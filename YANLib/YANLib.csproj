@@ -10,10 +10,39 @@
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
     <Description>Yami An Nephilim library</Description>
+    <Copyright>Copyright ©  2023</Copyright>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Tynab/YANLib</RepositoryUrl>
+    <PackageTags>C#, .NET, Library</PackageTags>
+    <PackAsTool>False</PackAsTool>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Extension:
+- Numeric
+- Text
+- List
+- Random
+Other:
+- Password</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageId>Tynab.YANLib</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="ic.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\res\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

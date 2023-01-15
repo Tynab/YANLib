@@ -36,20 +36,20 @@ public static partial class YANNum
     public static ushort ParseUshortMax(this string str) => ushort.TryParse(str, out var num) ? num : ushort.MaxValue;
 
     /// <summary>
-    /// Generate random number.
+    /// Generate random ushort number.
     /// </summary>
     /// <returns>Ushort random number.</returns>
     public static ushort RandomNumberUshort() => (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
 
     /// <summary>
-    /// Generate random number with max value.
+    /// Generate random ushort number with max value.
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0.</param>
     /// <returns>Ushort random number.</returns>
     public static ushort RandomNumberUshort(ushort max) => (ushort)new Random().Next(ushort.MinValue, max);
 
     /// <summary>
-    /// Generate random number with min and max value.
+    /// Generate random ushort number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>

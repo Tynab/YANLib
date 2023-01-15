@@ -36,20 +36,20 @@ public static partial class YANNum
     public static double ParseDoubleMax(this string str) => double.TryParse(str, out var num) ? num : double.MaxValue;
 
     /// <summary>
-    /// Generate random number.
+    /// Generate random double number.
     /// </summary>
     /// <returns>Double random number.</returns>
     public static double RandomNumberDouble() => new Random().NextDouble();
 
     /// <summary>
-    /// Generate random number with max value.
+    /// Generate random double number with max value.
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0. If not, the inclusive lower bound of the random number flexible to <see cref="double.MinValue"/>.</param>
     /// <returns>Double random number.</returns>
     public static double RandomNumberDouble(double max) => max < 0 ? new Random().NextDouble(double.MinValue, max) : new Random().NextDouble(0, max);
 
     /// <summary>
-    /// Generate random number with min and max value.
+    /// Generate random double number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>

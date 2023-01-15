@@ -36,20 +36,20 @@ public static partial class YANNum
     public static float ParseFloatMax(this string str) => float.TryParse(str, out var num) ? num : float.MaxValue;
 
     /// <summary>
-    /// Generate random number.
+    /// Generate random float number.
     /// </summary>
     /// <returns>Float random number.</returns>
     public static float RandomNumberFloat() => new Random().NextSingle();
 
     /// <summary>
-    /// Generate random number with max value.
+    /// Generate random float number with max value.
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0. If not, the inclusive lower bound of the random number flexible to <see cref="float.MinValue"/>.</param>
     /// <returns>Float random number.</returns>
     public static float RandomNumberFloat(float max) => max < 0 ? new Random().NextSingle(float.MinValue, max) : new Random().NextSingle(0, max);
 
     /// <summary>
-    /// Generate random number with min and max value.
+    /// Generate random float number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>

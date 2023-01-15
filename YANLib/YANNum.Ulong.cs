@@ -38,20 +38,20 @@ public static partial class YANNum
     public static ulong ParseUlongMax(this string str) => ulong.TryParse(str, out var num) ? num : ulong.MaxValue;
 
     /// <summary>
-    /// Generate random number.
+    /// Generate random ulong number.
     /// </summary>
     /// <returns>Ulong random number.</returns>
     public static ulong RandomNumberUlong() => (ulong)(new Random().NextInt64(long.MinValue, long.MaxValue) - long.MinValue);
 
     /// <summary>
-    /// Generate random number with max value.
+    /// Generate random ulong number with max value.
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0.</param>
     /// <returns>Ulong random number.</returns>
     public static ulong RandomNumberUlong(ulong max) => (ulong)(new Random().NextInt64(long.MinValue, (long)(max + (BigInteger)long.MinValue)) - long.MinValue);
 
     /// <summary>
-    /// Generate random number with min and max value.
+    /// Generate random ulong number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>

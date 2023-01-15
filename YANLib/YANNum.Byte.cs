@@ -36,20 +36,20 @@ public static partial class YANNum
     public static byte ParseByteMax(this string str) => byte.TryParse(str, out var num) ? num : byte.MaxValue;
 
     /// <summary>
-    /// Generate random number.
+    /// Generate random byte number.
     /// </summary>
     /// <returns>Byte random number.</returns>
     public static byte RandomNumberByte() => (byte)new Random().Next(byte.MinValue, byte.MaxValue);
 
     /// <summary>
-    /// Generate random number with max value.
+    /// Generate random byte number with max value.
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0.</param>
     /// <returns>Byte random number.</returns>
     public static byte RandomNumberByte(byte max) => (byte)new Random().Next(byte.MinValue, max);
 
     /// <summary>
-    /// Generate random number with min and max value.
+    /// Generate random byte number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>

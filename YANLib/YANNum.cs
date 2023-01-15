@@ -3,7 +3,7 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Returns the smallest item.
+    /// Returns the smallest item in params.
     /// </summary>
     /// <typeparam name="T">Object type.</typeparam>
     /// <param name="arr">Params.</param>
@@ -29,7 +29,7 @@ public static partial class YANNum
     }
 
     /// <summary>
-    /// Returns the largest item.
+    /// Returns the largest item in params.
     /// </summary>
     /// <typeparam name="T">Object type.</typeparam>
     /// <param name="arr">Params.</param>
