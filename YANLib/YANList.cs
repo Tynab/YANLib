@@ -10,17 +10,7 @@ public static class YANList
     /// <typeparam name="T">Object type.</typeparam>
     /// <param name="list">Input list.</param>
     /// <returns>List has item or not.</returns>
-    public static bool HasItem<T>(this List<T> list)
-    {
-        if (list != null)
-        {
-            if (list.Count > 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    public static bool HasItem<T>(this List<T> list) => list != null && list.Count > 0;
 
     /// <summary>
     /// Split list by size.

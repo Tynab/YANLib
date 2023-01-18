@@ -46,7 +46,11 @@ public static partial class YANNum
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0. If not, the inclusive lower bound of the random number flexible to <see cref="float.MinValue"/>.</param>
     /// <returns>Float random number.</returns>
-    public static float RandomNumberFloat(float max) => max < 0 ? new Random().NextSingle(float.MinValue, max) : new Random().NextSingle(0, max);
+    public static float RandomNumberFloat(float max)
+    {
+        var rnd = new Random();
+        return max < 0 ? rnd.NextSingle(float.MinValue, max) : rnd.NextSingle(0, max);
+    }
 
     /// <summary>
     /// Generate random float number with min and max value.

@@ -46,7 +46,11 @@ public static partial class YANNum
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0. If not, the inclusive lower bound of the random number flexible to <see cref="nint.MinValue"/>.</param>
     /// <returns>Nint random number.</returns>
-    public static nint RandomNumberNint(nint max) => (nint)(max < 0 ? new Random().NextInt64(nint.MinValue, max) : new Random().NextInt64(0, max));
+    public static nint RandomNumberNint(nint max)
+    {
+        var rnd = new Random();
+        return (nint)(max < 0 ? rnd.NextInt64(nint.MinValue, max) : rnd.NextInt64(0, max));
+    }
 
     /// <summary>
     /// Generate random nint number with min and max value.

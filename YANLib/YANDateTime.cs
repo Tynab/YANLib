@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using static System.Globalization.DateTimeFormatInfo;
+﻿using static System.DateTime;
 using static System.Globalization.CultureInfo;
+using static System.Globalization.DateTimeFormatInfo;
 using static System.Globalization.DateTimeStyles;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.DateTime;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Intrinsics.X86;
+using static System.Math;
 
 namespace YANLib;
 
@@ -77,10 +70,10 @@ public static class YANDateTime
     public static DateTime RandomDateTime(DateTime min, DateTime max) => min > max ? Today : min.AddDays(new Random().Next((MaxValue - MinValue).Days));
 
     /// <summary>
-    /// Get week of year advanced.
+    /// Returns the week of year that includes the date in the specified <see cref="DateTime"/> value.
     /// </summary>
     /// <param name="dt">Input datetime.</param>
-    /// <returns>Number week of year.</returns>
+    /// <returns>The positive integer that represents the week of the year that includes the date in the <paramref name="dt"/> parameter.</returns>
     public static int GetWeekOfYear(this DateTime dt) => CurrentInfo.Calendar.GetWeekOfYear(dt, CurrentInfo.CalendarWeekRule, CurrentInfo.FirstDayOfWeek);
 
     /// <summary>
@@ -89,5 +82,5 @@ public static class YANDateTime
     /// <param name="dt1"></param>
     /// <param name="dt2"></param>
     /// <returns></returns>
-    public static int TotalMonths(DateTime dt1, DateTime dt2) => Math.Abs((dt1.Year - dt2.Year) * 12 + dt1.Month - dt2.Month);
+    public static int TotalMonths(DateTime dt1, DateTime dt2) => Abs((dt1.Year - dt2.Year) * 12 + dt1.Month - dt2.Month);
 }

@@ -46,7 +46,11 @@ public static partial class YANNum
     /// </summary>
     /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0. If not, the inclusive lower bound of the random number flexible to <see cref="short.MinValue"/>.</param>
     /// <returns>Short random number.</returns>
-    public static short RandomNumberShort(short max) => (short)(max < 0 ? new Random().Next(short.MinValue, max) : new Random().Next(0, max));
+    public static short RandomNumberShort(short max)
+    {
+        var rnd = new Random();
+        return (short)(max < 0 ? rnd.Next(short.MinValue, max) : rnd.Next(0, max));
+    }
 
     /// <summary>
     /// Generate random short number with min and max value.
