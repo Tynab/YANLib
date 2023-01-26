@@ -29,6 +29,8 @@ private void Func(string s)
 - Text
 - List
 - Random
+- Process
+- Task
 
 ### OTHER
 - Password

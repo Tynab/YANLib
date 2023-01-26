@@ -18,16 +18,20 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Extension:
-- Numeric
-- Text
-- List
-- Random
-Other:
-- Password</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix:
+- HasValue (YANText)
+- HasCharater (YANText)
+Add:
+- HasValues (YANText)
+- HasCharaters (YANText)
+- WaitAnyWithCondition (YANTask)
+- ProcessKiller (YANProcess)
+- IsValidPasswordStandard (YANPass)
+- IsValidPassword (YANPass)</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
