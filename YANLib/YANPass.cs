@@ -126,7 +126,7 @@ public class YANPass
     }
 
     /// <summary>
-    /// Check if password is valid.
+    /// Check if password is valid (optional).
     /// </summary>
     /// <param name="password">Input password.</param>
     /// <param name="len">Password length limit.</param>
@@ -199,7 +199,7 @@ public class YANPass
     }
 
     /// <summary>
-    /// Check if password is valid.
+    /// Check if password is valid (optional).
     /// </summary>
     /// <param name="password">Input password.</param>
     /// <param name="splChars">Special characters check.</param>
@@ -281,7 +281,7 @@ public class YANPass
     }
 
     /// <summary>
-    /// Check if password is valid.
+    /// Check if password is valid (optional).
     /// </summary>
     /// <param name="password">Input password.</param>
     /// <param name="len">Password length limit.</param>
