@@ -96,11 +96,11 @@ public static partial class YANDateTime
         var diff = tzDst - tzSrc;
         if (diff < 0 && (dt - MinValue).TotalHours >= Abs(diff))
         {
-            dt.AddHours(diff);
+            dt = dt.AddHours(diff);
         }
         else if (diff > 0 && (MaxValue - dt).TotalHours >= diff)
         {
-            dt.AddHours(diff);
+            dt = dt.AddHours(diff);
         }
         return dt;
     }
