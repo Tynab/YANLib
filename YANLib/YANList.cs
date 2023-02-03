@@ -2,7 +2,7 @@
 
 namespace YANLib;
 
-public static class YANList
+public static partial class YANList
 {
     /// <summary>
     /// Check if list has item.

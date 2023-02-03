@@ -6,7 +6,7 @@ using static System.Math;
 
 namespace YANLib;
 
-public static class YANDateTime
+public static partial class YANDateTime
 {
     /// <summary>
     /// 
@@ -83,4 +83,25 @@ public static class YANDateTime
     /// <param name="dt2"></param>
     /// <returns></returns>
     public static int TotalMonths(DateTime dt1, DateTime dt2) => Abs((dt1.Year - dt2.Year) * 12 + dt1.Month - dt2.Month);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="dt"></param>
+    /// <param name="tzSrc"></param>
+    /// <param name="tzDst"></param>
+    /// <returns></returns>
+    public static DateTime ChangeTimeZone(this DateTime dt, int tzSrc, int tzDst)
+    {
+        var diff = tzDst - tzSrc;
+        if (diff < 0 && (dt - MinValue).TotalHours >= Abs(diff))
+        {
+            dt.AddHours(diff);
+        }
+        else if (diff > 0 && (MaxValue - dt).TotalHours >= diff)
+        {
+            dt.AddHours(diff);
+        }
+        return dt;
+    }
 }

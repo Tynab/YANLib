@@ -9,7 +9,7 @@
     <Title>YANLib</Title>
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
-    <Description>Yami An Nephilim library</Description>
+    <Description>Yami An Nephilim Library</Description>
     <Copyright>Copyright ©  2023</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -19,19 +19,11 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Fix:
-- HasValue (YANText)
-- HasCharater (YANText)
-Add:
-- HasValues (YANText)
-- HasCharaters (YANText)
-- WaitAnyWithCondition (YANTask)
-- ProcessKiller (YANProcess)
-- IsValidPasswordStandard (YANPass)
-- IsValidPassword (YANPass)</PackageReleaseNotes>
+- ChangeTimeZone (YANDateTime)</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>

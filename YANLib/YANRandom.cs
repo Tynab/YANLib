@@ -1,6 +1,6 @@
 ﻿namespace YANLib;
 
-public static class YANRandom
+public static partial class YANRandom
 {
     /// <summary>
     /// Returns a non-negative random integer.
