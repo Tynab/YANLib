@@ -5,13 +5,13 @@ namespace YANLib;
 public static partial class YANModel
 {
     /// <summary>
-    /// 
+    /// Change date time value by different time zone for all <see cref="DateTime"/> properties in parent model, child model and list child model.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="mdl"></param>
-    /// <param name="tzSrc"></param>
-    /// <param name="tzDst"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">Class model.</typeparam>
+    /// <param name="mdl">Input model.</param>
+    /// <param name="tzSrc">Time zone source.</param>
+    /// <param name="tzDst">Time zone destination.</param>
+    /// <returns>Model with date time changed.</returns>
     public static T ChangeTimeZoneAllProperties<T>(this T mdl, int tzSrc, int tzDst)
     {
         if (mdl != null)
