@@ -5,14 +5,14 @@ namespace YANLib;
 public static partial class YANProcess
 {
     /// <summary>
-    /// Kill all process with name.
+    /// A extension method that kills all processes by the specified name.
     /// </summary>
-    /// <param name="name">Process name.</param>
-    public static void ProcessKiller(this string name)
+    /// <param name="name">The name of the processes to be killed.</param>
+    public static void KillAllProcessesByName(this string name)
     {
-        while (GetProcessesByName(name).Length > 0)
+        while (GetProcessesByName(name)?.Length > 0)
         {
-            GetProcessesByName(name).FirstOrDefault()?.Kill();
+            GetProcessesByName(name)?.FirstOrDefault()?.Kill();
         }
     }
 }

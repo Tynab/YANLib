@@ -5,25 +5,17 @@ namespace YANLib;
 public static partial class YANList
 {
     /// <summary>
-    /// Check if list has item.
+    /// Chunks a list into smaller lists of a specified size.
     /// </summary>
-    /// <typeparam name="T">Object type.</typeparam>
-    /// <param name="list">Input list.</param>
-    /// <returns>List has item or not.</returns>
-    public static bool HasItem<T>(this List<T> list) => list != null && list.Count > 0;
-
-    /// <summary>
-    /// Split list by size.
-    /// </summary>
-    /// <typeparam name="T">Object type.</typeparam>
-    /// <param name="list">Input list.</param>
-    /// <param name="size">Number of item to split.</param>
-    /// <returns>Split list.</returns>
-    public static IEnumerable<List<T>> SplitListBySize<T>(this List<T> list, int size)
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    /// <param name="source">The source list to chunk.</param>
+    /// <param name="chunkSize">The size of each chunk.</param>
+    /// <returns>An enumerable of chunked lists.</returns>
+    public static IEnumerable<List<T>> ChunkBySize<T>(this List<T> source, int chunkSize)
     {
-        for (var i = 0; i < list.Count; i += size)
+        for (var i = 0; i < source?.Count; i += chunkSize)
         {
-            yield return list.GetRange(i, Min(size, list.Count - i));
+            yield return source.GetRange(i, Min(chunkSize, source.Count - i));
         }
     }
 }

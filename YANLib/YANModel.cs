@@ -1,46 +1,43 @@
 ﻿using System.Collections;
+using static System.Reflection.BindingFlags;
 
 namespace YANLib;
 
 public static partial class YANModel
 {
     /// <summary>
-    /// Change date time value by different time zone for all <see cref="DateTime"/> properties in parent model, child model and list child model.
+    /// Changes the time zone of all properties of the specified model <paramref name="mdl"/>.
     /// </summary>
-    /// <typeparam name="T">Class model.</typeparam>
-    /// <param name="mdl">Input model.</param>
-    /// <param name="tzSrc">Time zone source.</param>
-    /// <param name="tzDst">Time zone destination.</param>
-    /// <returns>Model with date time changed.</returns>
-    public static T ChangeTimeZoneAllProperties<T>(this T mdl, int tzSrc, int tzDst)
+    /// <typeparam name="T">The type of the model.</typeparam>
+    /// <param name="mdl">The model whose properties' time zones are to be changed.</param>
+    /// <param name="tzSrc">The source time zone offset, in minutes.</param>
+    /// <param name="tzDst">The destination time zone offset, in minutes.</param>
+    /// <returns>The model with the changed time zones of its properties.</returns>
+    public static T? ChangeTimeZoneAllProperties<T>(this T? mdl, int tzSrc, int tzDst) where T : class
     {
         if (mdl != null)
         {
-            var props = mdl.GetType().GetProperties();
+            var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
             foreach (var prop in props)
             {
-                var propType = prop.PropertyType;
-                if (propType == typeof(DateTime?))
+                var val = prop.GetValue(mdl);
+                if (val != null)
                 {
-                    prop.SetValue(mdl, ((DateTime?)prop.GetValue(mdl, null)).ChangeTimeZone(tzSrc, tzDst), null);
-                }
-                else if (propType == typeof(DateTime))
-                {
-                    var val = prop.GetValue(mdl, null);
-                    if (val != null)
+                    if (val is DateTime dt)
                     {
-                        prop.SetValue(mdl, ((DateTime)val).ChangeTimeZone(tzSrc, tzDst), null);
+                        prop.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
                     }
-                }
-                else if (propType.Namespace != null && !propType.Namespace.StartsWith("System"))
-                {
-                    prop.GetValue(mdl, null).ChangeTimeZoneAllProperties(tzSrc, tzDst);
-                }
-                else if (propType.IsGenericType && prop.GetValue(mdl, null) is IList list)
-                {
-                    foreach (var item in list)
+                    else if (val.GetType().IsClass)
                     {
-                        item.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+                        prop.SetValue(mdl, ChangeTimeZoneAllProperties(val, tzSrc, tzDst));
+                    }
+                    else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(List<>))
+                    {
+                        var list = (IList)val;
+                        for (var i = 0; i < list.Count; i++)
+                        {
+                            list[i] = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+                        }
                     }
                 }
             }

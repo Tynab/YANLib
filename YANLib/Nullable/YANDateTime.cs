@@ -9,46 +9,51 @@ namespace YANLib.Nullable;
 public static partial class YANDateTime
 {
     /// <summary>
-    /// Try parse <see cref="string"/> to <see cref="DateTime"/>, if failed return null.
+    /// An extension method to parse a string into a nullable <see cref="DateTime"/> object.
     /// </summary>
-    /// <param name="str">Input string</param>
-    /// <returns><see cref="DateTime"/> value.</returns>
+    /// <param name="str">The string to be parsed into a <see cref="DateTime"/> object.</param>
+    /// <returns>A nullable <see cref="DateTime"/> object parsed from the input string, or null if the parse operation fails.</returns>
     public static DateTime? ParseDateTime(this string str) => TryParse(str, out var dt) ? dt : null;
 
     /// <summary>
-    /// Try parse <see cref="string"/> to <see cref="DateTime"/>, if failed return null with option string format <paramref name="fmt"/>.
+    /// Parses a string representation of a <see cref="DateTime"/> object using a specified format.
     /// </summary>
-    /// <param name="str">Input string</param>
-    /// <param name="fmt">String format.</param>
-    /// <returns><see cref="DateTime"/> value.</returns>
+    /// <param name="str">The input string to be parsed as a <see cref="DateTime"/> object.</param>
+    /// <param name="fmt">The format used to parse the string representation of a <see cref="DateTime"/> object.</param>
+    /// <returns>A <see cref="DateTime"/> object represented by the input string, or null if the string cannot be parsed using the specified format.</returns>
     public static DateTime? ParseDateTime(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : null;
 
     /// <summary>
-    /// Generate random <see cref="DateTime"/> value with <paramref name="min"/> and <paramref name="max"/> value.
+    /// Generates a random <see cref="DateTime"/> object within a specified range.
     /// </summary>
-    /// <param name="min">The inclusive lower bound of the random value returned.</param>
-    /// <param name="max">The exclusive upper bound of the random value returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return null.</param>
-    /// <returns><see cref="DateTime"/> random value.</returns>
+    /// <param name="min">The minimum value of the range used to generate the random <see cref="DateTime"/> object.
+    /// <param name="max">The maximum value of the range used to generate the random <see cref="DateTime"/> object.
+    /// <returns>A random <see cref="DateTime"/> object within the specified range, or null if the minimum value is greater than the maximum value.
     public static DateTime? RandomDateTime(DateTime min, DateTime max) => min > max ? null : min.AddTicks(RandomNumberLong((max - min).Ticks));
 
     /// <summary>
-    /// Change date time value by different time zone.
+    /// Converts a <see cref="DateTime"/> value from a source timezone to a destination timezone. The source timezone offset and destination timezone offset are provided in hours.
     /// </summary>
-    /// <param name="dt">Input date time.</param>
-    /// <param name="tzSrc">Time zone source.</param>
-    /// <param name="tzDst">Time zone destination.</param>
-    /// <returns>Date time value changed.</returns>
+    /// <param name="dt">The <see cref="DateTime"/> value to convert.</param>
+    /// <param name="tzSrc">The timezone offset, in hours, of the source timezone.</param>
+    /// <param name="tzDst">The timezone offset, in hours, of the destination timezone.</param>
+    /// <returns>The converted <see cref="DateTime"/> value, or null if the original value is null or the conversion is not possible due to out-of-range values.</returns>
     public static DateTime? ChangeTimeZone(this DateTime dt, int tzSrc, int tzDst)
     {
         var diff = tzDst - tzSrc;
-        return diff < 0 ? (dt - MinValue).TotalHours < Abs(diff) ? null : dt.AddHours(diff) : (MaxValue - dt).TotalHours < diff ? null : dt.AddHours(diff);
+        return diff switch
+        {
+            < 0 when (dt - MinValue).TotalHours < Abs(diff) => null,
+            > 0 when (MaxValue - dt).TotalHours < diff => null,
+            _ => dt.AddHours(diff)
+        };
     }
 
     /// <summary>
-    /// Change date time value from time zone 0 to time zone destination.
+    /// Converts a <see cref="DateTime"/> value to a new timezone based on the Daylight Saving Time offset, if provided. If no Daylight Saving Time offset is provided, the value is converted to the new timezone based on the standard time offset.
     /// </summary>
-    /// <param name="dt">Input date time.</param>
-    /// <param name="tzDst">Time zone destination.</param>
-    /// <returns>Date time value changed.</returns>
+    /// <param name="dt">The <see cref="DateTime"/> value to convert.</param>
+    /// <param name="tzDst">The Daylight Saving Time offset, in minutes, for the new timezone. If not provided, the standard time offset will be used.</param>
+    /// <returns>The converted <see cref="DateTime"/> value, or null if the original value is null.</returns>
     public static DateTime? ChangeTimeZone(this DateTime dt, int tzDst) => dt.ChangeTimeZone(0, tzDst);
 }

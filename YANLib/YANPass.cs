@@ -1,9 +1,11 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using static System.Convert;
 using static System.Security.Cryptography.CryptographicOperations;
 using static System.Security.Cryptography.RandomNumberGenerator;
 using static System.Security.Cryptography.Rfc2898DeriveBytes;
-using static System.Threading.Tasks.Task;
+using static System.Text.RegularExpressions.Regex;
 
 namespace YANLib;
 
@@ -23,26 +25,26 @@ public class YANPass
 
     #region Methods
     /// <summary>
-    /// Hash password.
+    /// Hashes a password using the configured algorithm, iteration count, and key size, and returns the hash as a string that includes the salt, iteration count, and algorithm information.
     /// </summary>
-    /// <param name="password">Input password.</param>
-    /// <returns>Hash string.</returns>
+    /// <param name="password">The password to hash.</param>
+    /// <returns>A string that includes the salt, iteration count, and algorithm information of the generated hash.</returns>
     public string Hash(string password)
     {
         var salt = GetBytes(SaltSize);
-        return string.Join(SegmentDelimiter, ToHexString(Pbkdf2(password, salt, Iterations, Algorithm, KeySize)), ToHexString(salt), Iterations, Algorithm);
+        return new StringBuilder().Append(ToHexString(Pbkdf2(password, salt, Iterations, Algorithm, KeySize))).Append(SegmentDelimiter).Append(ToHexString(salt)).Append(SegmentDelimiter).Append(Iterations).Append(SegmentDelimiter).Append(Algorithm).ToString();
     }
 
     /// <summary>
-    /// Verify password.
+    /// Verifies whether a password matches a given hash.
     /// </summary>
-    /// <param name="password">Input password.</param>
-    /// <param name="strHash">Hash string.</param>
-    /// <returns>Verify or not.</returns>
+    /// <param name="password">The password to check.</param>
+    /// <param name="strHash">The hash to verify against.</param>
+    /// <returns><see langword="true"/> if the password matches the hash, <see langword="false"/> otherwise.</returns>
     public bool Verify(string password, string strHash)
     {
         var segments = strHash.Split(SegmentDelimiter);
-        if (segments.Length > 3)
+        if (segments?.Length > 3)
         {
             var hash = FromHexString(segments[0]);
             return FixedTimeEquals(Pbkdf2(password, FromHexString(segments[1]), segments[2].ParseInt(), new HashAlgorithmName(segments[3]), hash.Length), hash);
@@ -54,156 +56,26 @@ public class YANPass
     }
 
     /// <summary>
-    /// Check if password is valid (standard).
+    /// Checks if a password satisfies the standard password policy.
     /// </summary>
-    /// <param name="password">Input password.</param>
-    /// <returns>Password is valid or not.</returns>
-    public bool IsValidPasswordStandard(string password)
-    {
-        // has character
-        if (!password.HasCharater())
-        {
-            return false;
-        }
-        // has 8 character
-        if (password.Length < 8)
-        {
-            return false;
-        }
-        var tasks = new Task<bool>[4];
-        // has lower case
-        tasks[0] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has upper case
-        tasks[1] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToUpper())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has number
-        tasks[2] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (int.TryParse(c.ToString(), out var _))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has special character
-        tasks[3] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (PASSWORD_SPECIAL_CHARATERS_STANDARD.Contains(c))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        WaitAll(tasks);
-        return tasks[0].Result && tasks[1].Result && tasks[2].Result && tasks[3].Result;
-    }
+    /// <param name="password">The password to check.</param>
+    /// <returns><see langword="true"/> if the password satisfies the standard password policy; otherwise, <see langword="false"/>.</returns>
+    public static bool IsValidPasswordStandard(string password) => password.HasCharater() && password?.Length >= 8 && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
-    /// Check if password is valid (optional).
+    /// Validates if the given password meets the standard password policy, which requires at least one lowercase letter, one uppercase letter, one numeric character, one special character, and a minimum length of <paramref name="len"/>.
     /// </summary>
-    /// <param name="password">Input password.</param>
-    /// <param name="len">Password length limit.</param>
-    /// <returns>Password is valid or not.</returns>
-    public bool IsValidPassword(string password, int len)
-    {
-        // has character
-        if (!password.HasCharater())
-        {
-            return false;
-        }
-        // has 8 character
-        if (password.Length < len)
-        {
-            return false;
-        }
-        var tasks = new Task<bool>[4];
-        // has lower case
-        tasks[0] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has upper case
-        tasks[1] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToUpper())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has number
-        tasks[2] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (int.TryParse(c.ToString(), out var _))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has special character
-        tasks[3] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (PASSWORD_SPECIAL_CHARATERS_STANDARD.Contains(c))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        WaitAll(tasks);
-        return tasks[0].Result && tasks[1].Result && tasks[2].Result && tasks[3].Result;
-    }
+    /// <param name="password">The password string to validate</param>
+    /// <param name="len">The minimum length of the password</param>
+    /// <returns><see langword="true"/> if the password meets the standard password policy, otherwise <see langword="false"/></returns>
+    public static bool IsValidPassword(string password, int len) => password.HasCharater() && password?.Length >= len && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
-    /// Check if password is valid (optional).
+    /// Determines whether the specified password is valid or not by checking if it has at least 8 characters and contains at least one lowercase letter, one uppercase letter, one number, and one special character from the given list of characters.
     /// </summary>
-    /// <param name="password">Input password.</param>
-    /// <param name="splChars">Special characters check.</param>
-    /// <returns>Password is valid or not.</returns>
+    /// <param name="password">The password to be validated.</param>
+    /// <param name="splChars">The list of special characters to be used for validation.</param>
+    /// <returns><see langword="true"/> if the password is valid; otherwise <see langword="false"/>.</returns>
     public bool IsValidPassword(string password, params char[] splChars)
     {
         // has character
@@ -216,77 +88,18 @@ public class YANPass
         {
             return false;
         }
-        var tasks = new Task<bool>[4];
-        // create new list password special charaters
         var newPwdSplChar = new List<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-        foreach (var c in splChars)
-        {
-            if (!newPwdSplChar.Contains(c))
-            {
-                newPwdSplChar.Add(c);
-            }
-        }
-        // has lower case
-        tasks[0] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has upper case
-        tasks[1] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToUpper())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has number
-        tasks[2] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (int.TryParse(c.ToString(), out var _))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has special character
-        tasks[3] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (newPwdSplChar.Contains(c))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        WaitAll(tasks);
-        return tasks[0].Result && tasks[1].Result && tasks[2].Result && tasks[3].Result;
+        newPwdSplChar.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
+        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$").IsMatch(password);
     }
 
     /// <summary>
-    /// Check if password is valid (optional).
+    /// Checks if a password is valid. The password must have at least one character, a minimum length of <paramref name="len"/>, and must contain at least one uppercase letter, one lowercase letter, one number, and one of the specified special characters.
     /// </summary>
-    /// <param name="password">Input password.</param>
-    /// <param name="len">Password length limit.</param>
-    /// <param name="splChars">Special characters check.</param>
-    /// <returns>Password is valid or not.</returns>
+    /// <param name="password">The password to check.</param>
+    /// <param name="len">The minimum length of the password.</param>
+    /// <param name="splChars">The list of special characters to check for.</param>
+    /// <returns><see langword="true"/> if the password is valid; otherwise <see langword="false"/>.</returns>
     public bool IsValidPassword(string password, int len, params char[] splChars)
     {
         // has character
@@ -294,73 +107,14 @@ public class YANPass
         {
             return false;
         }
-        // has 8 character
+        // has len character
         if (password.Length < len)
         {
             return false;
         }
-        var tasks = new Task<bool>[4];
-        // create new list password special charaters
         var newPwdSplChar = new List<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-        foreach (var c in splChars)
-        {
-            if (!newPwdSplChar.Contains(c))
-            {
-                newPwdSplChar.Add(c);
-            }
-        }
-        // has lower case
-        tasks[0] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has upper case
-        tasks[1] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                var str = c.ToString();
-                if (str == str.ToUpper())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has number
-        tasks[2] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (int.TryParse(c.ToString(), out var _))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        // has special character
-        tasks[3] = Run(() =>
-        {
-            foreach (var c in password)
-            {
-                if (newPwdSplChar.Contains(c))
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-        WaitAll(tasks);
-        return tasks[0].Result && tasks[1].Result && tasks[2].Result && tasks[3].Result;
+        newPwdSplChar.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
+        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$").IsMatch(password);
     }
     #endregion
 }

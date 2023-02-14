@@ -1,35 +1,50 @@
 ﻿using static System.Threading.Tasks.Task;
-using static System.Threading.Tasks.TaskStatus;
 
 namespace YANLib;
 
 public static partial class YANTask
 {
     /// <summary>
-    /// Waits for any of the provided <see cref="Task"/> objects to complete execution with condition.
+    /// Waits for any task in a collection of tasks to complete, and returns the result of the task that satisfies a specified condition.
     /// </summary>
-    /// <typeparam name="T">Object type.</typeparam>
-    /// <param name="tasks">Input tasks.</param>
-    /// <param name="goodRslt">Good result.</param>
-    /// <returns>First task completed result.</returns>
-    public static async Task<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt)
+    /// <typeparam name="T">The type of the result produced by the tasks.</typeparam>
+    /// <param name="tasks">A collection of tasks to wait for.</param>
+    /// <param name="goodRslt">The result that the returned task must satisfy.</param>
+    /// <returns>The result of the completed task that satisfies the specified condition, or <see langword="null"/> if no such task exists.</returns>
+    /// <remarks>
+    /// This method waits for any of the specified tasks to complete, and returns the result of the first completed task that satisfies the specified condition. The remaining tasks are not cancelled, but their results are ignored.
+    /// </remarks>
+    public static async Task<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : struct
     {
-        var taskList = new List<Task<T>>(tasks);
-        var fstCmpl = default(Task<T>);
-        while (taskList.Count > 0)
+        var cmplTask = await WhenAny(tasks);
+        return cmplTask.IsCompletedSuccessfully && cmplTask.Result.Equals(goodRslt) ? cmplTask.Result : null;
+    }
+
+    /// <summary>
+    /// Waits for any task in a collection of tasks to complete, and returns the result of the task that satisfies a specified condition.
+    /// </summary>
+    /// <typeparam name="T">The type of the result produced by the tasks.</typeparam>
+    /// <param name="tasks">A collection of tasks to wait for.</param>
+    /// <param name="goodRslt">The result that the returned task must satisfy.</param>
+    /// <returns>The result of the completed task that satisfies the specified condition, or <see langword="null"/> if no such task exists.</returns>
+    /// <remarks>
+    /// This method waits for any of the specified tasks to complete, and returns the result of the first completed task that satisfies the specified condition. The remaining tasks are not cancelled, but their results are ignored.
+    /// </remarks>
+    public static async Task<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : struct
+    {
+        while (tasks.Any())
         {
-            var curCmpl = await WhenAny(taskList);
-            var rslt = curCmpl.Result;
-            if (curCmpl.Status == RanToCompletion && rslt != null && rslt.Equals(goodRslt))
+            var cmplTask = await WhenAny(tasks);
+            tasks = tasks.Except(new[]
             {
-                fstCmpl = curCmpl;
-                break;
-            }
-            else
+                cmplTask
+            });
+            var rslt = await cmplTask;
+            if (rslt.Equals(goodRslt))
             {
-                taskList.Remove(curCmpl);
+                return rslt;
             }
         }
-        return (fstCmpl != default(Task<T>)) ? fstCmpl.Result : default;
+        return null;
     }
 }

@@ -3,67 +3,67 @@
 public static partial class YANRandom
 {
     /// <summary>
-    /// Returns a non-negative random integer.
+    /// Extension method that generates a random 32-bit signed integer using the <see cref="Random.Next(int, int)"/> method.
     /// </summary>
-    /// <param name="rnd">Random.</param>
-    /// <returns>A 32-bit signed integer.</returns>
+    /// <param name="rnd">The <see cref="Random"/> instance to use for generating the random number.</param>
+    /// <returns>A random 32-bit signed integer.</returns>
     public static int NextInt32(this Random rnd) => rnd.Next(0, 1 << 4) << 28 | rnd.Next(0, 1 << 28);
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random decimal value.
     /// </summary>
-    /// <param name="rnd">Random.</param>
-    /// <returns>A decimal-precision floating point number that is greater than or equal to 0.0, and less than 1.0.</returns>
+    /// <param name="rnd"><see cref="Random"/> object to generate the decimal value.</param>
+    /// <returns>A random decimal value.</returns>
     public static decimal NextDecimal(this Random rnd) => new(rnd.NextInt32(), rnd.NextInt32(), rnd.NextInt32(), rnd.Next(2) == 1, (byte)rnd.Next(29));
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random floating-point number within the specified range.
     /// </summary>
-    /// <param name="rnd">Random.</param>
+    /// <param name="rnd">The <see cref="Random"/> object to use as the source of randomness.</param>
     /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-    /// <param name="maxValue">The exclusive upper bound of the random number returned. <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.</param>
-    /// <returns>A float-precision floating point number that is greater than or equal to <paramref name="minValue"/> and less than <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but not <paramref name="maxValue"/>. If minValue equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.</returns>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
+    /// <returns>A random floating-point number that is greater than or equal to <paramref name="minValue"/>, and less than <paramref name="maxValue"/>.</returns>
     public static float NextSingle(this Random rnd, float minValue, float maxValue) => minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random floating-point number less than the specified maximum value.
     /// </summary>
-    /// <param name="rnd">Random.</param>
-    /// <param name="maxValue">The exclusive upper bound of the random number to be generated. <paramref name="maxValue"/> must be greater than or equal to 0.</param>
-    /// <returns>A float-precision floating point number that is greater than or equal to 0, and less than <paramref name="maxValue"/>; that is, the range of return values ordinarily includes 0 but not <paramref name="maxValue"/>. However, if <paramref name="maxValue"/> equals 0, <paramref name="maxValue"/> is returned.</returns>
+    /// <param name="rnd">The <see cref="Random"/> object to use as the source of randomness.</param>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned. Must be greater than 0.</param>
+    /// <returns>A random floating-point number that is greater than or equal to 0, and less than <paramref name="maxValue"/>.</returns>
     public static float NextSingle(this Random rnd, float maxValue) => maxValue > 0 ? rnd.NextSingle(0, maxValue) : 0;
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random floating-point number within the specified range.
     /// </summary>
-    /// <param name="rnd">Random.</param>
+    /// <param name="rnd">The <see cref="Random"/> object to use as the source of randomness.</param>
     /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-    /// <param name="maxValue">The exclusive upper bound of the random number returned. <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.</param>
-    /// <returns>A double-precision floating point number that is greater than or equal to <paramref name="minValue"/> and less than <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but not <paramref name="maxValue"/>. If minValue equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.</returns>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
+    /// <returns>A random floating-point number that is greater than or equal to <paramref name="minValue"/>, and less than <paramref name="maxValue"/>.</returns>
     public static double NextDouble(this Random rnd, double minValue, double maxValue) => minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random floating-point number less than the specified maximum value.
     /// </summary>
-    /// <param name="rnd">Random.</param>
-    /// <param name="maxValue">The exclusive upper bound of the random number to be generated. <paramref name="maxValue"/> must be greater than or equal to 0.</param>
-    /// <returns>A double-precision floating point number that is greater than or equal to 0, and less than <paramref name="maxValue"/>; that is, the range of return values ordinarily includes 0 but not <paramref name="maxValue"/>. However, if <paramref name="maxValue"/> equals 0, <paramref name="maxValue"/> is returned.</returns>
+    /// <param name="rnd">The <see cref="Random"/> object to use as the source of randomness.</param>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned. Must be greater than 0.</param>
+    /// <returns>A random floating-point number that is greater than or equal to 0, and less than <paramref name="maxValue"/>.</returns>
     public static double NextDouble(this Random rnd, double maxValue) => maxValue > 0 ? rnd.NextDouble(0, maxValue) : 0;
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random decimal number within the specified range.
     /// </summary>
-    /// <param name="rnd">Random.</param>
+    /// <param name="rnd">The <see cref="Random"/> object to use as the source of randomness.</param>
     /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-    /// <param name="maxValue">The exclusive upper bound of the random number returned. <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.</param>
-    /// <returns>A decimal-precision floating point number that is greater than or equal to <paramref name="minValue"/> and less than <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but not <paramref name="maxValue"/>. If minValue equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.</returns>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
+    /// <returns>A random decimal number that is greater than or equal to <paramref name="minValue"/>, and less than <paramref name="maxValue"/>.</returns>
     public static decimal NextDecimal(this Random rnd, decimal minValue, decimal maxValue) => minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
 
     /// <summary>
-    /// Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
+    /// Generates a random decimal number less than the specified maximum value.
     /// </summary>
-    /// <param name="rnd">Random.</param>
-    /// <param name="maxValue">The exclusive upper bound of the random number to be generated. <paramref name="maxValue"/> must be greater than or equal to 0.</param>
-    /// <returns>A decimal-precision floating point number that is greater than or equal to 0, and less than <paramref name="maxValue"/>; that is, the range of return values ordinarily includes 0 but not <paramref name="maxValue"/>. However, if <paramref name="maxValue"/> equals 0, <paramref name="maxValue"/> is returned.</returns>
+    /// <param name="rnd">The <see cref="Random"/> object to use as the source of randomness.</param>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned. Must be greater than 0.</param>
+    /// <returns>A random decimal number that is greater than or equal to 0, and less than <paramref name="maxValue"/>.</returns>
     public static decimal NextDecimal(this Random rnd, decimal maxValue) => maxValue > 0 ? rnd.NextDecimal(0, maxValue) : 0;
 }
