@@ -3,11 +3,11 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Returns the minimum value in a sequence of values.
+    /// Returns the minimum element in <paramref name="arr"/>, as determined by the default comparer, which is the element with the smallest value.
     /// </summary>
-    /// <typeparam name="T">The type of the elements of the array.</typeparam>
-    /// <param name="arr">An array of values to determine the minimum value of. Must not be null.</param>
-    /// <returns>The minimum value in the sequence represented by <paramref name="arr"/>.</returns>
+    /// <typeparam name="T">The type of the elements in the array.</typeparam>
+    /// <param name="arr">An array of elements of type <typeparamref name="T"/>.</param>
+    /// <returns>The minimum element in <paramref name="arr"/>, or the default value for type <typeparamref name="T"/> if <paramref name="arr"/> is empty.</returns>
     public static T Min<T>(params T[] arr) where T : IComparable<T>
     {
         var min = arr[0];
@@ -22,11 +22,11 @@ public static partial class YANNum
     }
 
     /// <summary>
-    /// Returns the maximum value in a sequence of values.
+    /// Returns the maximum element in <paramref name="arr"/>, as determined by the default comparer, which is the element with the largest value.
     /// </summary>
-    /// <typeparam name="T">The type of the elements of the array.</typeparam>
-    /// <param name="arr">An array of values to determine the maximum value of. Must not be null.</param>
-    /// <returns>The maximum value in the sequence represented by <paramref name="arr"/>.</returns>
+    /// <typeparam name="T">The type of the elements in the array.</typeparam>
+    /// <param name="arr">An array of elements of type <typeparamref name="T"/>.</param>
+    /// <returns>The maximum element in <paramref name="arr"/>, or the default value for type <typeparamref name="T"/> if <paramref name="arr"/> is empty.</returns>
     public static T Max<T>(params T[] arr) where T : IComparable<T>
     {
         var max = arr[0];

@@ -1,18 +1,31 @@
 ﻿using static System.Diagnostics.Process;
+using static System.Threading.Tasks.Task;
 
 namespace YANLib;
 
 public static partial class YANProcess
 {
     /// <summary>
-    /// A extension method that kills all processes by the specified name.
+    /// Asynchronously kills all running processes with the specified name by first attempting to close their main window, and if that fails, force-killing them.
+    /// After attempting to close the processes, this method waits for one second before force-killing any remaining processes to give them a chance to exit gracefully.
     /// </summary>
-    /// <param name="name">The name of the processes to be killed.</param>
-    public static void KillAllProcessesByName(this string name)
+    /// <param name="name">The name of the processes to kill.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public static async Task KillAllProcessesByNameAsync(this string name)
     {
-        while (GetProcessesByName(name)?.Length > 0)
+        var procs = GetProcessesByName(name);
+        foreach (var proc in procs)
         {
-            GetProcessesByName(name)?.FirstOrDefault()?.Kill();
+            if (!proc.CloseMainWindow())
+            {
+                proc?.Kill();
+            }
+        }
+        await Delay(1000);
+        procs = GetProcessesByName(name);
+        foreach (var proc in procs)
+        {
+            proc?.Kill();
         }
     }
 }

@@ -6,13 +6,14 @@ namespace YANLib;
 public static partial class YANModel
 {
     /// <summary>
-    /// Changes the time zone of all properties of the specified model <paramref name="mdl"/>.
+    /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="null"/>.
     /// </summary>
-    /// <typeparam name="T">The type of the model.</typeparam>
-    /// <param name="mdl">The model whose properties' time zones are to be changed.</param>
-    /// <param name="tzSrc">The source time zone offset, in minutes.</param>
-    /// <param name="tzDst">The destination time zone offset, in minutes.</param>
-    /// <returns>The model with the changed time zones of its properties.</returns>
+    /// <typeparam name="T">The type of the object to change the time zone.</typeparam>
+    /// <param name="mdl">The nullable object to change the time zone.</param>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <returns>The nullable object with all its properties having the specified time zone; or <see langword="null"/> if the object is <see langword="null"/>.</returns>
     public static T? ChangeTimeZoneAllProperties<T>(this T? mdl, int tzSrc, int tzDst) where T : class
     {
         if (mdl != null)
