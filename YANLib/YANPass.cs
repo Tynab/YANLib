@@ -43,11 +43,11 @@ public class YANPass
     /// <returns><see langword="true"/> if the provided password is valid; otherwise, <see langword="false"/>.</returns>
     public bool Verify(string password, string strHash)
     {
-        var segments = strHash.Split(SegmentDelimiter);
-        if (segments?.Length > 3)
+        var segs = strHash?.Split(SegmentDelimiter);
+        if (segs?.Length > 3)
         {
-            var hash = FromHexString(segments[0]);
-            return FixedTimeEquals(Pbkdf2(password, FromHexString(segments[1]), segments[2].ParseInt(), new HashAlgorithmName(segments[3]), hash.Length), hash);
+            var hash = FromHexString(segs[0]);
+            return FixedTimeEquals(Pbkdf2(password, FromHexString(segs[1]), segs[2].ParseInt(), new HashAlgorithmName(segs[3]), hash.Length), hash);
         }
         else
         {
@@ -89,8 +89,8 @@ public class YANPass
             return false;
         }
         var newPwdSplChar = new List<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-        newPwdSplChar.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
-        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$").IsMatch(password);
+        newPwdSplChar?.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
+        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar?.ToArray()))}]).+$").IsMatch(password);
     }
 
     /// <summary>
@@ -113,8 +113,8 @@ public class YANPass
             return false;
         }
         var newPwdSplChar = new List<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-        newPwdSplChar.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
-        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$").IsMatch(password);
+        newPwdSplChar?.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
+        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar?.ToArray()))}]).+$").IsMatch(password);
     }
     #endregion
 }

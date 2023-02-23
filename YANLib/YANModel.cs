@@ -21,21 +21,21 @@ public static partial class YANModel
             var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
             foreach (var prop in props)
             {
-                var val = prop.GetValue(mdl);
+                var val = prop?.GetValue(mdl);
                 if (val != null)
                 {
                     if (val is DateTime dt)
                     {
-                        prop.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
+                        prop?.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
                     }
                     else if (val.GetType().IsClass)
                     {
-                        prop.SetValue(mdl, ChangeTimeZoneAllProperties(val, tzSrc, tzDst));
+                        prop?.SetValue(mdl, ChangeTimeZoneAllProperties(val, tzSrc, tzDst));
                     }
-                    else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(List<>))
+                    else if (val.GetType().IsGenericType && val?.GetType()?.GetGenericTypeDefinition() == typeof(List<>))
                     {
                         var list = (IList)val;
-                        for (var i = 0; i < list.Count; i++)
+                        for (var i = 0; i < list?.Count; i++)
                         {
                             list[i] = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
                         }

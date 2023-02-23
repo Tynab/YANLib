@@ -95,7 +95,12 @@ public static partial class YANDateTime
     public static DateTime ChangeTimeZone(this DateTime dt, int tzSrc, int tzDst)
     {
         var diff = tzDst - tzSrc;
-        return diff < 0 ? (dt - MinValue).TotalHours < Abs(diff) ? dt : dt.AddHours(diff) : (MaxValue - dt).TotalHours < diff ? dt : dt.AddHours(diff);
+        return diff switch
+        {
+            < 0 when (dt - MinValue).TotalHours < Abs(diff) => dt,
+            > 0 when (MaxValue - dt).TotalHours < diff => dt,
+            _ => dt.AddHours(diff)
+        };
     }
 
     /// <summary>

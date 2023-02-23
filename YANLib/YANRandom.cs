@@ -26,14 +26,6 @@ public static partial class YANRandom
     public static float NextSingle(this Random rnd, float minValue, float maxValue) => minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
 
     /// <summary>
-    /// Returns a random <see cref="float"/> value between 0 and the specified maximum value.
-    /// </summary>
-    /// <param name="rnd">The <see cref="Random"/> object.</param>
-    /// <param name="maxValue">The maximum <see cref="float"/> value.</param>
-    /// <returns>A random <see cref="float"/> value between 0 and <paramref name="maxValue"/>.</returns>
-    public static float NextSingle(this Random rnd, float maxValue) => maxValue > 0 ? rnd.NextSingle(0, maxValue) : 0;
-
-    /// <summary>
     /// Returns a random <see cref="double"/> value between the specified minimum and maximum values.
     /// </summary>
     /// <param name="rnd">The <see cref="Random"/> object.</param>
@@ -43,14 +35,6 @@ public static partial class YANRandom
     public static double NextDouble(this Random rnd, double minValue, double maxValue) => minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
 
     /// <summary>
-    /// Returns a random <see cref="double"/> value between 0 and the specified maximum value.
-    /// </summary>
-    /// <param name="rnd">The <see cref="Random"/> object.</param>
-    /// <param name="maxValue">The maximum <see cref="double"/> value.</param>
-    /// <returns>A random <see cref="double"/> value between 0 and <paramref name="maxValue"/>.</returns>
-    public static double NextDouble(this Random rnd, double maxValue) => maxValue > 0 ? rnd.NextDouble(0, maxValue) : 0;
-
-    /// <summary>
     /// Returns a random <see cref="decimal"/> value between the specified minimum and maximum values.
     /// </summary>
     /// <param name="rnd">The <see cref="Random"/> object.</param>
@@ -58,12 +42,4 @@ public static partial class YANRandom
     /// <param name="maxValue">The maximum <see cref="decimal"/> value.</param>
     /// <returns>A random <see cref="decimal"/> value between <paramref name="minValue"/> and <paramref name="maxValue"/>.</returns>
     public static decimal NextDecimal(this Random rnd, decimal minValue, decimal maxValue) => minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
-
-    /// <summary>
-    /// Returns a random <see cref="decimal"/> value less than the specified maximum value.
-    /// </summary>
-    /// <param name="rnd">The <see cref="Random"/> object.</param>
-    /// <param name="maxValue">The maximum <see cref="decimal"/> value.</param>
-    /// <returns>A random <see cref="decimal"/> value between 0 and <paramref name="maxValue"/>.</returns>
-    public static decimal NextDecimal(this Random rnd, decimal maxValue) => maxValue > 0 ? rnd.NextDecimal(0, maxValue) : 0;
 }

@@ -47,11 +47,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A nullable <see cref="DateTime"/> value representing a random date between <see cref="MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime? max)
-    {
-        var maxVal = max ?? MinValue;
-        return RandomDateTime(maxVal > Today ? Today : maxVal, maxVal);
-    }
+    public static DateTime? RandomDateTime(DateTime? max) => max.HasValue ? RandomDateTime(max.Value > Today ? Today : MinValue, max) : null;
 
     /// <summary>
     /// Returns the week of the year that the specified <see cref="DateTime"/> value falls in, according to the current culture's calendar, week rule, and first day of the week settings. If the input value is <see langword="null"/>, <see langword="null"/> is returned.
