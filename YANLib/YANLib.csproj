@@ -18,12 +18,11 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Fix:
-- ChangeTimeZoneAllProperties (YANModel)</PackageReleaseNotes>
+    <PackageReleaseNotes>Add nullable all numeric extension</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
