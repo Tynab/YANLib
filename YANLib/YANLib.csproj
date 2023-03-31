@@ -18,11 +18,21 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Add nullable all numeric extension</PackageReleaseNotes>
+    <PackageReleaseNotes>Optimize:
+- YANList
+- YANModel
+Update:
+- YANNum
+- YANDateTime
+- YANPass
+- YANProcess
+- YANRandom
+- YANTask
+- YANText</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>1.0.5</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
