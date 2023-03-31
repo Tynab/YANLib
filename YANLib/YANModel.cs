@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Reflection;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib;
@@ -18,7 +19,7 @@ public static partial class YANModel
     {
         if (mdl != null)
         {
-            var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+            var props = typeof(T).GetProperties(Public | Instance).ChgTzPropPrcYld();
             foreach (var prop in props)
             {
                 var val = prop?.GetValue(mdl);
@@ -32,7 +33,7 @@ public static partial class YANModel
                     {
                         prop?.SetValue(mdl, ChangeTimeZoneAllProperties(val, tzSrc, tzDst));
                     }
-                    else if (val.GetType().IsGenericType && val?.GetType()?.GetGenericTypeDefinition() == typeof(List<>))
+                    else if (val.GetType().IsGenericType && val?.GetType()?.GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var list = (IList)val;
                         for (var i = 0; i < list?.Count; i++)
@@ -44,5 +45,17 @@ public static partial class YANModel
             }
         }
         return mdl;
+    }
+
+    // Change time zone properties process yield
+    private static IEnumerable<PropertyInfo> ChgTzPropPrcYld(this PropertyInfo[] arrProp)
+    {
+        for (var i = 0; i < arrProp.Length; i++)
+        {
+            if (arrProp[i].CanRead && arrProp[i].CanWrite)
+            {
+                yield return arrProp[i];
+            }
+        }
     }
 }
