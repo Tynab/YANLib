@@ -1,8 +1,9 @@
-﻿using static System.Nullable;
+﻿using static System.Math;
+using static System.Nullable;
 
-namespace YANLib;
+namespace YANLib.YANCollection;
 
-public static partial class YANList
+public static partial class YANEnumerable
 {
     /// <summary>
     /// Splits a given <see cref="List{T}"/> into smaller chunks of a specified size.
@@ -20,7 +21,7 @@ public static partial class YANList
         }
         for (var i = 0; i < cnt; i += chunkSize)
         {
-            yield return srcs.GetRange(i, i + chunkSize > cnt ? cnt - i : chunkSize);
+            yield return srcs.GetRange(i, Min(chunkSize, cnt - i));
         }
     }
 
@@ -30,14 +31,14 @@ public static partial class YANList
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     /// <param name="srcs">The source list to be cleaned.</param>
     /// <returns>A new <see cref="IList{T}"/> that contains only non-null or non-whitespace elements.</returns>
-    public static IList<T>? Clean<T>(this IList<T> srcs)
+    public static IEnumerable<T>? Clean<T>(this IEnumerable<T> srcs)
     {
-        if (srcs?.Count > 0)
+        if (srcs?.Count() > 0)
         {
             var t = typeof(T);
             if (t.IsClass || GetUnderlyingType(t) != null)
             {
-                return srcs.ClnPrcYld().ToList();
+                return srcs.ClnPrcYld();
             }
         }
         return srcs;
@@ -48,29 +49,5 @@ public static partial class YANList
     /// </summary>
     /// <param name="srcs">The source list to be cleaned.</param>
     /// <returns>A new list string that contains only non-null or non-whitespace elements, or null if the input list is null.</returns>
-    public static IList<string>? Clean(this IList<string> srcs) => srcs?.Count > 0 ? srcs.ClnPrcYld().ToList() : srcs;
-
-    // Clean process yield
-    private static IEnumerable<T> ClnPrcYld<T>(this IList<T> srcs)
-    {
-        for (var i = 0; i < srcs?.Count; i++)
-        {
-            if (srcs[i] != null)
-            {
-                yield return srcs[i];
-            }
-        }
-    }
-
-    // Clean process yield
-    private static IEnumerable<string> ClnPrcYld(this IList<string> srcs)
-    {
-        for (var i = 0; i < srcs?.Count; i++)
-        {
-            if (!string.IsNullOrWhiteSpace(srcs[i]))
-            {
-                yield return srcs[i];
-            }
-        }
-    }
+    public static IEnumerable<string>? Clean(this IEnumerable<string> srcs) => srcs?.Count() > 0 ? srcs.ClnPrcYld() : srcs;
 }
