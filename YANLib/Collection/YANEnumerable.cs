@@ -1,7 +1,7 @@
 ﻿using static System.Math;
 using static System.Nullable;
 
-namespace YANLib.YANCollection;
+namespace YANLib.Collection;
 
 public static partial class YANEnumerable
 {

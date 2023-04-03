@@ -1,15 +1,15 @@
 ﻿using static System.Nullable;
 
-namespace YANLib.YANCollection;
+namespace YANLib.Collection;
 
 public static partial class YANList
 {
     /// <summary>
-    /// Cleans a given <see cref="IList{T}"/> by removing null or whitespace elements depending on the type of T.
+    /// Cleans a given <see cref="List{T}"/> by removing null or whitespace elements depending on the type of T.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     /// <param name="srcs">The source list to be cleaned.</param>
-    /// <returns>A new <see cref="IList{T}"/> that contains only non-null or non-whitespace elements.</returns>
+    /// <returns>A new <see cref="List{T}"/> that contains only non-null or non-whitespace elements.</returns>
     public static List<T>? Clean<T>(this IEnumerable<T> srcs)
     {
         if (srcs?.Count() > 0)

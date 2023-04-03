@@ -18,21 +18,14 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Optimize:
-- YANList
-- YANModel
-Update:
-- YANNum
-- YANDateTime
-- YANPass
-- YANProcess
-- YANRandom
-- YANTask
-- YANText</PackageReleaseNotes>
+    <PackageReleaseNotes>Add:
+- YANCollection
+- YANEnumerable
+Move YANList to Collection</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

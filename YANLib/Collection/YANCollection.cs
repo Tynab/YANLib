@@ -1,6 +1,4 @@
-﻿using myAlias = YANLib.YANCollection;
-
-namespace YANLib;
+﻿namespace YANLib.Collection;
 
 public static partial class YANCollection
 {
