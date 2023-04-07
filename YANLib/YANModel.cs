@@ -54,7 +54,7 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if all properties of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotNull<T>(T mdl) where T : class
+    public static bool AllPropertiesNotNull<T>(this T mdl) where T : class
     {
         if (mdl == null)
         {
@@ -78,7 +78,7 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotNull<T>(T mdl, HashSet<string> names) where T : class
+    public static bool AllPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class
     {
         if (mdl == null)
         {
