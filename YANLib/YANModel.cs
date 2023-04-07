@@ -70,6 +70,13 @@ public static partial class YANModel
         return true;
     }
 
+    /// <summary>
+    /// Checks whether all properties of the specified object have null values, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <returns><see langword="true"/> if all properties of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl) where T : class
     {
         if (mdl == null)
@@ -86,6 +93,13 @@ public static partial class YANModel
         return true;
     }
 
+    /// <summary>
+    /// Checks whether any property of the specified object has a non-null value, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <returns><see langword="true"/> if any property of the specified object has a non-null value; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl) where T : class
     {
         if (mdl == null)
@@ -101,6 +115,14 @@ public static partial class YANModel
         }
         return false;
     }
+
+    /// <summary>
+    /// Checks whether any property of the specified object has a null value, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <returns><see langword="true"/> if any property of the specified object has a null value; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl) where T : class
     {
         if (mdl == null)
@@ -142,6 +164,14 @@ public static partial class YANModel
         return true;
     }
 
+    /// <summary>
+    /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <param name="names">The names of the properties to check.</param>
+    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class
     {
         if (mdl == null)
@@ -159,6 +189,14 @@ public static partial class YANModel
         return true;
     }
 
+    /// <summary>
+    /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <param name="names">The names of the properties to check.</param>
+    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class
     {
         if (mdl == null)
@@ -175,6 +213,15 @@ public static partial class YANModel
         }
         return false;
     }
+
+    /// <summary>
+    /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <param name="names">The names of the properties to check.</param>
+    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class
     {
         if (mdl == null)

@@ -44,6 +44,12 @@ public static partial class YANEnumerable
         return srcs;
     }
 
+    /// <summary>
+    /// Cleans a given <see cref="IList{T}"/> by removing null or whitespace elements depending on the type of T.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    /// <param name="srcs">The source list to be cleaned.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> that contains only non-null or non-whitespace elements.</returns>
     public static IEnumerable<T>? Clean<T>(this IList<T> srcs)
     {
         if (srcs?.Count > 0)
@@ -64,5 +70,10 @@ public static partial class YANEnumerable
     /// <returns>An enumerable of strings that contains only non-null or non-whitespace elements, or null if the input enumerable is null.</returns>
     public static IEnumerable<string>? Clean(this IEnumerable<string> srcs) => srcs?.Count() > 0 ? srcs.ClnPrcYld() : srcs;
 
+    /// <summary>
+    /// Cleans a given list of strings by removing null or whitespace elements, returning a new enumerable that contains only non-null and non-whitespace elements.
+    /// </summary>
+    /// <param name="srcs">The source list of strings to be cleaned.</param>
+    /// <returns>An enumerable of strings that contains only non-null or non-whitespace elements, or null if the input list is null.</returns>
     public static IEnumerable<string>? Clean(this IList<string> srcs) => srcs?.Count > 0 ? srcs.ClnPrcYld() : srcs;
 }

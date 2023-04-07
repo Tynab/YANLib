@@ -43,11 +43,16 @@ public static partial class YANList
     }
 
     /// <summary>
-    /// Cleans a given list string by removing null or whitespace elements, returning a new list that contains only non-null and non-whitespace elements.
+    /// Cleans a given enumerable of string by removing null or whitespace elements, returning a new list that contains only non-null and non-whitespace elements.
     /// </summary>
     /// <param name="srcs">The source list to be cleaned.</param>
     /// <returns>A new list string that contains only non-null or non-whitespace elements, or null if the input list is null.</returns>
     public static List<string>? Clean(this IEnumerable<string> srcs) => srcs?.Count() > 0 ? srcs.ClnPrcYld().ToList() : srcs?.ToList();
 
+    /// <summary>
+    /// Cleans a given list of strings by removing null or whitespace elements, returning a new list that contains only non-null and non-whitespace elements.
+    /// </summary>
+    /// <param name="srcs">The source list to be cleaned.</param>
+    /// <returns>A new list of strings that contains only non-null or non-whitespace elements, or null if the input list is null.</returns>
     public static List<string>? Clean(this IList<string> srcs) => srcs?.Count > 0 ? srcs.ClnPrcYld().ToList() : srcs?.ToList();
 }
