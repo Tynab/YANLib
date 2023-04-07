@@ -70,6 +70,53 @@ public static partial class YANModel
         return true;
     }
 
+    public static bool AllPropertiesNull<T>(this T mdl) where T : class
+    {
+        if (mdl == null)
+        {
+            return false;
+        }
+        foreach (var prop in mdl.GetType().GetProperties())
+        {
+            if (prop.GetValue(mdl) != null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool AnyPropertiesNotNull<T>(this T mdl) where T : class
+    {
+        if (mdl == null)
+        {
+            return false;
+        }
+        foreach (var prop in mdl.GetType().GetProperties())
+        {
+            if (prop.GetValue(mdl) != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static bool AnyPropertiesNull<T>(this T mdl) where T : class
+    {
+        if (mdl == null)
+        {
+            return false;
+        }
+        foreach (var prop in mdl.GetType().GetProperties())
+        {
+            if (prop.GetValue(mdl) == null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="false"/>.
@@ -93,6 +140,56 @@ public static partial class YANModel
             }
         }
         return true;
+    }
+
+    public static bool AllPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class
+    {
+        if (mdl == null)
+        {
+            return true;
+        }
+        foreach (var name in names)
+        {
+            var prop = mdl.GetType().GetProperty(name);
+            if (prop != null && prop.GetValue(mdl) != null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool AnyPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class
+    {
+        if (mdl == null)
+        {
+            return false;
+        }
+        foreach (var name in names)
+        {
+            var prop = mdl.GetType().GetProperty(name);
+            if (prop != null && prop.GetValue(mdl) != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static bool AnyPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class
+    {
+        if (mdl == null)
+        {
+            return true;
+        }
+        foreach (var name in names)
+        {
+            var prop = mdl.GetType().GetProperty(name);
+            if (prop != null && prop.GetValue(mdl) == null)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Change time zone properties process yield
