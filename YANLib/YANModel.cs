@@ -47,6 +47,54 @@ public static partial class YANModel
         return mdl;
     }
 
+    /// <summary>
+    /// Checks whether all properties of the specified object have non-null values, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <returns><see langword="true"/> if all properties of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
+    public static bool AllPropertiesNotNull<T>(T mdl) where T : class
+    {
+        if (mdl == null)
+        {
+            return false;
+        }
+        foreach (var prop in mdl.GetType().GetProperties())
+        {
+            if (prop.GetValue(mdl) == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
+    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="mdl">The object to check.</param>
+    /// <param name="names">The names of the properties to check.</param>
+    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
+    public static bool AllPropertiesNotNull<T>(T mdl, HashSet<string> names) where T : class
+    {
+        if (mdl == null)
+        {
+            return false;
+        }
+        foreach (var name in names)
+        {
+            var prop = mdl.GetType().GetProperty(name);
+            if (prop == null || prop.GetValue(mdl) == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Change time zone properties process yield
     private static IEnumerable<PropertyInfo> ChgTzPropPrcYld(this PropertyInfo[] arrProp)
     {
