@@ -44,7 +44,8 @@ public static partial class YANNum
     /// <summary>
     /// Generate random uint number with max value.
     /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0.</param>
+    /// <param name="max">The exclusive upper bound of the random number to be generated.
+    /// <paramref name="max"/> must be greater than or equal to 0.</param>
     /// <returns>Uint random number.</returns>
     public static uint RandomNumberUint(uint max) => (uint)new Random().NextInt64(uint.MinValue, max);
 
@@ -52,7 +53,9 @@ public static partial class YANNum
     /// Generate random uint number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>
+    /// <param name="max">The exclusive upper bound of the random number returned.
+    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
+    /// If not, return 0.</param>
     /// <returns>Uint random number.</returns>
     public static uint RandomNumberUint(uint min, uint max) => (uint)(min > max ? 0 : new Random().NextInt64(min, max));
 }

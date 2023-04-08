@@ -44,7 +44,8 @@ public static partial class YANNum
     /// <summary>
     /// Generate random ushort number with max value.
     /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0.</param>
+    /// <param name="max">The exclusive upper bound of the random number to be generated.
+    /// <paramref name="max"/> must be greater than or equal to 0.</param>
     /// <returns>Ushort random number.</returns>
     public static ushort RandomNumberUshort(ushort max) => (ushort)new Random().Next(ushort.MinValue, max);
 
@@ -52,7 +53,9 @@ public static partial class YANNum
     /// Generate random ushort number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>
+    /// <param name="max">The exclusive upper bound of the random number returned.
+    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
+    /// If not, return 0.</param>
     /// <returns>Ushort random number.</returns>
     public static ushort RandomNumberUshort(ushort min, ushort max) => (ushort)(min > max ? 0 : new Random().Next(min, max));
 }

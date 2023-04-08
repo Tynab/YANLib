@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Reflection;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib;
@@ -19,8 +18,7 @@ public static partial class YANModel
     {
         if (mdl != null)
         {
-            var props = typeof(T).GetProperties(Public | Instance).ChgTzPropPrcYld();
-            foreach (var prop in props)
+            foreach (var prop in typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite))
             {
                 var val = prop?.GetValue(mdl);
                 if (val != null)
@@ -36,9 +34,9 @@ public static partial class YANModel
                     else if (val.GetType().IsGenericType && val?.GetType()?.GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var list = (IList)val;
-                        for (var i = 0; i < list?.Count; i++)
+                        foreach (var item in list)
                         {
-                            list[i] = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+                            ChangeTimeZoneAllProperties(item, tzSrc, tzDst);
                         }
                     }
                 }
@@ -54,21 +52,7 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if all properties of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotNull<T>(this T mdl) where T : class
-    {
-        if (mdl == null)
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties())
-        {
-            if (prop.GetValue(mdl) == null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    public static bool AllPropertiesNotNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().All(prop => prop.GetValue(mdl) != null);
 
     /// <summary>
     /// Checks whether all properties of the specified object have null values, including all its nested properties and properties in lists.
@@ -77,21 +61,7 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if all properties of the specified object have null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNull<T>(this T mdl) where T : class
-    {
-        if (mdl == null)
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties())
-        {
-            if (prop.GetValue(mdl) != null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    public static bool AllPropertiesNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().All(prop => prop.GetValue(mdl) == null);
 
     /// <summary>
     /// Checks whether any property of the specified object has a non-null value, including all its nested properties and properties in lists.
@@ -100,21 +70,7 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if any property of the specified object has a non-null value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotNull<T>(this T mdl) where T : class
-    {
-        if (mdl == null)
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties())
-        {
-            if (prop.GetValue(mdl) != null)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    public static bool AnyPropertiesNotNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().Any(prop => prop.GetValue(mdl) != null);
 
     /// <summary>
     /// Checks whether any property of the specified object has a null value, including all its nested properties and properties in lists.
@@ -123,21 +79,7 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if any property of the specified object has a null value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNull<T>(this T mdl) where T : class
-    {
-        if (mdl == null)
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties())
-        {
-            if (prop.GetValue(mdl) == null)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    public static bool AnyPropertiesNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().Any(prop => prop.GetValue(mdl) == null);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -147,22 +89,7 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class
-    {
-        if (mdl == null)
-        {
-            return false;
-        }
-        foreach (var name in names)
-        {
-            var prop = mdl.GetType().GetProperty(name);
-            if (prop == null || prop.GetValue(mdl) == null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    public static bool AllPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
@@ -172,22 +99,7 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class
-    {
-        if (mdl == null)
-        {
-            return true;
-        }
-        foreach (var name in names)
-        {
-            var prop = mdl.GetType().GetProperty(name);
-            if (prop != null && prop.GetValue(mdl) != null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    public static bool AllPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -197,22 +109,7 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class
-    {
-        if (mdl == null)
-        {
-            return false;
-        }
-        foreach (var name in names)
-        {
-            var prop = mdl.GetType().GetProperty(name);
-            if (prop != null && prop.GetValue(mdl) != null)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    public static bool AnyPropertiesNotNull<T>(this T mdl, HashSet<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
@@ -222,32 +119,5 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class
-    {
-        if (mdl == null)
-        {
-            return true;
-        }
-        foreach (var name in names)
-        {
-            var prop = mdl.GetType().GetProperty(name);
-            if (prop != null && prop.GetValue(mdl) == null)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Change time zone properties process yield
-    private static IEnumerable<PropertyInfo> ChgTzPropPrcYld(this PropertyInfo[] arrProp)
-    {
-        for (var i = 0; i < arrProp.Length; i++)
-        {
-            if (arrProp[i].CanRead && arrProp[i].CanWrite)
-            {
-                yield return arrProp[i];
-            }
-        }
-    }
+    public static bool AnyPropertiesNull<T>(this T mdl, HashSet<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
 }

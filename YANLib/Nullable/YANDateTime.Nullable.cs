@@ -7,16 +7,18 @@ namespace YANLib.Nullable;
 public static partial class YANDateTime
 {
     /// <summary>
-    /// Tries to parse the string representation of a date and time using <paramref name="fmt"/>. Returns the parsed <see cref="DateTime"/> value, or <paramref name="dfltVal"/> if the parsing fails. If <paramref name="dfltVal"/> is not specified or <see langword="null"/>, returns <see langword="null"/> instead.
+    /// Parses the string representation of a <see cref="DateTime"/> using the specified format and culture.
+    /// Returns the parsed <see cref="DateTime"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
-    /// <param name="fmt">The format of the string representation.</param>
-    /// <param name="dfltVal">The default value to return if the parsing fails. This parameter is optional.</param>
-    /// <returns>The parsed <see cref="DateTime"/> value, <paramref name="dfltVal"/> if the parsing succeeds, or <see langword="null"/> if <paramref name="dfltVal"/> is not specified or <see langword="null"/>.</returns>
+    /// <param name="fmt">The format of the string representation of the date and time.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="DateTime"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
     public static DateTime? ParseDateTime(this string str, string fmt, DateTime? dfltVal) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : dfltVal;
 
     /// <summary>
-    /// Generates a random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>. If <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>, <see langword="null"/> is returned.
+    /// Generates a random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>, <see langword="null"/> is returned.
     /// </summary>
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
@@ -24,7 +26,8 @@ public static partial class YANDateTime
     public static DateTime? RandomDateTime(DateTime? min, DateTime max) => min.HasValue ? RandomDateTime(min.Value, max) : null;
 
     /// <summary>
-    /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>. If <paramref name="max"/> is <see langword="null"/>, <see cref="Today"/> is returned.
+    /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="max"/> is <see langword="null"/>, <see cref="Today"/> is returned.
     /// </summary>
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
@@ -43,14 +46,16 @@ public static partial class YANDateTime
     public static DateTime? RandomDateTime(DateTime? min, DateTime? max) => min.HasValue ? RandomDateTime(min.Value, max) : RandomDateTime(max);
 
     /// <summary>
-    /// Generates a random <see cref="DateTime"/> value between <see cref="MinValue"/> and <paramref name="max"/>. If <paramref name="max"/> is <see langword="null"/>, <see cref="Today"/> is returned.
+    /// Generates a random <see cref="DateTime"/> value between <see cref="MinValue"/> and <paramref name="max"/>.
+    /// If <paramref name="max"/> is <see langword="null"/>, <see cref="Today"/> is returned.
     /// </summary>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A nullable <see cref="DateTime"/> value representing a random date between <see cref="MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
     public static DateTime? RandomDateTime(DateTime? max) => max.HasValue ? RandomDateTime(max.Value > Today ? Today : MinValue, max) : null;
 
     /// <summary>
-    /// Returns the week of the year that the specified <see cref="DateTime"/> value falls in, according to the current culture's calendar, week rule, and first day of the week settings. If the input value is <see langword="null"/>, <see langword="null"/> is returned.
+    /// Returns the week of the year that the specified <see cref="DateTime"/> value falls in, according to the current culture's calendar, week rule, and first day of the week settings.
+    /// If the input value is <see langword="null"/>, <see langword="null"/> is returned.
     /// </summary>
     /// <param name="dt">The <see cref="DateTime"/> value.</param>
     /// <returns>The week of the year that the specified <see cref="DateTime"/> value falls in, or <see langword="null"/> if the input value is <see langword="null"/>.</returns>
@@ -104,7 +109,8 @@ public static partial class YANDateTime
     /// If the <paramref name="tzSrc"/> parameter is <see langword="null"/>, the original <paramref name="dt"/> is used as-is, otherwise it is converted from the time zone specified by the <paramref name="tzSrc"/> parameter to the time zone specified by the <paramref name="tzDst"/> parameter.
     /// </summary>
     /// <param name="dt">The original <see cref="DateTime"/> value.</param>
-    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours. If <see langword="null"/>, the original <paramref name="dt"/> is used as-is.</param>
+    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.
+    /// If <see langword="null"/>, the original <paramref name="dt"/> is used as-is.</param>
     /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
     /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone; or <see langword="null"/> if the input <paramref name="dt"/> is <see langword="null"/>.</returns>
     public static DateTime? ChangeTimeZone(this DateTime dt, int? tzSrc, int tzDst) => tzSrc.HasValue ? dt.ChangeTimeZone(tzSrc.Value, tzDst) : dt.ChangeTimeZone(tzDst);
@@ -115,8 +121,10 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="dt">The original <see cref="DateTime"/> value.</param>
     /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.</param>
-    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours. If <see langword="null"/>, the original <paramref name="dt"/> is returned as-is.</param>
-    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone. If <paramref name="dt"/> is <see langword="null"/>, returns <see langword="null"/>.</returns>
+    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.
+    /// If <see langword="null"/>, the original <paramref name="dt"/> is returned as-is.</param>
+    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone.
+    /// If <paramref name="dt"/> is <see langword="null"/>, returns <see langword="null"/>.</returns>
     public static DateTime? ChangeTimeZone(this DateTime dt, int tzSrc, int? tzDst) => tzDst.HasValue ? dt.ChangeTimeZone(tzSrc, tzDst.Value) : dt;
 
     /// <summary>
@@ -125,7 +133,8 @@ public static partial class YANDateTime
     /// If the <paramref name="tzSrc"/> parameter is <see langword="null"/>, the original nullable <see cref="DateTime"/> value is used as-is, otherwise it is converted from the time zone specified by the <paramref name="tzSrc"/> parameter to the time zone specified by the <paramref name="tzDst"/> parameter.
     /// </summary>
     /// <param name="dt">The nullable <see cref="DateTime"/> value to convert.</param>
-    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours. If <see langword="null"/>, the original nullable <paramref name="dt"/> is used as-is.</param>
+    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.
+    /// If <see langword="null"/>, the original nullable <paramref name="dt"/> is used as-is.</param>
     /// <param name="tzDst">The time zone offset to convert the original nullable <see cref="DateTime"/> value to, in hours.</param>
     /// <returns>A new nullable <see cref="DateTime"/> value representing the same point in time as the original nullable <see cref="DateTime"/> value, but converted to a different time zone.</returns>
     public static DateTime? ChangeTimeZone(this DateTime? dt, int? tzSrc, int tzDst) => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : null;
@@ -137,7 +146,8 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="dt">The nullable <see cref="DateTime"/> value to convert.</param>
     /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.</param>
-    /// <param name="tzDst">The time zone offset to convert the original nullable <see cref="DateTime"/> value to, in hours. If <see langword="null"/>, the original nullable <paramref name="dt"/> is returned as-is.</param>
+    /// <param name="tzDst">The time zone offset to convert the original nullable <see cref="DateTime"/> value to, in hours.
+    /// If <see langword="null"/>, the original nullable <paramref name="dt"/> is returned as-is.</param>
     /// <returns>A new nullable <see cref="DateTime"/> value representing the same point in time as the original nullable <see cref="DateTime"/> value, but converted to a different time zone.</returns>
     public static DateTime? ChangeTimeZone(this DateTime? dt, int tzSrc, int? tzDst) => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : null;
 
@@ -148,9 +158,13 @@ public static partial class YANDateTime
     /// Otherwise, the original <see cref="DateTime"/> value is converted to the time zone specified by the <paramref name="tzDst"/> parameter.
     /// </summary>
     /// <param name="dt">The <see cref="DateTime"/> value to convert.</param>
-    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours. If <see langword="null"/>, the local time zone is used.</param>
-    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours. If <see langword="null"/>, the original <see cref="DateTime"/> value is returned as-is. If <paramref name="tzSrc"/> is also <see langword="null"/>, the local time zone is used.</param>
-    /// <returns>A new nullable <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone. If the original <see cref="DateTime"/> value is <see langword="null"/>, the method returns <see langword="null"/>.</returns>
+    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.
+    /// If <see langword="null"/>, the local time zone is used.</param>
+    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.
+    /// If <see langword="null"/>, the original <see cref="DateTime"/> value is returned as-is.
+    /// If <paramref name="tzSrc"/> is also <see langword="null"/>, the local time zone is used.</param>
+    /// <returns>A new nullable <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone.
+    /// If the original <see cref="DateTime"/> value is <see langword="null"/>, the method returns <see langword="null"/>.</returns>
     public static DateTime? ChangeTimeZone(this DateTime dt, int? tzSrc, int? tzDst) => tzSrc.HasValue ? dt.ChangeTimeZone(tzSrc.Value, tzDst) : dt.ChangeTimeZone(tzDst);
 
     /// <summary>
@@ -159,8 +173,11 @@ public static partial class YANDateTime
     /// If the <paramref name="tzDst"/> parameter is <see langword="null"/>, the original nullable <paramref name="dt"/> is returned as-is, otherwise it is converted from the time zone specified by the <paramref name="tzSrc"/> parameter to the time zone specified by the <paramref name="tzDst"/> parameter.
     /// </summary>
     /// <param name="dt">The nullable <see cref="DateTime"/> value to convert.</param>
-    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours. If <see langword="null"/>, the local time zone is used.</param>
-    /// <param name="tzDst">The time zone offset to convert the original nullable <paramref name="dt"/> value to, in hours. If <see langword="null"/>, the original nullable <paramref name="dt"/> is returned as-is. If <paramref name="tzSrc"/> is also <see langword="null"/>, the local time zone is used.</param>
+    /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.
+    /// If <see langword="null"/>, the local time zone is used.</param>
+    /// <param name="tzDst">The time zone offset to convert the original nullable <paramref name="dt"/> value to, in hours.
+    /// If <see langword="null"/>, the original nullable <paramref name="dt"/> is returned as-is.
+    /// If <paramref name="tzSrc"/> is also <see langword="null"/>, the local time zone is used.</param>
     /// <returns>A new nullable <see cref="DateTime"/> value representing the same point in time as the original nullable <see cref="DateTime"/> value, but converted to a different time zone.</returns>
     public static DateTime? ChangeTimeZone(this DateTime? dt, int? tzSrc, int? tzDst) => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : null;
 
@@ -177,7 +194,8 @@ public static partial class YANDateTime
     /// Returns a new nullable <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset specified by the <paramref name="tzDst"/> parameter.
     /// </summary>
     /// <param name="dt">The original <see cref="DateTime"/> value.</param>
-    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours. If <see langword="null"/>, a time zone offset of 0 is used.</param>
+    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.
+    /// If <see langword="null"/>, a time zone offset of 0 is used.</param>
     /// <returns>A new nullable <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset specified by the <paramref name="tzDst"/> parameter.</returns>
     public static DateTime? ChangeTimeZone(this DateTime dt, int? tzDst) => dt.ChangeTimeZone(0, tzDst);
 
@@ -187,7 +205,9 @@ public static partial class YANDateTime
     /// If the <paramref name="tzDst"/> parameter is <see langword="null"/>, a time zone offset of 0 is used.
     /// </summary>
     /// <param name="dt">The nullable <see cref="DateTime"/> value to convert.</param>
-    /// <param name="tzDst">The time zone offset to convert the original nullable <see cref="DateTime"/> value to, in hours. If <see langword="null"/>, a time zone offset of 0 is used.</param>
-    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original nullable <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset specified by the <paramref name="tzDst"/> parameter. If the original nullable <see cref="DateTime"/> value is <see langword="null"/>, the method returns <see langword="null"/>.</returns>
+    /// <param name="tzDst">The time zone offset to convert the original nullable <see cref="DateTime"/> value to, in hours.
+    /// If <see langword="null"/>, a time zone offset of 0 is used.</param>
+    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original nullable <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset specified by the <paramref name="tzDst"/> parameter.
+    /// If the original nullable <see cref="DateTime"/> value is <see langword="null"/>, the method returns <see langword="null"/>.</returns>
     public static DateTime? ChangeTimeZone(this DateTime? dt, int? tzDst) => dt.ChangeTimeZone(0, tzDst);
 }

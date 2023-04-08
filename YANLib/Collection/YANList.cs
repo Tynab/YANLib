@@ -12,15 +12,23 @@ public static partial class YANList
     /// <returns>A new <see cref="List{T}"/> that contains only non-null or non-whitespace elements.</returns>
     public static List<T>? Clean<T>(this IEnumerable<T> srcs)
     {
-        if (srcs?.Count() > 0)
+        if (srcs?.Any() == true)
         {
             var t = typeof(T);
             if (t.IsClass || GetUnderlyingType(t) != null)
             {
-                return srcs.ClnPrcYld().ToList();
+                var result = new List<T>();
+                foreach (var item in srcs)
+                {
+                    if (item != null)
+                    {
+                        result.Add(item);
+                    }
+                }
+                return result;
             }
         }
-        return srcs?.ToList();
+        return default;
     }
 
     /// <summary>
@@ -36,10 +44,19 @@ public static partial class YANList
             var t = typeof(T);
             if (t.IsClass || GetUnderlyingType(t) != null)
             {
-                return srcs.ClnPrcYld().ToList();
+                var result = new List<T>(srcs.Count);
+                for (int i = 0; i < srcs.Count; i++)
+                {
+                    T item = srcs[i];
+                    if (item != null)
+                    {
+                        result.Add(item);
+                    }
+                }
+                return result;
             }
         }
-        return srcs?.ToList();
+        return default;
     }
 
     /// <summary>
@@ -47,12 +64,12 @@ public static partial class YANList
     /// </summary>
     /// <param name="srcs">The source list to be cleaned.</param>
     /// <returns>A new list string that contains only non-null or non-whitespace elements, or null if the input list is null.</returns>
-    public static List<string>? Clean(this IEnumerable<string> srcs) => srcs?.Count() > 0 ? srcs.ClnPrcYld().ToList() : srcs?.ToList();
+    public static List<string>? Clean(this IEnumerable<string>? srcs) => srcs?.Where(s => s != null).ToList();
 
     /// <summary>
     /// Cleans a given list of strings by removing null or whitespace elements, returning a new list that contains only non-null and non-whitespace elements.
     /// </summary>
     /// <param name="srcs">The source list to be cleaned.</param>
     /// <returns>A new list of strings that contains only non-null or non-whitespace elements, or null if the input list is null.</returns>
-    public static List<string>? Clean(this IList<string> srcs) => srcs?.Count > 0 ? srcs.ClnPrcYld().ToList() : srcs?.ToList();
+    public static List<string>? Clean(this IList<string> srcs) => srcs?.Where(s => s != null).ToList();
 }

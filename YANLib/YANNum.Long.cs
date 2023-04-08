@@ -44,7 +44,9 @@ public static partial class YANNum
     /// <summary>
     /// Generate random long number with max value.
     /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated. <paramref name="max"/> must be greater than or equal to 0. If not, the inclusive lower bound of the random number flexible to <see cref="long.MinValue"/>.</param>
+    /// <param name="max">The exclusive upper bound of the random number to be generated.
+    /// <paramref name="max"/> must be greater than or equal to 0.
+    /// If not, the inclusive lower bound of the random number flexible to <see cref="long.MinValue"/>.</param>
     /// <returns>Long random number.</returns>
     public static long RandomNumberLong(long max)
     {
@@ -56,7 +58,9 @@ public static partial class YANNum
     /// Generate random long number with min and max value.
     /// </summary>
     /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned. <paramref name="max"/> must be greater than or equal to <paramref name="min"/>. If not, return 0.</param>
+    /// <param name="max">The exclusive upper bound of the random number returned.
+    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
+    /// If not, return 0.</param>
     /// <returns>Long random number.</returns>
     public static long RandomNumberLong(long min, long max) => min > max ? 0 : new Random().NextInt64(min, max);
 }

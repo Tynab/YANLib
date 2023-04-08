@@ -10,14 +10,16 @@ namespace YANLib;
 public static partial class YANDateTime
 {
     /// <summary>
-    /// Parses the string representation of a date and time using the default format. Returns the parsed <see cref="DateTime"/> value, or <see cref="Today"/> if the parsing fails.
+    /// Parses the string representation of a date and time using the default format.
+    /// Returns the parsed <see cref="DateTime"/> value, or <see cref="Today"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="DateTime"/> value, or <see cref="Today"/> if the parsing fails.</returns>
     public static DateTime ParseDateTime(this string str) => TryParse(str, out var dt) ? dt : Today;
 
     /// <summary>
-    /// Parses the string representation of a date and time using <paramref name="fmt"/>. Returns the parsed <see cref="DateTime"/> value, or <see cref="Today"/> if the parsing fails.
+    /// Parses the string representation of a date and time using <paramref name="fmt"/>.
+    /// Returns the parsed <see cref="DateTime"/> value, or <see cref="Today"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="fmt">The format of the string representation.</param>
@@ -25,7 +27,8 @@ public static partial class YANDateTime
     public static DateTime ParseDateTime(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : Today;
 
     /// <summary>
-    /// Parses the string representation of a date and time using <paramref name="fmt"/>. Returns the parsed <see cref="DateTime"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// Parses the string representation of a date and time using <paramref name="fmt"/>.
+    /// Returns the parsed <see cref="DateTime"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="fmt">The format of the string representation.</param>
@@ -34,7 +37,8 @@ public static partial class YANDateTime
     public static DateTime ParseDateTime(this string str, string fmt, DateTime dfltVal) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : dfltVal;
 
     /// <summary>
-    /// Parses the string representation of a date and time using <paramref name="fmt"/>. Returns the parsed <see cref="DateTime"/> value, or <see cref="MinValue"/> if the parsing fails.
+    /// Parses the string representation of a date and time using <paramref name="fmt"/>.
+    /// Returns the parsed <see cref="DateTime"/> value, or <see cref="MinValue"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="fmt">The format of the string representation.</param>
@@ -42,7 +46,8 @@ public static partial class YANDateTime
     public static DateTime ParseDateTimeMin(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : MinValue;
 
     /// <summary>
-    /// Parses the string representation of a date and time using <paramref name="fmt"/>. Returns the parsed <see cref="DateTime"/> value, or <see cref="MaxValue"/> if the parsing fails.
+    /// Parses the string representation of a date and time using <paramref name="fmt"/>.
+    /// Returns the parsed <see cref="DateTime"/> value, or <see cref="MaxValue"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="fmt">The format of the string representation.</param>
@@ -50,7 +55,8 @@ public static partial class YANDateTime
     public static DateTime ParseDateTimeMax(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : MaxValue;
 
     /// <summary>
-    /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>. If <paramref name="min"/> is greater than <paramref name="max"/>, <see cref="Today"/> is returned.
+    /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see cref="Today"/> is returned.
     /// </summary>
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
@@ -64,7 +70,8 @@ public static partial class YANDateTime
     public static DateTime RandomDateTime() => RandomDateTime(MinValue, MaxValue);
 
     /// <summary>
-    /// Generates a random <see cref="DateTime"/> value between the minimum value allowed by the <see cref="DateTime"/> type and <paramref name="max"/>. If <paramref name="max"/> is greater than <see cref="Today"/>, <see cref="Today"/> is used instead.
+    /// Generates a random <see cref="DateTime"/> value between the minimum value allowed by the <see cref="DateTime"/> type and <paramref name="max"/>.
+    /// If <paramref name="max"/> is greater than <see cref="Today"/>, <see cref="Today"/> is used instead.
     /// </summary>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A random <see cref="DateTime"/> value between the minimum value allowed by the <see cref="DateTime"/> type and <paramref name="max"/>.</returns>

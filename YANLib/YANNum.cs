@@ -3,11 +3,11 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Returns the minimum element in <paramref name="arr"/>, as determined by the default comparer, which is the element with the smallest value.
+    /// Finds the minimum value in an array of values that implement the <see cref="IComparable{T}"/> interface.
     /// </summary>
-    /// <typeparam name="T">The type of the elements in the array.</typeparam>
-    /// <param name="arr">An array of elements of type <typeparamref name="T"/>.</param>
-    /// <returns>The minimum element in <paramref name="arr"/>, or the default value for type <typeparamref name="T"/> if <paramref name="arr"/> is empty.</returns>
+    /// <typeparam name="T">The type of the values in the array.</typeparam>
+    /// <param name="arr">The array of values to find the minimum value in.</param>
+    /// <returns>The minimum value in the array.</returns>
     public static T Min<T>(params T[] arr) where T : IComparable<T>
     {
         var min = arr[0];
@@ -22,11 +22,11 @@ public static partial class YANNum
     }
 
     /// <summary>
-    /// Returns the maximum element in <paramref name="arr"/>, as determined by the default comparer, which is the element with the largest value.
+    /// Finds the maximum value in an array of values that implement the <see cref="IComparable{T}"/> interface.
     /// </summary>
-    /// <typeparam name="T">The type of the elements in the array.</typeparam>
-    /// <param name="arr">An array of elements of type <typeparamref name="T"/>.</param>
-    /// <returns>The maximum element in <paramref name="arr"/>, or the default value for type <typeparamref name="T"/> if <paramref name="arr"/> is empty.</returns>
+    /// <typeparam name="T">The type of the values in the array.</typeparam>
+    /// <param name="arr">The array of values to find the maximum value in.</param>
+    /// <returns>The maximum value in the array.</returns>
     public static T Max<T>(params T[] arr) where T : IComparable<T>
     {
         var max = arr[0];

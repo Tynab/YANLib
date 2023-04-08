@@ -14,18 +14,14 @@ public static partial class YANProcess
     public static async Task KillAllProcessesByNameAsync(this string name)
     {
         var procs = GetProcessesByName(name);
-        foreach (var proc in procs)
+        var tasks = procs.Select(proc =>
         {
             if (!proc.CloseMainWindow())
             {
-                proc?.Kill();
+                proc.Kill();
             }
-        }
-        await Delay(1000);
-        procs = GetProcessesByName(name);
-        foreach (var proc in procs)
-        {
-            proc?.Kill();
-        }
+            return proc.WaitForExitAsync();
+        }).ToList();
+        await WhenAll(tasks);
     }
 }

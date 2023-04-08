@@ -9,14 +9,16 @@ namespace YANLib.Nullable;
 public static partial class YANDateTime
 {
     /// <summary>
-    /// Parses the string representation of a date and time using the default format. Returns the parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.
+    /// Parses the string representation of a date and time using the default format.
+    /// Returns the parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.</returns>
     public static DateTime? ParseDateTime(this string str) => TryParse(str, out var dt) ? dt : null;
 
     /// <summary>
-    /// Parses the string representation of a date and time using <paramref name="fmt"/>. Returns the parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.
+    /// Parses the string representation of a date and time using <paramref name="fmt"/>.
+    /// Returns the parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="fmt">The format of the string representation of the date and time.</param>
@@ -24,7 +26,8 @@ public static partial class YANDateTime
     public static DateTime? ParseDateTime(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : null;
 
     /// <summary>
-    /// Generates a random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>. If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="null"/> is returned.
+    /// Generates a random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="null"/> is returned.
     /// </summary>
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
