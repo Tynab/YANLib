@@ -99,7 +99,7 @@ public static partial class YANDateTime
     /// <param name="tzSrc">The time zone offset of the original <see cref="DateTime"/> value, in hours.</param>
     /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
     /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone.</returns>
-    public static DateTime ChangeTimeZone(this DateTime dt, int tzSrc, int tzDst)
+    public static DateTime ChangeTimeZone(this DateTime dt, byte tzSrc, byte tzDst)
     {
         var diff = tzDst - tzSrc;
         return diff switch

@@ -3,64 +3,57 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to sbyte, if failed return 0.
+    /// Parses the string representation of a signed byte using the default format.
+    /// Returns the parsed <see cref="sbyte"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Sbyte number.</returns>
-    public static sbyte ParseSbyte(this string str)
-    {
-        _ = sbyte.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="sbyte"/> value, or 0 if the parsing fails.</returns>
+    public static sbyte ParseSbyte(this string str) => sbyte.TryParse(str, out var num) ? num : (sbyte)0;
 
     /// <summary>
-    /// Try parse string to sbyte, if failed return default value.
+    /// Parses the string representation of an <see cref="sbyte"/> using the default format.
+    /// Returns the parsed <see cref="sbyte"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Sbyte number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="sbyte"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static sbyte ParseSbyte(this string str, sbyte dfltVal) => sbyte.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to sbyte, if failed return min value.
+    /// Parses the string representation of a signed byte using the default format.
+    /// Returns the parsed <see cref="sbyte"/> value, or <see cref="sbyte.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Sbyte number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="sbyte"/> value, or <see cref="sbyte.MinValue"/> if the parsing fails.</returns>
     public static sbyte ParseSbyteMin(this string str) => sbyte.TryParse(str, out var num) ? num : sbyte.MinValue;
 
     /// <summary>
-    /// Try parse string to sbyte, if failed return max value.
+    /// Parses the string representation of a signed byte using the default format.
+    /// Returns the parsed <see cref="sbyte"/> value, or <see cref="sbyte.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Sbyte number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="sbyte"/> value, or <see cref="sbyte.MaxValue"/> if the parsing fails.</returns>
     public static sbyte ParseSbyteMax(this string str) => sbyte.TryParse(str, out var num) ? num : sbyte.MaxValue;
 
     /// <summary>
-    /// Generate random sbyte number.
+    /// Generates a random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Sbyte random number.</returns>
-    public static sbyte RandomNumberSbyte() => (sbyte)new Random().Next(sbyte.MinValue, sbyte.MaxValue);
-
-    /// <summary>
-    /// Generate random sbyte number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.
-    /// If not, the inclusive lower bound of the random number flexible to <see cref="sbyte.MinValue"/>.</param>
-    /// <returns>Sbyte random number.</returns>
-    public static sbyte RandomNumberSbyte(sbyte max)
-    {
-        var rnd = new Random();
-        return (sbyte)(max < 0 ? rnd.Next(sbyte.MinValue, max) : rnd.Next(0, max));
-    }
-
-    /// <summary>
-    /// Generate random sbyte number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Sbyte random number.</returns>
+    /// <param name="min">The minimum <see cref="sbyte"/> value.</param>
+    /// <param name="max">The maximum <see cref="sbyte"/> value.</param>
+    /// <returns>A random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static sbyte RandomNumberSbyte(sbyte min, sbyte max) => (sbyte)(min > max ? 0 : new Random().Next(min, max));
+
+    /// <summary>
+    /// Generates a random <see cref="sbyte"/> value between <see cref="sbyte.MinValue"/> and <see cref="sbyte.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="sbyte"/> value between <see cref="sbyte.MinValue"/> and <see cref="sbyte.MaxValue"/>.</returns>
+    public static sbyte RandomNumberSbyte() => RandomNumberSbyte(sbyte.MinValue, sbyte.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="sbyte"/> value between <see cref="sbyte.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="sbyte"/> value.</param>
+    /// <returns>A random <see cref="sbyte"/> value between <see cref="sbyte.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static sbyte RandomNumberSbyte(sbyte max) => RandomNumberSbyte(sbyte.MinValue, max);
 }

@@ -3,64 +3,57 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to nint, if failed return 0.
+    /// Parses the string representation of a nint using the default format.
+    /// Returns the parsed <see cref="nint"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Nint number.</returns>
-    public static nint ParseNint(this string str)
-    {
-        _ = nint.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nint"/> value, or 0 if the parsing fails.</returns>
+    public static nint ParseNint(this string str) => nint.TryParse(str, out var num) ? num : 0;
 
     /// <summary>
-    /// Try parse string to nint, if failed return default value.
+    /// Parses the string representation of a nint using the default format.
+    /// Returns the parsed <see cref="nint"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Nint number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="nint"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static nint ParseNint(this string str, nint dfltVal) => nint.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to nint, if failed return min value.
+    /// Parses the string representation of a nint (an integer that is the same size as a pointer) using the default format.
+    /// Returns the parsed <see cref="nint"/> value, or <see cref="nint.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Nint number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nint"/> value, or <see cref="nint.MinValue"/> if the parsing fails.</returns>
     public static nint ParseNintMin(this string str) => nint.TryParse(str, out var num) ? num : nint.MinValue;
 
     /// <summary>
-    /// Try parse string to nint, if failed return max value.
+    /// Parses the string representation of a <see cref="nint"/> using the default format.
+    /// Returns the parsed <see cref="nint"/> value, or <see cref="nint.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Nint number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nint"/> value, or <see cref="nint.MaxValue"/> if the parsing fails.</returns>
     public static nint ParseNintMax(this string str) => nint.TryParse(str, out var num) ? num : nint.MaxValue;
 
     /// <summary>
-    /// Generate random nint number.
+    /// Generates a random <see cref="nint"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Nint random number.</returns>
-    public static nint RandomNumberNint() => (nint)new Random().NextInt64(nint.MinValue, nint.MaxValue);
-
-    /// <summary>
-    /// Generate random nint number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.
-    /// If not, the inclusive lower bound of the random number flexible to <see cref="nint.MinValue"/>.</param>
-    /// <returns>Nint random number.</returns>
-    public static nint RandomNumberNint(nint max)
-    {
-        var rnd = new Random();
-        return (nint)(max < 0 ? rnd.NextInt64(nint.MinValue, max) : rnd.NextInt64(0, max));
-    }
-
-    /// <summary>
-    /// Generate random nint number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Nint random number.</returns>
+    /// <param name="min">The minimum <see cref="nint"/> value.</param>
+    /// <param name="max">The maximum <see cref="nint"/> value.</param>
+    /// <returns>A random <see cref="nint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static nint RandomNumberNint(nint min, nint max) => (nint)(min > max ? 0 : new Random().NextInt64(min, max));
+
+    /// <summary>
+    /// Generates a random <see cref="nint"/> value between <see cref="nint.MinValue"/> and <see cref="nint.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="nint"/> value between <see cref="nint.MinValue"/> and <see cref="nint.MaxValue"/>.</returns>
+    public static nint RandomNumberNint() => RandomNumberNint(nint.MinValue, nint.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="byte"/> value between <see cref="byte.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="byte"/> value.</param>
+    /// <returns>A random <see cref="byte"/> value between <see cref="byte.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static nint RandomNumberNint(nint max) => RandomNumberNint(nint.MinValue, max);
 }

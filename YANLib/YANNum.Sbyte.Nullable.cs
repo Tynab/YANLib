@@ -33,9 +33,6 @@ public partial class YANNum
     /// <summary>
     /// Generates a random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// If both <paramref name="min"/> and <paramref name="max"/> are <see langword="null"/>, 0 is returned.
-    /// If only <paramref name="min"/> is <see langword="null"/>, it defaults to 0.
-    /// If only <paramref name="max"/> is <see langword="null"/>, it defaults to the maximum value that can be represented by an <see cref="sbyte"/>.
-    /// If <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="max"/> is less than 0, 0 is returned.
     /// </summary>
     /// <param name="min">The minimum <see cref="sbyte"/> value.</param>
     /// <param name="max">The maximum <see cref="sbyte"/> value.</param>

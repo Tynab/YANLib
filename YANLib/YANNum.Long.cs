@@ -3,64 +3,57 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to long, if failed return 0.
+    /// Parses the string representation of a long using the default format.
+    /// Returns the parsed <see cref="long"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Long number.</returns>
-    public static long ParseLong(this string str)
-    {
-        _ = long.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="long"/> value, or 0 if the parsing fails.</returns>
+    public static long ParseLong(this string str) => long.TryParse(str, out var num) ? num : 0;
 
     /// <summary>
-    /// Try parse string to long, if failed return default value.
+    /// Parses the string representation of a long integer using the default format.
+    /// Returns the parsed <see cref="long"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Long number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="long"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static long ParseLong(this string str, long dfltVal) => long.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to long, if failed return min value.
+    /// Parses the string representation of a long integer using the default format.
+    /// Returns the parsed <see cref="long"/> value, or <see cref="long.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Long number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="long"/> value, or <see cref="long.MinValue"/> if the parsing fails.</returns>
     public static long ParseLongMin(this string str) => long.TryParse(str, out var num) ? num : long.MinValue;
 
     /// <summary>
-    /// Try parse string to long, if failed return max value.
+    /// Parses the string representation of a long using the default format.
+    /// Returns the parsed <see cref="long"/> value, or <see cref="long.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Long number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="long"/> value, or <see cref="long.MaxValue"/> if the parsing fails.</returns>
     public static long ParseLongMax(this string str) => long.TryParse(str, out var num) ? num : long.MaxValue;
 
     /// <summary>
-    /// Generate random long number.
+    /// Generates a random <see cref="long"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Long random number.</returns>
-    public static long RandomNumberLong() => new Random().NextInt64();
-
-    /// <summary>
-    /// Generate random long number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.
-    /// If not, the inclusive lower bound of the random number flexible to <see cref="long.MinValue"/>.</param>
-    /// <returns>Long random number.</returns>
-    public static long RandomNumberLong(long max)
-    {
-        var rnd = new Random();
-        return max < 0 ? rnd.NextInt64(long.MinValue, max) : rnd.NextInt64(0, max);
-    }
-
-    /// <summary>
-    /// Generate random long number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Long random number.</returns>
+    /// <param name="min">The minimum <see cref="long"/> value.</param>
+    /// <param name="max">The maximum <see cref="long"/> value.</param>
+    /// <returns>A random <see cref="long"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static long RandomNumberLong(long min, long max) => min > max ? 0 : new Random().NextInt64(min, max);
+
+    /// <summary>
+    /// Generates a random <see cref="long"/> value between <see cref="long.MinValue"/> and <see cref="long.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="long"/> value between <see cref="long.MinValue"/> and <see cref="long.MaxValue"/>.</returns>
+    public static long RandomNumberLong() => RandomNumberLong(long.MinValue, long.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="long"/> value between <see cref="long.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="long"/> value.</param>
+    /// <returns>A random <see cref="long"/> value between <see cref="long.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static long RandomNumberLong(long max) => RandomNumberLong(long.MinValue, max);
 }

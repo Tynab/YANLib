@@ -5,59 +5,57 @@ namespace YANLib;
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to ulong, if failed return 0.
+    /// Parses the string representation of an unsigned long integer using the default format.
+    /// Returns the parsed <see cref="ulong"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Ulong number.</returns>
-    public static ulong ParseUlong(this string str)
-    {
-        _ = ulong.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ulong"/> value, or 0 if the parsing fails.</returns>
+    public static ulong ParseUlong(this string str) => ulong.TryParse(str, out var num) ? num : 0;
 
     /// <summary>
-    /// Try parse string to ulong, if failed return default value.
+    /// Parses the string representation of an unsigned long integer using the default format.
+    /// Returns the parsed <see cref="ulong"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Ulong number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="ulong"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static ulong ParseUlong(this string str, ulong dfltVal) => ulong.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to ulong, if failed return min value.
+    /// Parses the string representation of an unsigned long integer using the default format.
+    /// Returns the parsed <see cref="ulong"/> value, or <see cref="ulong.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Ulong number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ulong"/> value, or <see cref="ulong.MinValue"/> if the parsing fails.</returns>
     public static ulong ParseUlongMin(this string str) => ulong.TryParse(str, out var num) ? num : ulong.MinValue;
 
     /// <summary>
-    /// Try parse string to ulong, if failed return max value.
+    /// Parses the string representation of an unsigned long integer using the default format.
+    /// Returns the parsed <see cref="ulong"/> value, or <see cref="ulong.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Ulong number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ulong"/> value, or <see cref="ulong.MaxValue"/> if the parsing fails.</returns>
     public static ulong ParseUlongMax(this string str) => ulong.TryParse(str, out var num) ? num : ulong.MaxValue;
 
     /// <summary>
-    /// Generate random ulong number.
+    /// Generates a random <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Ulong random number.</returns>
-    public static ulong RandomNumberUlong() => (ulong)(new Random().NextInt64(long.MinValue, long.MaxValue) - long.MinValue);
-
-    /// <summary>
-    /// Generate random ulong number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.</param>
-    /// <returns>Ulong random number.</returns>
-    public static ulong RandomNumberUlong(ulong max) => (ulong)(new Random().NextInt64(long.MinValue, (long)(max + (BigInteger)long.MinValue)) - long.MinValue);
-
-    /// <summary>
-    /// Generate random ulong number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Ulong random number.</returns>
+    /// <param name="min">The minimum <see cref="ulong"/> value.</param>
+    /// <param name="max">The maximum <see cref="ulong"/> value.</param>
+    /// <returns>A random <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static ulong RandomNumberUlong(ulong min, ulong max) => min > max ? 0 : (ulong)(new Random().NextInt64(long.MinValue, (long)(max - (min - (BigInteger)long.MinValue))) - long.MinValue) + min;
+
+    /// <summary>
+    /// Generates a random <see cref="ulong"/> value between <see cref="ulong.MinValue"/> and <see cref="ulong.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="ulong"/> value between <see cref="ulong.MinValue"/> and <see cref="ulong.MaxValue"/>.</returns>
+    public static ulong RandomNumberUlong() => RandomNumberUlong(ulong.MinValue, ulong.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="ulong"/> value between <see cref="ulong.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="ulong"/> value.</param>
+    /// <returns>A random <see cref="ulong"/> value between <see cref="ulong.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static ulong RandomNumberUlong(ulong max) => RandomNumberUlong(ulong.MinValue, max);
 }

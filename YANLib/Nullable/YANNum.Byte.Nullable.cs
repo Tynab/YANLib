@@ -9,42 +9,47 @@ public static partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="byte"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static byte? ParseByte(this string str, byte? dfltVal) => byte.TryParse(str, out var num) ? num : dfltVal;
+    public static byte? ToByte<T>(this string str, T? dfltVal) where T : struct => byte.TryParse(str, out var num) ? num : dfltVal.ToByte();
 
     /// <summary>
-    /// Generates a random nullable <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>, <see langword="null"/> is returned.
+    /// Generates a random byte between the specified minimum and maximum values, inclusive.
+    /// Returns the generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.
     /// </summary>
-    /// <param name="min">The minimum <see cref="byte"/> value.</param>
-    /// <param name="max">The maximum <see cref="byte"/> value.</param>
-    /// <returns>A random nullable <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static byte? RandomNumberByte(byte? min, byte max) => min.HasValue ? YANLib.YANNum.RandomNumberByte(min.Value, max) : null;
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.</returns>
+    public static byte? GenRandomByte<T1, T2>(T1? min, T2 max) where T1 : struct where T2 : struct => min.HasValue ? YANLib.YANNum.GenRandomByte(min.Value, max) : default;
 
     /// <summary>
-    /// Generates a random nullable <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="max"/> is <see langword="null"/>, <see langword="null"/> is returned.
+    /// Generates a random byte between the specified minimum and maximum values, inclusive.
+    /// Returns the generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.
     /// </summary>
-    /// <param name="min">The minimum <see cref="byte"/> value.</param>
-    /// <param name="max">The maximum <see cref="byte"/> value.</param>
-    /// <returns>A random nullable <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static byte? RandomNumberByte(byte min, byte? max) => max.HasValue ? YANLib.YANNum.RandomNumberByte(min, max.Value) : null;
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.</returns>
+    public static byte? GenRandomByte<T1, T2>(T1 min, T2? max) where T1 : struct where T2 : struct => max.HasValue ? YANLib.YANNum.GenRandomByte(min, max.Value) : default;
 
     /// <summary>
-    /// Generates a random <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If both <paramref name="min"/> and <paramref name="max"/> are <see langword="null"/>, a random value between 0 and 255 is returned.
-    /// If only <paramref name="min"/> is <see langword="null"/>, a random value is generated between 0 and <paramref name="max"/>.
-    /// If only <paramref name="max"/> is <see langword="null"/>, a random value is generated between <paramref name="min"/> and 255.
+    /// Generates a random byte between the specified minimum and maximum values, inclusive.
+    /// Returns the generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.
     /// </summary>
-    /// <param name="min">The minimum <see cref="byte"/> value.</param>
-    /// <param name="max">The maximum <see cref="byte"/> value.</param>
-    /// <returns>A random <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static byte? RandomNumberByte(byte? min, byte? max) => min.HasValue ? YANLib.YANNum.RandomNumberByte(min.Value, max) : null;
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.</returns>
+    public static byte? GenRandomByte<T1, T2>(T1? min, T2? max) where T1 : struct where T2 : struct => min.HasValue ? YANLib.YANNum.GenRandomByte(min.Value, max) : default;
 
     /// <summary>
-    /// Generates a random <see cref="byte"/> value between <see cref="byte.MinValue"/> and <paramref name="max"/>.
-    /// If <paramref name="max"/> is <see langword="null"/>, <see cref="byte.MaxValue"/> is used.
+    /// Generates a random byte between the minimum value of 0 and the specified maximum value, inclusive.
+    /// Returns the generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.
     /// </summary>
-    /// <param name="max">The maximum <see cref="byte"/> value.</param>
-    /// <returns>A nullable <see cref="byte"/> value representing a random number between <see cref="byte.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static byte? RandomNumberByte(byte? max) => max.HasValue ? YANLib.YANNum.RandomNumberByte(byte.MinValue, max.Value) : null;
+    /// <typeparam name="T">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The generated <see cref="byte"/> value, or <see langword="default"/> if the generation fails.</returns>
+    public static byte? GenRandomByte<T>(T? max) where T : struct => max.HasValue ? YANLib.YANNum.GenRandomByte(byte.MinValue, max.Value) : default;
 }

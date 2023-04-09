@@ -5,59 +5,57 @@ namespace YANLib;
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to nuint, if failed return 0.
+    /// Parses the string representation of a <see cref="nuint"/> using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Nuint number.</returns>
-    public static nuint ParseNuint(this string str)
-    {
-        _ = nuint.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nuint"/> value, or 0 if the parsing fails.</returns>
+    public static nuint ParseNuint(this string str) => nuint.TryParse(str, out var num) ? num : 0;
 
     /// <summary>
-    /// Try parse string to nuint, if failed return default value.
+    /// Parses the string representation of a <see cref="nuint"/> using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Nuint number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="nuint"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static nuint ParseNuint(this string str, nuint dfltVal) => nuint.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to nuint, if failed return min value.
+    /// Parses the string representation of an unsigned integer using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or <see cref="nuint.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Nuint number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nuint"/> value, or <see cref="nuint.MinValue"/> if the parsing fails.</returns>
     public static nuint ParseNuintMin(this string str) => nuint.TryParse(str, out var num) ? num : nuint.MinValue;
 
     /// <summary>
-    /// Try parse string to nuint, if failed return max value.
+    /// Parses the string representation of an unsigned integer using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or <see cref="nuint.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Nuint number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nuint"/> value, or <see cref="nuint.MaxValue"/> if the parsing fails.</returns>
     public static nuint ParseNuintMax(this string str) => nuint.TryParse(str, out var num) ? num : nuint.MaxValue;
 
     /// <summary>
-    /// Generate random nuint number.
+    /// Generates a random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Nuint random number.</returns>
-    public static nuint RandomNumberNuint() => (nuint)(new Random().NextInt64(nint.MinValue, nint.MaxValue) - nint.MinValue);
-
-    /// <summary>
-    /// Generate random nuint number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.</param>
-    /// <returns>Nuint random number.</returns>
-    public static nuint RandomNumberNuint(nuint max) => (nuint)(new Random().NextInt64(nint.MinValue, (long)(max + (BigInteger)nint.MinValue)) - nint.MinValue);
-
-    /// <summary>
-    /// Generate random nuint number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Nuint random number.</returns>
+    /// <param name="min">The minimum <see cref="nuint"/> value.</param>
+    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
+    /// <returns>A random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static nuint RandomNumberNuint(nuint min, nuint max) => min > max ? 0 : (nuint)(new Random().NextInt64(nint.MinValue, (long)(max - (min - (BigInteger)nint.MinValue))) - nint.MinValue) + min;
+
+    /// <summary>
+    /// Generates a random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <see cref="nuint.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <see cref="nuint.MaxValue"/>.</returns>
+    public static nuint RandomNumberNuint() => RandomNumberNuint(nuint.MinValue, nuint.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
+    /// <returns>A random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static nuint RandomNumberNuint(nuint max) => RandomNumberNuint(nuint.MinValue, max);
 }

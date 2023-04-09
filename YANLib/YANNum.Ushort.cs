@@ -3,59 +3,57 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to ushort, if failed return 0.
+    /// Parses the string representation of an unsigned short integer using the default format.
+    /// Returns the parsed <see cref="ushort"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Ushort number.</returns>
-    public static ushort ParseUshort(this string str)
-    {
-        _ = ushort.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ushort"/> value, or 0 if the parsing fails.</returns>
+    public static ushort ParseUshort(this string str) => ushort.TryParse(str, out var num) ? num : (ushort)0;
 
     /// <summary>
-    /// Try parse string to ushort, if failed return default value.
+    /// Parses the string representation of an unsigned short integer using the default format.
+    /// Returns the parsed <see cref="ushort"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Ushort number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="ushort"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static ushort ParseUshort(this string str, ushort dfltVal) => ushort.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to ushort, if failed return min value.
+    /// Parses the string representation of a ushort using the default format.
+    /// Returns the parsed <see cref="ushort"/> value, or <see cref="ushort.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Ushort number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ushort"/> value, or <see cref="ushort.MinValue"/> if the parsing fails.</returns>
     public static ushort ParseUshortMin(this string str) => ushort.TryParse(str, out var num) ? num : ushort.MinValue;
 
     /// <summary>
-    /// Try parse string to ushort, if failed return max value.
+    /// Parses the string representation of an unsigned short integer using the default format.
+    /// Returns the parsed <see cref="ushort"/> value, or <see cref="ushort.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Ushort number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ushort"/> value, or <see cref="ushort.MaxValue"/> if the parsing fails.</returns>
     public static ushort ParseUshortMax(this string str) => ushort.TryParse(str, out var num) ? num : ushort.MaxValue;
 
     /// <summary>
-    /// Generate random ushort number.
+    /// Generates a random <see cref="ushort"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Ushort random number.</returns>
-    public static ushort RandomNumberUshort() => (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
-
-    /// <summary>
-    /// Generate random ushort number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.</param>
-    /// <returns>Ushort random number.</returns>
-    public static ushort RandomNumberUshort(ushort max) => (ushort)new Random().Next(ushort.MinValue, max);
-
-    /// <summary>
-    /// Generate random ushort number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Ushort random number.</returns>
+    /// <param name="min">The minimum <see cref="ushort"/> value.</param>
+    /// <param name="max">The maximum <see cref="ushort"/> value.</param>
+    /// <returns>A random <see cref="ushort"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static ushort RandomNumberUshort(ushort min, ushort max) => (ushort)(min > max ? 0 : new Random().Next(min, max));
+
+    /// <summary>
+    /// Generates a random <see cref="ushort"/> value between <see cref="ushort.MinValue"/> and <see cref="ushort.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="ushort"/> value between <see cref="ushort.MinValue"/> and <see cref="ushort.MaxValue"/>.</returns>
+    public static ushort RandomNumberUshort() => RandomNumberUshort(ushort.MinValue, ushort.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="ushort"/> value between <see cref="ushort.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="ushort"/> value.</param>
+    /// <returns>A random <see cref="ushort"/> value between <see cref="ushort.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static ushort RandomNumberUshort(ushort max) => RandomNumberUshort(ushort.MinValue, max);
 }

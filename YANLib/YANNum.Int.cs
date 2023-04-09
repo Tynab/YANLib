@@ -3,64 +3,57 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Try parse string to int, if failed return 0.
+    /// Parses the string representation of an integer using the default format.
+    /// Returns the parsed <see cref="int"/> value, or 0 if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Int number.</returns>
-    public static int ParseInt(this string str)
-    {
-        _ = int.TryParse(str, out var num);
-        return num;
-    }
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="int"/> value, or 0 if the parsing fails.</returns>
+    public static int ParseInt(this string str) => int.TryParse(str, out var num) ? num : 0;
 
     /// <summary>
-    /// Try parse string to int, if failed return default value.
+    /// Parses the string representation of an integer using the default format.
+    /// Returns the parsed <see cref="int"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <param name="dfltVal">Default value.</param>
-    /// <returns>Int number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="int"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
     public static int ParseInt(this string str, int dfltVal) => int.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
-    /// Try parse string to int, if failed return min value.
+    /// Parses the string representation of an integer using the default format.
+    /// Returns the parsed <see cref="int"/> value, or <see cref="int.MinValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Int number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="int"/> value, or <see cref="int.MinValue"/> if the parsing fails.</returns>
     public static int ParseIntMin(this string str) => int.TryParse(str, out var num) ? num : int.MinValue;
 
     /// <summary>
-    /// Try parse string to int, if failed return max value.
+    /// Parses the string representation of an integer using the default format.
+    /// Returns the parsed <see cref="int"/> value, or <see cref="int.MaxValue"/> if the parsing fails.
     /// </summary>
-    /// <param name="str">Input string.</param>
-    /// <returns>Int number.</returns>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="int"/> value, or <see cref="int.MaxValue"/> if the parsing fails.</returns>
     public static int ParseIntMax(this string str) => int.TryParse(str, out var num) ? num : int.MaxValue;
 
     /// <summary>
-    /// Generate random int number.
+    /// Generates a random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
     /// </summary>
-    /// <returns>Int random number.</returns>
-    public static int RandomNumberInt() => new Random().Next();
-
-    /// <summary>
-    /// Generate random int number with max value.
-    /// </summary>
-    /// <param name="max">The exclusive upper bound of the random number to be generated.
-    /// <paramref name="max"/> must be greater than or equal to 0.
-    /// If not, the inclusive lower bound of the random number flexible to <see cref="int.MinValue"/>.</param>
-    /// <returns>Int random number.</returns>
-    public static int RandomNumberInt(int max)
-    {
-        var rnd = new Random();
-        return max < 0 ? rnd.Next(int.MinValue, max) : rnd.Next(0, max);
-    }
-
-    /// <summary>
-    /// Generate random int number with min and max value.
-    /// </summary>
-    /// <param name="min">The inclusive lower bound of the random number returned.</param>
-    /// <param name="max">The exclusive upper bound of the random number returned.
-    /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
-    /// If not, return 0.</param>
-    /// <returns>Int random number.</returns>
+    /// <param name="min">The minimum <see cref="int"/> value.</param>
+    /// <param name="max">The maximum <see cref="int"/> value.</param>
+    /// <returns>A random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static int RandomNumberInt(int min, int max) => min > max ? 0 : new Random().Next(min, max);
+
+    /// <summary>
+    /// Generates a random <see cref="int"/> value between <see cref="int.MinValue"/> and <see cref="int.MaxValue"/>.
+    /// </summary>
+    /// <returns>A random <see cref="int"/> value between <see cref="int.MinValue"/> and <see cref="int.MaxValue"/>.</returns>
+    public static int RandomNumberInt() => RandomNumberInt(int.MinValue, int.MaxValue);
+
+    /// <summary>
+    /// Generates a random <see cref="int"/> value between <see cref="int.MinValue"/> and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The maximum <see cref="int"/> value.</param>
+    /// <returns>A random <see cref="int"/> value between <see cref="int.MinValue"/> and the <paramref name="max"/>.</returns>
+    public static int RandomNumberInt(int max) => RandomNumberInt(int.MinValue, max);
 }
