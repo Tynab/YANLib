@@ -18,7 +18,7 @@ public static partial class YANNum
     /// <param name="min">The minimum <see cref="nuint"/> value.</param>
     /// <param name="max">The maximum <see cref="nuint"/> value.</param>
     /// <returns>A random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static nuint? RandomNumberNuint(nuint? min, nuint max) => min.HasValue ? YANLib.YANNum.RandomNumberNuint(min.Value, max) : null;
+    public static nuint? RandomNumberNuint(nuint? min, nuint max) => min.HasValue ? YANLib.YANNum.GenRandomNuint(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -27,7 +27,7 @@ public static partial class YANNum
     /// <param name="min">The minimum <see cref="nuint"/> value.</param>
     /// <param name="max">The maximum <see cref="nuint"/> value.</param>
     /// <returns>A random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static nuint? RandomNumberNuint(nuint min, nuint? max) => max.HasValue ? YANLib.YANNum.RandomNumberNuint(min, max.Value) : null;
+    public static nuint? RandomNumberNuint(nuint min, nuint? max) => max.HasValue ? YANLib.YANNum.GenRandomNuint(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -38,7 +38,7 @@ public static partial class YANNum
     /// <param name="min">The minimum <see cref="nuint"/> value.</param>
     /// <param name="max">The maximum <see cref="nuint"/> value.</param>
     /// <returns>A random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static nuint? RandomNumberNuint(nuint? min, nuint? max) => min.HasValue ? YANLib.YANNum.RandomNumberNuint(min.Value, max) : null;
+    public static nuint? RandomNumberNuint(nuint? min, nuint? max) => min.HasValue ? YANLib.YANNum.GenRandomNuint(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <paramref name="max"/>.
@@ -46,5 +46,5 @@ public static partial class YANNum
     /// </summary>
     /// <param name="max">The maximum <see cref="nuint"/> value.</param>
     /// <returns>A nullable <see cref="nuint"/> value representing a random number between <see cref="nuint.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static nuint? RandomNumberNuint(nuint? max) => max.HasValue ? YANLib.YANNum.RandomNumberNuint(nuint.MinValue, max.Value) : null;
+    public static nuint? RandomNumberNuint(nuint? max) => max.HasValue ? YANLib.YANNum.GenRandomNuint(nuint.MinValue, max.Value) : null;
 }

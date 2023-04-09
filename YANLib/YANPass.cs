@@ -53,7 +53,7 @@ public class YANPass
             if (segs.Length > 3)
             {
                 var hash = FromHexString(segs[0]);
-                return FixedTimeEquals(Pbkdf2(password, FromHexString(segs[1]), segs[2].ParseInt(), new HashAlgorithmName(segs[3]), hash.Length), hash);
+                return FixedTimeEquals(Pbkdf2(password, FromHexString(segs[1]), segs[2].ToInt(), new HashAlgorithmName(segs[3]), hash.Length), hash);
             }
         }
         return false;

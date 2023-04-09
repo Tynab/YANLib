@@ -14,7 +14,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : struct
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks?.Any() == true)
         {
@@ -37,7 +37,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : struct => await tasks.WaitAnyWithCondition(goodRslt);
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : IComparable<T> => await tasks.WaitAnyWithCondition(goodRslt);
 
     /// <summary>
     /// Waits for any of the specified <see cref="Task{TResult}"/> objects to complete and returns a nullable <typeparamref name="T"/> result that matches the specified condition.
@@ -49,7 +49,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : struct
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks?.Any() == true)
         {
@@ -69,7 +69,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params Task<T>[] tasks) where T : struct => await tasks.WaitAnyWithCondition(goodRslt);
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params Task<T>[] tasks) where T : IComparable<T> => await tasks.WaitAnyWithCondition(goodRslt);
 
     /// <summary>
     /// Waits for any of the specified <see cref="ValueTask{TResult}"/> objects to complete and returns a nullable <typeparamref name="T"/> result that matches the specified condition.
@@ -81,7 +81,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : struct
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks?.Any() == true)
         {
@@ -110,7 +110,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : struct => await tasks.WhenAnyWithCondition(goodRslt);
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : IComparable<T> => await tasks.WhenAnyWithCondition(goodRslt);
 
     /// <summary>
     /// Waits for any of the specified <see cref="Task{TResult}"/> objects to complete and returns a nullable <typeparamref name="T"/> result that matches the specified condition.
@@ -122,7 +122,7 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : struct
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks?.Any() == true)
         {
@@ -142,5 +142,5 @@ public static partial class YANTask
     /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
     /// The result of the operation is the <typeparamref name="T"/> value of the completed task that matches the specified condition, or <see langword="null"/> if no such task completed successfully.
     /// </returns>
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(T goodRslt, params Task<T>[] tasks) where T : struct => await tasks.WhenAnyWithCondition(goodRslt);
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(T goodRslt, params Task<T>[] tasks) where T : IComparable<T> => await tasks.WhenAnyWithCondition(goodRslt);
 }

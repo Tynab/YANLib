@@ -17,29 +17,50 @@ public static partial class YANRandom
     public static decimal NextDecimal(this Random rnd) => new(rnd.NextInt32(), rnd.NextInt32(), rnd.NextInt32(), rnd.Next(2) == 1, (byte)rnd.Next(29));
 
     /// <summary>
-    /// Returns a random <see cref="float"/> value between the specified minimum and maximum values.
+    /// Returns a random <see cref="float"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// </summary>
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
     /// <param name="rnd">The <see cref="Random"/> object.</param>
-    /// <param name="minValue">The minimum <see cref="float"/> value.</param>
-    /// <param name="maxValue">The maximum <see cref="float"/> value.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>A random <see cref="float"/> value between <paramref name="minValue"/> and <paramref name="maxValue"/>.</returns>
-    public static float NextSingle(this Random rnd, float minValue, float maxValue) => minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
+    public static float NextSingle<T1, T2>(this Random rnd, T1 min, T2 max) where T1 : struct where T2 : struct
+    {
+        var minValue = min.ToFloat();
+        var maxValue = max.ToFloat();
+        return minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
+    }
 
     /// <summary>
-    /// Returns a random <see cref="double"/> value between the specified minimum and maximum values.
+    /// Returns a random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// </summary>
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
     /// <param name="rnd">The <see cref="Random"/> object.</param>
-    /// <param name="minValue">The minimum <see cref="double"/> value.</param>
-    /// <param name="maxValue">The maximum <see cref="double"/> value.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>A random <see cref="double"/> value between <paramref name="minValue"/> and <paramref name="maxValue"/>.</returns>
-    public static double NextDouble(this Random rnd, double minValue, double maxValue) => minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
+    public static double NextDouble<T1, T2>(this Random rnd, T1 min, T2 max) where T1 : struct where T2 : struct
+    {
+        var minValue = min.ToDouble();
+        var maxValue = max.ToDouble();
+        return minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
+    }
 
     /// <summary>
-    /// Returns a random <see cref="decimal"/> value between the specified minimum and maximum values.
+    /// Returns a random <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// </summary>
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
     /// <param name="rnd">The <see cref="Random"/> object.</param>
-    /// <param name="minValue">The minimum <see cref="decimal"/> value.</param>
-    /// <param name="maxValue">The maximum <see cref="decimal"/> value.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>A random <see cref="decimal"/> value between <paramref name="minValue"/> and <paramref name="maxValue"/>.</returns>
-    public static decimal NextDecimal(this Random rnd, decimal minValue, decimal maxValue) => minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
+    public static decimal NextDecimal<T1, T2>(this Random rnd, T1 min, T2 max) where T1 : struct where T2 : struct
+    {
+        var minValue = min.ToDecimal();
+        var maxValue = max.ToDecimal();
+        return minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : 0;
+    }
 }

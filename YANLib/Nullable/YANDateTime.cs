@@ -32,7 +32,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime min, DateTime max) => min > max ? null : min.AddTicks(RandomNumberLong((max - min).Ticks));
+    public static DateTime? RandomDateTime(DateTime min, DateTime max) => min > max ? null : min.AddTicks(GenRandomLong((max - min).Ticks));
 
     /// <summary>
     /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone.

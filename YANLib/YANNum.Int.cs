@@ -4,56 +4,34 @@ public static partial class YANNum
 {
     /// <summary>
     /// Parses the string representation of an integer using the default format.
-    /// Returns the parsed <see cref="int"/> value, or 0 if the parsing fails.
+    /// Returns the parsed <see cref="int"/> value, or <see langword="default"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="int"/> value, or 0 if the parsing fails.</returns>
-    public static int ParseInt(this string str) => int.TryParse(str, out var num) ? num : 0;
+    /// <returns>The parsed <see cref="int"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static int ToInt(this string str) => int.TryParse(str, out var num) ? num : default;
 
-    /// <summary>
-    /// Parses the string representation of an integer using the default format.
-    /// Returns the parsed <see cref="int"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="int"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
-    public static int ParseInt(this string str, int dfltVal) => int.TryParse(str, out var num) ? num : dfltVal;
+    public static int ToInt<T>(this string str, T dfltVal) where T : struct => int.TryParse(str, out var num) ? num : dfltVal.ToInt();
 
-    /// <summary>
-    /// Parses the string representation of an integer using the default format.
-    /// Returns the parsed <see cref="int"/> value, or <see cref="int.MinValue"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="int"/> value, or <see cref="int.MinValue"/> if the parsing fails.</returns>
-    public static int ParseIntMin(this string str) => int.TryParse(str, out var num) ? num : int.MinValue;
+    public static int ToInt<T>(this T num) where T : struct
+    {
+        try
+        {
+            return Convert.ToInt32(num);
+        }
+        catch
+        {
+            return default;
+        }
+    }
 
-    /// <summary>
-    /// Parses the string representation of an integer using the default format.
-    /// Returns the parsed <see cref="int"/> value, or <see cref="int.MaxValue"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="int"/> value, or <see cref="int.MaxValue"/> if the parsing fails.</returns>
-    public static int ParseIntMax(this string str) => int.TryParse(str, out var num) ? num : int.MaxValue;
+    public static int GenRandomInt<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
+    {
+        var minValue = min.ToInt();
+        var maxValue = max.ToInt();
+        return minValue > maxValue ? default : new Random().Next(minValue, maxValue);
+    }
 
-    /// <summary>
-    /// Generates a random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
-    /// </summary>
-    /// <param name="min">The minimum <see cref="int"/> value.</param>
-    /// <param name="max">The maximum <see cref="int"/> value.</param>
-    /// <returns>A random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static int RandomNumberInt(int min, int max) => min > max ? 0 : new Random().Next(min, max);
+    public static int GenRandomInt() => GenRandomInt(int.MinValue, int.MaxValue);
 
-    /// <summary>
-    /// Generates a random <see cref="int"/> value between <see cref="int.MinValue"/> and <see cref="int.MaxValue"/>.
-    /// </summary>
-    /// <returns>A random <see cref="int"/> value between <see cref="int.MinValue"/> and <see cref="int.MaxValue"/>.</returns>
-    public static int RandomNumberInt() => RandomNumberInt(int.MinValue, int.MaxValue);
-
-    /// <summary>
-    /// Generates a random <see cref="int"/> value between <see cref="int.MinValue"/> and <paramref name="max"/>.
-    /// </summary>
-    /// <param name="max">The maximum <see cref="int"/> value.</param>
-    /// <returns>A random <see cref="int"/> value between <see cref="int.MinValue"/> and the <paramref name="max"/>.</returns>
-    public static int RandomNumberInt(int max) => RandomNumberInt(int.MinValue, max);
+    public static int GenRandomInt<T>(T max) where T : struct => GenRandomInt(int.MinValue, max);
 }

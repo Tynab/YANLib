@@ -18,7 +18,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="double"/> value.</param>
     /// <param name="max">The maximum <see cref="double"/> value.</param>
     /// <returns>A random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static double? RandomNumberDouble(double? min, double max) => min.HasValue ? YANLib.YANNum.RandomNumberDouble(min.Value, max) : null;
+    public static double? RandomNumberDouble(double? min, double max) => min.HasValue ? YANLib.YANNum.GenRandomDouble(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -27,7 +27,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="double"/> value.</param>
     /// <param name="max">The maximum <see cref="double"/> value.</param>
     /// <returns>A random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static double? RandomNumberDouble(double min, double? max) => max.HasValue ? YANLib.YANNum.RandomNumberDouble(min, max.Value) : null;
+    public static double? RandomNumberDouble(double min, double? max) => max.HasValue ? YANLib.YANNum.GenRandomDouble(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -38,7 +38,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="double"/> value.</param>
     /// <param name="max">The maximum <see cref="double"/> value.</param>
     /// <returns>A random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static double? RandomNumberDouble(double? min, double? max) => min.HasValue ? YANLib.YANNum.RandomNumberDouble(min.Value, max) : null;
+    public static double? RandomNumberDouble(double? min, double? max) => min.HasValue ? YANLib.YANNum.GenRandomDouble(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="double"/> value between <see cref="double.MinValue"/> and <paramref name="max"/>.
@@ -46,5 +46,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="max">The maximum <see cref="double"/> value.</param>
     /// <returns>A nullable <see cref="double"/> value representing a random number between <see cref="double.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static double? RandomNumberDouble(double? max) => max.HasValue ? YANLib.YANNum.RandomNumberDouble(double.MinValue, max.Value) : null;
+    public static double? RandomNumberDouble(double? max) => max.HasValue ? YANLib.YANNum.GenRandomDouble(double.MinValue, max.Value) : null;
 }

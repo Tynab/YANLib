@@ -6,56 +6,34 @@ public static partial class YANNum
 {
     /// <summary>
     /// Parses the string representation of a <see cref="nuint"/> using the default format.
-    /// Returns the parsed <see cref="nuint"/> value, or 0 if the parsing fails.
+    /// Returns the parsed <see cref="nuint"/> value, or <see langword="default"/> if the parsing fails.
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or 0 if the parsing fails.</returns>
-    public static nuint ParseNuint(this string str) => nuint.TryParse(str, out var num) ? num : 0;
+    /// <returns>The parsed <see cref="nuint"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static nuint ToNuint(this string str) => nuint.TryParse(str, out var num) ? num : default;
 
-    /// <summary>
-    /// Parses the string representation of a <see cref="nuint"/> using the default format.
-    /// Returns the parsed <see cref="nuint"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or the default value specified by the <paramref name="dfltVal"/> parameter if the parsing fails.</returns>
-    public static nuint ParseNuint(this string str, nuint dfltVal) => nuint.TryParse(str, out var num) ? num : dfltVal;
+    public static nuint ToNuint<T>(this string str, T dfltVal) where T : struct => nuint.TryParse(str, out var num) ? num : dfltVal.ToNuint();
 
-    /// <summary>
-    /// Parses the string representation of an unsigned integer using the default format.
-    /// Returns the parsed <see cref="nuint"/> value, or <see cref="nuint.MinValue"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or <see cref="nuint.MinValue"/> if the parsing fails.</returns>
-    public static nuint ParseNuintMin(this string str) => nuint.TryParse(str, out var num) ? num : nuint.MinValue;
+    public static nuint ToNuint<T>(this T num) where T : struct
+    {
+        try
+        {
+            return new UIntPtr(Convert.ToUInt64(num));
+        }
+        catch
+        {
+            return default;
+        }
+    }
 
-    /// <summary>
-    /// Parses the string representation of an unsigned integer using the default format.
-    /// Returns the parsed <see cref="nuint"/> value, or <see cref="nuint.MaxValue"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or <see cref="nuint.MaxValue"/> if the parsing fails.</returns>
-    public static nuint ParseNuintMax(this string str) => nuint.TryParse(str, out var num) ? num : nuint.MaxValue;
+    public static nuint GenRandomNuint<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
+    {
+        var minValue = min.ToNuint();
+        var maxValue = max.ToNuint();
+        return minValue > maxValue ? default : (new Random().NextInt64(nint.MinValue, (long)(maxValue - (minValue - (BigInteger)nint.MinValue))) - nint.MinValue).ToNuint() + minValue;
+    }
 
-    /// <summary>
-    /// Generates a random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="min"/> is greater than <paramref name="max"/>, 0 is returned.
-    /// </summary>
-    /// <param name="min">The minimum <see cref="nuint"/> value.</param>
-    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
-    /// <returns>A random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static nuint RandomNumberNuint(nuint min, nuint max) => min > max ? 0 : (nuint)(new Random().NextInt64(nint.MinValue, (long)(max - (min - (BigInteger)nint.MinValue))) - nint.MinValue) + min;
+    public static nuint GenRandomNuint() => GenRandomNuint(nuint.MinValue, nuint.MaxValue);
 
-    /// <summary>
-    /// Generates a random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <see cref="nuint.MaxValue"/>.
-    /// </summary>
-    /// <returns>A random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <see cref="nuint.MaxValue"/>.</returns>
-    public static nuint RandomNumberNuint() => RandomNumberNuint(nuint.MinValue, nuint.MaxValue);
-
-    /// <summary>
-    /// Generates a random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <paramref name="max"/>.
-    /// </summary>
-    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
-    /// <returns>A random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and the <paramref name="max"/>.</returns>
-    public static nuint RandomNumberNuint(nuint max) => RandomNumberNuint(nuint.MinValue, max);
+    public static nuint GenRandomNuint<T>(T max) where T : struct => GenRandomNuint(nuint.MinValue, max);
 }
