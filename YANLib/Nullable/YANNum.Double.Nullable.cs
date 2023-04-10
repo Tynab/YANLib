@@ -3,48 +3,72 @@
 public partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of a <see cref="double"/> using the default format.
-    /// Returns the parsed <see cref="double"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.
+    /// Converts the specified value to a double.
+    /// Returns the converted <see cref="double"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="double"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static double? ToDouble<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return Convert.ToDouble(num);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
+    /// Parses the string representation of a double using the default format.
+    /// Returns the parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="double"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static double? ToDouble(this string str, double? dfltVal) => double.TryParse(str, out var num) ? num : dfltVal;
-
-    /// <summary>
-    /// Generates a random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>, <see langword="null"/> is returned.
-    /// </summary>
-    /// <param name="min">The minimum <see cref="double"/> value.</param>
-    /// <param name="max">The maximum <see cref="double"/> value.</param>
-    /// <returns>A random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static double? GenRandomDouble(double? min, double max) => min.HasValue ? YANLib.YANNum.GenRandomDouble(min.Value, max) : null;
-
-    /// <summary>
-    /// Generates a random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="max"/> is <see langword="null"/>, <see langword="null"/> is returned.
-    /// </summary>
-    /// <param name="min">The minimum <see cref="double"/> value.</param>
-    /// <param name="max">The maximum <see cref="double"/> value.</param>
-    /// <returns>A random nullable <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static double? GenRandomDouble(double min, double? max) => max.HasValue ? YANLib.YANNum.GenRandomDouble(min, max.Value) : null;
+    /// <returns>The parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static double? ToDouble<T>(this string str, T? dfltVal) where T : struct => dfltVal.HasValue ? str.ToDouble(dfltVal.Value) : default;
 
     /// <summary>
     /// Generates a random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If both <paramref name="min"/> and <paramref name="max"/> are <see langword="null"/>, a random value between 0 and 1 is returned.
-    /// If only <paramref name="min"/> is <see langword="null"/>, a random value is generated between 0 and <paramref name="max"/>.
-    /// If only <paramref name="max"/> is <see langword="null"/>, a random value is generated between <paramref name="min"/> and 1.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
     /// </summary>
-    /// <param name="min">The minimum <see cref="double"/> value.</param>
-    /// <param name="max">The maximum <see cref="double"/> value.</param>
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>A random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static double? GenRandomDouble(double? min, double? max) => min.HasValue ? YANLib.YANNum.GenRandomDouble(min.Value, max) : null;
+    public static double? GenRandomDouble<T1, T2>(T1? min, T2 max) where T1 : struct where T2 : struct => min.HasValue ? GenRandomDouble(min.Value, max) : default;
+
+    /// <summary>
+    /// Generates a random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
+    /// </summary>
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
+    public static double? GenRandomDouble<T1, T2>(T1 min, T2? max) where T1 : struct where T2 : struct => max.HasValue ? GenRandomDouble(min, max.Value) : default;
+
+    /// <summary>
+    /// Generates a random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
+    /// </summary>
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
+    public static double? GenRandomDouble<T1, T2>(T1? min, T2? max) where T1 : struct where T2 : struct => min.HasValue ? GenRandomDouble(min.Value, max) : default;
 
     /// <summary>
     /// Generates a random <see cref="double"/> value between <see cref="double.MinValue"/> and <paramref name="max"/>.
-    /// If <paramref name="max"/> is <see langword="null"/>, <see cref="double.MaxValue"/> is used.
     /// </summary>
-    /// <param name="max">The maximum <see cref="double"/> value.</param>
-    /// <returns>A nullable <see cref="double"/> value representing a random number between <see cref="double.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static double? GenRandomDouble(double? max) => max.HasValue ? YANLib.YANNum.GenRandomDouble(double.MinValue, max.Value) : null;
+    /// <typeparam name="T">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="double"/> value between <see cref="double.MinValue"/> and <paramref name="max"/>.</returns>
+    public static double? GenRandomDouble<T>(T? max) where T : struct => max.HasValue ? GenRandomDouble(double.MinValue, max.Value) : default;
 }

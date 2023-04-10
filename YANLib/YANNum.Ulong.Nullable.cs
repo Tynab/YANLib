@@ -3,6 +3,25 @@
 public static partial class YANNum
 {
     /// <summary>
+    /// Converts the specified value to an unsigned long integer.
+    /// Returns the converted <see cref="ulong"/> value, or <see langword="default"/> if the conversion fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="ulong"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static ulong ToUlong<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return Convert.ToUInt64(num);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Parses the string representation of an unsigned long integer using the default format.
     /// Returns the parsed <see cref="ulong"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>

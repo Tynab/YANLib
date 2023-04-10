@@ -3,48 +3,72 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of a <see cref="nuint"/> using the specified format.
-    /// Returns the parsed <see cref="nuint"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.
+    /// Converts the specified value to a <see cref="nuint"/> (an unsigned integer type representing a pointer or a handle).
+    /// Returns the converted <see cref="nuint"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="nuint"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static nuint? ToNuint<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return new UIntPtr(Convert.ToUInt64(num));
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
+    /// Parses the string representation of a <see cref="nuint"/> using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static nuint? ToNuint(this string str, nuint? dfltVal) => nuint.TryParse(str, out var num) ? num : dfltVal;
+    /// <returns>The parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static nuint? ToNuint<T>(this string str, T? dfltVal) where T : struct => dfltVal.HasValue ? str.ToNuint(dfltVal.Value) : default;
 
     /// <summary>
-    /// Generates a random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>, <see langword="null"/> is returned.
+    /// Generates a random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
     /// </summary>
-    /// <param name="min">The minimum <see cref="nuint"/> value.</param>
-    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
-    /// <returns>A random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static nuint? GenRandomNuint(nuint? min, nuint max) => min.HasValue ? YANLib.YANNum.GenRandomNuint(min.Value, max) : null;
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
+    public static nuint? GenRandomNuint<T1, T2>(T1? min, T2 max) where T1 : struct where T2 : struct => min.HasValue ? GenRandomNuint(min.Value, max) : default;
 
     /// <summary>
-    /// Generates a random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If <paramref name="max"/> is <see langword="null"/>, <see langword="null"/> is returned.
+    /// Generates a random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
     /// </summary>
-    /// <param name="min">The minimum <see cref="nuint"/> value.</param>
-    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
-    /// <returns>A random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static nuint? GenRandomNuint(nuint min, nuint? max) => max.HasValue ? YANLib.YANNum.GenRandomNuint(min, max.Value) : null;
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
+    public static nuint? GenRandomNuint<T1, T2>(T1 min, T2? max) where T1 : struct where T2 : struct => max.HasValue ? GenRandomNuint(min, max.Value) : default;
 
     /// <summary>
-    /// Generates a random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
-    /// If both <paramref name="min"/> and <paramref name="max"/> are <see langword="null"/>, a random value between 0 and <see cref="nuint.MaxValue"/> is returned.
-    /// If only <paramref name="min"/> is <see langword="null"/>, a random value is generated between 0 and <paramref name="max"/>.
-    /// If only <paramref name="max"/> is <see langword="null"/>, a random value is generated between <paramref name="min"/> and <see cref="nuint.MaxValue"/>.
+    /// Generates a random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.
+    /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
     /// </summary>
-    /// <param name="min">The minimum <see cref="nuint"/> value.</param>
-    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
-    /// <returns>A random nullable <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static nuint? GenRandomNuint(nuint? min, nuint? max) => min.HasValue ? YANLib.YANNum.GenRandomNuint(min.Value, max) : null;
+    /// <typeparam name="T1">The type of the minimum value, which must be a value type.</typeparam>
+    /// <typeparam name="T2">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
+    public static nuint? GenRandomNuint<T1, T2>(T1? min, T2? max) where T1 : struct where T2 : struct => min.HasValue ? GenRandomNuint(min.Value, max) : default;
 
     /// <summary>
     /// Generates a random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <paramref name="max"/>.
-    /// If <paramref name="max"/> is <see langword="null"/>, the maximum value of <see cref="nuint"/> is used.
     /// </summary>
-    /// <param name="max">The maximum <see cref="nuint"/> value.</param>
-    /// <returns>A nullable <see cref="nuint"/> value representing a random number between <see cref="nuint.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static nuint? GenRandomNuint(nuint? max) => max.HasValue ? YANLib.YANNum.GenRandomNuint(nuint.MinValue, max.Value) : null;
+    /// <typeparam name="T">The type of the maximum value, which must be a value type.</typeparam>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A random <see cref="nuint"/> value between <see cref="nuint.MinValue"/> and <paramref name="max"/>.</returns>
+    public static nuint? GenRandomNuint<T>(T? max) where T : struct => max.HasValue ? GenRandomNuint(nuint.MinValue, max.Value) : default;
 }

@@ -5,24 +5,6 @@ namespace YANLib;
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of a <see cref="nuint"/> using the default format.
-    /// Returns the parsed <see cref="nuint"/> value, or <see langword="default"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or <see langword="default"/> if the parsing fails.</returns>
-    public static nuint ToNuint(this string str) => nuint.TryParse(str, out var num) ? num : default;
-
-    /// <summary>
-    /// Parses the string representation of a <see cref="nuint"/> using the default format.
-    /// Returns the parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.
-    /// </summary>
-    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static nuint ToNuint<T>(this string str, T dfltVal) where T : struct => nuint.TryParse(str, out var num) ? num : dfltVal.ToNuint();
-
-    /// <summary>
     /// Converts the specified value to a <see cref="nuint"/> (an unsigned integer type representing a pointer or a handle).
     /// Returns the converted <see cref="nuint"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
@@ -40,6 +22,24 @@ public static partial class YANNum
             return default;
         }
     }
+
+    /// <summary>
+    /// Parses the string representation of a <see cref="nuint"/> using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or <see langword="default"/> if the parsing fails.
+    /// </summary>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="nuint"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static nuint ToNuint(this string str) => nuint.TryParse(str, out var num) ? num : default;
+
+    /// <summary>
+    /// Parses the string representation of a <see cref="nuint"/> using the default format.
+    /// Returns the parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static nuint ToNuint<T>(this string str, T dfltVal) where T : struct => nuint.TryParse(str, out var num) ? num : dfltVal.ToNuint();
 
     /// <summary>
     /// Generates a random <see cref="nuint"/> value between <paramref name="min"/> and <paramref name="max"/>.

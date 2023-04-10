@@ -3,24 +3,6 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of an integer using the default format.
-    /// Returns the parsed <see cref="int"/> value, or <see langword="default"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="int"/> value, or <see langword="default"/> if the parsing fails.</returns>
-    public static int ToInt(this string str) => int.TryParse(str, out var num) ? num : default;
-
-    /// <summary>
-    /// Parses the string representation of an integer using the default format.
-    /// Returns the parsed <see cref="int"/> value, or <paramref name="dfltVal"/> if the parsing fails.
-    /// </summary>
-    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="int"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static int ToInt<T>(this string str, T dfltVal) where T : struct => int.TryParse(str, out var num) ? num : dfltVal.ToInt();
-
-    /// <summary>
     /// Converts the specified value to an integer.
     /// Returns the converted <see cref="int"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
@@ -38,6 +20,24 @@ public static partial class YANNum
             return default;
         }
     }
+
+    /// <summary>
+    /// Parses the string representation of an integer using the default format.
+    /// Returns the parsed <see cref="int"/> value, or <see langword="default"/> if the parsing fails.
+    /// </summary>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="int"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static int ToInt(this string str) => int.TryParse(str, out var num) ? num : default;
+
+    /// <summary>
+    /// Parses the string representation of an integer using the default format.
+    /// Returns the parsed <see cref="int"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="int"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static int ToInt<T>(this string str, T dfltVal) where T : struct => int.TryParse(str, out var num) ? num : dfltVal.ToInt();
 
     /// <summary>
     /// Generates a random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.

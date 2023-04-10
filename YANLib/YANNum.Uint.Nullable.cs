@@ -3,6 +3,25 @@
 public static partial class YANNum
 {
     /// <summary>
+    /// Converts the specified value to an unsigned integer.
+    /// Returns the converted <see cref="uint"/> value, or <see langword="default"/> if the conversion fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="uint"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static uint ToUint<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return Convert.ToUInt32(num);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Parses the string representation of an unsigned integer using the default format.
     /// Returns the parsed <see cref="uint"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>

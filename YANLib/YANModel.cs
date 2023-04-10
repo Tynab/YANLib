@@ -270,6 +270,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if all properties of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNotNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().All(prop => prop.GetValue(mdl) != null);
 
+    public static bool AllPropertiesNotDefault<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().All(prop => prop.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether all properties of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="false"/>.
@@ -278,6 +280,8 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if all properties of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().All(prop => prop.GetValue(mdl) == null);
+
+    public static bool AllPropertiesDefault<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().All(prop => prop.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether any property of the specified object has a non-null value, including all its nested properties and properties in lists.
@@ -288,6 +292,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if any property of the specified object has a non-null value; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().Any(prop => prop.GetValue(mdl) != null);
 
+    public static bool AnyPropertiesNotDefault<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().Any(prop => prop.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether any property of the specified object has a null value, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="false"/>.
@@ -296,6 +302,8 @@ public static partial class YANModel
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if any property of the specified object has a null value; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().Any(prop => prop.GetValue(mdl) == null);
+
+    public static bool AnyPropertiesDefault<T>(this T mdl) where T : class => mdl != null && mdl.GetType().GetProperties().Any(prop => prop.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -307,6 +315,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNotNull<T>(this T mdl, params string[] names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AllPropertiesNotDefault<T>(this T mdl, params string[] names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -316,6 +326,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl, params string[] names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AllPropertiesDefault<T>(this T mdl, params string[] names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -327,6 +339,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl, params string[] names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AnyPropertiesNotDefault<T>(this T mdl, params string[] names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -336,6 +350,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl, params string[] names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AnyPropertiesDefault<T>(this T mdl, params string[] names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -347,6 +363,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNotNull<T>(this T mdl, IEnumerable<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AllPropertiesNotDefault<T>(this T mdl, IEnumerable<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -356,6 +374,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl, IEnumerable<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AllPropertiesDefault<T>(this T mdl, IEnumerable<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -367,6 +387,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl, IEnumerable<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AnyPropertiesNotDefault<T>(this T mdl, IEnumerable<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -376,6 +398,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl, IEnumerable<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AnyPropertiesDefault<T>(this T mdl, IEnumerable<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -387,6 +411,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNotNull<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AllPropertiesNotDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -396,6 +422,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AllPropertiesDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -407,6 +435,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AnyPropertiesNotDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -416,6 +446,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AnyPropertiesDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -427,6 +459,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNotNull<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AllPropertiesNotDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -436,6 +470,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AllPropertiesDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -447,6 +483,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AnyPropertiesNotDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -456,6 +494,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AnyPropertiesDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -467,6 +507,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNotNull<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AllPropertiesNotDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl != null && names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether all properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -476,6 +518,8 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if all properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AllPropertiesNull<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AllPropertiesDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl == null || names.All(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have non-null values, including all its nested properties and properties in lists.
@@ -487,6 +531,8 @@ public static partial class YANModel
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have non-null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNotNull<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != null);
 
+    public static bool AnyPropertiesNotDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) != default);
+
     /// <summary>
     /// Checks whether any properties with the specified names of the specified object have null values, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
@@ -496,4 +542,6 @@ public static partial class YANModel
     /// <param name="names">The names of the properties to check.</param>
     /// <returns><see langword="true"/> if any properties with the specified names of the specified object have null values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyPropertiesNull<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == null);
+
+    public static bool AnyPropertiesDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class => mdl != null && names.Any(name => mdl.GetType().GetProperty(name)?.GetValue(mdl) == default);
 }

@@ -3,6 +3,25 @@
 public partial class YANNum
 {
     /// <summary>
+    /// Converts the specified value to a signed byte (sbyte).
+    /// Returns the converted <see cref="sbyte"/> value, or <see langword="default"/> if the conversion fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="sbyte"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static sbyte ToSbyte<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return Convert.ToSByte(num);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Parses the string representation of an <see cref="sbyte"/> using the default format.
     /// Returns the parsed <see cref="sbyte"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>

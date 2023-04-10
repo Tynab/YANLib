@@ -3,24 +3,6 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of a long using the default format.
-    /// Returns the parsed <see cref="long"/> value, or <see langword="default"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="long"/> value, or <see langword="default"/> if the parsing fails.</returns>
-    public static long ToLong(this string str) => long.TryParse(str, out var num) ? num : default;
-
-    /// <summary>
-    /// Parses the string representation of a long using the default format.
-    /// Returns the parsed <see cref="long"/> value, or <paramref name="dfltVal"/> if the parsing fails.
-    /// </summary>
-    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="long"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static long ToLong<T>(this string str, T dfltVal) where T : struct => long.TryParse(str, out var num) ? num : dfltVal.ToLong();
-
-    /// <summary>
     /// Converts the specified value to a long integer.
     /// Returns the converted <see cref="long"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
@@ -38,6 +20,24 @@ public static partial class YANNum
             return default;
         }
     }
+
+    /// <summary>
+    /// Parses the string representation of a long using the default format.
+    /// Returns the parsed <see cref="long"/> value, or <see langword="default"/> if the parsing fails.
+    /// </summary>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="long"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static long ToLong(this string str) => long.TryParse(str, out var num) ? num : default;
+
+    /// <summary>
+    /// Parses the string representation of a long using the default format.
+    /// Returns the parsed <see cref="long"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="long"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static long ToLong<T>(this string str, T dfltVal) where T : struct => long.TryParse(str, out var num) ? num : dfltVal.ToLong();
 
     /// <summary>
     /// Generates a random <see cref="long"/> value between <paramref name="min"/> and <paramref name="max"/>.

@@ -5,24 +5,6 @@ namespace YANLib;
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of an unsigned long integer using the default format.
-    /// Returns the parsed <see cref="ulong"/> value, or <see langword="default"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="ulong"/> value, or <see langword="default"/> if the parsing fails.</returns>
-    public static ulong ToUlong(this string str) => ulong.TryParse(str, out var num) ? num : default;
-
-    /// <summary>
-    /// Parses the string representation of an <see cref="ulong"/> using the default format.
-    /// Returns the parsed <see cref="ulong"/> value, or <paramref name="dfltVal"/> if the parsing fails.
-    /// </summary>
-    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="ulong"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static ulong ToUlong<T>(this string str, T dfltVal) where T : struct => ulong.TryParse(str, out var num) ? num : dfltVal.ToUlong();
-
-    /// <summary>
     /// Converts the specified value to an unsigned long integer.
     /// Returns the converted <see cref="ulong"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
@@ -40,6 +22,24 @@ public static partial class YANNum
             return default;
         }
     }
+
+    /// <summary>
+    /// Parses the string representation of an unsigned long integer using the default format.
+    /// Returns the parsed <see cref="ulong"/> value, or <see langword="default"/> if the parsing fails.
+    /// </summary>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="ulong"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static ulong ToUlong(this string str) => ulong.TryParse(str, out var num) ? num : default;
+
+    /// <summary>
+    /// Parses the string representation of an <see cref="ulong"/> using the default format.
+    /// Returns the parsed <see cref="ulong"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="ulong"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static ulong ToUlong<T>(this string str, T dfltVal) where T : struct => ulong.TryParse(str, out var num) ? num : dfltVal.ToUlong();
 
     /// <summary>
     /// Generates a random <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.

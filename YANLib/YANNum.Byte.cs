@@ -3,24 +3,6 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of a byte using the default format.
-    /// Returns the parsed <see cref="byte"/> value, or <see langword="default"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="byte"/> value, or <see langword="default"/> if the parsing fails.</returns>
-    public static byte ToByte(this string str) => byte.TryParse(str, out var num) ? num : default;
-
-    /// <summary>
-    /// Parses the string representation of a byte using the default format.
-    /// Returns the parsed <see cref="byte"/> value, or <paramref name="dfltVal"/> if the parsing fails.
-    /// </summary>
-    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="byte"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static byte ToByte<T>(this string str, T dfltVal) where T : struct => byte.TryParse(str, out var num) ? num : dfltVal.ToByte();
-
-    /// <summary>
     /// Converts the specified value to a byte.
     /// Returns the converted <see cref="byte"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
@@ -38,6 +20,24 @@ public static partial class YANNum
             return default;
         }
     }
+
+    /// <summary>
+    /// Parses the string representation of a byte using the default format.
+    /// Returns the parsed <see cref="byte"/> value, or <see langword="default"/> if the parsing fails.
+    /// </summary>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="byte"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static byte ToByte(this string str) => byte.TryParse(str, out var num) ? num : default;
+
+    /// <summary>
+    /// Parses the string representation of a byte using the default format.
+    /// Returns the parsed <see cref="byte"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="byte"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static byte ToByte<T>(this string str, T dfltVal) where T : struct => byte.TryParse(str, out var num) ? num : dfltVal.ToByte();
 
     /// <summary>
     /// Generates a random <see cref="byte"/> value between <paramref name="min"/> and <paramref name="max"/>.

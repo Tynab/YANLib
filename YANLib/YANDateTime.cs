@@ -87,8 +87,8 @@ public static partial class YANDateTime
         var diff = tzDst.ToInt() - tzSrc.ToInt();
         return diff switch
         {
-            < 0 when (dt - MinValue).TotalHours < Abs(diff) => dt,
-            > 0 when (MaxValue - dt).TotalHours < diff => dt,
+            < 0 when (dt - MinValue).TotalHours < Abs(diff) => default,
+            > 0 when (MaxValue - dt).TotalHours < diff => default,
             _ => dt.AddHours(diff)
         };
     }

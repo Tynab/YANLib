@@ -3,6 +3,25 @@
 public static partial class YANNum
 {
     /// <summary>
+    /// Converts the specified value to a double.
+    /// Returns the converted <see cref="double"/> value, or <see langword="default"/> if the conversion fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="double"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static double ToDouble<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return Convert.ToDouble(num);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Parses the string representation of a double using the default format.
     /// Returns the parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>

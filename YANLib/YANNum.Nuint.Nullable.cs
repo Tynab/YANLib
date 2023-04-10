@@ -3,6 +3,25 @@
 public static partial class YANNum
 {
     /// <summary>
+    /// Converts the specified value to a <see cref="nuint"/> (an unsigned integer type representing a pointer or a handle).
+    /// Returns the converted <see cref="nuint"/> value, or <see langword="default"/> if the conversion fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to be converted, which must be a value type.</typeparam>
+    /// <param name="num">The value to be converted.</param>
+    /// <returns>The converted <see cref="nuint"/> value, or <see langword="default"/> if the conversion fails.</returns>
+    public static nuint ToNuint<T>(this T? num) where T : struct
+    {
+        try
+        {
+            return new UIntPtr(Convert.ToUInt64(num));
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Parses the string representation of a <see cref="nuint"/> using the default format.
     /// Returns the parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>

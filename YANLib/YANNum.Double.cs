@@ -3,24 +3,6 @@
 public static partial class YANNum
 {
     /// <summary>
-    /// Parses the string representation of a double using the default format.
-    /// Returns the parsed <see cref="double"/> value, or <see langword="default"/> if the parsing fails.
-    /// </summary>
-    /// <param name="str">The string to be parsed.</param>
-    /// <returns>The parsed <see cref="double"/> value, or <see langword="default"/> if the parsing fails.</returns>
-    public static double ToDouble(this string str) => double.TryParse(str, out var num) ? num : default;
-
-    /// <summary>
-    /// Parses the string representation of a double using the default format.
-    /// Returns the parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.
-    /// </summary>
-    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
-    /// <param name="str">The string to be parsed.</param>
-    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
-    /// <returns>The parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static double ToDouble<T>(this string str, T dfltVal) where T : struct => double.TryParse(str, out var num) ? num : dfltVal.ToDouble();
-
-    /// <summary>
     /// Converts the specified value to a double.
     /// Returns the converted <see cref="double"/> value, or <see langword="default"/> if the conversion fails.
     /// </summary>
@@ -38,6 +20,24 @@ public static partial class YANNum
             return default;
         }
     }
+
+    /// <summary>
+    /// Parses the string representation of a double using the default format.
+    /// Returns the parsed <see cref="double"/> value, or <see langword="default"/> if the parsing fails.
+    /// </summary>
+    /// <param name="str">The string to be parsed.</param>
+    /// <returns>The parsed <see cref="double"/> value, or <see langword="default"/> if the parsing fails.</returns>
+    public static double ToDouble(this string str) => double.TryParse(str, out var num) ? num : default;
+
+    /// <summary>
+    /// Parses the string representation of a double using the default format.
+    /// Returns the parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.
+    /// </summary>
+    /// <typeparam name="T">The type of the default value to be returned, which must be a value type.</typeparam>
+    /// <param name="str">The string to be parsed.</param>
+    /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
+    /// <returns>The parsed <see cref="double"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
+    public static double ToDouble<T>(this string str, T dfltVal) where T : struct => double.TryParse(str, out var num) ? num : dfltVal.ToDouble();
 
     /// <summary>
     /// Generates a random <see cref="double"/> value between <paramref name="min"/> and <paramref name="max"/>.
