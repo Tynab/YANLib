@@ -24,27 +24,6 @@ public static partial class YANText
     public static bool IsNullOrEmpty(this IEnumerable<char> cs) => !cs.Any(c => c.HasValue());
 
     /// <summary>
-    /// Determines whether any of the specified characters in the collection is <see langword="null"/> or <see cref="char.MinValue"/>.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the collection is <see langword="null"/> or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this ICollection<char> cs) => !cs.Any(c => c.HasValue());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the list is <see langword="null"/> or <see cref="char.MinValue"/>.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the list is <see langword="null"/> or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this IList<char> cs) => !cs.Any(c => c.HasValue());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the set is <see langword="null"/> or <see cref="char.MinValue"/>.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the set is <see langword="null"/> or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this ISet<char> cs) => !cs.Any(c => c.HasValue());
-
-    /// <summary>
     /// Determines whether any of the specified characters in the read-only collection is <see langword="null"/> or <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
@@ -85,27 +64,6 @@ public static partial class YANText
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable collection is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
     public static bool IsNullOrWhiteSpace(this IEnumerable<char> cs) => !cs.Any(c => c.HasCharater());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the collection is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the collection is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this ICollection<char> cs) => !cs.Any(c => c.HasCharater());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the list is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the list is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IList<char> cs) => !cs.Any(c => c.HasCharater());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the set is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the set is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this ISet<char> cs) => !cs.Any(c => c.HasCharater());
 
     /// <summary>
     /// Determines whether any of the specified characters in the read-only collection is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
@@ -150,27 +108,6 @@ public static partial class YANText
     public static bool HasValue(this IEnumerable<char> cs) => !cs.Any(c => c.IsNullOrEmpty());
 
     /// <summary>
-    /// Determines whether any of the specified characters in the collection is not <see langword="null"/> and not <see cref="char.MinValue"/>.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the collection is not <see langword="null"/> and not <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool HasValue(this ICollection<char> cs) => !cs.Any(c => c.IsNullOrEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the list is not <see langword="null"/> and not <see cref="char.MinValue"/>.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the list is not <see langword="null"/> and not <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool HasValue(this IList<char> cs) => !cs.Any(c => c.IsNullOrEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the set is not <see langword="null"/> and not <see cref="char.MinValue"/>.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the set is not <see langword="null"/> and not <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool HasValue(this ISet<char> cs) => !cs.Any(c => c.IsNullOrEmpty());
-
-    /// <summary>
     /// Determines whether any of the specified characters in the read-only collection is not <see langword="null"/> and not <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
@@ -211,27 +148,6 @@ public static partial class YANText
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable collection is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space; otherwise, <see langword="false"/>.</returns>
     public static bool HasCharater(this IEnumerable<char> cs) => !cs.Any(c => c.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the collection is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the collection is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space; otherwise, <see langword="false"/>.</returns>
-    public static bool HasCharater(this ICollection<char> cs) => !cs.Any(c => c.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the list is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the list is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space; otherwise, <see langword="false"/>.</returns>
-    public static bool HasCharater(this IList<char> cs) => !cs.Any(c => c.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether any of the specified characters in the set is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if any of the characters in the set is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space; otherwise, <see langword="false"/>.</returns>
-    public static bool HasCharater(this ISet<char> cs) => !cs.Any(c => c.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the read-only collection is not <see langword="null"/> and not <see cref="char.MinValue"/> and not white space.

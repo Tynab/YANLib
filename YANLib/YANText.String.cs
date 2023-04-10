@@ -24,27 +24,6 @@ public static partial class YANText
     public static bool IsNullOrEmpty(this IEnumerable<string> strs) => !strs.Any(s => s.HasValue());
 
     /// <summary>
-    /// Determines whether any of the specified strings in the collection is <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the collection is <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this ICollection<string> strs) => !strs.Any(s => s.HasValue());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the list is <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the list is <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this IList<string> strs) => !strs.Any(s => s.HasValue());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the set is <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the set is <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this ISet<string> strs) => !strs.Any(s => s.HasValue());
-
-    /// <summary>
     /// Determines whether any of the specified strings in the read-only collection is <see langword="null"/> or <see cref="string.Empty"/>.
     /// </summary>
     /// <param name="strs">The strings to check.</param>
@@ -85,20 +64,6 @@ public static partial class YANText
     /// <param name="strs">The strings to check.</param>
     /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
     public static bool IsNullOrWhiteSpace(this IEnumerable<string> strs) => !strs.Any(s => s.HasCharater());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the collection is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the collection is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this ICollection<string> strs) => !strs.Any(s => s.HasCharater());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the set is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the set is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this ISet<string> strs) => !strs.Any(s => s.HasCharater());
 
     /// <summary>
     /// Determines whether any of the specified strings in the read-only collection is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
@@ -143,20 +108,6 @@ public static partial class YANText
     public static bool HasValue(this IEnumerable<string> strs) => !strs.Any(s => s.IsNullOrEmpty());
 
     /// <summary>
-    /// Determines whether any of the specified strings in the collection is not <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the collection is not <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool HasValue(this ICollection<string> strs) => !strs.Any(s => s.IsNullOrEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the set is not <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the set is not <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool HasValue(this ISet<string> strs) => !strs.Any(s => s.IsNullOrEmpty());
-
-    /// <summary>
     /// Determines whether any of the specified strings in the read-only collection is not <see langword="null"/> or <see cref="string.Empty"/>.
     /// </summary>
     /// <param name="strs">The strings to check.</param>
@@ -197,20 +148,6 @@ public static partial class YANText
     /// <param name="strs">The strings to check.</param>
     /// <returns><see langword="true"/> if all the strings in the enumerable are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
     public static bool HasCharater(this IEnumerable<string> strs) => !strs.Any(s => s.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether all the specified strings in the collection are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the collection are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
-    public static bool HasCharater(this ICollection<string> strs) => !strs.Any(s => s.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether all the specified strings in the set are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the set are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
-    public static bool HasCharater(this ISet<string> strs) => !strs.Any(s => s.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether all the specified strings in the read-only collection are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters.
