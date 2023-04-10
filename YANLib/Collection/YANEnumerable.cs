@@ -79,7 +79,7 @@ public static partial class YANEnumerable
             {
                 for (var i = 0; i < cnt; i++)
                 {
-                    T item = srcs[i];
+                    var item = srcs[i];
                     if (item != null)
                     {
                         yield return item;

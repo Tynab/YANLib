@@ -8,5 +8,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="float"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static float? ParseFloat(this string str) => float.TryParse(str, out var num) ? num : null;
+    public static float? ToFloat(this string str) => float.TryParse(str, out var num) ? num : null;
 }

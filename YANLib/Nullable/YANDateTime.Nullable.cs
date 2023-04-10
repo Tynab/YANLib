@@ -14,7 +14,7 @@ public static partial class YANDateTime
     /// <param name="fmt">The format of the string representation of the date and time.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="DateTime"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static DateTime? ParseDateTime(this string str, string fmt, DateTime? dfltVal) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : dfltVal;
+    public static DateTime? ToDateTime(this string str, string fmt, DateTime? dfltVal) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : dfltVal;
 
     /// <summary>
     /// Generates a random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -23,7 +23,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime? min, DateTime max) => min.HasValue ? RandomDateTime(min.Value, max) : null;
+    public static DateTime? GenRandomDateTime(DateTime? min, DateTime max) => min.HasValue ? GenRandomDateTime(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -32,7 +32,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime min, DateTime? max) => max.HasValue ? RandomDateTime(min, max.Value) : null;
+    public static DateTime? GenRandomDateTime(DateTime min, DateTime? max) => max.HasValue ? GenRandomDateTime(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -43,7 +43,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime? min, DateTime? max) => min.HasValue ? RandomDateTime(min.Value, max) : RandomDateTime(max);
+    public static DateTime? GenRandomDateTime(DateTime? min, DateTime? max) => min.HasValue ? GenRandomDateTime(min.Value, max) : GenRandomDateTime(max);
 
     /// <summary>
     /// Generates a random <see cref="DateTime"/> value between <see cref="MinValue"/> and <paramref name="max"/>.
@@ -51,7 +51,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A nullable <see cref="DateTime"/> value representing a random date between <see cref="MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime? max) => max.HasValue ? RandomDateTime(max.Value > Today ? Today : MinValue, max) : null;
+    public static DateTime? GenRandomDateTime(DateTime? max) => max.HasValue ? GenRandomDateTime(max.Value > Today ? Today : MinValue, max) : null;
 
     /// <summary>
     /// Returns the week of the year that the specified <see cref="DateTime"/> value falls in, according to the current culture's calendar, week rule, and first day of the week settings.

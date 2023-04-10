@@ -8,5 +8,5 @@ public static partial class YANNum
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="ulong"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static ulong? ParseUlong(this string str) => ulong.TryParse(str, out var num) ? num : null;
+    public static ulong? ToUlong(this string str) => ulong.TryParse(str, out var num) ? num : null;
 }

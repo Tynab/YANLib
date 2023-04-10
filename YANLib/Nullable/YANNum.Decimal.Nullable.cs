@@ -9,7 +9,7 @@ public partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="decimal"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static decimal? ParseDecimal(this string str, decimal? dfltVal) => decimal.TryParse(str, out var num) ? num : dfltVal;
+    public static decimal? ToDecimal(this string str, decimal? dfltVal) => decimal.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
     /// Generates a random nullable <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -18,7 +18,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="decimal"/> value.</param>
     /// <param name="max">The maximum <see cref="decimal"/> value.</param>
     /// <returns>A random nullable <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static decimal? RandomNumberDecimal(decimal? min, decimal max) => min.HasValue ? YANLib.YANNum.GenRandomDecimal(min.Value, max) : null;
+    public static decimal? GenRandomDecimal(decimal? min, decimal max) => min.HasValue ? YANLib.YANNum.GenRandomDecimal(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -27,7 +27,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="decimal"/> value.</param>
     /// <param name="max">The maximum <see cref="decimal"/> value.</param>
     /// <returns>A random nullable <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static decimal? RandomNumberDecimal(decimal min, decimal? max) => max.HasValue ? YANLib.YANNum.GenRandomDecimal(min, max.Value) : null;
+    public static decimal? GenRandomDecimal(decimal min, decimal? max) => max.HasValue ? YANLib.YANNum.GenRandomDecimal(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -38,7 +38,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="decimal"/> value.</param>
     /// <param name="max">The maximum <see cref="decimal"/> value.</param>
     /// <returns>A random <see cref="decimal"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static decimal? RandomNumberDecimal(decimal? min, decimal? max) => min.HasValue ? YANLib.YANNum.GenRandomDecimal(min.Value, max) : null;
+    public static decimal? GenRandomDecimal(decimal? min, decimal? max) => min.HasValue ? YANLib.YANNum.GenRandomDecimal(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="decimal"/> value between <see cref="decimal.MinValue"/> and <paramref name="max"/>.
@@ -46,5 +46,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="max">The maximum <see cref="decimal"/> value.</param>
     /// <returns>A nullable <see cref="decimal"/> value representing a random number between <see cref="decimal.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static decimal? RandomNumberDecimal(decimal? max) => max.HasValue ? YANLib.YANNum.GenRandomDecimal(decimal.MinValue, max.Value) : null;
+    public static decimal? GenRandomDecimal(decimal? max) => max.HasValue ? YANLib.YANNum.GenRandomDecimal(decimal.MinValue, max.Value) : null;
 }

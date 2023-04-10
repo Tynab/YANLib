@@ -8,5 +8,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="decimal"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static decimal? ParseDecimal(this string str) => decimal.TryParse(str, out var num) ? num : null;
+    public static decimal? ToDecimal(this string str) => decimal.TryParse(str, out var num) ? num : null;
 }

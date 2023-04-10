@@ -45,9 +45,9 @@ public static partial class YANList
             if (t.IsClass || GetUnderlyingType(t) != null)
             {
                 var result = new List<T>(srcs.Count);
-                for (int i = 0; i < srcs.Count; i++)
+                for (var i = 0; i < srcs.Count; i++)
                 {
-                    T item = srcs[i];
+                    var item = srcs[i];
                     if (item != null)
                     {
                         result.Add(item);

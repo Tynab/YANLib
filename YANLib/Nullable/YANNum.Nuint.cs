@@ -8,5 +8,5 @@ public static partial class YANNum
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="nuint"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static nuint? ParseNuint(this string str) => nuint.TryParse(str, out var num) ? num : null;
+    public static nuint? ToNuint(this string str) => nuint.TryParse(str, out var num) ? num : null;
 }

@@ -9,7 +9,7 @@ public partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="short"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static short? ParseShort(this string str, short? dfltVal) => short.TryParse(str, out var num) ? num : dfltVal;
+    public static short? ToShort(this string str, short? dfltVal) => short.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
     /// Generates a random nullable <see cref="short"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -18,7 +18,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="short"/> value.</param>
     /// <param name="max">The maximum <see cref="short"/> value.</param>
     /// <returns>A random nullable <see cref="short"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static short? RandomNumberShort(short? min, short max) => min.HasValue ? YANLib.YANNum.GenRandomShort(min.Value, max) : null;
+    public static short? GenRandomShort(short? min, short max) => min.HasValue ? YANLib.YANNum.GenRandomShort(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="short"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -27,7 +27,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="short"/> value.</param>
     /// <param name="max">The maximum <see cref="short"/> value.</param>
     /// <returns>A random nullable <see cref="short"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static short? RandomNumberShort(short min, short? max) => max.HasValue ? YANLib.YANNum.GenRandomShort(min, max.Value) : null;
+    public static short? GenRandomShort(short min, short? max) => max.HasValue ? YANLib.YANNum.GenRandomShort(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random <see cref="short"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -38,7 +38,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="short"/> value.</param>
     /// <param name="max">The maximum <see cref="short"/> value.</param>
     /// <returns>A random <see cref="short"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static short? RandomNumberShort(short? min, short? max) => min.HasValue ? YANLib.YANNum.GenRandomShort(min.Value, max) : null;
+    public static short? GenRandomShort(short? min, short? max) => min.HasValue ? YANLib.YANNum.GenRandomShort(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="short"/> value between <see cref="short.MinValue"/> and <paramref name="max"/>.
@@ -46,5 +46,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="max">The maximum <see cref="short"/> value.</param>
     /// <returns>A nullable <see cref="short"/> value representing a random number between <see cref="short.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static short? RandomNumberShort(short? max) => max.HasValue ? YANLib.YANNum.GenRandomShort(short.MinValue, max.Value) : null;
+    public static short? GenRandomShort(short? max) => max.HasValue ? YANLib.YANNum.GenRandomShort(short.MinValue, max.Value) : null;
 }

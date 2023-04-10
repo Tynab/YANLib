@@ -8,5 +8,5 @@ public static partial class YANNum
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="ushort"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static ushort? ParseUshort(this string str) => ushort.TryParse(str, out var num) ? num : null;
+    public static ushort? ToUshort(this string str) => ushort.TryParse(str, out var num) ? num : null;
 }

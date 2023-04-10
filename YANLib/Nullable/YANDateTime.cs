@@ -14,7 +14,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static DateTime? ParseDateTime(this string str) => TryParse(str, out var dt) ? dt : null;
+    public static DateTime? ToDateTime(this string str) => TryParse(str, out var dt) ? dt : null;
 
     /// <summary>
     /// Parses the string representation of a date and time using <paramref name="fmt"/>.
@@ -23,7 +23,7 @@ public static partial class YANDateTime
     /// <param name="str">The string to be parsed.</param>
     /// <param name="fmt">The format of the string representation of the date and time.</param>
     /// <returns>The parsed <see cref="DateTime"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static DateTime? ParseDateTime(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : null;
+    public static DateTime? ToDateTime(this string str, string fmt) => TryParseExact(str, fmt, InvariantCulture, None, out var dt) ? dt : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -32,7 +32,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value.</param>
     /// <returns>A random nullable <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static DateTime? RandomDateTime(DateTime min, DateTime max) => min > max ? null : min.AddTicks(GenRandomLong((max - min).Ticks));
+    public static DateTime? GenRandomDateTime(DateTime min, DateTime max) => min > max ? null : min.AddTicks(GenRandomLong((max - min).Ticks));
 
     /// <summary>
     /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone.

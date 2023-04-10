@@ -9,7 +9,7 @@ public partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="int"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static int? ParseInt(this string str, int? dfltVal) => int.TryParse(str, out var num) ? num : dfltVal;
+    public static int? ToInt(this string str, int? dfltVal) => int.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
     /// Generates a random nullable <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -18,7 +18,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="int"/> value.</param>
     /// <param name="max">The maximum <see cref="int"/> value.</param>
     /// <returns>A random nullable <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static int? RandomNumberInt(int? min, int max) => min.HasValue ? YANLib.YANNum.GenRandomInt(min.Value, max) : null;
+    public static int? GenRandomInt(int? min, int max) => min.HasValue ? YANLib.YANNum.GenRandomInt(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -27,7 +27,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="int"/> value.</param>
     /// <param name="max">The maximum <see cref="int"/> value.</param>
     /// <returns>A random nullable <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static int? RandomNumberInt(int min, int? max) => max.HasValue ? YANLib.YANNum.GenRandomInt(min, max.Value) : null;
+    public static int? GenRandomInt(int min, int? max) => max.HasValue ? YANLib.YANNum.GenRandomInt(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -38,7 +38,7 @@ public partial class YANNum
     /// <param name="min">The minimum <see cref="int"/> value.</param>
     /// <param name="max">The maximum <see cref="int"/> value.</param>
     /// <returns>A random <see cref="int"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static int? RandomNumberInt(int? min, int? max) => min.HasValue ? YANLib.YANNum.GenRandomInt(min.Value, max) : null;
+    public static int? GenRandomInt(int? min, int? max) => min.HasValue ? YANLib.YANNum.GenRandomInt(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="int"/> value between <see cref="int.MinValue"/> and <paramref name="max"/>.
@@ -46,5 +46,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="max">The maximum <see cref="int"/> value.</param>
     /// <returns>A nullable <see cref="int"/> value representing a random number between <see cref="int.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static int? RandomNumberInt(int? max) => max.HasValue ? YANLib.YANNum.GenRandomInt(int.MinValue, max.Value) : null;
+    public static int? GenRandomInt(int? max) => max.HasValue ? YANLib.YANNum.GenRandomInt(int.MinValue, max.Value) : null;
 }

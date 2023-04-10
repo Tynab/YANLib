@@ -9,7 +9,7 @@ public static partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="ulong"/> value, or the default value <paramref name="dfltVal"/> if the parsing fails.</returns>
-    public static ulong? ParseUlong(this string str, ulong? dfltVal) => ulong.TryParse(str, out var num) ? num : dfltVal;
+    public static ulong? ToUlong(this string str, ulong? dfltVal) => ulong.TryParse(str, out var num) ? num : dfltVal;
 
     /// <summary>
     /// Generates a random nullable <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -18,7 +18,7 @@ public static partial class YANNum
     /// <param name="min">The minimum <see cref="ulong"/> value.</param>
     /// <param name="max">The maximum <see cref="ulong"/> value.</param>
     /// <returns>A random nullable <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="min"/> is greater than <paramref name="max"/> or <paramref name="min"/> is <see langword="null"/>.</returns>
-    public static ulong? RandomNumberUlong(ulong? min, ulong max) => min.HasValue ? YANLib.YANNum.GenRandomUlong(min.Value, max) : null;
+    public static ulong? GenRandomUlong(ulong? min, ulong max) => min.HasValue ? YANLib.YANNum.GenRandomUlong(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -27,7 +27,7 @@ public static partial class YANNum
     /// <param name="min">The minimum <see cref="ulong"/> value.</param>
     /// <param name="max">The maximum <see cref="ulong"/> value.</param>
     /// <returns>A random nullable <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static ulong? RandomNumberUlong(ulong min, ulong? max) => max.HasValue ? YANLib.YANNum.GenRandomUlong(min, max.Value) : null;
+    public static ulong? GenRandomUlong(ulong min, ulong? max) => max.HasValue ? YANLib.YANNum.GenRandomUlong(min, max.Value) : null;
 
     /// <summary>
     /// Generates a random nullable <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -38,7 +38,7 @@ public static partial class YANNum
     /// <param name="min">The minimum <see cref="ulong"/> value.</param>
     /// <param name="max">The maximum <see cref="ulong"/> value.</param>
     /// <returns>A random nullable <see cref="ulong"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static ulong? RandomNumberUlong(ulong? min, ulong? max) => min.HasValue ? YANLib.YANNum.GenRandomUlong(min.Value, max) : null;
+    public static ulong? GenRandomUlong(ulong? min, ulong? max) => min.HasValue ? YANLib.YANNum.GenRandomUlong(min.Value, max) : null;
 
     /// <summary>
     /// Generates a random <see cref="ulong"/> value between <see cref="ulong.MinValue"/> and <paramref name="max"/>.
@@ -46,5 +46,5 @@ public static partial class YANNum
     /// </summary>
     /// <param name="max">The maximum <see cref="ulong"/> value.</param>
     /// <returns>A nullable <see cref="ulong"/> value representing a random number between <see cref="ulong.MinValue"/> and <paramref name="max"/>, or <see langword="null"/> if <paramref name="max"/> is <see langword="null"/>.</returns>
-    public static ulong? RandomNumberUlong(ulong? max) => max.HasValue ? YANLib.YANNum.GenRandomUlong(ulong.MinValue, max.Value) : null;
+    public static ulong? GenRandomUlong(ulong? max) => max.HasValue ? YANLib.YANNum.GenRandomUlong(ulong.MinValue, max.Value) : null;
 }

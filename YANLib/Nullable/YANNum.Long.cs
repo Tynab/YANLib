@@ -8,5 +8,5 @@ public partial class YANNum
     /// </summary>
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="long"/> value, or <see langword="null"/> if the parsing fails.</returns>
-    public static long? ParseLong(this string str) => long.TryParse(str, out var num) ? num : null;
+    public static long? ToLong(this string str) => long.TryParse(str, out var num) ? num : null;
 }
