@@ -26,7 +26,7 @@ public static partial class YANProcess
     /// </summary>
     /// <param name="names">The names of the processes to kill.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public static async Task KillAllProcessesByNames(params string[] names) => await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
+    public static async Task KillAllProcessesByName(params string[] names) => await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
     {
         if (!p.CloseMainWindow())
         {

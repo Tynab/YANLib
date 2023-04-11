@@ -91,7 +91,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to check.</param>
     /// <returns><see langword="true"/> if the character is not the null character (<see cref="char.MinValue"/>); otherwise, <see langword="false"/>.</returns>
-    public static bool HasValue(this char c) => c != char.MinValue;
+    public static bool HasValue(this char c) => c is not char.MinValue;
 
     /// <summary>
     /// Determines whether any of the specified characters in the array is not <see langword="null"/> and not <see cref="char.MinValue"/>.
