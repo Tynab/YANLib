@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using YANLib.Dtos;
 using YANLib.Services;
@@ -17,13 +18,13 @@ public class YANJsonController : YANLibController
     #endregion
 
     #region Methods
-    [HttpPost("serialize")]
-    public async ValueTask<IActionResult> Serialize([FromBody] JsonDto request) => Ok(await _yanJsonService.Serialize(request));
+    [HttpPost("serializes")]
+    public async ValueTask<IActionResult> Serialize([FromBody] List<JsonTestDto> request) => Ok(await _yanJsonService.Serializes(request));
 
-    [HttpPost("serialize-camel")]
-    public async ValueTask<IActionResult> SerializeCamel([FromBody] JsonDto request) => Ok(await _yanJsonService.SerializeCamel(request));
+    [HttpPost("camel-serializes")]
+    public async ValueTask<IActionResult> SerializeCamel([FromBody] List<JsonTestDto> request) => Ok(await _yanJsonService.CamelSerializes(request));
 
-    [HttpGet("deserialize")]
-    public async ValueTask<IActionResult> Deserialize(byte quantity = 1) => Ok(await _yanJsonService.Deserialize(quantity));
+    [HttpGet("deserializes")]
+    public async ValueTask<IActionResult> Deserialize(byte quantity = 1) => Ok(await _yanJsonService.Deserializes(quantity));
     #endregion
 }

@@ -7,7 +7,7 @@ namespace YANLib.Services;
 
 public interface IYANJsonService : IApplicationService
 {
-    public ValueTask<string> Serialize(JsonDto request);
-    public ValueTask<string> SerializeCamel(JsonDto request);
-    public ValueTask<List<JsonDto>> Deserialize(byte quantity);
+    public ValueTask<string> Serializes(List<JsonTestDto> requests);
+    public ValueTask<string> CamelSerializes(List<JsonTestDto> requests);
+    public ValueTask<List<JsonTestDto>> Deserializes(byte quantity);
 }

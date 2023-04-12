@@ -64,7 +64,7 @@ public static partial class YANText
             {
                 if (!isWhtSp)
                 {
-                    _ = sb.Append(' ');
+                    _ = sb.Append(str[i]);
                     isWhtSp = true;
                 }
             }

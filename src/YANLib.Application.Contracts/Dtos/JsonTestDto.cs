@@ -2,7 +2,7 @@
 
 namespace YANLib.Dtos;
 
-public class JsonDto
+public class JsonTestDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

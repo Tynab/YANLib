@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using static System.Activator;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib;
@@ -71,6 +70,121 @@ public static partial class YANModel
     }
 
     /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1 tzSrc, T2 tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Length <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < mdls.Length; i++)
+        {
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || !mdls.Any())
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < mdls.Count; i++)
+        {
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
     /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="null"/>.
     /// </summary>
@@ -132,6 +246,121 @@ public static partial class YANModel
             }
         }
         return mdl;
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1? tzSrc, T2 tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Length <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < mdls.Length; i++)
+        {
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || !mdls.Any())
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < mdls.Count; i++)
+        {
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
     }
 
     /// <summary>
@@ -199,6 +428,121 @@ public static partial class YANModel
     }
 
     /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1 tzSrc, T2? tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Length <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < mdls.Length; i++)
+        {
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || !mdls.Any())
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < mdls.Count; i++)
+        {
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
+    {
+        if (mdls is null || mdls.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var mdl in mdls)
+        {
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+        }
+    }
+
+    /// <summary>
     /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="null"/>.
     /// </summary>
@@ -263,598 +607,117 @@ public static partial class YANModel
     }
 
     /// <summary>
-    /// Checks whether all properties of the specified object have non-default values, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
     /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <returns><see langword="true"/> if all properties of the specified object have non-default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T mdl) where T : class
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1? tzSrc, T2? tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
     {
-        if (mdl is null)
+        if (mdls is null || mdls.Length <= 0)
         {
-            return false;
+            yield break;
         }
-        foreach (var prop in mdl.GetType().GetProperties())
+        for (var i = 0; i < mdls.Length; i++)
         {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
         }
-        return true;
     }
 
     /// <summary>
-    /// Checks whether all properties of the specified object have default values, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
     /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <returns><see langword="true"/> if all properties of the specified object have default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl) where T : class
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdl is null)
+        if (mdls is null || !mdls.Any())
         {
-            return false;
+            yield break;
         }
-        foreach (var prop in typeof(T).GetProperties())
+        foreach (var mdl in mdls)
         {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default(T)))
-            {
-                return false;
-            }
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
         }
-        return true;
     }
 
     /// <summary>
-    /// Checks whether any property of the specified object has a value other than the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
     /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <returns><see langword="true"/> if any property of the specified object has a value other than the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl) where T : class
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdl is null)
+        if (mdls is null || mdls.Count <= 0)
         {
-            return false;
+            yield break;
         }
-        foreach (var prop in mdl.GetType().GetProperties())
+        foreach (var mdl in mdls)
         {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
         }
-        return false;
     }
 
     /// <summary>
-    /// Checks whether any property of the specified object has a value equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
     /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <returns><see langword="true"/> if any property of the specified object has a value equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T mdl) where T : class
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdl is null)
+        if (mdls is null || mdls.Count <= 0)
         {
-            return false;
+            yield break;
         }
-        foreach (var prop in mdl.GetType().GetProperties())
+        for (var i = 0; i < mdls.Count; i++)
         {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
+            yield return mdls[i].ChangeTimeZoneAllProperties(tzSrc, tzDst);
         }
-        return false;
     }
 
     /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
+    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
+    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
     /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T mdl, params string[] names) where T : class
+    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
+    /// <typeparam name="T1">The type of the source time zone.</typeparam>
+    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="tzSrc">The source time zone.</param>
+    /// <param name="tzDst">The destination time zone.</param>
+    /// <param name="mdls">The nullable objects to change the time zone.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
+    public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdl is null || names.IsNullOrWhiteSpace())
+        if (mdls is null || mdls.Count <= 0)
         {
-            return false;
+            yield break;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var mdl in mdls)
         {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
+            yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
         }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl, params string[] names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl, params string[] names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T mdl, params string[] names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T mdl, IEnumerable<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl, IEnumerable<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl, IEnumerable<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T mdl, IEnumerable<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T mdl, IReadOnlyCollection<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T mdl, IReadOnlyList<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether all properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="true"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if all properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are not equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Checks whether any properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="false"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to check.</typeparam>
-    /// <param name="mdl">The object to check.</param>
-    /// <param name="names">The names of the properties to check.</param>
-    /// <returns><see langword="true"/> if any properties with the specified names of the specified object have values that are equal to the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T mdl, IReadOnlySet<string> names) where T : class
-    {
-        if (mdl is null || names.IsNullOrWhiteSpace())
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
-        {
-            var type = prop.PropertyType;
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

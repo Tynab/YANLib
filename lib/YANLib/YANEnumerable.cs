@@ -29,11 +29,13 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-null values from the given array <paramref name="srcs"/>.
+    /// Removes <see langword="null"/> values from the specified objects and returns an <see cref="IEnumerable{T}"/> containing the non-null values.
+    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and excludes them.
+    /// If <typeparamref name="T"/> is a non-nullable value type, the method returns all objects in the input enumerable without modification.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the array.</typeparam>
-    /// <param name="srcs">The array to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-null values from <paramref name="srcs"/>.</returns>
+    /// <typeparam name="T">The type of the objects to clean.</typeparam>
+    /// <param name="srcs">The objects to clean.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
     public static IEnumerable<T> Clean<T>(params T[] srcs)
     {
         if (srcs is null || srcs.Length <= 0)
@@ -63,11 +65,13 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-null values from the given <paramref name="srcs"/> <see cref="IEnumerable{T}"/>.
+    /// Removes <see langword="null"/> values from the specified objects and returns an <see cref="IEnumerable{T}"/> containing the non-null values.
+    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and excludes them.
+    /// If <typeparamref name="T"/> is a non-nullable value type, the method returns all objects in the input enumerable without modification.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the <paramref name="srcs"/> <see cref="IEnumerable{T}"/>.</typeparam>
-    /// <param name="srcs">The <see cref="IEnumerable{T}"/> to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-null values from <paramref name="srcs"/>.</returns>
+    /// <typeparam name="T">The type of the objects to clean.</typeparam>
+    /// <param name="srcs">The objects to clean.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
     public static IEnumerable<T> Clean<T>(this IEnumerable<T> srcs)
     {
         if (srcs is null || !srcs.Any())
@@ -95,12 +99,14 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-null values from the given <paramref name="srcs"/> <see cref="ICollection{T}"/>.
+    /// Removes <see langword="null"/> values from the specified objects and returns an <see cref="IEnumerable{T}"/> containing the non-null values.
+    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and excludes them.
+    /// If <typeparamref name="T"/> is a non-nullable value type, the method returns all objects in the input enumerable without modification.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the <paramref name="srcs"/> <see cref="ICollection{T}"/>.</typeparam>
-    /// <param name="srcs">The <see cref="ICollection{T}"/> to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-null values from <paramref name="srcs"/>.</returns>
-    public static IEnumerable<T> Clean<T>(this ICollection<T> srcs)
+    /// <typeparam name="T">The type of the objects to clean.</typeparam>
+    /// <param name="srcs">The objects to clean.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
+    public static IEnumerable<T> Clean<T>(this IReadOnlyCollection<T> srcs)
     {
         if (srcs is null || srcs.Count <= 0)
         {
@@ -127,12 +133,14 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-null values from the given <paramref name="srcs"/> <see cref="IList{T}"/>.
+    /// Removes <see langword="null"/> values from the specified objects and returns an <see cref="IEnumerable{T}"/> containing the non-null values.
+    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and excludes them.
+    /// If <typeparamref name="T"/> is a non-nullable value type, the method returns all objects in the input enumerable without modification.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the <paramref name="srcs"/> <see cref="IList{T}"/>.</typeparam>
-    /// <param name="srcs">The <see cref="IList{T}"/> to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-null values from <paramref name="srcs"/>.</returns>
-    public static IEnumerable<T> Clean<T>(this IList<T> srcs)
+    /// <typeparam name="T">The type of the objects to clean.</typeparam>
+    /// <param name="srcs">The objects to clean.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
+    public static IEnumerable<T> Clean<T>(this IReadOnlyList<T> srcs)
     {
         if (srcs is null || srcs.Count <= 0)
         {
@@ -161,12 +169,14 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-null values from the given <paramref name="srcs"/> <see cref="ISet{T}"/>.
+    /// Removes <see langword="null"/> values from the specified objects and returns an <see cref="IEnumerable{T}"/> containing the non-null values.
+    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and excludes them.
+    /// If <typeparamref name="T"/> is a non-nullable value type, the method returns all objects in the input enumerable without modification.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the <paramref name="srcs"/> <see cref="ISet{T}"/>.</typeparam>
-    /// <param name="srcs">The <see cref="ISet{T}"/> to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-null values from <paramref name="srcs"/>.</returns>
-    public static IEnumerable<T> Clean<T>(this ISet<T> srcs)
+    /// <typeparam name="T">The type of the objects to clean.</typeparam>
+    /// <param name="srcs">The objects to clean.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
+    public static IEnumerable<T> Clean<T>(this IReadOnlySet<T> srcs)
     {
         if (srcs is null || srcs.Count <= 0)
         {
@@ -193,10 +203,10 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-empty values from the given <paramref name="srcs"/> array of strings.
+    /// Removes <see langword="null"/> values and empty strings from the specified enumerable of strings, and returns an <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.
     /// </summary>
-    /// <param name="srcs">The array of strings to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-empty values from <paramref name="srcs"/>.</returns>
+    /// <param name="srcs">The enumerable of strings to clean.</param>
+    /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
     public static IEnumerable<string> Clean(params string[] srcs)
     {
         if (srcs is null || srcs.Length <= 0)
@@ -215,10 +225,10 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-empty values from the given <paramref name="srcs"/> <see cref="IEnumerable{T}"/> of strings.
+    /// Removes <see langword="null"/> values and empty strings from the specified enumerable of strings, and returns an <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.
     /// </summary>
-    /// <param name="srcs">The <see cref="IEnumerable{T}"/> of strings to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-empty values from <paramref name="srcs"/>.</returns>
+    /// <param name="srcs">The enumerable of strings to clean.</param>
+    /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
     public static IEnumerable<string> Clean(this IEnumerable<string> srcs)
     {
         if (srcs is null || !srcs.Any())
@@ -235,11 +245,11 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-empty values from the given <paramref name="srcs"/> <see cref="ICollection{T}"/> of strings.
+    /// Removes <see langword="null"/> values and empty strings from the specified enumerable of strings, and returns an <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.
     /// </summary>
-    /// <param name="srcs">The <see cref="ICollection{T}"/> of strings to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-empty values from <paramref name="srcs"/>.</returns>
-    public static IEnumerable<string> Clean(this ICollection<string> srcs)
+    /// <param name="srcs">The enumerable of strings to clean.</param>
+    /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
+    public static IEnumerable<string> Clean(this IReadOnlyCollection<string> srcs)
     {
         if (srcs is null || srcs.Count <= 0)
         {
@@ -255,11 +265,11 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-empty values from the given <paramref name="srcs"/> <see cref="IList{T}"/> of strings.
+    /// Removes <see langword="null"/> values and empty strings from the specified enumerable of strings, and returns an <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.
     /// </summary>
-    /// <param name="srcs">The <see cref="IList{T}"/> of strings to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-empty values from <paramref name="srcs"/>.</returns>
-    public static IEnumerable<string> Clean(this IList<string> srcs)
+    /// <param name="srcs">The enumerable of strings to clean.</param>
+    /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
+    public static IEnumerable<string> Clean(this IReadOnlyList<string> srcs)
     {
         if (srcs is null || srcs.Count <= 0)
         {
@@ -277,11 +287,11 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Returns a new <see cref="IEnumerable{T}"/> containing only the non-empty values from the given <paramref name="srcs"/> <see cref="ISet{T}"/> of strings.
+    /// Removes <see langword="null"/> values and empty strings from the specified enumerable of strings, and returns an <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.
     /// </summary>
-    /// <param name="srcs">The <see cref="ISet{T}"/> of strings to be cleaned.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing only the non-empty values from <paramref name="srcs"/>.</returns>
-    public static IEnumerable<string> Clean(this ISet<string> srcs)
+    /// <param name="srcs">The enumerable of strings to clean.</param>
+    /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
+    public static IEnumerable<string> Clean(this IReadOnlySet<string> srcs)
     {
         if (srcs is null || srcs.Count <= 0)
         {
