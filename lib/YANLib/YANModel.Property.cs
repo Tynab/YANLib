@@ -249,22 +249,11 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if any property of the specified object has a value other than the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl) where T : class
+    public static bool AnyPropertiesNotDefault<T>(this T mdl) where T : class => mdl.GetType().GetProperties().Any(prop =>
     {
-        if (mdl is null)
-        {
-            return false;
-        }
-        foreach (var prop in mdl.GetType().GetProperties())
-        {
-            var type = prop.PropertyType;
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+        var type = prop.PropertyType;
+        return !EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default);
+    });
 
     /// <summary>
     /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists.

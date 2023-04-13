@@ -475,7 +475,7 @@ public static partial class YANJson
         {
             rslt = default;
         }
-        if (rslt == null || !rslt.AnyPropertiesNotDefault())
+        if (rslt is null || !rslt.AnyPropertiesNotDefault())
         {
             try
             {
