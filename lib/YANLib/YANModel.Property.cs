@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using static System.Activator;
+﻿using static System.Activator;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib;
@@ -19,7 +18,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties())
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -132,11 +131,22 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if all properties of the specified object have default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T mdl) where T : class => !mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Any(prop =>
+    public static bool AllPropertiesDefault<T>(this T mdl) where T : class
     {
-        var type = prop.PropertyType;
-        return !EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default);
-    });
+        if (mdl is null)
+        {
+            return false;
+        }
+        foreach (var prop in typeof(T).GetProperties(Public | Instance | DeclaredOnly))
+        {
+            var type = prop.PropertyType;
+            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default(T)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /// <summary>
     /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists.
@@ -240,11 +250,22 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the object to check.</typeparam>
     /// <param name="mdl">The object to check.</param>
     /// <returns><see langword="true"/> if any property of the specified object has a value other than the default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T mdl) where T : class => mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Any(prop =>
+    public static bool AnyPropertiesNotDefault<T>(this T mdl) where T : class
     {
-        var type = prop.PropertyType;
-        return !EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default);
-    });
+        if (mdl is null)
+        {
+            return false;
+        }
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
+        {
+            var type = prop.PropertyType;
+            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /// <summary>
     /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists.
@@ -354,7 +375,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties())
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -474,7 +495,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -579,7 +600,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -684,7 +705,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -789,7 +810,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -894,7 +915,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1019,7 +1040,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1144,7 +1165,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1269,7 +1290,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1394,7 +1415,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1519,7 +1540,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1644,7 +1665,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1769,7 +1790,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -1894,7 +1915,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2019,7 +2040,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2144,7 +2165,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2269,7 +2290,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2394,7 +2415,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2519,7 +2540,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2644,7 +2665,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
@@ -2769,7 +2790,7 @@ public static partial class YANModel
         {
             return false;
         }
-        foreach (var prop in mdl.GetType().GetProperties().Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))

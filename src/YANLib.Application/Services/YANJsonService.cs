@@ -13,7 +13,7 @@ namespace YANLib.Services;
 public class YANJsonService : YANLibAppService, IYANJsonService
 {
     // Serialize
-    public async ValueTask<string> Serializes(List<JsonTestDto> requests) => await FromResult(requests.Serialize());
+    public async ValueTask<string> Serializes(List<JsonTestDto> requests) => await FromResult(requests.SerializePascal());
 
     // Serialize camel case
     public async ValueTask<string> CamelSerializes(List<JsonTestDto> requests) => await FromResult(requests.SerializeCamel());
@@ -26,20 +26,28 @@ public class YANJsonService : YANLibAppService, IYANJsonService
     {
         for (var i = 0; i < quantity; i++)
         {
-            yield return new JsonTestDto
-            {
-                Id = Guid.NewGuid(),
-                Name = $"Nguyễn Văn {GenerateRandomCharacter().ToUpper()}",
-                Income = GenerateRandomUshort(),
-                IsRisk = GenerateRandomBool()
-            }.SerializeCamel();
+            yield return i % 2 == 0
+                ? new JsonTestDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Nguyễn Văn {GenerateRandomCharacter().ToUpper()}",
+                    Income = GenerateRandomUshort(),
+                    IsRisk = GenerateRandomBool()
+                }.SerializeCamel()
+                : new JsonTestDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Nguyễn Văn {GenerateRandomCharacter().ToUpper()}",
+                    Income = GenerateRandomUshort(),
+                    IsRisk = GenerateRandomBool()
+                }.SerializePascal();
         }
     }
 
     // Modified data
     private static IEnumerable<JsonTestDto> ModData(byte quantity)
     {
-        foreach (var dto in GenData(quantity).DeserializeStandard<JsonTestDto>())
+        foreach (var dto in GenData(quantity).Deserialize<JsonTestDto>())
         {
             dto.Income *= 1000;
             yield return dto;
