@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  yanlib.httpapi.host:
+    image: ${DOCKER_REGISTRY-}yanlibhttpapihost
+    build:
+      context: .
+      dockerfile: host/YANLib.HttpApi.Host/Dockerfile
