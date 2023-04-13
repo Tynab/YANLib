@@ -338,8 +338,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing random DateTime values between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime min, DateTime max, T size) where T : struct
     {
-        var cnt = size.ToUlong();
-        for (var i = 0ul; i < cnt; i++)
+        for (var i = 0ul; i < size.ToUlong(); i++)
         {
             yield return GenerateRandomDateTime(min, max);
         }
@@ -360,8 +359,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing random DateTime values between <see cref="DateTime.MinValue"/> and <see cref="DateTime.MaxValue"/>.</returns>
     public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(T size) where T : struct
     {
-        var cnt = size.ToUlong();
-        for (var i = 0ul; i < cnt; i++)
+        for (var i = 0ul; i < size.ToUlong(); i++)
         {
             yield return GenerateRandomDateTime();
         }
@@ -385,8 +383,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing random DateTime values between <see cref="DateTime.MinValue"/> and <paramref name="max"/>.</returns>
     public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime max, T size) where T : struct
     {
-        var cnt = size.ToUlong();
-        for (var i = 0ul; i < cnt; i++)
+        for (var i = 0ul; i < size.ToUlong(); i++)
         {
             yield return GenerateRandomDateTime(max);
         }
