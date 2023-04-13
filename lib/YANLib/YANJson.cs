@@ -11,7 +11,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the object to be serialized. Must be a reference type.</typeparam>
     /// <param name="mdl">The object to be serialized.</param>
     /// <returns>A JSON string representing the serialized object.</returns>
-    public static string SerializePascal<T>(this T mdl) where T : class => JsonSerializer.Serialize(mdl);
+    public static string Serialize<T>(this T mdl) where T : class => JsonSerializer.Serialize(mdl);
 
     /// <summary>
     /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.
@@ -20,7 +20,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be serialized. Must be a reference type.</typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> SerializePascal<T>(params T[] mdls) where T : class
+    public static IEnumerable<string> Serialize<T>(params T[] mdls) where T : class
     {
         if (mdls is null || mdls.Length <= 0)
         {
@@ -28,7 +28,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < mdls.Length; i++)
         {
-            yield return mdls[i].SerializePascal();
+            yield return JsonSerializer.Serialize(mdls[i]);
         }
     }
 
@@ -39,7 +39,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be serialized. Must be a reference type.</typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> SerializePascal<T>(this IEnumerable<T> mdls) where T : class
+    public static IEnumerable<string> Serialize<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
         {
@@ -47,7 +47,7 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return mdl.SerializePascal();
+            yield return JsonSerializer.Serialize(mdl);
         }
     }
 
@@ -58,7 +58,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be serialized. Must be a reference type.</typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> SerializePascal<T>(this IReadOnlyCollection<T> mdls) where T : class
+    public static IEnumerable<string> Serialize<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
         if (mdls is null || mdls.Count <= 0)
         {
@@ -66,7 +66,7 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return mdl.SerializePascal();
+            yield return JsonSerializer.Serialize(mdl);
         }
     }
 
@@ -77,7 +77,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be serialized. Must be a reference type.</typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> SerializePascal<T>(this IReadOnlyList<T> mdls) where T : class
+    public static IEnumerable<string> Serialize<T>(this IReadOnlyList<T> mdls) where T : class
     {
         if (mdls is null || mdls.Count <= 0)
         {
@@ -85,7 +85,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < mdls.Count; i++)
         {
-            yield return mdls[i].SerializePascal();
+            yield return JsonSerializer.Serialize(mdls[i]);
         }
     }
 
@@ -96,7 +96,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be serialized. Must be a reference type.</typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> SerializePascal<T>(this IReadOnlySet<T> mdls) where T : class
+    public static IEnumerable<string> Serialize<T>(this IReadOnlySet<T> mdls) where T : class
     {
         if (mdls is null || mdls.Count <= 0)
         {
@@ -104,7 +104,7 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return mdl.SerializePascal();
+            yield return JsonSerializer.Serialize(mdl);
         }
     }
 
@@ -228,7 +228,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the object to be deserialized. Must be a reference type.</typeparam>
     /// <param name="str">The JSON string to be deserialized.</param>
     /// <returns>The deserialized object, or <see langword="default"/> if the deserialization fails.</returns>
-    public static T? DeserializePascal<T>(this string str) where T : class
+    public static T? Deserialize<T>(this string str) where T : class
     {
         try
         {
@@ -247,7 +247,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializePascal<T>(params string[] strs) where T : class
+    public static IEnumerable<T?> Deserialize<T>(params string[] strs) where T : class
     {
         if (strs is null || strs.Length <= 0)
         {
@@ -255,7 +255,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < strs.Length; i++)
         {
-            yield return strs[i].DeserializePascal<T>();
+            yield return strs[i].Deserialize<T>();
         }
     }
 
@@ -266,7 +266,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializePascal<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> Deserialize<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
         {
@@ -274,7 +274,7 @@ public static partial class YANJson
         }
         foreach (var str in strs)
         {
-            yield return str.DeserializePascal<T>();
+            yield return str.Deserialize<T>();
         }
     }
 
@@ -285,7 +285,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializePascal<T>(this IReadOnlyCollection<string> strs) where T : class
+    public static IEnumerable<T?> Deserialize<T>(this IReadOnlyCollection<string> strs) where T : class
     {
         if (strs is null || strs.Count <= 0)
         {
@@ -293,7 +293,7 @@ public static partial class YANJson
         }
         foreach (var str in strs)
         {
-            yield return str.DeserializePascal<T>();
+            yield return str.Deserialize<T>();
         }
     }
 
@@ -304,7 +304,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializePascal<T>(this IReadOnlyList<string> strs) where T : class
+    public static IEnumerable<T?> Deserialize<T>(this IReadOnlyList<string> strs) where T : class
     {
         if (strs is null || strs.Count <= 0)
         {
@@ -312,7 +312,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < strs.Count; i++)
         {
-            yield return strs[i].DeserializePascal<T>();
+            yield return strs[i].Deserialize<T>();
         }
     }
 
@@ -323,7 +323,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializePascal<T>(this IReadOnlySet<string> strs) where T : class
+    public static IEnumerable<T?> Deserialize<T>(this IReadOnlySet<string> strs) where T : class
     {
         if (strs is null || strs.Count <= 0)
         {
@@ -331,7 +331,7 @@ public static partial class YANJson
         }
         foreach (var str in strs)
         {
-            yield return str.DeserializePascal<T>();
+            yield return str.Deserialize<T>();
         }
     }
 
@@ -460,14 +460,284 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the object to be deserialized. Must be a reference type.</typeparam>
     /// <param name="str">The JSON string to be deserialized.</param>
     /// <returns>The deserialized object, or <see langword="default"/> if the deserialization fails.</returns>
-    public static T? Deserialize<T>(this string str) where T : class
+    public static T? DeserializeDuo<T>(this string str) where T : class
+    {
+        T? rslt;
+        try
+        {
+
+            rslt = JsonSerializer.Deserialize<T>(str);
+        }
+        catch
+        {
+            rslt = default;
+        }
+        if (rslt is not null && rslt.AnyPropertiesNotDefault())
+        {
+            return rslt;
+        }
+        else
+        {
+            try
+            {
+                return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = false,
+                    PropertyNamingPolicy = CamelCase
+                });
+            }
+            catch
+            {
+                return default;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuo<T>(params string[] strs) where T : class
+    {
+        if (strs is null || strs.Length <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].DeserializeDuo<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuo<T>(this IEnumerable<string> strs) where T : class
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.DeserializeDuo<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlyCollection<string> strs) where T : class
+    {
+        if (strs is null || strs.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.DeserializeDuo<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlyList<string> strs) where T : class
+    {
+        if (strs is null || strs.Count <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].DeserializeDuo<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlySet<string> strs) where T : class
+    {
+        if (strs is null || strs.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.DeserializeDuo<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes a JSON string to an object of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// If the deserialization fails, returns <see langword="default"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="str">The JSON string to be deserialized.</param>
+    /// <returns>The deserialized object, or <see langword="default"/> if the deserialization fails.</returns>
+    public static T? DeserializeDuoCamelPriority<T>(this string str) where T : class
+    {
+        T? rslt;
+        try
+        {
+
+            rslt = JsonSerializer.Deserialize<T>(str);
+        }
+        catch
+        {
+            rslt = default;
+        }
+        if (rslt is not null && rslt.AnyPropertiesNotDefault())
+        {
+            return rslt;
+        }
+        else
+        {
+            try
+            {
+                return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = false,
+                    PropertyNamingPolicy = CamelCase
+                });
+            }
+            catch
+            {
+                return default;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(params string[] strs) where T : class
+    {
+        if (strs is null || strs.Length <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].DeserializeDuoCamelPriority<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IEnumerable<string> strs) where T : class
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.DeserializeDuoCamelPriority<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlyCollection<string> strs) where T : class
+    {
+        if (strs is null || strs.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.DeserializeDuoCamelPriority<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlyList<string> strs) where T : class
+    {
+        if (strs is null || strs.Count <= 0)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].DeserializeDuoCamelPriority<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="strs">The array of JSON strings to be deserialized.</param>
+    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
+    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlySet<string> strs) where T : class
+    {
+        if (strs is null || strs.Count <= 0)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.DeserializeDuoCamelPriority<T>();
+        }
+    }
+
+    /// <summary>
+    /// Deserializes a JSON string to an object of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
+    /// If the deserialization fails, returns <see langword="default"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be deserialized. Must be a reference type.</typeparam>
+    /// <param name="str">The JSON string to be deserialized.</param>
+    /// <returns>The deserialized object, or <see langword="default"/> if the deserialization fails.</returns>
+    public static T? DeserializeStandard<T>(this string str) where T : class
     {
         try
         {
             return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = CamelCase
+                PropertyNamingPolicy = CamelCase,
             });
         }
         catch
@@ -483,7 +753,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(params string[] strs) where T : class
+    public static IEnumerable<T?> DeserializeStandard<T>(params string[] strs) where T : class
     {
         if (strs is null || strs.Length <= 0)
         {
@@ -491,7 +761,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < strs.Length; i++)
         {
-            yield return strs[i].Deserialize<T>();
+            yield return strs[i].DeserializeStandard<T>();
         }
     }
 
@@ -502,7 +772,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeStandard<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
         {
@@ -510,7 +780,7 @@ public static partial class YANJson
         }
         foreach (var str in strs)
         {
-            yield return str.Deserialize<T>();
+            yield return str.DeserializeStandard<T>();
         }
     }
 
@@ -521,7 +791,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(this IReadOnlyCollection<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlyCollection<string> strs) where T : class
     {
         if (strs is null || strs.Count <= 0)
         {
@@ -529,7 +799,7 @@ public static partial class YANJson
         }
         foreach (var str in strs)
         {
-            yield return str.Deserialize<T>();
+            yield return str.DeserializeStandard<T>();
         }
     }
 
@@ -540,7 +810,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(this IReadOnlyList<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlyList<string> strs) where T : class
     {
         if (strs is null || strs.Count <= 0)
         {
@@ -548,7 +818,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < strs.Count; i++)
         {
-            yield return strs[i].Deserialize<T>();
+            yield return strs[i].DeserializeStandard<T>();
         }
     }
 
@@ -559,7 +829,7 @@ public static partial class YANJson
     /// <typeparam name="T">The type of the objects to be deserialized. Must be a reference type.</typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(this IReadOnlySet<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlySet<string> strs) where T : class
     {
         if (strs is null || strs.Count <= 0)
         {
@@ -567,7 +837,7 @@ public static partial class YANJson
         }
         foreach (var str in strs)
         {
-            yield return str.Deserialize<T>();
+            yield return str.DeserializeStandard<T>();
         }
     }
 }

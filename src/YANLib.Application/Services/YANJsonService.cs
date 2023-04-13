@@ -13,7 +13,7 @@ namespace YANLib.Services;
 public class YANJsonService : YANLibAppService, IYANJsonService
 {
     // Serialize
-    public async ValueTask<string> Serializes(List<JsonTestDto> requests) => await FromResult(requests.SerializePascal());
+    public async ValueTask<string> Serializes(List<JsonTestDto> requests) => await FromResult(requests.Serialize());
 
     // Serialize camel case
     public async ValueTask<string> CamelSerializes(List<JsonTestDto> requests) => await FromResult(requests.SerializeCamel());
@@ -40,7 +40,7 @@ public class YANJsonService : YANLibAppService, IYANJsonService
                     Name = $"Nguyễn Văn {GenerateRandomCharacter().ToUpper()}",
                     Income = GenerateRandomUshort(),
                     IsRisk = GenerateRandomBool()
-                }.SerializePascal();
+                }.Serialize();
         }
     }
 

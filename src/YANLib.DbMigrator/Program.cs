@@ -1,11 +1,10 @@
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using System.Threading.Tasks;
+using static System.DateTime;
 
 namespace YANLib.DbMigrator;
 
@@ -23,7 +22,7 @@ class Program
                 .MinimumLevel.Override("YANLib", LogEventLevel.Information)
 #endif
                 .Enrich.FromLogContext()
-            .WriteTo.Async(c => c.File("Logs/logs.txt"))
+            .WriteTo.Async(c => c.File($"Logs/{Now:yyyy-MM-dd}.log"))
             .WriteTo.Async(c => c.Console())
             .CreateLogger();
 
