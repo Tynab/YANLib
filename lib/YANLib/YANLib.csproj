@@ -9,10 +9,7 @@
     <Title>YANLib</Title>
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
-    <Description>Update: all
-Add: YANJson
-Warning:
-- Change the prefix of method names from GenRandom_ to GenerateRandom</Description>
+    <Description>Update: YANJson (optimize)</Description>
     <Copyright>Copyright ©  2023</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -25,7 +22,7 @@ Warning:
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
