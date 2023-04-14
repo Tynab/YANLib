@@ -28,7 +28,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < mdls.Length; i++)
         {
-            yield return JsonSerializer.Serialize(mdls[i]);
+            yield return mdls[i].Serialize();
         }
     }
 
@@ -47,7 +47,7 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return JsonSerializer.Serialize(mdl);
+            yield return mdl.Serialize();
         }
     }
 
@@ -66,7 +66,7 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return JsonSerializer.Serialize(mdl);
+            yield return mdl.Serialize();
         }
     }
 
@@ -85,7 +85,7 @@ public static partial class YANJson
         }
         for (var i = 0; i < mdls.Count; i++)
         {
-            yield return JsonSerializer.Serialize(mdls[i]);
+            yield return mdls[i].Serialize();
         }
     }
 
@@ -104,7 +104,7 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return JsonSerializer.Serialize(mdl);
+            yield return mdl.Serialize();
         }
     }
 
@@ -466,7 +466,7 @@ public static partial class YANJson
         try
         {
 
-            rslt = JsonSerializer.Deserialize<T>(str);
+            rslt = str.Deserialize<T>();
         }
         catch
         {
@@ -480,11 +480,7 @@ public static partial class YANJson
         {
             try
             {
-                return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = false,
-                    PropertyNamingPolicy = CamelCase
-                });
+                return str.DeserializeCamel<T>();
             }
             catch
             {
@@ -601,7 +597,7 @@ public static partial class YANJson
         try
         {
 
-            rslt = JsonSerializer.Deserialize<T>(str);
+            rslt = str.DeserializeCamel<T>();
         }
         catch
         {
@@ -615,11 +611,7 @@ public static partial class YANJson
         {
             try
             {
-                return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = false,
-                    PropertyNamingPolicy = CamelCase
-                });
+                return str.Deserialize<T>();
             }
             catch
             {

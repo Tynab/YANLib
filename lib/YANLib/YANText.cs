@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using static System.Convert;
 using static System.StringComparison;
 
@@ -10,21 +11,7 @@ public static partial class YANText
 
     public static bool Compare(params string[] strs) => strs?.Length > 0 && !strs.Any(s => s != strs.FirstOrDefault());
 
-    public static string ToTitle(this string str)
-    {
-        if (str.IsNullOrWhiteSpace())
-        {
-            return str;
-        }
-        var sb = new StringBuilder(str);
-        var isNewWord = true;
-        for (var i = 0; i < sb.Length; i++)
-        {
-            sb[i] = isNewWord && sb[i].IsAlphabetic() ? sb[i].ToUpper() : sb[i].ToLower();
-            isNewWord = sb[i].IsWhiteSpace();
-        }
-        return sb.ToString();
-    }
+    public static string ToTitle(this string str) => str.IsNullOrWhiteSpace() ? str : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
 
     public static string ToCapitalize(this string str)
     {
