@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Text;
-using static System.Convert;
 
 namespace YANLib;
 
@@ -205,6 +204,79 @@ public static partial class YANText
         return sb.ToString();
     }
 
+    public static void CleanSpace(ref string str) => str = str.CleanSpace();
+
+    public static IEnumerable<string> CleanSpace(params string[] strs)
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].CleanSpace();
+        }
+    }
+
+    public static IEnumerable<string> CleanSpace(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.CleanSpace();
+        }
+    }
+
+    public static IEnumerable<string> CleanSpace(this IReadOnlyCollection<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.CleanSpace();
+        }
+    }
+
+    public static IEnumerable<string> CleanSpace(this IReadOnlyList<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].CleanSpace();
+        }
+    }
+
+    public static IEnumerable<string> CleanSpace(this IReadOnlySet<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.CleanSpace();
+        }
+    }
+
+    public static void CleanSpaceRef(this IList<string> strs)
+    {
+        if (strs is not null && strs.Count > 0)
+        {
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].CleanSpace();
+            }
+        }
+    }
+
     public static string FormatName(this string str)
     {
         if (str.IsNullOrEmpty())
@@ -226,6 +298,79 @@ public static partial class YANText
         return sb.ToString();
     }
 
+    public static void FormatName(ref string str) => str = str.FilterAlphabetic();
+
+    public static IEnumerable<string> FormatName(params string[] strs)
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].FormatName();
+        }
+    }
+
+    public static IEnumerable<string> FormatName(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FormatName();
+        }
+    }
+
+    public static IEnumerable<string> FormatName(this IReadOnlyCollection<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FormatName();
+        }
+    }
+
+    public static IEnumerable<string> FormatName(this IReadOnlyList<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].FormatName();
+        }
+    }
+
+    public static IEnumerable<string> FormatName(this IReadOnlySet<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FormatName();
+        }
+    }
+
+    public static void FormatNameRef(this IList<string> strs)
+    {
+        if (strs is not null && strs.Count > 0)
+        {
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].FormatName();
+            }
+        }
+    }
+
     public static string FilterAlphabetic(this string str)
     {
         if (str.IsNullOrEmpty())
@@ -242,6 +387,79 @@ public static partial class YANText
             }
         }
         return sb.ToString();
+    }
+
+    public static void FilterAlphabetic(ref string str) => str = str.FilterAlphabetic();
+
+    public static IEnumerable<string> FilterAlphabetic(params string[] strs)
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].FilterAlphabetic();
+        }
+    }
+
+    public static IEnumerable<string> FilterAlphabetic(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FilterAlphabetic();
+        }
+    }
+
+    public static IEnumerable<string> FilterAlphabetic(this IReadOnlyCollection<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FilterAlphabetic();
+        }
+    }
+
+    public static IEnumerable<string> FilterAlphabetic(this IReadOnlyList<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].FilterAlphabetic();
+        }
+    }
+
+    public static IEnumerable<string> FilterAlphabetic(this IReadOnlySet<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.CleanSpace();
+        }
+    }
+
+    public static void FilterAlphabeticRef(this IList<string> strs)
+    {
+        if (strs is not null && strs.Count > 0)
+        {
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].FilterAlphabetic();
+            }
+        }
     }
 
     public static string FilterNumber(this string str)
@@ -262,6 +480,79 @@ public static partial class YANText
         return sb.ToString();
     }
 
+    public static void FilterNumber(ref string str) => str = str.FilterNumber();
+
+    public static IEnumerable<string> FilterNumber(params string[] strs)
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].FilterNumber();
+        }
+    }
+
+    public static IEnumerable<string> FilterNumber(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FilterNumber();
+        }
+    }
+
+    public static IEnumerable<string> FilterNumber(this IReadOnlyCollection<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FilterNumber();
+        }
+    }
+
+    public static IEnumerable<string> FilterNumber(this IReadOnlyList<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].FilterNumber();
+        }
+    }
+
+    public static IEnumerable<string> FilterNumber(this IReadOnlySet<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.FilterNumber();
+        }
+    }
+
+    public static void FilterNumberRef(this IList<string> strs)
+    {
+        if (strs is not null && strs.Count > 0)
+        {
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].FilterNumber();
+            }
+        }
+    }
+
     public static string FilterAlphanumeric(this string str)
     {
         if (str.IsNullOrEmpty())
@@ -280,131 +571,76 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static char ToLower(this char c) => char.ToLower(c);
+    public static void FilterAlphanumeric(ref string str) => str = str.FilterAlphanumeric();
 
-    public static void ToLower(ref char c) => c = ToLower(c);
-
-    public static IEnumerable<char> ToLower(params char[] cs)
+    public static IEnumerable<string> FilterAlphanumeric(params string[] strs)
     {
-        if (cs is null || cs.Length < 1)
+        if (strs is null || strs.Length < 1)
         {
             yield break;
         }
-        for (var i = 0; i < cs.Length; i++)
+        for (var i = 0; i < strs.Length; i++)
         {
-            yield return ToLower(cs[i]);
+            yield return strs[i].FilterAlphanumeric();
         }
     }
 
-    public static IEnumerable<char> ToLower(this IEnumerable<char> cs)
+    public static IEnumerable<string> FilterAlphanumeric(this IEnumerable<string> strs)
     {
-        if (cs is null || !cs.Any())
+        if (strs is null || !strs.Any())
         {
             yield break;
         }
-        foreach (var c in cs)
+        foreach (var str in strs)
         {
-            yield return ToLower(c);
+            yield return str.FilterAlphanumeric();
         }
     }
 
-    public static IEnumerable<char> ToLower(this IReadOnlyCollection<char> cs)
+    public static IEnumerable<string> FilterAlphanumeric(this IReadOnlyCollection<string> strs)
     {
-        if (cs is null || cs.Count < 1)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
-        foreach (var c in cs)
+        foreach (var str in strs)
         {
-            yield return ToLower(c);
+            yield return str.FilterAlphanumeric();
         }
     }
 
-    public static IEnumerable<char> ToLower(this IReadOnlyList<char> cs)
+    public static IEnumerable<string> FilterAlphanumeric(this IReadOnlyList<string> strs)
     {
-        if (cs is null || cs.Count < 1)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
-        for (var i = 0; i < cs.Count; i++)
+        for (var i = 0; i < strs.Count; i++)
         {
-            yield return ToLower(cs[i]);
+            yield return strs[i].FilterAlphanumeric();
         }
     }
 
-    public static IEnumerable<char> ToLower(this IReadOnlySet<char> cs)
+    public static IEnumerable<string> FilterAlphanumeric(this IReadOnlySet<string> strs)
     {
-        if (cs is null || cs.Count < 1)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
-        foreach (var c in cs)
+        foreach (var str in strs)
         {
-            yield return ToLower(c);
+            yield return str.FilterAlphanumeric();
         }
     }
 
-    public static char ToUpper(this char c) => char.ToUpper(c);
-
-    public static void ToUpper(ref char c) => c = ToUpper(c);
-
-    public static IEnumerable<char> ToUpper(params char[] cs)
+    public static void FilterAlphanumericRef(this IList<string> strs)
     {
-        if (cs is null || cs.Length < 1)
+        if (strs is not null && strs.Count > 0)
         {
-            yield break;
-        }
-        for (var i = 0; i < cs.Length; i++)
-        {
-            yield return ToUpper(cs[i]);
-        }
-    }
-
-    public static IEnumerable<char> ToUpper(this IEnumerable<char> cs)
-    {
-        if (cs is null || !cs.Any())
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToUpper(c);
-        }
-    }
-
-    public static IEnumerable<char> ToUpper(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToUpper(c);
-        }
-    }
-
-    public static IEnumerable<char> ToUpper(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < cs.Count; i++)
-        {
-            yield return ToUpper(cs[i]);
-        }
-    }
-
-    public static IEnumerable<char> ToUpper(this IReadOnlySet<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToUpper(c);
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].FilterAlphanumeric();
+            }
         }
     }
 }
