@@ -10,7 +10,7 @@ public static partial class YANNum
     /// <returns>The minimum value in the array.</returns>
     public static T? Min<T>(params T[] nums) where T : IComparable<T>
     {
-        if (nums is null || nums.Length <= 0)
+        if (nums is null || nums.Length < 1)
         {
             return default;
         }
@@ -33,7 +33,7 @@ public static partial class YANNum
     /// <returns>The maximum value in the array.</returns>
     public static T? Max<T>(params T[] nums) where T : IComparable<T>
     {
-        if (nums is null || nums.Length <= 0)
+        if (nums is null || nums.Length < 1)
         {
             return default;
         }

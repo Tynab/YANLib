@@ -17,7 +17,7 @@ public static partial class YANEnumerable
     public static IEnumerable<List<T>> ChunkBySize<T, T1>(this List<T> srcs, T1 chunkSize) where T1 : struct
     {
         var size = chunkSize.ToInt();
-        if (srcs is null || srcs.Count <= 0 && size <= 0)
+        if (srcs is null || srcs.Count < 1 && size < 1)
         {
             yield break;
         }
@@ -38,7 +38,7 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
     public static IEnumerable<T> Clean<T>(params T[] srcs)
     {
-        if (srcs is null || srcs.Length <= 0)
+        if (srcs is null || srcs.Length < 1)
         {
             yield break;
         }
@@ -108,7 +108,7 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
     public static IEnumerable<T> Clean<T>(this IReadOnlyCollection<T> srcs)
     {
-        if (srcs is null || srcs.Count <= 0)
+        if (srcs is null || srcs.Count < 1)
         {
             yield break;
         }
@@ -142,7 +142,7 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
     public static IEnumerable<T> Clean<T>(this IReadOnlyList<T> srcs)
     {
-        if (srcs is null || srcs.Count <= 0)
+        if (srcs is null || srcs.Count < 1)
         {
             yield break;
         }
@@ -178,7 +178,7 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
     public static IEnumerable<T> Clean<T>(this IReadOnlySet<T> srcs)
     {
-        if (srcs is null || srcs.Count <= 0)
+        if (srcs is null || srcs.Count < 1)
         {
             yield break;
         }
@@ -209,7 +209,7 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
     public static IEnumerable<string> Clean(params string[] srcs)
     {
-        if (srcs is null || srcs.Length <= 0)
+        if (srcs is null || srcs.Length < 1)
         {
             yield break;
         }
@@ -217,7 +217,7 @@ public static partial class YANEnumerable
         for (var i = 0; i < cnt; i++)
         {
             var item = srcs[i];
-            if (item.HasCharater())
+            if (item.IsNotNullOrWhiteSpace())
             {
                 yield return item;
             }
@@ -237,7 +237,7 @@ public static partial class YANEnumerable
         }
         foreach (var item in srcs)
         {
-            if (item.HasCharater())
+            if (item.IsNotNullOrWhiteSpace())
             {
                 yield return item;
             }
@@ -251,13 +251,13 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
     public static IEnumerable<string> Clean(this IReadOnlyCollection<string> srcs)
     {
-        if (srcs is null || srcs.Count <= 0)
+        if (srcs is null || srcs.Count < 1)
         {
             yield break;
         }
         foreach (var item in srcs)
         {
-            if (item.HasCharater())
+            if (item.IsNotNullOrWhiteSpace())
             {
                 yield return item;
             }
@@ -271,7 +271,7 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
     public static IEnumerable<string> Clean(this IReadOnlyList<string> srcs)
     {
-        if (srcs is null || srcs.Count <= 0)
+        if (srcs is null || srcs.Count < 1)
         {
             yield break;
         }
@@ -279,7 +279,7 @@ public static partial class YANEnumerable
         for (var i = 0; i < cnt; i++)
         {
             var item = srcs[i];
-            if (item.HasCharater())
+            if (item.IsNotNullOrWhiteSpace())
             {
                 yield return item;
             }
@@ -293,13 +293,13 @@ public static partial class YANEnumerable
     /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
     public static IEnumerable<string> Clean(this IReadOnlySet<string> srcs)
     {
-        if (srcs is null || srcs.Count <= 0)
+        if (srcs is null || srcs.Count < 1)
         {
             yield break;
         }
         foreach (var item in srcs)
         {
-            if (item.HasCharater())
+            if (item.IsNotNullOrWhiteSpace())
             {
                 yield return item;
             }

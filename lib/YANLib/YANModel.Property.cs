@@ -38,7 +38,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -76,7 +76,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -95,7 +95,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -114,7 +114,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlySet<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -157,7 +157,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -195,7 +195,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -214,7 +214,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -233,7 +233,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlySet<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -276,7 +276,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -314,7 +314,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -333,7 +333,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -352,7 +352,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlySet<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -395,7 +395,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -433,7 +433,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -452,7 +452,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -471,7 +471,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
     public static IEnumerable<bool> AllPropertiAnyPropertiesDefaultesDefault<T>(this IReadOnlySet<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -536,7 +536,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -556,7 +556,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -576,7 +576,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -641,7 +641,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -661,7 +661,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -681,7 +681,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlySet<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -746,7 +746,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -766,7 +766,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -786,7 +786,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -851,7 +851,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -871,7 +871,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -891,7 +891,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlySet<T> mdls, params string[] names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -936,7 +936,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -976,7 +976,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -996,7 +996,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1016,7 +1016,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1061,7 +1061,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1101,7 +1101,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1121,7 +1121,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1141,7 +1141,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlySet<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1186,7 +1186,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1226,7 +1226,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1246,7 +1246,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1266,7 +1266,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1311,7 +1311,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1351,7 +1351,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1371,7 +1371,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1391,7 +1391,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlySet<T> mdls, IEnumerable<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1436,7 +1436,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(IReadOnlyCollection<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1476,7 +1476,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1496,7 +1496,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1516,7 +1516,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1561,7 +1561,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(IReadOnlyCollection<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1601,7 +1601,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1621,7 +1621,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1641,7 +1641,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1686,7 +1686,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(IReadOnlyCollection<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1726,7 +1726,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1746,7 +1746,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1766,7 +1766,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1811,7 +1811,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(IReadOnlyCollection<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1851,7 +1851,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1871,7 +1871,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1891,7 +1891,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyCollection<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1936,7 +1936,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(IReadOnlyList<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -1976,7 +1976,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -1996,7 +1996,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2016,7 +2016,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2061,7 +2061,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(IReadOnlyList<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2101,7 +2101,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2121,7 +2121,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2141,7 +2141,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2186,7 +2186,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(IReadOnlyList<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2226,7 +2226,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2246,7 +2246,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2266,7 +2266,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2311,7 +2311,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(IReadOnlyList<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2351,7 +2351,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2371,7 +2371,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2391,7 +2391,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlySet<T> mdls, IReadOnlyList<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2436,7 +2436,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(IReadOnlySet<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2476,7 +2476,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2496,7 +2496,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2516,7 +2516,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2561,7 +2561,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(IReadOnlySet<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2601,7 +2601,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2621,7 +2621,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2641,7 +2641,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlySet<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2686,7 +2686,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(IReadOnlySet<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2726,7 +2726,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2746,7 +2746,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2766,7 +2766,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlySet<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2811,7 +2811,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(IReadOnlySet<string> names, params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -2851,7 +2851,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2871,7 +2871,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -2891,7 +2891,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlySet<T> mdls, IReadOnlySet<string> names) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }

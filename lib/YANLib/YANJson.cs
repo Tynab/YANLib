@@ -22,7 +22,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string> Serialize<T>(params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -60,7 +60,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string> Serialize<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -79,7 +79,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string> Serialize<T>(this IReadOnlyList<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -98,7 +98,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string> Serialize<T>(this IReadOnlySet<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -131,7 +131,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
     public static IEnumerable<string> SerializeCamel<T>(params T[] mdls) where T : class
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -171,7 +171,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
     public static IEnumerable<string> SerializeCamel<T>(this IReadOnlyCollection<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -191,7 +191,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
     public static IEnumerable<string> SerializeCamel<T>(this IReadOnlyList<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -211,7 +211,7 @@ public static partial class YANJson
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
     public static IEnumerable<string> SerializeCamel<T>(this IReadOnlySet<T> mdls) where T : class
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -249,7 +249,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> Deserialize<T>(params string[] strs) where T : class
     {
-        if (strs is null || strs.Length <= 0)
+        if (strs is null || strs.Length < 1)
         {
             yield break;
         }
@@ -287,7 +287,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> Deserialize<T>(this IReadOnlyCollection<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -306,7 +306,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> Deserialize<T>(this IReadOnlyList<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -325,7 +325,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> Deserialize<T>(this IReadOnlySet<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -367,7 +367,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
     public static IEnumerable<T?> DeserializeCamel<T>(params string[] strs) where T : class
     {
-        if (strs is null || strs.Length <= 0)
+        if (strs is null || strs.Length < 1)
         {
             yield break;
         }
@@ -405,7 +405,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
     public static IEnumerable<T?> DeserializeCamel<T>(this IReadOnlyCollection<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -424,7 +424,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
     public static IEnumerable<T?> DeserializeCamel<T>(this IReadOnlyList<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -443,7 +443,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
     public static IEnumerable<T?> DeserializeCamel<T>(this IReadOnlySet<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -498,7 +498,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuo<T>(params string[] strs) where T : class
     {
-        if (strs is null || strs.Length <= 0)
+        if (strs is null || strs.Length < 1)
         {
             yield break;
         }
@@ -536,7 +536,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlyCollection<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -555,7 +555,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlyList<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -574,7 +574,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlySet<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -629,7 +629,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(params string[] strs) where T : class
     {
-        if (strs is null || strs.Length <= 0)
+        if (strs is null || strs.Length < 1)
         {
             yield break;
         }
@@ -667,7 +667,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlyCollection<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -686,7 +686,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlyList<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -705,7 +705,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlySet<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -747,7 +747,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeStandard<T>(params string[] strs) where T : class
     {
-        if (strs is null || strs.Length <= 0)
+        if (strs is null || strs.Length < 1)
         {
             yield break;
         }
@@ -785,7 +785,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlyCollection<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -804,7 +804,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlyList<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }
@@ -823,7 +823,7 @@ public static partial class YANJson
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlySet<string> strs) where T : class
     {
-        if (strs is null || strs.Count <= 0)
+        if (strs is null || strs.Count < 1)
         {
             yield break;
         }

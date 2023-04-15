@@ -82,7 +82,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1 tzSrc, T2 tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -128,7 +128,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -151,7 +151,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -174,7 +174,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -261,7 +261,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1? tzSrc, T2 tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -307,7 +307,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -330,7 +330,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -353,7 +353,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -440,7 +440,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1 tzSrc, T2? tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -486,7 +486,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -509,7 +509,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -532,7 +532,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -619,7 +619,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(T1? tzSrc, T2? tzDst, params T?[] mdls) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Length <= 0)
+        if (mdls is null || mdls.Length < 1)
         {
             yield break;
         }
@@ -665,7 +665,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyCollection<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -688,7 +688,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlyList<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }
@@ -711,7 +711,7 @@ public static partial class YANModel
     /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IReadOnlySet<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || mdls.Count <= 0)
+        if (mdls is null || mdls.Count < 1)
         {
             yield break;
         }

@@ -31,7 +31,7 @@ public class YANPass
     /// <returns>A string in the format "hashValue|salt|iterations|algorithm", where "hashValue" is the computed hash value of the password, "salt" is the randomly generated salt used for hashing, "iterations" is the number of iterations used for the key derivation function, and "algorithm" is the name of the key derivation function used.</returns>
     public string? Hash(string password)
     {
-        if (password.HasCharater() && SaltSize > 0 && Iterations > 0 && KeySize > 0)
+        if (password.IsNotNullOrWhiteSpace() && SaltSize > 0 && Iterations > 0 && KeySize > 0)
         {
             var salt = GetBytes(SaltSize);
             return new StringBuilder().Append(ToHexString(Pbkdf2(password, salt, Iterations, Algorithm, KeySize))).Append(SegmentDelimiter).Append(ToHexString(salt)).Append(SegmentDelimiter).Append(Iterations).Append(SegmentDelimiter).Append(Algorithm).ToString();
@@ -47,7 +47,7 @@ public class YANPass
     /// <returns><see langword="true"/> if the provided password is valid; otherwise, <see langword="false"/>.</returns>
     public bool Verify(string password, string strHash)
     {
-        if (strHash.HasCharater() && SegmentDelimiter.HasCharater())
+        if (strHash.IsNotNullOrWhiteSpace() && SegmentDelimiter.IsNotEmptyOrWhiteSpace())
         {
             var segs = strHash.Split(SegmentDelimiter);
             if (segs.Length > 3)
@@ -64,7 +64,7 @@ public class YANPass
     /// </summary>
     /// <param name="password">The password string to validate.</param>
     /// <returns><see langword="true"/> if the password meets the standard requirements for password validation; otherwise, <see langword="false"/>.</returns>
-    public static bool IsValidPasswordStandard(string password) => password.HasCharater() && password.Length >= 8 && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
+    public static bool IsValidPasswordStandard(string password) => password.IsNotNullOrWhiteSpace() && password.Length >= 8 && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
     /// Determines whether a password meets the requirements for password validation, which are: it contains at least one character, has a length of at least the specified value, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character.
@@ -72,7 +72,7 @@ public class YANPass
     /// <param name="password">The password string to validate.</param>
     /// <param name="len">The minimum length for the password.</param>
     /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
-    public static bool IsValidPassword(string password, int len) => password.HasCharater() && password.Length >= len && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
+    public static bool IsValidPassword(string password, int len) => password.IsNotNullOrWhiteSpace() && password.Length >= len && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
     /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
@@ -83,7 +83,7 @@ public class YANPass
     public bool IsValidPassword(string password, params char[] splChars)
     {
         // has character
-        if (!password.HasCharater())
+        if (!password.IsNotNullOrWhiteSpace())
         {
             return false;
         }
@@ -107,7 +107,7 @@ public class YANPass
     public bool IsValidPassword(string password, int len, params char[] splChars)
     {
         // has character
-        if (!password.HasCharater())
+        if (!password.IsNotNullOrWhiteSpace())
         {
             return false;
         }

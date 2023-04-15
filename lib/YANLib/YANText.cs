@@ -1,17 +1,85 @@
 ﻿using System.Globalization;
 using System.Text;
 using static System.Convert;
-using static System.StringComparison;
 
 namespace YANLib;
 
 public static partial class YANText
 {
-    public static bool Equal(this string str1, string str2) => string.Equals(str1, str2, OrdinalIgnoreCase);
-
-    public static bool Compare(params string[] strs) => strs?.Length > 0 && !strs.Any(s => s != strs.FirstOrDefault());
-
     public static string ToTitle(this string str) => str.IsNullOrWhiteSpace() ? str : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
+
+    public static void ToTitle(ref string str) => str = str.ToTitle();
+
+    public static IEnumerable<string> ToTitle(params string[] strs)
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToTitle();
+        }
+    }
+
+    public static IEnumerable<string> ToTitle(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.ToTitle();
+        }
+    }
+
+    public static IEnumerable<string> ToTitle(this IReadOnlyCollection<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.ToTitle();
+        }
+    }
+
+    public static IEnumerable<string> ToTitle(this IReadOnlyList<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToTitle();
+        }
+    }
+
+    public static IEnumerable<string> ToTitle(this IReadOnlySet<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.ToTitle();
+        }
+    }
+
+    public static void ToTitleRef(this IList<string> strs)
+    {
+        if (strs is not null && strs.Count > 0)
+        {
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].ToTitle();
+            }
+        }
+    }
 
     public static string ToCapitalize(this string str)
     {
@@ -34,6 +102,79 @@ public static partial class YANText
             }
         }
         return sb.ToString();
+    }
+
+    public static void ToCapitalize(ref string str) => str = str.ToCapitalize();
+
+    public static IEnumerable<string> ToCapitalize(params string[] strs)
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToCapitalize();
+        }
+    }
+
+    public static IEnumerable<string> ToCapitalize(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.ToCapitalize();
+        }
+    }
+
+    public static IEnumerable<string> ToCapitalize(this IReadOnlyCollection<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.ToCapitalize();
+        }
+    }
+
+    public static IEnumerable<string> ToCapitalize(this IReadOnlyList<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToCapitalize();
+        }
+    }
+
+    public static IEnumerable<string> ToCapitalize(this IReadOnlySet<string> strs)
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.ToCapitalize();
+        }
+    }
+
+    public static void ToCapitalizeRef(this IList<string> strs)
+    {
+        if (strs is not null && strs.Count > 0)
+        {
+            for (var i = 0; i < strs.Count; i++)
+            {
+                strs[i] = strs[i].ToCapitalize();
+            }
+        }
     }
 
     public static string CleanSpace(this string str)
@@ -139,65 +280,131 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static string RemoveSpacesAroundCharacter(this string str, char c)
-    {
-        if (str.IsNullOrWhiteSpace())
-        {
-            return str;
-        }
-        var sb = new StringBuilder();
-        for (var i = 0; i < str.Length; i++)
-        {
-            if (str[i] == c && (i > 0 && str[i - 1].IsWhiteSpace() || i < str.Length - 1 && str[i + 1].IsWhiteSpace()))
-            {
-                continue;
-            }
-            _ = sb.Append(str[i]);
-        }
-        return sb.ToString();
-    }
-
-    public static string FixBullet(this string str)
-    {
-        if (str.IsNullOrWhiteSpace())
-        {
-            return str;
-        }
-        var sb = new StringBuilder();
-        for (var i = 0; i < str.Length; i++)
-        {
-            if (i > 0 && str[i - 1] is '-' or '+' && (i == 1 || i > 1 && str[i - 2] == '\n'))
-            {
-                _ = sb.Append(' ');
-            }
-            _ = sb.Append(str[i]);
-        }
-        return sb.ToString();
-    }
-
-    public static bool IsWhiteSpace(this char c) => char.IsWhiteSpace(c);
-
-    public static bool IsNotWhiteSpace(this char c) => !char.IsWhiteSpace(c);
-
-    public static bool IsAlphabetic(this char c) => char.IsLetter(c);
-
-    public static bool IsNotAlphabetic(this char c) => !char.IsLetter(c);
-
-    public static bool IsPunctuation(this char c) => char.IsPunctuation(c);
-
-    public static bool IsNotPunctuation(this char c) => !char.IsPunctuation(c);
-
-    public static bool IsNumber(this char c) => char.IsDigit(c);
-
-    public static bool IsNotNumber(this char c) => !char.IsDigit(c);
-
     public static char ToLower(this char c) => char.ToLower(c);
+
+    public static void ToLower(ref char c) => c = ToLower(c);
+
+    public static IEnumerable<char> ToLower(params char[] cs)
+    {
+        if (cs is null || cs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < cs.Length; i++)
+        {
+            yield return ToLower(cs[i]);
+        }
+    }
+
+    public static IEnumerable<char> ToLower(this IEnumerable<char> cs)
+    {
+        if (cs is null || !cs.Any())
+        {
+            yield break;
+        }
+        foreach (var c in cs)
+        {
+            yield return ToLower(c);
+        }
+    }
+
+    public static IEnumerable<char> ToLower(this IReadOnlyCollection<char> cs)
+    {
+        if (cs is null || cs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var c in cs)
+        {
+            yield return ToLower(c);
+        }
+    }
+
+    public static IEnumerable<char> ToLower(this IReadOnlyList<char> cs)
+    {
+        if (cs is null || cs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < cs.Count; i++)
+        {
+            yield return ToLower(cs[i]);
+        }
+    }
+
+    public static IEnumerable<char> ToLower(this IReadOnlySet<char> cs)
+    {
+        if (cs is null || cs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var c in cs)
+        {
+            yield return ToLower(c);
+        }
+    }
 
     public static char ToUpper(this char c) => char.ToUpper(c);
 
-    public static int ToUnicode(this char c) => ToInt32(c);
+    public static void ToUpper(ref char c) => c = ToUpper(c);
 
-    public static bool Equal(this char c1, char c2) => char.ToLower(c1) == char.ToLower(c2);
+    public static IEnumerable<char> ToUpper(params char[] cs)
+    {
+        if (cs is null || cs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < cs.Length; i++)
+        {
+            yield return ToUpper(cs[i]);
+        }
+    }
 
-    public static bool Compare(params char[] cs) => cs?.Length > 0 && !cs.Any(s => s != cs.FirstOrDefault());
+    public static IEnumerable<char> ToUpper(this IEnumerable<char> cs)
+    {
+        if (cs is null || !cs.Any())
+        {
+            yield break;
+        }
+        foreach (var c in cs)
+        {
+            yield return ToUpper(c);
+        }
+    }
+
+    public static IEnumerable<char> ToUpper(this IReadOnlyCollection<char> cs)
+    {
+        if (cs is null || cs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var c in cs)
+        {
+            yield return ToUpper(c);
+        }
+    }
+
+    public static IEnumerable<char> ToUpper(this IReadOnlyList<char> cs)
+    {
+        if (cs is null || cs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < cs.Count; i++)
+        {
+            yield return ToUpper(cs[i]);
+        }
+    }
+
+    public static IEnumerable<char> ToUpper(this IReadOnlySet<char> cs)
+    {
+        if (cs is null || cs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var c in cs)
+        {
+            yield return ToUpper(c);
+        }
+    }
 }

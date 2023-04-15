@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YANLib.Dtos;
+using static System.Guid;
 using static System.Threading.Tasks.ValueTask;
 using static YANLib.YANBool;
 using static YANLib.YANNum;
@@ -29,15 +29,15 @@ public class YANJsonService : YANLibAppService, IYANJsonService
             yield return i % 2 == 0
                 ? new JsonTestDto
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"Nguyễn Văn {GenerateRandomCharacter().ToUpper()}",
+                    Id = NewGuid(),
+                    Name = $"nguyễn văn {GenerateRandomCharacter()}".ToTitle(),
                     Income = GenerateRandomUshort(),
                     IsRisk = GenerateRandomBool()
                 }.SerializeCamel()
                 : new JsonTestDto
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"Nguyễn Văn {GenerateRandomCharacter().ToUpper()}",
+                    Id = NewGuid(),
+                    Name = $"đoàn thị {GenerateRandomCharacter()}".ToTitle(),
                     Income = GenerateRandomUshort(),
                     IsRisk = GenerateRandomBool()
                 }.Serialize();
@@ -47,7 +47,7 @@ public class YANJsonService : YANLibAppService, IYANJsonService
     // Modified data
     private static IEnumerable<JsonTestDto> ModData(byte quantity)
     {
-        foreach (var dto in GenData(quantity).Deserialize<JsonTestDto>())
+        foreach (var dto in GenData(quantity).DeserializeDuo<JsonTestDto>())
         {
             dto.Income *= 1000;
             yield return dto;

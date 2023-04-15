@@ -532,7 +532,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(T1 tzSrc, T2 tzDst, params DateTime[] dts) where T1 : struct where T2 : struct
     {
-        if (dts is null || dts.Length <= 0)
+        if (dts is null || dts.Length < 1)
         {
             yield break;
         }
@@ -578,7 +578,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlyCollection<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
-        if (dts is null || dts.Count <= 0)
+        if (dts is null || dts.Count < 1)
         {
             yield break;
         }
@@ -601,7 +601,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlyList<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
-        if (dts is null || dts.Count <= 0)
+        if (dts is null || dts.Count < 1)
         {
             yield break;
         }
@@ -624,7 +624,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
-        if (dts is null || dts.Count <= 0)
+        if (dts is null || dts.Count < 1)
         {
             yield break;
         }
@@ -645,7 +645,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime> ChangeTimeZone<T>(T tzDst, params DateTime[] dts) where T : struct
     {
-        if (dts is null || dts.Length <= 0)
+        if (dts is null || dts.Length < 1)
         {
             yield break;
         }
@@ -687,7 +687,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlyCollection<DateTime> dts, T tzDst) where T : struct
     {
-        if (dts is null || dts.Count <= 0)
+        if (dts is null || dts.Count < 1)
         {
             yield break;
         }
@@ -708,7 +708,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlyList<DateTime> dts, T tzDst) where T : struct
     {
-        if (dts is null || dts.Count <= 0)
+        if (dts is null || dts.Count < 1)
         {
             yield break;
         }
@@ -729,7 +729,7 @@ public static partial class YANDateTime
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlySet<DateTime> dts, T tzDst) where T : struct
     {
-        if (dts is null || dts.Count <= 0)
+        if (dts is null || dts.Count < 1)
         {
             yield break;
         }
