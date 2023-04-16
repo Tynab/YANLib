@@ -21,6 +21,66 @@ public static partial class YANNum
         }
     }
 
+    public static IEnumerable<nint?> ToNint<T>(params T[] nums) where T : struct
+    {
+        if (nums is null || nums.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Length; i++)
+        {
+            yield return nums[i].ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IEnumerable<T> nums) where T : struct
+    {
+        if (nums is null || !nums.Any())
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlyCollection<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlyList<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Count; i++)
+        {
+            yield return nums[i].ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlySet<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToNint();
+        }
+    }
+
     /// <summary>
     /// Parses the string representation of a nint using the default format.
     /// Returns the parsed <see cref="nint"/> value, or <see langword="default"/> if the parsing fails.
@@ -28,6 +88,66 @@ public static partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="nint"/> value, or <see langword="default"/> if the parsing fails.</returns>
     public static nint? ToNint(this string str) => nint.TryParse(str, out var num) ? num : default;
+
+    public static IEnumerable<nint?> ToNint<T>(params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IEnumerable<string> strs) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlyCollection<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlyList<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToNint();
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlySet<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToNint();
+        }
+    }
 
     /// <summary>
     /// Parses the string representation of a nint using the default format.
@@ -38,6 +158,66 @@ public static partial class YANNum
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="nint"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
     public static nint? ToNint<T>(this string str, T dfltVal) where T : struct => nint.TryParse(str, out var num) ? num : dfltVal.ToNint();
+
+    public static IEnumerable<nint?> ToNint<T>(T dfltVal, params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToNint(dfltVal);
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToNint(dfltVal);
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlyCollection<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToNint(dfltVal);
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlyList<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToNint(dfltVal);
+        }
+    }
+
+    public static IEnumerable<nint?> ToNint<T>(this IReadOnlySet<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToNint(dfltVal);
+        }
+    }
 
     /// <summary>
     /// Generates a random <see cref="IntPtr"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -53,6 +233,14 @@ public static partial class YANNum
         var minValue = min.ToNint();
         var maxValue = max.ToNint();
         return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().NextInt64(minValue.Value, maxValue.Value).ToNint() : default;
+    }
+
+    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomNint(min, max);
+        }
     }
 
     /// <summary>

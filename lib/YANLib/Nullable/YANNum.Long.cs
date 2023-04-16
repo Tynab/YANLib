@@ -21,6 +21,66 @@ public partial class YANNum
         }
     }
 
+    public static IEnumerable<long?> ToLong<T>(params T[] nums) where T : struct
+    {
+        if (nums is null || nums.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Length; i++)
+        {
+            yield return nums[i].ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IEnumerable<T> nums) where T : struct
+    {
+        if (nums is null || !nums.Any())
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlyCollection<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlyList<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Count; i++)
+        {
+            yield return nums[i].ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlySet<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToLong();
+        }
+    }
+
     /// <summary>
     /// Parses the string representation of a long using the default format.
     /// Returns the parsed <see cref="long"/> value, or <see langword="default"/> if the parsing fails.
@@ -28,6 +88,66 @@ public partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="long"/> value, or <see langword="default"/> if the parsing fails.</returns>
     public static long? ToLong(this string str) => long.TryParse(str, out var num) ? num : default;
+
+    public static IEnumerable<long?> ToLong<T>(params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IEnumerable<string> strs) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlyCollection<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlyList<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToLong();
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlySet<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToLong();
+        }
+    }
 
     /// <summary>
     /// Parses the string representation of a long using the default format.
@@ -38,6 +158,66 @@ public partial class YANNum
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="long"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
     public static long? ToLong<T>(this string str, T dfltVal) where T : struct => long.TryParse(str, out var num) ? num : dfltVal.ToLong();
+
+    public static IEnumerable<long?> ToLong<T>(T dfltVal, params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToLong(dfltVal);
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToLong(dfltVal);
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlyCollection<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToLong(dfltVal);
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlyList<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToLong(dfltVal);
+        }
+    }
+
+    public static IEnumerable<long?> ToLong<T>(this IReadOnlySet<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToLong(dfltVal);
+        }
+    }
 
     /// <summary>
     /// Generates a random <see cref="long"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -53,6 +233,14 @@ public partial class YANNum
         var minValue = min.ToLong();
         var maxValue = max.ToLong();
         return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().NextInt64(minValue.Value, maxValue.Value) : default;
+    }
+
+    public static IEnumerable<long?> GenerateRandomLong<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomLong(min, max);
+        }
     }
 
     /// <summary>

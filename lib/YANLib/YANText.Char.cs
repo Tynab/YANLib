@@ -843,7 +843,7 @@ public static partial class YANText
     /// <param name="c">The character to retrieve the value from.</param>
     /// <param name="dfltVal">The default value to return if the character is <see langword="null"/>.</param>
     /// <returns>The non-null character value or the default value if it is <see langword="null"/>.</returns>
-    public static char GetValue(this char c, char dfltVal) => c.IsEmpty() ? char.MinValue : dfltVal;
+    public static char GetValue(this char c, char dfltVal) => c.IsEmpty() ? dfltVal : c;
 
     /// <summary>
     /// Generates a random lowercase character from the English alphabet.
@@ -863,14 +863,7 @@ public static partial class YANText
     public static char ToLower(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToLower(c) : c;
 
     /// <summary>
-    /// Converts the character to lowercase and updates the input character reference to the lowercase version, if it is not empty or whitespace; otherwise, returns the original character.
-    /// </summary>
-    /// <param name="c">The character to convert to lowercase.</param>
-    public static void ToLower(ref char c) => c = ToLower(c);
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
@@ -887,8 +880,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
@@ -905,8 +897,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
@@ -923,8 +914,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
@@ -941,8 +931,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
@@ -981,14 +970,7 @@ public static partial class YANText
     public static char ToLowerInvariant(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToLowerInvariant(c) : c;
 
     /// <summary>
-    /// Converts the character to lowercase using the invariant culture, if it is not empty or whitespace; otherwise, returns the original character.
-    /// </summary>
-    /// <param name="c">The character to convert to lowercase.</param>
-    public static void ToLowerInvariant(ref char c) => c = ToLowerInvariant(c);
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1005,8 +987,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1023,8 +1004,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1041,8 +1021,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1059,8 +1038,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to lowercase.</param>
     /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1099,14 +1077,7 @@ public static partial class YANText
     public static char ToUpper(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToUpper(c) : c;
 
     /// <summary>
-    /// Converts the character to uppercase using the invariant culture and updates the input character reference to the uppercase version.
-    /// </summary>
-    /// <param name="c">The character to convert to uppercase.</param>
-    public static void ToUpper(ref char c) => c = ToUpper(c);
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1123,8 +1094,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1141,8 +1111,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1159,8 +1128,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1177,8 +1145,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1217,11 +1184,10 @@ public static partial class YANText
     public static char ToUpperInvariant(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToUpperInvariant(c) : c;
 
     /// <summary>
-    /// Converts the character to uppercase using the invariant culture, if it is not empty or whitespace; otherwise, updates the original character to its uppercase version.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
-    /// <param name="c">The character to convert to uppercase.</param>
-    public static void ToUpperInvariant(ref char c) => c = ToUpperInvariant(c);
-
+    /// <param name="cs">The characters to convert to uppercase.</param>
+    /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
     public static IEnumerable<char> ToUpperInvariant(params char[] cs)
     {
         if (cs is null || cs.Length < 1)
@@ -1235,8 +1201,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1253,8 +1218,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1271,8 +1235,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
@@ -1289,8 +1252,7 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase,
-    /// ignoring their casing, based on their Unicode values using the invariant culture.
+    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="cs">The characters to convert to uppercase.</param>
     /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>

@@ -21,6 +21,66 @@ public partial class YANNum
         }
     }
 
+    public static IEnumerable<sbyte?> ToSbyte<T>(params T?[] nums) where T : struct
+    {
+        if (nums is null || nums.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Length; i++)
+        {
+            yield return nums[i].ToSbyte();
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IEnumerable<T?> nums) where T : struct
+    {
+        if (nums is null || !nums.Any())
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToSbyte();
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlyCollection<T?> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToSbyte();
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlyList<T?> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Count; i++)
+        {
+            yield return nums[i].ToSbyte();
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlySet<T?> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToSbyte();
+        }
+    }
+
     /// <summary>
     /// Parses the string representation of an <see cref="sbyte"/> using the default format.
     /// Returns the parsed <see cref="sbyte"/> value, or <paramref name="dfltVal"/> if the parsing fails.
@@ -30,6 +90,66 @@ public partial class YANNum
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="sbyte"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
     public static sbyte? ToSbyte<T>(this string str, T? dfltVal) where T : struct => dfltVal.HasValue ? str.ToSbyte(dfltVal.Value) : default;
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(T? dfltVal, params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToSbyte(dfltVal);
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToSbyte(dfltVal);
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlyCollection<string> strs, T? dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToSbyte(dfltVal);
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlyList<string> strs, T? dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToSbyte(dfltVal);
+        }
+    }
+
+    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlySet<string> strs, T? dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToSbyte(dfltVal);
+        }
+    }
 
     /// <summary>
     /// Generates a random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -42,6 +162,22 @@ public partial class YANNum
     /// <returns>A random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static sbyte? GenerateRandomSbyte<T1, T2>(T1? min, T2 max) where T1 : struct where T2 : struct => min.HasValue ? GenerateRandomSbyte(min.Value, max) : default;
 
+    public static IEnumerable<sbyte?> GenerateRandomSbyte<T1, T2, T>(T1? min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomSbyte(min, max);
+        }
+    }
+
+    public static IEnumerable<sbyte?> GenerateRandomSbyte<T1, T2, T>(T1? min, T2 max, T? size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomSbyte(min, max);
+        }
+    }
+
     /// <summary>
     /// Generates a random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
@@ -53,6 +189,22 @@ public partial class YANNum
     /// <returns>A random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static sbyte? GenerateRandomSbyte<T1, T2>(T1 min, T2? max) where T1 : struct where T2 : struct => max.HasValue ? GenerateRandomSbyte(min, max.Value) : default;
 
+    public static IEnumerable<sbyte?> GenerateRandomSbyte<T1, T2, T>(T1 min, T2? max, T size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomSbyte(min, max);
+        }
+    }
+
+    public static IEnumerable<sbyte?> GenerateRandomSbyte<T1, T2, T>(T1 min, T2? max, T? size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomSbyte(min, max);
+        }
+    }
+
     /// <summary>
     /// Generates a random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
@@ -63,6 +215,22 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <returns>A random <see cref="sbyte"/> value between <paramref name="min"/> and <paramref name="max"/>.</returns>
     public static sbyte? GenerateRandomSbyte<T1, T2>(T1? min, T2? max) where T1 : struct where T2 : struct => min.HasValue ? GenerateRandomSbyte(min.Value, max) : default;
+
+    public static IEnumerable<sbyte?> GenerateRandomSbyte<T1, T2, T>(T1? min, T2? max, T size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomSbyte(min, max);
+        }
+    }
+
+    public static IEnumerable<sbyte?> GenerateRandomSbyte<T1, T2, T>(T1? min, T2? max, T? size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomSbyte(min, max);
+        }
+    }
 
     /// <summary>
     /// Generates a random <see cref="sbyte"/> value between <see cref="sbyte.MinValue"/> and <paramref name="max"/>.

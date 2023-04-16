@@ -21,6 +21,66 @@ public partial class YANNum
         }
     }
 
+    public static IEnumerable<float?> ToFloat<T>(params T[] nums) where T : struct
+    {
+        if (nums is null || nums.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Length; i++)
+        {
+            yield return nums[i].ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IEnumerable<T> nums) where T : struct
+    {
+        if (nums is null || !nums.Any())
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlyCollection<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlyList<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < nums.Count; i++)
+        {
+            yield return nums[i].ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlySet<T> nums) where T : struct
+    {
+        if (nums is null || nums.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in nums)
+        {
+            yield return num.ToFloat();
+        }
+    }
+
     /// <summary>
     /// Parses the string representation of a <see cref="float"/> using the default format.
     /// Returns the parsed <see cref="float"/> value, or <see langword="default"/> if the parsing fails.
@@ -28,6 +88,66 @@ public partial class YANNum
     /// <param name="str">The string to be parsed.</param>
     /// <returns>The parsed <see cref="float"/> value, or <see langword="default"/> if the parsing fails.</returns>
     public static float? ToFloat(this string str) => float.TryParse(str, out var num) ? num : default;
+
+    public static IEnumerable<float?> ToFloat<T>(params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IEnumerable<string> strs) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlyCollection<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlyList<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToFloat();
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlySet<string> strs) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToFloat();
+        }
+    }
 
     /// <summary>
     /// Parses the string representation of a float using the default format.
@@ -38,6 +158,66 @@ public partial class YANNum
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="float"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
     public static float? ToFloat<T>(this string str, T dfltVal) where T : struct => float.TryParse(str, out var num) ? num : dfltVal.ToFloat();
+
+    public static IEnumerable<float?> ToFloat<T>(T dfltVal, params string[] strs) where T : struct
+    {
+        if (strs is null || strs.Length < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Length; i++)
+        {
+            yield return strs[i].ToFloat(dfltVal);
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToFloat(dfltVal);
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlyCollection<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToFloat(dfltVal);
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlyList<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        for (var i = 0; i < strs.Count; i++)
+        {
+            yield return strs[i].ToFloat(dfltVal);
+        }
+    }
+
+    public static IEnumerable<float?> ToFloat<T>(this IReadOnlySet<string> strs, T dfltVal) where T : struct
+    {
+        if (strs is null || strs.Count < 1)
+        {
+            yield break;
+        }
+        foreach (var num in strs)
+        {
+            yield return num.ToFloat(dfltVal);
+        }
+    }
 
     /// <summary>
     /// Generates a random <see cref="float"/> value between <paramref name="min"/> and <paramref name="max"/>.
@@ -53,6 +233,14 @@ public partial class YANNum
         var minValue = min.ToFloat();
         var maxValue = max.ToFloat();
         return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().NextSingle(minValue.Value, maxValue.Value) : default;
+    }
+
+    public static IEnumerable<float?> GenerateRandomFloat<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    {
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
+        {
+            yield return GenerateRandomFloat(min, max);
+        }
     }
 
     /// <summary>

@@ -72,7 +72,7 @@ public class YANPass
     /// <param name="password">The password string to validate.</param>
     /// <param name="len">The minimum length for the password.</param>
     /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
-    public static bool IsValidPassword(string password, int len) => password.IsNotNullOrWhiteSpace() && password.Length >= len && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
+    public static bool IsValidPassword<T>(string password, T len) where T : struct => password.IsNotNullOrWhiteSpace() && password.Length >= len.ToByte() && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
     /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
@@ -87,14 +87,111 @@ public class YANPass
         {
             return false;
         }
-        // has 8 character
+        // has 8 characters
         if (password.Length < 8)
         {
             return false;
         }
-        var newPwdSplChar = new List<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-        newPwdSplChar?.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
-        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar?.ToArray()))}]).+$").IsMatch(password);
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the standard requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword(string password, IEnumerable<char> splChars)
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has 8 characters
+        if (password.Length < 8)
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the standard requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword(string password, IReadOnlyCollection<char> splChars)
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has 8 characters
+        if (password.Length < 8)
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the standard requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword(string password, IReadOnlyList<char> splChars)
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has 8 characters
+        if (password.Length < 8)
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the standard requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword(string password, IReadOnlySet<char> splChars)
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has 8 characters
+        if (password.Length < 8)
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
     }
 
     /// <summary>
@@ -104,7 +201,7 @@ public class YANPass
     /// <param name="len">The minimum length for the password.</param>
     /// <param name="splChars">Additional special characters to require in the password.</param>
     /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
-    public bool IsValidPassword(string password, int len, params char[] splChars)
+    public bool IsValidPassword<T>(string password, T len, params char[] splChars) where T : struct
     {
         // has character
         if (!password.IsNotNullOrWhiteSpace())
@@ -112,13 +209,114 @@ public class YANPass
             return false;
         }
         // has len character
-        if (password.Length < len)
+        if (password.Length < len.ToByte())
         {
             return false;
         }
-        var newPwdSplChar = new List<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-        newPwdSplChar?.AddRange(splChars.Where(c => !newPwdSplChar.Contains(c)));
-        return new Regex($@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar?.ToArray()))}]).+$").IsMatch(password);
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the requirements for password validation, which are: it contains at least one character, has a length of at least the specified value, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="len">The minimum length for the password.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword<T>(string password, T len, IEnumerable<char> splChars) where T : struct
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has len character
+        if (password.Length < len.ToByte())
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the requirements for password validation, which are: it contains at least one character, has a length of at least the specified value, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="len">The minimum length for the password.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword<T>(string password, T len, IReadOnlyCollection<char> splChars) where T : struct
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has len character
+        if (password.Length < len.ToByte())
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the requirements for password validation, which are: it contains at least one character, has a length of at least the specified value, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="len">The minimum length for the password.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword<T>(string password, T len, IReadOnlyList<char> splChars) where T : struct
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has len character
+        if (password.Length < len.ToByte())
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+    }
+
+    /// <summary>
+    /// Determines whether a password meets the requirements for password validation, which are: it contains at least one character, has a length of at least the specified value, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
+    /// </summary>
+    /// <param name="password">The password string to validate.</param>
+    /// <param name="len">The minimum length for the password.</param>
+    /// <param name="splChars">Additional special characters to require in the password.</param>
+    /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
+    public bool IsValidPassword<T>(string password, T len, IReadOnlySet<char> splChars) where T : struct
+    {
+        // has character
+        if (!password.IsNotNullOrWhiteSpace())
+        {
+            return false;
+        }
+        // has len character
+        if (password.Length < len.ToByte())
+        {
+            return false;
+        }
+        // Check if the password matches the regex pattern
+        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        newPwdSplChar.UnionWith(splChars);
+        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
     }
     #endregion
 }
