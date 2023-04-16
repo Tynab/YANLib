@@ -21,6 +21,16 @@ public static partial class YANNum
         }
     }
 
+    /// <summary>
+    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
+    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the value-type objects to be converted.
+    /// Must be a value type.
+    /// </typeparam>
+    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
+    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
     public static IEnumerable<byte> ToByte<T>(params T?[] nums) where T : struct
     {
         if (nums is null || nums.Length < 1)
@@ -33,6 +43,16 @@ public static partial class YANNum
         }
     }
 
+    /// <summary>
+    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
+    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the value-type objects to be converted.
+    /// Must be a value type.
+    /// </typeparam>
+    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
+    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
     public static IEnumerable<byte> ToByte<T>(this IEnumerable<T?> nums) where T : struct
     {
         if (nums is null || !nums.Any())
@@ -45,6 +65,16 @@ public static partial class YANNum
         }
     }
 
+    /// <summary>
+    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
+    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the value-type objects to be converted.
+    /// Must be a value type.
+    /// </typeparam>
+    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
+    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
     public static IEnumerable<byte> ToByte<T>(this IReadOnlyCollection<T?> nums) where T : struct
     {
         if (nums is null || nums.Count < 1)
@@ -57,6 +87,16 @@ public static partial class YANNum
         }
     }
 
+    /// <summary>
+    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
+    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the value-type objects to be converted.
+    /// Must be a value type.
+    /// </typeparam>
+    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
+    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
     public static IEnumerable<byte> ToByte<T>(this IReadOnlyList<T?> nums) where T : struct
     {
         if (nums is null || nums.Count < 1)
@@ -69,6 +109,16 @@ public static partial class YANNum
         }
     }
 
+    /// <summary>
+    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
+    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the value-type objects to be converted.
+    /// Must be a value type.
+    /// </typeparam>
+    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
+    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
     public static IEnumerable<byte> ToByte<T>(this IReadOnlySet<T?> nums) where T : struct
     {
         if (nums is null || nums.Count < 1)
