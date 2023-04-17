@@ -180,7 +180,7 @@ public static partial class YANText
     /// <param name="str1">The first string to compare.</param>
     /// <param name="str2">The second string to compare.</param>
     /// <returns><see langword="true"/> if the strings are equal, ignoring their casing, and comparing their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool EqualsIgnoreCase(this string str1, string str2) => IsNull(str1, str2) || !str1.IsNull() && !str1.IsNull() && string.Equals(str1, str2, OrdinalIgnoreCase);
+    public static bool EqualsIgnoreCase(this string str1, string str2) => IsNull(str1, str2) || str1.IsNotNull() && str1.IsNotNull() && string.Equals(str1, str2, OrdinalIgnoreCase);
 
     /// <summary>
     /// Determines whether the specified strings are equal, ignoring their casing, and comparing their values using ordinal comparison.

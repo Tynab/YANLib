@@ -93,7 +93,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to check.</param>
     /// <returns><see langword="true"/> if the character is the null character (<see cref="char.MinValue"/>) or white space; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this char c) => c.IsEmpty() || char.IsWhiteSpace(c);
+    public static bool IsNullOrWhiteSpace(this char c) => c.IsEmpty() || c.IsWhiteSpace();
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
@@ -305,7 +305,7 @@ public static partial class YANText
     /// <param name="c1">The first character to compare.</param>
     /// <param name="c2">The second character to compare.</param>
     /// <returns><see langword="true"/> if the characters are equal, ignoring their casing, and comparing their Unicode values; otherwise, <see langword="false"/>.</returns>
-    public static bool EqualsIgnoreCase(this char c1, char c2) => char.ToLowerInvariant(c1) == char.ToLowerInvariant(c2);
+    public static bool EqualsIgnoreCase(this char c1, char c2) => c1.ToLowerInvariant() == c2.ToLowerInvariant();
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable are equal to the first character in the enumerable, ignoring their casing, and comparing their Unicode values.
@@ -431,7 +431,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to check.</param>
     /// <returns><see langword="true"/> if the character is not the null character (<see cref="char.MinValue"/>) and is not a whitespace character; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(this char c) => c.IsNotEmpty() && !char.IsWhiteSpace(c);
+    public static bool IsNotEmptyOrWhiteSpace(this char c) => c.IsNotEmpty() && c.IsNotWhiteSpace();
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>.
@@ -718,7 +718,7 @@ public static partial class YANText
     /// <param name="c1">The first character to compare.</param>
     /// <param name="c2">The second character to compare.</param>
     /// <returns><see langword="true"/> if the two characters are not equal, ignoring their casing, based on their Unicode values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEqualsIgnoreCase(this char c1, char c2) => char.ToLowerInvariant(c1) != char.ToLowerInvariant(c2);
+    public static bool NotEqualsIgnoreCase(this char c1, char c2) => c1.ToLowerInvariant() != c2.ToLowerInvariant();
 
     /// <summary>
     /// Determines whether all the characters in the specified enumerable are distinct, ignoring their casing, based on their Unicode values.

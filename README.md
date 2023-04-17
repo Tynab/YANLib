@@ -50,11 +50,14 @@ private static IEnumerable<string> GenData(byte quantity)
 - Text
 - Bool
 - DateTime
+- Nullable
 - Model
 - JSON
+- Enumerable
 - Random
 - Process
 - Task
+- Func
 
 ### OTHER
 - Password

@@ -540,7 +540,6 @@ public static partial class YANJson
         T? rslt;
         try
         {
-
             rslt = str.Deserialize<T>();
         }
         catch
@@ -689,7 +688,6 @@ public static partial class YANJson
         T? rslt;
         try
         {
-
             rslt = str.DeserializeCamel<T>();
         }
         catch
