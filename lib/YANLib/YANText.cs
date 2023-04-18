@@ -619,7 +619,7 @@ public static partial class YANText
         }
         foreach (var str in strs)
         {
-            yield return str.CleanSpace();
+            yield return str.FilterAlphabetic();
         }
     }
 

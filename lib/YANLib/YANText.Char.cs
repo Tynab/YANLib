@@ -100,35 +100,35 @@ public static partial class YANText
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsNotEmptyOrWhiteSpace());
+    public static bool IsNullOrWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyOrWhiteSpace());
+    public static bool IsNullOrWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IReadOnlyCollection<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyOrWhiteSpace());
+    public static bool IsNullOrWhiteSpace(this IReadOnlyCollection<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IReadOnlyList<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyOrWhiteSpace());
+    public static bool IsNullOrWhiteSpace(this IReadOnlyList<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is <see langword="null"/> or <see cref="char.MinValue"/> or whitespace; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IReadOnlySet<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyOrWhiteSpace());
+    public static bool IsNullOrWhiteSpace(this IReadOnlySet<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
     /// <summary>
     /// Determines whether the specified character is an alphabetic character, which includes letters from any language, or is the null character (<see cref="char.MinValue"/>) or a white space character.
@@ -431,42 +431,42 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to check.</param>
     /// <returns><see langword="true"/> if the character is not the null character (<see cref="char.MinValue"/>) and is not a whitespace character; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(this char c) => c.IsNotEmpty() && c.IsNotWhiteSpace();
+    public static bool IsNotEmptyAndWhiteSpace(this char c) => c.IsNotEmpty() && c.IsNotWhiteSpace();
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool IsNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool IsNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(this IReadOnlyCollection<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool IsNotEmptyAndWhiteSpace(this IReadOnlyCollection<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(this IReadOnlyList<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool IsNotEmptyAndWhiteSpace(this IReadOnlyList<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether any of the specified characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>.
     /// </summary>
     /// <param name="cs">The characters to check.</param>
     /// <returns><see langword="true"/> if any of the characters in the enumerable is not a white-space character or <see cref="char.MinValue"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyOrWhiteSpace(this IReadOnlySet<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool IsNotEmptyAndWhiteSpace(this IReadOnlySet<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether the specified character is not an alphabetic character and is not the null character (<see cref="char.MinValue"/>) and is not a whitespace character.
@@ -860,7 +860,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to convert to lowercase.</param>
     /// <returns>The lowercase version of the character if it is not empty or whitespace; otherwise, the original character.</returns>
-    public static char ToLower(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToLower(c) : c;
+    public static char ToLower(this char c) => c.IsNotEmptyAndWhiteSpace() ? char.ToLower(c) : c;
 
     /// <summary>
     /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
@@ -967,7 +967,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to convert to lowercase.</param>
     /// <returns>The lowercase version of the character using the invariant culture if it is not empty or whitespace; otherwise, the original character.</returns>
-    public static char ToLowerInvariant(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToLowerInvariant(c) : c;
+    public static char ToLowerInvariant(this char c) => c.IsNotEmptyAndWhiteSpace() ? char.ToLowerInvariant(c) : c;
 
     /// <summary>
     /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
@@ -1074,7 +1074,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to convert to uppercase.</param>
     /// <returns>The uppercase version of the character using the invariant culture if it is not empty or whitespace; otherwise, the original character.</returns>
-    public static char ToUpper(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToUpper(c) : c;
+    public static char ToUpper(this char c) => c.IsNotEmptyAndWhiteSpace() ? char.ToUpper(c) : c;
 
     /// <summary>
     /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
@@ -1181,7 +1181,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="c">The character to convert to uppercase.</param>
     /// <returns>The uppercase version of the character using the invariant culture if it is not empty or whitespace; otherwise, the original character.</returns>
-    public static char ToUpperInvariant(this char c) => c.IsNotEmptyOrWhiteSpace() ? char.ToUpperInvariant(c) : c;
+    public static char ToUpperInvariant(this char c) => c.IsNotEmptyAndWhiteSpace() ? char.ToUpperInvariant(c) : c;
 
     /// <summary>
     /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.

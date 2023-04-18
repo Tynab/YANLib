@@ -293,7 +293,7 @@ public static partial class YANEnumerable
         for (var i = 0; i < cnt; i++)
         {
             var src = srcs[i];
-            if (src.IsNotNullOrWhiteSpace())
+            if (src.IsNotNullAndWhiteSpace())
             {
                 yield return src;
             }
@@ -313,7 +313,7 @@ public static partial class YANEnumerable
         }
         foreach (var src in srcs)
         {
-            if (src.IsNotNullOrWhiteSpace())
+            if (src.IsNotNullAndWhiteSpace())
             {
                 yield return src;
             }
@@ -333,7 +333,7 @@ public static partial class YANEnumerable
         }
         foreach (var src in srcs)
         {
-            if (src.IsNotNullOrWhiteSpace())
+            if (src.IsNotNullAndWhiteSpace())
             {
                 yield return src;
             }
@@ -355,7 +355,7 @@ public static partial class YANEnumerable
         for (var i = 0; i < cnt; i++)
         {
             var src = srcs[i];
-            if (src.IsNotNullOrWhiteSpace())
+            if (src.IsNotNullAndWhiteSpace())
             {
                 yield return src;
             }
@@ -375,7 +375,7 @@ public static partial class YANEnumerable
         }
         foreach (var src in srcs)
         {
-            if (src.IsNotNullOrWhiteSpace())
+            if (src.IsNotNullAndWhiteSpace())
             {
                 yield return src;
             }
@@ -393,7 +393,7 @@ public static partial class YANEnumerable
         {
             foreach (var src in srcs)
             {
-                if (src.IsNotNullOrWhiteSpace())
+                if (src.IsNotNullAndWhiteSpace())
                 {
                     _ = srcs.Remove(src);
                 }
@@ -412,7 +412,7 @@ public static partial class YANEnumerable
         {
             for (var i = 0; i < srcs.Count; i++)
             {
-                if (srcs[i].IsNotNullOrWhiteSpace())
+                if (srcs[i].IsNotNullAndWhiteSpace())
                 {
                     srcs.RemoveAt(i);
                 }
@@ -431,7 +431,7 @@ public static partial class YANEnumerable
         {
             foreach (var src in srcs)
             {
-                if (src.IsNotNullOrWhiteSpace())
+                if (src.IsNotNullAndWhiteSpace())
                 {
                     _ = srcs.Remove(src);
                 }

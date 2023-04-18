@@ -13,7 +13,7 @@ public static partial class YANProcess
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public static async Task KillAllProcessesByName(this string name)
     {
-        if (name.IsNotNullOrWhiteSpace())
+        if (name.IsNotNullAndWhiteSpace())
         {
             await WhenAll(GetProcessesByName(name).Select(p =>
             {
@@ -34,7 +34,7 @@ public static partial class YANProcess
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public static async Task KillAllProcessesByName(params string[] names)
     {
-        if (names.IsNotNullOrWhiteSpace())
+        if (names.IsNotNullAndWhiteSpace())
         {
             await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
             {

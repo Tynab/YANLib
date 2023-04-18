@@ -469,7 +469,7 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the objects to check.</typeparam>
     /// <param name="mdls">The objects to check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
-    public static IEnumerable<bool> AllPropertiAnyPropertiesDefaultesDefault<T>(this IReadOnlySet<T> mdls) where T : class
+    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlySet<T> mdls) where T : class
     {
         if (mdls is null || mdls.Count < 1)
         {

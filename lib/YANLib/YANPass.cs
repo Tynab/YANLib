@@ -31,7 +31,7 @@ public class YANPass
     /// <returns>A string in the format "hashValue|salt|iterations|algorithm", where "hashValue" is the computed hash value of the password, "salt" is the randomly generated salt used for hashing, "iterations" is the number of iterations used for the key derivation function, and "algorithm" is the name of the key derivation function used.</returns>
     public string? Hash(string password)
     {
-        if (password.IsNotNullOrWhiteSpace() && SaltSize > 0 && Iterations > 0 && KeySize > 0)
+        if (password.IsNotNullAndWhiteSpace() && SaltSize > 0 && Iterations > 0 && KeySize > 0)
         {
             var salt = GetBytes(SaltSize);
             return new StringBuilder().Append(ToHexString(Pbkdf2(password, salt, Iterations, Algorithm, KeySize))).Append(SegmentDelimiter).Append(ToHexString(salt)).Append(SegmentDelimiter).Append(Iterations).Append(SegmentDelimiter).Append(Algorithm).ToString();
@@ -47,7 +47,7 @@ public class YANPass
     /// <returns><see langword="true"/> if the provided password is valid; otherwise, <see langword="false"/>.</returns>
     public bool Verify(string password, string strHash)
     {
-        if (strHash.IsNotNullOrWhiteSpace() && SegmentDelimiter.IsNotEmptyOrWhiteSpace())
+        if (strHash.IsNotNullAndWhiteSpace() && SegmentDelimiter.IsNotEmptyAndWhiteSpace())
         {
             var segs = strHash.Split(SegmentDelimiter);
             if (segs.Length > 3)
@@ -64,7 +64,7 @@ public class YANPass
     /// </summary>
     /// <param name="password">The password string to validate.</param>
     /// <returns><see langword="true"/> if the password meets the standard requirements for password validation; otherwise, <see langword="false"/>.</returns>
-    public static bool IsValidPasswordStandard(string password) => password.IsNotNullOrWhiteSpace() && password.Length >= 8 && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
+    public static bool IsValidPasswordStandard(string password) => password.IsNotNullAndWhiteSpace() && password.Length >= 8 && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
     /// Determines whether a password meets the requirements for password validation, which are: it contains at least one character, has a length of at least the specified value, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character.
@@ -72,7 +72,7 @@ public class YANPass
     /// <param name="password">The password string to validate.</param>
     /// <param name="len">The minimum length for the password.</param>
     /// <returns><see langword="true"/> if the password meets the requirements for password validation; otherwise, <see langword="false"/>.</returns>
-    public static bool IsValidPassword<T>(string password, T len) where T : struct => password.IsNotNullOrWhiteSpace() && password.Length >= len.ToByte() && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
+    public static bool IsValidPassword<T>(string password, T len) where T : struct => password.IsNotNullAndWhiteSpace() && password.Length >= len.ToByte() && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
 
     /// <summary>
     /// Determines whether a password meets the standard requirements for password validation, which are: it contains at least one character, has a length of at least 8, and contains at least one lowercase letter, one uppercase letter, one digit, and one special character, in addition to any specified additional special characters.
@@ -83,7 +83,7 @@ public class YANPass
     public bool IsValidPassword(string password, params char[] splChars)
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -107,7 +107,7 @@ public class YANPass
     public bool IsValidPassword(string password, IEnumerable<char> splChars)
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -131,7 +131,7 @@ public class YANPass
     public bool IsValidPassword(string password, IReadOnlyCollection<char> splChars)
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -155,7 +155,7 @@ public class YANPass
     public bool IsValidPassword(string password, IReadOnlyList<char> splChars)
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -179,7 +179,7 @@ public class YANPass
     public bool IsValidPassword(string password, IReadOnlySet<char> splChars)
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -204,7 +204,7 @@ public class YANPass
     public bool IsValidPassword<T>(string password, T len, params char[] splChars) where T : struct
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -229,7 +229,7 @@ public class YANPass
     public bool IsValidPassword<T>(string password, T len, IEnumerable<char> splChars) where T : struct
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -254,7 +254,7 @@ public class YANPass
     public bool IsValidPassword<T>(string password, T len, IReadOnlyCollection<char> splChars) where T : struct
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -279,7 +279,7 @@ public class YANPass
     public bool IsValidPassword<T>(string password, T len, IReadOnlyList<char> splChars) where T : struct
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
@@ -304,7 +304,7 @@ public class YANPass
     public bool IsValidPassword<T>(string password, T len, IReadOnlySet<char> splChars) where T : struct
     {
         // has character
-        if (!password.IsNotNullOrWhiteSpace())
+        if (!password.IsNotNullAndWhiteSpace())
         {
             return false;
         }
