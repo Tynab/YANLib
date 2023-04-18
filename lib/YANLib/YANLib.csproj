@@ -10,14 +10,11 @@
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
     <Description>Update:
-- YANNullable
-- YANNum
-- YANJson
+- YANEnumarable
+- YANProcess
 - YANText
-
-Demo:
-- YANAsync
-- YANFunc</Description>
+- YANModel
+- YANPass</Description>
     <Copyright>Copyright ©  2023</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -26,11 +23,13 @@ Demo:
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Convert to extensions method in YANModel</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix:
+- Method name
+- FilterAlphabetic return</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
