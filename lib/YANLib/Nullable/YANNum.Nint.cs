@@ -110,28 +110,6 @@ public static partial class YANNum
     }
 
     /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{nint}"/> containing the nint representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{nint}"/> containing the nint representations of the objects.</returns>
-    public static IEnumerable<nint?> ToNint<T>(this IReadOnlySet<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in nums)
-        {
-            yield return num.ToNint();
-        }
-    }
-
-    /// <summary>
     /// Parses the string representation of a nint using the default format.
     /// Returns the parsed <see cref="nint"/> value, or <see langword="default"/> if the parsing fails.
     /// </summary>
@@ -208,24 +186,6 @@ public static partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToNint();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings to an <see cref="IEnumerable{nint}"/> containing the nint representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{nint}"/> containing the nint representations of the strings.</returns>
-    public static IEnumerable<nint?> ToNint(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToNint();
         }
     }
 
@@ -340,32 +300,6 @@ public static partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToNint(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings to an <see cref="IEnumerable{nint}"/> containing the nint representations of the strings, with an optional default value for conversion.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value for conversion.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">
-    /// The default value for conversion if a string cannot be parsed to nint.
-    /// Used when conversion fails for a particular string.
-    /// </param>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{nint}"/> containing the nint representations of the strings.</returns>
-    public static IEnumerable<nint?> ToNint<T>(this IReadOnlySet<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToNint(dfltVal);
         }
     }
 

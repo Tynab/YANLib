@@ -14,7 +14,7 @@ public static partial class YANRandom
     /// </summary>
     /// <param name="rnd">The <see cref="Random"/> object.</param>
     /// <returns>A random <see cref="decimal"/> value.</returns>
-    public static decimal NextDecimal(this Random rnd) => new(rnd.NextInt32(), rnd.NextInt32(), rnd.NextInt32(), rnd.Next(2) == 1, (byte)rnd.Next(29));
+    public static decimal NextDecimal(this Random rnd) => new(rnd.NextInt32(), rnd.NextInt32(), rnd.NextInt32(), rnd.Next(2) is 1, (byte)rnd.Next(29));
 
     /// <summary>
     /// Returns a random <see cref="float"/> value between <paramref name="min"/> and <paramref name="max"/>.

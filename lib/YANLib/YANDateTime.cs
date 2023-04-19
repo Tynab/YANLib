@@ -90,24 +90,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Converts an enumerable of strings representing date/time values to an <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
-    /// </summary>
-    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
-    public static IEnumerable<DateTime> ToDateTime(IReadOnlySet<string> strs)
-    {
-        if (strs.IsNullOrWhiteSpace())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime();
-        }
-    }
-
-    /// <summary>
     /// Parses the string representation of a date and time using <paramref name="fmt"/>.
     /// Returns the parsed <see cref="DateTime"/> value, or <see langword="default"/> if the parsing fails.
     /// </summary>
@@ -189,25 +171,6 @@ public static partial class YANDateTime
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToDateTime(fmt);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings representing date/time values in a specified format to an <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
-    /// </summary>
-    /// <param name="fmt">The format of the date/time values in the input strings.</param>
-    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
-    public static IEnumerable<DateTime> ToDateTime(IReadOnlySet<string> strs, string fmt)
-    {
-        if (strs.IsNullOrWhiteSpace())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmt);
         }
     }
 
@@ -302,27 +265,6 @@ public static partial class YANDateTime
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToDateTime(fmt, dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings representing date/time values in a specified format to an <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
-    /// If a string cannot be parsed to a valid DateTime value, the default value specified by <paramref name="dfltVal"/> is used instead.
-    /// </summary>
-    /// <param name="fmt">The format of the date/time values in the input strings.</param>
-    /// <param name="dfltVal">The default DateTime value to be used for strings that cannot be parsed to valid DateTime values.</param>
-    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
-    public static IEnumerable<DateTime> ToDateTime(IReadOnlySet<string> strs, string fmt, DateTime dfltVal)
-    {
-        if (strs.IsNullOrWhiteSpace())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmt, dfltVal);
         }
     }
 
@@ -449,24 +391,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Gets the week of the year for an enumerable of DateTime values using the default calendar of the current culture.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/> or empty.
-    /// </summary>
-    /// <param name="dts">The enumerable of DateTime values for which to get the week of the year.</param>
-    /// <returns>An <see cref="IEnumerable{Int32}"/> containing the week of the year values for the input DateTime values.</returns>
-    public static IEnumerable<int> GetWeekOfYear(this IReadOnlySet<DateTime> dts)
-    {
-        if (dts is null || dts.Count > 0)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.GetWeekOfYear();
-        }
-    }
-
-    /// <summary>
     /// Returns the total number of months between the two specified <see cref="DateTime"/> values, ignoring the day of the month.
     /// </summary>
     /// <param name="dt1">The first <see cref="DateTime"/> value.</param>
@@ -583,28 +507,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Converts an enumerable of DateTime values from one time zone to another using the specified source and destination time zones.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/> or empty.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone to convert from.</param>
-    /// <param name="tzDst">The destination time zone to convert to.</param>
-    /// <param name="dts">The enumerable of DateTime values to convert.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
     /// Converts an list of DateTime values from one time zone to another using the specified source and destination time zones, and updates the original list in-place.
     /// If the input list is <see langword="null"/> or empty, no action is taken.
     /// </summary>
@@ -710,26 +612,6 @@ public static partial class YANDateTime
         for (var i = 0; i < dts.Count; i++)
         {
             yield return dts[i].ChangeTimeZone(tzDst);
-        }
-    }
-
-    /// <summary>
-    /// Converts an array of DateTime values from one time zone to another using the specified destination time zone, and returns an <see cref="IEnumerable{DateTime}"/> containing the DateTime values converted to the destination time zone.
-    /// Returns an empty sequence if the input array is <see langword="null"/> or empty.
-    /// </summary>
-    /// <typeparam name="T">The type of the destination time zone.</typeparam>
-    /// <param name="tzDst">The destination time zone to convert to.</param>
-    /// <param name="dts">The array of DateTime values to convert.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlySet<DateTime> dts, T tzDst) where T : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
         }
     }
 

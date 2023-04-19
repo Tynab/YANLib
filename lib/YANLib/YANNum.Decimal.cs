@@ -106,27 +106,6 @@ public static partial class YANNum
     }
 
     /// <summary>
-    /// Converts an enumerable of values of a generic value type to an <see cref="IEnumerable{decimal}"/> containing the decimal representations of the values.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/> or empty.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the values to be converted, which must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of values to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{decimal}"/> containing the decimal representations of the values.</returns>
-    public static IEnumerable<decimal> ToDecimal<T>(this IReadOnlySet<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in nums)
-        {
-            yield return num.ToDecimal();
-        }
-    }
-
-    /// <summary>
     /// Parses the string representation of a decimal using the default format.
     /// Returns the parsed <see cref="decimal"/> value, or <see langword="default"/> if the parsing fails.
     /// </summary>
@@ -203,24 +182,6 @@ public static partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToDecimal();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{decimal}"/> containing the decimal representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/> or empty.
-    /// </summary>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{decimal}"/> containing the decimal representations of the strings.</returns>
-    public static IEnumerable<decimal> ToDecimal(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToDecimal();
         }
     }
 
@@ -323,29 +284,6 @@ public static partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToDecimal(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{decimal}"/> containing the decimal representations of the strings, using a default value for invalid conversions.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/> or empty.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for invalid conversions.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{decimal}"/> containing the decimal representations of the strings.</returns>
-    public static IEnumerable<decimal> ToDecimal<T>(this IReadOnlySet<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToDecimal(dfltVal);
         }
     }
 

@@ -9,7 +9,7 @@ public static partial class YANBool
     /// Returns <see langword="true"/> or <see langword="false"/> with equal probability.
     /// </summary>
     /// <returns>A random boolean value.</returns>
-    public static bool GenerateRandomBool() => GenerateRandomByte(0, 2) == 1;
+    public static bool GenerateRandomBool() => GenerateRandomByte(0, 2) is 1;
 
     /// <summary>
     /// Generates an <see cref="IEnumerable{bool}"/> containing random boolean values.

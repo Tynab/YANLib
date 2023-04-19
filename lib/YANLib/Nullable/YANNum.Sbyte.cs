@@ -110,28 +110,6 @@ public partial class YANNum
     }
 
     /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{sbyte}"/> containing the signed byte representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{sbyte}"/> containing the signed byte representations of the objects.</returns>
-    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlySet<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in nums)
-        {
-            yield return num.ToSbyte();
-        }
-    }
-
-    /// <summary>
     /// Parses the string representation of a signed byte using the default format.
     /// Returns the parsed <see cref="sbyte"/> value, or <see langword="default"/> if the parsing fails.
     /// </summary>
@@ -208,24 +186,6 @@ public partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToSbyte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings to an <see cref="IEnumerable{sbyte}"/> containing the signed byte representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{sbyte}"/> containing the signed byte representations of the strings.</returns>
-    public static IEnumerable<sbyte?> ToSbyte(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToSbyte();
         }
     }
 
@@ -328,29 +288,6 @@ public partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToSbyte(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings to an <see cref="IEnumerable{sbyte}"/> containing the signed byte representations of the strings, using the specified default value for invalid string representations.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for invalid string representations.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid string representations.</param>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{sbyte}"/> containing the signed byte representations of the strings.</returns>
-    public static IEnumerable<sbyte?> ToSbyte<T>(this IReadOnlySet<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToSbyte(dfltVal);
         }
     }
 

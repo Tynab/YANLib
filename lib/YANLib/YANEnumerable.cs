@@ -44,12 +44,12 @@ public static partial class YANEnumerable
         }
         var t = typeof(T);
         var cnt = srcs.Length;
-        if (t.IsClass || GetUnderlyingType(t) != null)
+        if (t.IsClass || GetUnderlyingType(t) is not null)
         {
             for (var i = 0; i < cnt; i++)
             {
                 var src = srcs[i];
-                if (src != null)
+                if (src is not null)
                 {
                     yield return src;
                 }
@@ -79,11 +79,11 @@ public static partial class YANEnumerable
             yield break;
         }
         var t = typeof(T);
-        if (t.IsClass || GetUnderlyingType(t) != null)
+        if (t.IsClass || GetUnderlyingType(t) is not null)
         {
             foreach (var src in srcs)
             {
-                if (src != null)
+                if (src is not null)
                 {
                     yield return src;
                 }
@@ -113,11 +113,11 @@ public static partial class YANEnumerable
             yield break;
         }
         var t = typeof(T);
-        if (t.IsClass || GetUnderlyingType(t) != null)
+        if (t.IsClass || GetUnderlyingType(t) is not null)
         {
             foreach (var src in srcs)
             {
-                if (src != null)
+                if (src is not null)
                 {
                     yield return src;
                 }
@@ -148,12 +148,12 @@ public static partial class YANEnumerable
         }
         var t = typeof(T);
         var cnt = srcs.Count;
-        if (t.IsClass || GetUnderlyingType(t) != null)
+        if (t.IsClass || GetUnderlyingType(t) is not null)
         {
             for (var i = 0; i < cnt; i++)
             {
                 var src = srcs[i];
-                if (src != null)
+                if (src is not null)
                 {
                     yield return src;
                 }
@@ -164,40 +164,6 @@ public static partial class YANEnumerable
             for (var i = 0; i < cnt; i++)
             {
                 yield return srcs[i];
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removes <see langword="null"/> values from the specified objects and returns an <see cref="IEnumerable{T}"/> containing the non-null values.
-    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and excludes them.
-    /// If <typeparamref name="T"/> is a non-nullable value type, the method returns all objects in the input enumerable without modification.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to clean.</typeparam>
-    /// <param name="srcs">The objects to clean.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing the non-null values.</returns>
-    public static IEnumerable<T> Clean<T>(this IReadOnlySet<T> srcs)
-    {
-        if (srcs is null || srcs.Count < 1)
-        {
-            yield break;
-        }
-        var t = typeof(T);
-        if (t.IsClass || GetUnderlyingType(t) != null)
-        {
-            foreach (var src in srcs)
-            {
-                if (src != null)
-                {
-                    yield return src;
-                }
-            }
-        }
-        else
-        {
-            foreach (var src in srcs)
-            {
-                yield return src;
             }
         }
     }
@@ -214,11 +180,11 @@ public static partial class YANEnumerable
         if (srcs is not null && srcs.Any())
         {
             var t = typeof(T);
-            if (t.IsClass || GetUnderlyingType(t) != null)
+            if (t.IsClass || GetUnderlyingType(t) is not null)
             {
                 foreach (var src in srcs)
                 {
-                    if(src != null)
+                    if (src is not null)
                     {
                         _ = srcs.Remove(src);
                     }
@@ -240,38 +206,13 @@ public static partial class YANEnumerable
         {
             var t = typeof(T);
             var cnt = srcs.Count;
-            if (t.IsClass || GetUnderlyingType(t) != null)
+            if (t.IsClass || GetUnderlyingType(t) is not null)
             {
                 for (var i = 0; i < cnt; i++)
                 {
-                    if (srcs[i] != null)
+                    if (srcs[i] is not null)
                     {
                         srcs.RemoveAt(i);
-                    }
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removes <see langword="null"/> values from the specified collection of objects and modifies the collection in-place, by removing the null values.
-    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and removes them from the collection.
-    /// If <typeparamref name="T"/> is a non-nullable value type, the method does not modify the collection.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="srcs">The collection of objects to clean.</param>
-    public static void CleanRef<T>(this ISet<T> srcs)
-    {
-        if (srcs is not null && srcs.Count > 0)
-        {
-            var t = typeof(T);
-            if (t.IsClass || GetUnderlyingType(t) != null)
-            {
-                foreach (var src in srcs)
-                {
-                    if (src != null)
-                    {
-                        _ = srcs.Remove(src);
                     }
                 }
             }
@@ -363,26 +304,6 @@ public static partial class YANEnumerable
     }
 
     /// <summary>
-    /// Removes <see langword="null"/> values and empty strings from the specified enumerable of strings, and returns an <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.
-    /// </summary>
-    /// <param name="srcs">The enumerable of strings to clean.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing the non-null and non-empty strings.</returns>
-    public static IEnumerable<string> Clean(this IReadOnlySet<string> srcs)
-    {
-        if (srcs is null || srcs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var src in srcs)
-        {
-            if (src.IsNotNullAndWhiteSpace())
-            {
-                yield return src;
-            }
-        }
-    }
-
-    /// <summary>
     /// Removes <see langword="null"/> or whitespace values from the specified collection of strings and modifies the collection in-place, by removing the null or whitespace values.
     /// If the string value is not null or whitespace, the method checks for whitespace values using <see cref="string.IsNullOrWhiteSpace"/> method and removes them from the collection.
     /// </summary>
@@ -420,22 +341,22 @@ public static partial class YANEnumerable
         }
     }
 
-    /// <summary>
-    /// Removes <see langword="null"/> or whitespace values from the specified collection of strings and modifies the collection in-place, by removing the null or whitespace values.
-    /// If the string value is not null or whitespace, the method checks for whitespace values using <see cref="string.IsNullOrWhiteSpace"/> method and removes them from the collection.
-    /// </summary>
-    /// <param name="srcs">The collection of strings to clean.</param>
-    public static void CleanRef(this ISet<string> srcs)
+    public static Dictionary<TKey, TValue>? CreateDictionary<TKey, TValue>(IEnumerable<TKey> keys, IEnumerable<TValue> values) where TKey : notnull
     {
-        if (srcs is not null && srcs.Count > 0)
+        if (keys is not null && values is not null && keys.Any() && values.Any())
         {
-            foreach (var src in srcs)
+            var keyList = keys.ToList();
+            var valueList = values.ToList();
+            if (keyList.Count > 0 && keyList.Count == keyList.Distinct().Count() && valueList.Count >= keyList.Count)
             {
-                if (src.IsNotNullAndWhiteSpace())
+                var rslt = new Dictionary<TKey, TValue>(keyList.Count);
+                for (var i = 0; i < keyList.Count; i++)
                 {
-                    _ = srcs.Remove(src);
+                    rslt.Add(keyList[i], valueList[i]);
                 }
+                return rslt;
             }
         }
+        return default;
     }
 }

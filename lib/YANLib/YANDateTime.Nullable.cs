@@ -99,27 +99,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Converts an enumerable of strings representing date/time values in a specified format to an <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
-    /// If a string cannot be parsed to a valid DateTime value, the default value specified by <paramref name="dfltVal"/> is used instead.
-    /// </summary>
-    /// <param name="fmt">The format of the date/time values in the input strings.</param>
-    /// <param name="dfltVal">The default DateTime value to be used for strings that cannot be parsed to valid DateTime values.</param>
-    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
-    public static IEnumerable<DateTime> ToDateTime(IReadOnlySet<string> strs, string fmt, DateTime? dfltVal)
-    {
-        if (strs.IsNullOrWhiteSpace())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmt, dfltVal);
-        }
-    }
-
-    /// <summary>
     /// Generates a random <see cref="DateTime"/> value between <paramref name="min"/> and <paramref name="max"/>.
     /// If <paramref name="min"/> is greater than <paramref name="max"/>, <see langword="default"/> is returned.
     /// </summary>
@@ -359,24 +338,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Gets the week of the year for an enumerable of DateTime values using the default calendar of the current culture.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/> or empty.
-    /// </summary>
-    /// <param name="dts">The enumerable of DateTime values for which to get the week of the year.</param>
-    /// <returns>An <see cref="IEnumerable{Int32}"/> containing the week of the year values for the input DateTime values.</returns>
-    public static IEnumerable<int> GetWeekOfYear(this IReadOnlySet<DateTime?> dts)
-    {
-        if (dts is null || dts.Count > 0)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.GetWeekOfYear();
-        }
-    }
-
-    /// <summary>
     /// Returns the total number of months between the two specified <see cref="DateTime"/> values, ignoring the day of the month.
     /// </summary>
     /// <param name="dt1">The first <see cref="DateTime"/> value.</param>
@@ -504,29 +465,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime?> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
     /// Converts an list of DateTime values from one time zone to another using the specified source and destination time zones, and updates the original list in-place.
     /// If the input list is <see langword="null"/> or empty, no action is taken.
     /// </summary>
@@ -646,29 +584,6 @@ public static partial class YANDateTime
         for (var i = 0; i < dts.Count; i++)
         {
             yield return dts[i].ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
         }
     }
 
@@ -796,29 +711,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
     /// Converts an list of DateTime values from one time zone to another using the specified source and destination time zones, and updates the original list in-place.
     /// If the input list is <see langword="null"/> or empty, no action is taken.
     /// </summary>
@@ -938,29 +830,6 @@ public static partial class YANDateTime
         for (var i = 0; i < dts.Count; i++)
         {
             yield return dts[i].ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime?> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
         }
     }
 
@@ -1088,29 +957,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime?> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
     /// Converts an list of DateTime values from one time zone to another using the specified source and destination time zones, and updates the original list in-place.
     /// If the input list is <see langword="null"/> or empty, no action is taken.
     /// </summary>
@@ -1230,29 +1076,6 @@ public static partial class YANDateTime
         for (var i = 0; i < dts.Count; i++)
         {
             yield return dts[i].ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
         }
     }
 
@@ -1380,29 +1203,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Returns an <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to a different time zone, based on the source and destination time zones specified.
-    /// The source and destination time zones are specified as generic type parameters <typeparamref name="T1"/> and <typeparamref name="T2"/> respectively, and must be of a struct type that represents a valid time zone identifier.
-    /// If any of the input <see cref="DateTime"/> values is <see langword="null"/>, no value will be returned for that input.
-    /// </summary>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IReadOnlySet<DateTime?> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
-
-    /// <summary>
     /// Converts an list of DateTime values from one time zone to another using the specified source and destination time zones, and updates the original list in-place.
     /// If the input list is <see langword="null"/> or empty, no action is taken.
     /// </summary>
@@ -1504,25 +1304,6 @@ public static partial class YANDateTime
         for (var i = 0; i < dts.Count; i++)
         {
             yield return dts[i].ChangeTimeZone(tzDst);
-        }
-    }
-
-    /// <summary>
-    /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.
-    /// </summary>
-    /// <typeparam name="T">The type of the time zone offset to convert the original <see cref="DateTime"/> value to, which must be a value type.</typeparam>
-    /// <param name="dt">The original <see cref="DateTime"/> value.</param>
-    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
-    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlySet<DateTime?> dts, T tzDst) where T : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
         }
     }
 
@@ -1630,25 +1411,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.
-    /// </summary>
-    /// <typeparam name="T">The type of the time zone offset to convert the original <see cref="DateTime"/> value to, which must be a value type.</typeparam>
-    /// <param name="dt">The original <see cref="DateTime"/> value.</param>
-    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
-    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlySet<DateTime> dts, T? tzDst) where T : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
-        }
-    }
-
-    /// <summary>
     /// Converts a list of DateTime values from one time zone to another using the specified destination time zone, and updates the original list in place with the DateTime values converted to the destination time zone.
     /// If the input list is <see langword="null"/> or empty, no changes will be made.
     /// </summary>
@@ -1748,25 +1510,6 @@ public static partial class YANDateTime
         for (var i = 0; i < dts.Count; i++)
         {
             yield return dts[i].ChangeTimeZone(tzDst);
-        }
-    }
-
-    /// <summary>
-    /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.
-    /// </summary>
-    /// <typeparam name="T">The type of the time zone offset to convert the original <see cref="DateTime"/> value to, which must be a value type.</typeparam>
-    /// <param name="dt">The original <see cref="DateTime"/> value.</param>
-    /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
-    /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.</returns>
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IReadOnlySet<DateTime?> dts, T? tzDst) where T : struct
-    {
-        if (dts is null || dts.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
         }
     }
 

@@ -110,28 +110,6 @@ public static partial class YANNum
     }
 
     /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an enumerable of <see cref="nuint"/> values, which represent the unsigned integer equivalent of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An enumerable of <see cref="nuint"/> values representing the unsigned integer equivalent of the objects.</returns>
-    public static IEnumerable<nuint?> ToNuint<T>(this IReadOnlySet<T?> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in nums)
-        {
-            yield return num.ToNuint();
-        }
-    }
-
-    /// <summary>
     /// Parses the string representation of a <see cref="nuint"/> using the default format.
     /// Returns the parsed <see cref="nuint"/> value, or <paramref name="dfltVal"/> if the parsing fails.
     /// </summary>
@@ -230,29 +208,6 @@ public static partial class YANNum
         for (var i = 0; i < strs.Count; i++)
         {
             yield return strs[i].ToNuint(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings <paramref name="strs"/> to an enumerable of <see cref="nuint"/> values, which represent the unsigned integer equivalent of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for conversion.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for conversion in case of failure.</param>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An enumerable of <see cref="nuint"/> values representing the unsigned integer equivalent of the strings.</returns>
-    public static IEnumerable<nuint?> ToNuint<T>(this IReadOnlySet<string> strs, T? dfltVal) where T : struct
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToNuint(dfltVal);
         }
     }
 

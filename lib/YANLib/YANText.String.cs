@@ -27,27 +27,6 @@ public static partial class YANText
     public static bool IsNull(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotNull());
 
     /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNull(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.IsNotNull());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNull(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.IsNotNull());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNull(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.IsNotNull());
-
-    /// <summary>
     /// Determines whether the specified string is <see langword="null"/> or <see cref="string.Empty"/>.
     /// </summary>
     /// <param name="str">The string to check.</param>
@@ -69,27 +48,6 @@ public static partial class YANText
     public static bool IsNullOrEmpty(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndEmpty());
 
     /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrEmpty(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndEmpty());
-
-    /// <summary>
     /// Determines whether the specified string is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
     /// </summary>
     /// <param name="str">The string to check.</param>
@@ -109,27 +67,6 @@ public static partial class YANText
     /// <param name="strs">The strings to check.</param>
     /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
     public static bool IsNullOrWhiteSpace(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndWhiteSpace());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndWhiteSpace());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndWhiteSpace());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable is <see langword="null"/>, <see cref="string.Empty"/>, or consists only of white-space characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNullOrWhiteSpace(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndWhiteSpace());
 
     /// <summary>
     /// Determines whether the specified strings are equal, comparing their values.
@@ -154,27 +91,6 @@ public static partial class YANText
     public static bool Equals(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.NotEquals(strs.First()));
 
     /// <summary>
-    /// Determines whether any of the specified strings in the enumerable are equal to the first string in the enumerable, comparing their values.
-    /// </summary>
-    /// <param name="strs">The strings to compare.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, comparing their values; otherwise, <see langword="false"/>.</returns>
-    public static bool Equals(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.NotEquals(strs.First()));
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable are equal to the first string in the enumerable, comparing their values.
-    /// </summary>
-    /// <param name="strs">The strings to compare.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, comparing their values; otherwise, <see langword="false"/>.</returns>
-    public static bool Equals(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.NotEquals(strs[0]));
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the enumerable are equal to the first string in the enumerable, comparing their values.
-    /// </summary>
-    /// <param name="strs">The strings to compare.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, comparing their values; otherwise, <see langword="false"/>.</returns>
-    public static bool Equals(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.NotEquals(strs.First()));
-
-    /// <summary>
     /// Determines whether the specified strings are equal, ignoring their casing, and comparing their values using ordinal comparison.
     /// </summary>
     /// <param name="str1">The first string to compare.</param>
@@ -195,27 +111,6 @@ public static partial class YANText
     /// <param name="strs">The strings to compare.</param>
     /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, ignoring their casing, and comparing their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
     public static bool EqualsIgnoreCase(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.NotEqualsIgnoreCase(strs.First()));
-
-    /// <summary>
-    /// Determines whether the specified strings are equal, ignoring their casing, and comparing their values using ordinal comparison.
-    /// </summary>
-    /// <param name="strs">The strings to compare.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, ignoring their casing, and comparing their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool EqualsIgnoreCase(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.NotEqualsIgnoreCase(strs.First()));
-
-    /// <summary>
-    /// Determines whether the specified strings are equal, ignoring their casing, and comparing their values using ordinal comparison.
-    /// </summary>
-    /// <param name="strs">The strings to compare.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, ignoring their casing, and comparing their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool EqualsIgnoreCase(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.NotEqualsIgnoreCase(strs[0]));
-
-    /// <summary>
-    /// Determines whether the specified strings are equal, ignoring their casing, and comparing their values using ordinal comparison.
-    /// </summary>
-    /// <param name="strs">The strings to compare.</param>
-    /// <returns><see langword="true"/> if any of the strings in the enumerable are equal to the first string in the enumerable, ignoring their casing, and comparing their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool EqualsIgnoreCase(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.NotEqualsIgnoreCase(strs.First()));
 
     /// <summary>
     /// Determines whether the specified string is not <see langword="null"/>.
@@ -239,27 +134,6 @@ public static partial class YANText
     public static bool IsNotNull(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNull());
 
     /// <summary>
-    /// Determines whether the specified strings are not <see langword="null"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the enumerable are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNull(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.IsNull());
-
-    /// <summary>
-    /// Determines whether the specified strings are not <see langword="null"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the enumerable are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNull(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.IsNull());
-
-    /// <summary>
-    /// Determines whether the specified strings are not <see langword="null"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the enumerable are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNull(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.IsNull());
-
-    /// <summary>
     /// Determines whether the specified string is not <see langword="null"/> or <see cref="string.Empty"/>.
     /// </summary>
     /// <param name="str">The string to check.</param>
@@ -281,27 +155,6 @@ public static partial class YANText
     public static bool IsNotNullAndEmpty(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrEmpty());
 
     /// <summary>
-    /// Determines whether any of the specified strings in the read-only collection is not <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the read-only collection is not <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNullAndEmpty(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the read-only list is not <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the read-only list is not <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNullAndEmpty(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrEmpty());
-
-    /// <summary>
-    /// Determines whether any of the specified strings in the read-only set is not <see langword="null"/> or <see cref="string.Empty"/>.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if any of the strings in the read-only set is not <see langword="null"/> or <see cref="string.Empty"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNullAndEmpty(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrEmpty());
-
-    /// <summary>
     /// Determines whether the specified string is not <see langword="null"/>, <see cref="string.Empty"/>, or consists only of whitespace characters.
     /// </summary>
     /// <param name="str">The string to check.</param>
@@ -321,27 +174,6 @@ public static partial class YANText
     /// <param name="strs">The strings to check.</param>
     /// <returns><see langword="true"/> if all the strings in the enumerable are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
     public static bool IsNotNullAndWhiteSpace(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether all the specified strings in the read-only collection are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the read-only collection are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNullAndWhiteSpace(this IReadOnlyCollection<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether all the specified strings in the read-only list are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the read-only list are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNullAndWhiteSpace(this IReadOnlyList<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrWhiteSpace());
-
-    /// <summary>
-    /// Determines whether all the specified strings in the read-only set are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the read-only set are not <see langword="null"/>, <see cref="string.Empty"/>, or consist only of whitespace characters; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotNullAndWhiteSpace(this IReadOnlySet<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrWhiteSpace());
 
     /// <summary>
     /// Determines whether two specified strings are not equal, based on their values.
@@ -440,28 +272,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Determines whether all the strings in the specified enumerable are distinct, based on their values.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the specified enumerable are distinct, based on their values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEquals(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<string>(strs.Count);
-        foreach (var str in strs)
-        {
-            if (!hashSet.Add(str))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
     /// Determines whether two specified strings are not equal, ignoring their casing, based on their values using ordinal comparison.
     /// </summary>
     /// <param name="str1">The first string to compare.</param>
@@ -550,28 +360,6 @@ public static partial class YANText
         for (var i = 0; i < strs.Count; i++)
         {
             if (!hashSet.Add(strs[i]))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the strings in the specified enumerable are distinct, ignoring their casing, based on their values using ordinal comparison.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the specified enumerable are distinct, ignoring their casing, based on their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEqualsIgnoreCase(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<string>(strs.Count, StringComparer.OrdinalIgnoreCase);
-        foreach (var str in strs)
-        {
-            if (!hashSet.Add(str))
             {
                 return false;
             }
@@ -681,23 +469,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
-    public static IEnumerable<string> ToLower(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToLower(str);
-        }
-    }
-
-    /// <summary>
     /// Converts the strings in the specified list to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="strs">The list of strings to convert to lowercase.</param>
@@ -784,23 +555,6 @@ public static partial class YANText
         for (var i = 0; i < strs.Count; i++)
         {
             yield return ToLowerInvariant(strs[i]);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToLowerInvariant(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToLowerInvariant(str);
         }
     }
 
@@ -895,23 +649,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpper(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToUpper(str);
-        }
-    }
-
-    /// <summary>
     /// Converts all strings in the specified list of strings to uppercase, by modifying the list in-place.
     /// </summary>
     /// <param name="strs">The list of strings to convert to uppercase.</param>
@@ -998,23 +735,6 @@ public static partial class YANText
         for (var i = 0; i < strs.Count; i++)
         {
             yield return ToUpperInvariant(strs[i]);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpperInvariant(this IReadOnlySet<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToUpperInvariant(str);
         }
     }
 

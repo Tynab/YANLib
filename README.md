@@ -26,7 +26,7 @@ private static IEnumerable<string> GenData(byte quantity)
 {
     for (var i = 0; i < quantity; i++)
     {
-        yield return i % 2 == 0
+        yield return i % 2 is 0
             ? new JsonTestDto
             {
                 Id = NewGuid(),
