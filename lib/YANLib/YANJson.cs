@@ -26,28 +26,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> Serialize<T>(params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].Serialize();
-        }
-    }
-
-    /// <summary>
-    /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be serialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="mdls">The enumerable of objects to be serialized.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string> Serialize<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -57,50 +35,6 @@ public static partial class YANJson
         foreach (var mdl in mdls)
         {
             yield return mdl.Serialize();
-        }
-    }
-
-    /// <summary>
-    /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be serialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="mdls">The enumerable of objects to be serialized.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> Serialize<T>(this IReadOnlyCollection<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.Serialize();
-        }
-    }
-
-    /// <summary>
-    /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be serialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="mdls">The enumerable of objects to be serialized.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects.</returns>
-    public static IEnumerable<string> Serialize<T>(this IReadOnlyList<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].Serialize();
         }
     }
 
@@ -131,29 +65,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="mdls">The enumerable of objects to be serialized.</param>
     /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
-    public static IEnumerable<string> SerializeCamel<T>(params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].SerializeCamel();
-        }
-    }
-
-    /// <summary>
-    /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects,
-    /// with the property names in camelCase and case sensitivity for property names set to false.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be serialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="mdls">The enumerable of objects to be serialized.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
     public static IEnumerable<string> SerializeCamel<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -163,52 +74,6 @@ public static partial class YANJson
         foreach (var mdl in mdls)
         {
             yield return mdl.SerializeCamel();
-        }
-    }
-
-    /// <summary>
-    /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects,
-    /// with the property names in camelCase and case sensitivity for property names set to false.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be serialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="mdls">The enumerable of objects to be serialized.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
-    public static IEnumerable<string> SerializeCamel<T>(this IReadOnlyCollection<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.SerializeCamel();
-        }
-    }
-
-    /// <summary>
-    /// Serializes an enumerable of objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects,
-    /// with the property names in camelCase and case sensitivity for property names set to false.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be serialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="mdls">The enumerable of objects to be serialized.</param>
-    /// <returns>An <see cref="IEnumerable{string}"/> containing JSON strings representing the serialized objects with camelCase property names and case sensitivity for property names set to false.</returns>
-    public static IEnumerable<string> SerializeCamel<T>(this IReadOnlyList<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].SerializeCamel();
         }
     }
 
@@ -244,28 +109,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(params string[] strs) where T : class
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].Deserialize<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> Deserialize<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
@@ -275,50 +118,6 @@ public static partial class YANJson
         foreach (var str in strs)
         {
             yield return str.Deserialize<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(this IReadOnlyCollection<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.Deserialize<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> Deserialize<T>(this IReadOnlyList<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].Deserialize<T>();
         }
     }
 
@@ -358,28 +157,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
-    public static IEnumerable<T?> DeserializeCamel<T>(params string[] strs) where T : class
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].DeserializeCamel<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false.
-    /// Returns an enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
     public static IEnumerable<T?> DeserializeCamel<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
@@ -389,50 +166,6 @@ public static partial class YANJson
         foreach (var str in strs)
         {
             yield return str.DeserializeCamel<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false.
-    /// Returns an enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
-    public static IEnumerable<T?> DeserializeCamel<T>(this IReadOnlyCollection<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeCamel<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false.
-    /// Returns an enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or an empty sequence if the input array is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.</returns>
-    public static IEnumerable<T?> DeserializeCamel<T>(this IReadOnlyList<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].DeserializeCamel<T>();
         }
     }
 
@@ -484,28 +217,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeDuo<T>(params string[] strs) where T : class
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].DeserializeDuo<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuo<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
@@ -515,50 +226,6 @@ public static partial class YANJson
         foreach (var str in strs)
         {
             yield return str.DeserializeDuo<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlyCollection<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeDuo<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeDuo<T>(this IReadOnlyList<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].DeserializeDuo<T>();
         }
     }
 
@@ -610,28 +277,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(params string[] strs) where T : class
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].DeserializeDuoCamelPriority<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
@@ -641,50 +286,6 @@ public static partial class YANJson
         foreach (var str in strs)
         {
             yield return str.DeserializeDuoCamelPriority<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlyCollection<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeDuoCamelPriority<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeDuoCamelPriority<T>(this IReadOnlyList<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].DeserializeDuoCamelPriority<T>();
         }
     }
 
@@ -724,28 +325,6 @@ public static partial class YANJson
     /// </typeparam>
     /// <param name="strs">The array of JSON strings to be deserialized.</param>
     /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeStandard<T>(params string[] strs) where T : class
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].DeserializeStandard<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
     public static IEnumerable<T?> DeserializeStandard<T>(this IEnumerable<string> strs) where T : class
     {
         if (strs is null || !strs.Any())
@@ -755,50 +334,6 @@ public static partial class YANJson
         foreach (var str in strs)
         {
             yield return str.DeserializeStandard<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlyCollection<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeStandard<T>();
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an array of JSON strings to an enumerable of objects of type <typeparamref name="T"/> using the default JSON deserialization settings, with camelCase property names and case sensitivity for property names set to false as additional options.
-    /// Returns an enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the objects to be deserialized.
-    /// Must be a reference type.
-    /// </typeparam>
-    /// <param name="strs">The array of JSON strings to be deserialized.</param>
-    /// <returns>An enumerable of deserialized objects, or <see langword="default"/> if the deserialization fails for any of the input strings.</returns>
-    public static IEnumerable<T?> DeserializeStandard<T>(this IReadOnlyList<string> strs) where T : class
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].DeserializeStandard<T>();
         }
     }
 }
