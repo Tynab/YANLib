@@ -31,28 +31,6 @@ public static partial class YANNum
     /// </typeparam>
     /// <param name="nums">The enumerable of value-type objects to be converted.</param>
     /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
-    public static IEnumerable<byte?> ToByte<T>(params T[] nums) where T : struct
-    {
-        if (nums is null || nums.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < nums.Length; i++)
-        {
-            yield return nums[i].ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
     public static IEnumerable<byte?> ToByte<T>(this IEnumerable<T> nums) where T : struct
     {
         if (nums is null || !nums.Any())
@@ -62,50 +40,6 @@ public static partial class YANNum
         foreach (var num in nums)
         {
             yield return num.ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
-    public static IEnumerable<byte?> ToByte<T>(this IReadOnlyCollection<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in nums)
-        {
-            yield return num.ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the objects.</returns>
-    public static IEnumerable<byte?> ToByte<T>(this IReadOnlyList<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < nums.Count; i++)
-        {
-            yield return nums[i].ToByte();
         }
     }
 
@@ -123,24 +57,6 @@ public static partial class YANNum
     /// </summary>
     /// <param name="strs">The enumerable of string objects to be converted.</param>
     /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte?> ToByte(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
     public static IEnumerable<byte?> ToByte(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -150,42 +66,6 @@ public static partial class YANNum
         foreach (var num in strs)
         {
             yield return num.ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte?> ToByte(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte?> ToByte(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].ToByte();
         }
     }
 
@@ -210,29 +90,6 @@ public static partial class YANNum
     /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
     /// <param name="strs">The enumerable of string objects to be converted.</param>
     /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte?> ToByte<T>(T dfltVal, params string[] strs) where T : struct
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToByte(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings, using a default value for invalid conversions.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for invalid conversions.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
     public static IEnumerable<byte?> ToByte<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {
         if (strs is null || !strs.Any())
@@ -242,52 +99,6 @@ public static partial class YANNum
         foreach (var num in strs)
         {
             yield return num.ToByte(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings, using a default value for invalid conversions.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for invalid conversions.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte?> ToByte<T>(this IReadOnlyCollection<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToByte(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings, using a default value for invalid conversions.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for invalid conversions.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte?> ToByte<T>(this IReadOnlyList<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].ToByte(dfltVal);
         }
     }
 
@@ -318,7 +129,7 @@ public static partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the generated sequence.</param>
     /// <returns>An <see cref="IEnumerable{byte}"/> containing the random byte values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<byte?> GenerateRandomByte<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<byte?> GenerateRandomBytes<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {

@@ -353,50 +353,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Determines whether all the characters in the specified enumerable are distinct, based on their Unicode values.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if all the characters in the specified enumerable are distinct, based on their Unicode values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEquals(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<char>(cs.Count);
-        foreach (var c in cs)
-        {
-            if (!hashSet.Add(c))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the characters in the specified enumerable are distinct, based on their Unicode values.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if all the characters in the specified enumerable are distinct, based on their Unicode values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEquals(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<char>(cs.Count);
-        for (var i = 0; i < cs.Count; i++)
-        {
-            if (!hashSet.Add(cs[i]))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
     /// Determines whether two specified characters are not equal, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="c1">The first character to compare.</param>
@@ -441,50 +397,6 @@ public static partial class YANText
         foreach (var c in cs)
         {
             if (!hashSet.Add(c.ToLowerInvariant()))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the characters in the specified enumerable are distinct, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if all the characters in the specified enumerable are distinct, ignoring their casing, based on their Unicode values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEqualsIgnoreCase(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<char>(cs.Count);
-        foreach (var c in cs)
-        {
-            if (!hashSet.Add(c.ToLowerInvariant()))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the characters in the specified enumerable are distinct, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="cs">The characters to check.</param>
-    /// <returns><see langword="true"/> if all the characters in the specified enumerable are distinct, ignoring their casing, based on their Unicode values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEqualsIgnoreCase(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<char>(cs.Count);
-        for (var i = 0; i < cs.Count; i++)
-        {
-            if (!hashSet.Add(cs[i].ToLowerInvariant()))
             {
                 return false;
             }
@@ -559,40 +471,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="cs">The characters to convert to lowercase.</param>
-    /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
-    public static IEnumerable<char> ToLower(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToLower(c);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="cs">The characters to convert to lowercase.</param>
-    /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
-    public static IEnumerable<char> ToLower(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < cs.Count; i++)
-        {
-            yield return ToLower(cs[i]);
-        }
-    }
-
-    /// <summary>
     /// Converts the characters in the specified list to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="cs">The list of characters to convert to lowercase.</param>
@@ -645,40 +523,6 @@ public static partial class YANText
         foreach (var c in cs)
         {
             yield return ToLowerInvariant(c);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="cs">The characters to convert to lowercase.</param>
-    /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<char> ToLowerInvariant(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToLowerInvariant(c);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="cs">The characters to convert to lowercase.</param>
-    /// <returns>An enumerable of characters converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<char> ToLowerInvariant(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < cs.Count; i++)
-        {
-            yield return ToLowerInvariant(cs[i]);
         }
     }
 
@@ -739,40 +583,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="cs">The characters to convert to uppercase.</param>
-    /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<char> ToUpper(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToUpper(c);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="cs">The characters to convert to uppercase.</param>
-    /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<char> ToUpper(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < cs.Count; i++)
-        {
-            yield return ToUpper(cs[i]);
-        }
-    }
-
-    /// <summary>
     /// Converts all characters in the specified character list to uppercase, by modifying the list in-place.
     /// </summary>
     /// <param name="cs">The character list to convert to uppercase.</param>
@@ -825,40 +635,6 @@ public static partial class YANText
         foreach (var c in cs)
         {
             yield return ToUpperInvariant(c);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="cs">The characters to convert to uppercase.</param>
-    /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<char> ToUpperInvariant(this IReadOnlyCollection<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var c in cs)
-        {
-            yield return ToUpperInvariant(c);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of characters and returns a new enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="cs">The characters to convert to uppercase.</param>
-    /// <returns>An enumerable of characters converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<char> ToUpperInvariant(this IReadOnlyList<char> cs)
-    {
-        if (cs is null || cs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < cs.Count; i++)
-        {
-            yield return ToUpperInvariant(cs[i]);
         }
     }
 

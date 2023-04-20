@@ -25,8 +25,6 @@ public static partial class YANNum
         return min;
     }
 
-    public static T? Min<T>(IEnumerable<T> nums) where T : IComparable<T> => nums is null || !nums.Any() ? default : nums.Where(x => x is not null).DefaultIfEmpty(default).Min();
-
     /// <summary>
     /// Finds the maximum value in an array of values that implement the <see cref="IComparable{T}"/> interface.
     /// </summary>
@@ -49,6 +47,4 @@ public static partial class YANNum
         }
         return max;
     }
-
-    public static T? Max<T>(IEnumerable<T> nums) where T : IComparable<T> => nums is null || !nums.Any() ? default : nums.Where(x => x is not null).DefaultIfEmpty(default).Max();
 }

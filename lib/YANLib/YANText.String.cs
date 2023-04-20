@@ -228,50 +228,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Determines whether all the strings in the specified enumerable are distinct, based on their values.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the specified enumerable are distinct, based on their values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEquals(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<string>(strs.Count);
-        foreach (var str in strs)
-        {
-            if (!hashSet.Add(str))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the strings in the specified enumerable are distinct, based on their values.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the specified enumerable are distinct, based on their values; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEquals(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<string>(strs.Count);
-        for (var i = 0; i < strs.Count; i++)
-        {
-            if (!hashSet.Add(strs[i]))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
     /// Determines whether two specified strings are not equal, ignoring their casing, based on their values using ordinal comparison.
     /// </summary>
     /// <param name="str1">The first string to compare.</param>
@@ -316,50 +272,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             if (!hashSet.Add(str))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the strings in the specified enumerable are distinct, ignoring their casing, based on their values using ordinal comparison.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the specified enumerable are distinct, ignoring their casing, based on their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEqualsIgnoreCase(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<string>(strs.Count, StringComparer.OrdinalIgnoreCase);
-        foreach (var str in strs)
-        {
-            if (!hashSet.Add(str))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Determines whether all the strings in the specified enumerable are distinct, ignoring their casing, based on their values using ordinal comparison.
-    /// </summary>
-    /// <param name="strs">The strings to check.</param>
-    /// <returns><see langword="true"/> if all the strings in the specified enumerable are distinct, ignoring their casing, based on their values using ordinal comparison; otherwise, <see langword="false"/>.</returns>
-    public static bool NotEqualsIgnoreCase(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 2)
-        {
-            return false;
-        }
-        var hashSet = new HashSet<string>(strs.Count, StringComparer.OrdinalIgnoreCase);
-        for (var i = 0; i < strs.Count; i++)
-        {
-            if (!hashSet.Add(strs[i]))
             {
                 return false;
             }
@@ -435,40 +347,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
-    public static IEnumerable<string> ToLower(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToLower(str);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
-    public static IEnumerable<string> ToLower(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return ToLower(strs[i]);
-        }
-    }
-
-    /// <summary>
     /// Converts the strings in the specified list to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="strs">The list of strings to convert to lowercase.</param>
@@ -521,40 +399,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return ToLowerInvariant(str);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToLowerInvariant(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToLowerInvariant(str);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToLowerInvariant(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return ToLowerInvariant(strs[i]);
         }
     }
 
@@ -615,40 +459,6 @@ public static partial class YANText
     }
 
     /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpper(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToUpper(str);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpper(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return ToUpper(strs[i]);
-        }
-    }
-
-    /// <summary>
     /// Converts all strings in the specified list of strings to uppercase, by modifying the list in-place.
     /// </summary>
     /// <param name="strs">The list of strings to convert to uppercase.</param>
@@ -701,40 +511,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return ToUpperInvariant(str);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpperInvariant(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return ToUpperInvariant(str);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpperInvariant(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return ToUpperInvariant(strs[i]);
         }
     }
 

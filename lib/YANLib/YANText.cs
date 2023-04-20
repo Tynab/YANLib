@@ -17,23 +17,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to convert to title case.</param>
     /// <returns>An enumerable of strings converted to title case using the current culture's text info.</returns>
-    public static IEnumerable<string> ToTitle(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToTitle();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to title case using the current culture's text info.
-    /// </summary>
-    /// <param name="strs">The strings to convert to title case.</param>
-    /// <returns>An enumerable of strings converted to title case using the current culture's text info.</returns>
     public static IEnumerable<string> ToTitle(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -43,40 +26,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.ToTitle();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to title case using the current culture's text info.
-    /// </summary>
-    /// <param name="strs">The strings to convert to title case.</param>
-    /// <returns>An enumerable of strings converted to title case using the current culture's text info.</returns>
-    public static IEnumerable<string> ToTitle(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToTitle();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to title case using the current culture's text info.
-    /// </summary>
-    /// <param name="strs">The strings to convert to title case.</param>
-    /// <returns>An enumerable of strings converted to title case using the current culture's text info.</returns>
-    public static IEnumerable<string> ToTitle(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].ToTitle();
         }
     }
 
@@ -128,23 +77,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to capitalize.</param>
     /// <returns>An enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.</returns>
-    public static IEnumerable<string> ToCapitalize(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToCapitalize();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.
-    /// </summary>
-    /// <param name="strs">The strings to capitalize.</param>
-    /// <returns>An enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.</returns>
     public static IEnumerable<string> ToCapitalize(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -154,40 +86,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.ToCapitalize();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.
-    /// </summary>
-    /// <param name="strs">The strings to capitalize.</param>
-    /// <returns>An enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.</returns>
-    public static IEnumerable<string> ToCapitalize(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToCapitalize();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.
-    /// </summary>
-    /// <param name="strs">The strings to capitalize.</param>
-    /// <returns>An enumerable of strings with the first character of each word capitalized and the remaining characters in lowercase, based on the current culture's text info.</returns>
-    public static IEnumerable<string> ToCapitalize(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].ToCapitalize();
         }
     }
 
@@ -248,24 +146,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to clean up.</param>
     /// <returns>An enumerable of strings with excess whitespace characters removed.</returns>
-    public static IEnumerable<string> CleanSpace(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].CleanSpace();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with excess whitespace characters removed from the beginning, end, and within each string.
-    /// Consecutive whitespace characters are reduced to a single space character.
-    /// </summary>
-    /// <param name="strs">The strings to clean up.</param>
-    /// <returns>An enumerable of strings with excess whitespace characters removed.</returns>
     public static IEnumerable<string> CleanSpace(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -275,42 +155,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.CleanSpace();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with excess whitespace characters removed from the beginning, end, and within each string.
-    /// Consecutive whitespace characters are reduced to a single space character.
-    /// </summary>
-    /// <param name="strs">The strings to clean up.</param>
-    /// <returns>An enumerable of strings with excess whitespace characters removed.</returns>
-    public static IEnumerable<string> CleanSpace(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.CleanSpace();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with excess whitespace characters removed from the beginning, end, and within each string.
-    /// Consecutive whitespace characters are reduced to a single space character.
-    /// </summary>
-    /// <param name="strs">The strings to clean up.</param>
-    /// <returns>An enumerable of strings with excess whitespace characters removed.</returns>
-    public static IEnumerable<string> CleanSpace(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].CleanSpace();
         }
     }
 
@@ -362,23 +206,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to format by filtering out non-alphabetic characters and converting the remaining characters to uppercase.</param>
     /// <returns>An enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> FormatName(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].FormatName();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to format by filtering out non-alphabetic characters and converting the remaining characters to uppercase.</param>
-    /// <returns>An enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
     public static IEnumerable<string> FormatName(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -388,40 +215,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.FormatName();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to format by filtering out non-alphabetic characters and converting the remaining characters to uppercase.</param>
-    /// <returns>An enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> FormatName(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.FormatName();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to format by filtering out non-alphabetic characters and converting the remaining characters to uppercase.</param>
-    /// <returns>An enumerable of strings with each string formatted by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> FormatName(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].FormatName();
         }
     }
 
@@ -470,24 +263,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to filter out non-alphabetic characters from.</param>
     /// <returns>An enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.</returns>
-    public static IEnumerable<string> FilterAlphabetic(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].FilterAlphabetic();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.
-    /// Empty or null strings are returned as is.
-    /// </summary>
-    /// <param name="strs">The strings to filter out non-alphabetic characters from.</param>
-    /// <returns>An enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.</returns>
     public static IEnumerable<string> FilterAlphabetic(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -497,42 +272,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.FilterAlphabetic();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.
-    /// Empty or null strings are returned as is.
-    /// </summary>
-    /// <param name="strs">The strings to filter out non-alphabetic characters from.</param>
-    /// <returns>An enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.</returns>
-    public static IEnumerable<string> FilterAlphabetic(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.FilterAlphabetic();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.
-    /// Empty or null strings are returned as is.
-    /// </summary>
-    /// <param name="strs">The strings to filter out non-alphabetic characters from.</param>
-    /// <returns>An enumerable of strings with all non-alphabetic characters filtered out, based on their Unicode values.</returns>
-    public static IEnumerable<string> FilterAlphabetic(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].FilterAlphabetic();
         }
     }
 
@@ -580,24 +319,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to filter out numeric characters from.</param>
     /// <returns>An enumerable of strings with all numeric characters filtered out, based on their Unicode values.</returns>
-    public static IEnumerable<string> FilterNumber(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].FilterNumber();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all numeric characters filtered out, based on their Unicode values.
-    /// If a string is empty or whitespace, it is returned as-is.
-    /// </summary>
-    /// <param name="strs">The strings to filter out numeric characters from.</param>
-    /// <returns>An enumerable of strings with all numeric characters filtered out, based on their Unicode values.</returns>
     public static IEnumerable<string> FilterNumber(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -607,42 +328,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.FilterNumber();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all numeric characters filtered out, based on their Unicode values.
-    /// If a string is empty or whitespace, it is returned as-is.
-    /// </summary>
-    /// <param name="strs">The strings to filter out numeric characters from.</param>
-    /// <returns>An enumerable of strings with all numeric characters filtered out, based on their Unicode values.</returns>
-    public static IEnumerable<string> FilterNumber(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.FilterNumber();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all numeric characters filtered out, based on their Unicode values.
-    /// If a string is empty or whitespace, it is returned as-is.
-    /// </summary>
-    /// <param name="strs">The strings to filter out numeric characters from.</param>
-    /// <returns>An enumerable of strings with all numeric characters filtered out, based on their Unicode values.</returns>
-    public static IEnumerable<string> FilterNumber(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].FilterNumber();
         }
     }
 
@@ -690,23 +375,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to filter out non-alphanumeric characters from.</param>
     /// <returns>An enumerable of strings with all non-alphanumeric characters filtered out.</returns>
-    public static IEnumerable<string> FilterAlphanumeric(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].FilterAlphanumeric();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all non-alphanumeric characters (i.e., characters that are not numbers or letters) filtered out.
-    /// </summary>
-    /// <param name="strs">The strings to filter out non-alphanumeric characters from.</param>
-    /// <returns>An enumerable of strings with all non-alphanumeric characters filtered out.</returns>
     public static IEnumerable<string> FilterAlphanumeric(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -716,40 +384,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.FilterAlphanumeric();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all non-alphanumeric characters (i.e., characters that are not numbers or letters) filtered out.
-    /// </summary>
-    /// <param name="strs">The strings to filter out non-alphanumeric characters from.</param>
-    /// <returns>An enumerable of strings with all non-alphanumeric characters filtered out.</returns>
-    public static IEnumerable<string> FilterAlphanumeric(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.FilterAlphanumeric();
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings with all non-alphanumeric characters (i.e., characters that are not numbers or letters) filtered out.
-    /// </summary>
-    /// <param name="strs">The strings to filter out non-alphanumeric characters from.</param>
-    /// <returns>An enumerable of strings with all non-alphanumeric characters filtered out.</returns>
-    public static IEnumerable<string> FilterAlphanumeric(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].FilterAlphanumeric();
         }
     }
 

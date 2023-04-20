@@ -46,4 +46,19 @@ public static partial class YANProcess
             }));
         }
     }
+
+    public static async Task KillAllProcessesByName(this IEnumerable<string> names)
+    {
+        if (names.IsNotNullAndWhiteSpace())
+        {
+            await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
+            {
+                if (!p.CloseMainWindow())
+                {
+                    p.Kill();
+                }
+                return p.WaitForExitAsync();
+            }));
+        }
+    }
 }

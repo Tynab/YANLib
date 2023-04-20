@@ -36,25 +36,6 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the objects to check.</typeparam>
     /// <param name="mdls">The objects to check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AllPropertiesNotDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -64,44 +45,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AllPropertiesNotDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AllPropertiesNotDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AllPropertiesNotDefault();
         }
     }
 
@@ -136,25 +79,6 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the objects to check.</typeparam>
     /// <param name="mdls">The objects to check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AllPropertiesDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -164,44 +88,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AllPropertiesDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AllPropertiesDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AllPropertiesDefault();
         }
     }
 
@@ -236,25 +122,6 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the objects to check.</typeparam>
     /// <param name="mdls">The objects to check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AnyPropertiesNotDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -264,44 +131,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AnyPropertiesNotDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AnyPropertiesNotDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AnyPropertiesNotDefault();
         }
     }
 
@@ -336,25 +165,6 @@ public static partial class YANModel
     /// <typeparam name="T">The type of the objects to check.</typeparam>
     /// <param name="mdls">The objects to check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AnyPropertiesDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IEnumerable<T> mdls) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -364,44 +174,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AnyPropertiesDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AnyPropertiesDefault();
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AnyPropertiesDefault();
         }
     }
 
@@ -451,46 +223,6 @@ public static partial class YANModel
     }
 
     /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AllPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AllPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
     /// Checks whether all properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="true"/>.
     /// </summary>
@@ -532,46 +264,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AllPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AllPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AllPropertiesDefault(names);
         }
     }
 
@@ -621,46 +313,6 @@ public static partial class YANModel
     }
 
     /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AnyPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AnyPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
     /// Checks whether any properties with the specified names of the specified object have values that are equal to the default value, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="false"/>.
     /// </summary>
@@ -706,46 +358,6 @@ public static partial class YANModel
     }
 
     /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AnyPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, params string[] names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AnyPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
     /// Checks whether all properties with the specified names of the specified object have values that are not equal to the default value, including all its nested properties and properties in lists.
     /// If the object is <see langword="null"/>, returns <see langword="false"/>.
     /// </summary>
@@ -778,26 +390,6 @@ public static partial class YANModel
     /// <param name="mdls">The objects to check.</param>
     /// <param name="names">The names of properties to exclude from the check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AllPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
     public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IEnumerable<T> mdls, IEnumerable<string> names) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -807,46 +399,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AllPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AllPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have non-default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have non-default values.</returns>
-    public static IEnumerable<bool> AllPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AllPropertiesNotDefault(names);
         }
     }
 
@@ -883,26 +435,6 @@ public static partial class YANModel
     /// <param name="mdls">The objects to check.</param>
     /// <param name="names">The names of properties to exclude from the check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AllPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
     public static IEnumerable<bool> AllPropertiesDefault<T>(this IEnumerable<T> mdls, IEnumerable<string> names) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -912,46 +444,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AllPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AllPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether all properties of the specified objects have default values, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether all properties, except for the specified names, have default values.</returns>
-    public static IEnumerable<bool> AllPropertiesDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AllPropertiesDefault(names);
         }
     }
 
@@ -988,26 +480,6 @@ public static partial class YANModel
     /// <param name="mdls">The objects to check.</param>
     /// <param name="names">The names of properties to exclude from the check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AnyPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
     public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IEnumerable<T> mdls, IEnumerable<string> names) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -1017,46 +489,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AnyPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AnyPropertiesNotDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a non-default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a non-default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesNotDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AnyPropertiesNotDefault(names);
         }
     }
 
@@ -1093,26 +525,6 @@ public static partial class YANModel
     /// <param name="mdls">The objects to check.</param>
     /// <param name="names">The names of properties to exclude from the check.</param>
     /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(IEnumerable<string> names, params T[] mdls) where T : class
-    {
-        if (mdls is null || mdls.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Length; i++)
-        {
-            yield return mdls[i].AnyPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
     public static IEnumerable<bool> AnyPropertiesDefault<T>(this IEnumerable<T> mdls, IEnumerable<string> names) where T : class
     {
         if (mdls is null || !mdls.Any())
@@ -1122,46 +534,6 @@ public static partial class YANModel
         foreach (var mdl in mdls)
         {
             yield return mdl.AnyPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyCollection<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var mdl in mdls)
-        {
-            yield return mdl.AnyPropertiesDefault(names);
-        }
-    }
-
-    /// <summary>
-    /// Checks whether any property of the specified objects has a default value, including all their nested properties and properties in lists, except for properties with the specified names.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="false"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to check.</typeparam>
-    /// <param name="mdls">The objects to check.</param>
-    /// <param name="names">The names of properties to exclude from the check.</param>
-    /// <returns>An <see cref="IEnumerable{bool}"/> containing <see langword="true"/> or <see langword="false"/> for each object, indicating whether any property, except for the specified names, has a default value.</returns>
-    public static IEnumerable<bool> AnyPropertiesDefault<T>(this IReadOnlyList<T> mdls, IEnumerable<string> names) where T : class
-    {
-        if (mdls is null || mdls.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < mdls.Count; i++)
-        {
-            yield return mdls[i].AnyPropertiesDefault(names);
         }
     }
 }

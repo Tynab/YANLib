@@ -31,28 +31,6 @@ public partial class YANNum
     /// </typeparam>
     /// <param name="nums">The enumerable of value-type objects to be converted.</param>
     /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the objects.</returns>
-    public static IEnumerable<int?> ToInt<T>(params T[] nums) where T : struct
-    {
-        if (nums is null || nums.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < nums.Length; i++)
-        {
-            yield return nums[i].ToInt();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{int}"/> containing the integer representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the objects.</returns>
     public static IEnumerable<int?> ToInt<T>(this IEnumerable<T> nums) where T : struct
     {
         if (nums is null || !nums.Any())
@@ -62,50 +40,6 @@ public partial class YANNum
         foreach (var num in nums)
         {
             yield return num.ToInt();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{int}"/> containing the integer representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the objects.</returns>
-    public static IEnumerable<int?> ToInt<T>(this IReadOnlyCollection<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in nums)
-        {
-            yield return num.ToInt();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of value-type objects of type <typeparamref name="T"/> to an <see cref="IEnumerable{int}"/> containing the integer representations of the objects.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the value-type objects to be converted.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="nums">The enumerable of value-type objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the objects.</returns>
-    public static IEnumerable<int?> ToInt<T>(this IReadOnlyList<T> nums) where T : struct
-    {
-        if (nums is null || nums.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < nums.Count; i++)
-        {
-            yield return nums[i].ToInt();
         }
     }
 
@@ -123,24 +57,6 @@ public partial class YANNum
     /// </summary>
     /// <param name="strs">The enumerable of strings to be converted.</param>
     /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the strings.</returns>
-    public static IEnumerable<int?> ToInt(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToInt();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings <paramref name="strs"/> to an <see cref="IEnumerable{int}"/> containing the integer representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the strings.</returns>
     public static IEnumerable<int?> ToInt(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -150,42 +66,6 @@ public partial class YANNum
         foreach (var num in strs)
         {
             yield return num.ToInt();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings <paramref name="strs"/> to an <see cref="IEnumerable{int}"/> containing the integer representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the strings.</returns>
-    public static IEnumerable<int?> ToInt(this IReadOnlyCollection<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        foreach (var num in strs)
-        {
-            yield return num.ToInt();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings <paramref name="strs"/> to an <see cref="IEnumerable{int}"/> containing the integer representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the strings.</returns>
-    public static IEnumerable<int?> ToInt(this IReadOnlyList<string> strs)
-    {
-        if (strs is null || strs.Count < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Count; i++)
-        {
-            yield return strs[i].ToInt();
         }
     }
 
