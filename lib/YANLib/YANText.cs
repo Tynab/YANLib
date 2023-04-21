@@ -33,7 +33,7 @@ public static partial class YANText
     /// Converts all strings in the specified list to title case using the current culture's text info, by modifying the list in-place.
     /// </summary>
     /// <param name="strs">The list of strings to convert to title case.</param>
-    public static void ToTitleRef(this IList<string> strs)
+    public static void ToTitle(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -94,7 +94,7 @@ public static partial class YANText
     /// The first character of each word is capitalized and the remaining characters are converted to lowercase, based on the current culture's text info.
     /// </summary>
     /// <param name="strs">The string list to convert to capitalize form.</param>
-    public static void ToCapitalizeRef(this IList<string> strs)
+    public static void ToCapitalize(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -163,7 +163,7 @@ public static partial class YANText
     /// Consecutive whitespace characters are reduced to a single space character.
     /// </summary>
     /// <param name="strs">The list of strings to clean up.</param>
-    public static void CleanSpaceRef(this IList<string> strs)
+    public static void CleanSpace(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -222,7 +222,7 @@ public static partial class YANText
     /// Formats a list of strings in place by filtering out non-alphabetic characters and converting the remaining characters to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
     /// </summary>
     /// <param name="strs">The list of strings to format by filtering out non-alphabetic characters and converting the remaining characters to uppercase.</param>
-    public static void FormatNameRef(this IList<string> strs)
+    public static void FormatName(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -279,7 +279,7 @@ public static partial class YANText
     /// Filters out all non-alphabetic characters from the strings in the specified list based on their Unicode values.
     /// </summary>
     /// <param name="strs">The list of strings to filter out non-alphabetic characters from.</param>
-    public static void FilterAlphabeticRef(this IList<string> strs)
+    public static void FilterAlphabetic(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -336,7 +336,7 @@ public static partial class YANText
     /// If a string in the list is empty or whitespace, it is left unchanged.
     /// </summary>
     /// <param name="strs">The list of strings to filter out numeric characters from.</param>
-    public static void FilterNumberRef(this IList<string> strs)
+    public static void FilterNumber(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -391,7 +391,7 @@ public static partial class YANText
     /// Modifies the strings in the specified list by filtering out all non-alphanumeric characters (i.e., characters that are not numbers or letters).
     /// </summary>
     /// <param name="strs">The list of strings to filter out non-alphanumeric characters from.</param>
-    public static void FilterAlphanumericRef(this IList<string> strs)
+    public static void FilterAlphanumeric(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {

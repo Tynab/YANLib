@@ -57,24 +57,6 @@ public static partial class YANNum
     /// </summary>
     /// <param name="strs">The enumerable of string objects to be converted.</param>
     /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte> ToByte(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToByte();
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
     public static IEnumerable<byte> ToByte(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -96,29 +78,6 @@ public static partial class YANNum
     /// <param name="dfltVal">The default value to be returned if the parsing fails.</param>
     /// <returns>The parsed <see cref="byte"/> value, or <paramref name="dfltVal"/> if the parsing fails.</returns>
     public static byte ToByte<T>(this string str, T dfltVal) where T : struct => byte.TryParse(str, out var num) ? num : dfltVal.ToByte();
-
-    /// <summary>
-    /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings, using a default value for invalid conversions.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> objects.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value to be used for invalid conversions.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
-    /// <param name="strs">The enumerable of string objects to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
-    public static IEnumerable<byte> ToByte<T>(T dfltVal, params string[] strs) where T : struct
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToByte(dfltVal);
-        }
-    }
 
     /// <summary>
     /// Converts an enumerable of string objects to an <see cref="IEnumerable{byte}"/> containing the byte representations of the strings, using a default value for invalid conversions.

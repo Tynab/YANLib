@@ -64,29 +64,6 @@ public static partial class YANNum
     /// <param name="dfltVal">The default value to use for conversion failures.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
     /// <returns>An <see cref="IEnumerable{double}"/> containing the double representations of the strings.</returns>
-    public static IEnumerable<double> ToDouble<T>(T? dfltVal, params string[] strs) where T : struct
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return strs[i].ToDouble(dfltVal);
-        }
-    }
-
-    /// <summary>
-    /// Converts an enumerable of strings to an <see cref="IEnumerable{double}"/> containing the double representations of the strings, using a default value for conversion failures.
-    /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only <see langword="null"/> strings.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the default value for conversion failures.
-    /// Must be a value type.
-    /// </typeparam>
-    /// <param name="dfltVal">The default value to use for conversion failures.</param>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
-    /// <returns>An <see cref="IEnumerable{double}"/> containing the double representations of the strings.</returns>
     public static IEnumerable<double> ToDouble<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
     {
         if (strs is null || !strs.Any())

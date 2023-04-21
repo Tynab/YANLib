@@ -221,7 +221,7 @@ public static partial class YANDateTime
     /// <param name="dts">The list of DateTime values to convert and update.</param>
     /// <param name="tzSrc">The source time zone to convert from.</param>
     /// <param name="tzDst">The destination time zone to convert to.</param>
-    public static void ChangeTimeZoneRef<T1, T2>(this IList<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
+    public static void ChangeTimeZone<T1, T2>(this IList<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
         if (dts is not null && dts.Count > 0)
         {
@@ -268,7 +268,7 @@ public static partial class YANDateTime
     /// <typeparam name="T">The type of the destination time zone.</typeparam>
     /// <param name="dts">The list of DateTime values to convert.</param>
     /// <param name="tzDst">The destination time zone to convert to.</param>
-    public static void ChangeTimeZoneRef<T>(this IList<DateTime> dts, T tzDst) where T : struct
+    public static void ChangeTimeZone<T>(this IList<DateTime> dts, T tzDst) where T : struct
     {
         if (dts is not null && dts.Count > 0)
         {

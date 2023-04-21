@@ -317,23 +317,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to convert to lowercase.</param>
     /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
-    public static IEnumerable<string> ToLower(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return ToLower(strs[i]);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values.</returns>
     public static IEnumerable<string> ToLower(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -350,7 +333,7 @@ public static partial class YANText
     /// Converts the strings in the specified list to lowercase, ignoring their casing, based on their Unicode values.
     /// </summary>
     /// <param name="strs">The list of strings to convert to lowercase.</param>
-    public static void ToLowerRef(this IList<string> strs)
+    public static void ToLower(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -373,23 +356,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to convert to lowercase.</param>
     /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToLowerInvariant(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return ToLowerInvariant(strs[i]);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to lowercase.</param>
-    /// <returns>An enumerable of strings converted to lowercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
     public static IEnumerable<string> ToLowerInvariant(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -406,7 +372,7 @@ public static partial class YANText
     /// Converts all strings in the specified string list to lowercase using the invariant culture, by modifying the list in-place.
     /// </summary>
     /// <param name="strs">The string list to convert to lowercase.</param>
-    public static void ToLowerInvariantRef(this IList<string> strs)
+    public static void ToLowerInvariant(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -429,23 +395,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to convert to uppercase.</param>
     /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpper(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return ToUpper(strs[i]);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, using the invariant culture.</returns>
     public static IEnumerable<string> ToUpper(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -462,7 +411,7 @@ public static partial class YANText
     /// Converts all strings in the specified list of strings to uppercase, by modifying the list in-place.
     /// </summary>
     /// <param name="strs">The list of strings to convert to uppercase.</param>
-    public static void ToUpperRef(this IList<string> strs)
+    public static void ToUpper(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {
@@ -485,23 +434,6 @@ public static partial class YANText
     /// </summary>
     /// <param name="strs">The strings to convert to uppercase.</param>
     /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
-    public static IEnumerable<string> ToUpperInvariant(params string[] strs)
-    {
-        if (strs is null || strs.Length < 1)
-        {
-            yield break;
-        }
-        for (var i = 0; i < strs.Length; i++)
-        {
-            yield return ToUpperInvariant(strs[i]);
-        }
-    }
-
-    /// <summary>
-    /// Enumerates through an enumerable of strings and returns a new enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.
-    /// </summary>
-    /// <param name="strs">The strings to convert to uppercase.</param>
-    /// <returns>An enumerable of strings converted to uppercase, ignoring their casing, based on their Unicode values using the invariant culture.</returns>
     public static IEnumerable<string> ToUpperInvariant(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -518,7 +450,7 @@ public static partial class YANText
     /// Converts all strings in the specified string list to uppercase using the invariant culture, by modifying the list in-place.
     /// </summary>
     /// <param name="strs">The string list to convert to uppercase.</param>
-    public static void ToUpperInvariantRef(this IList<string> strs)
+    public static void ToUpperInvariant(this IList<string> strs)
     {
         if (strs is not null && strs.Count > 0)
         {

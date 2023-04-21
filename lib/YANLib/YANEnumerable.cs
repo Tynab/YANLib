@@ -69,7 +69,7 @@ public static partial class YANEnumerable
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
     /// <param name="srcs">The collection of objects to clean.</param>
-    public static void CleanRef<T>(this ICollection<T> srcs)
+    public static void Clean<T>(this ICollection<T> srcs)
     {
         if (srcs is not null && srcs.Any())
         {
@@ -78,35 +78,9 @@ public static partial class YANEnumerable
             {
                 foreach (var src in srcs)
                 {
-                    if (src is not null)
+                    if (src is null)
                     {
                         _ = srcs.Remove(src);
-                    }
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removes <see langword="null"/> values from the specified collection of objects and modifies the collection in-place, by removing the null values.
-    /// If the type <typeparamref name="T"/> is a class or a nullable value type, the method checks for <see langword="null"/> values and removes them from the collection.
-    /// If <typeparamref name="T"/> is a non-nullable value type, the method does not modify the collection.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="srcs">The collection of objects to clean.</param>
-    public static void CleanRef<T>(this IList<T> srcs)
-    {
-        if (srcs is not null && srcs.Count > 0)
-        {
-            var t = typeof(T);
-            var cnt = srcs.Count;
-            if (t.IsClass || GetUnderlyingType(t) is not null)
-            {
-                for (var i = 0; i < cnt; i++)
-                {
-                    if (srcs[i] is not null)
-                    {
-                        srcs.RemoveAt(i);
                     }
                 }
             }
@@ -138,34 +112,15 @@ public static partial class YANEnumerable
     /// If the string value is not null or whitespace, the method checks for whitespace values using <see cref="string.IsNullOrWhiteSpace"/> method and removes them from the collection.
     /// </summary>
     /// <param name="srcs">The collection of strings to clean.</param>
-    public static void CleanRef(this ICollection<string> srcs)
+    public static void Clean(this ICollection<string> srcs)
     {
         if (srcs is not null && srcs.Any())
         {
             foreach (var src in srcs)
             {
-                if (src.IsNotNullAndWhiteSpace())
+                if (src.IsNullOrWhiteSpace())
                 {
                     _ = srcs.Remove(src);
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removes <see langword="null"/> or whitespace values from the specified collection of strings and modifies the collection in-place, by removing the null or whitespace values.
-    /// If the string value is not null or whitespace, the method checks for whitespace values using <see cref="string.IsNullOrWhiteSpace"/> method and removes them from the collection.
-    /// </summary>
-    /// <param name="srcs">The collection of strings to clean.</param>
-    public static void CleanRef(this IList<string> srcs)
-    {
-        if (srcs is not null && srcs.Count > 0)
-        {
-            for (var i = 0; i < srcs.Count; i++)
-            {
-                if (srcs[i].IsNotNullAndWhiteSpace())
-                {
-                    srcs.RemoveAt(i);
                 }
             }
         }

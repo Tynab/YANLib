@@ -101,7 +101,7 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the enumerable, specifying the number of random values to generate.</param>
     /// <returns>An enumerable of random <see cref="IntPtr"/> values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1? min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<nint?> GenerateRandomNints<T1, T2, T>(T1? min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
@@ -120,7 +120,7 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the enumerable, specifying the number of random values to generate.</param>
     /// <returns>An enumerable of random <see cref="IntPtr"/> values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1? min, T2 max, T? size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<nint?> GenerateRandomNints<T1, T2, T>(T1? min, T2 max, T? size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
@@ -150,7 +150,7 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the enumerable, specifying the number of random values to generate.</param>
     /// <returns>An enumerable of random <see cref="IntPtr"/> values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1 min, T2? max, T size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<nint?> GenerateRandomNints<T1, T2, T>(T1 min, T2? max, T size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
@@ -169,7 +169,7 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the enumerable, specifying the number of random values to generate.</param>
     /// <returns>An enumerable of random <see cref="IntPtr"/> values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1 min, T2? max, T? size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<nint?> GenerateRandomNints<T1, T2, T>(T1 min, T2? max, T? size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
@@ -199,7 +199,7 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the enumerable, specifying the number of random values to generate.</param>
     /// <returns>An enumerable of random <see cref="IntPtr"/> values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1? min, T2? max, T size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<nint?> GenerateRandomNints<T1, T2, T>(T1? min, T2? max, T size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
@@ -218,7 +218,7 @@ public partial class YANNum
     /// <param name="max">The maximum value.</param>
     /// <param name="size">The size of the enumerable, specifying the number of random values to generate.</param>
     /// <returns>An enumerable of random <see cref="IntPtr"/> values between <paramref name="min"/> and <paramref name="max"/>.</returns>
-    public static IEnumerable<nint?> GenerateRandomNint<T1, T2, T>(T1? min, T2? max, T? size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<nint?> GenerateRandomNints<T1, T2, T>(T1? min, T2? max, T? size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
