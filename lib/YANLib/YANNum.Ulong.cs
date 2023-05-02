@@ -89,8 +89,8 @@ public static partial class YANNum
     /// The type of the default value to be used when converting strings to ulong.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used when converting strings to ulong.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value to be used when converting strings to ulong.</param>
     /// <returns>An <see cref="IEnumerable{ulong}"/> containing the ulong representations of the strings.</returns>
     public static IEnumerable<ulong> ToUlong<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {

@@ -61,8 +61,8 @@ public static partial class YANNum
     /// The type of the default value for conversion failures.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to use for conversion failures.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value to use for conversion failures.</param>
     /// <returns>An <see cref="IEnumerable{double}"/> containing the double representations of the strings.</returns>
     public static IEnumerable<double> ToDouble<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
     {

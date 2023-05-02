@@ -87,8 +87,8 @@ public static partial class YANNum
     /// The type of the default value to be used for invalid conversions.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
     /// <param name="strs">The enumerable of string objects to be converted.</param>
+    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
     /// <returns>An <see cref="IEnumerable{byte}"/> containing the byte representations of the strings.</returns>
     public static IEnumerable<byte> ToByte<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {

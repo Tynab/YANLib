@@ -61,8 +61,8 @@ public partial class YANNum
     /// The type of the default value to be used for invalid or null strings.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid or null strings.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value to be used for invalid or null strings.</param>
     /// <returns>An <see cref="IEnumerable{short}"/> containing the short integer representations of the strings.</returns>
     public static IEnumerable<short> ToShort<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
     {

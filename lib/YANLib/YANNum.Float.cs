@@ -87,8 +87,8 @@ public static partial class YANNum
     /// The type of the default value for parsing invalid or null strings.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for parsing invalid or null strings.</param>
     /// <param name="strs">The enumerable of strings to be converted to float.</param>
+    /// <param name="dfltVal">The default value to be used for parsing invalid or null strings.</param>
     /// <returns>An <see cref="IEnumerable{float}"/> containing the float representations of the strings.</returns>
     public static IEnumerable<float> ToFloat<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {

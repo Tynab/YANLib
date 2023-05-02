@@ -87,8 +87,8 @@ public static partial class YANNum
     /// The type of the default value to be used for parsing strings that cannot be converted to integers.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for parsing strings that cannot be converted to integers.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value to be used for parsing strings that cannot be converted to integers.</param>
     /// <returns>An <see cref="IEnumerable{int}"/> containing the integer representations of the strings.</returns>
     public static IEnumerable<int> ToInt<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {

@@ -90,5 +90,4 @@ public static partial class YANHttpClient
             return default;
         }
     }
-
 }

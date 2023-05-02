@@ -61,8 +61,8 @@ public static partial class YANNum
     /// The type of the default value for conversion failure.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for conversion failure.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value to be used for conversion failure.</param>
     /// <returns>An <see cref="IEnumerable{ushort}"/> containing the ushort representations of the strings.</returns>
     public static IEnumerable<ushort> ToUshort<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
     {

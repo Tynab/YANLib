@@ -61,8 +61,8 @@ public static partial class YANNum
     /// The type of the default value for the conversion to uint.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value for the conversion to uint.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value for the conversion to uint.</param>
     /// <returns>An <see cref="IEnumerable{uint}"/> containing the uint representations of the strings.</returns>
     public static IEnumerable<uint> ToUint<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
     {

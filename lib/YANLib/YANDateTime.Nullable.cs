@@ -19,9 +19,9 @@ public static partial class YANDateTime
     /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
     /// If a string cannot be parsed to a valid DateTime value, the default value specified by <paramref name="dfltVal"/> is used instead.
     /// </summary>
+    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
     /// <param name="fmt">The format of the date/time values in the input strings.</param>
     /// <param name="dfltVal">The default DateTime value to be used for strings that cannot be parsed to valid DateTime values.</param>
-    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
     public static IEnumerable<DateTime> ToDateTime(IEnumerable<string> strs, string fmt, DateTime? dfltVal)
     {
@@ -262,9 +262,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -316,9 +316,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -370,9 +370,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -424,9 +424,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -478,9 +478,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -532,9 +532,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -586,9 +586,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
-    /// <param name="dts">The <see cref="DateTime"/> values to convert to the destination time zone.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the <see cref="DateTime"/> values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -635,7 +635,7 @@ public static partial class YANDateTime
     /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.
     /// </summary>
     /// <typeparam name="T">The type of the time zone offset to convert the original <see cref="DateTime"/> value to, which must be a value type.</typeparam>
-    /// <param name="dt">The original <see cref="DateTime"/> value.</param>
+    /// <param name="dts">The original <see cref="DateTime"/> value.</param>
     /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
     /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T>(this IEnumerable<DateTime?> dts, T tzDst) where T : struct
@@ -681,7 +681,7 @@ public static partial class YANDateTime
     /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.
     /// </summary>
     /// <typeparam name="T">The type of the time zone offset to convert the original <see cref="DateTime"/> value to, which must be a value type.</typeparam>
-    /// <param name="dt">The original <see cref="DateTime"/> value.</param>
+    /// <param name="dts">The original <see cref="DateTime"/> value.</param>
     /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
     /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T>(this IEnumerable<DateTime> dts, T? tzDst) where T : struct
@@ -727,7 +727,7 @@ public static partial class YANDateTime
     /// Returns a new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.
     /// </summary>
     /// <typeparam name="T">The type of the time zone offset to convert the original <see cref="DateTime"/> value to, which must be a value type.</typeparam>
-    /// <param name="dt">The original <see cref="DateTime"/> value.</param>
+    /// <param name="dts">The original <see cref="DateTime"/> value.</param>
     /// <param name="tzDst">The time zone offset to convert the original <see cref="DateTime"/> value to, in hours.</param>
     /// <returns>A new <see cref="DateTime"/> value representing the same point in time as the original <see cref="DateTime"/> value, but converted to a different time zone with a time zone offset of 0.</returns>
     public static IEnumerable<DateTime> ChangeTimeZone<T>(this IEnumerable<DateTime?> dts, T? tzDst) where T : struct

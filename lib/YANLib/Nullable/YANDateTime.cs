@@ -23,7 +23,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
-    public static IEnumerable<DateTime?> ToDateTime(IEnumerable<string> strs)
+    public static IEnumerable<DateTime?> ToDateTime(this IEnumerable<string> strs)
     {
         if (strs.IsNullOrWhiteSpace())
         {
@@ -48,8 +48,8 @@ public static partial class YANDateTime
     /// Converts an enumerable of strings representing date/time values in a specified format to an <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.
     /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
     /// </summary>
-    /// <param name="fmt">The format of the date/time values in the input strings.</param>
     /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
+    /// <param name="fmt">The format of the date/time values in the input strings.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
     public static IEnumerable<DateTime?> ToDateTime(IEnumerable<string> strs, string fmt)
     {
@@ -78,9 +78,9 @@ public static partial class YANDateTime
     /// Returns an empty sequence if the input enumerable is <see langword="null"/>, empty, or contains only whitespace strings.
     /// If a string cannot be parsed to a valid DateTime value, the default value specified by <paramref name="dfltVal"/> is used instead.
     /// </summary>
+    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
     /// <param name="fmt">The format of the date/time values in the input strings.</param>
     /// <param name="dfltVal">The default DateTime value to be used for strings that cannot be parsed to valid DateTime values.</param>
-    /// <param name="strs">The enumerable of strings to convert to DateTime values.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the parsed DateTime values.</returns>
     public static IEnumerable<DateTime?> ToDateTime(IEnumerable<string> strs, string fmt, DateTime dfltVal)
     {
@@ -196,9 +196,9 @@ public static partial class YANDateTime
     /// </summary>
     /// <typeparam name="T1">The type of the source time zone.</typeparam>
     /// <typeparam name="T2">The type of the destination time zone.</typeparam>
+    /// <param name="dts">The enumerable of DateTime values to convert.</param>
     /// <param name="tzSrc">The source time zone to convert from.</param>
     /// <param name="tzDst">The destination time zone to convert to.</param>
-    /// <param name="dts">The enumerable of DateTime values to convert.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime?> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -226,8 +226,8 @@ public static partial class YANDateTime
     /// Returns an empty sequence if the input array is <see langword="null"/> or empty.
     /// </summary>
     /// <typeparam name="T">The type of the destination time zone.</typeparam>
-    /// <param name="tzDst">The destination time zone to convert to.</param>
     /// <param name="dts">The array of DateTime values to convert.</param>
+    /// <param name="tzDst">The destination time zone to convert to.</param>
     /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime values converted to the destination time zone.</returns>
     public static IEnumerable<DateTime?> ChangeTimeZone<T>(this IEnumerable<DateTime> dts, T tzDst) where T : struct
     {

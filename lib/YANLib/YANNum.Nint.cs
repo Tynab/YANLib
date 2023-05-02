@@ -87,11 +87,11 @@ public static partial class YANNum
     /// The type of the default value for conversion.
     /// Must be a value type.
     /// </typeparam>
+    /// <param name="strs">The enumerable of strings to be converted.</param>
     /// <param name="dfltVal">
     /// The default value for conversion if a string cannot be parsed to nint.
     /// Used when conversion fails for a particular string.
     /// </param>
-    /// <param name="strs">The enumerable of strings to be converted.</param>
     /// <returns>An <see cref="IEnumerable{nint}"/> containing the nint representations of the strings.</returns>
     public static IEnumerable<nint> ToNint<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {

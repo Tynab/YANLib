@@ -60,8 +60,8 @@ public partial class YANNum
     /// The type of the default value to be used for invalid conversions.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
     /// <param name="strs">The enumerable of string objects to be converted.</param>
+    /// <param name="dfltVal">The default value to be used for invalid conversions.</param>
     /// <returns>An <see cref="IEnumerable{decimal}"/> containing the decimal representations of the strings.</returns>
     public static IEnumerable<decimal> ToDecimal<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct
     {

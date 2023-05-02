@@ -89,8 +89,8 @@ public static partial class YANNum
     /// The type of the default value to be used for conversion.
     /// Must be a value type.
     /// </typeparam>
-    /// <param name="dfltVal">The default value to be used for conversion in case of failure.</param>
     /// <param name="strs">The enumerable of strings to be converted.</param>
+    /// <param name="dfltVal">The default value to be used for conversion in case of failure.</param>
     /// <returns>An enumerable of <see cref="nuint"/> values representing the unsigned integer equivalent of the strings.</returns>
     public static IEnumerable<nuint> ToNuint<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {
