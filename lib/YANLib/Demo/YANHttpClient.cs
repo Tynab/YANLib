@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Net.HttpStatusCode;
 
-namespace YANLib.Async;
+namespace YANLib.Demo;
 
 public static partial class YANHttpClient
 {
-    public static async ValueTask<T?> GetApiAsync<T>(this HttpClient httpClient, string uri, string param, string? path = null, string? authorization = null, JsonSerializerOptions? serializerOptions = null) where T : class, new()
+    private static async ValueTask<T?> GetApiAsync<T>(this HttpClient httpClient, string uri, string param, string? path = null, string? authorization = null, JsonSerializerOptions? serializerOptions = null) where T : class, new()
     {
         try
         {
@@ -52,7 +52,7 @@ public static partial class YANHttpClient
         }
     }
 
-    public static async Task<T?> PostApiAsync<T>(string uri, string param, object data, string? authorization = null) where T : class, new()
+    private static async Task<T?> PostApiAsync<T>(string uri, string param, object data, string? authorization = null) where T : class, new()
     {
         var httpCl = new HttpClient
         {

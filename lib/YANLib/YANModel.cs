@@ -5,15 +5,7 @@ namespace YANLib;
 
 public static partial class YANModel
 {
-    /// <summary>
-    /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to change the time zone.</typeparam>
-    /// <param name="mdl">The nullable object to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>The nullable object with all its properties having the specified time zone; or <see langword="null"/> if the object is <see langword="null"/>.</returns>
+    
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)
@@ -69,17 +61,6 @@ public static partial class YANModel
         return mdl;
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="mdls">The nullable objects to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdls is null || !mdls.Any())
@@ -92,15 +73,6 @@ public static partial class YANModel
         }
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to change the time zone.</typeparam>
-    /// <param name="mdl">The nullable object to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>The nullable object with all its properties having the specified time zone; or <see langword="null"/> if the object is <see langword="null"/>.</returns>
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)
@@ -156,17 +128,6 @@ public static partial class YANModel
         return mdl;
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="mdls">The nullable objects to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdls is null || !mdls.Any())
@@ -179,15 +140,6 @@ public static partial class YANModel
         }
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to change the time zone.</typeparam>
-    /// <param name="mdl">The nullable object to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>The nullable object with all its properties having the specified time zone; or <see langword="null"/> if the object is <see langword="null"/>.</returns>
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)
@@ -243,17 +195,6 @@ public static partial class YANModel
         return mdl;
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="mdls">The nullable objects to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdls is null || !mdls.Any())
@@ -266,15 +207,6 @@ public static partial class YANModel
         }
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified object with nullable value, including all its nested properties and properties in lists.
-    /// If the object is <see langword="null"/>, returns <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to change the time zone.</typeparam>
-    /// <param name="mdl">The nullable object to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>The nullable object with all its properties having the specified time zone; or <see langword="null"/> if the object is <see langword="null"/>.</returns>
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)
@@ -330,17 +262,6 @@ public static partial class YANModel
         return mdl;
     }
 
-    /// <summary>
-    /// Changes the time zone of all properties of the specified objects in the enumerable with nullable values, including all their nested properties and properties in lists.
-    /// If any of the objects is <see langword="null"/>, returns <see langword="null"/> for that object.
-    /// </summary>
-    /// <typeparam name="T">The type of the objects to change the time zone.</typeparam>
-    /// <typeparam name="T1">The type of the source time zone.</typeparam>
-    /// <typeparam name="T2">The type of the destination time zone.</typeparam>
-    /// <param name="mdls">The nullable objects to change the time zone.</param>
-    /// <param name="tzSrc">The source time zone.</param>
-    /// <param name="tzDst">The destination time zone.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing the nullable objects with all their properties having the specified time zone; or <see langword="null"/> for each object that is <see langword="null"/> in the enumerable.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdls is null || !mdls.Any())
