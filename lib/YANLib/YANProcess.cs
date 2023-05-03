@@ -23,7 +23,7 @@ public static partial class YANProcess
 
     public static async Task KillAllProcessesByName(params string[] names)
     {
-        if (names.IsNotNullAndWhiteSpace())
+        if (names.AllNotNullAndWhiteSpace())
         {
             await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
             {
@@ -38,7 +38,7 @@ public static partial class YANProcess
 
     public static async Task KillAllProcessesByName(this IEnumerable<string> names)
     {
-        if (names.IsNotNullAndWhiteSpace())
+        if (names.AllNotNullAndWhiteSpace())
         {
             await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
             {

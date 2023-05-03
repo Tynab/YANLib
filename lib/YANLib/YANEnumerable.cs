@@ -10,7 +10,7 @@ public static partial class YANEnumerable
     public static IEnumerable<List<T>> ChunkBySize<T, T1>(this List<T> srcs, T1 chunkSize) where T1 : struct
     {
         var size = chunkSize.ToInt();
-        if (srcs is null || srcs.Count < 1 && size < 1)
+        if (srcs.IsNullOrEmpty() && size < 1)
         {
             yield break;
         }
@@ -23,7 +23,7 @@ public static partial class YANEnumerable
 
     public static IEnumerable<T> Clean<T>(this IEnumerable<T> srcs)
     {
-        if (srcs is null || !srcs.Any())
+        if (srcs.IsNullOrEmpty())
         {
             yield break;
         }
@@ -49,7 +49,7 @@ public static partial class YANEnumerable
 
     public static void Clean<T>(this ICollection<T> srcs)
     {
-        if (srcs is not null && srcs.Any())
+        if (srcs.IsNotNullAndEmpty())
         {
             var t = typeof(T);
             if (t.IsClass || GetUnderlyingType(t) is not null)
@@ -93,4 +93,20 @@ public static partial class YANEnumerable
             }
         }
     }
+
+    public static bool IsNullOrEmpty<T>(this IEnumerable<T> srcs) => srcs is null || !srcs.Any();
+
+    public static bool IsNullOrEmpty<T>(this IReadOnlyCollection<T> srcs) => srcs is null || srcs.Count < 1;
+
+    public static bool IsNotNullAndEmpty<T>(this IEnumerable<T> srcs) => srcs is not null && srcs.Any();
+
+    public static bool IsNotNullAndEmpty<T>(this IReadOnlyCollection<T> srcs) => srcs is not null && srcs.Count > 0;
+
+    public static bool AllNullOrEmpty<T>(IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
+
+    public static bool AnyNullOrEmpty<T>(IEnumerable<T?> srcs) where T : class => srcs.Any(x => x is null || x.AllPropertiesDefault());
+
+    public static bool AllNotNullAndEmpty<T>(IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is null || x.AllPropertiesDefault());
+
+    public static bool AnyNotNullAndEmpty<T>(IEnumerable<T?> srcs) where T : class => srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
 }

@@ -29,11 +29,11 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 using static System.IO.Path;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace YANLib;
-
 [DependsOn(
-    typeof(YANLibHttpApiModule),
+typeof(YANLibHttpApiModule),
     typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreMultiTenancyModule),
     typeof(YANLibApplicationModule),
@@ -136,14 +136,16 @@ public class YANLibHttpApiHostModule : AbpModule
             configuration["AuthServer:Authority"],
             new Dictionary<string, string>
             {
-                    {"YANLib", "YANLib API"}
+                    {"YANLib", "YANLib API"},
+                    {"YANJson", "YANJson API"}
             },
             options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "YANLib API", Version = "v1" });
-                options.DocInclusionPredicate((docName, description) => true);
+                options.SwaggerDoc("main", new OpenApiInfo { Title = "YANLib API", Version = "main" });
+                options.SwaggerDoc("json", new OpenApiInfo { Title = "YANJson API", Version = "json" });
                 options.CustomSchemaIds(type => type.FullName);
                 options.HideAbpEndpoints();
+                options.EnableAnnotations();
             });
     }
 
@@ -231,7 +233,8 @@ public class YANLibHttpApiHostModule : AbpModule
         app.UseSwagger();
         app.UseAbpSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "YANLib API");
+            c.SwaggerEndpoint("/swagger/main/swagger.json", "YANLib API");
+            c.SwaggerEndpoint("/swagger/json/swagger.json", "YANJson API");
 
             var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
             c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);

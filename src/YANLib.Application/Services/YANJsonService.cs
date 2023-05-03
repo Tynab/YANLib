@@ -1,56 +1,42 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using YANLib.Dtos;
 using static System.Guid;
-using static System.Threading.Tasks.ValueTask;
-using static YANLib.YANBool;
-using static YANLib.YANNum;
-using static YANLib.YANText;
+using static System.Threading.Tasks.Task;
 
 namespace YANLib.Services;
 
 public class YANJsonService : YANLibAppService, IYANJsonService
 {
-    // Serialize
-    public async ValueTask<string> Serializes(List<JsonTestDto> requests) => await FromResult(requests.Serialize());
-
-    // Serialize camel case
-    public async ValueTask<string> CamelSerializes(List<JsonTestDto> requests) => await FromResult(requests.SerializeCamel());
-
-    // Deserialize
-    public async ValueTask<List<JsonTestDto>> Deserializes(byte quantity) => quantity == 0 ? default : await FromResult(ModData(quantity).Clean().ToList());
-
-    // Generate data
-    private static IEnumerable<string> GenData(byte quantity)
+    public async ValueTask<string> DuoVsStandard(uint quantity)
     {
-        for (var i = 0; i < quantity; i++)
+        var json = new JsonDto
         {
-            yield return i % 2 == 0
-                ? new JsonTestDto
-                {
-                    Id = NewGuid(),
-                    Name = $"nguyễn văn {GenerateRandomCharacter()}".ToTitle(),
-                    Income = GenerateRandomUshort(),
-                    IsRisk = GenerateRandomBool()
-                }.SerializeCamel()
-                : new JsonTestDto
-                {
-                    Id = NewGuid(),
-                    Name = $"đoàn thị {GenerateRandomCharacter()}".ToTitle(),
-                    Income = GenerateRandomUshort(),
-                    IsRisk = GenerateRandomBool()
-                }.Serialize();
-        }
-    }
-
-    // Modified data
-    private static IEnumerable<JsonTestDto> ModData(byte quantity)
-    {
-        foreach (var dto in GenData(quantity).DeserializeDuo<JsonTestDto>())
+            Id = NewGuid()
+        }.Serialize();
+        var duoTask = Run(() =>
         {
-            dto.Income *= 1000;
-            yield return dto;
-        }
+            var sw = new Stopwatch();
+            sw.Start();
+            for (var i = 0; i < quantity; i++)
+            {
+                _ = json.DeserializeDuo<JsonDto>();
+            }
+            sw.Stop();
+            return sw.Elapsed.TotalMilliseconds;
+        });
+        var stdTask = Run(() =>
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            for (var i = 0; i < quantity; i++)
+            {
+                _ = json.DeserializeStandard<JsonDto>();
+            }
+            sw.Stop();
+            return sw.Elapsed.TotalMilliseconds;
+        });
+        _ = await WhenAll(duoTask, stdTask);
+        return $"Standard: {stdTask.Result}\nDuo: {duoTask.Result}";
     }
 }

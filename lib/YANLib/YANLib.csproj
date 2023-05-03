@@ -9,12 +9,7 @@
     <Title>YANLib</Title>
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
-    <Description>Update:
-- YANEnumarable
-- YANProcess
-- YANText
-- YANModel
-- YANPass</Description>
+    <Description>Beta</Description>
     <Copyright>Copyright ©  2023</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -23,13 +18,11 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Fix:
-- Method name
-- FilterAlphabetic return</PackageReleaseNotes>
+    <PackageReleaseNotes>Beta</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>3.1.1</Version>
+    <Version>3.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
