@@ -1,4 +1,6 @@
-﻿using static System.DateTime;
+﻿using System.Linq;
+using static System.DateTime;
+using static System.Linq.Enumerable;
 
 namespace YANLib;
 
@@ -22,17 +24,7 @@ public static partial class YANDateTime
     /// <param name="fmt">The format of the input strings.</param>
     /// <param name="dfltVal">The default value to return for any strings that fail to convert.</param>
     /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted input string in the specified format, and the specified default value for any strings that fail to convert.</returns>
-    public static IEnumerable<DateTime> ToDateTime(this IEnumerable<string> strs, string fmt, DateTime? dfltVal)
-    {
-        if (strs.AllNullOrWhiteSpace())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmt, dfltVal);
-        }
-    }
+    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs, string fmt, DateTime? dfltVal) => strs.AllWhiteSpaceOrNull() ? default : strs.Select(s => s.ToDateTime(fmt, dfltVal));
 
     /// <summary>
     /// Generates a random <see cref="DateTime"/> object between the specified minimum and maximum values.
@@ -65,67 +57,21 @@ public static partial class YANDateTime
     /// <returns>A randomly generated <see cref="DateTime"/> object between the minimum <see cref="DateTime"/> value and the specified maximum value.</returns>
     public static DateTime GenerateRandomDateTime(DateTime? max) => max.HasValue ? GenerateRandomDateTime(max.Value) : default;
 
-    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime? max, T size) where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomDateTime(min, max);
-        }
-    }
+    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime? max, T size) where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
 
-    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime? max, T? size) where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomDateTime(min, max);
-        }
-    }
+    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime? max, T? size) where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
 
-    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime min, DateTime? max, T size) where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomDateTime(min, max);
-        }
-    }
+    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime min, DateTime? max, T size) where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
 
-    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime min, DateTime? max, T? size) where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomDateTime(min, max);
-        }
-    }
+    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime min, DateTime? max, T? size) where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
 
-    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime max, T size) where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomDateTime(min, max);
-        }
-    }
+    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime max, T size) where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
 
-    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime max, T? size) where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomDateTime(min, max);
-        }
-    }
+    public static IEnumerable<DateTime> GenerateRandomDateTimes<T>(DateTime? min, DateTime max, T? size) where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
 
     public static int GetWeekOfYear(this DateTime? dt) => dt.HasValue ? dt.Value.GetWeekOfYear() : default;
 
-    public static IEnumerable<int> GetWeekOfYear(this IEnumerable<DateTime?> dts)
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.GetWeekOfYear();
-        }
-    }
+    public static IEnumerable<int>? GetWeekOfYear(this IEnumerable<DateTime?> dts) => dts is null || !dts.Any() ? default : dts.Select(d => d.GetWeekOfYear());
 
     public static int TotalMonths(DateTime? dt1, DateTime dt2) => dt1.HasValue ? TotalMonths(dt1.Value, dt2) : default;
 
@@ -135,17 +81,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime? dt, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : default;
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime?> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -160,17 +96,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime dt, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct => tzSrc.HasValue ? dt.ChangeTimeZone(tzSrc.Value, tzDst) : dt.ChangeTimeZone(tzDst);
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -185,17 +111,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime dt, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct => tzDst.HasValue ? dt.ChangeTimeZone(tzSrc, tzDst.Value) : dt;
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -210,17 +126,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime? dt, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : default;
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime?> dts, T1? tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
@@ -235,17 +141,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime? dt, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : default;
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime?> dts, T1 tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -260,17 +156,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime dt, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct => tzSrc.HasValue ? dt.ChangeTimeZone(tzSrc.Value, tzDst) : dt.ChangeTimeZone(tzDst);
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -285,17 +171,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime? dt, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct => dt.HasValue ? dt.Value.ChangeTimeZone(tzSrc, tzDst) : default;
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzSrc, tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime?> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static void ChangeTimeZone<T1, T2>(this IList<DateTime?> dts, T1? tzSrc, T2? tzDst) where T1 : struct where T2 : struct
     {
@@ -310,17 +186,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T>(this DateTime? dt, T tzDst) where T : struct => dt.ChangeTimeZone(0, tzDst);
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IEnumerable<DateTime?> dts, T tzDst) where T : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T>(this IEnumerable<DateTime?> dts, T tzDst) where T : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzDst));
 
     public static void ChangeTimeZone<T>(this IList<DateTime?> dts, T tzDst) where T : struct
     {
@@ -335,17 +201,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T>(this DateTime dt, T? tzDst) where T : struct => dt.ChangeTimeZone(0, tzDst);
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IEnumerable<DateTime> dts, T? tzDst) where T : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T>(this IEnumerable<DateTime> dts, T? tzDst) where T : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzDst));
 
     public static void ChangeTimeZone<T>(this IList<DateTime> dts, T? tzDst) where T : struct
     {
@@ -360,17 +216,7 @@ public static partial class YANDateTime
 
     public static DateTime ChangeTimeZone<T>(this DateTime? dt, T? tzDst) where T : struct => dt.ChangeTimeZone(0, tzDst);
 
-    public static IEnumerable<DateTime> ChangeTimeZone<T>(this IEnumerable<DateTime?> dts, T? tzDst) where T : struct
-    {
-        if (dts is null || !dts.Any())
-        {
-            yield break;
-        }
-        foreach (var dt in dts)
-        {
-            yield return dt.ChangeTimeZone(tzDst);
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T>(this IEnumerable<DateTime?> dts, T? tzDst) where T : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzDst));
 
     public static void ChangeTimeZone<T>(this IList<DateTime?> dts, T? tzDst) where T : struct
     {

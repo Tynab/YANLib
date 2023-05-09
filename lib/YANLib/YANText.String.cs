@@ -17,25 +17,25 @@ public static partial class YANText
 
     public static bool AnyNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNull());
 
-    public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
+    public static bool IsEmptyOrNull(this string str) => string.IsNullOrEmpty(str);
 
-    public static bool AllNullOrEmpty(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotNullAndEmpty());
+    public static bool AllEmptyOrNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotEmptyAndNull());
 
-    public static bool AnyNullOrEmpty(params string[] strs) => strs is not null && strs.Any(s => s.IsNullOrEmpty());
+    public static bool AnyEmptyOrNull(params string[] strs) => strs is not null && strs.Any(s => s.IsEmptyOrNull());
 
-    public static bool AllNullOrEmpty(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndEmpty());
+    public static bool AllEmptyOrNull(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotEmptyAndNull());
 
-    public static bool AnyNullOrEmpty(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNullOrEmpty());
+    public static bool AnyEmptyOrNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsEmptyOrNull());
 
-    public static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);
+    public static bool IsWhiteSpaceOrNull(this string str) => string.IsNullOrWhiteSpace(str);
 
-    public static bool AllNullOrWhiteSpace(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotNullAndWhiteSpace());
+    public static bool AllWhiteSpaceOrNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotWhiteSpaceAndNull());
 
-    public static bool AnyNullOrWhiteSpace(params string[] strs) => strs is not null && strs.Any(s => s.IsNullOrWhiteSpace());
+    public static bool AnyWhiteSpaceOrNull(params string[] strs) => strs is not null && strs.Any(s => s.IsWhiteSpaceOrNull());
 
-    public static bool AllNullOrWhiteSpace(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotNullAndWhiteSpace());
+    public static bool AllWhiteSpaceOrNull(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNotWhiteSpaceAndNull());
 
-    public static bool AnyNullOrWhiteSpace(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNullOrWhiteSpace());
+    public static bool AnyWhiteSpaceOrNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsWhiteSpaceOrNull());
 
     public static bool EqualsIgnoreCase(this string str1, string str2) => AllNull(str1, str2) || str1.IsNotNull() && str1.IsNotNull() && string.Equals(str1, str2, OrdinalIgnoreCase);
 
@@ -57,25 +57,25 @@ public static partial class YANText
 
     public static bool AnyNotNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotNull());
 
-    public static bool IsNotNullAndEmpty(this string str) => !string.IsNullOrEmpty(str);
+    public static bool IsNotEmptyAndNull(this string str) => !string.IsNullOrEmpty(str);
 
-    public static bool AllNotNullAndEmpty(params string[] strs) => strs is not null && !strs.Any(s => s.IsNullOrEmpty());
+    public static bool AllNotEmptyAndNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsEmptyOrNull());
 
-    public static bool AnyNotNullAndEmpty(params string[] strs) => strs is not null && strs.Any(s => s.IsNotNullAndEmpty());
+    public static bool AnyNotEmptyAndNull(params string[] strs) => strs is not null && strs.Any(s => s.IsNotEmptyAndNull());
 
-    public static bool AllNotNullAndEmpty(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrEmpty());
+    public static bool AllNotEmptyAndNull(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsEmptyOrNull());
 
-    public static bool AnyNotNullAndEmpty(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotNullAndEmpty());
+    public static bool AnyNotEmptyAndNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotEmptyAndNull());
 
-    public static bool IsNotNullAndWhiteSpace(this string str) => !string.IsNullOrWhiteSpace(str);
+    public static bool IsNotWhiteSpaceAndNull(this string str) => !string.IsNullOrWhiteSpace(str);
 
-    public static bool AllNotNullAndWhiteSpace(params string[] strs) => strs is not null && !strs.Any(s => s.IsNullOrWhiteSpace());
+    public static bool AllNotWhiteSpaceAndNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsWhiteSpaceOrNull());
 
-    public static bool AnyNotNullAndWhiteSpace(params string[] strs) => strs is not null && strs.Any(s => s.IsNotNullAndWhiteSpace());
+    public static bool AnyNotWhiteSpaceAndNull(params string[] strs) => strs is not null && strs.Any(s => s.IsNotWhiteSpaceAndNull());
 
-    public static bool AllNotNullAndWhiteSpace(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsNullOrWhiteSpace());
+    public static bool AllNotWhiteSpaceAndNull(this IEnumerable<string> strs) => strs is not null && !strs.Any(s => s.IsWhiteSpaceOrNull());
 
-    public static bool AnyNotNullAndWhiteSpace(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotNullAndWhiteSpace());
+    public static bool AnyNotWhiteSpaceAndNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotWhiteSpaceAndNull());
 
     public static bool NotEqualsIgnoreCase(this string str1, string str2) => AllNotNull(str1, str2) && !string.Equals(str1, str2, OrdinalIgnoreCase);
 
@@ -123,11 +123,11 @@ public static partial class YANText
 
     public static string GetValue(this string str, char dfltVal) => str ?? (dfltVal.IsNotEmpty() ? dfltVal.ToString() : string.Empty);
 
-    public static string ToLower(this string str) => str.IsNotNullAndWhiteSpace() ? str.ToLower() : str;
+    public static string ToLower(this string str) => str.IsNotWhiteSpaceAndNull() ? str.ToLower() : str;
 
     public static IEnumerable<string> ToLower(this IEnumerable<string> strs)
     {
-        if (strs.IsNullOrEmpty())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -139,7 +139,7 @@ public static partial class YANText
 
     public static void ToLower(this ICollection<string> strs)
     {
-        if (strs.IsNotNullAndEmpty())
+        if (strs.IsNotEmptyAndNull())
         {
             foreach (var str in strs)
             {
@@ -148,11 +148,11 @@ public static partial class YANText
         }
     }
 
-    public static string ToLowerInvariant(this string str) => str.IsNotNullAndWhiteSpace() ? str.ToLower(CultureInfo.InvariantCulture) : str;
+    public static string ToLowerInvariant(this string str) => str.IsNotWhiteSpaceAndNull() ? str.ToLower(CultureInfo.InvariantCulture) : str;
 
     public static IEnumerable<string> ToLowerInvariant(this IEnumerable<string> strs)
     {
-        if (strs.IsNullOrEmpty())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -164,7 +164,7 @@ public static partial class YANText
 
     public static void ToLowerInvariant(this IList<string> strs)
     {
-        if (strs.IsNotNullAndEmpty())
+        if (strs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < strs.Count; i++)
             {
@@ -173,11 +173,11 @@ public static partial class YANText
         }
     }
 
-    public static string ToUpper(this string str) => str.IsNotNullAndWhiteSpace() ? str.ToUpper() : str;
+    public static string ToUpper(this string str) => str.IsNotWhiteSpaceAndNull() ? str.ToUpper() : str;
 
     public static IEnumerable<string> ToUpper(this IEnumerable<string> strs)
     {
-        if (strs.IsNullOrEmpty())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -189,7 +189,7 @@ public static partial class YANText
 
     public static void ToUpper(this IList<string> strs)
     {
-        if (strs.IsNotNullAndEmpty())
+        if (strs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < strs.Count; i++)
             {
@@ -198,11 +198,11 @@ public static partial class YANText
         }
     }
 
-    public static string ToUpperInvariant(this string str) => str.IsNotNullAndWhiteSpace() ? str.ToUpper(CultureInfo.InvariantCulture) : str;
+    public static string ToUpperInvariant(this string str) => str.IsNotWhiteSpaceAndNull() ? str.ToUpper(CultureInfo.InvariantCulture) : str;
 
     public static IEnumerable<string> ToUpperInvariant(this IEnumerable<string> strs)
     {
-        if (strs.IsNullOrEmpty())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -214,7 +214,7 @@ public static partial class YANText
 
     public static void ToUpperInvariant(this IList<string> strs)
     {
-        if (strs.IsNotNullAndEmpty())
+        if (strs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < strs.Count; i++)
             {

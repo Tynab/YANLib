@@ -10,7 +10,7 @@ public static partial class YANEnumerable
     public static IEnumerable<List<T>> ChunkBySize<T, T1>(this List<T> srcs, T1 chunkSize) where T1 : struct
     {
         var size = chunkSize.ToInt();
-        if (srcs.IsNullOrEmpty() && size < 1)
+        if (srcs.IsEmptyOrNull() && size < 1)
         {
             yield break;
         }
@@ -23,7 +23,7 @@ public static partial class YANEnumerable
 
     public static IEnumerable<T> Clean<T>(this IEnumerable<T> srcs)
     {
-        if (srcs.IsNullOrEmpty())
+        if (srcs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -49,7 +49,7 @@ public static partial class YANEnumerable
 
     public static void Clean<T>(this ICollection<T> srcs)
     {
-        if (srcs.IsNotNullAndEmpty())
+        if (srcs.IsNotEmptyAndNull())
         {
             var t = typeof(T);
             if (t.IsClass || GetUnderlyingType(t) is not null)
@@ -73,7 +73,7 @@ public static partial class YANEnumerable
         }
         foreach (var src in srcs)
         {
-            if (src.IsNotNullAndWhiteSpace())
+            if (src.IsNotWhiteSpaceAndNull())
             {
                 yield return src;
             }
@@ -86,7 +86,7 @@ public static partial class YANEnumerable
         {
             foreach (var src in srcs)
             {
-                if (src.IsNullOrWhiteSpace())
+                if (src.IsWhiteSpaceOrNull())
                 {
                     _ = srcs.Remove(src);
                 }
@@ -94,19 +94,19 @@ public static partial class YANEnumerable
         }
     }
 
-    public static bool IsNullOrEmpty<T>(this IEnumerable<T> srcs) => srcs is null || !srcs.Any();
+    public static bool IsEmptyOrNull<T>(this IEnumerable<T> srcs) => srcs is null || !srcs.Any();
 
-    public static bool IsNullOrEmpty<T>(this IReadOnlyCollection<T> srcs) => srcs is null || srcs.Count < 1;
+    public static bool IsEmptyOrNull<T>(this ICollection<T> srcs) => srcs is null || srcs.Count < 1;
 
-    public static bool IsNotNullAndEmpty<T>(this IEnumerable<T> srcs) => srcs is not null && srcs.Any();
+    public static bool IsNotEmptyAndNull<T>(this IEnumerable<T> srcs) => srcs is not null && srcs.Any();
 
-    public static bool IsNotNullAndEmpty<T>(this IReadOnlyCollection<T> srcs) => srcs is not null && srcs.Count > 0;
+    public static bool IsNotEmptyAndNull<T>(this ICollection<T> srcs) => srcs is not null && srcs.Count > 0;
 
-    public static bool AllNullOrEmpty<T>(IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
+    public static bool AllEmptyOrNull<T>(this IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
 
-    public static bool AnyNullOrEmpty<T>(IEnumerable<T?> srcs) where T : class => srcs.Any(x => x is null || x.AllPropertiesDefault());
+    public static bool AnyEmptyOrNull<T>(this IEnumerable<T?> srcs) where T : class => srcs.Any(x => x is null || x.AllPropertiesDefault());
 
-    public static bool AllNotNullAndEmpty<T>(IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is null || x.AllPropertiesDefault());
+    public static bool AllNotEmptyAndNull<T>(this IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is null || x.AllPropertiesDefault());
 
-    public static bool AnyNotNullAndEmpty<T>(IEnumerable<T?> srcs) where T : class => srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
+    public static bool AnyNotEmptyAndNull<T>(this IEnumerable<T?> srcs) where T : class => srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
 }

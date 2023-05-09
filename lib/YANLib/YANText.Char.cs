@@ -25,15 +25,15 @@ public static partial class YANText
 
     public static bool AnyWhiteSpace(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsWhiteSpace());
 
-    public static bool IsNullOrWhiteSpace(this char c) => c.IsEmpty() || c.IsWhiteSpace();
+    public static bool IsWhiteSpaceOrNull(this char c) => c.IsEmpty() || c.IsWhiteSpace();
 
-    public static bool AllNullOrWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
+    public static bool AllWhiteSpaceOrNull(params char[] cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
-    public static bool AnyNullOrWhiteSpace(params char[] cs) => cs is not null && cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool AnyWhiteSpaceOrNull(params char[] cs) => cs is not null && cs.Any(c => c.IsWhiteSpaceOrNull());
 
-    public static bool AllNullOrWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
+    public static bool AllWhiteSpaceOrNull(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
-    public static bool AnyNullOrWhiteSpace(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool AnyWhiteSpaceOrNull(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsWhiteSpaceOrNull());
 
     public static bool IsAlphabetic(this char c) => char.IsLetter(c);
 
@@ -97,11 +97,11 @@ public static partial class YANText
 
     public static bool IsNotEmptyAndWhiteSpace(this char c) => c.IsNotEmpty() && c.IsNotWhiteSpace();
 
-    public static bool AllNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool AllNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsWhiteSpaceOrNull());
 
     public static bool AnyNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
-    public static bool AllNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNullOrWhiteSpace());
+    public static bool AllNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsWhiteSpaceOrNull());
 
     public static bool AnyNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
@@ -197,7 +197,7 @@ public static partial class YANText
 
     public static IEnumerable<char> ToLower(this IEnumerable<char> cs)
     {
-        if (cs.IsNullOrEmpty())
+        if (cs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -209,7 +209,7 @@ public static partial class YANText
 
     public static void ToLower(this IList<char> cs)
     {
-        if (cs.IsNotNullAndEmpty())
+        if (cs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < cs.Count; i++)
             {
@@ -222,7 +222,7 @@ public static partial class YANText
 
     public static IEnumerable<char> ToLowerInvariant(this IEnumerable<char> cs)
     {
-        if (cs.IsNullOrEmpty())
+        if (cs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -234,7 +234,7 @@ public static partial class YANText
 
     public static void ToLowerInvariant(this IList<char> cs)
     {
-        if (cs.IsNotNullAndEmpty())
+        if (cs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < cs.Count; i++)
             {
@@ -247,7 +247,7 @@ public static partial class YANText
 
     public static IEnumerable<char> ToUpper(this IEnumerable<char> cs)
     {
-        if (cs.IsNullOrEmpty())
+        if (cs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -259,7 +259,7 @@ public static partial class YANText
 
     public static void ToUpper(this IList<char> cs)
     {
-        if (cs.IsNotNullAndEmpty())
+        if (cs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < cs.Count; i++)
             {
@@ -272,7 +272,7 @@ public static partial class YANText
 
     public static IEnumerable<char> ToUpperInvariant(this IEnumerable<char> cs)
     {
-        if (cs.IsNullOrEmpty())
+        if (cs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -284,7 +284,7 @@ public static partial class YANText
 
     public static void ToUpperInvariant(this IList<char> cs)
     {
-        if (cs.IsNotNullAndEmpty())
+        if (cs.IsNotEmptyAndNull())
         {
             for (var i = 0; i < cs.Count; i++)
             {

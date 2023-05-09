@@ -23,7 +23,7 @@ public static partial class YANModel
         return true;
     }
 
-    public static bool AllPropertiesNotDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotNullAndEmpty() && !mdls.Any(x => x.AnyPropertiesDefault());
+    public static bool AllPropertiesNotDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotEmptyAndNull() && !mdls.Any(x => x.AnyPropertiesDefault());
 
     public static bool AllPropertiesDefault<T>(this T? mdl) where T : class
     {
@@ -42,7 +42,7 @@ public static partial class YANModel
         return true;
     }
 
-    public static bool AllPropertiesDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotNullAndEmpty() && !mdls.Any(x => x.AnyPropertiesNotDefault());
+    public static bool AllPropertiesDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotEmptyAndNull() && !mdls.Any(x => x.AnyPropertiesNotDefault());
 
     public static bool AnyPropertiesNotDefault<T>(this T? mdl) where T : class
     {
@@ -61,7 +61,7 @@ public static partial class YANModel
         return false;
     }
 
-    public static bool AnyPropertiesNotDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotNullAndEmpty() && mdls.Any(x => x.AnyPropertiesNotDefault());
+    public static bool AnyPropertiesNotDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotEmptyAndNull() && mdls.Any(x => x.AnyPropertiesNotDefault());
 
     public static bool AnyPropertiesDefault<T>(this T? mdl) where T : class
     {
@@ -80,11 +80,11 @@ public static partial class YANModel
         return false;
     }
 
-    public static bool AnyPropertiesDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotNullAndEmpty() && mdls.Any(x => x.AnyPropertiesDefault());
+    public static bool AnyPropertiesDefault<T>(this IEnumerable<T?> mdls) where T : class => mdls.IsNotEmptyAndNull() && mdls.Any(x => x.AnyPropertiesDefault());
 
     public static bool AllPropertiesNotDefault<T>(this T? mdl, params string[] names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -99,11 +99,11 @@ public static partial class YANModel
         return true;
     }
 
-    public static bool AllPropertiesNotDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotNullAndEmpty() && !mdls.Any(x => x.AnyPropertiesDefault(names));
+    public static bool AllPropertiesNotDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotEmptyAndNull() && !mdls.Any(x => x.AnyPropertiesDefault(names));
 
     public static bool AllPropertiesDefault<T>(this T? mdl, params string[] names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -118,11 +118,11 @@ public static partial class YANModel
         return true;
     }
 
-    public static bool AllPropertiesDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotNullAndEmpty() && !mdls.Any(x => x.AnyPropertiesNotDefault(names));
+    public static bool AllPropertiesDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotEmptyAndNull() && !mdls.Any(x => x.AnyPropertiesNotDefault(names));
 
     public static bool AnyPropertiesNotDefault<T>(this T? mdl, params string[] names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -137,11 +137,11 @@ public static partial class YANModel
         return false;
     }
 
-    public static bool AnyPropertiesNotDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotNullAndEmpty() && mdls.Any(x => x.AnyPropertiesNotDefault(names));
+    public static bool AnyPropertiesNotDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotEmptyAndNull() && mdls.Any(x => x.AnyPropertiesNotDefault(names));
 
     public static bool AnyPropertiesDefault<T>(this T? mdl, params string[] names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -156,11 +156,11 @@ public static partial class YANModel
         return false;
     }
 
-    public static bool AnyPropertiesDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotNullAndEmpty() && mdls.Any(x => x.AnyPropertiesDefault(names));
+    public static bool AnyPropertiesDefault<T>(this IEnumerable<T?> mdls, params string[] names) where T : class => mdls.IsNotEmptyAndNull() && mdls.Any(x => x.AnyPropertiesDefault(names));
 
     public static bool AllPropertiesNotDefault<T>(this T? mdl, IEnumerable<string> names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -175,11 +175,11 @@ public static partial class YANModel
         return true;
     }
 
-    public static bool AllPropertiesNotDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotNullAndEmpty() && !mdls.Any(x => x.AnyPropertiesDefault(names));
+    public static bool AllPropertiesNotDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotEmptyAndNull() && !mdls.Any(x => x.AnyPropertiesDefault(names));
 
     public static bool AllPropertiesDefault<T>(this T? mdl, IEnumerable<string> names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -194,11 +194,11 @@ public static partial class YANModel
         return true;
     }
 
-    public static bool AllPropertiesDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotNullAndEmpty() && !mdls.Any(x => x.AnyPropertiesNotDefault(names));
+    public static bool AllPropertiesDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotEmptyAndNull() && !mdls.Any(x => x.AnyPropertiesNotDefault(names));
 
     public static bool AnyPropertiesNotDefault<T>(this T? mdl, IEnumerable<string> names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -213,11 +213,11 @@ public static partial class YANModel
         return false;
     }
 
-    public static bool AnyPropertiesNotDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotNullAndEmpty() && mdls.Any(x => x.AnyPropertiesNotDefault(names));
+    public static bool AnyPropertiesNotDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotEmptyAndNull() && mdls.Any(x => x.AnyPropertiesNotDefault(names));
 
     public static bool AnyPropertiesDefault<T>(this T? mdl, IEnumerable<string> names) where T : class
     {
-        if (mdl is null || names.AllNullOrWhiteSpace())
+        if (mdl is null || names.AllWhiteSpaceOrNull())
         {
             return false;
         }
@@ -232,5 +232,5 @@ public static partial class YANModel
         return false;
     }
 
-    public static bool AnyPropertiesDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotNullAndEmpty() && mdls.Any(x => x.AnyPropertiesDefault(names));
+    public static bool AnyPropertiesDefault<T>(this IEnumerable<T?> mdls, IEnumerable<string> names) where T : class => mdls.IsNotEmptyAndNull() && mdls.Any(x => x.AnyPropertiesDefault(names));
 }

@@ -24,7 +24,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted input string in the specified format, and the specified default value for any strings that fail to convert.</returns>
     public static IEnumerable<DateTime?> ToDateTime(this IEnumerable<string> strs, string fmt, DateTime? dfltVal)
     {
-        if (strs.AllNullOrWhiteSpace())
+        if (strs.AllWhiteSpaceOrNull())
         {
             yield break;
         }

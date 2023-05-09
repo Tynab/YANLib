@@ -6,7 +6,7 @@ namespace YANLib;
 public static partial class YANText
 {
 
-    public static string ToTitle(this string str) => str.IsNullOrWhiteSpace() ? str : CurrentCulture.TextInfo.ToTitleCase(str);
+    public static string ToTitle(this string str) => str.IsWhiteSpaceOrNull() ? str : CurrentCulture.TextInfo.ToTitleCase(str);
 
     public static IEnumerable<string> ToTitle(this IEnumerable<string> strs)
     {
@@ -33,7 +33,7 @@ public static partial class YANText
 
     public static string ToCapitalize(this string str)
     {
-        if (str.IsNullOrWhiteSpace())
+        if (str.IsWhiteSpaceOrNull())
         {
             return str;
         }
@@ -79,7 +79,7 @@ public static partial class YANText
 
     public static string CleanSpace(this string str)
     {
-        if (str.IsNullOrEmpty())
+        if (str.IsEmptyOrNull())
         {
             return str;
         }
@@ -130,7 +130,7 @@ public static partial class YANText
 
     public static string FormatName(this string str)
     {
-        if (str.IsNullOrEmpty())
+        if (str.IsEmptyOrNull())
         {
             return str;
         }
@@ -174,7 +174,7 @@ public static partial class YANText
 
     public static string FilterAlphabetic(this string str)
     {
-        if (str.IsNullOrEmpty())
+        if (str.IsEmptyOrNull())
         {
             return str;
         }
@@ -215,7 +215,7 @@ public static partial class YANText
 
     public static string FilterNumber(this string str)
     {
-        if (str.IsNullOrEmpty())
+        if (str.IsEmptyOrNull())
         {
             return str;
         }
@@ -256,7 +256,7 @@ public static partial class YANText
 
     public static string FilterAlphanumeric(this string str)
     {
-        if (str.IsNullOrEmpty())
+        if (str.IsEmptyOrNull())
         {
             return str;
         }
