@@ -6,9 +6,9 @@ namespace YANLib;
 public static partial class YANJson
 {
     
-    public static string Serialize<T>(this T mdl) where T : class => JsonSerializer.Serialize(mdl);
+    public static string Serialize<T>(this T mdl) => JsonSerializer.Serialize(mdl);
 
-    public static IEnumerable<string> Serializes<T>(this IEnumerable<T> mdls) where T : class
+    public static IEnumerable<string> Serializes<T>(this IEnumerable<T> mdls)
     {
         if (mdls is null || !mdls.Any())
         {
@@ -20,13 +20,13 @@ public static partial class YANJson
         }
     }
 
-    public static string SerializeCamel<T>(this T mdl) where T : class => JsonSerializer.Serialize(mdl, new JsonSerializerOptions
+    public static string SerializeCamel<T>(this T mdl) => JsonSerializer.Serialize(mdl, new JsonSerializerOptions
     {
         PropertyNameCaseInsensitive = false,
         PropertyNamingPolicy = CamelCase
     });
 
-    public static IEnumerable<string> SerializeCamels<T>(this IEnumerable<T> mdls) where T : class
+    public static IEnumerable<string> SerializeCamels<T>(this IEnumerable<T> mdls)
     {
         if (mdls is null || !mdls.Any())
         {
@@ -38,7 +38,7 @@ public static partial class YANJson
         }
     }
 
-    public static T? Deserialize<T>(this string str) where T : class
+    public static T? Deserialize<T>(this string str)
     {
         try
         {
@@ -50,7 +50,7 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?> Deserializes<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> Deserializes<T>(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
         {
@@ -62,7 +62,7 @@ public static partial class YANJson
         }
     }
 
-    public static T? DeserializeCamel<T>(this string str) where T : class
+    public static T? DeserializeCamel<T>(this string str)
     {
         try
         {
@@ -78,7 +78,7 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?> DeserializeCamels<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeCamels<T>(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
         {
@@ -90,7 +90,7 @@ public static partial class YANJson
         }
     }
 
-    public static T? DeserializeDuo<T>(this string str) where T : class
+    public static T? DeserializeDuo<T>(this string str)
     {
         T? rslt;
         try
@@ -118,7 +118,7 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?> DeserializeDuos<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeDuos<T>(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
         {
@@ -130,7 +130,7 @@ public static partial class YANJson
         }
     }
 
-    public static T? DeserializeDuoCamelPriority<T>(this string str) where T : class
+    public static T? DeserializeDuoCamelPriority<T>(this string str)
     {
         T? rslt;
         try
@@ -158,7 +158,7 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?> DeserializeDuoCamelPriorities<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeDuoCamelPriorities<T>(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
         {
@@ -170,7 +170,7 @@ public static partial class YANJson
         }
     }
 
-    public static T? DeserializeStandard<T>(this string str) where T : class
+    public static T? DeserializeStandard<T>(this string str)
     {
         try
         {
@@ -186,7 +186,7 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?> DeserializeStandards<T>(this IEnumerable<string> strs) where T : class
+    public static IEnumerable<T?> DeserializeStandards<T>(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
         {
