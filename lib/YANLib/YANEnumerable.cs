@@ -47,24 +47,6 @@ public static partial class YANEnumerable
         }
     }
 
-    public static void Clean<T>(this ICollection<T> srcs)
-    {
-        if (srcs.IsNotEmptyAndNull())
-        {
-            var t = typeof(T);
-            if (t.IsClass || GetUnderlyingType(t) is not null)
-            {
-                foreach (var src in srcs)
-                {
-                    if (src is null)
-                    {
-                        _ = srcs.Remove(src);
-                    }
-                }
-            }
-        }
-    }
-
     public static IEnumerable<string> Clean(this IEnumerable<string> srcs)
     {
         if (srcs is null || !srcs.Any())
@@ -76,20 +58,6 @@ public static partial class YANEnumerable
             if (src.IsNotWhiteSpaceAndNull())
             {
                 yield return src;
-            }
-        }
-    }
-
-    public static void Clean(this ICollection<string> srcs)
-    {
-        if (srcs is not null && srcs.Any())
-        {
-            foreach (var src in srcs)
-            {
-                if (src.IsWhiteSpaceOrNull())
-                {
-                    _ = srcs.Remove(src);
-                }
             }
         }
     }

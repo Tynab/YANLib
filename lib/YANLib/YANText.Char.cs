@@ -207,17 +207,6 @@ public static partial class YANText
         }
     }
 
-    public static void ToLower(this IList<char> cs)
-    {
-        if (cs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < cs.Count; i++)
-            {
-                cs[i] = ToLower(cs[i]);
-            }
-        }
-    }
-
     public static char ToLowerInvariant(this char c) => c.IsNotEmptyAndWhiteSpace() ? char.ToLowerInvariant(c) : c;
 
     public static IEnumerable<char> ToLowerInvariant(this IEnumerable<char> cs)
@@ -229,17 +218,6 @@ public static partial class YANText
         foreach (var c in cs)
         {
             yield return ToLowerInvariant(c);
-        }
-    }
-
-    public static void ToLowerInvariant(this IList<char> cs)
-    {
-        if (cs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < cs.Count; i++)
-            {
-                cs[i] = ToLowerInvariant(cs[i]);
-            }
         }
     }
 
@@ -257,17 +235,6 @@ public static partial class YANText
         }
     }
 
-    public static void ToUpper(this IList<char> cs)
-    {
-        if (cs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < cs.Count; i++)
-            {
-                cs[i] = ToUpper(cs[i]);
-            }
-        }
-    }
-
     public static char ToUpperInvariant(this char c) => c.IsNotEmptyAndWhiteSpace() ? char.ToUpperInvariant(c) : c;
 
     public static IEnumerable<char> ToUpperInvariant(this IEnumerable<char> cs)
@@ -279,17 +246,6 @@ public static partial class YANText
         foreach (var c in cs)
         {
             yield return ToUpperInvariant(c);
-        }
-    }
-
-    public static void ToUpperInvariant(this IList<char> cs)
-    {
-        if (cs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < cs.Count; i++)
-            {
-                cs[i] = ToUpperInvariant(cs[i]);
-            }
         }
     }
 }

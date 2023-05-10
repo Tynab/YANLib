@@ -137,17 +137,6 @@ public static partial class YANText
         }
     }
 
-    public static void ToLower(this ICollection<string> strs)
-    {
-        if (strs.IsNotEmptyAndNull())
-        {
-            foreach (var str in strs)
-            {
-                _ = ToLower(str);
-            }
-        }
-    }
-
     public static string ToLowerInvariant(this string str) => str.IsNotWhiteSpaceAndNull() ? str.ToLower(CultureInfo.InvariantCulture) : str;
 
     public static IEnumerable<string> ToLowerInvariant(this IEnumerable<string> strs)
@@ -159,17 +148,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return ToLowerInvariant(str);
-        }
-    }
-
-    public static void ToLowerInvariant(this IList<string> strs)
-    {
-        if (strs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = ToLowerInvariant(strs[i]);
-            }
         }
     }
 
@@ -187,17 +165,6 @@ public static partial class YANText
         }
     }
 
-    public static void ToUpper(this IList<string> strs)
-    {
-        if (strs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = ToUpper(strs[i]);
-            }
-        }
-    }
-
     public static string ToUpperInvariant(this string str) => str.IsNotWhiteSpaceAndNull() ? str.ToUpper(CultureInfo.InvariantCulture) : str;
 
     public static IEnumerable<string> ToUpperInvariant(this IEnumerable<string> strs)
@@ -209,17 +176,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return ToUpperInvariant(str);
-        }
-    }
-
-    public static void ToUpperInvariant(this IList<string> strs)
-    {
-        if (strs.IsNotEmptyAndNull())
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = ToUpperInvariant(strs[i]);
-            }
         }
     }
 }

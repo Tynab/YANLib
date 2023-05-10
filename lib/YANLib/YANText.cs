@@ -20,17 +20,6 @@ public static partial class YANText
         }
     }
 
-    public static void ToTitle(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].ToTitle();
-            }
-        }
-    }
-
     public static string ToCapitalize(this string str)
     {
         if (str.IsWhiteSpaceOrNull())
@@ -63,17 +52,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.ToCapitalize();
-        }
-    }
-
-    public static void ToCapitalize(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].ToCapitalize();
-            }
         }
     }
 
@@ -117,17 +95,6 @@ public static partial class YANText
         }
     }
 
-    public static void CleanSpace(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].CleanSpace();
-            }
-        }
-    }
-
     public static string FormatName(this string str)
     {
         if (str.IsEmptyOrNull())
@@ -161,17 +128,6 @@ public static partial class YANText
         }
     }
 
-    public static void FormatName(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].FormatName();
-            }
-        }
-    }
-
     public static string FilterAlphabetic(this string str)
     {
         if (str.IsEmptyOrNull())
@@ -199,17 +155,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.FilterAlphabetic();
-        }
-    }
-
-    public static void FilterAlphabetic(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].FilterAlphabetic();
-            }
         }
     }
 
@@ -243,17 +188,6 @@ public static partial class YANText
         }
     }
 
-    public static void FilterNumber(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].FilterNumber();
-            }
-        }
-    }
-
     public static string FilterAlphanumeric(this string str)
     {
         if (str.IsEmptyOrNull())
@@ -281,17 +215,6 @@ public static partial class YANText
         foreach (var str in strs)
         {
             yield return str.FilterAlphanumeric();
-        }
-    }
-
-    public static void FilterAlphanumeric(this IList<string> strs)
-    {
-        if (strs is not null && strs.Count > 0)
-        {
-            for (var i = 0; i < strs.Count; i++)
-            {
-                strs[i] = strs[i].FilterAlphanumeric();
-            }
         }
     }
 }

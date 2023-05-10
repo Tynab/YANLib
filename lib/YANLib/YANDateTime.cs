@@ -24,7 +24,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="strs">The collection of strings to be converted to <see cref="DateTime"/>.</param>
     /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted input string.</returns>
-    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs) => strs.AllWhiteSpaceOrNull() ? default : strs.Select(s => s.ToDateTime());
+    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs) => strs.IsEmptyOrNull() ? default : strs.Select(s => s.ToDateTime());
 
     /// <summary>
     /// Converts the specified string representation of a date and time to its <see cref="DateTime"/> equivalent using the specified format.
@@ -42,7 +42,7 @@ public static partial class YANDateTime
     /// <param name="strs">The collection of strings to be converted to <see cref="DateTime"/>.</param>
     /// <param name="fmt">The format of the input strings.</param>
     /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted input string in the specified format.</returns>
-    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs, string fmt) => strs.AllWhiteSpaceOrNull() ? default : strs.Select(s => s.ToDateTime(fmt));
+    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs, string fmt) => strs.IsEmptyOrNull() ? default : strs.Select(s => s.ToDateTime(fmt));
 
     /// <summary>
     /// Converts the specified string representation of a date and time to its <see cref="DateTime"/> equivalent using the specified format.
@@ -62,7 +62,7 @@ public static partial class YANDateTime
     /// <param name="fmt">The format of the input strings.</param>
     /// <param name="dfltVal">The default value to return for any strings that fail to convert.</param>
     /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted input string in the specified format, and the specified default value for any strings that fail to convert.</returns>
-    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs, string fmt, DateTime dfltVal) => strs.AllWhiteSpaceOrNull() ? default : strs.Select(s => s.ToDateTime(fmt, dfltVal));
+    public static IEnumerable<DateTime>? ToDateTime(this IEnumerable<string> strs, string fmt, DateTime dfltVal) => strs.IsEmptyOrNull() ? default : strs.Select(s => s.ToDateTime(fmt, dfltVal));
 
     /// <summary>
     /// Generates a random <see cref="DateTime"/> object between the specified minimum and maximum values.
@@ -89,7 +89,7 @@ public static partial class YANDateTime
 
     public static int GetWeekOfYear(this DateTime dt) => CurrentInfo.Calendar.GetWeekOfYear(dt, CurrentInfo.CalendarWeekRule, CurrentInfo.FirstDayOfWeek);
 
-    public static IEnumerable<int>? GetWeekOfYear(this IEnumerable<DateTime> dts) => dts is null || !dts.Any() ? default : dts.Select(d => d.GetWeekOfYear());
+    public static IEnumerable<int>? GetWeekOfYear(this IEnumerable<DateTime> dts) => dts.IsEmptyOrNull() ? default : dts.Select(d => d.GetWeekOfYear());
 
     public static int TotalMonths(DateTime dt1, DateTime dt2) => Abs((dt1.Year - dt2.Year) * 12 + dt1.Month - dt2.Month);
 
@@ -104,31 +104,9 @@ public static partial class YANDateTime
         };
     }
 
-    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
-
-    public static void ChangeTimeZone<T1, T2>(this IList<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
-    {
-        if (dts is not null && dts.Count > 0)
-        {
-            for (var i = 0; i < dts.Count; i++)
-            {
-                dts[i] = dts[i].ChangeTimeZone(tzSrc, tzDst);
-            }
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T1, T2>(this IEnumerable<DateTime> dts, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct => dts.IsEmptyOrNull() ? default : dts.Select(d => d.ChangeTimeZone(tzSrc, tzDst));
 
     public static DateTime ChangeTimeZone<T>(this DateTime dt, T tzDst) where T : struct => dt.ChangeTimeZone(0, tzDst);
 
-    public static IEnumerable<DateTime>? ChangeTimeZone<T>(this IEnumerable<DateTime> dts, T tzDst) where T : struct => dts is null || !dts.Any() ? default : dts.Select(d => d.ChangeTimeZone(tzDst));
-
-    public static void ChangeTimeZone<T>(this IList<DateTime> dts, T tzDst) where T : struct
-    {
-        if (dts is not null && dts.Count > 0)
-        {
-            for (var i = 0; i < dts.Count; i++)
-            {
-                dts[i] = dts[i].ChangeTimeZone(tzDst);
-            }
-        }
-    }
+    public static IEnumerable<DateTime>? ChangeTimeZone<T>(this IEnumerable<DateTime> dts, T tzDst) where T : struct => dts.IsEmptyOrNull() ? default : dts.Select(d => d.ChangeTimeZone(tzDst));
 }
