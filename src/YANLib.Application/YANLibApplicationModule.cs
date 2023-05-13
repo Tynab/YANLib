@@ -1,5 +1,6 @@
 ﻿using Volo.Abp.Application;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.FluentValidation;
 using Volo.Abp.Modularity;
 
 namespace YANLib;
@@ -8,7 +9,8 @@ namespace YANLib;
     typeof(YANLibDomainModule),
     typeof(YANLibApplicationContractsModule),
     typeof(AbpDddApplicationModule),
-    typeof(AbpAutoMapperModule)
+    typeof(AbpAutoMapperModule),
+    typeof(AbpFluentValidationModule)
     )]
 public class YANLibApplicationModule : AbpModule
 {
