@@ -1,1 +1,28 @@
+name: Publish
 
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    
+jobs:
+  publish:
+    runs-on: ubuntu-lastest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+          
+      - name: Restore
+        run: dotnet restore ./YANLib.sln
+        
+      - name: Build
+        run: dotnet build ./YANLib.sln --configuration Release --no-restore
+        
+      - name: Publish
+        run: dotnet publish ./YANLib.sln --configuration Release --no-build
