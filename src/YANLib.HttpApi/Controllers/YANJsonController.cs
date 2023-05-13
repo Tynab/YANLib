@@ -23,7 +23,7 @@ public class YANJsonController : YANLibController
     #endregion
 
     #region Methods
-    [HttpGet("duo-vs-standard")]
+    [HttpGet("duo-vs-standard/{quantity}")]
     [SwaggerOperation(Summary = "Deserialize speed test (Duo vs Standard)")]
     public async ValueTask<IActionResult> DuoVsStandard([Required] uint quantity = 10000) => Ok(await _service.DuoVsStandard(quantity));
 
@@ -35,25 +35,25 @@ public class YANJsonController : YANLibController
     [SwaggerOperation(Summary = "Serialize n-1 Camel case")]
     public IActionResult SerializeCamel([Required] List<JsonDto> request) => Ok(request.SerializeCamel());
 
-    [HttpGet("deserialize")]
+    [HttpGet("deserialize/{text}")]
     [SwaggerOperation(Summary = "Deserialize 1-1 Pascal case")]
-    public IActionResult Deserializes([Required] string text) => Ok(text.Deserialize<JsonDto>());
+    public IActionResult Deserializes([Required] string text = "{\"Id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\"}") => Ok(text.Deserialize<JsonDto>());
 
-    [HttpGet("camel-deserialize")]
+    [HttpGet("camel-deserialize/{text}")]
     [SwaggerOperation(Summary = "Deserialize 1-1 Camel case")]
-    public IActionResult DeserializeCamel([Required] string text) => Ok(text.DeserializeCamel<JsonDto>());
+    public IActionResult DeserializeCamel([Required] string text = "{\"id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\"}") => Ok(text.DeserializeCamel<JsonDto>());
 
-    [HttpGet("standard-deserialize")]
+    [HttpGet("standard-deserialize/{text}")]
     [SwaggerOperation(Summary = "Deserialize 1-1 ignore case")]
-    public IActionResult DeserializeStandard([Required] string text) => Ok(text.DeserializeStandard<JsonDto>());
+    public IActionResult DeserializeStandard([Required] string text = "{\"Id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\"}") => Ok(text.DeserializeStandard<JsonDto>());
 
-    [HttpGet("duo-deserialize")]
+    [HttpGet("duo-deserialize/{text}")]
     [SwaggerOperation(Summary = "Deserialize 1-1 ignore case (Pascal priority)")]
-    public IActionResult DeserializeDuo([Required] string text) => Ok(text.DeserializeDuo<JsonDto>());
+    public IActionResult DeserializeDuo([Required] string text = "{\"Id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\"}") => Ok(text.DeserializeDuo<JsonDto>());
 
-    [HttpGet("duo-camel-priority-deserialize")]
+    [HttpGet("duo-camel-priority-deserialize/{text}")]
     [SwaggerOperation(Summary = "Deserialize 1-1 ignore case (Camel priority)")]
-    public IActionResult DeserializeDuoCamelPriority([Required] string text) => Ok(text.DeserializeDuoCamelPriority<JsonDto>());
+    public IActionResult DeserializeDuoCamelPriority([Required] string text = "{\"Id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\"}") => Ok(text.DeserializeDuoCamelPriority<JsonDto>());
 
     [HttpPost("serializes")]
     [SwaggerOperation(Summary = "Serialize n-n Pascal case")]
