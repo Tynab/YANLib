@@ -11772,7 +11772,6 @@
              * DataTables will use it's smart filtering methods (to word match at
              * any point in the data), when false this will not be done.
              *  @namespace
-             *  @extends DataTable.models.oSearch
              *
              *  @dtopt Options
              *  @name DataTable.defaults.search
@@ -13113,7 +13112,6 @@
             /**
              * Language information for the table.
              *  @namespace
-             *  @extends DataTable.defaults.oLanguage
              */
             "oLanguage": {
                 /**
@@ -13238,7 +13236,6 @@
              * Note that this parameter will be set by the initialisation routine. To
              * set a default use {@link DataTable.defaults}.
              *  @namespace
-             *  @extends DataTable.models.oSearch
              */
             "oPreviousSearch": {},
 
@@ -13826,7 +13823,6 @@
          * `jQuery.fn.dataTable.ext` where it may be accessed and manipulated. It is
          * also aliased to `jQuery.fn.dataTableExt` for historic reasons.
          *  @namespace
-         *  @extends DataTable.models.ext
          */
 
 
