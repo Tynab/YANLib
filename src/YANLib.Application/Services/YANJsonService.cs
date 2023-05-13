@@ -37,6 +37,6 @@ public class YANJsonService : YANLibAppService, IYANJsonService
             return sw.Elapsed.TotalMilliseconds;
         });
         _ = await WhenAll(duoTask, stdTask);
-        return $"Standard: {stdTask.Result}\nDuo: {duoTask.Result}";
+        return $"Standard: {stdTask.Result} ms\nDuo: {duoTask.Result} ms";
     }
 }

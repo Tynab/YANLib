@@ -9,17 +9,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
+    <ProjectReference Include="..\YANLib.Application.Redis\YANLib.Application.Redis.csproj" />
     <ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
     <ProjectReference Include="..\YANLib.Application.Contracts\YANLib.Application.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Account.Application" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.Application" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Application" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="6.0.0" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="6.0.3" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" Version="6.0.3" />
   </ItemGroup>
 
 </Project>

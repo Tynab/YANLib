@@ -1,7 +1,7 @@
 ﻿using YANLib.Localization;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace YANLib.Controllers;
+namespace YANLib;
 
 /* Inherit your controllers from this class.
  */

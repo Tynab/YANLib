@@ -2,11 +2,13 @@
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp;
 using YANLib.Dtos;
 using YANLib.Services;
 
 namespace YANLib.Controllers;
 
+[RemoteService]
 [ApiExplorerSettings(GroupName = "json")]
 [Route("api/tynab/yanlib/yanjson")]
 public class YANJsonController : YANLibController
@@ -26,11 +28,11 @@ public class YANJsonController : YANLibController
 
     [HttpPost("serialize")]
     [SwaggerOperation(Summary = "Serialize n-1 Pascal case")]
-    public IActionResult Serialize([FromBody] List<JsonDto> request) => Ok(request.Serialize());
+    public IActionResult Serialize(List<JsonDto> request) => Ok(request.Serialize());
 
     [HttpPost("camel-serialize")]
     [SwaggerOperation(Summary = "Serialize n-1 Camel case")]
-    public IActionResult SerializeCamel([FromBody] List<JsonDto> request) => Ok(request.SerializeCamel());
+    public IActionResult SerializeCamel(List<JsonDto> request) => Ok(request.SerializeCamel());
 
     [HttpGet("deserialize")]
     [SwaggerOperation(Summary = "Deserialize 1-1 Pascal case")]
@@ -54,30 +56,30 @@ public class YANJsonController : YANLibController
 
     [HttpPost("serializes")]
     [SwaggerOperation(Summary = "Serialize n-n Pascal case")]
-    public IActionResult Serializes([FromBody] List<JsonDto> request) => Ok(request.Serializes());
+    public IActionResult Serializes(List<JsonDto> request) => Ok(request.Serializes());
 
     [HttpPost("camel-serializes")]
     [SwaggerOperation(Summary = "Serialize n-n Camel case")]
-    public IActionResult SerializeCamels([FromBody] List<JsonDto> request) => Ok(request.SerializeCamels());
+    public IActionResult SerializeCamels(List<JsonDto> request) => Ok(request.SerializeCamels());
 
     [HttpPost("deserializes")]
     [SwaggerOperation(Summary = "Deserialize n-n Pascal case")]
-    public IActionResult Deserializes([FromBody] List<string> text) => Ok(text.Deserializes<JsonDto>());
+    public IActionResult Deserializes(List<string> text) => Ok(text.Deserializes<JsonDto>());
 
     [HttpPost("camel-deserializes")]
     [SwaggerOperation(Summary = "Deserialize n-n Camel case")]
-    public IActionResult DeserializeCamels([FromBody] List<string> text) => Ok(text.DeserializeCamels<JsonDto>());
+    public IActionResult DeserializeCamels(List<string> text) => Ok(text.DeserializeCamels<JsonDto>());
 
     [HttpPost("standard-deserializes")]
     [SwaggerOperation(Summary = "Deserialize n-n ignore case")]
-    public IActionResult DeserializeStandards([FromBody] List<string> text) => Ok(text.DeserializeStandards<JsonDto>());
+    public IActionResult DeserializeStandards(List<string> text) => Ok(text.DeserializeStandards<JsonDto>());
 
     [HttpPost("duo-deserializes")]
     [SwaggerOperation(Summary = "Deserialize n-n ignore case (Pascal priority)")]
-    public IActionResult DeserializeDuos([FromBody] List<string> text) => Ok(text.DeserializeDuos<JsonDto>());
+    public IActionResult DeserializeDuos(List<string> text) => Ok(text.DeserializeDuos<JsonDto>());
 
     [HttpPost("duo-camel-priority-deserializes")]
     [SwaggerOperation(Summary = "Deserialize n-n ignore case (Camel priority)")]
-    public IActionResult DeserializeDuoCamelPriorities([FromBody] List<string> text) => Ok(text.DeserializeDuoCamelPriorities<JsonDto>());
+    public IActionResult DeserializeDuoCamelPriorities(List<string> text) => Ok(text.DeserializeDuoCamelPriorities<JsonDto>());
     #endregion
 }

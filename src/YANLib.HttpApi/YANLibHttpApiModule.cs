@@ -1,24 +1,13 @@
 ﻿using Localization.Resources.AbpUi;
-using YANLib.Localization;
-using Volo.Abp.Account;
-using Volo.Abp.FeatureManagement;
-using Volo.Abp.Identity;
+using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement.HttpApi;
-using Volo.Abp.SettingManagement;
-using Volo.Abp.TenantManagement;
+using YANLib.Localization;
 
 namespace YANLib;
-
 [DependsOn(
     typeof(YANLibApplicationContractsModule),
-    typeof(AbpAccountHttpApiModule),
-    typeof(AbpIdentityHttpApiModule),
-    typeof(AbpPermissionManagementHttpApiModule),
-    typeof(AbpTenantManagementHttpApiModule),
-    typeof(AbpFeatureManagementHttpApiModule),
-    typeof(AbpSettingManagementHttpApiModule)
+    typeof(AbpAspNetCoreMvcModule)
     )]
 public class YANLibHttpApiModule : AbpModule
 {

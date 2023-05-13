@@ -1,15 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\common.props" />
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>YANLib</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Volo.Abp.MongoDB" Version="6.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="6.0.3" />
   </ItemGroup>
 
 </Project>

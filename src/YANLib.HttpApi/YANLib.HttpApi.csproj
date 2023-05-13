@@ -14,12 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.HttpApi" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi" Version="6.0.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi" Version="6.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="6.0.3" />
   </ItemGroup>
 
 </Project>
