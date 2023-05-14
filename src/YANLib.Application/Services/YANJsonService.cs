@@ -14,7 +14,7 @@ public class YANJsonService : YANLibAppService, IYANJsonService
 
     public YANJsonService(IJsonSerializer jsonSerializer) => _jsonSerializer = jsonSerializer;
 
-    public async ValueTask<string> DuoVsStandards(uint quantity, bool hideSystem)
+    public async ValueTask<string> YanVsStandards(uint quantity, bool hideSystem)
     {
         var json = new JsonDto
         {

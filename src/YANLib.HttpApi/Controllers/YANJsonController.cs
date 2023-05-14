@@ -23,9 +23,9 @@ public class YANJsonController : YANLibController
     #endregion
 
     #region Methods
-    [HttpGet("duo-vs-standards")]
-    [SwaggerOperation(Summary = "Deserialize speed test (Duo vs Standards)")]
-    public async ValueTask<IActionResult> DuoVsStandards([Required] uint quantity = 10000, [Required] bool hideSystem = true) => Ok(await _service.DuoVsStandards(quantity, hideSystem));
+    [HttpGet("yan-vs-standards")]
+    [SwaggerOperation(Summary = "Deserialize speed test (YAN vs Standards)")]
+    public async ValueTask<IActionResult> YanVsStandards([Required] uint quantity = 10000, [Required] bool hideSystem = true) => Ok(await _service.YanVsStandards(quantity, hideSystem));
 
     [HttpPost("serialize")]
     [SwaggerOperation(Summary = "Serialize n-1 Pascal case")]
