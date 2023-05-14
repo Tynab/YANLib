@@ -8,8 +8,8 @@ PM> NuGet\Install-Package Tynab.YANLib
 ```
 
 ## MASK
-<p align="center">
-<img src="https://github.com/Tynab/YANLib/blob/main/pic/0.jpg"></img>
+<p align='center'>
+<img src='pic/0.jpg'></img>
 </p>
 
 ## CODE DEMO
