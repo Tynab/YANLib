@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Volo.Abp.DependencyInjection;
+using static StackExchange.Redis.ConnectionMultiplexer;
 
 namespace YANLib.Application.Redis.ConnectionFactory.Implements;
 
@@ -15,7 +16,7 @@ public class RedisConnectionFactory : IRedisConnectionFactory, ISingletonDepende
     public RedisConnectionFactory(IOptions<RedisOptions> options)
     {
         _option = options.Value;
-        _connection = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(_option.RedisConnectionString ?? string.Empty));
+        _connection = new Lazy<ConnectionMultiplexer>(() => Connect(_option.RedisConnectionString ?? string.Empty));
     }
     #endregion
 

@@ -5,7 +5,16 @@ namespace YANLib;
 
 public static partial class YANJson
 {
-    
+    private static readonly JsonSerializerOptions Pnsi = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    private static readonly JsonSerializerOptions CamelCasePnp = new()
+    {
+        PropertyNamingPolicy = CamelCase
+    };
+
     public static string Serialize<T>(this T mdl) => JsonSerializer.Serialize(mdl);
 
     public static IEnumerable<string> Serializes<T>(this IEnumerable<T> mdls)
@@ -20,13 +29,9 @@ public static partial class YANJson
         }
     }
 
-    public static string SerializeCamel<T>(this T mdl) => JsonSerializer.Serialize(mdl, new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = false,
-        PropertyNamingPolicy = CamelCase
-    });
+    public static string CamelSerialize<T>(this T mdl) => JsonSerializer.Serialize(mdl, CamelCasePnp);
 
-    public static IEnumerable<string> SerializeCamels<T>(this IEnumerable<T> mdls)
+    public static IEnumerable<string> CamelSerializes<T>(this IEnumerable<T> mdls)
     {
         if (mdls is null || !mdls.Any())
         {
@@ -34,7 +39,31 @@ public static partial class YANJson
         }
         foreach (var mdl in mdls)
         {
-            yield return mdl.SerializeCamel();
+            yield return mdl.CamelSerialize();
+        }
+    }
+
+    public static T? StandardDeserialize<T>(this string str)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<T>(str);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    public static IEnumerable<T?> StandardDeserializes<T>(this IEnumerable<string> strs)
+    {
+        if (strs is null || !strs.Any())
+        {
+            yield break;
+        }
+        foreach (var str in strs)
+        {
+            yield return str.StandardDeserialize<T>();
         }
     }
 
@@ -42,7 +71,7 @@ public static partial class YANJson
     {
         try
         {
-            return JsonSerializer.Deserialize<T>(str);
+            return JsonSerializer.Deserialize<T>(str, Pnsi);
         }
         catch
         {
@@ -59,142 +88,6 @@ public static partial class YANJson
         foreach (var str in strs)
         {
             yield return str.Deserialize<T>();
-        }
-    }
-
-    public static T? DeserializeCamel<T>(this string str)
-    {
-        try
-        {
-            return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = false,
-                PropertyNamingPolicy = CamelCase
-            });
-        }
-        catch
-        {
-            return default;
-        }
-    }
-
-    public static IEnumerable<T?> DeserializeCamels<T>(this IEnumerable<string> strs)
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeCamel<T>();
-        }
-    }
-
-    public static T? DeserializeDuo<T>(this string str)
-    {
-        T? rslt;
-        try
-        {
-            rslt = str.Deserialize<T>();
-        }
-        catch
-        {
-            rslt = default;
-        }
-        if (rslt is not null && rslt.AnyPropertiesNotDefault())
-        {
-            return rslt;
-        }
-        else
-        {
-            try
-            {
-                return str.DeserializeCamel<T>();
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
-
-    public static IEnumerable<T?> DeserializeDuos<T>(this IEnumerable<string> strs)
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeDuo<T>();
-        }
-    }
-
-    public static T? DeserializeDuoCamelPriority<T>(this string str)
-    {
-        T? rslt;
-        try
-        {
-            rslt = str.DeserializeCamel<T>();
-        }
-        catch
-        {
-            rslt = default;
-        }
-        if (rslt is not null && rslt.AnyPropertiesNotDefault())
-        {
-            return rslt;
-        }
-        else
-        {
-            try
-            {
-                return str.Deserialize<T>();
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
-
-    public static IEnumerable<T?> DeserializeDuoCamelPriorities<T>(this IEnumerable<string> strs)
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeDuoCamelPriority<T>();
-        }
-    }
-
-    public static T? DeserializeStandard<T>(this string str)
-    {
-        try
-        {
-            return JsonSerializer.Deserialize<T>(str, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = CamelCase,
-            });
-        }
-        catch
-        {
-            return default;
-        }
-    }
-
-    public static IEnumerable<T?> DeserializeStandards<T>(this IEnumerable<string> strs)
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-        foreach (var str in strs)
-        {
-            yield return str.DeserializeStandard<T>();
         }
     }
 }

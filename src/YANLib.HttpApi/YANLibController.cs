@@ -1,14 +1,9 @@
-﻿using YANLib.Localization;
-using Volo.Abp.AspNetCore.Mvc;
+﻿using Volo.Abp.AspNetCore.Mvc;
+using YANLib.Localization;
 
 namespace YANLib;
 
-/* Inherit your controllers from this class.
- */
 public abstract class YANLibController : AbpControllerBase
 {
-    protected YANLibController()
-    {
-        LocalizationResource = typeof(YANLibResource);
-    }
+    protected YANLibController() => LocalizationResource = typeof(YANLibResource);
 }

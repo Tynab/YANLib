@@ -33,7 +33,7 @@ public class RedisService : IRedisService<RedisDto>
             var val = item.Value;
             if (val.HasValue)
             {
-                rslts.Add(item.Name.ToString(), UTF8.GetString(val!).DeserializeDuoCamelPriority<RedisDto>());
+                rslts.Add(item.Name.ToString(), UTF8.GetString(val!).Deserialize<RedisDto>());
             }
         }
         return rslts;
@@ -46,7 +46,7 @@ public class RedisService : IRedisService<RedisDto>
             return default;
         }
         var val = await _database.HashGetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant());
-        return val.HasValue ? UTF8.GetString(val!).DeserializeDuoCamelPriority<RedisDto>() : default;
+        return val.HasValue ? UTF8.GetString(val!).Deserialize<RedisDto>() : default;
     }
 
     public async ValueTask<Dictionary<string, RedisDto?>?> GetBulk(string group, params string[] keys)
@@ -61,19 +61,19 @@ public class RedisService : IRedisService<RedisDto>
             var val = await _database.HashGetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant());
             if (val.HasValue)
             {
-                rslts.Add(key, UTF8.GetString(val!).DeserializeDuoCamelPriority<RedisDto>());
+                rslts.Add(key, UTF8.GetString(val!).Deserialize<RedisDto>());
             }
         }
         return rslts;
     }
 
-    public Task Set(string group, string key, RedisDto value) => _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), value.SerializeCamel());
+    public Task Set(string group, string key, RedisDto value) => _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), value.CamelSerialize());
 
     public async Task SetBulk(string group, IDictionary<string, RedisDto> fields)
     {
         if (group.IsNotWhiteSpaceAndNull() && fields.IsNotEmptyAndNull())
         {
-            await _database.HashSetAsync(group.ToLowerInvariant(), fields.Select(p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.SerializeCamel())).ToArray());
+            await _database.HashSetAsync(group.ToLowerInvariant(), fields.Select(p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.CamelSerialize())).ToArray());
         }
     }
 

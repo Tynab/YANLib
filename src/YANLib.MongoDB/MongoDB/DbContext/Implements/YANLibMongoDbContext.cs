@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.MongoDB;
-using YANLib.MongoDB.DbContext;
+﻿using Volo.Abp.MongoDB;
 
 namespace YANLib.MongoDB.DbContext.Implements;
 
@@ -17,7 +11,6 @@ public class YANLibMongoDbContext : AbpMongoDbContext, IYANLibMongoDbContext
     protected override void CreateModel(IMongoModelBuilder modelBuilder)
     {
         base.CreateModel(modelBuilder);
-
         modelBuilder.ConfigureYANLib();
     }
 }

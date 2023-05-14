@@ -14,35 +14,7 @@ PM> NuGet\Install-Package Tynab.YANLib
 
 ## CODE DEMO
 ```c#
-// Import
-using System.Collections.Generic;
-using static System.Guid;
-using static YANLib.YANBool;
-using static YANLib.YANNum;
-using static YANLib.YANText;
-
-// Generate data
-private static IEnumerable<string> GenData(byte quantity)
-{
-    for (var i = 0; i < quantity; i++)
-    {
-        yield return i % 2 is 0
-            ? new JsonTestDto
-            {
-                Id = NewGuid(),
-                Name = $"nguyễn văn {GenerateRandomCharacter()}".ToTitle(),
-                Income = GenerateRandomUshort(),
-                IsRisk = GenerateRandomBool()
-            }.SerializeCamel()
-            : new JsonTestDto
-            {
-                Id = NewGuid(),
-                Name = $"đoàn thị {GenerateRandomCharacter()}".ToTitle(),
-                Income = GenerateRandomUshort(),
-                IsRisk = GenerateRandomBool()
-            }.Serialize();
-    }
-}
+var dto = json.Deserialize<JsonDto>();
 ```
 
 ### EXTENSION
@@ -57,7 +29,7 @@ private static IEnumerable<string> GenData(byte quantity)
 - Random
 - Process
 - Task
-- Func
+- Bytes
 
 ### OTHER
 - Password

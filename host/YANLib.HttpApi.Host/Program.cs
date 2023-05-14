@@ -2,9 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
 using System;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Builder.WebApplication;
+using static Serilog.Events.LogEventLevel;
 using static System.DateTime;
 
 namespace YANLib;
@@ -19,20 +20,13 @@ public class Program
 #else
             .MinimumLevel.Information()
 #endif
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .WriteTo.Async(c => c.File($"Logs/{Now:yyyy-MM-dd}.log"))
-            .WriteTo.Async(c => c.Console())
-            .CreateLogger();
+            .MinimumLevel.Override("Microsoft", Information).MinimumLevel.Override("Microsoft.EntityFrameworkCore", Warning).Enrich.FromLogContext().WriteTo.Async(c => c.File($"Logs/{Now:yyyy-MM-dd}.log")).WriteTo.Async(c => c.Console()).CreateLogger();
 
         try
         {
             Log.Information("Starting YANLib.HttpApi.Host.");
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Host.AddAppSettingsSecretsJson()
-                .UseAutofac()
-                .UseSerilog();
+            var builder = CreateBuilder(args);
+            builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog();
             await builder.AddApplicationAsync<YANLibHttpApiHostModule>();
             var app = builder.Build();
             await app.InitializeApplicationAsync();

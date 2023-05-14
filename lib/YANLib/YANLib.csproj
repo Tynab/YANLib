@@ -9,7 +9,7 @@
     <Title>YANLib</Title>
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
-    <Description>Beta 5</Description>
+    <Description>Beta 6</Description>
     <Copyright>Copyright ©  2023</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -18,11 +18,11 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Beta 5</PackageReleaseNotes>
+    <PackageReleaseNotes>Beta 6</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>3.1.6</Version>
+    <Version>3.1.7</Version>
   </PropertyGroup>
 
   <ItemGroup>

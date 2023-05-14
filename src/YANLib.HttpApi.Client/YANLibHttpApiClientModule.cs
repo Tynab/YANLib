@@ -15,14 +15,7 @@ public class YANLibHttpApiClientModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddHttpClientProxies(
-            typeof(YANLibApplicationContractsModule).Assembly,
-            RemoteServiceName
-        );
-
-        Configure<AbpVirtualFileSystemOptions>(options =>
-        {
-            options.FileSets.AddEmbedded<YANLibHttpApiClientModule>();
-        });
+        _ = context.Services.AddHttpClientProxies(typeof(YANLibApplicationContractsModule).Assembly, RemoteServiceName);
+        Configure<AbpVirtualFileSystemOptions>(o => o.FileSets.AddEmbedded<YANLibHttpApiClientModule>());
     }
 }

@@ -5,8 +5,5 @@ namespace YANLib.Controllers;
 
 public class HomeController : AbpController
 {
-    public ActionResult Index()
-    {
-        return Redirect("~/swagger");
-    }
+    public ActionResult Index() => Redirect("~/swagger");
 }

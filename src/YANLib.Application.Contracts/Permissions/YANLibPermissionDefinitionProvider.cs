@@ -1,6 +1,7 @@
-﻿using YANLib.Localization;
-using Volo.Abp.Authorization.Permissions;
+﻿using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Localization;
+using YANLib.Localization;
+using static Volo.Abp.Localization.LocalizableString;
 
 namespace YANLib.Permissions;
 
@@ -13,8 +14,5 @@ public class YANLibPermissionDefinitionProvider : PermissionDefinitionProvider
         //myGroup.AddPermission(YANLibPermissions.MyPermission1, L("Permission:MyPermission1"));
     }
 
-    private static LocalizableString L(string name)
-    {
-        return LocalizableString.Create<YANLibResource>(name);
-    }
+    private static LocalizableString L(string name) => Create<YANLibResource>(name);
 }

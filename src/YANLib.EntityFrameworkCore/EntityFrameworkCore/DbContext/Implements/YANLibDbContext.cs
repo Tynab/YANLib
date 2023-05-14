@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
-using YANLib.EntityFrameworkCore.DbContext;
 
 namespace YANLib.EntityFrameworkCore.DbContext.Implements;
 
@@ -12,10 +11,8 @@ public class YANLibDbContext : AbpDbContext<YANLibDbContext>, IYANLibDbContext
     * public DbSet<Question> Questions { get; set; }
     */
 
-    public YANLibDbContext(DbContextOptions<YANLibDbContext> options)
-        : base(options)
+    public YANLibDbContext(DbContextOptions<YANLibDbContext> options) : base(options)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

@@ -5,5 +5,4 @@ namespace YANLib.Localization;
 [LocalizationResourceName("YANLib")]
 public class YANLibResource
 {
-
 }

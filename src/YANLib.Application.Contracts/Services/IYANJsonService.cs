@@ -5,5 +5,5 @@ namespace YANLib.Services;
 
 public interface IYANJsonService : IApplicationService
 {
-    public ValueTask<string> DuoVsStandard(uint quantity);
+    public ValueTask<string> DuoVsStandards(uint quantity, bool hideSystem);
 }
