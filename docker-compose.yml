@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 
 services:
   yanlib.httpapi.host:
@@ -22,11 +22,11 @@ services:
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
-      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
       METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
       FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
       HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
       BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-}
@@ -138,6 +138,8 @@ services:
       - 9092:9092
       - 9093:9093
     environment:
+      BITNAMI_DEBUG: yes
+      KAFKA_ENABLE_KRAFT: no
       KAFKA_BROKER_ID: 1
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
@@ -167,6 +169,16 @@ services:
     depends_on:
       - zookeeper
       - kafka
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --requirepass ${REDIS_PASS:-}
+    ports:
+      - 6379:6379
+    networks:
+      - demo
     restart: unless-stopped
 
 networks:
