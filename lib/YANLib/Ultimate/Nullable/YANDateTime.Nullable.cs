@@ -30,7 +30,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime?> GenerateRandomDateTimes<T>(DateTime? min, DateTime max, T size) where T : struct
     {
-        for (var i = 0ul; i < YANNum.ToUlong(size); i++)
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
             yield return YANLib.Nullable.YANDateTime.GenerateRandomDateTime(min, max);
         }
@@ -38,7 +38,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime?> GenerateRandomDateTimes<T>(DateTime? min, DateTime max, T? size) where T : struct
     {
-        for (var i = 0ul; i < YANNum.ToUlong(size); i++)
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
             yield return YANLib.Nullable.YANDateTime.GenerateRandomDateTime(min, max);
         }
@@ -46,7 +46,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime?> GenerateRandomDateTimes<T>(DateTime min, DateTime? max, T size) where T : struct
     {
-        for (var i = 0ul; i < YANNum.ToUlong(size); i++)
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
             yield return YANLib.Nullable.YANDateTime.GenerateRandomDateTime(min, max);
         }
@@ -54,7 +54,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime?> GenerateRandomDateTimes<T>(DateTime min, DateTime? max, T? size) where T : struct
     {
-        for (var i = 0ul; i < YANNum.ToUlong(size); i++)
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
             yield return YANLib.Nullable.YANDateTime.GenerateRandomDateTime(min, max);
         }
@@ -62,7 +62,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime?> GenerateRandomDateTimes<T>(DateTime? min, DateTime? max, T size) where T : struct
     {
-        for (var i = 0ul; i < YANNum.ToUlong(size); i++)
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
             yield return YANLib.Nullable.YANDateTime.GenerateRandomDateTime(min, max);
         }
@@ -70,7 +70,7 @@ public static partial class YANDateTime
 
     public static IEnumerable<DateTime?> GenerateRandomDateTimes<T>(DateTime? min, DateTime? max, T? size) where T : struct
     {
-        for (var i = 0ul; i < YANNum.ToUlong(size); i++)
+        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
         {
             yield return YANLib.Nullable.YANDateTime.GenerateRandomDateTime(min, max);
         }
