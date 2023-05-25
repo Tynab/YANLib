@@ -58,7 +58,7 @@ Here are some options for configuring performance when using JsonSerializerOptio
 <i>Note:</i>
 - When using the PropertyNameCaseInsensitive = true and PropertyNamingPolicy = CamelCase attributes in JsonSerializerOptions of System.Text.Json, the Serialize and Deserialize processes are configured to simultaneously support both capitalization styles and CamelCase in property names.
 - However, using these options can affect the performance of the Serialize and Deserialize processes. When PropertyNameCaseInsensitive = true, System.Text.Json needs to search for properties in the object based on case-insensitive names, which adds processing time compared to the default case-sensitive search.
-- To achieve both case-insensitive serialization and deserialization while maintaining application performance, the YanLib package can be used.
+- To achieve both case-insensitive serialization and deserialization while maintaining application performance, the Tynab.YANLib package can be used.
 
 ## TEST
 
