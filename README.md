@@ -41,6 +41,8 @@ However, based on performance benchmark tests conducted in different environment
 
 However, Volo.Json is also a fast and lightweight JSON library designed for optimizing performance and reliability. It is built on new .NET Core data types like Span, Utf8JsonReader, Utf8JsonWriter, which allows for faster data processing and reduced memory usage. In some cases, Volo.Json can provide better performance than System.Text.Json and Newtonsoft.Json.
 
+<b>Case sensitivity when using System.Text.Json Deserialize/Serialize:</b>
+
 When the properties of the object to be serialized to JSON have different capitalization, exceptions can occur when using JSON libraries.
 
 To address this issue, we can use the optional properties of JSON libraries to customize the property naming in JSON as desired.
@@ -53,7 +55,7 @@ Here are some options for configuring performance when using JsonSerializerOptio
 4. Use JsonSerializerOptions.MaxDepth to limit the maximum depth of the object being serialized or deserialized, preventing potential memory issues during serialization or deserialization.
 5. Use JsonSerializerOptions.DictionaryKeyPolicy to configure the naming of keys in a Dictionary, helping to reduce the time for serialization and deserialization.
 
-Note:
+<i>Note:</i>
 - When using the PropertyNameCaseInsensitive = true and PropertyNamingPolicy = CamelCase attributes in JsonSerializerOptions of System.Text.Json, the Serialize and Deserialize processes are configured to simultaneously support both capitalization styles and CamelCase in property names.
 - However, using these options can affect the performance of the Serialize and Deserialize processes. When PropertyNameCaseInsensitive = true, System.Text.Json needs to search for properties in the object based on case-insensitive names, which adds processing time compared to the default case-sensitive search.
 - To achieve both case-insensitive serialization and deserialization while maintaining application performance, the YanLib package can be used.
