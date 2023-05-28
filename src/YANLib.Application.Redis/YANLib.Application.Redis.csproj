@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
     <ProjectReference Include="..\YANLib.Application.Contracts\YANLib.Application.Contracts.csproj" />
+    <ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
   </ItemGroup>
 
 </Project>

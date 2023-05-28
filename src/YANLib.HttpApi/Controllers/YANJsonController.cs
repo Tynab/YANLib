@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,17 +16,26 @@ namespace YANLib.Controllers;
 public class YANJsonController : YANLibController
 {
     #region Fields
+    private readonly ILogger<YANJsonController> _logger;
     private readonly IYANJsonService _service;
     #endregion
 
     #region Constructors
-    public YANJsonController(IYANJsonService service) => _service = service;
+    public YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service)
+    {
+        _logger = logger;
+        _service = service;
+    }
     #endregion
 
     #region Methods
     [HttpGet("yan-vs-standards")]
     [SwaggerOperation(Summary = "Deserialize speed test (YAN vs Standards)")]
-    public async ValueTask<IActionResult> YanVsStandards([Required] uint quantity = 10000, [Required] bool hideSystem = true) => Ok(await _service.YanVsStandards(quantity, hideSystem));
+    public async ValueTask<IActionResult> YanVsStandards([Required] uint quantity = 10000, [Required] bool hideSystem = true)
+    {
+        _logger.LogInformation("YanVsStandardsYANJsonController: {Quantity}, {HideSystem}", quantity, hideSystem);
+        return Ok(await _service.YanVsStandards(quantity, hideSystem));
+    }
 
     [HttpPost("serialize")]
     [SwaggerOperation(Summary = "Serialize n-1 Pascal case")]

@@ -14,7 +14,10 @@ using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
+using Volo.Abp.Caching.StackExchangeRedis;
+using Volo.Abp.Http.Client;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
@@ -25,14 +28,16 @@ using static System.StringSplitOptions;
 
 namespace YANLib;
 [DependsOn(
-typeof(YANLibHttpApiModule),
-    typeof(AbpAutofacModule),
-    typeof(AbpAspNetCoreMultiTenancyModule),
+    typeof(YANLibHttpApiModule),
     typeof(YANLibApplicationModule),
     typeof(YANLibEntityFrameworkCoreModule),
+    typeof(AbpAutofacModule),
+    typeof(AbpAspNetCoreMultiTenancyModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule)
+    typeof(AbpSwashbuckleModule),
+    typeof(AbpCachingStackExchangeRedisModule),
+    typeof(AbpHttpClientModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {

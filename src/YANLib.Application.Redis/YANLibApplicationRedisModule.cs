@@ -3,7 +3,8 @@
 namespace YANLib.Application.Redis;
 
 [DependsOn(
-    typeof(YANLibApplicationContractsModule)
+    typeof(YANLibApplicationContractsModule),
+    typeof(YANLibDomainModule)
     )]
 public class YANLibApplicationRedisModule : AbpModule
 {

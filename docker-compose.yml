@@ -8,32 +8,32 @@ services:
       dockerfile: host/YANLib.HttpApi.Host/Dockerfile
 
   setup:
+    profiles:
+      - setup
     build:
       context: setup/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     init: true
-    container_name: setup
     volumes:
       - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
       - ./setup/lib.sh:/lib.sh:ro,Z
       - ./setup/roles:/roles:ro,Z
-      - setup:/state:Z
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
       METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
       FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
       HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
-      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
-      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-}
       KAFKA_CLIENT_USERS: ${KAFKA_CLIENT_USERS:-}
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS:-}
     networks:
-      - demo
+      - yanlib
     depends_on:
       - elasticsearch
 
@@ -42,7 +42,6 @@ services:
       context: elasticsearch/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
-    container_name: elasticsearch
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
       - elasticsearch:/usr/share/elasticsearch/data:Z
@@ -50,15 +49,17 @@ services:
       - 9200:9200
       - 9300:9300
     environment:
+      node.name: elasticsearch
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       # Bootstrap password.
       # Used to initialize the keystore during the initial startup of
       # Elasticsearch. Ignored on subsequent runs.
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       # Use single node discovery in order to disable production mode and avoid bootstrap checks.
-      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/bootstrap-checks.html
+      discovery.type: single-node
     networks:
-      - demo
+      - yanlib
     restart: unless-stopped
 
   logstash:
@@ -66,7 +67,6 @@ services:
       context: logstash/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
-    container_name: logstash
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
@@ -80,7 +80,7 @@ services:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
-      - demo
+      - yanlib
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -90,7 +90,6 @@ services:
       context: kibana/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
-    container_name: kibana
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
@@ -98,14 +97,13 @@ services:
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     networks:
-      - demo
+      - yanlib
     depends_on:
       - elasticsearch
     restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
@@ -113,27 +111,25 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-}
     networks:
-      - demo
+      - yanlib
     depends_on:
       - logstash
     restart: unless-stopped
 
   zookeeper:
     image: bitnami/zookeeper:latest
-    container_name: zookeeper
     ports:
       - 2181:2181
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
-      - demo
+      - yanlib
     depends_on:
       - logstash
     restart: unless-stopped
 
   kafka:
     image: bitnami/kafka:latest
-    container_name: kafka
     ports:
       - 9092:9092
       - 9093:9093
@@ -150,14 +146,13 @@ services:
       KAFKA_CLIENT_USERS: ${KAFKA_CLIENT_USERS:-}
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS:-}
     networks:
-      - demo
+      - yanlib
     depends_on:
       - zookeeper
     restart: unless-stopped
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
     ports:
       - 8080:8080
     environment:
@@ -165,7 +160,7 @@ services:
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
     networks:
-      - demo
+      - yanlib
     depends_on:
       - zookeeper
       - kafka
@@ -173,16 +168,15 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis
     command: redis-server --requirepass ${REDIS_PASS:-}
     ports:
       - 6379:6379
     networks:
-      - demo
+      - yanlib
     restart: unless-stopped
 
 networks:
-  demo:
+  yanlib:
     driver: bridge
 
 volumes:

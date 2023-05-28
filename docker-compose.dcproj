@@ -14,7 +14,6 @@
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
-    <None Include=".dockerignore" />
     <None Include="elasticsearch\.dockerignore" />
     <None Include="elasticsearch\config\elasticsearch.yml" />
     <None Include="elasticsearch\Dockerfile" />
