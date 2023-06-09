@@ -2,7 +2,7 @@
 
 public static partial class YANNum
 {
-    
+
     public static byte? ToByte<T>(this T num) where T : struct
     {
         try
@@ -15,7 +15,7 @@ public static partial class YANNum
         }
     }
 
-    
+
     public static IEnumerable<byte?> ToByte<T>(this IEnumerable<T> nums) where T : struct
     {
         if (nums is null || !nums.Any())
@@ -28,10 +28,10 @@ public static partial class YANNum
         }
     }
 
-    
+
     public static byte? ToByte(this string str) => byte.TryParse(str, out var num) ? num : default;
 
-    
+
     public static IEnumerable<byte?> ToByte(this IEnumerable<string> strs)
     {
         if (strs is null || !strs.Any())
@@ -44,10 +44,10 @@ public static partial class YANNum
         }
     }
 
-    
+
     public static byte? ToByte<T>(this string str, T dfltVal) where T : struct => byte.TryParse(str, out var num) ? num : dfltVal.ToByte();
 
-    
+
     public static IEnumerable<byte?> ToByte<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {
         if (strs is null || !strs.Any())
@@ -60,7 +60,7 @@ public static partial class YANNum
         }
     }
 
-    
+
     public static byte? GenerateRandomByte<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
     {
         var minValue = min.ToByte();
@@ -68,7 +68,7 @@ public static partial class YANNum
         return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().Next(minValue.Value, maxValue.Value).ToByte() : default;
     }
 
-    
+
     public static IEnumerable<byte?> GenerateRandomBytes<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
     {
         for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
@@ -77,9 +77,9 @@ public static partial class YANNum
         }
     }
 
-    
+
     public static byte? GenerateRandomByte() => GenerateRandomByte(byte.MinValue, byte.MaxValue);
 
-    
+
     public static byte? GenerateRandomByte<T>(T max) where T : struct => GenerateRandomByte(byte.MinValue, max);
 }

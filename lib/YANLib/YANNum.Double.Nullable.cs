@@ -2,7 +2,7 @@
 
 public static partial class YANNum
 {
-    
+
     public static double ToDouble<T>(this T? num) where T : struct
     {
         try

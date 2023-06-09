@@ -2,7 +2,7 @@
 
 public static partial class YANNum
 {
-    
+
     public static T? Min<T>(params T[] nums) where T : IComparable<T>
     {
         if (nums is null || nums.Length < 1)

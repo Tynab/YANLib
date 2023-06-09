@@ -20,7 +20,7 @@ public static partial class YANBytes
         {
             yield break;
         }
-        foreach(var arr in arrs)
+        foreach (var arr in arrs)
         {
             yield return arr.FromByteArray<T>();
         }

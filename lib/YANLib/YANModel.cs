@@ -5,7 +5,7 @@ namespace YANLib;
 
 public static partial class YANModel
 {
-    
+
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)

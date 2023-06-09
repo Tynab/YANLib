@@ -2,7 +2,7 @@
 
 public static partial class YANNum
 {
-    
+
     public static float ToFloat<T>(this T num) where T : struct
     {
         try

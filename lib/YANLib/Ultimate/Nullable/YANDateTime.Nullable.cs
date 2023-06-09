@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace YANLib.Ultimate.Nullable;
+﻿namespace YANLib.Ultimate.Nullable;
 
 public static partial class YANDateTime
 {

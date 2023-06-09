@@ -1,11 +1,10 @@
-﻿using static System.Environment;
-using static System.Threading.Tasks.Task;
+﻿using static System.Threading.Tasks.Task;
 
 namespace YANLib;
 
 public static partial class YANTask
 {
-    
+
     public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : IComparable<T> => await tasks.WaitAnyWithCondition(goodRslt);
 
     public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>

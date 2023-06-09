@@ -29,9 +29,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib", "lib\YANLib\YANLib
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{696811A9-FD68-4538-85AD-07BB9C30CFCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.Application.Redis", "src\YANLib.Application.Redis\YANLib.Application.Redis.csproj", "{2B031F5C-93EC-4222-93F4-4505B29CAB81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.Application.Redis", "src\YANLib.Application.Redis\YANLib.Application.Redis.csproj", "{2B031F5C-93EC-4222-93F4-4505B29CAB81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.MongoDB", "src\YANLib.MongoDB\YANLib.MongoDB.csproj", "{DE74000F-A442-4A12-990F-C806C75BCA62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.MongoDB", "src\YANLib.MongoDB\YANLib.MongoDB.csproj", "{DE74000F-A442-4A12-990F-C806C75BCA62}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{8C44E9D9-768E-4EB5-B305-40061382363E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.Benchmarks", "..\YANLib.Benchmarks\YANLib.Benchmarks.csproj", "{4A010823-A036-4458-9BB9-0849B44217C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +91,10 @@ Global
 		{DE74000F-A442-4A12-990F-C806C75BCA62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE74000F-A442-4A12-990F-C806C75BCA62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE74000F-A442-4A12-990F-C806C75BCA62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A010823-A036-4458-9BB9-0849B44217C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A010823-A036-4458-9BB9-0849B44217C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A010823-A036-4458-9BB9-0849B44217C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A010823-A036-4458-9BB9-0849B44217C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +111,7 @@ Global
 		{8B38E857-59CA-446E-8E46-EAD98567E96E} = {25EA463A-93D0-428E-8C86-838779199B9C}
 		{2B031F5C-93EC-4222-93F4-4505B29CAB81} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{DE74000F-A442-4A12-990F-C806C75BCA62} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
+		{4A010823-A036-4458-9BB9-0849B44217C1} = {8C44E9D9-768E-4EB5-B305-40061382363E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28315BFD-90E7-4E14-A2EA-F3D23AF4126F}

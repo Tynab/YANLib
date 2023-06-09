@@ -5,7 +5,7 @@ namespace YANLib;
 
 public static partial class YANProcess
 {
-    
+
     public static async Task KillAllProcessesByName(this string name)
     {
         if (name.IsNotWhiteSpaceAndNull())

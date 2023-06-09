@@ -24,7 +24,7 @@ public class YANPass
     #endregion
 
     #region Methods
-    
+
     public string? Hash(string password)
     {
         if (password.IsNotWhiteSpaceAndNull() && SaltSize > 0 && Iterations > 0 && KeySize > 0)

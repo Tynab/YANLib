@@ -3,7 +3,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.Json;
 using YANLib.Dtos;
+using static Newtonsoft.Json.JsonConvert;
 using static System.Guid;
+using static System.Text.Json.JsonSerializer;
 using static System.Threading.Tasks.Task;
 
 namespace YANLib.Services;
@@ -32,7 +34,7 @@ public class YANJsonService : YANLibAppService, IYANJsonService
             var last = string.Empty;
             for (var i = 0; i < quantity; i++)
             {
-                var dto = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonDto>(i is 0 ? json : jsonCamel);
+                var dto = DeserializeObject<JsonDto>(i is 0 ? json : jsonCamel);
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
             }
@@ -79,7 +81,7 @@ public class YANJsonService : YANLibAppService, IYANJsonService
                 var last = string.Empty;
                 for (var i = 0; i < quantity; i++)
                 {
-                    var dto = JsonSerializer.Deserialize<JsonDto>(i is 0 ? json : jsonCamel);
+                    var dto = Deserialize<JsonDto>(i is 0 ? json : jsonCamel);
                     first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                     last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
                 }
@@ -94,7 +96,7 @@ public class YANJsonService : YANLibAppService, IYANJsonService
                 var last = string.Empty;
                 for (var i = 0; i < quantity; i++)
                 {
-                    var dto = JsonSerializer.Deserialize<JsonDto>(i is 0 ? json : jsonCamel, new JsonSerializerOptions
+                    var dto = Deserialize<JsonDto>(i is 0 ? json : jsonCamel, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });

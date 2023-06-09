@@ -4,7 +4,7 @@ namespace YANLib;
 
 public static partial class YANText
 {
-    
+
     public static bool IsEmpty(this char c) => c is char.MinValue;
 
     public static bool AllEmpty(params char[] cs) => cs is not null && !cs.Any(c => c.IsNotEmpty());

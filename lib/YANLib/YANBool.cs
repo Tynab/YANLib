@@ -1,5 +1,5 @@
-﻿using static YANLib.YANNum;
-using static System.Linq.Enumerable;
+﻿using static System.Linq.Enumerable;
+using static YANLib.YANNum;
 
 namespace YANLib;
 

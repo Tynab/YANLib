@@ -2,7 +2,7 @@
 
 public partial class YANNum
 {
-    
+
     public static int? ToInt<T>(this T num) where T : struct
     {
         try

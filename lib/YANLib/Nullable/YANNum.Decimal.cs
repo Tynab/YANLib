@@ -2,7 +2,7 @@
 
 public partial class YANNum
 {
-    
+
     public static decimal? ToDecimal<T>(this T num) where T : struct
     {
         try

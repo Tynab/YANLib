@@ -6,7 +6,7 @@ namespace YANLib;
 
 public static partial class YANEnumerable
 {
-    
+
     public static IEnumerable<List<T>> ChunkBySize<T, T1>(this List<T> srcs, T1 chunkSize) where T1 : struct
     {
         var size = chunkSize.ToInt();

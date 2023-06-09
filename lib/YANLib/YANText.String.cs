@@ -1,12 +1,11 @@
 ﻿using System.Globalization;
 using static System.StringComparison;
-using static System.Globalization.CultureInfo;
 
 namespace YANLib;
 
 public static partial class YANText
 {
-    
+
     public static bool IsNull(this string str) => str is null;
 
     public static bool AllNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotNull());
