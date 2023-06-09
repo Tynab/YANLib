@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using static System.Runtime.InteropServices.CollectionsMarshal;
 
-namespace YANLib.Benchmarks.Common;
+namespace YANLib.Benchmarks.Process.Common;
 
 public class LoopBenchmark
 {

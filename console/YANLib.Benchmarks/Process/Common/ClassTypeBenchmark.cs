@@ -3,7 +3,7 @@ using YANLib.Benchmarks.Models;
 using static System.Guid;
 using static System.Threading.Tasks.Parallel;
 
-namespace YANLib.Benchmarks.Common;
+namespace YANLib.Benchmarks.Process.Common;
 
 public class ClassTypeBenchmark
 {

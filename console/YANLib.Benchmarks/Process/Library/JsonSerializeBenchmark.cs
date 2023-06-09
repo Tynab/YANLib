@@ -4,7 +4,7 @@ using static Newtonsoft.Json.JsonConvert;
 using static System.Guid;
 using static System.Threading.Tasks.Parallel;
 
-namespace YANLib.Benchmarks.Library;
+namespace YANLib.Benchmarks.Process.Library;
 
 public class JsonSerializeBenchmark
 {
