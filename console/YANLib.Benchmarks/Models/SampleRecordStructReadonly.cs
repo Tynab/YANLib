@@ -1,6 +1,6 @@
 ﻿namespace YANLib.Benchmarks.Models;
 
-public record SampleRecord
+public readonly record struct SampleRecordStructReadonly
 {
     public Guid Id { get; init; }
 }
