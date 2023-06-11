@@ -20,9 +20,7 @@ using Volo.Abp.Http.Client;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
-using Volo.Abp.VirtualFileSystem;
 using YANLib.EntityFrameworkCore;
-using static System.IO.Path;
 using static System.StringSplitOptions;
 
 namespace YANLib;
@@ -45,26 +43,8 @@ public class YANLibHttpApiHostModule : AbpModule
         var configuration = context.Services.GetConfiguration();
         ConfigureConventionalControllers();
         ConfigureLocalization();
-        ConfigureVirtualFileSystem(context);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-    }
-
-    private void ConfigureVirtualFileSystem(ServiceConfigurationContext context)
-    {
-        var hostingEnvironment = context.Services.GetHostingEnvironment();
-        if (hostingEnvironment.IsDevelopment())
-        {
-            Configure<AbpVirtualFileSystemOptions>(o =>
-            {
-                var path = hostingEnvironment.ContentRootPath;
-                var dir = $@"..\..\src\{DirectorySeparatorChar}YANLib.";
-                o.FileSets.ReplaceEmbeddedByPhysical<YANLibDomainSharedModule>(Combine(path, $"{dir}Domain.Shared"));
-                o.FileSets.ReplaceEmbeddedByPhysical<YANLibDomainModule>(Combine(path, $"{dir}Domain"));
-                o.FileSets.ReplaceEmbeddedByPhysical<YANLibApplicationContractsModule>(Combine(path, $"{dir}Application.Contracts"));
-                o.FileSets.ReplaceEmbeddedByPhysical<YANLibApplicationModule>(Combine(path, $"{dir}Application"));
-            });
-        }
     }
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));

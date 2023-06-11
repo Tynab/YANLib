@@ -14,6 +14,7 @@
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
+    <None Include="Dockerfile" />
     <None Include="elasticsearch\.dockerignore" />
     <None Include="elasticsearch\config\elasticsearch.yml" />
     <None Include="elasticsearch\Dockerfile" />
@@ -55,6 +56,7 @@
     <None Include="extensions\metricbeat\metricbeat-compose.yml" />
     <None Include="extensions\metricbeat\README.md" />
     <None Include="extensions\README.md" />
+    <None Include="Jenkinsfile" />
     <None Include="kibana\.dockerignore" />
     <None Include="kibana\config\kibana.yml" />
     <None Include="kibana\Dockerfile" />
