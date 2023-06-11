@@ -187,14 +187,11 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
-    privileged: true
-    user: root
     ports:
       - 8081:8080
       - 50001:50000
     volumes:
-      - /home/${myname}/jenkins_compose/jenkins_configuration:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins_home:/var/jenkins_home
     networks:
       - yanlib
     restart: unless-stopped
