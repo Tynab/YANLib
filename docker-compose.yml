@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  yanlib:
+  yanlib.httpapi.host:
     image: yanlib:latest
     container_name: yanlib
     build:
