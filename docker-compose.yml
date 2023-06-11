@@ -1,14 +1,14 @@
 version: '3.7'
 
 services:
-  yanlib.httpapi.host:
-    image: ${DOCKER_REGISTRY-}yanlibhttpapihost
+  yanlib:
+    image: yanlib:latest
     container_name: yanlib
     build:
       context: .
       dockerfile: ./Dockerfile
     networks:
-      - yanlib
+      - yan
 
   setup:
     profiles:
@@ -36,7 +36,7 @@ services:
       KAFKA_CLIENT_USERS: ${KAFKA_CLIENT_USERS:-}
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS:-}
     networks:
-      - yanlib
+      - yan
     depends_on:
       - elasticsearch
 
@@ -63,7 +63,7 @@ services:
       # see: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/bootstrap-checks.html
       discovery.type: single-node
     networks:
-      - yanlib
+      - yan
     restart: unless-stopped
 
   logstash:
@@ -85,7 +85,7 @@ services:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
-      - yanlib
+      - yan
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -103,7 +103,7 @@ services:
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     networks:
-      - yanlib
+      - yan
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -118,7 +118,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-}
     networks:
-      - yanlib
+      - yan
     depends_on:
       - logstash
     restart: unless-stopped
@@ -131,7 +131,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
-      - yanlib
+      - yan
     depends_on:
       - logstash
     restart: unless-stopped
@@ -155,7 +155,7 @@ services:
       KAFKA_CLIENT_USERS: ${KAFKA_CLIENT_USERS:-}
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS:-}
     networks:
-      - yanlib
+      - yan
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -170,7 +170,7 @@ services:
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
     networks:
-      - yanlib
+      - yan
     depends_on:
       - zookeeper
       - kafka
@@ -183,25 +183,11 @@ services:
     ports:
       - 6379:6379
     networks:
-      - yanlib
-    restart: unless-stopped
-
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    ports:
-      - 8081:8080
-      - 50001:50000
-    volumes:
-      - ~/jenkins:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/local/bin/docker:/usr/local/bin/docker
-    networks:
-      - yanlib
+      - yan
     restart: unless-stopped
 
 networks:
-  yanlib:
+  yan:
     driver: bridge
 
 volumes:
