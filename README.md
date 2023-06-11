@@ -62,7 +62,7 @@ Here are some options for configuring performance when using JsonSerializerOptio
 
 ## TEST
 
-https://yanlib-service.azurewebsites.net/api/tynab/yanlib/yanjson/yan-vs-standards?quantity=100000&hideSystem=true
+https://yanlib.yamiannephilim.com/api/tynab/yanlib/yanjson/yan-vs-standards?quantity=10000&hideSystem=true
 
 <p align='center'>
 <img src='pic/0.jpg'></img>
