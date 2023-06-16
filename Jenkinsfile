@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'jenkins/jenkins:dind'
-            args '--privileged --user root --group-add docker'
-        }
-    }
+    agent any
     stages {
         stage('Build stage') {
             steps {
