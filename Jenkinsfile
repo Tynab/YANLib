@@ -1,39 +1,14 @@
-def gv
-
 pipeline {
     agent any
+
     stages {
-        stage('init') {
+        stage('Build') {
             steps {
                 script {
-                    echo "Initializing Groovy Script..."
-                    gv = load "script.groovy"
+                    def img = 'httpd:2.4-alpine'
+                    docker.image(img).run('-d -p 80:80')
                 }
             }
         }
-        stage('build') {
-            steps {
-                script {
-                    echo "Build Docker Image with Dockerfile..."
-                    gv.buildImage()
-                }
-            }
-        }
-        stage('push') {
-            steps {
-                script {
-                    echo "Pushing Docker Image to Docker Hub Repo..."
-                    gv.pushImage()
-                }
-            }
-        }
-        stage('deploy') {
-            steps {
-                script {
-                    echo "Deploying the application to EC2..."
-                    gv.deployImage()
-                }
-            }
-        }
-    }   
+    }
 }
