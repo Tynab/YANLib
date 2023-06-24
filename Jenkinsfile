@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh 'apt update'
                 sh 'apt upgrade -y'
-                apt-get install --assume-yes docker.io
+                sh 'apt-get install --assume-yes docker.io'
                 sh 'apt update'
                 sh 'apt upgrade -y'
                 sh 'docker build -t yanlib:latest .'
