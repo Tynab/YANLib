@@ -14,5 +14,19 @@ pipeline {
                 }
             }
         }
+        
+        stage('Run') {
+            steps {
+                script {
+                    docker.withTool('docker') {
+                        def containerName = 'yanlib'
+                        def imageName = 'yanlib'
+                        def imageTag = 'latest'
+                        
+                        sh "docker run --name ${containerName} -d ${imageName}:${imageTag}"
+                    }
+                }
+            }
+        }
     }
 }
