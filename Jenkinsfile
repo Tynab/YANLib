@@ -1,12 +1,15 @@
 pipeline {
-    agent any
-    
+    agent {
+        docker {
+            image 'alpine:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+
     stages {
         stage('Build') {
             steps {
-                // sh 'apt update'
-                // sh 'apt upgrade -y'
-                // sh 'apt-get install --assume-yes docker.io'
+                sh 'apk add --no-cache docker'
                 sh 'docker build -t yanlib:latest .'
             }
         }
