@@ -9,7 +9,7 @@
     <Title>YANLib</Title>
     <Authors>Yami An</Authors>
     <Company>YAN</Company>
-    <Description>Beta 6</Description>
+    <Description>YANLib is an optimized .NET library that enhances data processing tasks. It offers various extension utilities to improve the handling of datetimes, numbers, text, passwords, JSON, and more. With a focus on large-scale data processing, YANLib provides efficient solutions for managing and manipulating data in .NET applications.</Description>
     <Copyright>Copyright ©  2023</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -18,11 +18,11 @@
     <PackAsTool>False</PackAsTool>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Beta 6</PackageReleaseNotes>
+    <PackageReleaseNotes>Update bool</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageId>Tynab.YANLib</PackageId>
-    <Version>3.1.7</Version>
+    <Version>3.1.8</Version>
   </PropertyGroup>
 
   <ItemGroup>

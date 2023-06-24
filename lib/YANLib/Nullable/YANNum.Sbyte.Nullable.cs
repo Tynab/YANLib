@@ -1,6 +1,6 @@
 ﻿namespace YANLib.Nullable;
 
-public partial class YANNum
+public static partial class YANNum
 {
 
     public static sbyte? ToSbyte<T>(this T? num) where T : struct
