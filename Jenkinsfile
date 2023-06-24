@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'jenkins/inbound-agent:4.10-1-alpine'
-        }
-    }
+    agent any
     
     stages {
         stage('Build') {
