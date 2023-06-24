@@ -4,9 +4,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'apt update'
-                sh 'apt upgrade -y'
-                sh 'apt-get install --assume-yes docker.io'
+                # sh 'apt update'
+                # sh 'apt upgrade -y'
+                # sh 'apt-get install --assume-yes docker.io'
                 sh 'docker build -t yanlib:latest .'
             }
         }
