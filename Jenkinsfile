@@ -10,7 +10,7 @@ pipeline {
         
         stage('Run') {
             steps {
-                sh 'docker run --name yanlib -d yanlib:latest'
+                sh 'docker run --name yanlib --network yan -d yanlib:latest'
             }
         }
     }
