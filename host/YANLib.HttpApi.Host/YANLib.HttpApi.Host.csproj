@@ -13,6 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Elastic.Apm" Version="1.22.0" />
+    <PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.22.0" />
+    <PackageReference Include="Elastic.Apm.StackExchange.Redis" Version="1.22.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
     <PackageReference Include="Serilog.Expressions" Version="3.4.1" />

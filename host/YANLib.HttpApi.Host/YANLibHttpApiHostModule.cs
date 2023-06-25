@@ -1,3 +1,4 @@
+using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -95,6 +96,7 @@ public class YANLibHttpApiHostModule : AbpModule
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var app = context.GetApplicationBuilder();
+        _ = app.UseAllElasticApm(context.GetConfiguration());
         var env = context.GetEnvironment();
         if (env.IsDevelopment())
         {
