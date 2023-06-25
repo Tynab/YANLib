@@ -10,8 +10,13 @@ pipeline {
 
         stage('Cleaning') {
             steps {
-                sh 'docker stop yanlib'
-                sh 'docker rm yanlib'
+                script {
+                    def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=yanlib"').trim()
+                    if (containerId) {
+                        sh "docker stop $containerId"
+                        sh "docker rm $containerId"
+                    }
+                }
             }
         }
 
