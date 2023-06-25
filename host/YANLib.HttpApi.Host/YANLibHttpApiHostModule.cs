@@ -23,6 +23,9 @@ using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using YANLib.EntityFrameworkCore;
 using static System.StringSplitOptions;
+using static Elastic.Apm.Agent;
+using Elastic.Apm.DiagnosticSource;
+using Elastic.Apm.EntityFrameworkCore;
 
 namespace YANLib;
 [DependsOn(
@@ -97,6 +100,8 @@ public class YANLibHttpApiHostModule : AbpModule
     {
         var app = context.GetApplicationBuilder();
         _ = app.UseAllElasticApm(context.GetConfiguration());
+        _ = Subscribe(new HttpDiagnosticsSubscriber());
+        _ = Subscribe(new EfCoreDiagnosticsSubscriber());
         var env = context.GetEnvironment();
         if (env.IsDevelopment())
         {
