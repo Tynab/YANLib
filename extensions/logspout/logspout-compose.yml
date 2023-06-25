@@ -13,7 +13,7 @@ services:
       ROUTE_URIS: logstash://logstash:50000
       LOGSTASH_TAGS: docker-elk
     networks:
-      - elk
+      - yan
     depends_on:
       - logstash
     restart: on-failure

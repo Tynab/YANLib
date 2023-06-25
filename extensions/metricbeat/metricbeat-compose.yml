@@ -20,7 +20,7 @@ services:
       # from within a container.
       - --system.hostfs=/hostfs
     volumes:
-      - ./extensions/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro,Z
+      - ./config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro,Z
       - type: bind
         source: /
         target: /hostfs
@@ -42,6 +42,6 @@ services:
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
       BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
     networks:
-      - elk
+      - yan
     depends_on:
       - elasticsearch

@@ -3,12 +3,6 @@ version: '3.7'
 # Example of Fleet-enrolled Elastic Agent pre-configured with an agent policy
 # for running the APM Server integration (see kibana.yml).
 #
-# Run with
-#   docker-compose \
-#     -f docker-compose.yml \
-#     -f extensions/fleet/fleet-compose.yml \
-#     -f extensions/fleet/agent-apmserver-compose.yml \
-#     up
 
 services:
   apm-server:
@@ -35,7 +29,7 @@ services:
     # Elastic Agent does not retry failed connections to Kibana upon the initial enrollment phase.
     restart: on-failure
     networks:
-      - elk
+      - yan
     depends_on:
       - elasticsearch
       - kibana
