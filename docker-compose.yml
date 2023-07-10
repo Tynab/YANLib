@@ -75,7 +75,7 @@ services:
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
-      - ./host/YANLib.HttpApi.Host/Logs:/usr/share/logstash/logs:ro,Z
+      - ./app/yanlib/host/YANLib.HttpApi.Host/Logs:/usr/share/logstash/logs:ro,Z
     ports:
       - 9600:9600
       - 5044:5044
