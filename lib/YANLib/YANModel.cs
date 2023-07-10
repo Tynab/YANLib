@@ -5,6 +5,11 @@ namespace YANLib;
 
 public static partial class YANModel
 {
+    public static List<T> ConvertList<T>(this T mdl) where T : class => new() { mdl };
+
+    public static HashSet<T> ConvertHashSet<T>(this T mdl) where T : class => new() { mdl };
+
+    public static T[] ConvertArray<T>(this T mdl) where T : class => new T[1] { mdl };
 
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
