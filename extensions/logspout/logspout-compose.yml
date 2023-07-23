@@ -4,6 +4,7 @@ services:
   logspout:
     build:
       context: extensions/logspout
+    container_name: logspout
     volumes:
       - type: bind
         source: /var/run/docker.sock

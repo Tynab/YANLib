@@ -6,6 +6,7 @@ services:
       context: extensions/fleet/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: fleet-server
     volumes:
       - fleet-server:/usr/share/elastic-agent/state:Z
     environment:

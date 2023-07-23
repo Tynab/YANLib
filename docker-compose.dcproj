@@ -18,6 +18,9 @@
     <None Include="elasticsearch\.dockerignore" />
     <None Include="elasticsearch\config\elasticsearch.yml" />
     <None Include="elasticsearch\Dockerfile" />
+    <None Include="es-ingest\.dockerignore" />
+    <None Include="es-ingest\config\elasticsearch.yml" />
+    <None Include="es-ingest\Dockerfile" />
     <None Include="extensions\curator\.dockerignore" />
     <None Include="extensions\curator\config\curator.yml" />
     <None Include="extensions\curator\config\delete_log_files_curator.yml" />

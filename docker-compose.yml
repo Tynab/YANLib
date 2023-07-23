@@ -107,7 +107,7 @@ services:
     depends_on:
       - elasticsearch
     restart: unless-stopped
-
+    
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -119,8 +119,6 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-}
     networks:
       - yan
-    depends_on:
-      - logstash
     restart: unless-stopped
 
   zookeeper:
@@ -132,8 +130,6 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
       - yan
-    depends_on:
-      - logstash
     restart: unless-stopped
 
   kafka:
@@ -183,6 +179,7 @@ networks:
 volumes:
   setup:
   elasticsearch:
+  es-ingest:
   
 # Run with
 #   docker-compose \

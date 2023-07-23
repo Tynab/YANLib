@@ -19,11 +19,14 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.Caching.StackExchangeRedis;
+using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.SqlServer;
 using Volo.Abp.Http.Client;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using YANLib.EntityFrameworkCore;
+using YANLib.Utilities;
 using static Elastic.Apm.Agent;
 using static System.StringSplitOptions;
 
@@ -37,6 +40,7 @@ namespace YANLib;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule),
+    typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpHttpClientModule)
 )]
@@ -45,6 +49,8 @@ public class YANLibHttpApiHostModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var configuration = context.Services.GetConfiguration();
+        context.Services.AddElasticsearch(configuration);
+        Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         ConfigureConventionalControllers();
         ConfigureLocalization();
         ConfigureCors(context, configuration);
