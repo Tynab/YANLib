@@ -29,7 +29,7 @@ public static class ElasticsearchUtil
             : (new IConfigurationSection[] { configuration.GetSection(urlTag) })).Select(s => new Uri(s.Value)).ToArray())
             : new SingleNodeConnectionPool(new Uri(configuration.GetSection(urlTag).Value))).DefaultIndex(configuration.GetSection(IdxSample)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
 
-        if (configuration.GetSection(usernameTag).Value.IsWhiteSpaceOrNull())
+        if (configuration.GetSection(usernameTag).Value.IsNotWhiteSpaceAndNull())
         {
             settings.ServerCertificateValidationCallback((o, certificate, chain, errors) => true);
             settings.ServerCertificateValidationCallback(AllowAll);

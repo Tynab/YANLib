@@ -45,9 +45,5 @@ public sealed class ElasticsearchController : YANLibController
 
         return Ok(await _developerEsService.Set(request));
     }
-
-    [HttpDelete("developers")]
-    [SwaggerOperation(Summary = "Xóa tất cả Developers trên Elasticsearch")]
-    public async ValueTask<IActionResult> DeleteAll() => Ok(await _developerEsService.DeleteAll());
     #endregion
 }
