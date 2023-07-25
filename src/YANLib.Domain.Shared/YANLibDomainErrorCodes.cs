@@ -16,6 +16,7 @@ public static class YANLibDomainErrorCodes
     public const string NOT_FOUND = "YANLib:404";
     public const string NOT_FOUND_CERT = "YANLib:414";
     public const string NOT_FOUND_DEV_TYPE = "YANLib:424";
+    public const string NOT_FOUND_DEV = "YANLib:434";
 
     public const string INTERNAL_SERVER_ERROR = "YANLib:500";
 }

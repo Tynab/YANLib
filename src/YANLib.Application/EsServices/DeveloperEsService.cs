@@ -12,19 +12,24 @@ using static YANLib.YANLibConsts;
 
 namespace YANLib.EsServices;
 
-public class SampleEsService : YANLibAppService, ISampleEsService
+public class DeveloperEsService : YANLibAppService, IDeveloperEsService
 {
-    private readonly ILogger<SampleEsService> _logger;
+    #region Fields
+    private readonly ILogger<DeveloperEsService> _logger;
     private readonly IElasticClient _elasticClient;
     private readonly IConfiguration _configuration;
+    #endregion
 
-    public SampleEsService(ILogger<SampleEsService> logger, IElasticClient elasticClient, IConfiguration configuration)
+    #region Constructors
+    public DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClient elasticClient, IConfiguration configuration)
     {
         _logger = logger;
         _elasticClient = elasticClient;
         _configuration = configuration;
     }
+    #endregion
 
+    #region Implements
     public async ValueTask<DeveloperIndex> Get(string id)
     {
         try
@@ -33,7 +38,7 @@ public class SampleEsService : YANLibAppService, ISampleEsService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetSampleEsService-Exception: {Id}", id);
+            _logger.LogError(ex, "GetDeveloperEsService-Exception: {Id}", id);
             throw;
         }
     }
@@ -48,7 +53,7 @@ public class SampleEsService : YANLibAppService, ISampleEsService
 
             if (!res.IsValid)
             {
-                _logger.LogError("SetSampleEsService-Failed: {Id} - {ServerError}", res.Id, res.ServerError.CamelSerialize());
+                _logger.LogError("SetDeveloperEsService-Failed: {Id} - {ServerError}", res.Id, res.ServerError.CamelSerialize());
 
                 return default;
             }
@@ -57,7 +62,7 @@ public class SampleEsService : YANLibAppService, ISampleEsService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetSampleEsService-Exception: {Data}", data.CamelSerialize());
+            _logger.LogError(ex, "SetDeveloperEsService-Exception: {Data}", data.CamelSerialize());
             throw;
         }
     }
@@ -85,7 +90,7 @@ public class SampleEsService : YANLibAppService, ISampleEsService
 
             if (!res.IsValid)
             {
-                _logger.LogError("SetBulkSampleEsService-Failed: {ServerError}", res.ServerError.CamelSerialize());
+                _logger.LogError("SetBulkDeveloperEsService-Failed: {ServerError}", res.ServerError.CamelSerialize());
 
                 return false;
             }
@@ -94,7 +99,7 @@ public class SampleEsService : YANLibAppService, ISampleEsService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulkSampleEsService-Exception: {Datas}", datas.CamelSerialize());
+            _logger.LogError(ex, "SetBulkDeveloperEsService-Exception: {Datas}", datas.CamelSerialize());
             throw;
         }
     }
@@ -109,8 +114,25 @@ public class SampleEsService : YANLibAppService, ISampleEsService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAllSampleEsService-Exception");
+            _logger.LogError(ex, "DeleteAllDeveloperEsService-Exception");
             throw;
         }
     }
+
+    public async ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByDeveloperId(Guid developerId) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
+    .Query(q => q
+    .Bool(b => b
+    .Must(d => d
+    .Match(m => m
+    .Field(c => c.DeveloperId)
+    .Query(developerId.ToString()))))))).Documents;
+
+    public async ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByPhone(string phone) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
+    .Query(q => q
+    .Bool(b => b
+    .Must(d => d
+    .Match(m => m
+    .Field(c => c.Phone)
+    .Query(phone))))))).Documents;
+    #endregion
 }

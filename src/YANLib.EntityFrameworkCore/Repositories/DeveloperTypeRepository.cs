@@ -80,7 +80,7 @@ public sealed class DeveloperTypeRepository : IDeveloperTypeRepository
     {
         try
         {
-            var mdl = await Get(entity.Code) ?? throw new BusinessException(NOT_FOUND_CERT);
+            var mdl = await Get(entity.Code) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE);
 
             mdl.Name = entity.Name;
             mdl.IsActive = entity.IsActive;

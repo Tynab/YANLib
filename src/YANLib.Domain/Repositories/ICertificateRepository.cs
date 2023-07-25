@@ -12,4 +12,5 @@ public interface ICertificateRepository : ITransientDependency
     public ValueTask<Certificate> Insert(Certificate entity);
     public ValueTask<Certificate> Update(Certificate entity);
     public ValueTask<IEnumerable<Certificate>> GetByDeveloperId(Guid developerId);
+    public ValueTask<IEnumerable<Certificate>> Inserts(IEnumerable<Certificate> entities);
 }

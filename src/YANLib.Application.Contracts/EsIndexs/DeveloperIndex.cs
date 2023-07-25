@@ -8,9 +8,11 @@ namespace YANLib.EsIndexs;
 public sealed class DeveloperIndex
 {
     public string Id { get; set; }
-    public Guid DeveloperId { get; set; }
     [Keyword]
+    public string DeveloperId { get; set; }
     public string Name { get; set; }
+    [Keyword]
+    public string Phone { get; set; }
     public string IdCard { get; set; }
     public bool IsActive { get; set; }
     public int Version { get; set; }

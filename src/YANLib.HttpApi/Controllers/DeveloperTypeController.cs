@@ -10,7 +10,7 @@ using YANLib.Services;
 namespace YANLib.Controllers;
 
 [RemoteService]
-[ApiExplorerSettings(GroupName = "main")]
+[ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/developer-types")]
 public sealed class DeveloperTypeController : YANLibController
 {

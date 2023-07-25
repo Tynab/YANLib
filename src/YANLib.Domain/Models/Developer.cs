@@ -10,6 +10,7 @@ public sealed class Developer
     [Key]
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public string Phone { get; set; }
     public string IdCard { get; set; }
     public int DeveloperTypeCode { get; set; }
     public bool IsActive { get; set; }

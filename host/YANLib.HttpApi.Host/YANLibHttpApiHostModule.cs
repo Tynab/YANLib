@@ -64,12 +64,12 @@ public class YANLibHttpApiHostModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         _ = context.Services.AddAbpSwaggerGenWithOAuth(configuration["AuthServer:Authority"], new Dictionary<string, string>
         {
-            {"YANLib", "YANLib API"},
-            {"YANJson", "YANJson API"}
+            {"YANLib Sample", "YANLib API Sample"},
+            {"YANLib Test", "YANLib API Test"}
         }, o =>
         {
-            o.SwaggerDoc("main", new OpenApiInfo { Title = $"YANLib API - {hostingEnvironment.EnvironmentName}", Version = "main" });
-            o.SwaggerDoc("json", new OpenApiInfo { Title = $"YANJson API - {hostingEnvironment.EnvironmentName}", Version = "json" });
+            o.SwaggerDoc("sample", new OpenApiInfo { Title = $"YANLib API Sample - {hostingEnvironment.EnvironmentName}", Version = "sample" });
+            o.SwaggerDoc("test", new OpenApiInfo { Title = $"YANLib API Test - {hostingEnvironment.EnvironmentName}", Version = "test" });
             o.CustomSchemaIds(t => t.FullName);
             o.HideAbpEndpoints();
             o.EnableAnnotations();
@@ -128,8 +128,8 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseSwagger();
         _ = app.UseAbpSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/main/swagger.json", "YANLib API");
-            c.SwaggerEndpoint("/swagger/json/swagger.json", "YANJson API");
+            c.SwaggerEndpoint("/swagger/sample/swagger.json", "YANLib API Sample");
+            c.SwaggerEndpoint("/swagger/test/swagger.json", "YANLib API Test");
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
         });

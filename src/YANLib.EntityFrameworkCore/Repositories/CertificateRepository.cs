@@ -8,6 +8,7 @@ using Volo.Abp;
 using YANLib.EntityFrameworkCore.DbContext;
 using YANLib.Models;
 using static System.DateTime;
+using static System.Guid;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Repositories;
@@ -87,6 +88,32 @@ public sealed class CertificateRepository : ICertificateRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetByDeveloperIdCertificateRepository-Exception: {DeveloperId}", developerId);
+            throw;
+        }
+    }
+
+    public async ValueTask<IEnumerable<Certificate>> Inserts(IEnumerable<Certificate> entities)
+    {
+        try
+        {
+            var ids = new HashSet<Guid>();
+
+            await _dbContext.Certificates.AddRangeAsync(entities.Select(x =>
+            {
+                var id = NewGuid();
+
+                x.Id = id;
+                x.CreatedDate = Now;
+                _ = ids.Add(id);
+
+                return x;
+            }));
+
+            return await _dbContext.SaveChangesAsync() > 0 ? await _dbContext.Certificates.AsNoTracking().Where(x => ids.Contains(x.Id)).ToArrayAsync() : throw new BusinessException(INTERNAL_SERVER_ERROR);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "InsertsCertificateRepository-Exception: {Entities}", entities.CamelSerialize());
             throw;
         }
     }

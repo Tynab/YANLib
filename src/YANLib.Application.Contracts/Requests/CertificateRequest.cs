@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YANLib.Requests;
 
-public class CertificateRequest
+public class CertificateRequest : CertificateRipRequest
 {
-    [Required]
-    public string Name { get; set; }
-    public float? GPA { get; set; }
     [Required]
     public Guid DeveloperId { get; set; }
 }

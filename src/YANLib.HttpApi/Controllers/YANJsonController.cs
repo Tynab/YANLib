@@ -9,8 +9,8 @@ using YANLib.Services;
 namespace YANLib.Controllers;
 
 [RemoteService]
-[ApiExplorerSettings(GroupName = "json")]
-[Route("api/yanlib/yanjson")]
+[ApiExplorerSettings(GroupName = "test")]
+[Route("api/yanlib/json")]
 public class YANJsonController : YANLibController
 {
     #region Fields

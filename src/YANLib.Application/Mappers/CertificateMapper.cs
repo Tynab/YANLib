@@ -19,6 +19,12 @@ public sealed class CertificateMapper : Profile
             .Ignore(d => d.CreatedDate)
             .Ignore(d => d.ModifiedDate);
 
+        _ = CreateMap<CertificateRipRequest, Certificate>()
+            .Ignore(d => d.Id)
+            .Ignore(d => d.DeveloperId)
+            .Ignore(d => d.CreatedDate)
+            .Ignore(d => d.ModifiedDate);
+
         _ = CreateMap<Certificate, CertificateResponse>().ReverseMap();
     }
 }
