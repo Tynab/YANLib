@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,19 +28,6 @@ public sealed class CertificateRepository : ICertificateRepository
     #endregion
 
     #region Implements
-    public async ValueTask<Certificate> Get(Guid id)
-    {
-        try
-        {
-            return await _dbContext.Certificates.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetCertificateRepository-Exception: {Id}", id);
-            throw;
-        }
-    }
-
     public async ValueTask<Certificate> Insert(Certificate entity)
     {
         try
@@ -62,32 +48,14 @@ public sealed class CertificateRepository : ICertificateRepository
     {
         try
         {
-            var mdl = await Get(entity.Id) ?? throw new BusinessException(NOT_FOUND_CERT);
+            entity.ModifiedDate = Now;
+            _dbContext.Certificates.Update(entity);
 
-            mdl.Name = entity.Name;
-            mdl.GPA = entity.GPA;
-            mdl.DeveloperId = entity.DeveloperId;
-            mdl.ModifiedDate = Now;
-            _dbContext.Certificates.Update(mdl);
-
-            return await _dbContext.SaveChangesAsync() > 0 ? mdl : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "UpdateCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
-            throw;
-        }
-    }
-
-    public async ValueTask<IEnumerable<Certificate>> GetByDeveloperId(Guid developerId)
-    {
-        try
-        {
-            return await _dbContext.Certificates.AsNoTracking().Where(x => x.DeveloperId == developerId).ToArrayAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByDeveloperIdCertificateRepository-Exception: {DeveloperId}", developerId);
             throw;
         }
     }
@@ -97,8 +65,7 @@ public sealed class CertificateRepository : ICertificateRepository
         try
         {
             var ids = new HashSet<Guid>();
-
-            await _dbContext.Certificates.AddRangeAsync(entities.Select(x =>
+            var rslts = entities.Select(x =>
             {
                 var id = NewGuid();
 
@@ -107,13 +74,36 @@ public sealed class CertificateRepository : ICertificateRepository
                 _ = ids.Add(id);
 
                 return x;
-            }));
+            });
 
-            return await _dbContext.SaveChangesAsync() > 0 ? await _dbContext.Certificates.AsNoTracking().Where(x => ids.Contains(x.Id)).ToArrayAsync() : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            await _dbContext.Certificates.AddRangeAsync(rslts);
+
+            return await _dbContext.SaveChangesAsync() > 0 ? rslts : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "InsertsCertificateRepository-Exception: {Entities}", entities.CamelSerialize());
+            throw;
+        }
+    }
+
+    public async ValueTask<IEnumerable<Certificate>> Updates(IEnumerable<Certificate> entities)
+    {
+        try
+        {
+            var rslts = entities.Select(x =>
+            {
+                x.ModifiedDate = Now;
+                return x;
+            });
+
+            _dbContext.Certificates.UpdateRange(rslts);
+
+            return await _dbContext.SaveChangesAsync() > 0 ? rslts : throw new BusinessException(INTERNAL_SERVER_ERROR);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "UpdatesCertificateRepository-Exception: {Entities}", entities.CamelSerialize());
             throw;
         }
     }

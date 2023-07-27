@@ -8,7 +8,6 @@ namespace YANLib.Repositories;
 public interface IDeveloperTypeRepository : ITransientDependency
 {
     public ValueTask<IEnumerable<DeveloperType>> GetAll();
-    public ValueTask<DeveloperType> Get(int code);
     public ValueTask<DeveloperType> Insert(DeveloperType entity);
     public ValueTask<DeveloperType> Update(DeveloperType entity);
 }

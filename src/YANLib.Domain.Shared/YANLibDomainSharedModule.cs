@@ -18,7 +18,7 @@ public class YANLibDomainSharedModule : AbpModule
         Configure<AbpVirtualFileSystemOptions>(o => o.FileSets.AddEmbedded<YANLibDomainSharedModule>());
         Configure<AbpLocalizationOptions>(o =>
         {
-            _ = o.Resources.Add<YANLibResource>("en").AddBaseTypes(typeof(AbpValidationResource)).AddVirtualJson("/Localization/YANLib");
+            _ = o.Resources.Add<YANLibResource>("vi").AddBaseTypes(typeof(AbpValidationResource)).AddVirtualJson("/Localization/YANLib");
             o.DefaultResourceType = typeof(YANLibResource);
         });
         Configure<AbpExceptionLocalizationOptions>(o => o.MapCodeNamespace("YANLib", typeof(YANLibResource)));

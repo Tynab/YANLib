@@ -47,6 +47,15 @@ public sealed class DeveloperController : YANLibController
         return Ok(await _service.Insert(request));
     }
 
+    [HttpPatch("idCard")]
+    [SwaggerOperation(Summary = "Cập nhật Developer")]
+    public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperFreeRequest request)
+    {
+        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.CamelSerialize());
+
+        return Ok(await _service.Adjust(idCard, request));
+    }
+
     [HttpGet("get-by-id-card")]
     [SwaggerOperation(Summary = "Tìm Developer theo Id Card")]
     public async ValueTask<IActionResult> GetByIdCard([Required] string idCard)
@@ -64,5 +73,9 @@ public sealed class DeveloperController : YANLibController
 
         return Ok(await _service.GetByPhone(phone));
     }
+
+    [HttpPost("sync-db-to-es")]
+    [SwaggerOperation(Summary = "Đồng bộ tất cả Developers từ Database lên Elasticsearch")]
+    public async ValueTask<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
     #endregion
 }

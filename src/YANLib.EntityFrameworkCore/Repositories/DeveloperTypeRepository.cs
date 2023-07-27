@@ -40,19 +40,6 @@ public sealed class DeveloperTypeRepository : IDeveloperTypeRepository
         }
     }
 
-    public async ValueTask<DeveloperType> Get(int code)
-    {
-        try
-        {
-            return await _dbContext.DeveloperTypes.AsNoTracking().FirstOrDefaultAsync(x => x.Code == code);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetDeveloperTypeRepository-Exception: {Code}", code);
-            throw;
-        }
-    }
-
     public async ValueTask<DeveloperType> Insert(DeveloperType entity)
     {
         try
@@ -80,14 +67,10 @@ public sealed class DeveloperTypeRepository : IDeveloperTypeRepository
     {
         try
         {
-            var mdl = await Get(entity.Code) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE);
+            entity.ModifiedDate = Now;
+            _dbContext.DeveloperTypes.Update(entity);
 
-            mdl.Name = entity.Name;
-            mdl.IsActive = entity.IsActive;
-            mdl.ModifiedDate = Now;
-            _dbContext.DeveloperTypes.Update(mdl);
-
-            return await _dbContext.SaveChangesAsync() > 0 ? mdl : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {

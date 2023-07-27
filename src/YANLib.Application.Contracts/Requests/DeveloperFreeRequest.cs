@@ -6,6 +6,6 @@ public sealed class DeveloperFreeRequest
 {
     public string Name { get; set; }
     public string Phone { get; set; }
-    public int DeveloperTypeCode { get; set; }
-    public List<CertificateRequest> Certificates { get; set; }
+    public int? DeveloperTypeCode { get; set; }
+    public List<CertificateRipRequest> Certificates { get; set; }
 }

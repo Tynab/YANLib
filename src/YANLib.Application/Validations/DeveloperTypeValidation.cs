@@ -10,7 +10,7 @@ public sealed class DeveloperTypeValidator : AbstractValidator<DeveloperTypeRequ
 {
     public DeveloperTypeValidator()
     {
-        _ = RuleFor(x => x.Code).NotNull().NotEmpty().GreaterThanOrEqualTo(0).WithErrorCode(BAD_REQUEST_CODE);
+        _ = RuleFor(x => x.Code).NotNull().NotEmpty().GreaterThanOrEqualTo(0).WithErrorCode(BAD_REQUEST_CODE).WithMessage("cc");
         _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME);
     }
 }

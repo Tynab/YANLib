@@ -98,6 +98,7 @@ public class YANLibHttpApiHostModule : AbpModule
         o.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch", "de"));
         o.Languages.Add(new LanguageInfo("es", "es", "Español", "es"));
         o.Languages.Add(new LanguageInfo("el", "el", "Ελληνικά"));
+        o.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
     });
 
     private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddCors(o => o.AddDefaultPolicy(b => b.WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o.RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));

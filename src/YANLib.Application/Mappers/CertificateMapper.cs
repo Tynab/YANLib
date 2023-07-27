@@ -10,15 +10,6 @@ public sealed class CertificateMapper : Profile
 {
     public CertificateMapper()
     {
-        _ = CreateMap<CertificateFullRequest, Certificate>()
-            .Ignore(d => d.CreatedDate)
-            .Ignore(d => d.ModifiedDate);
-
-        _ = CreateMap<CertificateRequest, Certificate>()
-            .Ignore(d => d.Id)
-            .Ignore(d => d.CreatedDate)
-            .Ignore(d => d.ModifiedDate);
-
         _ = CreateMap<CertificateRipRequest, Certificate>()
             .Ignore(d => d.Id)
             .Ignore(d => d.DeveloperId)

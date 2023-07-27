@@ -27,5 +27,10 @@ public sealed class DeveloperMapper : Profile
 
         _ = CreateMap<DeveloperResponse, DeveloperIndex>()
             .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.Id.ToString()));
+
+        _ = CreateMap<DeveloperIndex, Developer>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => new Guid(s.DeveloperId)))
+            .ForMember(d => d.DeveloperTypeCode, o => o.MapFrom(s => s.DeveloperType.Code))
+            .Ignore(d => d.DeveloperType);
     }
 }
