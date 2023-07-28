@@ -3,6 +3,7 @@
 public static class YANLibConsts
 {
     public const string DbTablePrefix = "App";
+
     public const string DbSchema = "sample";
 
     public const string ConnectionStringName = "Default";

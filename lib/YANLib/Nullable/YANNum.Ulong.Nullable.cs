@@ -21,6 +21,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in nums)
         {
             yield return num.ToUlong();
@@ -35,6 +36,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToUlong(dfltVal);

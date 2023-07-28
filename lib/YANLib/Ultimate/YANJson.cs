@@ -8,6 +8,7 @@ public static partial class YANJson
         {
             yield break;
         }
+
         foreach (var mdl in mdls)
         {
             yield return mdl.Serialize();
@@ -20,6 +21,7 @@ public static partial class YANJson
         {
             yield break;
         }
+
         foreach (var mdl in mdls)
         {
             yield return mdl.CamelSerialize();
@@ -32,6 +34,7 @@ public static partial class YANJson
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.StandardDeserialize<T>();
@@ -44,6 +47,7 @@ public static partial class YANJson
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.Deserialize<T>();

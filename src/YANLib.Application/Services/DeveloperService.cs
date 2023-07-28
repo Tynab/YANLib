@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.EsIndexs;
@@ -84,7 +85,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
         {
             if (await _esService.Get(request.IdCard) is not null)
             {
-                throw new BusinessException(EXIST_ID_CARD);
+                throw new BusinessException(EXIST_ID_CARD).WithData("IdCard", request.IdCard);
             }
 
             var id = NewGuid();
@@ -114,7 +115,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
     {
         try
         {
-            var mdl = await _esService.Get(idCard) ?? throw new BusinessException();
+            var mdl = await _esService.Get(idCard) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", idCard);
             var ent = ObjectMapper.Map<DeveloperIndex, Developer>(mdl);
             var id = NewGuid();
             var certEnts = ObjectMapper.Map<List<CertificateRipRequest>, List<Certificate>>(request.Certificates);
@@ -157,8 +158,27 @@ public class DeveloperService : YANLibAppService, IDeveloperService
         {
             var rslt = await _esService.DeleteAll();
             var mdls = await _repository.GetAll();
+            var datas = new List<DeveloperIndex>();
+            var semSlim = new SemaphoreSlim(1);
 
-            return mdls.IsNotEmptyAndNull() ? rslt && await _esService.SetBulk(ObjectMapper.Map<List<Developer>, List<DeveloperIndex>>(mdls.ToList())) : rslt;
+            await Task.WhenAll(mdls.Select(async x =>
+            {
+                var dto = ObjectMapper.Map<Developer, DeveloperIndex>(x);
+
+                await semSlim.WaitAsync();
+
+                try
+                {
+                    dto.Certificates = new List<CertificateResponse>(ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _certificateRepository.GetByDeveloperId(x.Id)));
+                    datas.Add(dto);
+                }
+                finally
+                {
+                    _ = semSlim.Release();
+                }
+            }));
+
+            return mdls.IsNotEmptyAndNull() ? rslt && await _esService.SetBulk(datas) : rslt;
         }
         catch (Exception ex)
         {

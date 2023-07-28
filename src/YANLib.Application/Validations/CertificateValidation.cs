@@ -10,8 +10,8 @@ public sealed class CertificateRipValidator : AbstractValidator<CertificateRipRe
 {
     public CertificateRipValidator()
     {
-        _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME);
-        _ = RuleFor(x => x.GPA).GreaterThan(0).WithErrorCode(BAD_REQUEST_GPA);
+        _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
+        _ = RuleFor(x => x.GPA).GreaterThan(0).WithErrorCode(BAD_REQUEST_GPA).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_GPA);
     }
 }
 
@@ -20,12 +20,10 @@ public sealed class CertificateRipValidators : AbstractValidator<List<Certificat
     #region Constructors
     public CertificateRipValidators()
     {
-        _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST);
-
+        _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleForEach(s => s).SetValidator(new CertificateRipValidator());
-
-        _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST);
-        _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME);
+        _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST);
+        _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
     }
     #endregion
 

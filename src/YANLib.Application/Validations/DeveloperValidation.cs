@@ -10,9 +10,9 @@ public sealed class DeveloperValidator : AbstractValidator<DeveloperRequest>
 {
     public DeveloperValidator()
     {
-        _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME);
-        _ = RuleFor(x => x.IdCard).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_ID_CARD);
-        _ = RuleFor(x => x.DeveloperTypeCode).NotNull().NotEmpty().GreaterThanOrEqualTo(0).WithErrorCode(BAD_REQUEST_CODE);
+        _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
+        _ = RuleFor(x => x.IdCard).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_ID_CARD).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_ID_CARD);
+        _ = RuleFor(x => x.DeveloperTypeCode).NotNull().NotEmpty().GreaterThanOrEqualTo(0).WithErrorCode(BAD_REQUEST_ID).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_ID);
     }
 }
 
@@ -21,13 +21,11 @@ public sealed class DeveloperValidators : AbstractValidator<List<DeveloperReques
     #region Constructors
     public DeveloperValidators()
     {
-        _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST);
-
+        _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleForEach(s => s).SetValidator(new DeveloperValidator());
-
-        _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST);
-        _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME);
-        _ = RuleFor(x => x).Must(IdCardIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_ID_CARD);
+        _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST);
+        _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
+        _ = RuleFor(x => x).Must(IdCardIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_ID_CARD).WithErrorCode(YANLibDomainErrorMessages.BAD_REQUEST_ID_CARD);
     }
     #endregion
 

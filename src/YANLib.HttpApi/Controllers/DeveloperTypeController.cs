@@ -29,11 +29,11 @@ public sealed class DeveloperTypeController : YANLibController
 
     #region Methods
     [HttpGet]
-    [SwaggerOperation(Summary = "Tìm tất cả Developer Types")]
+    [SwaggerOperation(Summary = "Tìm tất cả định nghĩa Developer Types")]
     public async ValueTask<IActionResult> GetAll() => Ok(await _service.GetAll());
 
     [HttpGet("{code}")]
-    [SwaggerOperation(Summary = "Tìm Developer Type theo Code")]
+    [SwaggerOperation(Summary = "Tìm định nghĩa Developer Type theo Code")]
     public async ValueTask<IActionResult> Get([Required] int code)
     {
         _logger.LogInformation("GetDeveloperTypeController: {Code}", code);
@@ -42,7 +42,7 @@ public sealed class DeveloperTypeController : YANLibController
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới Developer Type")]
+    [SwaggerOperation(Summary = "Thêm mới định nghĩa Developer Type")]
     public async ValueTask<IActionResult> Insert([Required] DeveloperTypeRequest request)
     {
         _logger.LogInformation("InsertDeveloperTypeController: {Request}", request.CamelSerialize());
@@ -51,7 +51,7 @@ public sealed class DeveloperTypeController : YANLibController
     }
 
     [HttpPut]
-    [SwaggerOperation(Summary = "Cập nhật Developer Type")]
+    [SwaggerOperation(Summary = "Cập nhật định nghĩa Developer Type")]
     public async ValueTask<IActionResult> Update([Required] DeveloperTypeRequest request)
     {
         _logger.LogInformation("UpdateDeveloperTypeController: {Request}", request.CamelSerialize());
@@ -59,7 +59,7 @@ public sealed class DeveloperTypeController : YANLibController
         return Ok(await _service.Update(request));
     }
 
-    [SwaggerOperation(Summary = "Đồng bộ tất cả Developer Types từ Database sang Redis")]
+    [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa Developer Types từ Database sang Redis")]
     [HttpPost("sync-db-to-redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
     #endregion

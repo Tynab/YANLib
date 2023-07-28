@@ -48,7 +48,7 @@ public sealed class DeveloperTypeRepository : IDeveloperTypeRepository
 
             if (mdl is not null)
             {
-                throw new BusinessException(EXIST_CODE);
+                throw new BusinessException(EXIST_ID).WithData("Id", entity.Code);
             }
 
             entity.CreatedDate = Now;
@@ -67,10 +67,14 @@ public sealed class DeveloperTypeRepository : IDeveloperTypeRepository
     {
         try
         {
-            entity.ModifiedDate = Now;
-            _dbContext.DeveloperTypes.Update(entity);
+            var mdl = await _dbContext.DeveloperTypes.AsNoTracking().FirstOrDefaultAsync(x => x.Code == entity.Code) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Id", entity.Code);
 
-            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            mdl.Name = entity.Name;
+            mdl.IsActive = entity.IsActive;
+            mdl.ModifiedDate = Now;
+            _dbContext.DeveloperTypes.Update(mdl);
+
+            return await _dbContext.SaveChangesAsync() > 0 ? mdl : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {

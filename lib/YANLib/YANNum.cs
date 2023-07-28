@@ -9,7 +9,9 @@ public static partial class YANNum
         {
             return default;
         }
+
         var min = nums[0];
+
         for (var i = 1; i < nums?.Length; i++)
         {
             if (nums[i] is not null && nums[i].CompareTo(min) < 0)
@@ -17,6 +19,7 @@ public static partial class YANNum
                 min = nums[i];
             }
         }
+
         return min;
     }
 
@@ -26,7 +29,9 @@ public static partial class YANNum
         {
             return default;
         }
+
         var max = nums[0];
+
         for (var i = 1; i < nums?.Length; i++)
         {
             if (nums[i]?.CompareTo(max) > 0)
@@ -34,6 +39,7 @@ public static partial class YANNum
                 max = nums[i];
             }
         }
+
         return max;
     }
 }

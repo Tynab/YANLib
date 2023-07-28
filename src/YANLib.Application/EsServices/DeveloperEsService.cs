@@ -49,16 +49,7 @@ public class DeveloperEsService : YANLibAppService, IDeveloperEsService
 
         try
         {
-            var res = await _elasticClient.IndexDocumentAsync(data);
-
-            if (!res.IsValid)
-            {
-                _logger.LogError("SetDeveloperEsService-Failed: {Id} - {ServerError}", res.Id, res.ServerError.CamelSerialize());
-
-                return default;
-            }
-
-            return true;
+            return await _elasticClient.IndexDocumentAsync(data) is not null;
         }
         catch (Exception ex)
         {
@@ -86,16 +77,7 @@ public class DeveloperEsService : YANLibAppService, IDeveloperEsService
                 reqs.Index<DeveloperIndex>(x => x.Document(data).Index(index));
             }
 
-            var res = await _elasticClient.BulkAsync(reqs);
-
-            if (!res.IsValid)
-            {
-                _logger.LogError("SetBulkDeveloperEsService-Failed: {ServerError}", res.ServerError.CamelSerialize());
-
-                return false;
-            }
-
-            return true;
+            return await _elasticClient.BulkAsync(reqs) is not null;
         }
         catch (Exception ex)
         {

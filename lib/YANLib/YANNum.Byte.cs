@@ -31,6 +31,7 @@ public static partial class YANNum
     {
         var minValue = min.ToByte();
         var maxValue = max.ToByte();
+
         return minValue > maxValue ? default : new Random().Next(minValue, maxValue).ToByte();
     }
 

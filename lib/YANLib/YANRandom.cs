@@ -11,6 +11,7 @@ public static partial class YANRandom
     {
         var minValue = min.ToFloat();
         var maxValue = max.ToFloat();
+
         return minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
@@ -18,6 +19,7 @@ public static partial class YANRandom
     {
         var minValue = min.ToDouble();
         var maxValue = max.ToDouble();
+
         return minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
@@ -25,6 +27,7 @@ public static partial class YANRandom
     {
         var minValue = min.ToDecimal();
         var maxValue = max.ToDecimal();
+
         return minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 }

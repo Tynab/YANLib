@@ -2,6 +2,16 @@
   "culture": "vi",
   "texts": {
     "YANLib:400": "Dữ liệu truyền vào không hợp lệ!",
-    "YANLib:423": "Mã định danh {IdCard} đã tồn tại!"
+    "YANLib:410": "Tên truyền vào không hợp lệ!",
+    "YANLib:420": "Mã định danh truyền vào không hợp lệ!",
+    "YANLib:430": "Mã truyền vào không hợp lệ!",
+    "YANLib:440": "Điểm truyền vào không hợp lệ!",
+    "YANLib:403": "Lỗi quy tắc!",
+    "YANLib:413": "Mã {Id} đã tồn tại!",
+    "YANLib:423": "Mã định danh {IdCard} đã tồn tại!",
+    "YANLib:404": "Không tìm thấy dữ liệu!",
+    "YANLib:414": "Không tìm thấy hồ sơ lập trình viên có mã định danh {IdCard}!",
+    "YANLib:424": "Không tìm thấy định nghĩa loại lập trình viên có mã {Code}!",
+    "YANLib:500": "Lỗi trong quá trình xử lý!"
   }
 }

@@ -143,7 +143,9 @@ public static partial class YANText
         {
             return false;
         }
+
         var hashSet = new HashSet<char>(cs.Length);
+
         for (var i = 0; i < cs.Length; i++)
         {
             if (!hashSet.Add(cs[i].ToLowerInvariant()))
@@ -151,6 +153,7 @@ public static partial class YANText
                 return false;
             }
         }
+
         return true;
     }
 
@@ -162,7 +165,9 @@ public static partial class YANText
         {
             return false;
         }
+
         var hashSet = new HashSet<char>(cs.Count());
+
         foreach (var c in cs)
         {
             if (!hashSet.Add(c.ToLowerInvariant()))
@@ -170,6 +175,7 @@ public static partial class YANText
                 return false;
             }
         }
+
         return true;
     }
 
@@ -182,6 +188,7 @@ public static partial class YANText
     public static char GenerateRandomCharacter()
     {
         var chars = "abcdefghijklmnopqrstuvwxyz";
+
         return chars[GenerateRandomByte(chars.Length)];
     }
 
@@ -201,6 +208,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var c in cs)
         {
             yield return ToLower(c);
@@ -215,6 +223,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var c in cs)
         {
             yield return ToLowerInvariant(c);
@@ -229,6 +238,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var c in cs)
         {
             yield return ToUpper(c);
@@ -243,6 +253,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var c in cs)
         {
             yield return ToUpperInvariant(c);

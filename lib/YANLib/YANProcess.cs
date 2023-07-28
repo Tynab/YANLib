@@ -16,6 +16,7 @@ public static partial class YANProcess
                 {
                     p.Kill();
                 }
+
                 return p.WaitForExitAsync();
             }));
         }
@@ -31,6 +32,7 @@ public static partial class YANProcess
                 {
                     p.Kill();
                 }
+
                 return p.WaitForExitAsync();
             }));
         }
@@ -46,6 +48,7 @@ public static partial class YANProcess
                 {
                     p.Kill();
                 }
+
                 return p.WaitForExitAsync();
             }));
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,34 +29,15 @@ public sealed class CertificateRepository : ICertificateRepository
     #endregion
 
     #region Implements
-    public async ValueTask<Certificate> Insert(Certificate entity)
+    public async ValueTask<IEnumerable<Certificate>> GetByDeveloperId(Guid developerId)
     {
         try
         {
-            entity.CreatedDate = Now;
-            _ = await _dbContext.Certificates.AddAsync(entity);
-
-            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.Certificates.AsNoTracking().Where(x => x.DeveloperId == developerId).ToArrayAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
-            throw;
-        }
-    }
-
-    public async ValueTask<Certificate> Update(Certificate entity)
-    {
-        try
-        {
-            entity.ModifiedDate = Now;
-            _dbContext.Certificates.Update(entity);
-
-            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "UpdateCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "GetByDeveloperIdCertificateRepository-Exception: {DeveloperId}", developerId);
             throw;
         }
     }

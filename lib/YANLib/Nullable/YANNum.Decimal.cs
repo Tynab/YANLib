@@ -21,6 +21,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in nums)
         {
             yield return num.ToDecimal();
@@ -35,6 +36,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToDecimal();
@@ -49,6 +51,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToDecimal(dfltVal);
@@ -59,6 +62,7 @@ public static partial class YANNum
     {
         var minValue = min.ToDecimal();
         var maxValue = max.ToDecimal();
+
         return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().NextDecimal(minValue.Value, maxValue.Value) : default;
     }
 

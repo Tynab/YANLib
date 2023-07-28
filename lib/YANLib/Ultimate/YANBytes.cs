@@ -8,6 +8,7 @@ public static partial class YANBytes
         {
             yield break;
         }
+
         foreach (var obj in objs)
         {
             yield return obj.ToByteArray();
@@ -20,6 +21,7 @@ public static partial class YANBytes
         {
             yield break;
         }
+
         foreach (var arr in arrs)
         {
             yield return arr.FromByteArray<T>();

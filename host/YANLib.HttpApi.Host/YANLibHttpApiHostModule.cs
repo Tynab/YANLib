@@ -3,6 +3,7 @@ using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Volo.Abp;
-using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
-using Volo.Abp.Autofac;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.SqlServer;
@@ -28,16 +26,17 @@ using Volo.Abp.Swashbuckle;
 using YANLib.EntityFrameworkCore;
 using YANLib.Utilities;
 using static Elastic.Apm.Agent;
+using static HealthChecks.UI.Client.UIResponseWriter;
+using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static System.StringSplitOptions;
 
 namespace YANLib;
+
 [DependsOn(
     typeof(YANLibHttpApiModule),
     typeof(YANLibApplicationModule),
     typeof(YANLibEntityFrameworkCoreModule),
-    typeof(AbpAutofacModule),
-    typeof(AbpAspNetCoreMultiTenancyModule),
-    typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
+    //typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
@@ -49,12 +48,14 @@ public class YANLibHttpApiHostModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var configuration = context.Services.GetConfiguration();
+
         context.Services.AddElasticsearch(configuration);
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         ConfigureConventionalControllers();
         ConfigureLocalization();
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
+        ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
@@ -62,6 +63,7 @@ public class YANLibHttpApiHostModule : AbpModule
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
+
         _ = context.Services.AddAbpSwaggerGenWithOAuth(configuration["AuthServer:Authority"], new Dictionary<string, string>
         {
             {"YANLib Sample", "YANLib API Sample"},
@@ -101,24 +103,36 @@ public class YANLibHttpApiHostModule : AbpModule
         o.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
     });
 
-    private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddCors(o => o.AddDefaultPolicy(b => b.WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o.RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+    private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddCors(o => o
+    .AddDefaultPolicy(b => b
+    .WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o
+    .RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+    private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHealthChecks()
+        .AddSqlServer(connectionString: configuration["ConnectionStrings:Default"], name: "database", failureStatus: Degraded, tags: new string[] { "db", "sql", "sqlserver" });
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var app = context.GetApplicationBuilder();
+
         _ = app.UseAllElasticApm(context.GetConfiguration());
         _ = Subscribe(new HttpDiagnosticsSubscriber());
         _ = Subscribe(new EfCoreDiagnosticsSubscriber());
+
         var env = context.GetEnvironment();
+
         if (env.IsDevelopment())
         {
             _ = app.UseDeveloperExceptionPage();
         }
+
         _ = app.UseAbpRequestLocalization();
+
         if (!env.IsDevelopment())
         {
             _ = app.UseErrorPage();
         }
+
         _ = app.UseCorrelationId();
         _ = app.UseStaticFiles();
         _ = app.UseRouting();
@@ -127,6 +141,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseUnitOfWork();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
+
         _ = app.UseAbpSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/sample/swagger.json", "YANLib API Sample");
@@ -134,8 +149,16 @@ public class YANLibHttpApiHostModule : AbpModule
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
         });
+
         _ = app.UseAuditing();
         _ = app.UseAbpSerilogEnrichers();
+
+        _ = app.UseHealthChecks("/health", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = WriteHealthCheckUIResponse
+        });
+
         _ = app.UseConfiguredEndpoints();
     }
 }

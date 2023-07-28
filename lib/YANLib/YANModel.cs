@@ -5,17 +5,18 @@ namespace YANLib;
 
 public static partial class YANModel
 {
-    public static List<T> ConvertList<T>(this T mdl) where T : class => new() { mdl };
+    public static List<T> AsList<T>(this T mdl) where T : class => new() { mdl };
 
-    public static HashSet<T> ConvertHashSet<T>(this T mdl) where T : class => new() { mdl };
+    public static HashSet<T> AsHashSet<T>(this T mdl) where T : class => new() { mdl };
 
-    public static T[] ConvertArray<T>(this T mdl) where T : class => new T[1] { mdl };
+    public static T[] AsArray<T>(this T mdl) where T : class => new T[1] { mdl };
 
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)
         {
             var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+
             if (properties.Any())
             {
                 foreach (var prop in properties)
@@ -24,11 +25,14 @@ public static partial class YANModel
                     {
                         continue;
                     }
+
                     var val = prop.GetValue(mdl);
+
                     if (val is null)
                     {
                         continue;
                     }
+
                     if (val is DateTime dt)
                     {
                         prop.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
@@ -44,6 +48,7 @@ public static partial class YANModel
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var list = (IList)val;
+
                         if (list.Count > 0)
                         {
                             for (var i = 0; i < list.Count; i++)
@@ -52,7 +57,9 @@ public static partial class YANModel
                                 {
                                     continue;
                                 }
+
                                 var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+
                                 if (changedItem is not null)
                                 {
                                     list[i] = changedItem;
@@ -63,6 +70,7 @@ public static partial class YANModel
                 }
             }
         }
+
         return mdl;
     }
 
@@ -72,6 +80,7 @@ public static partial class YANModel
         {
             yield break;
         }
+
         foreach (var mdl in mdls)
         {
             yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
@@ -83,6 +92,7 @@ public static partial class YANModel
         if (mdl is not null)
         {
             var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+
             if (properties.Any())
             {
                 foreach (var prop in properties)
@@ -91,11 +101,14 @@ public static partial class YANModel
                     {
                         continue;
                     }
+
                     var val = prop.GetValue(mdl);
+
                     if (val is null)
                     {
                         continue;
                     }
+
                     if (val is DateTime dt)
                     {
                         prop.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
@@ -111,6 +124,7 @@ public static partial class YANModel
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var list = (IList)val;
+
                         if (list.Count > 0)
                         {
                             for (var i = 0; i < list.Count; i++)
@@ -119,7 +133,9 @@ public static partial class YANModel
                                 {
                                     continue;
                                 }
+
                                 var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+
                                 if (changedItem is not null)
                                 {
                                     list[i] = changedItem;
@@ -139,6 +155,7 @@ public static partial class YANModel
         {
             yield break;
         }
+
         foreach (var mdl in mdls)
         {
             yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
@@ -150,6 +167,7 @@ public static partial class YANModel
         if (mdl is not null)
         {
             var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+
             if (properties.Any())
             {
                 foreach (var prop in properties)
@@ -158,11 +176,14 @@ public static partial class YANModel
                     {
                         continue;
                     }
+
                     var val = prop.GetValue(mdl);
+
                     if (val is null)
                     {
                         continue;
                     }
+
                     if (val is DateTime dt)
                     {
                         prop.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
@@ -170,6 +191,7 @@ public static partial class YANModel
                     else if (val.GetType().IsClass)
                     {
                         var changedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
+
                         if (changedVal is not null)
                         {
                             prop.SetValue(mdl, changedVal);
@@ -178,6 +200,7 @@ public static partial class YANModel
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var list = (IList)val;
+
                         if (list.Count > 0)
                         {
                             for (var i = 0; i < list.Count; i++)
@@ -186,7 +209,9 @@ public static partial class YANModel
                                 {
                                     continue;
                                 }
+
                                 var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+
                                 if (changedItem is not null)
                                 {
                                     list[i] = changedItem;
@@ -197,6 +222,7 @@ public static partial class YANModel
                 }
             }
         }
+
         return mdl;
     }
 
@@ -206,6 +232,7 @@ public static partial class YANModel
         {
             yield break;
         }
+
         foreach (var mdl in mdls)
         {
             yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);
@@ -217,6 +244,7 @@ public static partial class YANModel
         if (mdl is not null)
         {
             var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+
             if (properties.Any())
             {
                 foreach (var prop in properties)
@@ -225,11 +253,14 @@ public static partial class YANModel
                     {
                         continue;
                     }
+
                     var val = prop.GetValue(mdl);
+
                     if (val is null)
                     {
                         continue;
                     }
+
                     if (val is DateTime dt)
                     {
                         prop.SetValue(mdl, dt.ChangeTimeZone(tzSrc, tzDst));
@@ -237,6 +268,7 @@ public static partial class YANModel
                     else if (val.GetType().IsClass)
                     {
                         var changedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
+
                         if (changedVal is not null)
                         {
                             prop.SetValue(mdl, changedVal);
@@ -245,6 +277,7 @@ public static partial class YANModel
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var list = (IList)val;
+
                         if (list.Count > 0)
                         {
                             for (var i = 0; i < list.Count; i++)
@@ -253,7 +286,9 @@ public static partial class YANModel
                                 {
                                     continue;
                                 }
+
                                 var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+
                                 if (changedItem is not null)
                                 {
                                     list[i] = changedItem;
@@ -264,6 +299,7 @@ public static partial class YANModel
                 }
             }
         }
+
         return mdl;
     }
 
@@ -273,6 +309,7 @@ public static partial class YANModel
         {
             yield break;
         }
+
         foreach (var mdl in mdls)
         {
             yield return mdl.ChangeTimeZoneAllProperties(tzSrc, tzDst);

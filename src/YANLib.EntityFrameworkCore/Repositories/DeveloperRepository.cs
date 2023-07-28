@@ -75,7 +75,7 @@ public sealed class DeveloperRepository : IDeveloperRepository
 
             if (mdls.IsEmptyOrNull())
             {
-                throw new BusinessException(NOT_FOUND_DEV);
+                throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", entity.IdCard);
             }
 
             _dbContext.Developers.UpdateRange(mdls.Select(x =>
