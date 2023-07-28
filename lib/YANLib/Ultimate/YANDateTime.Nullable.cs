@@ -16,6 +16,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.ToDateTime(fmt, dfltVal);
@@ -76,6 +77,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.GetWeekOfYear();
@@ -88,6 +90,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -100,6 +103,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -112,6 +116,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -124,6 +129,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -136,6 +142,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -148,6 +155,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -160,6 +168,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzSrc, tzDst);
@@ -172,6 +181,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzDst);
@@ -184,6 +194,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzDst);
@@ -196,6 +207,7 @@ public static partial class YANDateTime
         {
             yield break;
         }
+
         foreach (var dt in dts)
         {
             yield return dt.ChangeTimeZone(tzDst);

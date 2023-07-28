@@ -22,6 +22,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in nums)
         {
             yield return num.ToByte();
@@ -38,6 +39,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToByte();
@@ -54,6 +56,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToByte(dfltVal);
@@ -65,6 +68,7 @@ public static partial class YANNum
     {
         var minValue = min.ToByte();
         var maxValue = max.ToByte();
+
         return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().Next(minValue.Value, maxValue.Value).ToByte() : default;
     }
 

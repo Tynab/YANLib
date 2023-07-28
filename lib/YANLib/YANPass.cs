@@ -30,8 +30,10 @@ public class YANPass
         if (password.IsNotWhiteSpaceAndNull() && SaltSize > 0 && Iterations > 0 && KeySize > 0)
         {
             var salt = GetBytes(SaltSize);
+
             return new StringBuilder().Append(ToHexString(Pbkdf2(password, salt, Iterations, Algorithm, KeySize))).Append(SegmentDelimiter).Append(ToHexString(salt)).Append(SegmentDelimiter).Append(Iterations).Append(SegmentDelimiter).Append(Algorithm).ToString();
         }
+
         return default;
     }
 
@@ -40,12 +42,15 @@ public class YANPass
         if (strHash.IsNotWhiteSpaceAndNull() && SegmentDelimiter.IsNotEmptyAndWhiteSpace())
         {
             var segs = strHash.Split(SegmentDelimiter);
+
             if (segs.Length > 3)
             {
                 var hash = FromHexString(segs[0]);
+
                 return FixedTimeEquals(Pbkdf2(password, FromHexString(segs[1]), segs[2].ToInt(), new HashAlgorithmName(segs[3]), hash.Length), hash);
             }
         }
+
         return false;
     }
 
@@ -60,14 +65,18 @@ public class YANPass
         {
             return false;
         }
+
         // has 8 characters
         if (password.Length < 8)
         {
             return false;
         }
+
         // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+
         newPwdSplChar.UnionWith(splChars);
+
         return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
     }
 
@@ -78,14 +87,18 @@ public class YANPass
         {
             return false;
         }
+
         // has 8 characters
         if (password.Length < 8)
         {
             return false;
         }
+
         // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+
         newPwdSplChar.UnionWith(splChars);
+
         return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
     }
 
@@ -96,14 +109,18 @@ public class YANPass
         {
             return false;
         }
+
         // has len character
         if (password.Length < len.ToByte())
         {
             return false;
         }
+
         // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+
         newPwdSplChar.UnionWith(splChars);
+
         return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
     }
 
@@ -114,14 +131,18 @@ public class YANPass
         {
             return false;
         }
+
         // has len character
         if (password.Length < len.ToByte())
         {
             return false;
         }
+
         // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+
         newPwdSplChar.UnionWith(splChars);
+
         return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
     }
     #endregion

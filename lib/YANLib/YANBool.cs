@@ -23,6 +23,7 @@ public static partial class YANBool
         {
             yield break;
         }
+
         foreach (var num in nums)
         {
             yield return num.ToBool();
@@ -37,6 +38,7 @@ public static partial class YANBool
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToBool();
@@ -51,6 +53,7 @@ public static partial class YANBool
         {
             yield break;
         }
+
         foreach (var num in strs)
         {
             yield return num.ToBool(dfltVal);

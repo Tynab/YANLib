@@ -10,11 +10,14 @@ public static partial class YANEnumerable
     public static IEnumerable<List<T>> ChunkBySize<T, T1>(this List<T> srcs, T1 chunkSize) where T1 : struct
     {
         var size = chunkSize.ToInt();
+
         if (srcs.IsEmptyOrNull() && size < 1)
         {
             yield break;
         }
+
         var cnt = srcs.Count;
+
         for (var i = 0; i < cnt; i += size)
         {
             yield return srcs.GetRange(i, Min(size, cnt - i));
@@ -27,7 +30,9 @@ public static partial class YANEnumerable
         {
             yield break;
         }
+
         var t = typeof(T);
+
         if (t.IsClass || GetUnderlyingType(t) is not null)
         {
             foreach (var src in srcs)
@@ -53,6 +58,7 @@ public static partial class YANEnumerable
         {
             yield break;
         }
+
         foreach (var src in srcs)
         {
             if (src.IsNotWhiteSpaceAndNull())

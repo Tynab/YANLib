@@ -8,6 +8,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var num in nums)
         {
             yield return num.ToByte();
@@ -20,6 +21,7 @@ public static partial class YANNum
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.ToByte(dfltVal);

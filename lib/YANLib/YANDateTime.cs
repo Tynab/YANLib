@@ -96,6 +96,7 @@ public static partial class YANDateTime
     public static DateTime ChangeTimeZone<T1, T2>(this DateTime dt, T1 tzSrc, T2 tzDst) where T1 : struct where T2 : struct
     {
         var diff = tzDst.ToInt() - tzSrc.ToInt();
+
         return diff switch
         {
             < 0 when (dt - MinValue).TotalHours < Abs(diff) => default,

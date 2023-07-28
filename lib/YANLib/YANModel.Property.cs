@@ -12,14 +12,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
+
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -31,14 +34,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in typeof(T).GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
+
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default(T)))
             {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -50,14 +56,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
+
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -69,14 +78,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
+
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -88,14 +100,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -107,14 +122,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -126,14 +144,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -145,14 +166,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -164,14 +188,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -183,14 +210,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -202,14 +232,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (!EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -221,14 +254,17 @@ public static partial class YANModel
         {
             return false;
         }
+
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
         {
             var type = prop.PropertyType;
+
             if (EqualityComparer<object>.Default.Equals(prop.GetValue(mdl), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }
         }
+
         return false;
     }
 

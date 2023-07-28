@@ -2,12 +2,14 @@
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FluentValidation;
 using Volo.Abp.Modularity;
+using YANLib.Application.Redis;
 
 namespace YANLib;
 
 [DependsOn(
     typeof(YANLibDomainModule),
     typeof(YANLibApplicationContractsModule),
+    typeof(YANLibApplicationRedisModule),
     typeof(AbpDddApplicationModule),
     typeof(AbpAutoMapperModule),
     typeof(AbpFluentValidationModule)

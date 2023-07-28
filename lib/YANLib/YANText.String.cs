@@ -84,7 +84,9 @@ public static partial class YANText
         {
             return false;
         }
+
         var hashSet = new HashSet<string>(strs.Length, StringComparer.OrdinalIgnoreCase);
+
         for (var i = 0; i < strs.Length; i++)
         {
             if (!hashSet.Add(strs[i]))
@@ -92,6 +94,7 @@ public static partial class YANText
                 return false;
             }
         }
+
         return true;
     }
 
@@ -103,7 +106,9 @@ public static partial class YANText
         {
             return false;
         }
+
         var hashSet = new HashSet<string>(strs.Count(), StringComparer.OrdinalIgnoreCase);
+
         foreach (var str in strs)
         {
             if (!hashSet.Add(str))
@@ -111,6 +116,7 @@ public static partial class YANText
                 return false;
             }
         }
+
         return true;
     }
 
@@ -130,6 +136,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return ToLower(str);
@@ -144,6 +151,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return ToLowerInvariant(str);
@@ -158,6 +166,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return ToUpper(str);
@@ -172,6 +181,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return ToUpperInvariant(str);

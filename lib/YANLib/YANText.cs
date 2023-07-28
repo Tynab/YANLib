@@ -14,6 +14,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.ToTitle();
@@ -26,8 +27,10 @@ public static partial class YANText
         {
             return str;
         }
+
         var sb = new StringBuilder(str);
         var is1stChar = true;
+
         for (var i = 0; i < sb.Length; i++)
         {
             if (is1stChar && sb[i].IsAlphabetic())
@@ -40,6 +43,7 @@ public static partial class YANText
                 sb[i] = sb[i].ToLower();
             }
         }
+
         return sb.ToString();
     }
 
@@ -49,6 +53,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.ToCapitalize();
@@ -61,9 +66,12 @@ public static partial class YANText
         {
             return str;
         }
+
         str = str.Trim();
+
         var sb = new StringBuilder();
         var isWhtSp = false;
+
         for (var i = 0; i < str.Length; i++)
         {
             if (str[i].IsWhiteSpace())
@@ -80,6 +88,7 @@ public static partial class YANText
                 isWhtSp = false;
             }
         }
+
         return sb.ToString();
     }
 
@@ -89,6 +98,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.CleanSpace();
@@ -101,18 +111,23 @@ public static partial class YANText
         {
             return str;
         }
+
         str = str.Trim();
+
         var sb = new StringBuilder();
         var isPrevCharWhtSp = true;
+
         for (var i = 0; i < str.Length; i++)
         {
             if (str[i].IsPunctuation() || str[i].IsNumber() || isPrevCharWhtSp && str[i].IsWhiteSpace())
             {
                 continue;
             }
+
             _ = isPrevCharWhtSp ? sb.Append(str[i].ToUpper()) : sb.Append(str[i].ToLower());
             isPrevCharWhtSp = str[i].IsWhiteSpace();
         }
+
         return sb.ToString();
     }
 
@@ -122,6 +137,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.FormatName();
@@ -134,8 +150,11 @@ public static partial class YANText
         {
             return str;
         }
+
         str = str.Trim();
+
         var sb = new StringBuilder();
+
         for (var i = 0; i < str.Length; i++)
         {
             if (str[i].IsAlphabetic())
@@ -143,6 +162,7 @@ public static partial class YANText
                 _ = sb.Append(str[i]);
             }
         }
+
         return sb.ToString();
     }
 
@@ -152,6 +172,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.FilterAlphabetic();
@@ -164,8 +185,11 @@ public static partial class YANText
         {
             return str;
         }
+
         str = str.Trim();
+
         var sb = new StringBuilder();
+
         for (var i = 0; i < str.Length; i++)
         {
             if (str[i].IsNumber())
@@ -173,6 +197,7 @@ public static partial class YANText
                 _ = sb.Append(str[i]);
             }
         }
+
         return sb.ToString();
     }
 
@@ -182,6 +207,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.FilterNumber();
@@ -194,8 +220,11 @@ public static partial class YANText
         {
             return str;
         }
+
         str = str.Trim();
+
         var sb = new StringBuilder();
+
         for (var i = 0; i < str.Length; i++)
         {
             if (str[i].IsNumber() || str[i].IsAlphabetic())
@@ -203,6 +232,7 @@ public static partial class YANText
                 _ = sb.Append(str[i]);
             }
         }
+
         return sb.ToString();
     }
 
@@ -212,6 +242,7 @@ public static partial class YANText
         {
             yield break;
         }
+
         foreach (var str in strs)
         {
             yield return str.FilterAlphanumeric();
