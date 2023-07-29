@@ -8,7 +8,6 @@ using Volo.Abp;
 using YANLib.EntityFrameworkCore.DbContext;
 using YANLib.Models;
 using static System.DateTime;
-using static System.Guid;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Repositories;
@@ -29,7 +28,7 @@ public sealed class CertificateRepository : ICertificateRepository
     #endregion
 
     #region Implements
-    public async ValueTask<IEnumerable<Certificate>> GetByDeveloperId(Guid developerId)
+    public async ValueTask<IEnumerable<Certificate>> GetByDeveloperId(string developerId)
     {
         try
         {
@@ -42,29 +41,18 @@ public sealed class CertificateRepository : ICertificateRepository
         }
     }
 
-    public async ValueTask<IEnumerable<Certificate>> Inserts(IEnumerable<Certificate> entities)
+    public async ValueTask<Certificate> Insert(Certificate entity)
     {
         try
         {
-            var ids = new HashSet<Guid>();
-            var rslts = entities.Select(x =>
-            {
-                var id = NewGuid();
+            entity.CreatedDate = Now;
+            _ = await _dbContext.Certificates.AddAsync(entity);
 
-                x.Id = id;
-                x.CreatedDate = Now;
-                _ = ids.Add(id);
-
-                return x;
-            });
-
-            await _dbContext.Certificates.AddRangeAsync(rslts);
-
-            return await _dbContext.SaveChangesAsync() > 0 ? rslts : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertsCertificateRepository-Exception: {Entities}", entities.CamelSerialize());
+            _logger.LogError(ex, "InsertCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
             throw;
         }
     }

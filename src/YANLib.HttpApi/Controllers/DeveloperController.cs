@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -31,7 +30,7 @@ public sealed class DeveloperController : YANLibController
     #region Methods
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Tìm Developer theo Id")]
-    public async ValueTask<IActionResult> Get([Required] Guid id)
+    public async ValueTask<IActionResult> Get([Required] string id)
     {
         _logger.LogInformation("GetDeveloperController: {Id}", id);
 

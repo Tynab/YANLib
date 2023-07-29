@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YANLib.Application.Redis.Services;
-using YANLib.DTOs;
+using YANLib.Dtos;
 using YANLib.Models;
 using YANLib.Repositories;
 using YANLib.Requests;
@@ -18,11 +18,11 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
     #region Fields
     private readonly ILogger<DeveloperTypeService> _logger;
     private readonly IDeveloperTypeRepository _repository;
-    private readonly IRedisService<DeveloperTypeRedis> _redisService;
+    private readonly IRedisService<DeveloperTypeRedisDto> _redisService;
     #endregion
 
     #region Constructors
-    public DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDeveloperTypeRepository repository, IRedisService<DeveloperTypeRedis> redisService)
+    public DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDeveloperTypeRepository repository, IRedisService<DeveloperTypeRedisDto> redisService)
     {
         _logger = logger;
         _repository = repository;
@@ -35,7 +35,7 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
     {
         try
         {
-            return (await _redisService.GetAll(DEV_TYPE_GRP)).Select(ObjectMapper.Map<KeyValuePair<string, DeveloperTypeRedis>, DeveloperTypeResponse>).ToList();
+            return (await _redisService.GetAll(DEV_TYPE_GRP)).Select(ObjectMapper.Map<KeyValuePair<string, DeveloperTypeRedisDto>, DeveloperTypeResponse>).ToList();
         }
         catch (Exception ex)
         {
@@ -48,7 +48,7 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
     {
         try
         {
-            var rslt = ObjectMapper.Map<DeveloperTypeRedis, DeveloperTypeResponse>(await _redisService.Get(DEV_TYPE_GRP, code.ToString()));
+            var rslt = ObjectMapper.Map<DeveloperTypeRedisDto, DeveloperTypeResponse>(await _redisService.Get(DEV_TYPE_GRP, code.ToString()));
 
             if (rslt is not null)
             {
@@ -72,7 +72,7 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
 
             if (mdl is not null)
             {
-                await _redisService.Set(DEV_TYPE_GRP, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedis>(mdl));
+                await _redisService.Set(DEV_TYPE_GRP, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
             }
 
             return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
@@ -92,7 +92,7 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
 
             if (mdl is not null)
             {
-                await _redisService.Set(DEV_TYPE_GRP, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedis>(mdl));
+                await _redisService.Set(DEV_TYPE_GRP, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
             }
 
             return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
@@ -112,7 +112,7 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
             var mdls = await _repository.GetAll();
             var rslt = await task;
 
-            return mdls.IsNotEmptyAndNull() ? rslt && await _redisService.SetBulk(DEV_TYPE_GRP, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedis>)) : rslt;
+            return mdls.IsNotEmptyAndNull() ? rslt && await _redisService.SetBulk(DEV_TYPE_GRP, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>)) : rslt;
         }
         catch (Exception ex)
         {

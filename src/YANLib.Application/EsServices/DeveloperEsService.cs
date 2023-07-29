@@ -101,7 +101,7 @@ public class DeveloperEsService : YANLibAppService, IDeveloperEsService
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByDeveloperId(Guid developerId) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
+    public async ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByDeveloperId(string developerId) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
     .Query(q => q
     .Bool(b => b
     .Must(d => d

@@ -2,7 +2,7 @@
 
 namespace YANLib.Requests;
 
-public sealed class CertificateRipRequest
+public class CertificateRipRequest
 {
     [Required]
     public string Name { get; set; }
