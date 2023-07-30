@@ -28,7 +28,7 @@ services:
       - 8200:8200
     hostname: apm-server
     # Elastic Agent does not retry failed connections to Kibana upon the initial enrollment phase.
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - yan
     depends_on:

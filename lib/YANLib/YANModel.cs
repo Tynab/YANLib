@@ -11,15 +11,33 @@ public static partial class YANModel
 
     public static T[] AsArray<T>(this T mdl) where T : class => new T[1] { mdl };
 
+    public static T Copy<T>(this T src) where T : new()
+    {
+        var rslt = new T();
+        var props = typeof(T).GetProperties(Public | Instance);
+
+        foreach (var prop in props)
+        {
+            if (prop.CanRead && prop.CanWrite)
+            {
+                var val = prop.GetValue(src);
+
+                prop.SetValue(rslt, val);
+            }
+        }
+
+        return rslt;
+    }
+
     public static T? ChangeTimeZoneAllProperties<T, T1, T2>(this T? mdl, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
         if (mdl is not null)
         {
-            var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+            var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
 
-            if (properties.Any())
+            if (props.Any())
             {
-                foreach (var prop in properties)
+                foreach (var prop in props)
                 {
                     if (prop is null)
                     {
@@ -39,10 +57,11 @@ public static partial class YANModel
                     }
                     else if (val.GetType().IsClass)
                     {
-                        var changedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
-                        if (changedVal is not null)
+                        var chgedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
+
+                        if (chgedVal is not null)
                         {
-                            prop.SetValue(mdl, changedVal);
+                            prop.SetValue(mdl, chgedVal);
                         }
                     }
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
@@ -58,11 +77,11 @@ public static partial class YANModel
                                     continue;
                                 }
 
-                                var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+                                var chgedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
 
-                                if (changedItem is not null)
+                                if (chgedItem is not null)
                                 {
-                                    list[i] = changedItem;
+                                    list[i] = chgedItem;
                                 }
                             }
                         }
@@ -91,11 +110,11 @@ public static partial class YANModel
     {
         if (mdl is not null)
         {
-            var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+            var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
 
-            if (properties.Any())
+            if (props.Any())
             {
-                foreach (var prop in properties)
+                foreach (var prop in props)
                 {
                     if (prop is null)
                     {
@@ -115,10 +134,11 @@ public static partial class YANModel
                     }
                     else if (val.GetType().IsClass)
                     {
-                        var changedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
-                        if (changedVal is not null)
+                        var chgedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
+
+                        if (chgedVal is not null)
                         {
-                            prop.SetValue(mdl, changedVal);
+                            prop.SetValue(mdl, chgedVal);
                         }
                     }
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
@@ -134,11 +154,11 @@ public static partial class YANModel
                                     continue;
                                 }
 
-                                var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+                                var chgedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
 
-                                if (changedItem is not null)
+                                if (chgedItem is not null)
                                 {
-                                    list[i] = changedItem;
+                                    list[i] = chgedItem;
                                 }
                             }
                         }
@@ -166,11 +186,11 @@ public static partial class YANModel
     {
         if (mdl is not null)
         {
-            var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+            var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
 
-            if (properties.Any())
+            if (props.Any())
             {
-                foreach (var prop in properties)
+                foreach (var prop in props)
                 {
                     if (prop is null)
                     {
@@ -190,11 +210,11 @@ public static partial class YANModel
                     }
                     else if (val.GetType().IsClass)
                     {
-                        var changedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
+                        var chgedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
 
-                        if (changedVal is not null)
+                        if (chgedVal is not null)
                         {
-                            prop.SetValue(mdl, changedVal);
+                            prop.SetValue(mdl, chgedVal);
                         }
                     }
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
@@ -210,11 +230,11 @@ public static partial class YANModel
                                     continue;
                                 }
 
-                                var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+                                var chgedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
 
-                                if (changedItem is not null)
+                                if (chgedItem is not null)
                                 {
-                                    list[i] = changedItem;
+                                    list[i] = chgedItem;
                                 }
                             }
                         }
@@ -243,11 +263,11 @@ public static partial class YANModel
     {
         if (mdl is not null)
         {
-            var properties = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
+            var props = typeof(T).GetProperties(Public | Instance).Where(p => p.CanRead && p.CanWrite);
 
-            if (properties.Any())
+            if (props.Any())
             {
-                foreach (var prop in properties)
+                foreach (var prop in props)
                 {
                     if (prop is null)
                     {
@@ -267,11 +287,11 @@ public static partial class YANModel
                     }
                     else if (val.GetType().IsClass)
                     {
-                        var changedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
+                        var chgedVal = ChangeTimeZoneAllProperties(val, tzSrc, tzDst);
 
-                        if (changedVal is not null)
+                        if (chgedVal is not null)
                         {
-                            prop.SetValue(mdl, changedVal);
+                            prop.SetValue(mdl, chgedVal);
                         }
                     }
                     else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
@@ -287,11 +307,11 @@ public static partial class YANModel
                                     continue;
                                 }
 
-                                var changedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
+                                var chgedItem = ChangeTimeZoneAllProperties(list[i], tzSrc, tzDst);
 
-                                if (changedItem is not null)
+                                if (chgedItem is not null)
                                 {
-                                    list[i] = changedItem;
+                                    list[i] = chgedItem;
                                 }
                             }
                         }

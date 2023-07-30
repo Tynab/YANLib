@@ -26,7 +26,7 @@ services:
       - 8220:8220
     hostname: fleet-server
     # Elastic Agent does not retry failed connections to Kibana upon the initial enrollment phase.
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - yan
     depends_on:

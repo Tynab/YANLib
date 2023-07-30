@@ -34,3 +34,4 @@ services:
       - yan
     depends_on:
       - elasticsearch
+    restart: unless-stopped

@@ -16,9 +16,11 @@ using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.Autofac;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.SqlServer;
+using Volo.Abp.EventBus.RabbitMq;
 using Volo.Abp.Http.Client;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
@@ -36,11 +38,13 @@ namespace YANLib;
     typeof(YANLibHttpApiModule),
     typeof(YANLibApplicationModule),
     typeof(YANLibEntityFrameworkCoreModule),
-    //typeof(AbpAutofacModule),
+    typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpCachingStackExchangeRedisModule),
+    //typeof(AbpEventBusKafkaModule),
+    typeof(AbpEventBusRabbitMqModule),
     typeof(AbpHttpClientModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule

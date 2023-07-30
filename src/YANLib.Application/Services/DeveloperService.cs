@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Id_Generator_Snowflake;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -6,14 +6,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.EventBus.Distributed;
 using YANLib.EsIndexs;
 using YANLib.EsServices;
-using YANLib.Localization;
+using YANLib.Etos;
 using YANLib.Models;
 using YANLib.Repositories;
 using YANLib.Requests;
 using YANLib.Responses;
-using static System.Guid;
+using static YANLib.YANLibConsts;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services;
@@ -22,25 +23,27 @@ public class DeveloperService : YANLibAppService, IDeveloperService
 {
     #region Fields
     private readonly ILogger<DeveloperService> _logger;
-    private readonly IStringLocalizer<YANLibResource> _localizer;
     private readonly IDeveloperRepository _repository;
     private readonly IDeveloperEsService _esService;
     private readonly ICertificateRepository _certificateRepository;
+    private readonly IDistributedEventBus _distributedEventBus;
+    private readonly IdGenerator _idGenerator;
     #endregion
 
     #region Constructors
-    public DeveloperService(ILogger<DeveloperService> logger, IStringLocalizer<YANLibResource> localizer, IDeveloperRepository repository, IDeveloperEsService esService, ICertificateRepository certificateRepository)
+    public DeveloperService(ILogger<DeveloperService> logger, IDeveloperRepository repository, IDeveloperEsService esService, ICertificateRepository certificateRepository, IDistributedEventBus distributedEventBus)
     {
         _logger = logger;
-        _localizer = localizer;
         _repository = repository;
         _esService = esService;
         _certificateRepository = certificateRepository;
+        _distributedEventBus = distributedEventBus;
+        _idGenerator = new IdGenerator(DevelopersWorkerId, YanlibDatacenterId);
     }
     #endregion
 
     #region Implements
-    public async ValueTask<DeveloperResponse> Get(Guid id)
+    public async ValueTask<DeveloperResponse> Get(string id)
     {
         try
         {
@@ -88,21 +91,35 @@ public class DeveloperService : YANLibAppService, IDeveloperService
                 throw new BusinessException(EXIST_ID_CARD).WithData("IdCard", request.IdCard);
             }
 
-            var id = NewGuid();
+            var id = _idGenerator.NextIdAlphabetic();
             var ent = ObjectMapper.Map<DeveloperRequest, Developer>(request);
             var certEnts = ObjectMapper.Map<List<CertificateRipRequest>, List<Certificate>>(request.Certificates);
 
             ent.Id = id;
-            certEnts?.ForEach(x => x.DeveloperId = id);
+
+            if (certEnts.IsNotEmptyAndNull())
+            {
+                foreach (var certEnt in certEnts)
+                {
+                    certEnt.Id = _idGenerator.NextIdAlphabetic();
+                    certEnt.DeveloperId = id;
+
+                    var eto = ObjectMapper.Map<Certificate, CertificateCreateEto>(certEnt);
+
+                    _logger.LogInformation("InsertDeveloperService-Publish: {ETO}", eto.CamelSerialize());
+
+                    await _distributedEventBus.PublishAsync(eto);
+                }
+            }
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Insert(ent));
 
             if (request.Certificates.IsNotEmptyAndNull())
             {
-                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _certificateRepository.Inserts(certEnts)));
+                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
             }
 
-            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException();
+            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -117,7 +134,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
         {
             var mdl = await _esService.Get(idCard) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", idCard);
             var ent = ObjectMapper.Map<DeveloperIndex, Developer>(mdl);
-            var id = NewGuid();
+            var id = _idGenerator.NextIdAlphabetic();
             var certEnts = ObjectMapper.Map<List<CertificateRipRequest>, List<Certificate>>(request.Certificates);
 
             ent.Id = id;
@@ -125,25 +142,44 @@ public class DeveloperService : YANLibAppService, IDeveloperService
             ent.Phone = request.Phone ?? ent.Phone;
             ent.IdCard = idCard;
             ent.DeveloperTypeCode = request.DeveloperTypeCode ?? ent.DeveloperTypeCode;
-            certEnts?.ForEach(x => x.DeveloperId = id);
+
+            if (certEnts.IsNotEmptyAndNull())
+            {
+                foreach (var certEnt in certEnts)
+                {
+                    certEnt.Id = _idGenerator.NextIdAlphabetic();
+                    certEnt.DeveloperId = id;
+
+                    var eto = ObjectMapper.Map<Certificate, CertificateCreateEto>(certEnt);
+
+                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.CamelSerialize());
+
+                    await _distributedEventBus.PublishAsync(eto);
+                }
+            }
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
 
             if (request.Certificates.IsNotEmptyAndNull())
             {
-                if (mdl.Certificates.IsNotEmptyAndNull())
+                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
+            }
+            else if (mdl.Certificates.IsNotEmptyAndNull())
+            {
+                foreach (var cert in mdl.Certificates)
                 {
-                    await _certificateRepository.Updates(ObjectMapper.Map<IEnumerable<CertificateResponse>, IEnumerable<Certificate>>(mdl.Certificates.Select(x =>
-                    {
-                        x.DeveloperId = null;
-                        return x;
-                    })));
-                }
+                    cert.Id = _idGenerator.NextIdAlphabetic();
+                    cert.DeveloperId = id;
 
-                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _certificateRepository.Inserts(certEnts)));
+                    var eto = ObjectMapper.Map<CertificateResponse, CertificateAdjustEto>(cert);
+
+                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.CamelSerialize());
+
+                    await _distributedEventBus.PublishAsync(eto);
+                }
             }
 
-            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException();
+            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
