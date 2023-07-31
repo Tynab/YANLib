@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using YANLib.Models;
 using YANLib.Repositories;
@@ -24,15 +26,15 @@ public class CertificateService : YANLibAppService, ICertificateService
     #endregion
 
     #region Implements
-    public async ValueTask<CertificateResponse> Insert(CertificateFullRequest request)
+    public async ValueTask<List<CertificateResponse>> Inserts(List<CertificateFullRequest> requests)
     {
         try
         {
-            return ObjectMapper.Map<Certificate, CertificateResponse>(await _repository.Insert(ObjectMapper.Map<CertificateFullRequest, Certificate>(request)));
+            return ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _repository.Inserts(ObjectMapper.Map<List<CertificateFullRequest>, List<Certificate>>(requests))).ToList();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertCertificateService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "InsertsCertificateService-Exception: {Requests}", requests.CamelSerialize());
             throw;
         }
     }

@@ -41,18 +41,24 @@ public sealed class CertificateRepository : ICertificateRepository
         }
     }
 
-    public async ValueTask<Certificate> Insert(Certificate entity)
+    public async ValueTask<IEnumerable<Certificate>> Inserts(IEnumerable<Certificate> entities)
     {
         try
         {
-            entity.CreatedDate = Now;
-            _ = await _dbContext.Certificates.AddAsync(entity);
+            var rslts = entities.Select(x =>
+            {
+                x.CreatedDate = Now;
 
-            return await _dbContext.SaveChangesAsync() > 0 ? entity : throw new BusinessException(INTERNAL_SERVER_ERROR);
+                return x;
+            });
+
+            await _dbContext.Certificates.AddRangeAsync(rslts);
+
+            return await _dbContext.SaveChangesAsync() > 0 ? rslts : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "InsertsCertificateRepository-Exception: {Entities}", entities.CamelSerialize());
             throw;
         }
     }
@@ -64,6 +70,7 @@ public sealed class CertificateRepository : ICertificateRepository
             var rslts = entities.Select(x =>
             {
                 x.ModifiedDate = Now;
+
                 return x;
             });
 
