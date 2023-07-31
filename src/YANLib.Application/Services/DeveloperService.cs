@@ -171,6 +171,8 @@ public class DeveloperService : YANLibAppService, IDeveloperService
                     x.ModifiedDate = Now;
                 });
 
+                rslt.Certificates = new List<CertificateResponse>(mdl.Certificates);
+
                 var etos = ObjectMapper.Map<List<CertificateResponse>, List<CertificateAdjustEto>>(mdl.Certificates);
 
                 _logger.LogInformation("AdjustDeveloperService-Publish: {ETOs}", etos.CamelSerialize());
