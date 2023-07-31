@@ -8,6 +8,6 @@ namespace YANLib.Repositories;
 public interface ICertificateRepository : ITransientDependency
 {
     public ValueTask<IEnumerable<Certificate>> GetByDeveloperId(string developerId);
-    public ValueTask<IEnumerable<Certificate>> Inserts(IEnumerable<Certificate> entities);
-    public ValueTask<IEnumerable<Certificate>> Updates(IEnumerable<Certificate> entities);
+    public ValueTask<IEnumerable<Certificate>> Inserts(List<Certificate> entities);
+    public ValueTask<IEnumerable<Certificate>> Updates(List<Certificate> entities);
 }

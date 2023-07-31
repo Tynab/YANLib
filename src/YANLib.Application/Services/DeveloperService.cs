@@ -14,6 +14,7 @@ using YANLib.Models;
 using YANLib.Repositories;
 using YANLib.Requests;
 using YANLib.Responses;
+using static System.DateTime;
 using static YANLib.YANLibConsts;
 using static YANLib.YANLibDomainErrorCodes;
 
@@ -106,6 +107,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
                 {
                     x.Id = _idGenerator.NextIdAlphabetic();
                     x.DeveloperId = id;
+                    x.CreatedDate = Now;
                 });
 
                 rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
@@ -150,6 +152,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
                 {
                     x.Id = _idGenerator.NextIdAlphabetic();
                     x.DeveloperId = id;
+                    x.CreatedDate = Now;
                 });
 
                 rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
@@ -164,8 +167,8 @@ public class DeveloperService : YANLibAppService, IDeveloperService
             {
                 mdl.Certificates.ForEach(x =>
                 {
-                    x.Id = _idGenerator.NextIdAlphabetic();
                     x.DeveloperId = id;
+                    x.ModifiedDate = Now;
                 });
 
                 var etos = ObjectMapper.Map<List<CertificateResponse>, List<CertificateAdjustEto>>(mdl.Certificates);

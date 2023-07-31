@@ -38,5 +38,18 @@ public class CertificateService : YANLibAppService, ICertificateService
             throw;
         }
     }
+
+    public async ValueTask<List<CertificateResponse>> Updates(List<CertificateFullRequest> requests)
+    {
+        try
+        {
+            return ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _repository.Updates(ObjectMapper.Map<List<CertificateFullRequest>, List<Certificate>>(requests))).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "UpdatesCertificateService-Exception: {Requests}", requests.CamelSerialize());
+            throw;
+        }
+    }
     #endregion
 }
