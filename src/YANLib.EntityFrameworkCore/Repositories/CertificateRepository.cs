@@ -41,20 +41,15 @@ public sealed class CertificateRepository : ICertificateRepository
         }
     }
 
-    public async ValueTask<IEnumerable<Certificate>> Inserts(IEnumerable<Certificate> entities)
+    public async ValueTask<IEnumerable<Certificate>> Inserts(List<Certificate> entities)
     {
         try
         {
-            var rslts = entities.Select(x =>
-            {
-                x.CreatedDate = Now;
+            entities.ForEach(x => x.CreatedDate = Now);
 
-                return x;
-            });
+            await _dbContext.Certificates.AddRangeAsync(entities);
 
-            await _dbContext.Certificates.AddRangeAsync(rslts);
-
-            return await _dbContext.SaveChangesAsync() > 0 ? rslts : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.SaveChangesAsync() > 0 ? entities : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -63,15 +58,20 @@ public sealed class CertificateRepository : ICertificateRepository
         }
     }
 
-    public async ValueTask<IEnumerable<Certificate>> Updates(IEnumerable<Certificate> entities)
+    public async ValueTask<IEnumerable<Certificate>> Updates(List<Certificate> entities)
     {
         try
         {
-            var rslts = entities.Select(x =>
-            {
-                x.ModifiedDate = Now;
+            var rslts = await _dbContext.Certificates.AsNoTracking().Where(x => entities.Select(y => y.Id).Contains(x.Id)).ToListAsync();
 
-                return x;
+            rslts.ForEach(x =>
+            {
+                var ent = entities.FirstOrDefault(y => y.Id == x.Id);
+
+                x.Name = ent.Name;
+                x.GPA = ent.GPA;
+                x.DeveloperId = ent.DeveloperId;
+                x.ModifiedDate = Now;
             });
 
             _dbContext.Certificates.UpdateRange(rslts);

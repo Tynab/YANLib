@@ -27,7 +27,7 @@ public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandl
     public async Task HandleEventAsync(List<CertificateAdjustEto> eventData)
     {
         _logger.LogInformation("AdjustCertificateHandler-Subcribe: {EventData}", eventData.CamelSerialize());
-        _logger.LogInformation("AdjustCertificateHandler-InsertsCertificateService: {Responses}", await _certificateService.Inserts(ObjectMapper.Map<List<CertificateAdjustEto>, List<CertificateFullRequest>>(eventData)));
+        _logger.LogInformation("AdjustCertificateHandler-UpdatesCertificateService: {Responses}", await _certificateService.Updates(ObjectMapper.Map<List<CertificateAdjustEto>, List<CertificateFullRequest>>(eventData)));
     }
     #endregion
 }
