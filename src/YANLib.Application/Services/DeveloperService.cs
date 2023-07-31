@@ -97,6 +97,15 @@ public class DeveloperService : YANLibAppService, IDeveloperService
 
             ent.Id = id;
 
+            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Insert(ent));
+
+            if (request.Certificates.IsNotEmptyAndNull())
+            {
+                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
+            }
+
+            var task = _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt));
+
             if (certEnts.IsNotEmptyAndNull())
             {
                 foreach (var certEnt in certEnts)
@@ -112,14 +121,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
                 }
             }
 
-            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Insert(ent));
-
-            if (request.Certificates.IsNotEmptyAndNull())
-            {
-                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
-            }
-
-            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await task ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -143,6 +145,15 @@ public class DeveloperService : YANLibAppService, IDeveloperService
             ent.IdCard = idCard;
             ent.DeveloperTypeCode = request.DeveloperTypeCode ?? ent.DeveloperTypeCode;
 
+            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
+
+            if (request.Certificates.IsNotEmptyAndNull())
+            {
+                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
+            }
+
+            var task = _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt));
+
             if (certEnts.IsNotEmptyAndNull())
             {
                 foreach (var certEnt in certEnts)
@@ -156,13 +167,6 @@ public class DeveloperService : YANLibAppService, IDeveloperService
 
                     await _distributedEventBus.PublishAsync(eto);
                 }
-            }
-
-            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
-
-            if (request.Certificates.IsNotEmptyAndNull())
-            {
-                rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certEnts));
             }
             else if (mdl.Certificates.IsNotEmptyAndNull())
             {
@@ -179,7 +183,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
                 }
             }
 
-            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await task ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
         catch (Exception ex)
         {
