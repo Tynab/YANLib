@@ -46,7 +46,7 @@ public sealed class DeveloperController : YANLibController
         return Ok(await _service.Insert(request));
     }
 
-    [HttpPatch("idCard")]
+    [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật Developer")]
     public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperFreeRequest request)
     {
