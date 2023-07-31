@@ -25,7 +25,7 @@ public class CreateCertificateHandler : YANLibAppService, IDistributedEventHandl
     #region Implements
     public async Task HandleEventAsync(CertificateCreateEto eventData)
     {
-        _logger.LogInformation("CreateCertificateHandler-Subcribe: {ETO}", eventData.CamelSerialize());
+        _logger.LogInformation("CreateCertificateHandler-Subcribe: {EventData}", eventData.CamelSerialize());
         _logger.LogInformation("CreateCertificateHandler-InsertCertificateService: {Response}", await _certificateService.Insert(ObjectMapper.Map<CertificateCreateEto, CertificateFullRequest>(eventData)));
     }
     #endregion
