@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.EventBus.Distributed;
 using YANLib.Etos;
@@ -7,7 +8,7 @@ using YANLib.Services;
 
 namespace YANLib.Handlers;
 
-public class CreateCertificateHandler : YANLibAppService, IDistributedEventHandler<CertificateCreateEto>
+public class CreateCertificateHandler : YANLibAppService, IDistributedEventHandler<List<CertificateCreateEto>>
 {
     #region Fields
     private readonly ILogger<CreateCertificateHandler> _logger;
@@ -23,10 +24,10 @@ public class CreateCertificateHandler : YANLibAppService, IDistributedEventHandl
     #endregion
 
     #region Implements
-    public async Task HandleEventAsync(CertificateCreateEto eventData)
+    public async Task HandleEventAsync(List<CertificateCreateEto> eventData)
     {
         _logger.LogInformation("CreateCertificateHandler-Subcribe: {EventData}", eventData.CamelSerialize());
-        _logger.LogInformation("CreateCertificateHandler-InsertCertificateService: {Response}", await _certificateService.Insert(ObjectMapper.Map<CertificateCreateEto, CertificateFullRequest>(eventData)));
+        _logger.LogInformation("CreateCertificateHandler-InsertsCertificateService: {Responses}", await _certificateService.Inserts(ObjectMapper.Map<List<CertificateCreateEto>, List<CertificateFullRequest>>(eventData)));
     }
     #endregion
 }
