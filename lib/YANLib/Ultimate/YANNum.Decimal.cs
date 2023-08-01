@@ -48,5 +48,4 @@ public static partial class YANNum
             yield return YANLib.YANNum.GenerateRandomDecimal(min, max);
         }
     }
-
 }
