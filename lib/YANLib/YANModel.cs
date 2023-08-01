@@ -95,7 +95,7 @@ public static partial class YANModel
 
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1 tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || !mdls.Any())
+        if (mdls.IsEmptyOrNull())
         {
             yield break;
         }
@@ -171,7 +171,7 @@ public static partial class YANModel
 
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1? tzSrc, T2 tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || !mdls.Any())
+        if (mdls.IsEmptyOrNull())
         {
             yield break;
         }
@@ -248,7 +248,7 @@ public static partial class YANModel
 
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1 tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || !mdls.Any())
+        if (mdls.IsEmptyOrNull())
         {
             yield break;
         }
@@ -325,7 +325,7 @@ public static partial class YANModel
 
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T, T1, T2>(this IEnumerable<T?> mdls, T1? tzSrc, T2? tzDst) where T : class where T1 : struct where T2 : struct
     {
-        if (mdls is null || !mdls.Any())
+        if (mdls.IsEmptyOrNull())
         {
             yield break;
         }

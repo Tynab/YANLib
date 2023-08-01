@@ -10,7 +10,7 @@ public static partial class YANText
 
     public static IEnumerable<string> ToTitle(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -49,7 +49,7 @@ public static partial class YANText
 
     public static IEnumerable<string> ToCapitalize(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -94,7 +94,7 @@ public static partial class YANText
 
     public static IEnumerable<string> CleanSpace(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -133,7 +133,7 @@ public static partial class YANText
 
     public static IEnumerable<string> FormatName(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -168,7 +168,7 @@ public static partial class YANText
 
     public static IEnumerable<string> FilterAlphabetic(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -203,7 +203,7 @@ public static partial class YANText
 
     public static IEnumerable<string> FilterNumber(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -238,7 +238,7 @@ public static partial class YANText
 
     public static IEnumerable<string> FilterAlphanumeric(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }

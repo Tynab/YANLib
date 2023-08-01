@@ -17,11 +17,11 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<byte>? ToByte<T>(this IEnumerable<T?> nums) where T : struct => nums is null || !nums.Any() ? default : nums.Select(n => n.ToByte());
+    public static IEnumerable<byte>? ToByte<T>(this IEnumerable<T?> nums) where T : struct => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToByte());
 
     public static byte ToByte<T>(this string str, T? dfltVal) where T : struct => dfltVal.HasValue ? str.ToByte(dfltVal.Value) : default;
 
-    public static IEnumerable<byte>? ToByte<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct => strs is null || !strs.Any() ? default : strs.Select(s => s.ToByte(dfltVal));
+    public static IEnumerable<byte>? ToByte<T>(this IEnumerable<string> strs, T? dfltVal) where T : struct => strs.IsEmptyOrNull() ? default : strs.Select(s => s.ToByte(dfltVal));
 
     public static byte GenerateRandomByte<T1, T2>(T1? min, T2 max) where T1 : struct where T2 : struct => min.HasValue ? GenerateRandomByte(min.Value, max) : default;
 

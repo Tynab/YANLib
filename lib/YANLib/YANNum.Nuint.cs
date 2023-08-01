@@ -19,7 +19,7 @@ public static partial class YANNum
 
     public static IEnumerable<nuint> ToNuint<T>(this IEnumerable<T> nums) where T : struct
     {
-        if (nums is null || !nums.Any())
+        if (nums.IsEmptyOrNull())
         {
             yield break;
         }
@@ -34,7 +34,7 @@ public static partial class YANNum
 
     public static IEnumerable<nuint> ToNuint(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -49,7 +49,7 @@ public static partial class YANNum
 
     public static IEnumerable<nuint> ToNuint<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }

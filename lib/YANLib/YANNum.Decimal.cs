@@ -15,24 +15,13 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<decimal> ToDecimal<T>(this IEnumerable<T> nums) where T : struct
-    {
-        if (nums is null || !nums.Any())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToDecimal();
-        }
-    }
+    public static IEnumerable<decimal>? ToDecimal<T>(this IEnumerable<T> nums) where T : struct => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToDecimal());
 
     public static decimal ToDecimal(this string str) => decimal.TryParse(str, out var num) ? num : default;
 
     public static IEnumerable<decimal> ToDecimal(this IEnumerable<string> strs)
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
@@ -47,7 +36,7 @@ public static partial class YANNum
 
     public static IEnumerable<decimal> ToDecimal<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
     {
-        if (strs is null || !strs.Any())
+        if (strs.IsEmptyOrNull())
         {
             yield break;
         }
