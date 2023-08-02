@@ -1,6 +1,6 @@
 ﻿namespace YANLib.Ultimate;
 
-public sealed partial class YANNum
+public static partial class YANNum
 {
     public static IEnumerable<decimal> ToDecimal<T>(this IEnumerable<T?> nums) where T : struct
     {
