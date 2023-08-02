@@ -54,7 +54,7 @@ public static partial class YANEnumerable
 
     public static IEnumerable<string> Clean(this IEnumerable<string> srcs)
     {
-        if (srcs is null || !srcs.Any())
+        if (srcs.IsEmptyOrNull())
         {
             yield break;
         }

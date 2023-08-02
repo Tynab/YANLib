@@ -17,11 +17,11 @@ public static partial class YANJson
 
     public static string Serialize<T>(this T mdl) => JsonSerializer.Serialize(mdl);
 
-    public static IEnumerable<string>? Serializes<T>(this IEnumerable<T> mdls) => mdls is null || !mdls.Any() ? default : mdls.Select(m => m.Serialize());
+    public static IEnumerable<string>? Serializes<T>(this IEnumerable<T> mdls) => mdls.IsEmptyOrNull() ? default : mdls.Select(m => m.Serialize());
 
     public static string CamelSerialize<T>(this T mdl) => JsonSerializer.Serialize(mdl, PropNamingPolWkCaseJsonSerializerOpt);
 
-    public static IEnumerable<string>? CamelSerializes<T>(this IEnumerable<T> mdls) => mdls is null || !mdls.Any() ? default : mdls.Select(m => m.CamelSerialize());
+    public static IEnumerable<string>? CamelSerializes<T>(this IEnumerable<T> mdls) => mdls.IsEmptyOrNull() ? default : mdls.Select(m => m.CamelSerialize());
 
     public static T? StandardDeserialize<T>(this string str)
     {
@@ -35,7 +35,7 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?>? StandardDeserializes<T>(this IEnumerable<string> strs) => strs is null || !strs.Any() ? default : strs.Select(s => s.StandardDeserialize<T>());
+    public static IEnumerable<T?>? StandardDeserializes<T>(this IEnumerable<string> strs) => strs.IsEmptyOrNull() ? default : strs.Select(s => s.StandardDeserialize<T>());
 
     public static T? Deserialize<T>(this string str)
     {
@@ -49,5 +49,5 @@ public static partial class YANJson
         }
     }
 
-    public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<string> strs) => strs is null || !strs.Any() ? default : strs.Select(s => s.Deserialize<T>());
+    public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<string> strs) => strs.IsEmptyOrNull() ? default : strs.Select(s => s.Deserialize<T>());
 }

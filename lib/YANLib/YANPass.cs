@@ -72,7 +72,6 @@ public class YANPass
             return false;
         }
 
-        // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
         newPwdSplChar.UnionWith(splChars);
@@ -94,7 +93,6 @@ public class YANPass
             return false;
         }
 
-        // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
         newPwdSplChar.UnionWith(splChars);
@@ -116,7 +114,6 @@ public class YANPass
             return false;
         }
 
-        // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
         newPwdSplChar.UnionWith(splChars);
@@ -138,7 +135,6 @@ public class YANPass
             return false;
         }
 
-        // Check if the password matches the regex pattern
         var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
         newPwdSplChar.UnionWith(splChars);

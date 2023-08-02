@@ -9,7 +9,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>
     {
-        if (tasks is not null && tasks.Any())
+        if (tasks.IsNotEmptyAndNull())
         {
             var cmplTask = await WhenAny(tasks.Select(t => t.AsTask()).ToList()).ConfigureAwait(false);
 
@@ -26,7 +26,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : IComparable<T>
     {
-        if (tasks is not null && tasks.Any())
+        if (tasks.IsNotEmptyAndNull())
         {
             var valueTasks = tasks.Select(t => new ValueTask<T>(t));
 
@@ -40,7 +40,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>
     {
-        if (tasks is not null && tasks.Any())
+        if (tasks.IsNotEmptyAndNull())
         {
             var taskSet = tasks.Select(t => t.AsTask()).ToHashSet();
 
@@ -66,7 +66,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : IComparable<T>
     {
-        if (tasks is not null && tasks.Any())
+        if (tasks.IsNotEmptyAndNull())
         {
             var valueTasks = tasks.Select(t => new ValueTask<T>(t));
 
