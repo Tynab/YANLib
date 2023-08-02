@@ -4,11 +4,11 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t yanlib:latest .'
+                sh 'docker build -t yamiannephilim/yanlib:latest .'
             }
         }
 
-        stage('Cleaning') {
+        stage('Clean') {
             steps {
                 script {
                     def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=yanlib"').trim()
@@ -22,7 +22,10 @@ pipeline {
 
         stage('Run') {
             steps {
-                sh 'docker run --name yanlib --network yan --restart=unless-stopped -d yanlib:latest'
+                sh 'docker container stop yanlib || echo "this container does not exist"'
+                sh 'docker network create yan || echo "this network exist"'
+                sh 'echo y | docker container prune'
+                sh 'docker run --name yanlib --network yan --restart=unless-stopped -d yamiannephilim/yanlib:latest'
             }
         }
     }
