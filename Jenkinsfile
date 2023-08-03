@@ -8,6 +8,14 @@ pipeline {
             }
         }
 
+        stage('Push') {
+            steps {
+                withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
+                    sh 'docker push yamiannephilim/yanlib'
+                }
+            }
+        }
+
         stage('Clean') {
             steps {
                 script {
