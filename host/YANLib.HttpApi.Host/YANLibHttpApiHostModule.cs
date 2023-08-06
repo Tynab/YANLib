@@ -1,3 +1,4 @@
+using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +45,6 @@ namespace YANLib;
     typeof(AbpSwashbuckleModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpCachingStackExchangeRedisModule),
-    //typeof(AbpEventBusKafkaModule),
     typeof(AbpEventBusRabbitMqModule),
     typeof(AbpHttpClientModule)
 )]
@@ -79,6 +80,40 @@ public class YANLibHttpApiHostModule : AbpModule
             o.CustomSchemaIds(t => t.FullName);
             o.HideAbpEndpoints();
             o.EnableAnnotations();
+        });
+
+        _ = context.Services.AddSingleton<IMongoClient>(new MongoClient(configuration["CAP:ConnectionString"]));
+
+        _ = context.Services.AddCap(c =>
+        {
+            _ = c.UseDashboard(o => o.PathMatch = "/cap");
+
+            _ = c.UseMongoDB(o =>
+            {
+                o.DatabaseName = configuration["CAP:DBName"];
+                o.DatabaseConnection = configuration["CAP:ConnectionString"];
+            });
+
+            _ = c.UseKafka(o =>
+            {
+                o.Servers = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
+
+                o.MainConfig.Add("security.protocol", "SASL_PLAINTEXT");
+                o.MainConfig.Add("sasl.mechanism", "PLAIN");
+
+                if (configuration["CAP:Kafka:Username"].IsNotWhiteSpaceAndNull())
+                {
+                    o.MainConfig.Add("sasl.username", configuration["CAP:Kafka:Username"]);
+                }
+
+                if (configuration["CAP:Kafka:Password"].IsNotWhiteSpaceAndNull())
+                {
+                    o.MainConfig.Add("sasl.password", configuration["CAP:Kafka:Password"]);
+                }
+            });
+
+            c.DefaultGroupName = configuration["Cap:DefaultGroupName"] ?? c.DefaultGroupName;
+            c.FailedRetryCount = configuration["Cap:FailedRetryCount"].ToInt(0);
         });
     }
 
@@ -140,7 +175,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseCorrelationId();
         _ = app.UseStaticFiles();
         _ = app.UseRouting();
-        _ = app.UseCors();
+        //_ = app.UseCors();
         _ = app.UseAuthentication();
         _ = app.UseUnitOfWork();
         _ = app.UseAuthorization();
@@ -164,5 +199,6 @@ public class YANLibHttpApiHostModule : AbpModule
         });
 
         _ = app.UseConfiguredEndpoints();
+        _ = app.UseCapDashboard();
     }
 }

@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
-using YANLib.EsIndexs;
+using YANLib.EsIndexes;
 using YANLib.EsServices;
 
 namespace YANLib.Controllers;

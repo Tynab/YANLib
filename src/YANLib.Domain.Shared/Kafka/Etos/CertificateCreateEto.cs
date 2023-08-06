@@ -1,9 +1,6 @@
-﻿using Volo.Abp.EventBus;
+﻿namespace YANLib.Kafka.Etos;
 
-namespace YANLib.Etos;
-
-[EventName("yanlib.certificate.adjust")]
-public sealed class CertificateAdjustEto
+public sealed class CertificateCreateEto
 {
     public string Id { get; set; }
     public string Name { get; set; }
