@@ -1,4 +1,5 @@
-﻿using Id_Generator_Snowflake;
+﻿using DotNetCore.CAP;
+using Id_Generator_Snowflake;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -7,14 +8,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.EventBus.Distributed;
-using YANLib.EsIndexs;
+using YANLib.EsIndexes;
 using YANLib.EsServices;
-using YANLib.Etos;
+using YANLib.Kafka.Etos;
 using YANLib.Models;
+using YANLib.RabbitMq.Etos;
 using YANLib.Repositories;
 using YANLib.Requests;
 using YANLib.Responses;
 using static System.DateTime;
+using static YANLib.Kafka.KafkaTopic;
 using static YANLib.YANLibConsts;
 using static YANLib.YANLibDomainErrorCodes;
 
@@ -28,17 +31,26 @@ public class DeveloperService : YANLibAppService, IDeveloperService
     private readonly IDeveloperEsService _esService;
     private readonly ICertificateRepository _certificateRepository;
     private readonly IDistributedEventBus _distributedEventBus;
+    private readonly ICapPublisher _capPublisher;
     private readonly IdGenerator _idGenerator;
     #endregion
 
     #region Constructors
-    public DeveloperService(ILogger<DeveloperService> logger, IDeveloperRepository repository, IDeveloperEsService esService, ICertificateRepository certificateRepository, IDistributedEventBus distributedEventBus)
+    public DeveloperService(
+        ILogger<DeveloperService> logger,
+        IDeveloperRepository repository,
+        IDeveloperEsService esService,
+        ICertificateRepository certificateRepository,
+        IDistributedEventBus distributedEventBus,
+        ICapPublisher capPublisher
+        )
     {
         _logger = logger;
         _repository = repository;
         _esService = esService;
         _certificateRepository = certificateRepository;
         _distributedEventBus = distributedEventBus;
+        _capPublisher = capPublisher;
         _idGenerator = new IdGenerator(DevelopersWorkerId, YanlibDatacenterId);
     }
     #endregion
@@ -116,7 +128,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
 
                 _logger.LogInformation("InsertDeveloperService-Publish: {ETOs}", etos.CamelSerialize());
 
-                await _distributedEventBus.PublishAsync(etos);
+                await _capPublisher.PublishAsync(CERT_CRT, etos);
             }
 
             return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
@@ -161,7 +173,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
 
                 _logger.LogInformation("AdjustDeveloperService-Publish: {ETOs}", etos.CamelSerialize());
 
-                await _distributedEventBus.PublishAsync(etos);
+                await _capPublisher.PublishAsync(CERT_CRT, etos);
             }
             else if (mdl.Certificates.IsNotEmptyAndNull())
             {

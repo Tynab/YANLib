@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Volo.Abp.AutoMapper;
-using YANLib.Etos;
+using YANLib.Kafka.Etos;
 using YANLib.Models;
+using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
 using YANLib.Responses;
 

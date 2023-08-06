@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.EventBus.Distributed;
-using YANLib.Etos;
+using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
 using YANLib.Services;
 

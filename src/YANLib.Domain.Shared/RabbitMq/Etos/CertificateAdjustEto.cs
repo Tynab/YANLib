@@ -1,9 +1,10 @@
 ﻿using Volo.Abp.EventBus;
+using static YANLib.RabbitMq.RabbitMqTopic;
 
-namespace YANLib.Etos;
+namespace YANLib.RabbitMq.Etos;
 
-[EventName("yanlib.certificate.create")]
-public sealed class CertificateCreateEto
+[EventName(ADJ_CRT)]
+public sealed class CertificateAdjustEto
 {
     public string Id { get; set; }
     public string Name { get; set; }

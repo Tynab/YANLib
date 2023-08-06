@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using YANLib.Responses;
 
-namespace YANLib.EsIndexs;
+namespace YANLib.EsIndexes;
 
 public sealed class DeveloperIndex
 {
