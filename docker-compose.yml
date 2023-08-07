@@ -180,7 +180,7 @@ services:
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
       KAFKA_CLUSTERS_0_PROPERTIES_CLIENT_DNS_LOOKUP: use_all_dns_ips
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule required username='${KAFKA_DEFAULT_USERS:-}' password='${KAFKA_DEFAULT_PASSWORDS:-}';"
-      KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION: true
+      KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION: "true"
     networks:
       - yan
     depends_on:
