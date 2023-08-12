@@ -12,7 +12,3 @@ xpack.license.self_generated.type: trial
 xpack.security.enabled: true
 
 # server.publicBaseUrl: https://my-elasticsearch-cluster.example.com
-
-## Set the built-in users' passwords.
-# Run the following command from the Elasticsearch directory:
-# ./bin/elasticsearch-setup-passwords interactive
