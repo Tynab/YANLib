@@ -11,7 +11,9 @@ public class YANLibDbContext : AbpDbContext<YANLibDbContext>, IYANLibDbContext
     public DbSet<DeveloperType> DeveloperTypes { get; set; }
     public DbSet<Certificate> Certificates { get; set; }
 
-    public YANLibDbContext(DbContextOptions<YANLibDbContext> options) : base(options) { }
+    public YANLibDbContext(DbContextOptions<YANLibDbContext> options) : base(options)
+    {
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -11,5 +11,5 @@ namespace YANLib.EntityFrameworkCore;
     )]
 public class YANLibEntityFrameworkCoreModule : AbpModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context) => context.Services.AddAbpDbContext<YANLibDbContext>(o => { });
+    public override void ConfigureServices(ServiceConfigurationContext context) => context.Services.AddAbpDbContext<YANLibDbContext>(o => o.AddDefaultRepositories(includeAllEntities: true));
 }
