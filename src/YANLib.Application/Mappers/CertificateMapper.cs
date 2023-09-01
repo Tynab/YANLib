@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Volo.Abp.AutoMapper;
+using YANLib.Entities;
 using YANLib.Kafka.Etos;
-using YANLib.Models;
 using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
 using YANLib.Responses;
@@ -12,26 +12,18 @@ public sealed class CertificateMapper : Profile
 {
     public CertificateMapper()
     {
-        _ = CreateMap<CertificateRipRequest, Certificate>()
-            .Ignore(d => d.Id)
-            .Ignore(d => d.DeveloperId)
+        _ = CreateMap<CertificateAdjustEto, CertificateRequest>();
+
+        _ = CreateMap<CertificateRequest, Certificate>()
             .Ignore(d => d.CreatedDate)
             .Ignore(d => d.ModifiedDate);
-
-        _ = CreateMap<Certificate, CertificateResponse>().ReverseMap();
 
         _ = CreateMap<Certificate, CertificateCreateEto>();
 
-        _ = CreateMap<Certificate, CertificateAdjustEto>();
+        _ = CreateMap<Certificate, CertificateResponse>();
 
         _ = CreateMap<CertificateResponse, CertificateAdjustEto>();
 
-        _ = CreateMap<CertificateFullRequest, Certificate>()
-            .Ignore(d => d.CreatedDate)
-            .Ignore(d => d.ModifiedDate);
-
-        _ = CreateMap<CertificateCreateEto, CertificateFullRequest>().ReverseMap();
-
-        _ = CreateMap<CertificateAdjustEto, CertificateFullRequest>().ReverseMap();
+        _ = CreateMap<CertificateCreateEto, CertificateRequest>();
     }
 }

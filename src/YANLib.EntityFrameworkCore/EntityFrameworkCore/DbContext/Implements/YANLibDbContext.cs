@@ -1,24 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
-using YANLib.Models;
-using static YANLib.YANLibConsts;
+using YANLib.Entities;
+using static YANLib.YANLibConsts.ConnectionStringName;
+using static YANLib.YANLibConsts.DbSchema;
 
 namespace YANLib.EntityFrameworkCore.DbContext.Implements;
 
+[ConnectionStringName(Default)]
 public class YANLibDbContext : AbpDbContext<YANLibDbContext>, IYANLibDbContext
 {
-    public DbSet<Developer> Developers { get; set; }
-    public DbSet<DeveloperType> DeveloperTypes { get; set; }
-    public DbSet<Certificate> Certificates { get; set; }
-
     public YANLibDbContext(DbContextOptions<YANLibDbContext> options) : base(options)
     {
     }
 
+    public DbSet<Developer> Developers { get; set; }
+    public DbSet<DeveloperType> DeveloperTypes { get; set; }
+    public DbSet<Certificate> Certificates { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        _ = builder.HasDefaultSchema(DbSchema);
+        _ = builder.HasDefaultSchema(Sample);
         builder.ConfigureYANLib();
     }
 }

@@ -3,15 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YANLib.Requests;
 
-public sealed class DeveloperRequest
+public sealed class DeveloperAdjustRequest
 {
-    [Required]
     public string Name { get; set; }
     public string Phone { get; set; }
-    [Required]
-    public string IdCard { get; set; }
-    [Required]
-    public int DeveloperTypeCode { get; set; }
+    public int? DeveloperTypeCode { get; set; }
     public List<Certificate> Certificates { get; set; }
 
     public sealed class Certificate

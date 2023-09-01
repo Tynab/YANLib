@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.EventBus.Distributed;
 using YANLib.RabbitMq.Etos;
@@ -8,7 +7,7 @@ using YANLib.Services;
 
 namespace YANLib.Handlers;
 
-public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandler<List<CertificateAdjustEto>>
+public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandler<CertificateAdjustEto>
 {
     #region Fields
     private readonly ILogger<AdjustCertificateHandler> _logger;
@@ -24,10 +23,10 @@ public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandl
     #endregion
 
     #region Implements
-    public async Task HandleEventAsync(List<CertificateAdjustEto> eventData)
+    public async Task HandleEventAsync(CertificateAdjustEto eventData)
     {
         _logger.LogInformation("AdjustCertificateHandler-Subcribe: {EventData}", eventData.CamelSerialize());
-        _logger.LogInformation("AdjustCertificateHandler-UpdatesCertificateService: {Responses}", await _certificateService.Updates(ObjectMapper.Map<List<CertificateAdjustEto>, List<CertificateFullRequest>>(eventData)));
+        _logger.LogInformation("AdjustCertificateHandler-UpdateCertificateService: {Responses}", await _certificateService.Update(ObjectMapper.Map<CertificateAdjustEto, CertificateRequest>(eventData)));
     }
     #endregion
 }

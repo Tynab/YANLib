@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
-using YANLib.Models;
-using static YANLib.YANLibConsts;
+using YANLib.Entities;
+using static YANLib.YANLibConsts.ConnectionStringName;
 
 namespace YANLib.EntityFrameworkCore.DbContext;
 
-[ConnectionStringName(ConnectionStringName)]
+[ConnectionStringName(Default)]
 public interface IYANLibDbContext : IEfCoreDbContext
 {
     public DbSet<Developer> Developers { get; }

@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using YANLib.Models;
+using YANLib.Entities;
 using YANLib.Repositories;
 using YANLib.Requests;
-using YANLib.Responses;
 
 namespace YANLib.Services;
 
@@ -18,7 +15,10 @@ public class CertificateService : YANLibAppService, ICertificateService
     #endregion
 
     #region Constructors
-    public CertificateService(ILogger<CertificateService> logger, ICertificateRepository repository)
+    public CertificateService(
+        ILogger<CertificateService> logger,
+        ICertificateRepository repository
+        )
     {
         _logger = logger;
         _repository = repository;
@@ -26,28 +26,28 @@ public class CertificateService : YANLibAppService, ICertificateService
     #endregion
 
     #region Implements
-    public async ValueTask<List<CertificateResponse>> Inserts(List<CertificateFullRequest> requests)
+    public async ValueTask<bool> Insert(CertificateRequest request)
     {
         try
         {
-            return ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _repository.Inserts(ObjectMapper.Map<List<CertificateFullRequest>, List<Certificate>>(requests))).ToList();
+            return await _repository.Insert(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertsCertificateService-Exception: {Requests}", requests.CamelSerialize());
+            _logger.LogError(ex, "InsertCertificateService-Exception: {Request}", request.CamelSerialize());
             throw;
         }
     }
 
-    public async ValueTask<List<CertificateResponse>> Updates(List<CertificateFullRequest> requests)
+    public async ValueTask<bool> Update(CertificateRequest request)
     {
         try
         {
-            return ObjectMapper.Map<IEnumerable<Certificate>, IEnumerable<CertificateResponse>>(await _repository.Updates(ObjectMapper.Map<List<CertificateFullRequest>, List<Certificate>>(requests))).ToList();
+            return await _repository.Update(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "UpdatesCertificateService-Exception: {Requests}", requests.CamelSerialize());
+            _logger.LogError(ex, "UpdateCertificateService-Exception: {Request}", request.CamelSerialize());
             throw;
         }
     }

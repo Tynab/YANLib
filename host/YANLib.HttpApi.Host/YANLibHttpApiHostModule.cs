@@ -77,7 +77,7 @@ public class YANLibHttpApiHostModule : AbpModule
         {
             o.SwaggerDoc("sample", new OpenApiInfo { Title = $"YANLib API Sample - {hostingEnvironment.EnvironmentName}", Version = "sample" });
             o.SwaggerDoc("test", new OpenApiInfo { Title = $"YANLib API Test - {hostingEnvironment.EnvironmentName}", Version = "test" });
-            o.CustomSchemaIds(t => t.FullName);
+            o.CustomSchemaIds(t => t.FullName.Replace("+", "."));
             o.HideAbpEndpoints();
             o.EnableAnnotations();
         });
@@ -97,7 +97,6 @@ public class YANLibHttpApiHostModule : AbpModule
             _ = c.UseKafka(o =>
             {
                 o.Servers = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
-
                 o.MainConfig.Add("security.protocol", "SASL_PLAINTEXT");
                 o.MainConfig.Add("sasl.mechanism", "PLAIN");
 
@@ -143,9 +142,9 @@ public class YANLibHttpApiHostModule : AbpModule
     });
 
     private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddCors(o => o
-    .AddDefaultPolicy(b => b
-    .WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o
-    .RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+        .AddDefaultPolicy(b => b
+            .WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o
+                .RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
     private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHealthChecks()
         .AddSqlServer(connectionString: configuration["ConnectionStrings:Default"], name: "database", failureStatus: Degraded, tags: new string[] { "db", "sql", "sqlserver" });

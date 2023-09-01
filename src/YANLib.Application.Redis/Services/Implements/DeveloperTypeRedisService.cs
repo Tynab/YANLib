@@ -2,15 +2,15 @@
 using StackExchange.Redis;
 using Volo.Abp;
 using YANLib.Application.Redis.ConnectionFactory;
-using YANLib.Dtos;
+using YANLib.RedisDtos;
 using static System.Text.Encoding;
 using static System.Threading.Tasks.Task;
-using static YANLib.YANLibConsts;
+using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Application.Redis.Services.Implements;
 
-public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
+public class DeveloperTypeRedisService : IRedisService<DeveloperTypeDto>
 {
     #region Fields
     private readonly ILogger<DeveloperTypeRedisService> _logger;
@@ -30,7 +30,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
     #endregion
 
     #region Implements
-    public async ValueTask<DeveloperTypeRedisDto?> Get(string group, string key)
+    public async ValueTask<DeveloperTypeDto?> Get(string group, string key)
     {
         try
         {
@@ -41,7 +41,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
 
             var val = await _database.HashGetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant());
 
-            return val.HasValue ? UTF8.GetString(val!).Deserialize<DeveloperTypeRedisDto>() : default;
+            return val.HasValue ? UTF8.GetString(val!).Deserialize<DeveloperTypeDto>() : default;
         }
         catch (Exception ex)
         {
@@ -50,7 +50,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         }
     }
 
-    public async ValueTask<IDictionary<string, DeveloperTypeRedisDto?>?> GetBulk(string group, params string[] keys)
+    public async ValueTask<IDictionary<string, DeveloperTypeDto?>?> GetBulk(string group, params string[] keys)
     {
         try
         {
@@ -59,7 +59,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
                 throw new BusinessException(BAD_REQUEST);
             }
 
-            var rslts = new Dictionary<string, DeveloperTypeRedisDto?>();
+            var rslts = new Dictionary<string, DeveloperTypeDto?>();
             var semSlim = new SemaphoreSlim(1);
 
             await WhenAll(keys.Select(async k =>
@@ -72,7 +72,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
 
                     if (val.HasValue)
                     {
-                        rslts.Add(k, UTF8.GetString(val!).Deserialize<DeveloperTypeRedisDto>());
+                        rslts.Add(k, UTF8.GetString(val!).Deserialize<DeveloperTypeDto>());
                     }
                 }
                 finally
@@ -90,7 +90,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         }
     }
 
-    public async ValueTask<IDictionary<string, DeveloperTypeRedisDto?>?> GetAll(string group)
+    public async ValueTask<IDictionary<string, DeveloperTypeDto?>?> GetAll(string group)
     {
         try
         {
@@ -99,7 +99,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
                 throw new BusinessException(BAD_REQUEST);
             }
 
-            var rslts = new Dictionary<string, DeveloperTypeRedisDto?>();
+            var rslts = new Dictionary<string, DeveloperTypeDto?>();
             var semSlim = new SemaphoreSlim(1);
 
             await WhenAll((await _database.HashGetAllAsync(group.ToLowerInvariant())).Where(e => e.Name.HasValue && e.Value.HasValue).Select(async x =>
@@ -112,7 +112,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
 
                     try
                     {
-                        rslts.Add(x.Name.ToString(), UTF8.GetString(val!).Deserialize<DeveloperTypeRedisDto>());
+                        rslts.Add(x.Name.ToString(), UTF8.GetString(val!).Deserialize<DeveloperTypeDto>());
                     }
                     finally
                     {
@@ -130,7 +130,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         }
     }
 
-    public async ValueTask<bool> Set(string group, string key, DeveloperTypeRedisDto value)
+    public async ValueTask<bool> Set(string group, string key, DeveloperTypeDto value)
     {
         var jsonVal = value.CamelSerialize();
 
@@ -147,7 +147,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         }
     }
 
-    public async ValueTask<bool> SetBulk(string group, IDictionary<string, DeveloperTypeRedisDto> fields)
+    public async ValueTask<bool> SetBulk(string group, IDictionary<string, DeveloperTypeDto> fields)
     {
         try
         {
@@ -235,7 +235,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         }
     }
 
-    public async ValueTask<IDictionary<string, IDictionary<string, DeveloperTypeRedisDto?>?>?> GetGroup(string groupPreffix)
+    public async ValueTask<IDictionary<string, IDictionary<string, DeveloperTypeDto?>?>?> GetGroup(string groupPreffix)
     {
         try
         {
@@ -244,7 +244,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
             if (redisRslt is not null)
             {
                 var keys = (RedisKey[])redisRslt!;
-                var rslts = new Dictionary<string, IDictionary<string, DeveloperTypeRedisDto?>?>();
+                var rslts = new Dictionary<string, IDictionary<string, DeveloperTypeDto?>?>();
 
                 if (keys.IsNotEmptyAndNull())
                 {
@@ -310,7 +310,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
     {
         try
         {
-            return groupPreffix.IsWhiteSpaceOrNull() ? throw new BusinessException(BAD_REQUEST) : await _database.ExecuteAsync(RedisKeyCommand, $"{groupPreffix}*");
+            return groupPreffix.IsWhiteSpaceOrNull() ? throw new BusinessException(BAD_REQUEST) : await _database.ExecuteAsync(KeyCommand, $"{groupPreffix}*");
         }
         catch (Exception ex)
         {

@@ -29,11 +29,11 @@ public sealed class DeveloperTypeController : YANLibController
 
     #region Methods
     [HttpGet]
-    [SwaggerOperation(Summary = "Tìm tất cả định nghĩa Developer Types")]
+    [SwaggerOperation(Summary = "Lấy tất cả định nghĩa Developer Types")]
     public async ValueTask<IActionResult> GetAll() => Ok(await _service.GetAll());
 
     [HttpGet("{code}")]
-    [SwaggerOperation(Summary = "Tìm định nghĩa Developer Type theo Code")]
+    [SwaggerOperation(Summary = "Lấy định nghĩa Developer Type theo Code")]
     public async ValueTask<IActionResult> Get([Required] int code)
     {
         _logger.LogInformation("GetDeveloperTypeController: {Code}", code);

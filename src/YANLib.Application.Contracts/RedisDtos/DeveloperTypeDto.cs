@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YANLib.Dtos;
+namespace YANLib.RedisDtos;
 
-public sealed class DeveloperTypeRedisDto
+public sealed class DeveloperTypeDto
 {
     public string Name { get; set; }
     public bool IsActive { get; set; }

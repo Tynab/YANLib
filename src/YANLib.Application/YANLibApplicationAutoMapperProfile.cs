@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using YANLib.Entities;
+using YANLib.Requests;
 
 namespace YANLib;
 
@@ -6,8 +8,8 @@ public class YANLibApplicationAutoMapperProfile : Profile
 {
     public YANLibApplicationAutoMapperProfile()
     {
-        /* You can configure your AutoMapper mapping configuration here.
-         * Alternatively, you can split your mapping configurations
-         * into multiple profile classes for a better organization. */
+        _ = CreateMap<DeveloperRequest.Certificate, Certificate>();
+
+        _ = CreateMap<DeveloperAdjustRequest.Certificate, Certificate>();
     }
 }

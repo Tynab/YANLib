@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace YANLib.Models;
+namespace YANLib.Entities;
 
 [Table("Certificates")]
 public sealed class Certificate
