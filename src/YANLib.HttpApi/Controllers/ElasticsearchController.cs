@@ -29,7 +29,7 @@ public sealed class ElasticsearchController : YANLibController
 
     #region Methods
     [HttpGet("developers/{id}")]
-    [SwaggerOperation(Summary = "Tìm Developer theo Id trên Elasticsearch")]
+    [SwaggerOperation(Summary = "Lấy Developer theo Id trên Elasticsearch")]
     public async ValueTask<IActionResult> Get([Required] string id)
     {
         _logger.LogInformation("GetElasticsearchController: {Id}", id);

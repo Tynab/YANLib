@@ -29,7 +29,7 @@ public sealed class DeveloperController : YANLibController
 
     #region Methods
     [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Tìm Developer theo Id")]
+    [SwaggerOperation(Summary = "Lấy Developer theo Id")]
     public async ValueTask<IActionResult> Get([Required] string id)
     {
         _logger.LogInformation("GetDeveloperController: {Id}", id);
@@ -48,7 +48,7 @@ public sealed class DeveloperController : YANLibController
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật Developer")]
-    public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperFreeRequest request)
+    public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperAdjustRequest request)
     {
         _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.CamelSerialize());
 
@@ -56,7 +56,7 @@ public sealed class DeveloperController : YANLibController
     }
 
     [HttpGet("get-by-id-card")]
-    [SwaggerOperation(Summary = "Tìm Developer theo Id Card")]
+    [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
     public async ValueTask<IActionResult> GetByIdCard([Required] string idCard)
     {
         _logger.LogInformation("GetByIdCardDeveloperController: {IdCard}", idCard);
@@ -65,12 +65,21 @@ public sealed class DeveloperController : YANLibController
     }
 
     [HttpGet("get-by-phone")]
-    [SwaggerOperation(Summary = "Tìm tất cả Developers theo Phone")]
+    [SwaggerOperation(Summary = "Lấy tất cả Developers theo Phone")]
     public async ValueTask<IActionResult> GetByPhone([Required] string phone)
     {
         _logger.LogInformation("GetByPhoneDeveloperController: {Phone}", phone);
 
         return Ok(await _service.GetByPhone(phone));
+    }
+
+    [HttpGet("search-by-phone")]
+    [SwaggerOperation(Summary = "Tìm tất cả Developers theo Phone")]
+    public async ValueTask<IActionResult> SearchByPhone([Required] string searchText)
+    {
+        _logger.LogInformation("SearchByPhoneDeveloperController: {SearchText}", searchText);
+
+        return Ok(await _service.SearchByPhone(searchText));
     }
 
     [HttpPost("sync-db-to-es")]

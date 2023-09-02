@@ -1,6 +1,5 @@
 ﻿using DotNetCore.CAP;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using YANLib.Kafka.Etos;
 using YANLib.Requests;
@@ -26,10 +25,10 @@ public class CreateCertificateSubcriber : YANLibAppService, ICapSubscribe
 
     #region Methods
     [CapSubscribe(CERT_CRT)]
-    public async Task Subcibe(List<CertificateCreateEto> eventData)
+    public async Task Subcibe(CertificateCreateEto eventData)
     {
         _logger.LogInformation("CreateCertificateSubcriber-Subcribe: {EventData}", eventData.CamelSerialize());
-        _logger.LogInformation("CreateCertificateSubcriber-InsertsCertificateService: {Responses}", await _certificateService.Inserts(ObjectMapper.Map<List<CertificateCreateEto>, List<CertificateFullRequest>>(eventData)));
+        _logger.LogInformation("CreateCertificateSubcriber-InsertCertificateService: {Responses}", await _certificateService.Insert(ObjectMapper.Map<CertificateCreateEto, CertificateRequest>(eventData)));
     }
     #endregion
 }

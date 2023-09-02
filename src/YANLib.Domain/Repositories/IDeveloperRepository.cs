@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Volo.Abp.DependencyInjection;
-using YANLib.Models;
+﻿using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories;
+using YANLib.Entities;
 
 namespace YANLib.Repositories;
 
-public interface IDeveloperRepository : ITransientDependency
+public interface IDeveloperRepository : IRepository<Developer, string>
 {
-    public ValueTask<IEnumerable<Developer>> GetAll();
-    public ValueTask<Developer> Insert(Developer entity);
     public ValueTask<Developer> Adjust(Developer entity);
 }

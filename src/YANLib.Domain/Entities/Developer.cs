@@ -1,14 +1,18 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Domain.Entities;
 
-namespace YANLib.Models;
+namespace YANLib.Entities;
 
 [Table("Developers")]
-public sealed class Developer
+public sealed class Developer : Entity<string>
 {
-    [Key]
-    public string Id { get; set; }
+    public Developer()
+    {
+    }
+
+    public Developer(string id) => Id = id;
+
     public string Name { get; set; }
     public string Phone { get; set; }
     public string IdCard { get; set; }
@@ -17,7 +21,4 @@ public sealed class Developer
     public int Version { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? ModifiedDate { get; set; }
-
-    [ForeignKey("DeveloperTypeCode")]
-    public DeveloperType DeveloperType { get; set; }
 }

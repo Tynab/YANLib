@@ -12,4 +12,5 @@ public interface IDeveloperEsService
     public ValueTask<bool> DeleteAll();
     public ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByDeveloperId(string developerId);
     public ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByPhone(string phone);
+    public ValueTask<IReadOnlyCollection<DeveloperIndex>> SearchByPhone(string searchText);
 }

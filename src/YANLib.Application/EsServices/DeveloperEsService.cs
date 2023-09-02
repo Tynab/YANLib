@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using YANLib.EsIndexes;
 using YANLib.Utilities;
 using static System.Threading.Tasks.Task;
-using static YANLib.YANLibConsts;
+using static YANLib.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.EsServices;
 
@@ -62,7 +62,7 @@ public class DeveloperEsService : YANLibAppService, IDeveloperEsService
     {
         try
         {
-            var index = _configuration.GetSection(IdxSample)?.Value;
+            var index = _configuration.GetSection(Sample)?.Value;
 
             if (index.IsWhiteSpaceOrNull())
             {
@@ -102,19 +102,27 @@ public class DeveloperEsService : YANLibAppService, IDeveloperEsService
     }
 
     public async ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByDeveloperId(string developerId) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
-    .Query(q => q
-    .Bool(b => b
-    .Must(d => d
-    .Match(m => m
-    .Field(c => c.DeveloperId)
-    .Query(developerId.ToString()))))))).Documents;
+        .Query(q => q
+            .Bool(b => b
+                .Must(d => d
+                    .Match(m => m
+                        .Field(c => c.DeveloperId)
+                        .Query(developerId.ToString()))))))).Documents;
 
     public async ValueTask<IReadOnlyCollection<DeveloperIndex>> GetByPhone(string phone) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
-    .Query(q => q
-    .Bool(b => b
-    .Must(d => d
-    .Match(m => m
-    .Field(c => c.Phone)
-    .Query(phone))))))).Documents;
+        .Query(q => q
+            .Bool(b => b
+                .Must(d => d
+                    .Match(m => m
+                        .Field(c => c.Phone)
+                        .Query(phone))))))).Documents;
+
+    public async ValueTask<IReadOnlyCollection<DeveloperIndex>> SearchByPhone(string searchText) => (await _elasticClient.SearchAsync<DeveloperIndex>(s => s
+        .Query(q => q
+            .Bool(b => b
+                .Must(d => d
+                    .MatchPhrasePrefix(m => m
+                        .Field(c => c.Phone)
+                        .Query(searchText))))))).Documents;
     #endregion
 }
