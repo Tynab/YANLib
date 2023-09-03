@@ -1,14 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Volo.Abp.Domain.Entities;
 
 namespace YANLib.Entities;
 
 [Table("DeveloperTypes")]
-public sealed class DeveloperType : Entity<int>
+public sealed class DeveloperType
 {
-    [Column("Code")]
-    public override int Id { get; protected set; }
+    [Key]
+    public int Code { get; set; }
     public string Name { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedDate { get; set; }

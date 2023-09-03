@@ -9,7 +9,8 @@ public static class YANLibDomainErrorCodes
     public const string BAD_REQUEST_GPA = "YANLib:440";
 
     public const string BUSINESS_ERROR = "YANLib:403";
-    public const string EXIST_ID_CARD = "YANLib:413";
+    public const string EXIST_ID = "YANLib:413";
+    public const string EXIST_ID_CARD = "YANLib:423";
 
     public const string NOT_FOUND = "YANLib:404";
     public const string NOT_FOUND_DEV = "YANLib:414";

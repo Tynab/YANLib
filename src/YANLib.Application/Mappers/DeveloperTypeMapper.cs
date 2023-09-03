@@ -23,16 +23,13 @@ public sealed class DeveloperTypeMapper : Profile
             .Ignore(d => d.Code);
 
         _ = CreateMap<DeveloperTypeRequest, DeveloperType>()
-            .ForMember(d => d.Id, o => o.MapFrom(s => s.Code))
             .Ignore(d => d.CreatedDate)
             .Ignore(d => d.ModifiedDate);
 
         _ = CreateMap<DeveloperType, DeveloperTypeDto>();
 
-        _ = CreateMap<DeveloperType, DeveloperTypeResponse>()
-            .ForMember(d => d.Code, o => o.MapFrom(s => s.Id));
+        _ = CreateMap<DeveloperType, DeveloperTypeResponse>();
 
-        _ = CreateMap<DeveloperTypeResponse, DeveloperType>()
-            .ForMember(d => d.Id, o => o.MapFrom(s => s.Code));
+        _ = CreateMap<DeveloperTypeResponse, DeveloperType>();
     }
 }
