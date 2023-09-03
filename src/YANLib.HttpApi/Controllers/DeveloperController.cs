@@ -28,13 +28,13 @@ public sealed class DeveloperController : YANLibController
     #endregion
 
     #region Methods
-    [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Lấy Developer theo Id")]
-    public async ValueTask<IActionResult> Get([Required] string id)
+    [HttpGet("{idCard}")]
+    [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
+    public async ValueTask<IActionResult> GetByIdCard([Required] string idCard)
     {
-        _logger.LogInformation("GetDeveloperController: {Id}", id);
+        _logger.LogInformation("GetByIdCardDeveloperController: {IdCard}", idCard);
 
-        return Ok(await _service.Get(id));
+        return Ok(await _service.GetByIdCard(idCard));
     }
 
     [HttpPost]
@@ -53,15 +53,6 @@ public sealed class DeveloperController : YANLibController
         _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.CamelSerialize());
 
         return Ok(await _service.Adjust(idCard, request));
-    }
-
-    [HttpGet("get-by-id-card")]
-    [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
-    public async ValueTask<IActionResult> GetByIdCard([Required] string idCard)
-    {
-        _logger.LogInformation("GetByIdCardDeveloperController: {IdCard}", idCard);
-
-        return Ok(await _service.GetByIdCard(idCard));
     }
 
     [HttpGet("get-by-phone")]
