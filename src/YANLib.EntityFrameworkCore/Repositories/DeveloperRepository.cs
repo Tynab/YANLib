@@ -52,7 +52,7 @@ public sealed class DeveloperRepository : IDeveloperRepository
 
             if (await _dbContext.SaveChangesAsync() > 0)
             {
-                entity.DeveloperType = await _dbContext.DeveloperTypes.AsNoTracking().FirstOrDefaultAsync(x => x.Code == entity.DeveloperTypeCode);
+                entity.DeveloperType = await _dbContext.DeveloperTypes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
                 return entity;
             }
             else
@@ -92,7 +92,7 @@ public sealed class DeveloperRepository : IDeveloperRepository
 
             if (await _dbContext.SaveChangesAsync() > 0)
             {
-                entity.DeveloperType = await _dbContext.DeveloperTypes.AsNoTracking().FirstOrDefaultAsync(x => x.Code == entity.DeveloperTypeCode);
+                entity.DeveloperType = await _dbContext.DeveloperTypes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
                 return entity;
             }
             else
