@@ -11,7 +11,7 @@ namespace YANLib.Application.Redis;
 [DependsOn(
     typeof(YANLibApplicationContractsModule),
     typeof(YANLibDomainModule)
-    )]
+)]
 public class YANLibApplicationRedisModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

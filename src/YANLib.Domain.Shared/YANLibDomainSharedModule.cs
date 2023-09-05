@@ -10,7 +10,7 @@ namespace YANLib;
 
 [DependsOn(
     typeof(AbpValidationModule)
-    )]
+)]
 public class YANLibDomainSharedModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

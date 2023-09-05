@@ -16,7 +16,10 @@ public class CreateCertificateSubcriber : YANLibAppService, ICapSubscribe
     #endregion
 
     #region Constructors
-    public CreateCertificateSubcriber(ILogger<CreateCertificateSubcriber> logger, ICertificateService certificateService)
+    public CreateCertificateSubcriber(
+        ILogger<CreateCertificateSubcriber> logger,
+        ICertificateService certificateService
+    )
     {
         _logger = logger;
         _certificateService = certificateService;

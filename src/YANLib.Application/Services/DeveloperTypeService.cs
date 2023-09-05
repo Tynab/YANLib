@@ -29,7 +29,7 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
         ILogger<DeveloperTypeService> logger,
         IRepository<DeveloperType, int> repository,
         IRedisService<DeveloperTypeDto> redisService
-        )
+    )
     {
         _logger = logger;
         _repository = repository;
