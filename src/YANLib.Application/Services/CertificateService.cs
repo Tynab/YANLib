@@ -18,7 +18,7 @@ public class CertificateService : YANLibAppService, ICertificateService
     public CertificateService(
         ILogger<CertificateService> logger,
         ICertificateRepository repository
-        )
+    )
     {
         _logger = logger;
         _repository = repository;

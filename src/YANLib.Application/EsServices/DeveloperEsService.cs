@@ -21,7 +21,10 @@ public class DeveloperEsService : YANLibAppService, IDeveloperEsService
     #endregion
 
     #region Constructors
-    public DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClient elasticClient, IConfiguration configuration)
+    public DeveloperEsService(ILogger<DeveloperEsService> logger,
+        IElasticClient elasticClient,
+        IConfiguration configuration
+    )
     {
         _logger = logger;
         _elasticClient = elasticClient;

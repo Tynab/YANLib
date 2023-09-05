@@ -9,7 +9,7 @@ namespace YANLib.EntityFrameworkCore;
 [DependsOn(
     typeof(YANLibDomainModule),
     typeof(AbpEntityFrameworkCoreModule)
-    )]
+)]
 public class YANLibEntityFrameworkCoreModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

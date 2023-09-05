@@ -47,7 +47,7 @@ public class DeveloperService : YANLibAppService, IDeveloperService
         IDistributedEventBus distributedEventBus,
         ICapPublisher capPublisher,
         IDeveloperTypeService developerTypeService
-        )
+    )
     {
         _logger = logger;
         _repository = repository;

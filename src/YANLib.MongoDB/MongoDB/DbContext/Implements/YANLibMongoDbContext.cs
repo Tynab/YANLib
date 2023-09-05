@@ -1,7 +1,9 @@
-﻿using Volo.Abp.MongoDB;
+﻿using Volo.Abp.Data;
+using Volo.Abp.MongoDB;
 
 namespace YANLib.MongoDB.DbContext.Implements;
 
+[ConnectionStringName("Default")]
 public class YANLibMongoDbContext : AbpMongoDbContext, IYANLibMongoDbContext
 {
     /* Add mongo collections here. Example:

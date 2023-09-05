@@ -15,7 +15,10 @@ public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandl
     #endregion
 
     #region Constructors
-    public AdjustCertificateHandler(ILogger<AdjustCertificateHandler> logger, ICertificateService certificateService)
+    public AdjustCertificateHandler(
+        ILogger<AdjustCertificateHandler> logger,
+        ICertificateService certificateService
+    )
     {
         _logger = logger;
         _certificateService = certificateService;
