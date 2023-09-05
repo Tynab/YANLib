@@ -4,6 +4,7 @@ namespace YANLib.Requests;
 
 public sealed class CertificateRequest
 {
+    [Required]
     public string Id { get; set; }
     [Required]
     public string Name { get; set; }

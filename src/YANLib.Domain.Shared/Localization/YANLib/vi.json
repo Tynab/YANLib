@@ -6,6 +6,7 @@
     "YANLib:420": "Mã định danh truyền vào không hợp lệ!",
     "YANLib:430": "Mã truyền vào không hợp lệ!",
     "YANLib:440": "Điểm truyền vào không hợp lệ!",
+    "YANLib:450": "Mã hồ sơ lập trình viên truyền vào không hợp lệ!",
     "YANLib:403": "Lỗi quy tắc!",
     "YANLib:413": "Mã {Id} đã tồn tại!",
     "YANLib:423": "Mã định danh {IdCard} đã tồn tại!",
