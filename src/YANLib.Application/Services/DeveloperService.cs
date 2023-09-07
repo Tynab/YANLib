@@ -215,10 +215,14 @@ public class DeveloperService : YANLibAppService, IDeveloperService
     {
         try
         {
-            var task = _esService.DeleteAll();
-            var mdls = await _repository.GetAll();
+            var clnTask = _esService.DeleteAll().AsTask();
+            var mdlsTask = _repository.GetAll().AsTask();
+
+            await WhenAll(clnTask, mdlsTask);
+
+            var rslt = await clnTask;
+            var mdls = await mdlsTask;
             var datas = new List<DeveloperIndex>();
-            var rslt = await task;
             var semSlim = new SemaphoreSlim(1);
 
             await WhenAll(mdls.Select(async x =>

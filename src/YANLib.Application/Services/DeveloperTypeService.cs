@@ -11,6 +11,7 @@ using YANLib.RedisDtos;
 using YANLib.Requests;
 using YANLib.Responses;
 using static System.DateTime;
+using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
 
@@ -132,9 +133,13 @@ public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
     {
         try
         {
-            var task = _redisService.DeleteAll(DeveloperTypeGroup);
-            var mdls = await _repository.GetListAsync();
-            var rslt = await task;
+            var clnTask = _redisService.DeleteAll(DeveloperTypeGroup).AsTask();
+            var mdlsTask = _repository.GetListAsync();
+
+            await WhenAll(clnTask, mdlsTask);
+
+            var rslt = await clnTask;
+            var mdls = await mdlsTask;
 
             return mdls.IsNotEmptyAndNull() ? rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeDto>)) : rslt;
         }
