@@ -25,39 +25,25 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services;
 
-public class DeveloperService : YANLibAppService, IDeveloperService
+public class DeveloperService(
+    ILogger<DeveloperService> logger,
+    IDeveloperRepository repository,
+    ICertificateRepository certificateRepository,
+    IDeveloperEsService esService,
+    IDistributedEventBus distributedEventBus,
+    ICapPublisher capPublisher,
+    IDeveloperTypeService developerTypeService
+) : YANLibAppService, IDeveloperService
 {
     #region Fields
-    private readonly ILogger<DeveloperService> _logger;
-    private readonly IDeveloperRepository _repository;
-    private readonly ICertificateRepository _certificateRepository;
-    private readonly IDeveloperEsService _esService;
-    private readonly IDistributedEventBus _distributedEventBus;
-    private readonly ICapPublisher _capPublisher;
-    private readonly IDeveloperTypeService _developerTypeService;
-    private readonly IdGenerator _idGenerator;
-    #endregion
-
-    #region Constructors
-    public DeveloperService(
-        ILogger<DeveloperService> logger,
-        IDeveloperRepository repository,
-        ICertificateRepository certificateRepository,
-        IDeveloperEsService esService,
-        IDistributedEventBus distributedEventBus,
-        ICapPublisher capPublisher,
-        IDeveloperTypeService developerTypeService
-    )
-    {
-        _logger = logger;
-        _repository = repository;
-        _esService = esService;
-        _certificateRepository = certificateRepository;
-        _distributedEventBus = distributedEventBus;
-        _capPublisher = capPublisher;
-        _developerTypeService = developerTypeService;
-        _idGenerator = new IdGenerator(DeveloperId, YanlibId);
-    }
+    private readonly ILogger<DeveloperService> _logger = logger;
+    private readonly IDeveloperRepository _repository = repository;
+    private readonly ICertificateRepository _certificateRepository = certificateRepository;
+    private readonly IDeveloperEsService _esService = esService;
+    private readonly IDistributedEventBus _distributedEventBus = distributedEventBus;
+    private readonly ICapPublisher _capPublisher = capPublisher;
+    private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
+    private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
     #endregion
 
     #region Implements
@@ -169,8 +155,8 @@ public class DeveloperService : YANLibAppService, IDeveloperService
 
                     var eto = ObjectMapper.Map<CertificateResponse, CertificateAdjustEto>(x);
 
-                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.CamelSerialize());
                     await _distributedEventBus.PublishAsync(eto);
+                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.CamelSerialize());
                 });
 
                 rslt.Certificates = new List<CertificateResponse>(mdl.Certificates);
@@ -215,10 +201,14 @@ public class DeveloperService : YANLibAppService, IDeveloperService
     {
         try
         {
-            var task = _esService.DeleteAll();
-            var mdls = await _repository.GetAll();
+            var clnTask = _esService.DeleteAll().AsTask();
+            var mdlsTask = _repository.GetAll().AsTask();
+
+            await WhenAll(clnTask, mdlsTask);
+
+            var rslt = await clnTask;
+            var mdls = await mdlsTask;
             var datas = new List<DeveloperIndex>();
-            var rslt = await task;
             var semSlim = new SemaphoreSlim(1);
 
             await WhenAll(mdls.Select(async x =>

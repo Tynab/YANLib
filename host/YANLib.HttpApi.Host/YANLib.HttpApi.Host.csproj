@@ -7,6 +7,7 @@
 		<RootNamespace>YANLib</RootNamespace>
 		<PreserveCompilationReferences>true</PreserveCompilationReferences>
 		<UserSecretsId>YANLib-4681b4fd-151f-4221-84a4-929d86723e4c</UserSecretsId>
+		<LangVersion>preview</LangVersion>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
@@ -19,6 +20,7 @@
 		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="6.2.1" />
 		<PackageReference Include="DotNetCore.CAP.Kafka" Version="6.2.1" />
 		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="6.2.1" />
+		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="6.2.1" />
 		<PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.22.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.21" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
@@ -28,7 +30,6 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy" Version="6.0.3" />
 		<PackageReference Include="Volo.Abp.Autofac" Version="6.0.3" />
 		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="6.0.3" />
 		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="6.0.3" />

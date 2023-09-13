@@ -12,19 +12,11 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Repositories;
 
-public sealed class DeveloperRepository : IDeveloperRepository
+public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYANLibDbContext dbContext) : IDeveloperRepository
 {
     #region Fields
-    private readonly ILogger<DeveloperRepository> _logger;
-    private readonly IYANLibDbContext _dbContext;
-    #endregion
-
-    #region Constructors
-    public DeveloperRepository(ILogger<DeveloperRepository> logger, IYANLibDbContext dbContext)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+    private readonly ILogger<DeveloperRepository> _logger = logger;
+    private readonly IYANLibDbContext _dbContext = dbContext;
     #endregion
 
     #region Implements

@@ -24,6 +24,11 @@ switch (choosen)
             _ = Run<JsonDeserializeBenchmark>();
             break;
         }
+    case 3:
+        {
+            _ = Run<HttpBenchmark>();
+            break;
+        }
     default:
         {
             _ = Run<LoopBenchmark>();

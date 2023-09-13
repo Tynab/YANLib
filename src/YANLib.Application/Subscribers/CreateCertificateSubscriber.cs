@@ -8,22 +8,14 @@ using static YANLib.Kafka.KafkaTopic;
 
 namespace YANLib.Subscribers;
 
-public class CreateCertificateSubscriber : YANLibAppService, ICapSubscribe
+public class CreateCertificateSubscriber(
+    ILogger<CreateCertificateSubscriber> logger,
+    ICertificateService certificateService
+) : YANLibAppService, ICapSubscribe
 {
     #region Fields
-    private readonly ILogger<CreateCertificateSubscriber> _logger;
-    private readonly ICertificateService _certificateService;
-    #endregion
-
-    #region Constructors
-    public CreateCertificateSubscriber(
-        ILogger<CreateCertificateSubscriber> logger,
-        ICertificateService certificateService
-    )
-    {
-        _logger = logger;
-        _certificateService = certificateService;
-    }
+    private readonly ILogger<CreateCertificateSubscriber> _logger = logger;
+    private readonly ICertificateService _certificateService = certificateService;
     #endregion
 
     #region Methods

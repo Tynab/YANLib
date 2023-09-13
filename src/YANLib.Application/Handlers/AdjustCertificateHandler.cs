@@ -7,22 +7,14 @@ using YANLib.Services;
 
 namespace YANLib.Handlers;
 
-public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandler<CertificateAdjustEto>
+public class AdjustCertificateHandler(
+    ILogger<AdjustCertificateHandler> logger,
+    ICertificateService certificateService
+) : YANLibAppService, IDistributedEventHandler<CertificateAdjustEto>
 {
     #region Fields
-    private readonly ILogger<AdjustCertificateHandler> _logger;
-    private readonly ICertificateService _certificateService;
-    #endregion
-
-    #region Constructors
-    public AdjustCertificateHandler(
-        ILogger<AdjustCertificateHandler> logger,
-        ICertificateService certificateService
-    )
-    {
-        _logger = logger;
-        _certificateService = certificateService;
-    }
+    private readonly ILogger<AdjustCertificateHandler> _logger = logger;
+    private readonly ICertificateService _certificateService = certificateService;
     #endregion
 
     #region Implements

@@ -12,19 +12,11 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/developers")]
-public sealed class DeveloperController : YANLibController
+public sealed class DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service) : YANLibController
 {
     #region Fields
-    private readonly ILogger<DeveloperController> _logger;
-    private readonly IDeveloperService _service;
-    #endregion
-
-    #region Constructors
-    public DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service)
-    {
-        _logger = logger;
-        _service = service;
-    }
+    private readonly ILogger<DeveloperController> _logger = logger;
+    private readonly IDeveloperService _service = service;
     #endregion
 
     #region Methods
