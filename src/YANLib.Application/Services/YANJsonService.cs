@@ -10,14 +10,10 @@ using static System.Threading.Tasks.Task;
 
 namespace YANLib.Services;
 
-public class YANJsonService : YANLibAppService, IYANJsonService
+public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, IYANJsonService
 {
     #region Fields
-    private readonly IJsonSerializer _jsonSerializer;
-    #endregion
-
-    #region Constructors
-    public YANJsonService(IJsonSerializer jsonSerializer) => _jsonSerializer = jsonSerializer;
+    private readonly IJsonSerializer _jsonSerializer = jsonSerializer;
     #endregion
 
     #region Implements

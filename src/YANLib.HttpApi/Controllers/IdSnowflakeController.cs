@@ -10,14 +10,10 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "test")]
 [Route("api/yanlib/id-snowflakes")]
-public sealed class IdSnowflakeController : YANLibController
+public sealed class IdSnowflakeController(ILogger<IdSnowflakeController> logger) : YANLibController
 {
     #region Fields
-    private readonly ILogger<IdSnowflakeController> _logger;
-    #endregion
-
-    #region Constructors
-    public IdSnowflakeController(ILogger<IdSnowflakeController> logger) => _logger = logger;
+    private readonly ILogger<IdSnowflakeController> _logger = logger;
     #endregion
 
     #region Methods

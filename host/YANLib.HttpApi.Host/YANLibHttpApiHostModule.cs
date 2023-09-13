@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.Caching;
@@ -45,7 +44,6 @@ namespace YANLib;
     typeof(YANLibHttpApiModule),
     typeof(YANLibApplicationModule),
     typeof(YANLibEntityFrameworkCoreModule),
-    typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
     typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule),
@@ -70,8 +68,8 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureCors(context, configuration);
         ConfigureAuthentication(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        ConfigureHealthChecks(context, configuration);
         ConfigureCap(context, configuration);
+        ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(o =>
@@ -141,13 +139,6 @@ public class YANLibHttpApiHostModule : AbpModule
         });
     }
 
-    private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHealthChecks().AddSqlServer(
-        connectionString: configuration["ConnectionStrings:Default"],
-        name: "database",
-        failureStatus: Degraded,
-        tags: new string[] { "db", "sql", "sqlserver"
-    });
-
     private static void ConfigureCap(ServiceConfigurationContext context, IConfiguration configuration)
     {
         _ = context.Services.AddSingleton<IMongoClient>(new MongoClient(configuration["CAP:ConnectionString"]));
@@ -179,10 +170,33 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
+            //_ = c.UseRabbitMQ(o =>
+            //{
+            //    o.HostName = configuration["CAP:RabbitMQ:Connections:Default:HostName"];
+            //    o.Port = configuration["CAP:RabbitMQ:Connections:Default:Port"].ToInt(5672);
+            //    o.UserName = configuration["CAP:RabbitMQ:Connections:Default:Username"];
+            //    o.Password = configuration["CAP:RabbitMQ:Connections:Default:Password"];
+
+            //    o.ConnectionFactoryOptions = c =>
+            //    {
+            //        c.Ssl.Enabled = configuration["CAP:RabbitMQ:Connections:Default:Ssl:Enabled"].ToBool(true);
+            //        c.Ssl.ServerName = configuration["CAP:RabbitMQ:Connections:Default:Ssl:ServerName"];
+            //    };
+
+            //    o.ExchangeName = configuration["CAP:RabbitMQ:EventBus:ExchangeName"];
+            //});
+
             c.DefaultGroupName = configuration["Cap:DefaultGroupName"] ?? c.DefaultGroupName;
             c.FailedRetryCount = configuration["Cap:FailedRetryCount"].ToInt(0);
         });
     }
+
+    private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHealthChecks().AddSqlServer(
+        connectionString: configuration["ConnectionStrings:Default"],
+        name: "database",
+        failureStatus: Degraded,
+        tags: new string[] { "db", "sql", "sqlserver"
+    });
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
@@ -219,7 +233,6 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseRouting();
         _ = app.UseCors();
         _ = app.UseAuthentication();
-        _ = app.UseMultiTenancy();
         _ = app.UseUnitOfWork();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();

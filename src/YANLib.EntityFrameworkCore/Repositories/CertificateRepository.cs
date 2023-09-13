@@ -12,19 +12,11 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Repositories;
 
-public sealed class CertificateRepository : ICertificateRepository
+public sealed class CertificateRepository(ILogger<CertificateRepository> logger, IYANLibDbContext dbContext) : ICertificateRepository
 {
     #region Fields
-    private readonly ILogger<CertificateRepository> _logger;
-    private readonly IYANLibDbContext _dbContext;
-    #endregion
-
-    #region Constructors
-    public CertificateRepository(ILogger<CertificateRepository> logger, IYANLibDbContext dbContext)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+    private readonly ILogger<CertificateRepository> _logger = logger;
+    private readonly IYANLibDbContext _dbContext = dbContext;
     #endregion
 
     #region Implements

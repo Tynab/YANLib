@@ -1,43 +1,44 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <ApplicationIcon>ic.ico</ApplicationIcon>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>YANLib</Title>
-    <Authors>Yami An</Authors>
-    <Company>YAN</Company>
-    <Description>YANLib is an optimized .NET library that enhances data processing tasks. It offers various extension utilities to improve the handling of datetimes, numbers, text, passwords, JSON, and more. With a focus on large-scale data processing, YANLib provides efficient solutions for managing and manipulating data in .NET applications.</Description>
-    <Copyright>Copyright ©  2023</Copyright>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Tynab/YANLib</RepositoryUrl>
-    <PackageTags>C#, .NET, Library</PackageTags>
-    <PackAsTool>False</PackAsTool>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Update model</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <PackageId>Tynab.YANLib</PackageId>
-    <Version>3.1.9</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationIcon>ic.ico</ApplicationIcon>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>YANLib</Title>
+		<Authors>Yami An</Authors>
+		<Company>YAN</Company>
+		<Description>YANLib is an optimized .NET library that enhances data processing tasks. It offers various extension utilities to improve the handling of datetimes, numbers, text, passwords, JSON, and more. With a focus on large-scale data processing, YANLib provides efficient solutions for managing and manipulating data in .NET applications.</Description>
+		<Copyright>Copyright ©  2023</Copyright>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Tynab/YANLib</RepositoryUrl>
+		<PackageTags>C#, .NET, Library</PackageTags>
+		<PackAsTool>False</PackAsTool>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryType>git</RepositoryType>
+		<PackageReleaseNotes>Update model</PackageReleaseNotes>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+		<PackageId>Tynab.YANLib</PackageId>
+		<Version>3.1.9</Version>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="ic.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="ic.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\res\icon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\res\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

@@ -7,22 +7,14 @@ using YANLib.Requests;
 
 namespace YANLib.Services;
 
-public class CertificateService : YANLibAppService, ICertificateService
+public class CertificateService(
+    ILogger<CertificateService> logger,
+    ICertificateRepository repository
+) : YANLibAppService, ICertificateService
 {
     #region Fields
-    private readonly ILogger<CertificateService> _logger;
-    private readonly ICertificateRepository _repository;
-    #endregion
-
-    #region Constructors
-    public CertificateService(
-        ILogger<CertificateService> logger,
-        ICertificateRepository repository
-    )
-    {
-        _logger = logger;
-        _repository = repository;
-    }
+    private readonly ILogger<CertificateService> _logger = logger;
+    private readonly ICertificateRepository _repository = repository;
     #endregion
 
     #region Implements

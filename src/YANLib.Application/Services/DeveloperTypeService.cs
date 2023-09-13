@@ -17,25 +17,16 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services;
 
-public class DeveloperTypeService : YANLibAppService, IDeveloperTypeService
+public class DeveloperTypeService(
+    ILogger<DeveloperTypeService> logger,
+    IRepository<DeveloperType, int> repository,
+    IRedisService<DeveloperTypeDto> redisService
+) : YANLibAppService, IDeveloperTypeService
 {
     #region Fields
-    private readonly ILogger<DeveloperTypeService> _logger;
-    private readonly IRepository<DeveloperType, int> _repository;
-    private readonly IRedisService<DeveloperTypeDto> _redisService;
-    #endregion
-
-    #region Constructors
-    public DeveloperTypeService(
-        ILogger<DeveloperTypeService> logger,
-        IRepository<DeveloperType, int> repository,
-        IRedisService<DeveloperTypeDto> redisService
-    )
-    {
-        _logger = logger;
-        _repository = repository;
-        _redisService = redisService;
-    }
+    private readonly ILogger<DeveloperTypeService> _logger = logger;
+    private readonly IRepository<DeveloperType, int> _repository = repository;
+    private readonly IRedisService<DeveloperTypeDto> _redisService = redisService;
     #endregion
 
     #region Implements
