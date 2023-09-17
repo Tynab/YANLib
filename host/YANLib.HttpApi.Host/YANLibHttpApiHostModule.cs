@@ -172,16 +172,22 @@ public class YANLibHttpApiHostModule : AbpModule
 
             //_ = c.UseRabbitMQ(o =>
             //{
-            //    o.HostName = configuration["CAP:RabbitMQ:Connections:Default:HostName"];
+            //    var host = configuration["CAP:RabbitMQ:Connections:Default:HostName"];
+
+            //    o.HostName = host;
             //    o.Port = configuration["CAP:RabbitMQ:Connections:Default:Port"].ToInt(5672);
+            //    o.VirtualHost = configuration["CAP:RabbitMQ:Connections:Default:VirtualHost"];
             //    o.UserName = configuration["CAP:RabbitMQ:Connections:Default:Username"];
             //    o.Password = configuration["CAP:RabbitMQ:Connections:Default:Password"];
 
-            //    o.ConnectionFactoryOptions = c =>
+            //    if (configuration["CAP:RabbitMQ:Connections:Default:Ssl"].IsNotWhiteSpaceAndNull())
             //    {
-            //        c.Ssl.Enabled = configuration["CAP:RabbitMQ:Connections:Default:Ssl:Enabled"].ToBool(true);
-            //        c.Ssl.ServerName = configuration["CAP:RabbitMQ:Connections:Default:Ssl:ServerName"];
-            //    };
+            //        o.ConnectionFactoryOptions = f =>
+            //        {
+            //            f.Ssl.Enabled = configuration["CAP:RabbitMQ:Connections:Default:Ssl:Enabled"].ToBool(true);
+            //            f.Ssl.ServerName = configuration["CAP:RabbitMQ:Connections:Default:Ssl:ServerName"] ?? host;
+            //        };
+            //    }
 
             //    o.ExchangeName = configuration["CAP:RabbitMQ:EventBus:ExchangeName"];
             //});
