@@ -107,7 +107,7 @@ services:
     depends_on:
       - elasticsearch
     restart: unless-stopped
-    
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
