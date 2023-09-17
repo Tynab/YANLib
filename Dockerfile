@@ -7,8 +7,6 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /yanlib
-COPY ["NuGet.Config", "."]
-COPY ["lib/YANLib/nuget.config", "lib/YANLib/"]
 COPY ["lib/YANLib/YANLib.csproj", "lib/YANLib/"]
 COPY ["host/YANLib.HttpApi.Host/YANLib.HttpApi.Host.csproj", "host/YANLib.HttpApi.Host/"]
 COPY ["src/YANLib.Application/YANLib.Application.csproj", "src/YANLib.Application/"]
