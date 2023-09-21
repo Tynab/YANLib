@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.EventBus.Distributed;
+using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndexes;
 using YANLib.EsServices;
@@ -31,8 +32,7 @@ public class DeveloperService(
     ICertificateRepository certificateRepository,
     IDeveloperEsService esService,
     IDistributedEventBus distributedEventBus,
-    ICapPublisher capPublisher,
-    IDeveloperTypeService developerTypeService
+    ICapPublisher capPublisher
 ) : YANLibAppService, IDeveloperService
 {
     #region Fields
@@ -42,7 +42,6 @@ public class DeveloperService(
     private readonly IDeveloperEsService _esService = esService;
     private readonly IDistributedEventBus _distributedEventBus = distributedEventBus;
     private readonly ICapPublisher _capPublisher = capPublisher;
-    private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
     #endregion
 
@@ -76,8 +75,6 @@ public class DeveloperService(
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Insert(ent));
 
-            rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
-
             if (request.Certificates.IsNotEmptyAndNull())
             {
                 var certs = new List<Certificate>();
@@ -109,7 +106,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse> Adjust(string idCard, DeveloperAdjustRequest request)
+    public async ValueTask<DeveloperResponse> Adjust(string idCard, DeveloperDto dto)
     {
         try
         {
@@ -118,20 +115,20 @@ public class DeveloperService(
             var id = _idGenerator.NextIdAlphabetic();
 
             ent.Id = id;
-            ent.Name = request.Name ?? ent.Name;
-            ent.Phone = request.Phone ?? ent.Phone;
+            ent.Name = dto.Name ?? ent.Name;
+            ent.Phone = dto.Phone ?? ent.Phone;
             ent.IdCard = idCard;
-            ent.DeveloperTypeCode = request.DeveloperTypeCode ?? ent.DeveloperTypeCode;
+            ent.DeveloperTypeCode = dto.DeveloperTypeCode ?? ent.DeveloperTypeCode;
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
 
-            if (request.Certificates.IsNotEmptyAndNull())
+            if (dto.Certificates.IsNotEmptyAndNull())
             {
                 var certs = new List<Certificate>();
 
-                request.Certificates.ForEach(async x =>
+                dto.Certificates.ForEach(async x =>
                 {
-                    var cert = ObjectMapper.Map<DeveloperAdjustRequest.Certificate, Certificate>(x);
+                    var cert = ObjectMapper.Map<DeveloperDto.Certificate, Certificate>(x);
 
                     cert.Id = _idGenerator.NextIdAlphabetic();
                     cert.DeveloperId = id;
@@ -166,7 +163,7 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustDeveloperService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "AdjustDeveloperService-Exception: {IdCard} - {DTO}", idCard, dto.CamelSerialize());
             throw;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.Requests;
 
@@ -10,6 +11,6 @@ public class YANLibApplicationAutoMapperProfile : Profile
     {
         _ = CreateMap<DeveloperRequest.Certificate, Certificate>();
 
-        _ = CreateMap<DeveloperAdjustRequest.Certificate, Certificate>();
+        _ = CreateMap<DeveloperDto.Certificate, Certificate>();
     }
 }

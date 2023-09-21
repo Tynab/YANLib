@@ -4,6 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
+using YANLib.Dtos;
 using YANLib.Requests;
 using YANLib.Services;
 
@@ -40,11 +41,11 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật Developer")]
-    public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperAdjustRequest request)
+    public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperDto dto)
     {
-        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.CamelSerialize());
+        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {DTO}", idCard, dto.CamelSerialize());
 
-        return Ok(await _service.Adjust(idCard, request));
+        return Ok(await _service.Adjust(idCard, dto));
     }
 
     [HttpGet("get-by-phone")]

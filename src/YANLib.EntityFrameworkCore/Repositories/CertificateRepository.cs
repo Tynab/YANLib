@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Volo.Abp;
 using YANLib.Entities;
 using YANLib.EntityFrameworkCore.DbContext;
 using static System.DateTime;
-using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Repositories;
 
@@ -39,9 +37,7 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
         {
             entity.CreatedDate = Now;
 
-            var rslt = (await _dbContext.Certificates.AddAsync(entity)).Entity;
-
-            return await _dbContext.SaveChangesAsync() > 0 ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.SaveChangesAsync() > 0 ? (await _dbContext.Certificates.AddAsync(entity)).Entity : default;
         }
         catch (Exception ex)
         {
@@ -54,16 +50,14 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
     {
         try
         {
-            var mdl = await _dbContext.Certificates.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
+            var mdl = await _dbContext.Certificates.AsNoTracking().SingleOrDefaultAsync(x => x.Id == entity.Id);
 
             mdl.Name = entity.Name;
             mdl.GPA = entity.GPA;
             mdl.DeveloperId = entity.DeveloperId;
             mdl.ModifiedDate = Now;
 
-            var rslt = _dbContext.Certificates.Update(mdl).Entity;
-
-            return await _dbContext.SaveChangesAsync() > 0 ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _dbContext.SaveChangesAsync() > 0 ? _dbContext.Certificates.Update(mdl).Entity : default;
         }
         catch (Exception ex)
         {

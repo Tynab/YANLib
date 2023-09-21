@@ -2,7 +2,7 @@
 
 namespace YANLib.RedisDtos;
 
-public sealed class DeveloperTypeDto
+public sealed class DeveloperTypeRedisDto
 {
     public string Name { get; set; }
     public bool IsActive { get; set; }

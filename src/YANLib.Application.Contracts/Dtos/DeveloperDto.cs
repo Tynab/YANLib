@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace YANLib.Requests;
+namespace YANLib.Dtos;
 
-public sealed class DeveloperAdjustRequest
+public sealed class DeveloperDto
 {
     public string Name { get; set; }
     public string Phone { get; set; }
