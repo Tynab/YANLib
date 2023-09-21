@@ -19,7 +19,7 @@ public class YANLibApplicationRedisModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         Configure<RedisOptions>(o => o.RedisConnectionString = configuration["Redis:Configuration"]);
-        _ = context.Services.AddSingleton<IRedisService<DeveloperTypeDto>, DeveloperTypeRedisService>();
+        _ = context.Services.AddSingleton<IRedisService<DeveloperTypeRedisDto>, DeveloperTypeRedisService>();
     }
 
     public override void OnApplicationShutdown(ApplicationShutdownContext context) => context.ServiceProvider.GetRequiredService<IRedisConnectionFactory>().Connection().CloseAsync();

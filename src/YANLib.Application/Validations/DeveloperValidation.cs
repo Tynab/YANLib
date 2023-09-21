@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using System.Collections.Generic;
 using System.Linq;
+using YANLib.Dtos;
 using YANLib.Requests;
 using static YANLib.YANLibDomainErrorCodes;
 
@@ -66,30 +67,30 @@ public sealed class DeveloperCertificateValidators : AbstractValidator<List<Deve
     #endregion
 }
 
-public sealed class DeveloperAdjustCertificateValidator : AbstractValidator<DeveloperAdjustRequest.Certificate>
+public sealed class DeveloperDtoCertificateValidator : AbstractValidator<DeveloperDto.Certificate>
 {
-    public DeveloperAdjustCertificateValidator()
+    public DeveloperDtoCertificateValidator()
     {
         _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x.GPA).GreaterThan(0).WithErrorCode(BAD_REQUEST_GPA).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_GPA);
     }
 }
 
-public sealed class DeveloperAdjustCertificateValidators : AbstractValidator<List<DeveloperAdjustRequest.Certificate>>
+public sealed class DeveloperDtoCertificateValidators : AbstractValidator<List<DeveloperDto.Certificate>>
 {
     #region Constructors
-    public DeveloperAdjustCertificateValidators()
+    public DeveloperDtoCertificateValidators()
     {
         _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
-        _ = RuleForEach(s => s).SetValidator(new DeveloperAdjustCertificateValidator());
+        _ = RuleForEach(s => s).SetValidator(new DeveloperDtoCertificateValidator());
         _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
     }
     #endregion
 
     #region Methods
-    private bool IsNotEmptyAndNull(List<DeveloperAdjustRequest.Certificate> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<DeveloperDto.Certificate> dtos) => dtos.IsNotEmptyAndNull();
 
-    private bool NameIsNotWhiteSpace(List<DeveloperAdjustRequest.Certificate> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
+    private bool NameIsNotWhiteSpace(List<DeveloperDto.Certificate> dtos) => dtos.Select(x => x.Name).AllNotWhiteSpaceAndNull();
     #endregion
 }
