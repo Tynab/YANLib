@@ -37,7 +37,9 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
         {
             entity.CreatedDate = Now;
 
-            return await _dbContext.SaveChangesAsync() > 0 ? (await _dbContext.Certificates.AddAsync(entity)).Entity : default;
+            var rslt = await _dbContext.Certificates.AddAsync(entity);
+
+            return await _dbContext.SaveChangesAsync() > 0 ? rslt.Entity : default;
         }
         catch (Exception ex)
         {
@@ -57,7 +59,9 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
             mdl.DeveloperId = entity.DeveloperId;
             mdl.ModifiedDate = Now;
 
-            return await _dbContext.SaveChangesAsync() > 0 ? _dbContext.Certificates.Update(mdl).Entity : default;
+            var rslt = _dbContext.Certificates.Update(mdl);
+
+            return await _dbContext.SaveChangesAsync() > 0 ? rslt.Entity : default;
         }
         catch (Exception ex)
         {

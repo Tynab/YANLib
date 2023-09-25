@@ -29,6 +29,7 @@ namespace YANLib.Services;
 public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,
+    IDeveloperTypeService developerTypeService,
     ICertificateRepository certificateRepository,
     IDeveloperEsService esService,
     IDistributedEventBus distributedEventBus,
@@ -38,6 +39,7 @@ public class DeveloperService(
     #region Fields
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
+    private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
     private readonly ICertificateRepository _certificateRepository = certificateRepository;
     private readonly IDeveloperEsService _esService = esService;
     private readonly IDistributedEventBus _distributedEventBus = distributedEventBus;
@@ -74,6 +76,11 @@ public class DeveloperService(
             ent.Id = id;
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Insert(ent));
+
+            if (rslt is not null)
+            {
+                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+            }
 
             if (request.Certificates.IsNotEmptyAndNull())
             {
@@ -121,6 +128,11 @@ public class DeveloperService(
             ent.DeveloperTypeCode = dto.DeveloperTypeCode ?? ent.DeveloperTypeCode;
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
+
+            if (rslt is not null)
+            {
+                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+            }
 
             if (dto.Certificates.IsNotEmptyAndNull())
             {
