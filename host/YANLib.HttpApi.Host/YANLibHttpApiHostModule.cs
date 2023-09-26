@@ -2,12 +2,10 @@ using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +13,6 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
@@ -38,12 +35,18 @@ using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
 using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
+using static System.Convert;
+using static System.StringSplitOptions;
+
+#if !DEBUG
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using YANLib.Middlewares;
 using static Microsoft.OpenApi.Models.ParameterLocation;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
-using static System.Convert;
 using static System.Net.HttpStatusCode;
-using static System.StringSplitOptions;
 using static System.Threading.Tasks.Task;
+#endif
 
 namespace YANLib;
 
@@ -117,27 +120,26 @@ public class YANLibHttpApiHostModule : AbpModule
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
 
+#if !DEBUG
         o.Events = new JwtBearerEvents
         {
             OnMessageReceived = async c =>
             {
                 string authorization = c.Request.Headers["Authorization"];
 
-                if (authorization is "eWFubGliLnRva2Vu")
+                if (authorization == configuration["Authorization:Bearer"])
                 {
                     await CompletedTask;
                 }
                 else
                 {
-                    c.Response.StatusCode = Forbidden.ToInt();
+                    c.Response.StatusCode = Unauthorized.ToInt();
                     c.Response.ContentType = "application/json";
-                    await c.Response.WriteAsync(new
-                    {
-                        message = "Access Denied"
-                    }.CamelSerialize());
+                    await c.Response.WriteAsync("Access Denied");
                 }
             }
         };
+#endif
     });
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
@@ -162,13 +164,29 @@ public class YANLibHttpApiHostModule : AbpModule
                 Version = "test"
             });
 
-            o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+#if !DEBUG
+            o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
                 In = Header,
                 Description = "Please insert JWT with Bearer into field",
                 Name = "Authorization",
                 Type = ApiKey
             });
+
+            o.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Id = "Authorization",
+                            Type = ReferenceType.SecurityScheme
+                        }
+                    }, new List<string>()
+                }
+            });
+#endif
 
             o.CustomSchemaIds(t => t.FullName.Replace("+", "."));
             o.HideAbpEndpoints();
@@ -268,13 +286,6 @@ public class YANLibHttpApiHostModule : AbpModule
             c.OAuthScopes("YANLib");
         });
 
-        _ = app.UseCors();
-        _ = app.UseAuthentication();
-        _ = app.UseAuthorization();
-        _ = app.UseAuditing();
-        _ = app.UseAbpSerilogEnrichers();
-        _ = app.UseConfiguredEndpoints();
-
         _ = app.UseHealthChecks("/health", new HealthCheckOptions()
         {
             Predicate = _ => true,
@@ -282,6 +293,17 @@ public class YANLibHttpApiHostModule : AbpModule
         });
 
         _ = app.UseCapDashboard();
+
+#if !DEBUG
+        _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
+#endif
+
+        _ = app.UseCors();
+        _ = app.UseAuthentication();
+        _ = app.UseAuthorization();
+        _ = app.UseAuditing();
+        _ = app.UseAbpSerilogEnrichers();
+        _ = app.UseConfiguredEndpoints();
         _ = app.UseAllElasticApm(context.GetConfiguration());
         _ = Subscribe(new HttpDiagnosticsSubscriber());
         _ = Subscribe(new EfCoreDiagnosticsSubscriber());
