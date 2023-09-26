@@ -2,12 +2,10 @@ using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +13,6 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
@@ -38,17 +35,13 @@ using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
 using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
-using static Microsoft.OpenApi.Models.ParameterLocation;
-using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Convert;
-using static System.Net.HttpStatusCode;
 using static System.StringSplitOptions;
-using static System.Threading.Tasks.Task;
 
 #if !DEBUG
-using Hoozing.Listener.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using YANLib.Middlewares;
 using static Microsoft.OpenApi.Models.ParameterLocation;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Net.HttpStatusCode;
@@ -134,7 +127,7 @@ public class YANLibHttpApiHostModule : AbpModule
             {
                 string authorization = c.Request.Headers["Authorization"];
 
-                if (authorization == configuration["Authorization:Key"])
+                if (authorization == configuration["Authorization:Bearer"])
                 {
                     await CompletedTask;
                 }
@@ -172,27 +165,27 @@ public class YANLibHttpApiHostModule : AbpModule
             });
 
 #if !DEBUG
-        o.AddSecurityDefinition("Secret", new OpenApiSecurityScheme
-        {
-            In = Header,
-            Description = "Please insert JWT with Bearer into field",
-            Name = "Secret",
-            Type = ApiKey
-        });
-
-        o.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+            o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
-                new OpenApiSecurityScheme
+                In = Header,
+                Description = "Please insert JWT with Bearer into field",
+                Name = "Authorization",
+                Type = ApiKey
+            });
+
+            o.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
                 {
-                    Reference = new OpenApiReference
+                    new OpenApiSecurityScheme
                     {
-                        Id = "Secret",
-                        Type = ReferenceType.SecurityScheme
-                    }
-                }, new List<string>()
-            }
-        });
+                        Reference = new OpenApiReference
+                        {
+                            Id = "Authorization",
+                            Type = ReferenceType.SecurityScheme
+                        }
+                    }, new List<string>()
+                }
+            });
 #endif
 
             o.CustomSchemaIds(t => t.FullName.Replace("+", "."));

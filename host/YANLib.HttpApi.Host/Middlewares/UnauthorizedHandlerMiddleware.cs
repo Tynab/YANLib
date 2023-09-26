@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using System;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static Serilog.Log;
 using static System.Net.HttpStatusCode;
