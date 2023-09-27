@@ -10,7 +10,7 @@ using Volo.Abp;
 using Volo.Abp.EventBus.Distributed;
 using YANLib.Dtos;
 using YANLib.Entities;
-using YANLib.EsIndexes;
+using YANLib.EsIndices;
 using YANLib.EsServices;
 using YANLib.Kafka.Etos;
 using YANLib.RabbitMq.Etos;

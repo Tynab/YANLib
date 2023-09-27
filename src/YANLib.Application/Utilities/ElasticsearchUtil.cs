@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using System;
 using System.Linq;
-using YANLib.EsIndexes;
+using YANLib.EsIndices;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
 using static YANLib.YANLibConsts.ElasticsearchIndex;

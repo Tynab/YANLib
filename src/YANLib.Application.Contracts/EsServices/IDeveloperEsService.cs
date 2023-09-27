@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using YANLib.EsIndexes;
+using YANLib.EsIndices;
 
 namespace YANLib.EsServices;
 

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YANLib.EsIndexes;
+using YANLib.EsIndices;
 using YANLib.Utilities;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
