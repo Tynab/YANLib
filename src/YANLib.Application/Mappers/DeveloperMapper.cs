@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Volo.Abp.AutoMapper;
 using YANLib.Entities;
+using YANLib.EsIndices;
 using YANLib.Requests;
 using YANLib.Responses;
 
