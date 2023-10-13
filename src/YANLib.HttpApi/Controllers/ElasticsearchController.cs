@@ -22,7 +22,7 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
     #region Methods
     [HttpGet("developers/{id}")]
     [SwaggerOperation(Summary = "Lấy Developer theo Id trên Elasticsearch")]
-    public async ValueTask<IActionResult> Get([Required] string id)
+    public async ValueTask<IActionResult> Get(string id)
     {
         _logger.LogInformation("GetElasticsearchController: {Id}", id);
 
