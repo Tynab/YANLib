@@ -82,7 +82,7 @@ public class DeveloperTypeService(
 
             if (mdl is not null)
             {
-                await _redisService.Set(DeveloperTypeGroup, mdl.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
+                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
             }
 
             return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
@@ -108,7 +108,7 @@ public class DeveloperTypeService(
 
             if (mdl is not null)
             {
-                await _redisService.Set(DeveloperTypeGroup, mdl.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
+                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
             }
 
             return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
