@@ -11,7 +11,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.3.3" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.4.1" />
 	</ItemGroup>
 
 </Project>

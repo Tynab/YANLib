@@ -68,7 +68,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
             foreach (var data in datas.OrderBy(x => x.CreatedDate))
             {
                 data.Id = data.IdCard;
-                reqs.Index<DeveloperIndex>(x => x.Document(data).Index(index));
+                _ = reqs.Index<DeveloperIndex>(x => x.Document(data).Index(index));
             }
 
             return await _elasticClient.BulkAsync(reqs) is not null;

@@ -26,7 +26,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet("{code}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa Developer Type theo Code")]
-    public async ValueTask<IActionResult> Get([Required] int code)
+    public async ValueTask<IActionResult> Get(int code)
     {
         _logger.LogInformation("GetDeveloperTypeController: {Code}", code);
 

@@ -18,6 +18,6 @@ public sealed class Developer
     public DateTime CreatedDate { get; set; }
     public DateTime? ModifiedDate { get; set; }
 
-    [ForeignKey("DeveloperTypeCode")]
+    [ForeignKey(nameof(DeveloperTypeCode))]
     public DeveloperType DeveloperType { get; set; }
 }

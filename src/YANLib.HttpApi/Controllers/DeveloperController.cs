@@ -23,7 +23,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     #region Methods
     [HttpGet("{idCard}")]
     [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
-    public async ValueTask<IActionResult> GetByIdCard([Required] string idCard)
+    public async ValueTask<IActionResult> GetByIdCard(string idCard)
     {
         _logger.LogInformation("GetByIdCardDeveloperController: {IdCard}", idCard);
 
@@ -41,7 +41,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật Developer")]
-    public async ValueTask<IActionResult> Adjust([Required] string idCard, [Required] DeveloperDto dto)
+    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperDto dto)
     {
         _logger.LogInformation("AdjustDeveloperController: {IdCard} - {DTO}", idCard, dto.CamelSerialize());
 
