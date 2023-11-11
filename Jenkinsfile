@@ -8,10 +8,26 @@ pipeline {
             }
         }
 
+        // stage('Push') {
+        //     steps {
+        //         withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
+        //             sh 'docker push yamiannephilim/yanlib'
+        //         }
+        //     }
+        // }
         stage('Push') {
             steps {
-                withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker push yamiannephilim/yanlib'
+                withDockerRegistry([credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/']) {
+                    script {
+                        def registry = 'https://index.docker.io/v1/'
+                        def image = 'yamiannephilim/yanlib'
+                        def dockerCreds = docker.getRegistryCredentials('docker_hub')
+
+                        docker.withRegistry(registry, dockerCreds) {
+                            sh "echo ${dockerCreds.PASSWORD} | docker login --username ${dockerCreds.US‌ERNAME} --password-stdin"
+                            sh "docker push ${image}"
+                        }
+                    }
                 }
             }
         }
