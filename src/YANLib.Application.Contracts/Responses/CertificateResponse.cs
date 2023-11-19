@@ -8,6 +8,6 @@ public sealed record CertificateResponse
     public string Name { get; set; }
     public double? GPA { get; set; }
     public string DeveloperId { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

@@ -8,14 +8,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.EventBus.Distributed;
-using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
 using YANLib.EsServices;
 using YANLib.Kafka.Etos;
 using YANLib.RabbitMq.Etos;
 using YANLib.Repositories;
-using YANLib.Requests;
+using YANLib.Requests.Developer;
 using YANLib.Responses;
 using static System.DateTime;
 using static System.Threading.Tasks.Task;
@@ -61,7 +60,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse> Insert(DeveloperRequest request)
+    public async ValueTask<DeveloperResponse> Create(DeveloperCreateRequest request)
     {
         try
         {
@@ -71,11 +70,11 @@ public class DeveloperService(
             }
 
             var id = _idGenerator.NextIdAlphabetic();
-            var ent = ObjectMapper.Map<DeveloperRequest, Developer>(request);
+            var ent = ObjectMapper.Map<DeveloperCreateRequest, Developer>(request);
 
             ent.Id = id;
 
-            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Insert(ent));
+            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Create(ent));
 
             if (rslt is not null)
             {
@@ -88,11 +87,11 @@ public class DeveloperService(
 
                 request.Certificates.ForEach(async x =>
                 {
-                    var cert = ObjectMapper.Map<DeveloperRequest.Certificate, Certificate>(x);
+                    var cert = ObjectMapper.Map<DeveloperCreateRequest.Certificate, Certificate>(x);
 
                     cert.Id = _idGenerator.NextIdAlphabetic();
                     cert.DeveloperId = id;
-                    cert.CreatedDate = Now;
+                    cert.CreatedAt = Now;
                     certs.Add(cert);
 
                     var eto = ObjectMapper.Map<Certificate, CertificateCreateEto>(cert);
@@ -108,12 +107,12 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertDeveloperService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "CreateDeveloperService-Exception: {Request}", request.CamelSerialize());
             throw;
         }
     }
 
-    public async ValueTask<DeveloperResponse> Adjust(string idCard, DeveloperDto dto)
+    public async ValueTask<DeveloperResponse> Adjust(string idCard, DeveloperUpdateRequest dto)
     {
         try
         {
@@ -140,11 +139,11 @@ public class DeveloperService(
 
                 dto.Certificates.ForEach(async x =>
                 {
-                    var cert = ObjectMapper.Map<DeveloperDto.Certificate, Certificate>(x);
+                    var cert = ObjectMapper.Map<DeveloperUpdateRequest.Certificate, Certificate>(x);
 
                     cert.Id = _idGenerator.NextIdAlphabetic();
                     cert.DeveloperId = id;
-                    cert.CreatedDate = Now;
+                    cert.CreatedAt = Now;
                     certs.Add(cert);
 
                     var eto = ObjectMapper.Map<Certificate, CertificateCreateEto>(cert);
@@ -160,7 +159,7 @@ public class DeveloperService(
                 mdl.Certificates.ForEach(async x =>
                 {
                     x.DeveloperId = id;
-                    x.ModifiedDate = Now;
+                    x.UpdatedAt = Now;
 
                     var eto = ObjectMapper.Map<CertificateResponse, CertificateAdjustEto>(x);
 

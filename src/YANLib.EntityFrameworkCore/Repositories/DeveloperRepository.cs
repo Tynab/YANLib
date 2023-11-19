@@ -31,13 +31,13 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
         }
     }
 
-    public async ValueTask<Developer> Insert(Developer entity)
+    public async ValueTask<Developer> Create(Developer entity)
     {
         try
         {
             entity.IsActive = true;
             entity.Version = 1;
-            entity.CreatedDate = Now;
+            entity.CreatedAt = Now;
             _ = await _dbContext.Developers.AddAsync(entity);
 
             if (await _dbContext.SaveChangesAsync() > 0)
@@ -52,7 +52,7 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertDeveloperRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "CreateDeveloperRepository-Exception: {Entity}", entity.CamelSerialize());
             throw;
         }
     }
@@ -63,11 +63,11 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
         {
             if (await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.IsActive, false)
-                .SetProperty(x => x.ModifiedDate, Now)) > 0)
+                .SetProperty(x => x.UpdatedAt, Now)) > 0)
             {
                 entity.IsActive = true;
                 entity.Version++;
-                entity.CreatedDate = Now;
+                entity.CreatedAt = Now;
                 _ = await _dbContext.Developers.AddAsync(entity);
 
                 if (await _dbContext.SaveChangesAsync() > 0)

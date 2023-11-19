@@ -35,11 +35,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa Developer Type")]
-    public async ValueTask<IActionResult> Insert([Required] DeveloperTypeRequest request)
+    public async ValueTask<IActionResult> Create([Required] DeveloperTypeRequest request)
     {
-        _logger.LogInformation("InsertDeveloperTypeController: {Request}", request.CamelSerialize());
+        _logger.LogInformation("CreateDeveloperTypeController: {Request}", request.CamelSerialize());
 
-        return Ok(await _service.Insert(request));
+        return Ok(await _service.Create(request));
     }
 
     [HttpPut]

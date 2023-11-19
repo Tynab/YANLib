@@ -18,15 +18,15 @@ public class CertificateService(
     #endregion
 
     #region Implements
-    public async ValueTask<bool> Insert(CertificateRequest request)
+    public async ValueTask<bool> Create(CertificateRequest request)
     {
         try
         {
-            return await _repository.Insert(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
+            return await _repository.Create(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertCertificateService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "CreateCertificateService-Exception: {Request}", request.CamelSerialize());
             throw;
         }
     }

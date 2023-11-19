@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace YANLib.Requests;
+﻿namespace YANLib.Requests;
 
 public sealed class DeveloperTypeRequest
 {
-    [Required]
-    public int Code { get; set; }
+    public required int Code { get; set; }
 
-    [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public bool IsActive { get; set; } = true;
 }

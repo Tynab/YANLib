@@ -22,9 +22,9 @@ public sealed class Developer
 
     public int Version { get; set; }
 
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     [ForeignKey(nameof(DeveloperTypeCode))]
     public DeveloperType DeveloperType { get; set; }

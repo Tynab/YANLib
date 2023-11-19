@@ -12,7 +12,7 @@ public interface IDeveloperTypeService : IApplicationService
 
     public ValueTask<DeveloperTypeResponse> Get(int code);
 
-    public ValueTask<DeveloperTypeResponse> Insert(DeveloperTypeRequest request);
+    public ValueTask<DeveloperTypeResponse> Create(DeveloperTypeRequest request);
 
     public ValueTask<DeveloperTypeResponse> Update(DeveloperTypeRequest request);
 

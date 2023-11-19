@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace YANLib.Dtos;
+namespace YANLib.Requests.Developer;
 
-public sealed class DeveloperDto
+public sealed class DeveloperUpdateRequest
 {
     public string Name { get; set; }
 
@@ -15,8 +14,7 @@ public sealed class DeveloperDto
 
     public sealed class Certificate
     {
-        [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public double? GPA { get; set; }
     }

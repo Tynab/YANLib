@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 
 namespace YANLib.Responses;
 
-public sealed record JsonResponse
+public sealed class JsonResponse
 {
-    [JsonPropertyName("IdOptionalName")]
     public Guid Id { get; set; }
 }

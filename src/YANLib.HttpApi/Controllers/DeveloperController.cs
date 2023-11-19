@@ -4,8 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
-using YANLib.Dtos;
-using YANLib.Requests;
+using YANLib.Requests.Developer;
 using YANLib.Services;
 
 namespace YANLib.Controllers;
@@ -32,20 +31,20 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới Developer")]
-    public async ValueTask<IActionResult> Insert([Required] DeveloperRequest request)
+    public async ValueTask<IActionResult> Create([Required] DeveloperCreateRequest request)
     {
-        _logger.LogInformation("InsertDeveloperController: {Request}", request.CamelSerialize());
+        _logger.LogInformation("CreateDeveloperController: {Request}", request.CamelSerialize());
 
-        return Ok(await _service.Insert(request));
+        return Ok(await _service.Create(request));
     }
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật Developer")]
-    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperDto dto)
+    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperUpdateRequest request)
     {
-        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {DTO}", idCard, dto.CamelSerialize());
+        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.CamelSerialize());
 
-        return Ok(await _service.Adjust(idCard, dto));
+        return Ok(await _service.Adjust(idCard, request));
     }
 
     [HttpGet("get-by-phone")]

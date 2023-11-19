@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.Json;
-using YANLib.Requests;
 using YANLib.Responses;
 using static Newtonsoft.Json.JsonConvert;
 using static System.Guid;
@@ -21,12 +20,12 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
     #region Implements
     public async ValueTask<string> YanVsStandards(uint quantity, bool hideSystem)
     {
-        var json = new JsonRequest
+        var json = new JsonResponse
         {
             Id = NewGuid()
         }.Serialize();
 
-        var jsonCamel = new JsonRequest
+        var jsonCamel = new JsonResponse
         {
             Id = NewGuid()
         }.CamelSerialize();
@@ -42,7 +41,7 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
             for (var i = 0; i < quantity; i++)
             {
-                var dto = DeserializeObject<JsonRequest>(i is 0 ? json : jsonCamel);
+                var dto = DeserializeObject<JsonResponse>(i is 0 ? json : jsonCamel);
 
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -64,7 +63,7 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
             for (var i = 0; i < quantity; i++)
             {
-                var dto = (JsonRequest)_jsonSerializer.Deserialize(typeof(JsonRequest), i is 0 ? json : jsonCamel);
+                var dto = (JsonResponse)_jsonSerializer.Deserialize(typeof(JsonResponse), i is 0 ? json : jsonCamel);
 
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -86,7 +85,7 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
             for (var i = 0; i < quantity; i++)
             {
-                var dto = (i is 0 ? json : jsonCamel).Deserialize<JsonRequest>();
+                var dto = (i is 0 ? json : jsonCamel).Deserialize<JsonResponse>();
 
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -110,7 +109,7 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
                 for (var i = 0; i < quantity; i++)
                 {
-                    var dto = Deserialize<JsonRequest>(i is 0 ? json : jsonCamel);
+                    var dto = Deserialize<JsonResponse>(i is 0 ? json : jsonCamel);
 
                     first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                     last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -132,7 +131,7 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
                 for (var i = 0; i < quantity; i++)
                 {
-                    var dto = Deserialize<JsonRequest>(i is 0 ? json : jsonCamel, new JsonSerializerOptions
+                    var dto = Deserialize<JsonResponse>(i is 0 ? json : jsonCamel, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -158,18 +157,18 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
         }
     }
 
-    public ValueTask<string> JsonSerialize(Guid id) => ValueTask.FromResult(new JsonRequest
+    public ValueTask<string> JsonSerialize(Guid id) => ValueTask.FromResult(new JsonResponse
     {
         Id = id
     }.Serialize());
 
-    public ValueTask<string> JsonSerializeOptionalName(Guid idOptionalName) => ValueTask.FromResult(new JsonResponse
+    public ValueTask<string> JsonSerializeOptionalName(Guid idOptionalName) => ValueTask.FromResult(new JsonOptionalNameResponse
     {
         Id = idOptionalName
     }.Serialize());
 
-    public ValueTask<JsonRequest> JsonDeserialize(string json) => ValueTask.FromResult(json.Deserialize<JsonRequest>());
+    public ValueTask<JsonResponse> JsonDeserialize(string json) => ValueTask.FromResult(json.Deserialize<JsonResponse>());
 
-    public ValueTask<JsonResponse> JsonDeserializeOptionalName(string json) => ValueTask.FromResult(json.Deserialize<JsonResponse>());
+    public ValueTask<JsonOptionalNameResponse> JsonDeserializeOptionalName(string json) => ValueTask.FromResult(json.Deserialize<JsonOptionalNameResponse>());
     #endregion
 }

@@ -2,7 +2,7 @@
 using Volo.Abp.AutoMapper;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.Requests;
+using YANLib.Requests.Developer;
 using YANLib.Responses;
 
 namespace YANLib.Mappers;
@@ -26,12 +26,12 @@ public sealed class DeveloperMapper : Profile
             .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.Id))
             .Ignore(d => d.Certificates);
 
-        _ = CreateMap<DeveloperRequest, Developer>()
+        _ = CreateMap<DeveloperCreateRequest, Developer>()
             .Ignore(d => d.Id)
             .Ignore(d => d.IsActive)
             .Ignore(d => d.Version)
-            .Ignore(d => d.CreatedDate)
-            .Ignore(d => d.ModifiedDate)
+            .Ignore(d => d.CreatedAt)
+            .Ignore(d => d.UpdatedAt)
             .Ignore(d => d.DeveloperType);
 
         _ = CreateMap<DeveloperIndex, Developer>()

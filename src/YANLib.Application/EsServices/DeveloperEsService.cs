@@ -65,7 +65,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
 
             var reqs = new BulkDescriptor();
 
-            foreach (var data in datas.OrderBy(x => x.CreatedDate))
+            foreach (var data in datas.OrderBy(x => x.CreatedAt))
             {
                 data.Id = data.IdCard;
                 _ = reqs.Index<DeveloperIndex>(x => x.Document(data).Index(index));

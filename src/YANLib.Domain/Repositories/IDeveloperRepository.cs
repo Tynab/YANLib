@@ -9,7 +9,7 @@ public interface IDeveloperRepository : ITransientDependency
 {
     public ValueTask<IEnumerable<Developer>> GetAll();
 
-    public ValueTask<Developer> Insert(Developer entity);
+    public ValueTask<Developer> Create(Developer entity);
 
     public ValueTask<Developer> Adjust(Developer entity);
 }
