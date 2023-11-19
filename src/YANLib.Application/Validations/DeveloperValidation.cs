@@ -6,9 +6,9 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class DeveloperValidator : AbstractValidator<DeveloperCreateRequest>
+public sealed class DeveloperCreateValidator : AbstractValidator<DeveloperCreateRequest>
 {
-    public DeveloperValidator()
+    public DeveloperCreateValidator()
     {
         _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x.IdCard).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_ID_CARD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID_CARD);
@@ -16,13 +16,13 @@ public sealed class DeveloperValidator : AbstractValidator<DeveloperCreateReques
     }
 }
 
-public sealed class DeveloperValidators : AbstractValidator<List<DeveloperCreateRequest>>
+public sealed class DeveloperCreateValidators : AbstractValidator<List<DeveloperCreateRequest>>
 {
     #region Constructors
-    public DeveloperValidators()
+    public DeveloperCreateValidators()
     {
         _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
-        _ = RuleForEach(s => s).SetValidator(new DeveloperValidator());
+        _ = RuleForEach(s => s).SetValidator(new DeveloperCreateValidator());
         _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x).Must(IdCardIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_ID_CARD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID_CARD);
@@ -38,22 +38,22 @@ public sealed class DeveloperValidators : AbstractValidator<List<DeveloperCreate
     #endregion
 }
 
-public sealed class DeveloperCertificateValidator : AbstractValidator<DeveloperCreateRequest.Certificate>
+public sealed class DeveloperCreateCertificateValidator : AbstractValidator<DeveloperCreateRequest.Certificate>
 {
-    public DeveloperCertificateValidator()
+    public DeveloperCreateCertificateValidator()
     {
         _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x.GPA).GreaterThan(0).WithErrorCode(BAD_REQUEST_GPA).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_GPA);
     }
 }
 
-public sealed class DeveloperCertificateValidators : AbstractValidator<List<DeveloperCreateRequest.Certificate>>
+public sealed class DeveloperCreateCertificateValidators : AbstractValidator<List<DeveloperCreateRequest.Certificate>>
 {
     #region Constructors
-    public DeveloperCertificateValidators()
+    public DeveloperCreateCertificateValidators()
     {
         _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
-        _ = RuleForEach(s => s).SetValidator(new DeveloperCertificateValidator());
+        _ = RuleForEach(s => s).SetValidator(new DeveloperCreateCertificateValidator());
         _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
     }
@@ -66,22 +66,22 @@ public sealed class DeveloperCertificateValidators : AbstractValidator<List<Deve
     #endregion
 }
 
-public sealed class DeveloperDtoCertificateValidator : AbstractValidator<DeveloperUpdateRequest.Certificate>
+public sealed class DeveloperUpdateCertificateValidator : AbstractValidator<DeveloperUpdateRequest.Certificate>
 {
-    public DeveloperDtoCertificateValidator()
+    public DeveloperUpdateCertificateValidator()
     {
         _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x.GPA).GreaterThan(0).WithErrorCode(BAD_REQUEST_GPA).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_GPA);
     }
 }
 
-public sealed class DeveloperDtoCertificateValidators : AbstractValidator<List<DeveloperUpdateRequest.Certificate>>
+public sealed class DeveloperUpdateCertificateValidators : AbstractValidator<List<DeveloperUpdateRequest.Certificate>>
 {
     #region Constructors
-    public DeveloperDtoCertificateValidators()
+    public DeveloperUpdateCertificateValidators()
     {
         _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
-        _ = RuleForEach(s => s).SetValidator(new DeveloperDtoCertificateValidator());
+        _ = RuleForEach(s => s).SetValidator(new DeveloperUpdateCertificateValidator());
         _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
     }

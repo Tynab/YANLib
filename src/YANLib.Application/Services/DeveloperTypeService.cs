@@ -8,7 +8,7 @@ using Volo.Abp.Domain.Repositories;
 using YANLib.Application.Redis.Services;
 using YANLib.Entities;
 using YANLib.RedisDtos;
-using YANLib.Requests;
+using YANLib.Requests.DeveloperType;
 using YANLib.Responses;
 using static System.DateTime;
 using static System.Threading.Tasks.Task;
@@ -63,7 +63,7 @@ public class DeveloperTypeService(
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse> Create(DeveloperTypeRequest request)
+    public async ValueTask<DeveloperTypeResponse> Create(DeveloperTypeCreateRequest request)
     {
         try
         {
@@ -74,7 +74,7 @@ public class DeveloperTypeService(
                 throw new BusinessException(EXIST_ID).WithData("Code", request.Code);
             }
 
-            var ent = ObjectMapper.Map<DeveloperTypeRequest, DeveloperType>(request);
+            var ent = ObjectMapper.Map<DeveloperTypeCreateRequest, DeveloperType>(request);
 
             ent.CreatedAt = Now;
 
@@ -94,12 +94,16 @@ public class DeveloperTypeService(
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse> Update(DeveloperTypeRequest request)
+    public async ValueTask<DeveloperTypeResponse> Update(int code, DeveloperTypeUpdateRequest request)
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, request.Code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", request.Code);
-            var ent = ObjectMapper.Map<DeveloperTypeRequest, DeveloperType>(request);
+            var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
+
+            request.Name = request.Name.IsWhiteSpaceOrNull() ? dto.Name : request.Name;
+            request.IsActive ??= dto.IsActive;
+
+            var ent = ObjectMapper.Map<(int, DeveloperTypeUpdateRequest), DeveloperType>((code, request));
 
             ent.CreatedAt = dto.CreatedAt;
             ent.UpdatedAt = Now;

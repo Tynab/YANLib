@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
-using YANLib.Requests;
+using YANLib.Requests.DeveloperType;
 using YANLib.Services;
 
 namespace YANLib.Controllers;
@@ -35,20 +35,20 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa Developer Type")]
-    public async ValueTask<IActionResult> Create([Required] DeveloperTypeRequest request)
+    public async ValueTask<IActionResult> Create([Required] DeveloperTypeCreateRequest request)
     {
         _logger.LogInformation("CreateDeveloperTypeController: {Request}", request.CamelSerialize());
 
         return Ok(await _service.Create(request));
     }
 
-    [HttpPut]
+    [HttpPut("{code}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa Developer Type")]
-    public async ValueTask<IActionResult> Update([Required] DeveloperTypeRequest request)
+    public async ValueTask<IActionResult> Update(int code, [Required] DeveloperTypeUpdateRequest request)
     {
-        _logger.LogInformation("UpdateDeveloperTypeController: {Request}", request.CamelSerialize());
+        _logger.LogInformation("UpdateDeveloperTypeController: {Code} - {Request}", code, request.CamelSerialize());
 
-        return Ok(await _service.Update(request));
+        return Ok(await _service.Update(code, request));
     }
 
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa Developer Types từ Database sang Redis")]

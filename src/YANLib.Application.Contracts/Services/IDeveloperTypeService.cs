@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
-using YANLib.Requests;
+using YANLib.Requests.DeveloperType;
 using YANLib.Responses;
 
 namespace YANLib.Services;
@@ -12,9 +12,9 @@ public interface IDeveloperTypeService : IApplicationService
 
     public ValueTask<DeveloperTypeResponse> Get(int code);
 
-    public ValueTask<DeveloperTypeResponse> Create(DeveloperTypeRequest request);
+    public ValueTask<DeveloperTypeResponse> Create(DeveloperTypeCreateRequest request);
 
-    public ValueTask<DeveloperTypeResponse> Update(DeveloperTypeRequest request);
+    public ValueTask<DeveloperTypeResponse> Update(int code, DeveloperTypeUpdateRequest request);
 
     public ValueTask<bool> SyncDbToRedis();
 }
