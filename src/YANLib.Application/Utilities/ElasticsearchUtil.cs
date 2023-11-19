@@ -31,9 +31,9 @@ public static class ElasticsearchUtil
 
         if (configuration.GetSection(usernameTag).Value.IsNotWhiteSpaceAndNull())
         {
-            settings.ServerCertificateValidationCallback((o, certificate, chain, errors) => true);
-            settings.ServerCertificateValidationCallback(AllowAll);
-            settings.BasicAuthentication(configuration.GetSection(usernameTag).Value, configuration.GetSection(pwdTag).Value);
+            _ = settings.ServerCertificateValidationCallback((o, certificate, chain, errors) => true);
+            _ = settings.ServerCertificateValidationCallback(AllowAll);
+            _ = settings.BasicAuthentication(configuration.GetSection(usernameTag).Value, configuration.GetSection(pwdTag).Value);
         }
 
         _indexSample = configuration.GetSection(Sample)?.Value;

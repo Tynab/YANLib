@@ -5,12 +5,12 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class SampleValidator : AbstractValidator<SampleRequest>
+public sealed class SampleValidator : AbstractValidator<JsonRequest>
 {
     public SampleValidator() => RuleFor(x => x.Id).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID);
 }
 
-public sealed class SampleValidators : AbstractValidator<List<SampleRequest>>
+public sealed class SampleValidators : AbstractValidator<List<JsonRequest>>
 {
     #region Constructors
     public SampleValidators()
@@ -22,6 +22,6 @@ public sealed class SampleValidators : AbstractValidator<List<SampleRequest>>
     #endregion
 
     #region Methods
-    private bool IsNotEmptyAndNull(List<SampleRequest> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<JsonRequest> requests) => requests.IsNotEmptyAndNull();
     #endregion
 }

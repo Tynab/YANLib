@@ -2,7 +2,7 @@
 
 namespace YANLib.Requests;
 
-public sealed class SampleRequest
+public sealed class JsonRequest
 {
     public Guid Id { get; set; }
 }
