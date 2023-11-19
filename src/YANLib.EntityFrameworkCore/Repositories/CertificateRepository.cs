@@ -31,11 +31,11 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
         }
     }
 
-    public async ValueTask<Certificate> Insert(Certificate entity)
+    public async ValueTask<Certificate> Create(Certificate entity)
     {
         try
         {
-            entity.CreatedDate = Now;
+            entity.CreatedAt = Now;
 
             var rslt = await _dbContext.Certificates.AddAsync(entity);
 
@@ -43,7 +43,7 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "CreateCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
             throw;
         }
     }
@@ -57,7 +57,7 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
             mdl.Name = entity.Name;
             mdl.GPA = entity.GPA;
             mdl.DeveloperId = entity.DeveloperId;
-            mdl.ModifiedDate = Now;
+            mdl.UpdatedAt = Now;
 
             var rslt = _dbContext.Certificates.Update(mdl);
 

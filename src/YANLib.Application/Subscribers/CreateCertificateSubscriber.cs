@@ -23,7 +23,7 @@ public class CreateCertificateSubscriber(
     public async Task Subscibe(CertificateCreateEto eventData)
     {
         _logger.LogInformation("CreateCertificateSubscriber-Subscribe: {EventData}", eventData.CamelSerialize());
-        _logger.LogInformation("CreateCertificateSubscriber-InsertCertificateService: {Responses}", await _certificateService.Insert(ObjectMapper.Map<CertificateCreateEto, CertificateRequest>(eventData)));
+        _logger.LogInformation("CreateCertificateSubscriber-CreateCertificateService: {Responses}", await _certificateService.Create(ObjectMapper.Map<CertificateCreateEto, CertificateRequest>(eventData)));
     }
     #endregion
 }

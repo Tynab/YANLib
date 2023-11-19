@@ -16,16 +16,16 @@ public sealed class DeveloperTypeMapper : Profile
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Key.ToInt()))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Value.Name))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Value.IsActive))
-            .ForMember(d => d.CreatedDate, o => o.MapFrom(s => s.Value.CreatedDate))
-            .ForMember(d => d.ModifiedDate, o => o.MapFrom(s => s.Value.ModifiedDate));
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.Value.CreatedAt))
+            .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.Value.UpdatedAt));
 
         _ = CreateMap<DeveloperTypeRedisDto, DeveloperTypeResponse>()
             .Ignore(d => d.Code);
 
         _ = CreateMap<DeveloperTypeRequest, DeveloperType>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Code))
-            .Ignore(d => d.CreatedDate)
-            .Ignore(d => d.ModifiedDate);
+            .Ignore(d => d.CreatedAt)
+            .Ignore(d => d.UpdatedAt);
 
         _ = CreateMap<DeveloperType, DeveloperTypeRedisDto>();
 

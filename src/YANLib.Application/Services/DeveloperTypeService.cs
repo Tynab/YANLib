@@ -63,7 +63,7 @@ public class DeveloperTypeService(
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse> Insert(DeveloperTypeRequest request)
+    public async ValueTask<DeveloperTypeResponse> Create(DeveloperTypeRequest request)
     {
         try
         {
@@ -76,7 +76,7 @@ public class DeveloperTypeService(
 
             var ent = ObjectMapper.Map<DeveloperTypeRequest, DeveloperType>(request);
 
-            ent.CreatedDate = Now;
+            ent.CreatedAt = Now;
 
             var mdl = await _repository.InsertAsync(ent);
 
@@ -89,7 +89,7 @@ public class DeveloperTypeService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertDeveloperTypeService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "CreateDeveloperTypeService-Exception: {Request}", request.CamelSerialize());
             throw;
         }
     }
@@ -101,8 +101,8 @@ public class DeveloperTypeService(
             var dto = await _redisService.Get(DeveloperTypeGroup, request.Code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", request.Code);
             var ent = ObjectMapper.Map<DeveloperTypeRequest, DeveloperType>(request);
 
-            ent.CreatedDate = dto.CreatedDate;
-            ent.ModifiedDate = Now;
+            ent.CreatedAt = dto.CreatedAt;
+            ent.UpdatedAt = Now;
 
             var mdl = await _repository.UpdateAsync(ent);
 
