@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Volo.Abp.AutoMapper;
 using YANLib.Entities;
 using YANLib.RedisDtos;
-using YANLib.Requests;
+using YANLib.Requests.DeveloperType;
 using YANLib.Responses;
 
 namespace YANLib.Mappers;
@@ -22,8 +22,15 @@ public sealed class DeveloperTypeMapper : Profile
         _ = CreateMap<DeveloperTypeRedisDto, DeveloperTypeResponse>()
             .Ignore(d => d.Code);
 
-        _ = CreateMap<DeveloperTypeRequest, DeveloperType>()
+        _ = CreateMap<DeveloperTypeCreateRequest, DeveloperType>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Code))
+            .Ignore(d => d.CreatedAt)
+            .Ignore(d => d.UpdatedAt);
+
+        _ = CreateMap<(int, DeveloperTypeUpdateRequest), DeveloperType>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Item1))
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Item2.Name))
+            .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Item2.IsActive))
             .Ignore(d => d.CreatedAt)
             .Ignore(d => d.UpdatedAt);
 

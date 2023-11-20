@@ -1,6 +1,6 @@
-﻿namespace YANLib.Requests;
+﻿namespace YANLib.Requests.DeveloperType;
 
-public sealed class DeveloperTypeRequest
+public sealed class DeveloperTypeCreateRequest
 {
     public required int Code { get; set; }
 
