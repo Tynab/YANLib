@@ -47,7 +47,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetDeveloperEsService-Exception: {Data}", data.CamelSerialize());
+            _logger.LogError(ex, "SetDeveloperEsService-Exception: {Data}", data.Serialize());
             throw;
         }
     }
@@ -75,7 +75,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulkDeveloperEsService-Exception: {Datas}", datas.CamelSerialize());
+            _logger.LogError(ex, "SetBulkDeveloperEsService-Exception: {Datas}", datas.Serialize());
             throw;
         }
     }

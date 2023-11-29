@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using static System.StringComparison;
 
 namespace YANLib;
@@ -6,7 +7,7 @@ namespace YANLib;
 public static partial class YANText
 {
 
-    public static bool IsNull(this string str) => str is null;
+    public static bool IsNull([NotNullWhen(false)] this string str) => str is null;
 
     public static bool AllNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotNull());
 
@@ -16,7 +17,7 @@ public static partial class YANText
 
     public static bool AnyNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNull());
 
-    public static bool IsEmptyOrNull(this string str) => string.IsNullOrEmpty(str);
+    public static bool IsEmptyOrNull([NotNullWhen(false)] this string str) => string.IsNullOrEmpty(str);
 
     public static bool AllEmptyOrNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotEmptyAndNull());
 
@@ -26,7 +27,7 @@ public static partial class YANText
 
     public static bool AnyEmptyOrNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsEmptyOrNull());
 
-    public static bool IsWhiteSpaceOrNull(this string str) => string.IsNullOrWhiteSpace(str);
+    public static bool IsWhiteSpaceOrNull([NotNullWhen(false)] this string str) => string.IsNullOrWhiteSpace(str);
 
     public static bool AllWhiteSpaceOrNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNotWhiteSpaceAndNull());
 
@@ -46,7 +47,7 @@ public static partial class YANText
 
     public static bool AnyEqualsIgnoreCase(this IEnumerable<string> strs) => !strs.AllNotEqualsIgnoreCase();
 
-    public static bool IsNotNull(this string str) => str is not null;
+    public static bool IsNotNull([NotNullWhen(true)] this string str) => str is not null;
 
     public static bool AllNotNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsNull());
 
@@ -56,7 +57,7 @@ public static partial class YANText
 
     public static bool AnyNotNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotNull());
 
-    public static bool IsNotEmptyAndNull(this string str) => !string.IsNullOrEmpty(str);
+    public static bool IsNotEmptyAndNull([NotNullWhen(true)] this string str) => !string.IsNullOrEmpty(str);
 
     public static bool AllNotEmptyAndNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsEmptyOrNull());
 
@@ -66,7 +67,7 @@ public static partial class YANText
 
     public static bool AnyNotEmptyAndNull(this IEnumerable<string> strs) => strs is not null && strs.Any(s => s.IsNotEmptyAndNull());
 
-    public static bool IsNotWhiteSpaceAndNull(this string str) => !string.IsNullOrWhiteSpace(str);
+    public static bool IsNotWhiteSpaceAndNull([NotNullWhen(true)] this string str) => !string.IsNullOrWhiteSpace(str);
 
     public static bool AllNotWhiteSpaceAndNull(params string[] strs) => strs is not null && !strs.Any(s => s.IsWhiteSpaceOrNull());
 

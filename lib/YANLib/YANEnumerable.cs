@@ -1,4 +1,5 @@
-﻿using static System.Math;
+﻿using System.Diagnostics.CodeAnalysis;
+using static System.Math;
 using static System.Nullable;
 using static YANLib.YANNum;
 
@@ -68,13 +69,13 @@ public static partial class YANEnumerable
         }
     }
 
-    public static bool IsEmptyOrNull<T>(this IEnumerable<T> srcs) => srcs is null || !srcs.Any();
+    public static bool IsEmptyOrNull<T>([NotNullWhen(false)] this IEnumerable<T> srcs) => srcs is null || !srcs.Any();
 
-    public static bool IsEmptyOrNull<T>(this ICollection<T> srcs) => srcs is null || srcs.Count < 1;
+    public static bool IsEmptyOrNull<T>([NotNullWhen(false)] this ICollection<T> srcs) => srcs is null || srcs.Count < 1;
 
-    public static bool IsNotEmptyAndNull<T>(this IEnumerable<T> srcs) => srcs is not null && srcs.Any();
+    public static bool IsNotEmptyAndNull<T>([NotNullWhen(true)] this IEnumerable<T> srcs) => srcs is not null && srcs.Any();
 
-    public static bool IsNotEmptyAndNull<T>(this ICollection<T> srcs) => srcs is not null && srcs.Count > 0;
+    public static bool IsNotEmptyAndNull<T>([NotNullWhen(true)] this ICollection<T> srcs) => srcs is not null && srcs.Count > 0;
 
     public static bool AllEmptyOrNull<T>(this IEnumerable<T?> srcs) where T : class => !srcs.Any(x => x is not null || x.AnyPropertiesNotDefault());
 

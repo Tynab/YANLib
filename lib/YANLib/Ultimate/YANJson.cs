@@ -11,7 +11,7 @@ public static partial class YANJson
 
         foreach (var mdl in mdls)
         {
-            yield return mdl.Serialize();
+            yield return mdl.StandardSerialize();
         }
     }
 
@@ -24,7 +24,7 @@ public static partial class YANJson
 
         foreach (var mdl in mdls)
         {
-            yield return mdl.CamelSerialize();
+            yield return mdl.Serialize();
         }
     }
 

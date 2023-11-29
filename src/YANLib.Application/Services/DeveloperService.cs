@@ -97,7 +97,7 @@ public class DeveloperService(
                     var eto = ObjectMapper.Map<Certificate, CertificateCreateEto>(cert);
 
                     await _capPublisher.PublishAsync(CERT_CRT, eto);
-                    _logger.LogInformation("InsertDeveloperService-Publish: {ETO}", eto.CamelSerialize());
+                    _logger.LogInformation("InsertDeveloperService-Publish: {ETO}", eto.Serialize());
                 });
 
                 rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certs));
@@ -107,7 +107,7 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "CreateDeveloperService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "CreateDeveloperService-Exception: {Request}", request.Serialize());
             throw;
         }
     }
@@ -149,7 +149,7 @@ public class DeveloperService(
                     var eto = ObjectMapper.Map<Certificate, CertificateCreateEto>(cert);
 
                     await _capPublisher.PublishAsync(CERT_CRT, eto);
-                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.CamelSerialize());
+                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.Serialize());
                 });
 
                 rslt.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(certs));
@@ -164,7 +164,7 @@ public class DeveloperService(
                     var eto = ObjectMapper.Map<CertificateResponse, CertificateAdjustEto>(x);
 
                     await _distributedEventBus.PublishAsync(eto);
-                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.CamelSerialize());
+                    _logger.LogInformation("AdjustDeveloperService-Publish: {ETO}", eto.Serialize());
                 });
 
                 rslt.Certificates = new List<CertificateResponse>(mdl.Certificates);
@@ -174,7 +174,7 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustDeveloperService-Exception: {IdCard} - {DTO}", idCard, dto.CamelSerialize());
+            _logger.LogError(ex, "AdjustDeveloperService-Exception: {IdCard} - {DTO}", idCard, dto.Serialize());
             throw;
         }
     }
