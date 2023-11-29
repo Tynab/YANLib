@@ -33,7 +33,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Thêm mới Developer")]
     public async ValueTask<IActionResult> Create([Required] DeveloperCreateRequest request)
     {
-        _logger.LogInformation("CreateDeveloperController: {Request}", request.CamelSerialize());
+        _logger.LogInformation("CreateDeveloperController: {Request}", request.Serialize());
 
         return Ok(await _service.Create(request));
     }
@@ -42,7 +42,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Cập nhật Developer")]
     public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperUpdateRequest request)
     {
-        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.CamelSerialize());
+        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 
         return Ok(await _service.Adjust(idCard, request));
     }

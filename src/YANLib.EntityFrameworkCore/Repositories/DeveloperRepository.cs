@@ -52,7 +52,7 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "CreateDeveloperRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "CreateDeveloperRepository-Exception: {Entity}", entity.Serialize());
             throw;
         }
     }
@@ -87,7 +87,7 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustDeveloperRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "AdjustDeveloperRepository-Exception: {Entity}", entity.Serialize());
             throw;
         }
     }

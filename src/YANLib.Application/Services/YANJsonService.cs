@@ -23,12 +23,12 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
         var json = new JsonResponse
         {
             Id = NewGuid()
-        }.Serialize();
+        }.StandardSerialize();
 
         var jsonCamel = new JsonResponse
         {
             Id = NewGuid()
-        }.CamelSerialize();
+        }.Serialize();
 
         var newtonsoftTask = Run(() =>
         {
@@ -160,12 +160,12 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
     public ValueTask<string> JsonSerialize(Guid id) => ValueTask.FromResult(new JsonResponse
     {
         Id = id
-    }.Serialize());
+    }.StandardSerialize());
 
     public ValueTask<string> JsonSerializeOptionalName(Guid idOptionalName) => ValueTask.FromResult(new JsonOptionalNameResponse
     {
         Id = idOptionalName
-    }.Serialize());
+    }.StandardSerialize());
 
     public ValueTask<JsonResponse> JsonDeserialize(string json) => ValueTask.FromResult(json.Deserialize<JsonResponse>());
 

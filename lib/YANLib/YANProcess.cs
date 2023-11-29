@@ -26,7 +26,7 @@ public static partial class YANProcess
     {
         if (names.AllNotWhiteSpaceAndNull())
         {
-            await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
+            await WhenAll(names.SelectMany(GetProcessesByName).Select(p =>
             {
                 if (!p.CloseMainWindow())
                 {
@@ -42,7 +42,7 @@ public static partial class YANProcess
     {
         if (names.AllNotWhiteSpaceAndNull())
         {
-            await WhenAll(names.SelectMany(name => GetProcessesByName(name)).Select(p =>
+            await WhenAll(names.SelectMany(GetProcessesByName).Select(p =>
             {
                 if (!p.CloseMainWindow())
                 {

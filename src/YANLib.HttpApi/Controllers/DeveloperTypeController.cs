@@ -37,7 +37,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [SwaggerOperation(Summary = "Thêm mới định nghĩa Developer Type")]
     public async ValueTask<IActionResult> Create([Required] DeveloperTypeCreateRequest request)
     {
-        _logger.LogInformation("CreateDeveloperTypeController: {Request}", request.CamelSerialize());
+        _logger.LogInformation("CreateDeveloperTypeController: {Request}", request.Serialize());
 
         return Ok(await _service.Create(request));
     }
@@ -46,7 +46,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [SwaggerOperation(Summary = "Cập nhật định nghĩa Developer Type")]
     public async ValueTask<IActionResult> Update(int code, [Required] DeveloperTypeUpdateRequest request)
     {
-        _logger.LogInformation("UpdateDeveloperTypeController: {Code} - {Request}", code, request.CamelSerialize());
+        _logger.LogInformation("UpdateDeveloperTypeController: {Code} - {Request}", code, request.Serialize());
 
         return Ok(await _service.Update(code, request));
     }

@@ -43,7 +43,7 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "CreateCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "CreateCertificateRepository-Exception: {Entity}", entity.Serialize());
             throw;
         }
     }
@@ -65,7 +65,7 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "UpdateCertificateRepository-Exception: {Entity}", entity.CamelSerialize());
+            _logger.LogError(ex, "UpdateCertificateRepository-Exception: {Entity}", entity.Serialize());
             throw;
         }
     }

@@ -132,7 +132,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
 
     public async ValueTask<bool> Set(string group, string key, DeveloperTypeRedisDto value)
     {
-        var jsonVal = value.CamelSerialize();
+        var jsonVal = value.Serialize();
 
         try
         {
@@ -156,13 +156,13 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
                 throw new BusinessException(BAD_REQUEST);
             }
 
-            await _database.HashSetAsync(group.ToLowerInvariant(), fields.Select(p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.CamelSerialize())).ToArray());
+            await _database.HashSetAsync(group.ToLowerInvariant(), fields.Select(p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.Serialize())).ToArray());
 
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulkDeveloperTypeRedisService-Exception: {Group} - {Fields}", group, fields.CamelSerialize());
+            _logger.LogError(ex, "SetBulkDeveloperTypeRedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
             throw;
         }
     }

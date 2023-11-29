@@ -20,7 +20,7 @@ public class JsonSerializeBenchmark
     };
 
     [Benchmark(Baseline = true)]
-    public void YANLib_Json() => For(0, Size, index => _model.Serialize());
+    public void YANLib_Json() => For(0, Size, index => _model.StandardSerialize());
 
     [Benchmark]
     public void Newtonsoft_Json() => For(0, Size, index => SerializeObject(_model));

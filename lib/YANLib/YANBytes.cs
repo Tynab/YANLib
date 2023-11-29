@@ -4,7 +4,7 @@ namespace YANLib;
 
 public static partial class YANBytes
 {
-    public static byte[]? ToByteArray<T>(this T obj) => obj is null ? default : UTF8.GetBytes(obj.Serialize());
+    public static byte[]? ToByteArray<T>(this T obj) => obj is null ? default : UTF8.GetBytes(obj.StandardSerialize());
 
     public static IEnumerable<byte[]?>? ToByteArray<T>(this IEnumerable<T> objs) => objs.IsEmptyOrNull() ? default : objs.Select(o => o.ToByteArray());
 

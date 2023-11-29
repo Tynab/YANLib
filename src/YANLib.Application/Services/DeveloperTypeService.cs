@@ -89,7 +89,7 @@ public class DeveloperTypeService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "CreateDeveloperTypeService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "CreateDeveloperTypeService-Exception: {Request}", request.Serialize());
             throw;
         }
     }
@@ -119,7 +119,7 @@ public class DeveloperTypeService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "UpdateDeveloperTypeService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "UpdateDeveloperTypeService-Exception: {Request}", request.Serialize());
             throw;
         }
     }

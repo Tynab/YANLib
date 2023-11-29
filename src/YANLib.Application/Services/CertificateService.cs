@@ -26,7 +26,7 @@ public class CertificateService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "CreateCertificateService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "CreateCertificateService-Exception: {Request}", request.Serialize());
             throw;
         }
     }
@@ -39,7 +39,7 @@ public class CertificateService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "UpdateCertificateService-Exception: {Request}", request.CamelSerialize());
+            _logger.LogError(ex, "UpdateCertificateService-Exception: {Request}", request.Serialize());
             throw;
         }
     }

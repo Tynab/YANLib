@@ -33,7 +33,7 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
     [SwaggerOperation(Summary = "Thêm mới Developer trên Elasticsearch")]
     public async ValueTask<IActionResult> Set([Required] DeveloperIndex request)
     {
-        _logger.LogInformation("SetElasticsearchController: {Request}", request.CamelSerialize());
+        _logger.LogInformation("SetElasticsearchController: {Request}", request.Serialize());
 
         return Ok(await _developerEsService.Set(request));
     }
