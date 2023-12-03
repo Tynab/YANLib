@@ -12,7 +12,7 @@ namespace YANLib;
 public class YANPass
 {
     #region Fields
-    private readonly List<char> PASSWORD_SPECIAL_CHARATERS_STANDARD = new() { '@', '#', '$', '%' };
+    private readonly List<char> PASSWORD_SPECIAL_CHARATERS_STANDARD = ['@', '#', '$', '%'];
     #endregion
 
     #region Properties

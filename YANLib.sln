@@ -37,6 +37,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "console", "console", "{8C44
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.Benchmarks", "console\YANLib.Benchmarks\YANLib.Benchmarks.csproj", "{241584E4-5815-4627-AE1D-D638644D4FDF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{495944F0-A2C2-4CD9-8462-E84C3BD041B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.Test", "test\YANLib.Test\YANLib.Test.csproj", "{2CED63D8-2023-4183-96BA-3512449D2F4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +99,10 @@ Global
 		{241584E4-5815-4627-AE1D-D638644D4FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{241584E4-5815-4627-AE1D-D638644D4FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{241584E4-5815-4627-AE1D-D638644D4FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CED63D8-2023-4183-96BA-3512449D2F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CED63D8-2023-4183-96BA-3512449D2F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CED63D8-2023-4183-96BA-3512449D2F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CED63D8-2023-4183-96BA-3512449D2F4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +120,7 @@ Global
 		{2B031F5C-93EC-4222-93F4-4505B29CAB81} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{DE74000F-A442-4A12-990F-C806C75BCA62} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{241584E4-5815-4627-AE1D-D638644D4FDF} = {8C44E9D9-768E-4EB5-B305-40061382363E}
+		{2CED63D8-2023-4183-96BA-3512449D2F4C} = {495944F0-A2C2-4CD9-8462-E84C3BD041B4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28315BFD-90E7-4E14-A2EA-F3D23AF4126F}

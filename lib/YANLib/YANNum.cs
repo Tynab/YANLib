@@ -42,4 +42,6 @@ public static partial class YANNum
 
         return max;
     }
+
+    public static object Round(this object? num, object? d = null) => num is double ? Math.Round(num.ToDouble(), d.ToInt()) : Math.Round(num.ToDecimal(), d.ToInt());
 }

@@ -1,9 +1,10 @@
-﻿namespace YANLib;
+﻿using static System.Linq.Enumerable;
+
+namespace YANLib;
 
 public static partial class YANNum
 {
-
-    public static uint ToUint<T>(this T num) where T : struct
+    public static uint ToUint(this object? num, object? dfltVal = null)
     {
         try
         {
@@ -11,70 +12,19 @@ public static partial class YANNum
         }
         catch
         {
-            return default;
+            return dfltVal is null ? default : dfltVal.ToUint();
         }
     }
 
-    public static IEnumerable<uint> ToUint<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<uint>? ToUint(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToUint(dfltVal));
+
+    public static uint GenerateRandomUint(object? min = null, object? max = null)
     {
-        if (nums.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToUint();
-        }
-    }
-
-    public static uint ToUint(this string str) => uint.TryParse(str, out var num) ? num : default;
-
-    public static IEnumerable<uint> ToUint(this IEnumerable<string> strs)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToUint();
-        }
-    }
-
-    public static uint ToUint<T>(this string str, T dfltVal) where T : struct => uint.TryParse(str, out var num) ? num : dfltVal.ToUint();
-
-    public static IEnumerable<uint> ToUint<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToUint(dfltVal);
-        }
-    }
-
-    public static uint GenerateRandomUint<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToUint();
-        var maxValue = max.ToUint();
+        var minValue = min is null ? uint.MinValue : min.ToUint();
+        var maxValue = max is null ? uint.MaxValue : max.ToUint();
 
         return minValue > maxValue ? default : new Random().NextInt64(minValue, maxValue).ToUint();
     }
 
-    public static IEnumerable<uint> GenerateRandomUints<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomUint(min, max);
-        }
-    }
-
-    public static uint GenerateRandomUint() => GenerateRandomUint(uint.MinValue, uint.MaxValue);
-
-    public static uint GenerateRandomUint<T>(T max) where T : struct => GenerateRandomUint(uint.MinValue, max);
+    public static IEnumerable<uint> GenerateRandomUints(object? min = null, object? max = null, object? size = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomUint(min, max));
 }

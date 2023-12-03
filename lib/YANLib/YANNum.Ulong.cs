@@ -1,11 +1,11 @@
 ﻿using System.Numerics;
+using static System.Linq.Enumerable;
 
 namespace YANLib;
 
 public static partial class YANNum
 {
-
-    public static ulong ToUlong<T>(this T num) where T : struct
+    public static ulong ToUlong(this object? num, object? dfltVal = null)
     {
         try
         {
@@ -13,70 +13,19 @@ public static partial class YANNum
         }
         catch
         {
-            return default;
+            return dfltVal is null ? default : dfltVal.ToUlong();
         }
     }
 
-    public static IEnumerable<ulong> ToUlong<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<ulong>? ToUlong(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToUlong(dfltVal));
+
+    public static ulong GenerateRandomUlong(object? min = null, object? max = null)
     {
-        if (nums.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToUlong();
-        }
-    }
-
-    public static ulong ToUlong(this string str) => ulong.TryParse(str, out var num) ? num : default;
-
-    public static IEnumerable<ulong> ToUlong(this IEnumerable<string> strs)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToUlong();
-        }
-    }
-
-    public static ulong ToUlong<T>(this string str, T dfltVal) where T : struct => ulong.TryParse(str, out var num) ? num : dfltVal.ToUlong();
-
-    public static IEnumerable<ulong> ToUlong<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToUlong(dfltVal);
-        }
-    }
-
-    public static ulong GenerateRandomUlong<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToUlong();
-        var maxValue = max.ToUlong();
+        var minValue = min is null ? ulong.MinValue : min.ToUlong();
+        var maxValue = max is null ? ulong.MaxValue : max.ToUlong();
 
         return minValue > maxValue ? default : (new Random().NextInt64(long.MinValue, (long)(maxValue - (minValue - (BigInteger)long.MinValue))) - long.MinValue).ToUlong() + minValue;
     }
 
-    public static IEnumerable<ulong> GenerateRandomUlongs<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomUlong(min, max);
-        }
-    }
-
-    public static ulong GenerateRandomUlong() => GenerateRandomUlong(ulong.MinValue, ulong.MaxValue);
-
-    public static ulong GenerateRandomUlong<T>(T max) where T : struct => GenerateRandomUlong(ulong.MinValue, max);
+    public static IEnumerable<ulong> GenerateRandomUlongs(object? min = null, object? max = null, object? size = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomUlong(min, max));
 }

@@ -7,26 +7,26 @@ public static partial class YANRandom
 
     public static decimal NextDecimal(this Random rnd) => new(rnd.NextInt32(), rnd.NextInt32(), rnd.NextInt32(), rnd.Next(2) is 1, (byte)rnd.Next(29));
 
-    public static float NextSingle<T1, T2>(this Random rnd, T1 min, T2 max) where T1 : struct where T2 : struct
+    public static float NextSingle(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min.ToFloat();
-        var maxValue = max.ToFloat();
+        var minValue = min is null ? float.MinValue : min.ToFloat();
+        var maxValue = max is null ? float.MaxValue : max.ToFloat();
 
         return minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
-    public static double NextDouble<T1, T2>(this Random rnd, T1 min, T2 max) where T1 : struct where T2 : struct
+    public static double NextDouble(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min.ToDouble();
-        var maxValue = max.ToDouble();
+        var minValue = min is null ? double.MinValue : min.ToDouble();
+        var maxValue = max is null ? double.MaxValue : max.ToDouble();
 
         return minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
-    public static decimal NextDecimal<T1, T2>(this Random rnd, T1 min, T2 max) where T1 : struct where T2 : struct
+    public static decimal NextDecimal(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min.ToDecimal();
-        var maxValue = max.ToDecimal();
+        var minValue = min is null ? decimal.MinValue : min.ToDecimal();
+        var maxValue = max is null ? decimal.MaxValue : max.ToDecimal();
 
         return minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }

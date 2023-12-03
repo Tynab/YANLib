@@ -1,9 +1,10 @@
-﻿namespace YANLib;
+﻿using static System.Linq.Enumerable;
+
+namespace YANLib;
 
 public static partial class YANNum
 {
-
-    public static nint ToNint<T>(this T num) where T : struct
+    public static nint ToNint(this object? num, object? dfltVal = null)
     {
         try
         {
@@ -11,70 +12,19 @@ public static partial class YANNum
         }
         catch
         {
-            return default;
+            return dfltVal is null ? default : dfltVal.ToNint();
         }
     }
 
-    public static IEnumerable<nint> ToNint<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<nint>? ToNint(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToNint(dfltVal));
+
+    public static nint GenerateRandomNint(object? min = null, object? max = null)
     {
-        if (nums.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToNint();
-        }
-    }
-
-    public static nint ToNint(this string str) => nint.TryParse(str, out var num) ? num : default;
-
-    public static IEnumerable<nint> ToNint(this IEnumerable<string> strs)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToNint();
-        }
-    }
-
-    public static nint ToNint<T>(this string str, T dfltVal) where T : struct => nint.TryParse(str, out var num) ? num : dfltVal.ToNint();
-
-    public static IEnumerable<nint> ToNint<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToNint(dfltVal);
-        }
-    }
-
-    public static nint GenerateRandomNint<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToNint();
-        var maxValue = max.ToNint();
+        var minValue = min is null ? nint.MinValue : min.ToNint();
+        var maxValue = max is null ? nint.MaxValue : max.ToNint();
 
         return minValue > maxValue ? default : new Random().NextInt64(minValue, maxValue).ToNint();
     }
 
-    public static IEnumerable<nint> GenerateRandomNints<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomNint(min, max);
-        }
-    }
-
-    public static nint GenerateRandomNint() => GenerateRandomNint(nint.MinValue, nint.MaxValue);
-
-    public static nint GenerateRandomNint<T>(T max) where T : struct => GenerateRandomNint(nint.MinValue, max);
+    public static IEnumerable<nint> GenerateRandomNints(object? min = null, object? max = null, object? size = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomNint(min, max));
 }
