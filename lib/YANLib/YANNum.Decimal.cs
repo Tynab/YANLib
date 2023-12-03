@@ -4,8 +4,7 @@ namespace YANLib;
 
 public static partial class YANNum
 {
-
-    public static decimal ToDecimal<T>(this T num) where T : struct
+    public static decimal ToDecimal(this object? num, object? dfltVal = null)
     {
         try
         {
@@ -13,31 +12,13 @@ public static partial class YANNum
         }
         catch
         {
-            return default;
+            return dfltVal is null ? default : dfltVal.ToDecimal();
         }
     }
 
-    public static IEnumerable<decimal>? ToDecimal<T>(this IEnumerable<T> nums) where T : struct => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToDecimal());
+    public static IEnumerable<decimal>? ToDecimal(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToDecimal(dfltVal));
 
-    public static decimal ToDecimal(this string str) => decimal.TryParse(str, out var num) ? num : default;
+    public static decimal GenerateRandomDecimal(object? min = null, object? max = null) => new Random().NextDecimal(min, max);
 
-    public static IEnumerable<decimal>? ToDecimal(this IEnumerable<string> strs) => strs.IsEmptyOrNull() ? default : strs.Select(s => s.ToDecimal());
-
-    public static decimal ToDecimal<T>(this string str, T dfltVal) where T : struct => decimal.TryParse(str, out var num) ? num : dfltVal.ToDecimal();
-
-    public static IEnumerable<decimal>? ToDecimal<T>(this IEnumerable<string> strs, T dfltVal) where T : struct => strs.IsEmptyOrNull() ? default : strs.Select(s => s.ToDecimal(dfltVal));
-
-    public static decimal GenerateRandomDecimal<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToDecimal();
-        var maxValue = max.ToDecimal();
-
-        return minValue > maxValue ? default : new Random().NextDecimal(minValue, maxValue);
-    }
-
-    public static IEnumerable<decimal> GenerateRandomDecimals<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDecimal(min, max));
-
-    public static decimal GenerateRandomDecimal() => GenerateRandomDecimal(decimal.MinValue, decimal.MaxValue);
-
-    public static decimal GenerateRandomDecimal<T>(T max) where T : struct => GenerateRandomDecimal(decimal.MinValue, max);
+    public static IEnumerable<decimal> GenerateRandomDecimals(object? min = null, object? max = null, object? size = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDecimal(min, max));
 }

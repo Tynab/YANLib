@@ -5,7 +5,6 @@ namespace YANLib;
 
 public static partial class YANModel
 {
-
     public static bool AllPropertiesNotDefault<T>(this T? mdl)
     {
         if (mdl is null)

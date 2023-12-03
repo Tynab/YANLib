@@ -1,9 +1,10 @@
-﻿namespace YANLib;
+﻿using static System.Linq.Enumerable;
+
+namespace YANLib;
 
 public static partial class YANNum
 {
-
-    public static ushort ToUshort<T>(this T num) where T : struct
+    public static ushort ToUshort(this object? num, object? dfltVal = null)
     {
         try
         {
@@ -11,70 +12,19 @@ public static partial class YANNum
         }
         catch
         {
-            return default;
+            return dfltVal is null ? default : dfltVal.ToUshort();
         }
     }
 
-    public static IEnumerable<ushort> ToUshort<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<ushort>? ToUshort(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToUshort(dfltVal));
+
+    public static ushort GenerateRandomUshort(object? min = null, object? max = null)
     {
-        if (nums.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToUshort();
-        }
-    }
-
-    public static ushort ToUshort(this string str) => ushort.TryParse(str, out var num) ? num : default;
-
-    public static IEnumerable<ushort> ToUshort(this IEnumerable<string> strs)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToUshort();
-        }
-    }
-
-    public static ushort ToUshort<T>(this string str, T dfltVal) where T : struct => ushort.TryParse(str, out var num) ? num : dfltVal.ToUshort();
-
-    public static IEnumerable<ushort> ToUshort<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToUshort(dfltVal);
-        }
-    }
-
-    public static ushort GenerateRandomUshort<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToUshort();
-        var maxValue = max.ToUshort();
+        var minValue = min is null ? ushort.MinValue : min.ToUshort();
+        var maxValue = max is null ? ushort.MaxValue : max.ToUshort();
 
         return minValue > maxValue ? default : new Random().Next(minValue, maxValue).ToUshort();
     }
 
-    public static IEnumerable<ushort> GenerateRandomUshorts<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomUshort(min, max);
-        }
-    }
-
-    public static ushort GenerateRandomUshort() => GenerateRandomUshort(ushort.MinValue, ushort.MaxValue);
-
-    public static ushort GenerateRandomUshort<T>(T max) where T : struct => GenerateRandomUshort(ushort.MinValue, max);
+    public static IEnumerable<ushort> GenerateRandomUshorts(object? min = null, object? max = null, object? size = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomUshort(min, max));
 }

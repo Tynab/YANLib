@@ -18,23 +18,28 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>Add:
-- Enum
-
-Update
-- Text: check null attribute
-- Json:
-    - byte[]
-    - Deserialize
-    - Deserializes
-    - StandardDeserialize
-    - StandardDeserializes
-    - CamelSerialize -&gt; StandardSerialize
-    - CamelSerializes -&gt; StandardSerializes</PackageReleaseNotes>
+		<PackageReleaseNotes>Update
+- Bool
+- Model
+- Num
+- Decimal
+- Double
+- Float
+- Int
+- Long
+- Nint
+- Nuint
+- Sbyte
+- Short
+- Uint
+- Ulong
+- Ushort
+- Pass
+- Random</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>3.2.0</Version>
+		<Version>3.2.1</Version>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 

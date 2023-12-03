@@ -1,9 +1,10 @@
-﻿namespace YANLib;
+﻿using static System.Linq.Enumerable;
+
+namespace YANLib;
 
 public static partial class YANNum
 {
-
-    public static sbyte ToSbyte<T>(this T num) where T : struct
+    public static sbyte ToSbyte(this object? num, object? dfltVal = null)
     {
         try
         {
@@ -11,70 +12,19 @@ public static partial class YANNum
         }
         catch
         {
-            return default;
+            return dfltVal is null ? default : dfltVal.ToSbyte();
         }
     }
 
-    public static IEnumerable<sbyte> ToSbyte<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<sbyte>? ToSbyte(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToSbyte(dfltVal));
+
+    public static sbyte GenerateRandomSbyte(object? min = null, object? max = null)
     {
-        if (nums.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToSbyte();
-        }
-    }
-
-    public static sbyte ToSbyte(this string str) => sbyte.TryParse(str, out var num) ? num : default;
-
-    public static IEnumerable<sbyte> ToSbyte(this IEnumerable<string> strs)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToSbyte();
-        }
-    }
-
-    public static sbyte ToSbyte<T>(this string str, T dfltVal) where T : struct => sbyte.TryParse(str, out var num) ? num : dfltVal.ToSbyte();
-
-    public static IEnumerable<sbyte> ToSbyte<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToSbyte(dfltVal);
-        }
-    }
-
-    public static sbyte GenerateRandomSbyte<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToSbyte();
-        var maxValue = max.ToSbyte();
+        var minValue = min is null ? sbyte.MinValue : min.ToSbyte();
+        var maxValue = max is null ? sbyte.MaxValue : max.ToSbyte();
 
         return minValue > maxValue ? default : new Random().Next(minValue, maxValue).ToSbyte();
     }
 
-    public static IEnumerable<sbyte> GenerateRandomSbytes<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
-    {
-        for (var i = 0ul; i < size.ToUlong(); i++)
-        {
-            yield return GenerateRandomSbyte(min, max);
-        }
-    }
-
-    public static sbyte GenerateRandomSbyte() => GenerateRandomSbyte(sbyte.MinValue, sbyte.MaxValue);
-
-    public static sbyte GenerateRandomSbyte<T>(T max) where T : struct => GenerateRandomSbyte(sbyte.MinValue, max);
+    public static IEnumerable<sbyte> GenerateRandomSbytes(object? min = null, object? max = null, object? size = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomSbyte(min, max));
 }

@@ -13,7 +13,7 @@ public sealed class DeveloperTypeMapper : Profile
     public DeveloperTypeMapper()
     {
         _ = CreateMap<KeyValuePair<string, DeveloperTypeRedisDto>, DeveloperTypeResponse>()
-            .ForMember(d => d.Code, o => o.MapFrom(s => s.Key.ToInt()))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Key.ToInt(default)))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Value.Name))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Value.IsActive))
             .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.Value.CreatedAt))
