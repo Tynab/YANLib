@@ -25,15 +25,15 @@ public static partial class YANText
 
     public static bool AnyWhiteSpace(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsWhiteSpace());
 
-    public static bool IsWhiteSpaceOrNull(this char c) => c.IsEmpty() || c.IsWhiteSpace();
+    public static bool IsWhiteSpaceOrEmpty(this char c) => c.IsEmpty() || c.IsWhiteSpace();
 
     public static bool AllWhiteSpaceOrNull(params char[] cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
-    public static bool AnyWhiteSpaceOrNull(params char[] cs) => cs is not null && cs.Any(c => c.IsWhiteSpaceOrNull());
+    public static bool AnyWhiteSpaceOrNull(params char[] cs) => cs is not null && cs.Any(c => c.IsWhiteSpaceOrEmpty());
 
     public static bool AllWhiteSpaceOrNull(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
-    public static bool AnyWhiteSpaceOrNull(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsWhiteSpaceOrNull());
+    public static bool AnyWhiteSpaceOrNull(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsWhiteSpaceOrEmpty());
 
     public static bool IsAlphabetic(this char c) => char.IsLetter(c);
 
@@ -97,11 +97,11 @@ public static partial class YANText
 
     public static bool IsNotEmptyAndWhiteSpace(this char c) => c.IsNotEmpty() && c.IsNotWhiteSpace();
 
-    public static bool AllNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsWhiteSpaceOrNull());
+    public static bool AllNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && !cs.Any(c => c.IsWhiteSpaceOrEmpty());
 
     public static bool AnyNotEmptyAndWhiteSpace(params char[] cs) => cs is not null && cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 
-    public static bool AllNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsWhiteSpaceOrNull());
+    public static bool AllNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && !cs.Any(c => c.IsWhiteSpaceOrEmpty());
 
     public static bool AnyNotEmptyAndWhiteSpace(this IEnumerable<char> cs) => cs is not null && cs.Any(c => c.IsNotEmptyAndWhiteSpace());
 

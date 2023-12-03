@@ -19,27 +19,13 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>Update
-- Bool
-- Model
-- Num
-- Decimal
-- Double
-- Float
-- Int
-- Long
-- Nint
-- Nuint
-- Sbyte
-- Short
-- Uint
-- Ulong
-- Ushort
-- Pass
-- Random</PackageReleaseNotes>
+- Text
+- Char
+- String</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>3.2.1</Version>
+		<Version>3.2.2</Version>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
