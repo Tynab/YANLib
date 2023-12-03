@@ -18,14 +18,11 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>Update
-- Text
-- Char
-- String</PackageReleaseNotes>
+		<PackageReleaseNotes>Hotfix Enumerable</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>3.2.2</Version>
+		<Version>3.2.3</Version>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
