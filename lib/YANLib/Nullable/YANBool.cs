@@ -2,58 +2,23 @@
 
 public static partial class YANBool
 {
-    public static bool? ToBool<T>(this T num) where T : struct
+    /// <summary>
+    /// Converts the specified nullable object to its <see cref="bool"/> equivalent.
+    /// Returns the resulting <see cref="bool"/> object if the conversion is successful. 
+    /// If the conversion fails and a default value is provided, attempts to convert the default value to a <see cref="bool"/> and returns it; otherwise, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="val">The object to be converted to <see cref="bool"/>. Can be <see langword="null"/>.</param>
+    /// <param name="dfltVal">The default value to be used if the conversion of <paramref name="val"/> fails. Can be <see langword="null"/>.</param>
+    /// <returns>The <see cref="bool"/> equivalent of the input object, or the converted default value if the input conversion fails, or <see langword="null"/> if both the input conversion fails and the default value is <see langword="null"/>.</returns>
+    public static bool? ToBool(this object? val, object? dfltVal = null)
     {
         try
         {
-            return Convert.ToBoolean(num);
+            return Convert.ToBoolean(val);
         }
         catch
         {
-            return default;
-        }
-    }
-
-    public static IEnumerable<bool?> ToBool<T>(this IEnumerable<T> nums) where T : struct
-    {
-        if (nums is null || !nums.Any())
-        {
-            yield break;
-        }
-
-        foreach (var num in nums)
-        {
-            yield return num.ToBool();
-        }
-    }
-
-    public static bool? ToBool(this string str) => bool.TryParse(str, out var num) && num;
-
-    public static IEnumerable<bool?> ToBool(this IEnumerable<string> strs)
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToBool();
-        }
-    }
-
-    public static bool? ToBool<T>(this string str, T dfltVal) where T : struct => bool.TryParse(str, out var num) ? num : dfltVal.ToBool();
-
-    public static IEnumerable<bool?> ToBool<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToBool(dfltVal);
+            return dfltVal is null ? default : dfltVal.ToBool();
         }
     }
 }
