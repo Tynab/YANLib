@@ -57,7 +57,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> bound for each generated value. Can be <see langword="null"/>.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> bound for each generated value. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of randomly generated <see cref="DateTime"/> values within the specified range.</returns>
-    public static IEnumerable<DateTime> GenerateRandomDateTimes(object? size, DateTime? min = null, DateTime? max = null) => Range(0, size.ToUint().ToInt()).Select(i => GenerateRandomDateTime(min, max));
+    public static IEnumerable<DateTime> GenerateRandomDateTimes(object? size, DateTime? min = null, DateTime? max = null) => Range(0, (int)size.ToUint()).Select(i => GenerateRandomDateTime(min, max));
 
     /// <summary>
     /// Gets the week of the year for the specified <see cref="DateTime"/>.
@@ -82,7 +82,7 @@ public static partial class YANDateTime
     /// <param name="dt1">The first <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
     /// <param name="dt2">The second <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
     /// <returns>The total number of months between the two dates.</returns>
-    public static int TotalMonths(DateTime? dt1 = null, DateTime? dt2 = null)
+    public static int TotalMonth(DateTime? dt1 = null, DateTime? dt2 = null)
     {
         var d1 = dt1 ?? MaxValue;
         var d2 = dt2 ?? MinValue;
