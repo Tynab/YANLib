@@ -1,16 +1,18 @@
-﻿namespace YANLib.Ultimate;
+﻿using static YANLib.YANBool;
+
+namespace YANLib.Ultimate;
 
 public static partial class YANBool
 {
     /// <summary>
-    /// Converts a collection of nullable objects to their <see cref="bool"/> equivalents.
+    /// Converts a collection of objects to an enumerable collection of <see cref="bool"/> values.
     /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// For each element in the collection, attempts to convert it to a <see cref="bool"/>. If the conversion fails and a default value is provided, attempts to convert the default value to a <see cref="bool"/> and yields it; otherwise, yields <see langword="null"/>.
+    /// Each object in the collection is attempted to be converted to a <see cref="bool"/>. If the conversion fails, the specified default value is used.
     /// </summary>
-    /// <param name="vals">The collection of nullable objects to be converted to <see cref="bool"/>. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to be used if the conversion of an element in <paramref name="vals"/> fails. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="bool"/> values, each representing the converted equivalent of an element in the input collection, or the converted default value if the conversion fails, or <see langword="null"/> if both the conversion fails and the default value is <see langword="null"/>.</returns>
-    public static IEnumerable<bool?> ToBools(this IEnumerable<object?>? vals, object? dfltVal = null)
+    /// <param name="vals">The collection of objects to be converted to <see cref="bool"/> values. Can be <see langword="null"/>.</param>
+    /// <param name="dfltVal">The default value to use if the conversion of an object fails. Can be <see langword="null"/>, resulting in a default value of false.</param>
+    /// <returns>An enumerable collection of <see cref="bool"/> values, each representing the converted equivalent of an element in the input collection or the specified default value if the conversion fails.</returns>
+    public static IEnumerable<bool> ToBools(this IEnumerable<object?>? vals, object? dfltVal = null)
     {
         if (vals.IsEmptyOrNull())
         {
@@ -32,7 +34,7 @@ public static partial class YANBool
     {
         for (var i = 0ul; i < size.ToUlong(); i++)
         {
-            yield return YANLib.YANBool.GenerateRandomBool();
+            yield return GenerateRandomBool();
         }
     }
 }
