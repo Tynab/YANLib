@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<sbyte>? ToSbyte(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToSbyte(dfltVal));
+    public static IEnumerable<sbyte>? ToSbyte(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToSbyte(dfltVal));
 
     public static sbyte GenerateRandomSbyte(object? min = null, object? max = null)
     {

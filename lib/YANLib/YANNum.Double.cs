@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<double>? ToDouble(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToDouble(dfltVal));
+    public static IEnumerable<double>? ToDouble(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToDouble(dfltVal));
 
     public static double GenerateRandomDouble(object? min = null, object? max = null) => new Random().NextDouble(min, max);
 

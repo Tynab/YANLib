@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<decimal>? ToDecimal(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToDecimal(dfltVal));
+    public static IEnumerable<decimal>? ToDecimal(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToDecimal(dfltVal));
 
     public static decimal GenerateRandomDecimal(object? min = null, object? max = null) => new Random().NextDecimal(min, max);
 

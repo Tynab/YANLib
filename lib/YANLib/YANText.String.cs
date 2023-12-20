@@ -9,73 +9,73 @@ public static partial class YANText
 
     public static bool IsNull([NotNullWhen(false)] this string? str) => str is null;
 
-    public static bool AllNull(params string?[] strs) => strs is not null && !strs.Any(s => s.IsNotNull());
+    public static bool AllNull(params string?[] strs) => strs is not null && !strs.Any(x => x.IsNotNull());
 
-    public static bool AnyNull(params string?[] strs) => strs is not null && strs.Any(s => s.IsNull());
+    public static bool AnyNull(params string?[] strs) => strs is not null && strs.Any(x => x.IsNull());
 
-    public static bool AllNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.IsNotNull());
+    public static bool AllNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.IsNotNull());
 
-    public static bool AnyNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(s => s.IsNull());
+    public static bool AnyNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(x => x.IsNull());
 
     public static bool IsEmptyOrNull([NotNullWhen(false)] this string? str) => string.IsNullOrEmpty(str);
 
-    public static bool AllEmptyOrNull(params string?[] strs) => strs is not null && !strs.Any(s => s.IsNotEmptyAndNull());
+    public static bool AllEmptyOrNull(params string?[] strs) => strs is not null && !strs.Any(x => x.IsNotEmptyAndNull());
 
-    public static bool AnyEmptyOrNull(params string?[] strs) => strs is not null && strs.Any(s => s.IsEmptyOrNull());
+    public static bool AnyEmptyOrNull(params string?[] strs) => strs is not null && strs.Any(x => x.IsEmptyOrNull());
 
-    public static bool AllEmptyOrNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.IsNotEmptyAndNull());
+    public static bool AllEmptyOrNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.IsNotEmptyAndNull());
 
-    public static bool AnyEmptyOrNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(s => s.IsEmptyOrNull());
+    public static bool AnyEmptyOrNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(x => x.IsEmptyOrNull());
 
     public static bool IsWhiteSpaceOrNull([NotNullWhen(false)] this string? str) => string.IsNullOrWhiteSpace(str);
 
-    public static bool AllWhiteSpaceOrNull(params string?[] strs) => strs is not null && !strs.Any(s => s.IsNotWhiteSpaceAndNull());
+    public static bool AllWhiteSpaceOrNull(params string?[] strs) => strs is not null && !strs.Any(x => x.IsNotWhiteSpaceAndNull());
 
-    public static bool AnyWhiteSpaceOrNull(params string?[] strs) => strs is not null && strs.Any(s => s.IsWhiteSpaceOrNull());
+    public static bool AnyWhiteSpaceOrNull(params string?[] strs) => strs is not null && strs.Any(x => x.IsWhiteSpaceOrNull());
 
-    public static bool AllWhiteSpaceOrNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.IsNotWhiteSpaceAndNull());
+    public static bool AllWhiteSpaceOrNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.IsNotWhiteSpaceAndNull());
 
-    public static bool AnyWhiteSpaceOrNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(s => s.IsWhiteSpaceOrNull());
+    public static bool AnyWhiteSpaceOrNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(x => x.IsWhiteSpaceOrNull());
 
     public static bool EqualsIgnoreCase(this string? str1, string? str2) => AllNull(str1, str2) || str1.IsNotNull() && str1.IsNotNull() && string.Equals(str1, str2, OrdinalIgnoreCase);
 
-    public static bool AllEqualsIgnoreCase(params string?[] strs) => strs is not null && !strs.Any(s => s.NotEqualsIgnoreCase(strs[0]));
+    public static bool AllEqualsIgnoreCase(params string?[] strs) => strs is not null && !strs.Any(x => x.NotEqualsIgnoreCase(strs[0]));
 
     public static bool AnyEqualsIgnoreCase(params string?[] strs) => !strs.AllNotEqualsIgnoreCase();
 
-    public static bool AllEqualsIgnoreCase(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.NotEqualsIgnoreCase(strs.First()));
+    public static bool AllEqualsIgnoreCase(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.NotEqualsIgnoreCase(strs.First()));
 
     public static bool AnyEqualsIgnoreCase(this IEnumerable<string?> strs) => !strs.AllNotEqualsIgnoreCase();
 
     public static bool IsNotNull([NotNullWhen(true)] this string? str) => str is not null;
 
-    public static bool AllNotNull(params string?[] strs) => strs is not null && !strs.Any(s => s.IsNull());
+    public static bool AllNotNull(params string?[] strs) => strs is not null && !strs.Any(x => x.IsNull());
 
-    public static bool AnyNotNull(params string?[] strs) => strs is not null && strs.Any(s => s.IsNotNull());
+    public static bool AnyNotNull(params string?[] strs) => strs is not null && strs.Any(x => x.IsNotNull());
 
-    public static bool AllNotNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.IsNull());
+    public static bool AllNotNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.IsNull());
 
-    public static bool AnyNotNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(s => s.IsNotNull());
+    public static bool AnyNotNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(x => x.IsNotNull());
 
     public static bool IsNotEmptyAndNull([NotNullWhen(true)] this string? str) => !string.IsNullOrEmpty(str);
 
-    public static bool AllNotEmptyAndNull(params string?[] strs) => strs is not null && !strs.Any(s => s.IsEmptyOrNull());
+    public static bool AllNotEmptyAndNull(params string?[] strs) => strs is not null && !strs.Any(x => x.IsEmptyOrNull());
 
-    public static bool AnyNotEmptyAndNull(params string?[] strs) => strs is not null && strs.Any(s => s.IsNotEmptyAndNull());
+    public static bool AnyNotEmptyAndNull(params string?[] strs) => strs is not null && strs.Any(x => x.IsNotEmptyAndNull());
 
-    public static bool AllNotEmptyAndNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.IsEmptyOrNull());
+    public static bool AllNotEmptyAndNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.IsEmptyOrNull());
 
-    public static bool AnyNotEmptyAndNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(s => s.IsNotEmptyAndNull());
+    public static bool AnyNotEmptyAndNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(x => x.IsNotEmptyAndNull());
 
     public static bool IsNotWhiteSpaceAndNull([NotNullWhen(true)] this string? str) => !string.IsNullOrWhiteSpace(str);
 
-    public static bool AllNotWhiteSpaceAndNull(params string?[] strs) => strs is not null && !strs.Any(s => s.IsWhiteSpaceOrNull());
+    public static bool AllNotWhiteSpaceAndNull(params string?[] strs) => strs is not null && !strs.Any(x => x.IsWhiteSpaceOrNull());
 
-    public static bool AnyNotWhiteSpaceAndNull(params string?[] strs) => strs is not null && strs.Any(s => s.IsNotWhiteSpaceAndNull());
+    public static bool AnyNotWhiteSpaceAndNull(params string?[] strs) => strs is not null && strs.Any(x => x.IsNotWhiteSpaceAndNull());
 
-    public static bool AllNotWhiteSpaceAndNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(s => s.IsWhiteSpaceOrNull());
+    public static bool AllNotWhiteSpaceAndNull(this IEnumerable<string?> strs) => strs is not null && !strs.Any(x => x.IsWhiteSpaceOrNull());
 
-    public static bool AnyNotWhiteSpaceAndNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(s => s.IsNotWhiteSpaceAndNull());
+    public static bool AnyNotWhiteSpaceAndNull(this IEnumerable<string?> strs) => strs is not null && strs.Any(x => x.IsNotWhiteSpaceAndNull());
 
     public static bool NotEqualsIgnoreCase(this string? str1, string? str2) => AllNotNull(str1, str2) && !string.Equals(str1, str2, OrdinalIgnoreCase);
 
