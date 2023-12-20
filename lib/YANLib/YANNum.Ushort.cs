@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<ushort>? ToUshort(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToUshort(dfltVal));
+    public static IEnumerable<ushort>? ToUshort(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUshort(dfltVal));
 
     public static ushort GenerateRandomUshort(object? min = null, object? max = null)
     {

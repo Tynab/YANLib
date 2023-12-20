@@ -10,14 +10,14 @@ public static partial class YANProcess
     {
         if (name.IsNotWhiteSpaceAndNull())
         {
-            await WhenAll(GetProcessesByName(name).Select(p =>
+            await WhenAll(GetProcessesByName(name).Select(x =>
             {
-                if (!p.CloseMainWindow())
+                if (!x.CloseMainWindow())
                 {
-                    p.Kill();
+                    x.Kill();
                 }
 
-                return p.WaitForExitAsync();
+                return x.WaitForExitAsync();
             }));
         }
     }
@@ -26,14 +26,14 @@ public static partial class YANProcess
     {
         if (names.AllNotWhiteSpaceAndNull())
         {
-            await WhenAll(names.SelectMany(GetProcessesByName).Select(p =>
+            await WhenAll(names.SelectMany(GetProcessesByName).Select(x =>
             {
-                if (!p.CloseMainWindow())
+                if (!x.CloseMainWindow())
                 {
-                    p.Kill();
+                    x.Kill();
                 }
 
-                return p.WaitForExitAsync();
+                return x.WaitForExitAsync();
             }));
         }
     }
@@ -42,14 +42,14 @@ public static partial class YANProcess
     {
         if (names.AllNotWhiteSpaceAndNull())
         {
-            await WhenAll(names.SelectMany(GetProcessesByName).Select(p =>
+            await WhenAll(names.SelectMany(GetProcessesByName).Select(x =>
             {
-                if (!p.CloseMainWindow())
+                if (!x.CloseMainWindow())
                 {
-                    p.Kill();
+                    x.Kill();
                 }
 
-                return p.WaitForExitAsync();
+                return x.WaitForExitAsync();
             }));
         }
     }

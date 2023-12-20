@@ -9,7 +9,7 @@ public static partial class YANModel
     {
         if (mdl is null)
         {
-            return false;
+            return default;
         }
 
         foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly))
@@ -100,7 +100,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -122,7 +122,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -144,7 +144,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -166,7 +166,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -188,7 +188,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -210,7 +210,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -232,7 +232,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 
@@ -254,7 +254,7 @@ public static partial class YANModel
             return false;
         }
 
-        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(p => names.Contains(p.Name)))
+        foreach (var prop in mdl.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
         {
             var type = prop.PropertyType;
 

@@ -17,7 +17,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<byte>? ToByte(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToByte(dfltVal));
+    public static IEnumerable<byte>? ToByte(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToByte(dfltVal));
 
     public static byte GenerateRandomByte(object? min = null, object? max = null)
     {

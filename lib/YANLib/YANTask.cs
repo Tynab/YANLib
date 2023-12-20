@@ -11,7 +11,7 @@ public static partial class YANTask
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var cmplTask = await WhenAny(tasks.Select(t => t.AsTask()).ToList()).ConfigureAwait(false);
+            var cmplTask = await WhenAny(tasks.Select(x => x.AsTask()).ToList()).ConfigureAwait(false);
 
             if (cmplTask.IsCompletedSuccessfully && typeof(T).IsValueType && cmplTask.Result.Equals(goodRslt))
             {
@@ -28,7 +28,7 @@ public static partial class YANTask
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var valueTasks = tasks.Select(t => new ValueTask<T>(t));
+            var valueTasks = tasks.Select(x => new ValueTask<T>(x));
 
             return await valueTasks.WaitAnyWithCondition(goodRslt);
         }
@@ -42,9 +42,9 @@ public static partial class YANTask
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var taskSet = tasks.Select(t => t.AsTask()).ToHashSet();
+            var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
 
-            while (taskSet.Count > 0)
+            while (taskSet.Count is not 0)
             {
                 var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
 
@@ -68,7 +68,7 @@ public static partial class YANTask
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var valueTasks = tasks.Select(t => new ValueTask<T>(t));
+            var valueTasks = tasks.Select(x => new ValueTask<T>(x));
 
             return await valueTasks.WhenAnyWithCondition(goodRslt);
         }

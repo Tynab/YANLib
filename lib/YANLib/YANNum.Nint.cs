@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<nint>? ToNint(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToNint(dfltVal));
+    public static IEnumerable<nint>? ToNint(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToNint(dfltVal));
 
     public static nint GenerateRandomNint(object? min = null, object? max = null)
     {

@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<float>? ToFloat<T>(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToFloat(dfltVal));
+    public static IEnumerable<float>? ToFloat<T>(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
 
     public static float GenerateRandomFloat(object? min = null, object? max = null) => new Random().NextSingle(min, max);
 

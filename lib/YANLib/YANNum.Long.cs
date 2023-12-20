@@ -16,7 +16,7 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<long>? ToLong(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(n => n.ToLong(dfltVal));
+    public static IEnumerable<long>? ToLong(this IEnumerable<object?> nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToLong(dfltVal));
 
     public static long GenerateRandomLong(object? min = null, object? max = null)
     {
