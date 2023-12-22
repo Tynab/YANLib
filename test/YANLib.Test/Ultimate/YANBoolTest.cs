@@ -1,5 +1,6 @@
-﻿using static Xunit.Assert;
-using static YANLib.Ultimate.YANBool;
+﻿using YANLib.Ultimate.Core;
+using static Xunit.Assert;
+using static YANLib.Ultimate.Core.YANBool;
 
 namespace YANLib.Test.Ultimate;
 
@@ -12,7 +13,7 @@ public sealed class YANBoolTest
         IEnumerable<object?>? input = null;
 
         // Act
-        var result = YANLib.Ultimate.YANBool.ToBools(input);
+        var result = YANBool.ToBools(input);
 
         // Assert
         Empty(result);
@@ -25,7 +26,7 @@ public sealed class YANBoolTest
         IEnumerable<object?> input = new List<object?>();
 
         // Act
-        var result = YANLib.Ultimate.YANBool.ToBools(input);
+        var result = YANBool.ToBools(input);
 
         // Assert
         Empty(result);
@@ -38,7 +39,7 @@ public sealed class YANBoolTest
         IEnumerable<object?> input = new List<object?> { "true", 0, "false" };
 
         // Act
-        var result = YANLib.Ultimate.YANBool.ToBools(input, true);
+        var result = YANBool.ToBools(input, true);
 
         // Assert
         Equal([true, false, false], result!);
@@ -51,7 +52,7 @@ public sealed class YANBoolTest
         IEnumerable<object?> input = new List<object?> { "invalid", null };
 
         // Act
-        var result = YANLib.Ultimate.YANBool.ToBools(input, false);
+        var result = YANBool.ToBools(input, false);
 
         // Assert
         Equal([false, false], result!);

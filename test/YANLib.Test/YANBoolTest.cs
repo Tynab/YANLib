@@ -1,5 +1,6 @@
-﻿using static Xunit.Assert;
-using static YANLib.YANBool;
+﻿using YANLib.Core;
+using static Xunit.Assert;
+using static YANLib.Core.YANBool;
 
 namespace YANLib.Test;
 

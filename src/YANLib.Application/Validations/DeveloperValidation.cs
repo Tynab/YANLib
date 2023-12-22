@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using System.Collections.Generic;
 using System.Linq;
+using YANLib.Core;
 using YANLib.Requests.Developer;
 using static YANLib.YANLibDomainErrorCodes;
 

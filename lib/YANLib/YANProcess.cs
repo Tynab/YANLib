@@ -1,4 +1,5 @@
-﻿using static System.Diagnostics.Process;
+﻿using YANLib.Core;
+using static System.Diagnostics.Process;
 using static System.Threading.Tasks.Task;
 
 namespace YANLib;
@@ -6,7 +7,7 @@ namespace YANLib;
 public static partial class YANProcess
 {
 
-    public static async Task KillAllProcessesByName(this string name)
+    public static async Task KillAllProcessesByNames(this string name)
     {
         if (name.IsNotWhiteSpaceAndNull())
         {
@@ -22,7 +23,7 @@ public static partial class YANProcess
         }
     }
 
-    public static async Task KillAllProcessesByName(params string[] names)
+    public static async Task KillAllProcessesByNames(params string[] names)
     {
         if (names.AllNotWhiteSpaceAndNull())
         {
@@ -38,7 +39,7 @@ public static partial class YANProcess
         }
     }
 
-    public static async Task KillAllProcessesByName(this IEnumerable<string> names)
+    public static async Task KillAllProcessesByNames(this IEnumerable<string> names)
     {
         if (names.AllNotWhiteSpaceAndNull())
         {

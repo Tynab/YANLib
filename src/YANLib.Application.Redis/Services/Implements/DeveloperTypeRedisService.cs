@@ -2,6 +2,7 @@
 using StackExchange.Redis;
 using Volo.Abp;
 using YANLib.Application.Redis.ConnectionFactory;
+using YANLib.Core;
 using YANLib.RedisDtos;
 using static System.Text.Encoding;
 using static System.Threading.Tasks.Task;

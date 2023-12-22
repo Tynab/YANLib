@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using YANLib.Benchmarks.Models;
+using YANLib.Core;
 using static Newtonsoft.Json.JsonConvert;
 using static System.Guid;
 using static System.Threading.Tasks.Parallel;

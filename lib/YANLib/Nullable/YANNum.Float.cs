@@ -1,80 +1,24 @@
-﻿namespace YANLib.Nullable;
+﻿using YANLib.Core;
+
+namespace YANLib.Nullable;
 
 public static partial class YANNum
 {
-
-    public static float? ToFloat<T>(this T num) where T : struct
+    public static float? ToFloat(this object? val, object? dfltVal = null)
     {
         try
         {
-            return Convert.ToSingle(num);
+            return Convert.ToSingle(val);
         }
         catch
         {
-            return default;
+            return dfltVal.IsNull() ? default : dfltVal.ToFloat();
         }
     }
 
-    public static IEnumerable<float?> ToFloat<T>(this IEnumerable<T> nums) where T : struct
-    {
-        if (nums is null || !nums.Any())
-        {
-            yield break;
-        }
+    public static IEnumerable<float?>? ToFloat<T>(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
 
-        foreach (var num in nums)
-        {
-            yield return num.ToFloat();
-        }
-    }
+    public static IEnumerable<float?>? ToFloat<T>(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
 
-    public static float? ToFloat(this string str) => float.TryParse(str, out var num) ? num : default;
-
-    public static IEnumerable<float?> ToFloat(this IEnumerable<string> strs)
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToFloat();
-        }
-    }
-
-    public static float? ToFloat<T>(this string str, T dfltVal) where T : struct => float.TryParse(str, out var num) ? num : dfltVal.ToFloat();
-
-    public static IEnumerable<float?> ToFloat<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
-    {
-        if (strs is null || !strs.Any())
-        {
-            yield break;
-        }
-
-        foreach (var num in strs)
-        {
-            yield return num.ToFloat(dfltVal);
-        }
-    }
-
-    public static float? GenerateRandomFloat<T1, T2>(T1 min, T2 max) where T1 : struct where T2 : struct
-    {
-        var minValue = min.ToFloat();
-        var maxValue = max.ToFloat();
-
-        return minValue.HasValue && maxValue.HasValue ? minValue > maxValue ? default : new Random().NextSingle(minValue.Value, maxValue.Value) : default;
-    }
-
-    public static IEnumerable<float?> GenerateRandomFloats<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
-    {
-        for (var i = 0ul; i < YANLib.YANNum.ToUlong(size); i++)
-        {
-            yield return GenerateRandomFloat(min, max);
-        }
-    }
-
-    public static float? GenerateRandomFloat() => GenerateRandomFloat(float.MinValue, float.MaxValue);
-
-    public static float? GenerateRandomFloat<T>(T max) where T : struct => GenerateRandomFloat(float.MinValue, max);
+    public static IEnumerable<float?>? ToFloat<T>(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
 }

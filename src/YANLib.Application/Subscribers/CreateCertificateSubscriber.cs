@@ -1,6 +1,7 @@
 ﻿using DotNetCore.CAP;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using YANLib.Core;
 using YANLib.Kafka.Etos;
 using YANLib.Requests;
 using YANLib.Services;

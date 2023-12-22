@@ -1,4 +1,6 @@
-﻿namespace YANLib.Nullable;
+﻿using YANLib.Core;
+
+namespace YANLib.Nullable;
 
 public static partial class YANBool
 {
@@ -18,7 +20,13 @@ public static partial class YANBool
         }
         catch
         {
-            return dfltVal is null ? default : dfltVal.ToBool();
+            return dfltVal.IsNull() ? default : dfltVal.ToBool();
         }
     }
+
+    public static IEnumerable<bool?>? ToBools(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToBool(dfltVal));
+
+    public static IEnumerable<bool?>? ToBools(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToBool(dfltVal));
+
+    public static IEnumerable<bool?>? ToBools(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToBool(dfltVal));
 }

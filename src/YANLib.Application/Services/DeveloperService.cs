@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.EventBus.Distributed;
+using YANLib.Core;
 using YANLib.Entities;
 using YANLib.EsIndices;
 using YANLib.EsServices;
