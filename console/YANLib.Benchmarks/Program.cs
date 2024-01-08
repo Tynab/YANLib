@@ -1,6 +1,4 @@
-﻿using static System.Console;
-
-#if RELEASE
+﻿#if RELEASE
 using YANLib.Benchmarks.Process.Common;
 using YANLib.Benchmarks.Process.Library;
 using static BenchmarkDotNet.Running.BenchmarkRunner;

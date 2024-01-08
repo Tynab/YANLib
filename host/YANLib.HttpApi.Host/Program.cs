@@ -1,12 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-using System;
-using System.Threading.Tasks;
-using static Microsoft.AspNetCore.Builder.WebApplication;
-
-namespace YANLib;
+﻿namespace YANLib;
 
 public class Program
 {

@@ -4,46 +4,46 @@ namespace YANLib.Ultimate.Core;
 
 public static partial class YANNum
 {
-    public static IEnumerable<float> ToFloat<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<float> ToFloats(this IEnumerable<object?>? vals, object? dfltVal = null)
     {
-        if (nums.IsEmptyOrNull())
+        if (vals.IsEmptyOrNull())
         {
             yield break;
         }
 
-        foreach (var num in nums)
+        foreach (var val in vals)
         {
-            yield return num.ToFloat();
+            yield return val.ToFloat(dfltVal);
         }
     }
 
-    public static IEnumerable<float> ToFloat(this IEnumerable<string> strs)
+    public static IEnumerable<float> ToFloats(this ICollection<object?>? vals, object? dfltVal = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (vals.IsEmptyOrNull())
         {
             yield break;
         }
 
-        foreach (var num in strs)
+        foreach (var val in vals)
         {
-            yield return YANLib.Core.YANNum.ToFloat(num);
+            yield return val.ToFloat(dfltVal);
         }
     }
 
-    public static IEnumerable<float> ToFloat<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
+    public static IEnumerable<float> ToFloats(this object?[]? vals, object? dfltVal = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (vals.IsEmptyOrNull())
         {
             yield break;
         }
 
-        foreach (var num in strs)
+        foreach (var val in vals)
         {
-            yield return num.ToFloat(dfltVal);
+            yield return val.ToFloat(dfltVal);
         }
     }
 
-    public static IEnumerable<float> GenerateRandomFloats<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<float> GenerateRandomFloats(object? min = null, object? max = null, object? size = null)
     {
         for (var i = 0ul; i < size.ToUlong(); i++)
         {

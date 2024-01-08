@@ -68,86 +68,33 @@ public static partial class YANDateTime
     /// <returns>The week of the year for the specified <see cref="DateTime"/>, or the default integer value if <see cref="DateTime"/> is <see langword="null"/>.</returns>
     public static int GetWeekOfYear(this DateTime? dt) => dt.HasValue ? CurrentInfo.Calendar.GetWeekOfYear(dt.Value, CurrentInfo.CalendarWeekRule, CurrentInfo.FirstDayOfWeek) : default;
 
-    /// <summary>
-    /// Converts a collection of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The collection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int>? GetWeekOfYears(this IEnumerable<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
-
-    /// <summary>
-    /// Converts a collection of <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The collection of <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<int>? GetWeekOfYears(this IEnumerable<DateTime>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
-    /// <summary>
-    /// Converts a collection (ICollection) of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The ICollection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int>? GetWeekOfYears(this ICollection<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
-
-    /// <summary>
-    /// Converts a collection (ICollection) of <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The ICollection of <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<int>? GetWeekOfYears(this ICollection<DateTime>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
-    /// <summary>
-    /// Converts an array of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The array of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int>? GetWeekOfYears(this DateTime?[]? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+    public static IEnumerable<int>? GetWeekOfYears(params DateTime[]? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
-    /// <summary>
-    /// Converts an array of <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The array of <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int>? GetWeekOfYears(this DateTime[]? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+    public static IEnumerable<int>? GetWeekOfYears(this IEnumerable<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+
+    public static IEnumerable<int>? GetWeekOfYears(this ICollection<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+
+    public static IEnumerable<int>? GetWeekOfYears(params DateTime?[]? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
     public static int TotalMonth(DateTime dt1, DateTime dt2) => Abs((dt1.Year - dt2.Year) * 12 + dt1.Month - dt2.Month);
 
-    /// <summary>
-    /// Changes the time zone of the given <see cref="DateTime"/>.
-    /// Adjusts the <see cref="DateTime"/> by the difference in hours between the source and destination time zones.
-    /// If the adjustment results in a date outside the valid range of <see cref="DateTime"/>, returns the default <see cref="DateTime"/>.
-    /// </summary>
-    /// <param name="dt">The <see cref="DateTime"/> to change the time zone for.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>The <see cref="DateTime"/> adjusted to the new time zone, or the default <see cref="DateTime"/> if the adjustment results in an invalid date.</returns>
     public static DateTime ChangeTimeZone(this DateTime dt, object? tzSrc = null, object? tzDst = null)
     {
         var diff = tzDst.ToInt() - tzSrc.ToInt();
 
         return diff switch
         {
-            < 0 when (dt - MinValue).TotalHours < Abs(diff) => default,
-            > 0 when (MaxValue - dt).TotalHours < diff => default,
+            0 => dt,
+            < 0 when (dt - MinValue).TotalHours < Abs(diff) => dt,
+            > 0 when (MaxValue - dt).TotalHours < diff => dt,
             _ => dt.AddHours(diff)
         };
     }
 
-    /// <summary>
-    /// Changes the time zone of a nullable <see cref="DateTime"/>.
-    /// If the <see cref="DateTime"/> has a value, adjusts it by the difference in hours between the source and destination time zones.
-    /// If the adjustment results in a date outside the valid range of <see cref="DateTime"/>, or if the <see cref="DateTime"/> is <see langword="null"/>, returns the default <see cref="DateTime"/>.
-    /// </summary>
-    /// <param name="dt">The nullable <see cref="DateTime"/> to change the time zone for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>The <see cref="DateTime"/> adjusted to the new time zone, or the default <see cref="DateTime"/> if the adjustment results in an invalid date or if <see cref="DateTime"/> is <see langword="null"/>.</returns>
     public static DateTime ChangeTimeZone(this DateTime? dt, object? tzSrc = null, object? tzDst = null)
     {
         if (!dt.HasValue)
@@ -159,87 +106,54 @@ public static partial class YANDateTime
 
         return diff switch
         {
-            < 0 when (dt.Value - MinValue).TotalHours < Abs(diff) => default,
-            > 0 when (MaxValue - dt.Value).TotalHours < diff => default,
+            0 => dt.Value,
+            < 0 when (dt.Value - MinValue).TotalHours < Abs(diff) => dt.Value,
+            > 0 when (MaxValue - dt.Value).TotalHours < diff => dt.Value,
             _ => dt.Value.AddHours(diff)
         };
     }
 
-    /// <summary>
-    /// Changes the time zones of a collection of nullable <see cref="DateTime"/> values.
-    /// Adjusts each <see cref="DateTime"/> in the collection by the difference in hours between the source and destination time zones.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The collection of nullable <see cref="DateTime"/> values to change the time zones for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zones, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    public static void ChangeTimeZone(this List<DateTime>? dts, object? tzSrc = null, object? tzDst = null)
+    {
+        if (dts.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        dts.ForEach(x => x = x.ChangeTimeZone(tzSrc, tzDst));
+    }
+
+    public static IEnumerable<DateTime>? ChangeTimeZones(this IEnumerable<DateTime>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
+        ? dts
+        : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
+
+    public static IEnumerable<DateTime>? ChangeTimeZones(this ICollection<DateTime>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
+        ? dts
+        : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
+
+    public static IEnumerable<DateTime>? ChangeTimeZones(this DateTime[]? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
+        ? dts
+        : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
+
+    public static void ChangeTimeZone(this List<DateTime?>? dts, object? tzSrc = null, object? tzDst = null)
+    {
+        if (dts.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        dts.ForEach(x => x = x.ChangeTimeZone(tzSrc, tzDst));
+    }
+
     public static IEnumerable<DateTime>? ChangeTimeZones(this IEnumerable<DateTime?>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
         ? default
         : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
 
-    /// <summary>
-    /// Changes the time zones of a collection of <see cref="DateTime"/> values.
-    /// Adjusts each <see cref="DateTime"/> in the collection by the difference in hours between the source and destination time zones.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The collection of <see cref="DateTime"/> values to change the time zones for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zones, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<DateTime>? ChangeTimeZones(this IEnumerable<DateTime>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
-        ? default
-        : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
-
-    /// <summary>
-    /// Changes the time zones of a collection (ICollection) of nullable <see cref="DateTime"/> values.
-    /// Adjusts each <see cref="DateTime"/> in the collection by the difference in hours between the source and destination time zones.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The ICollection of nullable <see cref="DateTime"/> values to change the time zones for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zones, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ChangeTimeZones(this ICollection<DateTime?>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
         ? default
         : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
 
-    /// <summary>
-    /// Changes the time zones of a collection (ICollection) of <see cref="DateTime"/> values.
-    /// Adjusts each <see cref="DateTime"/> in the collection by the difference in hours between the source and destination time zones.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The ICollection of <see cref="DateTime"/> values to change the time zones for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zones, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<DateTime>? ChangeTimeZones(this ICollection<DateTime>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
-        ? default
-        : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
-
-    /// <summary>
-    /// Changes the time zones of an array of nullable <see cref="DateTime"/> values.
-    /// Adjusts each <see cref="DateTime"/> in the array by the difference in hours between the source and destination time zones.
-    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The array of nullable <see cref="DateTime"/> values to change the time zones for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zones, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ChangeTimeZones(this DateTime?[]? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
-        ? default
-        : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
-
-    /// <summary>
-    /// Changes the time zones of an array of <see cref="DateTime"/> values.
-    /// Adjusts each <see cref="DateTime"/> in the array by the difference in hours between the source and destination time zones.
-    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="dts">The array of <see cref="DateTime"/> values to change the time zones for. Can be <see langword="null"/>.</param>
-    /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
-    /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zones, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<DateTime>? ChangeTimeZones(this DateTime[]? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
         ? default
         : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
 }

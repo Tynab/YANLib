@@ -1,7 +1,4 @@
-﻿using Volo.Abp.DependencyInjection;
-using Volo.Abp.Ui.Branding;
-
-namespace YANLib;
+﻿namespace YANLib;
 
 [Dependency(ReplaceServices = true)]
 public class YANLibBrandingProvider : DefaultBrandingProvider

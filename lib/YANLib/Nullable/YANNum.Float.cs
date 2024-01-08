@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<float?>? ToFloat<T>(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
+    public static IEnumerable<float?>? ToFloats<T>(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToFloat(dfltVal));
 
-    public static IEnumerable<float?>? ToFloat<T>(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
+    public static IEnumerable<float?>? ToFloats<T>(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToFloat(dfltVal));
 
-    public static IEnumerable<float?>? ToFloat<T>(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToFloat(dfltVal));
+    public static IEnumerable<float?>? ToFloats<T>(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToFloat(dfltVal));
 }

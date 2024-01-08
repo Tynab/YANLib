@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<long?>? ToLong(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToLong(dfltVal));
+    public static IEnumerable<long?>? ToLongs(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToLong(dfltVal));
 
-    public static IEnumerable<long?>? ToLong(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToLong(dfltVal));
+    public static IEnumerable<long?>? ToLongs(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToLong(dfltVal));
 
-    public static IEnumerable<long?>? ToLong(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToLong(dfltVal));
+    public static IEnumerable<long?>? ToLongs(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToLong(dfltVal));
 }

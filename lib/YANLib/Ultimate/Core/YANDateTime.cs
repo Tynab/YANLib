@@ -88,26 +88,6 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Converts a collection of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
-    /// </summary>
-    /// <param name="dts">The collection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
-    public static IEnumerable<int> GetWeekOfYears(this IEnumerable<DateTime?>? dts)
-    {
-        if (dts.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var dt in dts)
-        {
-            yield return dt.GetWeekOfYear();
-        }
-    }
-
-    /// <summary>
     /// Converts a collection of non-nullable <see cref="DateTime"/> values to their respective week numbers of the year.
     /// If the collection is <see langword="null"/> or empty, yields no results.
     /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
@@ -115,26 +95,6 @@ public static partial class YANDateTime
     /// <param name="dts">The collection of non-nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this IEnumerable<DateTime>? dts)
-    {
-        if (dts.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var dt in dts)
-        {
-            yield return dt.GetWeekOfYear();
-        }
-    }
-
-    /// <summary>
-    /// Converts a collection (ICollection) of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
-    /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
-    /// </summary>
-    /// <param name="dts">The ICollection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
-    public static IEnumerable<int> GetWeekOfYears(this ICollection<DateTime?>? dts)
     {
         if (dts.IsEmptyOrNull())
         {
@@ -168,13 +128,13 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Converts an array of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
+    /// Converts an array of non-nullable <see cref="DateTime"/> values to their respective week numbers of the year.
     /// If the array is <see langword="null"/> or empty, yields no results.
     /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
     /// </summary>
-    /// <param name="dts">The array of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
+    /// <param name="dts">The array of non-nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
-    public static IEnumerable<int> GetWeekOfYears(this DateTime?[]? dts)
+    public static IEnumerable<int> GetWeekOfYears(this DateTime[]? dts)
     {
         if (dts.IsEmptyOrNull())
         {
@@ -188,13 +148,53 @@ public static partial class YANDateTime
     }
 
     /// <summary>
-    /// Converts an array of non-nullable <see cref="DateTime"/> values to their respective week numbers of the year.
+    /// Converts a collection of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
+    /// If the collection is <see langword="null"/> or empty, yields no results.
+    /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
+    /// </summary>
+    /// <param name="dts">The collection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
+    /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
+    public static IEnumerable<int> GetWeekOfYears(this IEnumerable<DateTime?>? dts)
+    {
+        if (dts.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var dt in dts)
+        {
+            yield return dt.GetWeekOfYear();
+        }
+    }
+
+    /// <summary>
+    /// Converts a collection (ICollection) of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
+    /// If the collection is <see langword="null"/> or empty, yields no results.
+    /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
+    /// </summary>
+    /// <param name="dts">The ICollection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
+    /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
+    public static IEnumerable<int> GetWeekOfYears(this ICollection<DateTime?>? dts)
+    {
+        if (dts.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var dt in dts)
+        {
+            yield return dt.GetWeekOfYear();
+        }
+    }
+
+    /// <summary>
+    /// Converts an array of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
     /// If the array is <see langword="null"/> or empty, yields no results.
     /// Each <see cref="DateTime"/> value is converted to its corresponding week number based on the current culture's calendar and rules.
     /// </summary>
-    /// <param name="dts">The array of non-nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
+    /// <param name="dts">The array of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
-    public static IEnumerable<int> GetWeekOfYears(this DateTime[]? dts)
+    public static IEnumerable<int> GetWeekOfYears(this DateTime?[]? dts)
     {
         if (dts.IsEmptyOrNull())
         {

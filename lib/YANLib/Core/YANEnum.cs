@@ -28,5 +28,5 @@ public static partial class YANEnum
     /// </summary>
     /// <param name="vals">The array of strings to be converted to enumeration values of type <typeparamref name="T"/>. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of enumeration values of type <typeparamref name="T"/>, or <see langword="null"/> for any string that does not correspond to a valid enumeration value.</returns>
-    public static IEnumerable<T?>? ToEnums<T>(this string?[]? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnum<T>());
+    public static IEnumerable<T?>? ToEnums<T>(params string?[]? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnum<T>());
 }

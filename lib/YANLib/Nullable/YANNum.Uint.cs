@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<uint?>? ToUint(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUint(dfltVal));
+    public static IEnumerable<uint?>? ToUints(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUint(dfltVal));
 
-    public static IEnumerable<uint?>? ToUint(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUint(dfltVal));
+    public static IEnumerable<uint?>? ToUints(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUint(dfltVal));
 
-    public static IEnumerable<uint?>? ToUint(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUint(dfltVal));
+    public static IEnumerable<uint?>? ToUints(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUint(dfltVal));
 }

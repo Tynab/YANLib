@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using static System.Math;
+﻿using static System.Math;
 using static System.Nullable;
 
 namespace YANLib.Core;
@@ -103,18 +102,11 @@ public static partial class YANEnumerable
         }
     }
 
-    /// <summary>
-    /// Cleans a collection of nullable elements by removing <see langword="null"/> values.
-    /// For classes and nullable value types, <see langword="null"/> elements are removed. For non-nullable value types, no elements are removed.
-    /// If the source collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="srcs">The source collection of nullable elements. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection with <see langword="null"/> elements removed, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<T?>? Clean<T>(this IEnumerable<T?>? srcs)
     {
         if (srcs.IsEmptyOrNull())
         {
-            return default;
+            return srcs;
         }
 
         var t = typeof(T);
@@ -122,18 +114,11 @@ public static partial class YANEnumerable
         return t.IsClass || GetUnderlyingType(t).IsNotNull() ? srcs.Where(x => x.IsNotNull()) : srcs;
     }
 
-    /// <summary>
-    /// Cleans a collection (ICollection) of nullable elements by removing <see langword="null"/> values.
-    /// For classes and nullable value types, <see langword="null"/> elements are removed. For non-nullable value types, no elements are removed.
-    /// If the source collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="srcs">The source ICollection of nullable elements. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection with <see langword="null"/> elements removed, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<T?>? Clean<T>(this ICollection<T?>? srcs)
     {
         if (srcs.IsEmptyOrNull())
         {
-            return default;
+            return srcs;
         }
 
         var t = typeof(T);
@@ -141,18 +126,11 @@ public static partial class YANEnumerable
         return t.IsClass || GetUnderlyingType(t).IsNotNull() ? srcs.Where(x => x.IsNotNull()) : srcs;
     }
 
-    /// <summary>
-    /// Cleans an array of nullable elements by removing <see langword="null"/> values.
-    /// For classes and nullable value types, <see langword="null"/> elements are removed. For non-nullable value types, no elements are removed.
-    /// If the source array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="srcs">The source array of nullable elements. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection with <see langword="null"/> elements removed, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<T?>? Clean<T>(this T?[]? srcs)
+    public static IEnumerable<T?>? Clean<T>(params T?[]? srcs)
     {
         if (srcs.IsEmptyOrNull())
         {
-            return default;
+            return srcs;
         }
 
         var t = typeof(T);
@@ -160,27 +138,9 @@ public static partial class YANEnumerable
         return t.IsClass || GetUnderlyingType(t).IsNotNull() ? srcs.Where(x => x.IsNotNull()) : srcs;
     }
 
-    /// <summary>
-    /// Cleans a collection of strings by removing <see langword="null"/> or white-space strings.
-    /// If the source collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="srcs">The source collection of strings. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection with <see langword="null"/> or white-space strings removed, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this IEnumerable<string?>? srcs) => srcs.IsEmptyOrNull() ? default : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
+    public static IEnumerable<string?>? Clean(this IEnumerable<string?>? srcs) => srcs.IsEmptyOrNull() ? srcs : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
 
-    /// <summary>
-    /// Cleans a collection (ICollection) of strings by removing <see langword="null"/> or white-space strings.
-    /// If the source collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="srcs">The source ICollection of strings. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection with <see langword="null"/> or white-space strings removed, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this ICollection<string?>? srcs) => srcs.IsEmptyOrNull() ? default : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
+    public static IEnumerable<string?>? Clean(this ICollection<string?>? srcs) => srcs.IsEmptyOrNull() ? srcs : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
 
-    /// <summary>
-    /// Cleans an array of strings by removing <see langword="null"/> or white-space strings.
-    /// If the source array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// </summary>
-    /// <param name="srcs">The source array of strings. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection with <see langword="null"/> or white-space strings removed, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this string?[]? srcs) => srcs.IsEmptyOrNull() ? default : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
+    public static IEnumerable<string?>? Clean(params string?[]? srcs) => srcs.IsEmptyOrNull() ? srcs : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
 }

@@ -1,11 +1,4 @@
-﻿using AutoMapper;
-using Volo.Abp.AutoMapper;
-using YANLib.Entities;
-using YANLib.EsIndices;
-using YANLib.Requests.Developer;
-using YANLib.Responses;
-
-namespace YANLib.Mappers;
+﻿namespace YANLib.Mappers;
 
 public sealed class DeveloperMapper : Profile
 {

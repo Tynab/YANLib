@@ -1,6 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-
-namespace YANLib.Benchmarks.Process.Common;
+﻿namespace YANLib.Benchmarks.Process.Common;
 
 public class HttpBenchmark
 {

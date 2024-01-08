@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<double?>? ToDouble(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToDouble(dfltVal));
+    public static IEnumerable<double?>? ToDoubles(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToDouble(dfltVal));
 
-    public static IEnumerable<double?>? ToDouble(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToDouble(dfltVal));
+    public static IEnumerable<double?>? ToDoubles(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToDouble(dfltVal));
 
-    public static IEnumerable<double?>? ToDouble(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToDouble(dfltVal));
+    public static IEnumerable<double?>? ToDoubles(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToDouble(dfltVal));
 }

@@ -5,23 +5,25 @@ namespace YANLib.Core;
 
 public static partial class YANText
 {
+    public static string? Title(this string? str) => str.IsWhiteSpaceOrNull() ? str : CurrentCulture.TextInfo.ToTitleCase(str);
 
-    public static string ToTitle(this string str) => str.IsWhiteSpaceOrNull() ? str : CurrentCulture.TextInfo.ToTitleCase(str);
-
-    public static IEnumerable<string> ToTitle(this IEnumerable<string> strs)
+    public static void Titles(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.ToTitle();
-        }
+        strs.ForEach(x => x = x.Title());
     }
 
-    public static string ToCapitalize(this string str)
+    public static IEnumerable<string?>? Titles(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.Title());
+
+    public static IEnumerable<string?>? Titles(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.Title());
+
+    public static IEnumerable<string?>? Titles(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.Title());
+
+    public static string? Capitalize(this string? str)
     {
         if (str.IsWhiteSpaceOrNull())
         {
@@ -47,20 +49,23 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static IEnumerable<string> ToCapitalize(this IEnumerable<string> strs)
+    public static void Capitalizes(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.ToCapitalize();
-        }
+        strs.ForEach(x => x = x.Capitalize());
     }
 
-    public static string CleanSpace(this string str)
+    public static IEnumerable<string?>? Capitalizes(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.Capitalize());
+
+    public static IEnumerable<string?>? Capitalizes(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.Capitalize());
+
+    public static IEnumerable<string?>? Capitalizes(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.Capitalize());
+
+    public static string? CleanSpace(this string? str)
     {
         if (str.IsEmptyOrNull())
         {
@@ -92,20 +97,23 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static IEnumerable<string> CleanSpace(this IEnumerable<string> strs)
+    public static void CleanSpace(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.CleanSpace();
-        }
+        strs.ForEach(x => x = x.CleanSpace());
     }
 
-    public static string FormatName(this string str)
+    public static IEnumerable<string?>? CleanSpaces(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.CleanSpace());
+
+    public static IEnumerable<string?>? CleanSpaces(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.CleanSpace());
+
+    public static IEnumerable<string?>? CleanSpaces(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.CleanSpace());
+
+    public static string? FormatName(this string? str)
     {
         if (str.IsEmptyOrNull())
         {
@@ -131,20 +139,23 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static IEnumerable<string> FormatName(this IEnumerable<string> strs)
+    public static void FormatName(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.FormatName();
-        }
+        strs.ForEach(x => x = x.FormatName());
     }
 
-    public static string FilterAlphabetic(this string str)
+    public static IEnumerable<string?>? FormatNames(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FormatName());
+
+    public static IEnumerable<string?>? FormatNames(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FormatName());
+
+    public static IEnumerable<string?>? FormatNames(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FormatName());
+
+    public static string? FilterAlphabetic(this string? str)
     {
         if (str.IsEmptyOrNull())
         {
@@ -166,20 +177,23 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static IEnumerable<string> FilterAlphabetic(this IEnumerable<string> strs)
+    public static void FilterAlphabetic(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.FilterAlphabetic();
-        }
+        strs.ForEach(x => x = x.FilterAlphabetic());
     }
 
-    public static string FilterNumber(this string str)
+    public static IEnumerable<string?>? FilterAlphabetics(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterAlphabetic());
+
+    public static IEnumerable<string?>? FilterAlphabetics(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterAlphabetic());
+
+    public static IEnumerable<string?>? FilterAlphabetics(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterAlphabetic());
+
+    public static string? FilterNumber(this string? str)
     {
         if (str.IsEmptyOrNull())
         {
@@ -201,20 +215,23 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static IEnumerable<string> FilterNumber(this IEnumerable<string> strs)
+    public static void FilterNumber(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.FilterNumber();
-        }
+        strs.ForEach(x => x = x.FilterNumber());
     }
 
-    public static string FilterAlphanumeric(this string str)
+    public static IEnumerable<string?>? FilterNumbers(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterNumber());
+
+    public static IEnumerable<string?>? FilterNumbers(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterNumber());
+
+    public static IEnumerable<string?>? FilterNumbers(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterNumber());
+
+    public static string? FilterAlphanumeric(this string? str)
     {
         if (str.IsEmptyOrNull())
         {
@@ -236,16 +253,19 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static IEnumerable<string> FilterAlphanumeric(this IEnumerable<string> strs)
+    public static void FilterAlphanumeric(this List<string?>? strs)
     {
         if (strs.IsEmptyOrNull())
         {
-            yield break;
+            return;
         }
 
-        foreach (var str in strs)
-        {
-            yield return str.FilterAlphanumeric();
-        }
+        strs.ForEach(x => x = x.FilterAlphanumeric());
     }
+
+    public static IEnumerable<string?>? FilterAlphanumerics(this IEnumerable<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterAlphanumeric());
+
+    public static IEnumerable<string?>? FilterAlphanumerics(this ICollection<string?>? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterAlphanumeric());
+
+    public static IEnumerable<string?>? FilterAlphanumerics(params string?[]? strs) => strs.IsEmptyOrNull() ? strs : strs.Select(x => x.FilterAlphanumeric());
 }

@@ -1,10 +1,4 @@
-﻿using Localization.Resources.AbpUi;
-using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.Localization;
-using Volo.Abp.Modularity;
-using YANLib.Localization;
-
-namespace YANLib;
+﻿namespace YANLib;
 
 [DependsOn(
     typeof(YANLibApplicationContractsModule),

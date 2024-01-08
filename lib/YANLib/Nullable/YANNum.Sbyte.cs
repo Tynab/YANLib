@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<sbyte?>? ToSbyte(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToSbyte(dfltVal));
+    public static IEnumerable<sbyte?>? ToSbytes(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToSbyte(dfltVal));
 
-    public static IEnumerable<sbyte?>? ToSbyte(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToSbyte(dfltVal));
+    public static IEnumerable<sbyte?>? ToSbytes(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToSbyte(dfltVal));
 
-    public static IEnumerable<sbyte?>? ToSbyte(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToSbyte(dfltVal));
+    public static IEnumerable<sbyte?>? ToSbytes(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToSbyte(dfltVal));
 }

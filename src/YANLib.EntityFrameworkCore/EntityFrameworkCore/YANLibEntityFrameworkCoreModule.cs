@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.EntityFrameworkCore;
-using Volo.Abp.Modularity;
-using YANLib.Entities;
-using YANLib.EntityFrameworkCore.DbContext.Implements;
+﻿using YANLib.EntityFrameworkCore.DbContext.Implements;
 
 namespace YANLib.EntityFrameworkCore;
 

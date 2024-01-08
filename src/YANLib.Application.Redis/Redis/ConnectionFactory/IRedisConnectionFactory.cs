@@ -1,6 +1,4 @@
-﻿using StackExchange.Redis;
-
-namespace YANLib.Application.Redis.ConnectionFactory;
+﻿namespace YANLib.Application.Redis.ConnectionFactory;
 
 public interface IRedisConnectionFactory
 {

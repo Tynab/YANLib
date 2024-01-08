@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-using static System.IO.Directory;
-
-namespace YANLib.EntityFrameworkCore;
+﻿namespace YANLib.EntityFrameworkCore;
 
 public class YANLibHttpApiHostMigrationsDbContextFactory : IDesignTimeDbContextFactory<YANLibHttpApiHostMigrationsDbContext>
 {

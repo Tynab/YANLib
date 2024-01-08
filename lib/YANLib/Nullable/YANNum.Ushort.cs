@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<ushort?>? ToUshort(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUshort(dfltVal));
+    public static IEnumerable<ushort?>? ToUshorts(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUshort(dfltVal));
 
-    public static IEnumerable<ushort?>? ToUshort(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUshort(dfltVal));
+    public static IEnumerable<ushort?>? ToUshorts(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUshort(dfltVal));
 
-    public static IEnumerable<ushort?>? ToUshort(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUshort(dfltVal));
+    public static IEnumerable<ushort?>? ToUshorts(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUshort(dfltVal));
 }

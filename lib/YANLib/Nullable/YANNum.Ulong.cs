@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<ulong?>? ToUlong(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUlong(dfltVal));
+    public static IEnumerable<ulong?>? ToUlongs(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUlong(dfltVal));
 
-    public static IEnumerable<ulong?>? ToUlong(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUlong(dfltVal));
+    public static IEnumerable<ulong?>? ToUlongs(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUlong(dfltVal));
 
-    public static IEnumerable<ulong?>? ToUlong(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToUlong(dfltVal));
+    public static IEnumerable<ulong?>? ToUlongs(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUlong(dfltVal));
 }

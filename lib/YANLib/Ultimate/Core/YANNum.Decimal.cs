@@ -4,46 +4,46 @@ namespace YANLib.Ultimate.Core;
 
 public static partial class YANNum
 {
-    public static IEnumerable<decimal> ToDecimal<T>(this IEnumerable<T> nums) where T : struct
+    public static IEnumerable<decimal> ToDecimals(this IEnumerable<object?>? vals, object? dfltVal = null)
     {
-        if (nums.IsNull() || !nums.Any())
+        if (vals.IsEmptyOrNull())
         {
             yield break;
         }
 
-        foreach (var num in nums)
+        foreach (var val in vals)
         {
-            yield return num.ToDecimal();
+            yield return val.ToDecimal(dfltVal);
         }
     }
 
-    public static IEnumerable<decimal> ToDecimal(this IEnumerable<string> strs)
+    public static IEnumerable<decimal> ToDecimals(this ICollection<object?>? vals, object? dfltVal = null)
     {
-        if (strs.IsNull() || !strs.Any())
+        if (vals.IsEmptyOrNull())
         {
             yield break;
         }
 
-        foreach (var num in strs)
+        foreach (var val in vals)
         {
-            yield return YANLib.Core.YANNum.ToDecimal(num);
+            yield return val.ToDecimal(dfltVal);
         }
     }
 
-    public static IEnumerable<decimal> ToDecimal<T>(this IEnumerable<string> strs, T dfltVal) where T : struct
+    public static IEnumerable<decimal> ToDecimals(this object?[]? vals, object? dfltVal = null)
     {
-        if (strs.IsNull() || !strs.Any())
+        if (vals.IsEmptyOrNull())
         {
             yield break;
         }
 
-        foreach (var num in strs)
+        foreach (var val in vals)
         {
-            yield return num.ToDecimal(dfltVal);
+            yield return val.ToDecimal(dfltVal);
         }
     }
 
-    public static IEnumerable<decimal> GenerateRandomDecimals<T1, T2, T>(T1 min, T2 max, T size) where T1 : struct where T2 : struct where T : struct
+    public static IEnumerable<decimal> GenerateRandomDecimals(object? min = null, object? max = null, object? size = null)
     {
         for (var i = 0ul; i < size.ToUlong(); i++)
         {

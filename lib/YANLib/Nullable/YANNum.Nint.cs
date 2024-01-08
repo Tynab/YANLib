@@ -16,9 +16,9 @@ public static partial class YANNum
         }
     }
 
-    public static IEnumerable<nint?>? ToNint(this IEnumerable<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToNint(dfltVal));
+    public static IEnumerable<nint?>? ToNints(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToNint(dfltVal));
 
-    public static IEnumerable<nint?>? ToNint(this ICollection<object?>? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToNint(dfltVal));
+    public static IEnumerable<nint?>? ToNints(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToNint(dfltVal));
 
-    public static IEnumerable<nint?>? ToNint(this object?[]? nums, object? dfltVal = null) => nums.IsEmptyOrNull() ? default : nums.Select(x => x.ToNint(dfltVal));
+    public static IEnumerable<nint?>? ToNints(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToNint(dfltVal));
 }

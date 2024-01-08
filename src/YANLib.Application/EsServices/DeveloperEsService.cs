@@ -1,15 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Nest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using YANLib.Core;
-using YANLib.EsIndices;
-using YANLib.Utilities;
-using static System.Threading.Tasks.Task;
-using static YANLib.YANLibConsts.ElasticsearchIndex;
+﻿using YANLib.Utilities;
 
 namespace YANLib.EsServices;
 
