@@ -1,4 +1,6 @@
-﻿namespace YANLib;
+﻿using YANLib.Core;
+
+namespace YANLib;
 
 public static partial class YANRandom
 {
@@ -9,24 +11,24 @@ public static partial class YANRandom
 
     public static float NextSingle(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min is null ? float.MinValue : min.ToFloat();
-        var maxValue = max is null ? float.MaxValue : max.ToFloat();
+        var minValue = min.IsNull() ? float.MinValue : min.ToFloat();
+        var maxValue = max.IsNull() ? float.MaxValue : max.ToFloat();
 
         return minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static double NextDouble(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min is null ? double.MinValue : min.ToDouble();
-        var maxValue = max is null ? double.MaxValue : max.ToDouble();
+        var minValue = min.IsNull() ? double.MinValue : min.ToDouble();
+        var maxValue = max.IsNull() ? double.MaxValue : max.ToDouble();
 
         return minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static decimal NextDecimal(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min is null ? decimal.MinValue : min.ToDecimal();
-        var maxValue = max is null ? decimal.MaxValue : max.ToDecimal();
+        var minValue = min.IsNull() ? decimal.MinValue : min.ToDecimal();
+        var maxValue = max.IsNull() ? decimal.MaxValue : max.ToDecimal();
 
         return minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }

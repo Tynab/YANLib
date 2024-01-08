@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using StackExchange.Redis;
-using Volo.Abp.DependencyInjection;
-using static StackExchange.Redis.ConnectionMultiplexer;
-
-namespace YANLib.Application.Redis.ConnectionFactory.Implements;
+﻿namespace YANLib.Application.Redis.ConnectionFactory.Implements;
 
 public class RedisConnectionFactory : IRedisConnectionFactory, ISingletonDependency
 {

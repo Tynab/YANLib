@@ -1,7 +1,4 @@
-﻿using Volo.Abp.Application.Services;
-using YANLib.Localization;
-
-namespace YANLib;
+﻿namespace YANLib;
 
 public abstract class YANLibAppService : ApplicationService
 {

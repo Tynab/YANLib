@@ -1,5 +1,6 @@
-﻿using static Xunit.Assert;
-using static YANLib.YANBool;
+﻿using YANLib.Core;
+using static Xunit.Assert;
+using static YANLib.Core.YANBool;
 
 namespace YANLib.Test;
 
@@ -85,6 +86,32 @@ public sealed class YANBoolTest
     }
 
     [Fact]
+    public void ToBools_CollectionInput_ReturnsBools()
+    {
+        // Arrange
+        ICollection<object?> input = new object?[] { 0, "false", null };
+
+        // Act
+        var result = input.ToBools();
+
+        // Assert
+        Equal([false, false, false], result!);
+    }
+
+    [Fact]
+    public void ToBools_ArrayInput_ReturnsBools()
+    {
+        // Arrange
+        object?[] input = ["true", 0, null];
+
+        // Act
+        var result = input.ToBools();
+
+        // Assert
+        Equal([true, false, false], result!);
+    }
+
+    [Fact]
     public void ToBool_EnumerableInputWithDefault_ReturnsBools()
     {
         // Arrange
@@ -96,6 +123,34 @@ public sealed class YANBoolTest
 
         // Assert
         Equal([true, true, false], result!);
+    }
+
+    [Fact]
+    public void ToBools_CollectionInputWithDefault_ReturnsBools()
+    {
+        // Arrange
+        IEnumerable<object?> input = new object?[] { 0, "invalid", null };
+        object defaultValue = true;
+
+        // Act
+        var result = input.ToBools(defaultValue);
+
+        // Assert
+        Equal([false, true, false], result!);
+    }
+
+    [Fact]
+    public void ToBools_ArrayInputWithDefault_ReturnsBools()
+    {
+        // Arrange
+        object?[] input = ["invalid", 0, null];
+        object defaultValue = true;
+
+        // Act
+        var result = input.ToBools(defaultValue);
+
+        // Assert
+        Equal([true, false, false], result!);
     }
 
     [Fact]
@@ -120,5 +175,18 @@ public sealed class YANBoolTest
         // Assert
         Equal(5, result.Count());
         All(result, x => IsType<bool>(x));
+    }
+
+    [Fact]
+    public void GenerateRandomBools_WithInvalidSize_ReturnsEmptyCollection()
+    {
+        // Arrange
+        var size = "invalid";
+
+        // Act
+        var result = GenerateRandomBools(size);
+
+        // Assert
+        Empty(result);
     }
 }

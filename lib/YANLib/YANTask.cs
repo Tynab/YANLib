@@ -1,4 +1,5 @@
-﻿using static System.Threading.Tasks.Task;
+﻿using YANLib.Core;
+using static System.Threading.Tasks.Task;
 
 namespace YANLib;
 

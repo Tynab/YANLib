@@ -1,12 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using YANLib.Entities;
-using YANLib.EntityFrameworkCore.DbContext;
-using static System.DateTime;
+﻿using YANLib.EntityFrameworkCore.DbContext;
 
 namespace YANLib.Repositories;
 

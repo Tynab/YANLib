@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using YANLib.Core;
 using static System.Convert;
 using static System.Security.Cryptography.CryptographicOperations;
 using static System.Security.Cryptography.RandomNumberGenerator;
@@ -39,7 +40,7 @@ public class YANPass
 
     public bool Verify(string password, string strHash)
     {
-        if (strHash.IsNotWhiteSpaceAndNull() && SegmentDelimiter.IsNotEmptyAndWhiteSpace())
+        if (strHash.IsNotWhiteSpaceAndNull() && SegmentDelimiter.IsNotWhiteSpaceAndEmpty())
         {
             var segs = strHash.Split(SegmentDelimiter);
 

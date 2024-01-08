@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore;
-
-namespace YANLib.EntityFrameworkCore;
+﻿namespace YANLib.EntityFrameworkCore;
 
 public class YANLibHttpApiHostMigrationsDbContext(DbContextOptions<YANLibHttpApiHostMigrationsDbContext> options) : AbpDbContext<YANLibHttpApiHostMigrationsDbContext>(options)
 {

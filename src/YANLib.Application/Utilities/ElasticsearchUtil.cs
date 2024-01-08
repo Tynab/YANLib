@@ -1,15 +1,4 @@
-﻿using Elasticsearch.Net;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Nest;
-using System;
-using System.Linq;
-using YANLib.EsIndices;
-using static Elasticsearch.Net.CertificateValidations;
-using static System.TimeSpan;
-using static YANLib.YANLibConsts.ElasticsearchIndex;
-
-namespace YANLib.Utilities;
+﻿namespace YANLib.Utilities;
 
 public static class ElasticsearchUtil
 {

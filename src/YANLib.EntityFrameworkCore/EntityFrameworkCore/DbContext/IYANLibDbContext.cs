@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Volo.Abp.Data;
-using Volo.Abp.EntityFrameworkCore;
-using YANLib.Entities;
-using static YANLib.YANLibConsts.ConnectionStringName;
-
-namespace YANLib.EntityFrameworkCore.DbContext;
+﻿namespace YANLib.EntityFrameworkCore.DbContext;
 
 [ConnectionStringName(Default)]
 public interface IYANLibDbContext : IEfCoreDbContext

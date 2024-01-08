@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel.DataAnnotations;
-using Volo.Abp;
-using static Id_Generator_Snowflake.IdGenerator;
-
-namespace YANLib.Controllers;
+﻿namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "test")]

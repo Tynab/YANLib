@@ -1,9 +1,4 @@
-﻿using FluentValidation;
-using System.Collections.Generic;
-using YANLib.Responses;
-using static YANLib.YANLibDomainErrorCodes;
-
-namespace YANLib.Validations;
+﻿namespace YANLib.Validations;
 
 public sealed class SampleValidator : AbstractValidator<JsonResponse>
 {

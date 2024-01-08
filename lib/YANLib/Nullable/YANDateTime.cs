@@ -1,10 +1,11 @@
-﻿using static System.DateTime;
+﻿using YANLib.Core;
+using static System.DateTime;
 using static System.Globalization.CultureInfo;
 using static System.Globalization.DateTimeFormatInfo;
 using static System.Globalization.DateTimeStyles;
 using static System.Linq.Enumerable;
 using static System.Math;
-using static YANLib.YANNum;
+using static YANLib.Core.YANNum;
 
 namespace YANLib.Nullable;
 
@@ -89,7 +90,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value for each generated value. Can be <see langword="null"/>.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value for each generated value. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of randomly generated <see cref="DateTime"/> values.</returns>
-    public static IEnumerable<DateTime?> GenerateRandomDateTimes(object? size, DateTime? min = null, DateTime? max = null) => Range(0, (int)size.ToUint()).Select(i => GenerateRandomDateTime(min, max));
+    public static IEnumerable<DateTime?> GenerateRandomDateTimes(object? size, DateTime? min = null, DateTime? max = null) => Range(0, (int)Core.YANNum.ToUint(size)).Select(i => GenerateRandomDateTime(min, max));
 
     /// <summary>
     /// Gets the week of the year for a specified <see cref="DateTime"/>.
@@ -141,7 +142,7 @@ public static partial class YANDateTime
             return default;
         }
 
-        var diff = tzDst.ToInt() - tzSrc.ToInt();
+        var diff = Core.YANNum.ToInt(tzDst) - Core.YANNum.ToInt(tzSrc);
 
         return diff switch
         {

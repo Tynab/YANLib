@@ -1,10 +1,4 @@
-﻿using FluentValidation;
-using System.Collections.Generic;
-using System.Linq;
-using YANLib.Requests.Developer;
-using static YANLib.YANLibDomainErrorCodes;
-
-namespace YANLib.Validations;
+﻿namespace YANLib.Validations;
 
 public sealed class DeveloperCreateValidator : AbstractValidator<DeveloperCreateRequest>
 {

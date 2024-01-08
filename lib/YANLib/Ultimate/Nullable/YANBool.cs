@@ -1,4 +1,6 @@
-﻿namespace YANLib.Ultimate.Nullable;
+﻿using YANLib.Core;
+
+namespace YANLib.Ultimate.Nullable;
 
 public static partial class YANBool
 {
