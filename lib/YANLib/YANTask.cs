@@ -5,47 +5,109 @@ namespace YANLib;
 
 public static partial class YANTask
 {
-
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : IComparable<T> => await tasks.WaitAnyWithCondition(goodRslt);
-
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>>? tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var cmplTask = await WhenAny(tasks.Select(x => x.AsTask()).ToList()).ConfigureAwait(false);
+            var cmplTask = await WhenAny(tasks.Select(x => x.AsTask())).ConfigureAwait(false);
+            var rslt = await cmplTask;
 
-            if (cmplTask.IsCompletedSuccessfully && typeof(T).IsValueType && cmplTask.Result.Equals(goodRslt))
+            if (cmplTask.IsCompletedSuccessfully && rslt.Equals(goodRslt))
             {
-                return cmplTask.Result;
+                return rslt;
             }
         }
 
         return default;
     }
 
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(T goodRslt, params Task<T>[] tasks) where T : IComparable<T> => await tasks.WaitAnyWithCondition(goodRslt);
-
-    public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : IComparable<T>
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(this ICollection<ValueTask<T>>? tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var valueTasks = tasks.Select(x => new ValueTask<T>(x));
+            var cmplTask = await WhenAny(tasks.Select(x => x.AsTask())).ConfigureAwait(false);
+            var rslt = await cmplTask;
 
-            return await valueTasks.WaitAnyWithCondition(goodRslt);
+            if (cmplTask.IsCompletedSuccessfully && rslt.Equals(goodRslt))
+            {
+                return rslt;
+            }
         }
 
         return default;
     }
 
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(T goodRslt, params ValueTask<T>[] tasks) where T : IComparable<T> => await tasks.WhenAnyWithCondition(goodRslt);
+    public static async ValueTask<T?> WaitAnyWithCondition<T>(this ValueTask<T>[]? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var cmplTask = await WhenAny(tasks.Select(x => x.AsTask())).ConfigureAwait(false);
+            var rslt = await cmplTask;
 
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<ValueTask<T>> tasks, T goodRslt) where T : IComparable<T>
+            if (cmplTask.IsCompletedSuccessfully && rslt.Equals(goodRslt))
+            {
+                return rslt;
+            }
+        }
+
+        return default;
+    }
+
+    public static async Task<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>>? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var cmplTask = await WhenAny(tasks).ConfigureAwait(false);
+            var rslt = await cmplTask;
+
+            if (cmplTask.IsCompletedSuccessfully && rslt.Equals(goodRslt))
+            {
+                return rslt;
+            }
+        }
+
+        return default;
+    }
+
+    public static async Task<T?> WaitAnyWithCondition<T>(this ICollection<Task<T>>? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var cmplTask = await WhenAny(tasks).ConfigureAwait(false);
+            var rslt = await cmplTask;
+
+            if (cmplTask.IsCompletedSuccessfully && rslt.Equals(goodRslt))
+            {
+                return rslt;
+            }
+        }
+
+        return default;
+    }
+
+    public static async Task<T?> WaitAnyWithCondition<T>(this Task<T>[]? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var cmplTask = await WhenAny(tasks).ConfigureAwait(false);
+            var rslt = await cmplTask;
+
+            if (cmplTask.IsCompletedSuccessfully && rslt.Equals(goodRslt))
+            {
+                return rslt;
+            }
+        }
+
+        return default;
+    }
+
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<ValueTask<T>>? tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks.IsNotEmptyAndNull())
         {
             var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
 
-            while (taskSet.Count is not 0)
+            while (taskSet.Count > 0)
             {
                 var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
 
@@ -53,7 +115,7 @@ public static partial class YANTask
 
                 var rslt = await cmplTask.ConfigureAwait(false);
 
-                if (typeof(T).IsValueType && rslt.Equals(goodRslt))
+                if (rslt.Equals(goodRslt))
                 {
                     return rslt;
                 }
@@ -63,15 +125,121 @@ public static partial class YANTask
         return default;
     }
 
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(T goodRslt, params Task<T>[] tasks) where T : IComparable<T> => await tasks.WhenAnyWithCondition(goodRslt);
-
-    public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>> tasks, T goodRslt) where T : IComparable<T>
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(this ICollection<ValueTask<T>>? tasks, T goodRslt) where T : IComparable<T>
     {
         if (tasks.IsNotEmptyAndNull())
         {
-            var valueTasks = tasks.Select(x => new ValueTask<T>(x));
+            var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
 
-            return await valueTasks.WhenAnyWithCondition(goodRslt);
+            while (taskSet.Count > 0)
+            {
+                var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
+
+                _ = taskSet.Remove(cmplTask);
+
+                var rslt = await cmplTask.ConfigureAwait(false);
+
+                if (rslt.Equals(goodRslt))
+                {
+                    return rslt;
+                }
+            }
+        }
+
+        return default;
+    }
+
+    public static async ValueTask<T?> WhenAnyWithCondition<T>(this ValueTask<T>[]? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
+
+            while (taskSet.Count > 0)
+            {
+                var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
+
+                _ = taskSet.Remove(cmplTask);
+
+                var rslt = await cmplTask.ConfigureAwait(false);
+
+                if (rslt.Equals(goodRslt))
+                {
+                    return rslt;
+                }
+            }
+        }
+
+        return default;
+    }
+
+    public static async Task<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>>? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var taskSet = tasks.ToHashSet();
+
+            while (taskSet.Count > 0)
+            {
+                var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
+
+                _ = taskSet.Remove(cmplTask);
+
+                var rslt = await cmplTask.ConfigureAwait(false);
+
+                if (rslt.Equals(goodRslt))
+                {
+                    return rslt;
+                }
+            }
+        }
+
+        return default;
+    }
+
+    public static async Task<T?> WhenAnyWithCondition<T>(this ICollection<Task<T>>? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var taskSet = tasks.ToHashSet();
+
+            while (taskSet.Count > 0)
+            {
+                var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
+
+                _ = taskSet.Remove(cmplTask);
+
+                var rslt = await cmplTask.ConfigureAwait(false);
+
+                if (rslt.Equals(goodRslt))
+                {
+                    return rslt;
+                }
+            }
+        }
+
+        return default;
+    }
+
+    public static async Task<T?> WhenAnyWithCondition<T>(this Task<T>[]? tasks, T goodRslt) where T : IComparable<T>
+    {
+        if (tasks.IsNotEmptyAndNull())
+        {
+            var taskSet = tasks.ToHashSet();
+
+            while (taskSet.Count > 0)
+            {
+                var cmplTask = await WhenAny(taskSet).ConfigureAwait(false);
+
+                _ = taskSet.Remove(cmplTask);
+
+                var rslt = await cmplTask.ConfigureAwait(false);
+
+                if (rslt.Equals(goodRslt))
+                {
+                    return rslt;
+                }
+            }
         }
 
         return default;
