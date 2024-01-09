@@ -10,23 +10,11 @@ using static System.Text.RegularExpressions.Regex;
 
 namespace YANLib;
 
-public class YANPass
+public partial class YANPass
 {
-    #region Fields
     private readonly List<char> PASSWORD_SPECIAL_CHARATERS_STANDARD = ['@', '#', '$', '%'];
-    #endregion
 
-    #region Properties
-    public int SaltSize { get; set; } = 16; // 128 bits
-    public int KeySize { get; set; } = 32; // 256 bits
-    public int Iterations { get; set; } = 100000;
-    public char SegmentDelimiter { get; set; } = ':';
-    public HashAlgorithmName Algorithm { get; set; } = HashAlgorithmName.SHA256;
-    #endregion
-
-    #region Methods
-
-    public string? Hash(string password)
+    public string? Hash(string? password)
     {
         if (password.IsNotWhiteSpaceAndNull() && SaltSize > 0 && Iterations > 0 && KeySize > 0)
         {
@@ -38,9 +26,9 @@ public class YANPass
         return default;
     }
 
-    public bool Verify(string password, string strHash)
+    public bool Verify(string? password, string? strHash)
     {
-        if (strHash.IsNotWhiteSpaceAndNull() && SegmentDelimiter.IsNotWhiteSpaceAndEmpty())
+        if (password.IsNotWhiteSpaceAndNull() && strHash.IsNotWhiteSpaceAndNull() && SegmentDelimiter.IsNotWhiteSpaceAndEmpty())
         {
             var segs = strHash.Split(SegmentDelimiter);
 
@@ -55,92 +43,90 @@ public class YANPass
         return false;
     }
 
-    public static bool IsValidPasswordStandard(string password) => password.IsNotWhiteSpaceAndNull() && password.Length >= 8 && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
-
-    public static bool IsValidPassword<T>(string password, T len) where T : struct => password.IsNotWhiteSpaceAndNull() && password.Length >= len.ToByte() && new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$").IsMatch(password);
-
-    public bool IsValidPassword(string password, params char[] splChars)
+    public bool IsValidPassword(string? password, object? len = null, IEnumerable<char>? splChars = null)
     {
-        // has character
-        if (!password.IsNotWhiteSpaceAndNull())
+        if (password.IsWhiteSpaceOrNull())
         {
             return false;
         }
 
-        // has 8 characters
-        if (password.Length < 8)
+        if (password.Length < (len.IsNull() ? 8 : len.ToByte()))
         {
             return false;
         }
 
-        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        if (splChars.IsEmptyOrNull())
+        {
+            return PasswordRegex().IsMatch(password);
+        }
+        else
+        {
+            var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
-        newPwdSplChar.UnionWith(splChars);
+            newPwdSplChar.UnionWith(splChars);
 
-        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+            return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+        }
     }
 
-    public bool IsValidPassword(string password, IEnumerable<char> splChars)
+    public bool IsValidPassword(string? password, object? len = null, ICollection<char>? splChars = null)
     {
-        // has character
-        if (!password.IsNotWhiteSpaceAndNull())
+        if (password.IsWhiteSpaceOrNull())
         {
             return false;
         }
 
-        // has 8 characters
-        if (password.Length < 8)
+        if (password.Length < (len.IsNull() ? 8 : len.ToByte()))
         {
             return false;
         }
 
-        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        if (splChars.IsEmptyOrNull())
+        {
+            return PasswordRegex().IsMatch(password);
+        }
+        else
+        {
+            var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
-        newPwdSplChar.UnionWith(splChars);
+            newPwdSplChar.UnionWith(splChars);
 
-        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+            return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+        }
     }
 
-    public bool IsValidPassword<T>(string password, T len, params char[] splChars) where T : struct
+    public bool IsValidPassword(string? password, object? len = null, params char[]? splChars)
     {
-        // has character
-        if (!password.IsNotWhiteSpaceAndNull())
+        if (password.IsWhiteSpaceOrNull())
         {
             return false;
         }
 
-        // has len character
-        if (password.Length < len.ToByte())
+        if (password.Length < (len.IsNull() ? 8 : len.ToByte()))
         {
             return false;
         }
 
-        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
+        if (splChars.IsEmptyOrNull())
+        {
+            return PasswordRegex().IsMatch(password);
+        }
+        else
+        {
+            var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
 
-        newPwdSplChar.UnionWith(splChars);
+            newPwdSplChar.UnionWith(splChars);
 
-        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+            return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
+        }
     }
 
-    public bool IsValidPassword<T>(string password, T len, IEnumerable<char> splChars) where T : struct
-    {
-        // has character
-        if (!password.IsNotWhiteSpaceAndNull())
-        {
-            return false;
-        }
+    [GeneratedRegex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).+$")]
+    private static partial Regex PasswordRegex();
 
-        // has len character
-        if (password.Length < len.ToByte())
-        {
-            return false;
-        }
-
-        var newPwdSplChar = new HashSet<char>(PASSWORD_SPECIAL_CHARATERS_STANDARD);
-
-        newPwdSplChar.UnionWith(splChars);
-
-        return IsMatch(password, $@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[{Escape(new string(newPwdSplChar.ToArray()))}]).+$");
-    }
-    #endregion
+    public int SaltSize { get; set; } = 16; // 128 bits
+    public int KeySize { get; set; } = 32; // 256 bits
+    public int Iterations { get; set; } = 100000;
+    public char SegmentDelimiter { get; set; } = ':';
+    public HashAlgorithmName Algorithm { get; set; } = HashAlgorithmName.SHA256;
 }

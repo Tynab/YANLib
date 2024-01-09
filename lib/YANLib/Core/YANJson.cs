@@ -127,6 +127,16 @@ public static partial class YANJson
         ? vals.Select(x => x.Serialize())
         : vals.Select(x => x.Serialize(options));
 
+    /// <summary>
+    /// Deserializes the JSON string to an object of type <typeparamref name="T"/>.
+    /// If the JSON string is <see langword="null"/>, empty, or white space, returns the default value of type <typeparamref name="T"/>.
+    /// The deserialization uses the specified <see cref="JsonSerializerOptions"/> if provided; otherwise, it uses default options.
+    /// If deserialization fails, returns the default value of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
+    /// <param name="json">The JSON string to deserialize. Can be <see langword="null"/> or white space.</param>
+    /// <param name="options">The <see cref="JsonSerializerOptions"/> to use for deserialization. Can be <see langword="null"/>.</param>
+    /// <returns>The deserialized object of type <typeparamref name="T"/>, or the default value of type <typeparamref name="T"/> if deserialization fails or the JSON string is <see langword="null"/> or white space.</returns>
     public static T? StandardDeserialize<T>(this string? json, JsonSerializerOptions? options = null)
     {
         try
@@ -181,6 +191,16 @@ public static partial class YANJson
         ? jsons.Select(x => x.StandardDeserialize<T>())
         : jsons.Select(x => x.StandardDeserialize<T>(options));
 
+    /// <summary>
+    /// Deserializes the JSON string to an object of type <typeparamref name="T"/>, with property name case insensitivity.
+    /// If the JSON string is <see langword="null"/>, empty, or white space, returns the default value of type <typeparamref name="T"/>.
+    /// The deserialization uses the specified <see cref="JsonSerializerOptions"/> if provided; otherwise, it defaults to case-insensitive property names.
+    /// If deserialization fails, returns the default value of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
+    /// <param name="json">The JSON string to deserialize. Can be <see langword="null"/> or white space.</param>
+    /// <param name="options">The <see cref="JsonSerializerOptions"/> to use for deserialization. Can be <see langword="null"/>. Defaults to case-insensitive property names if <see langword="null"/>.</param>
+    /// <returns>The deserialized object of type <typeparamref name="T"/>, or the default value of type <typeparamref name="T"/> if deserialization fails or the JSON string is <see langword="null"/> or white space.</returns>
     public static T? Deserialize<T>(this string? json, JsonSerializerOptions? options = null)
     {
         try

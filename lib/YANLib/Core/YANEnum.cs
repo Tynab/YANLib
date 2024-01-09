@@ -4,6 +4,13 @@ namespace YANLib.Core;
 
 public static partial class YANEnum
 {
+    /// <summary>
+    /// Converts the specified string to its equivalent enumeration value of type <typeparamref name="T"/>.
+    /// If the string is <see langword="null"/>, empty, or consists only of white-space characters, or if the conversion fails, returns the default value of the enum type.
+    /// </summary>
+    /// <typeparam name="T">The enum type to which the string is to be converted. Must be a struct type.</typeparam>
+    /// <param name="val">The string to convert to an enum value. Can be <see langword="null"/> or white space.</param>
+    /// <returns>The equivalent enumeration value of type <typeparamref name="T"/> if the conversion is successful, or the default value of the enum type if the conversion fails or the string is <see langword="null"/> or white space.</returns>
     public static T? ToEnum<T>(this string? val) where T : struct => val.IsWhiteSpaceOrNull() ? default : TryParse<T>(val, out var result) ? result : default;
 
     /// <summary>
