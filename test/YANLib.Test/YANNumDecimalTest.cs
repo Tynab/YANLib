@@ -1,3 +1,4 @@
+using YANLib.Core;
 using static Xunit.Assert;
 
 namespace YANLib.Test;

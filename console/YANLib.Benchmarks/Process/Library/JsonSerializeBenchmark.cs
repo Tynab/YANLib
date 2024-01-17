@@ -1,4 +1,9 @@
-﻿using YANLib.Benchmarks.Models;
+﻿using BenchmarkDotNet.Attributes;
+using YANLib.Benchmarks.Models;
+using YANLib.Core;
+using static System.Guid;
+using static System.Threading.Tasks.Parallel;
+using static Newtonsoft.Json.JsonConvert;
 
 namespace YANLib.Benchmarks.Process.Library;
 
@@ -16,7 +21,7 @@ public class JsonSerializeBenchmark
     };
 
     [Benchmark(Baseline = true)]
-    public void YANLib_Json() => For(0, Size, index => _model.StandardSerialize());
+    public void YANLib_Json() => For(0, Size, index => _model.Serialize());
 
     [Benchmark]
     public void Newtonsoft_Json() => For(0, Size, index => SerializeObject(_model));
