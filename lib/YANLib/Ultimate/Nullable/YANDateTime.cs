@@ -5,16 +5,7 @@ namespace YANLib.Ultimate.Nullable;
 
 public static partial class YANDateTime
 {
-    /// <summary>
-    /// Converts a collection of string representations of dates and times to their respective <see cref="DateTime"/> equivalents, using a specified format and default value.
-    /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each string in the collection is converted to a <see cref="DateTime"/> value using the specified format; if conversion fails, the specified default value is used.
-    /// </summary>
-    /// <param name="strs">The collection of strings to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input strings. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to return if a string fails to convert. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values representing the converted results, or the specified default value for strings that fail to convert.</returns>
-    public static IEnumerable<DateTime?> ToDateTimes(this IEnumerable<string?>? strs, string? fmt = null, DateTime? dfltVal = null)
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null)
     {
         if (strs.IsEmptyOrNull())
         {
@@ -23,20 +14,11 @@ public static partial class YANDateTime
 
         foreach (var str in strs)
         {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmt, dfltVal);
+            yield return str.ToDateTime(dfltVal);
         }
     }
 
-    /// <summary>
-    /// Converts a collection (ICollection) of string representations of dates and times to their respective <see cref="DateTime"/> equivalents, using a specified format and default value.
-    /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each string in the collection is converted to a <see cref="DateTime"/> value using the specified format; if conversion fails, the specified default value is used.
-    /// </summary>
-    /// <param name="strs">The ICollection of strings to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input strings. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to return if a string fails to convert. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values representing the converted results, or the specified default value for strings that fail to convert.</returns>
-    public static IEnumerable<DateTime?> ToDateTimes(this ICollection<string?>? strs, string? fmt = null, DateTime? dfltVal = null)
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null)
     {
         if (strs.IsEmptyOrNull())
         {
@@ -45,20 +27,11 @@ public static partial class YANDateTime
 
         foreach (var str in strs)
         {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmt, dfltVal);
+            yield return str.ToDateTime(dfltVal);
         }
     }
 
-    /// <summary>
-    /// Converts an array of string representations of dates and times to their respective <see cref="DateTime"/> equivalents, using a specified format and default value.
-    /// If the array is <see langword="null"/> or empty, yields no results.
-    /// Each string in the array is converted to a <see cref="DateTime"/> value using the specified format; if conversion fails, the specified default value is used.
-    /// </summary>
-    /// <param name="strs">The array of strings to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input strings. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to return if a string fails to convert. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values representing the converted results, or the specified default value for strings that fail to convert.</returns>
-    public static IEnumerable<DateTime?> ToDateTimes(this string?[]? strs, string? fmt = null, DateTime? dfltVal = null)
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null)
     {
         if (strs.IsEmptyOrNull())
         {
@@ -67,7 +40,241 @@ public static partial class YANDateTime
 
         foreach (var str in strs)
         {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmt, dfltVal);
+            yield return str.ToDateTime(dfltVal);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, IEnumerable<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, IEnumerable<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, IEnumerable<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, ICollection<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, ICollection<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, ICollection<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, params string?[]? fmts)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, params string?[]? fmts)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, params string?[]? fmts)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
+        }
+    }
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, params string?[]? fmts)
+    {
+        if (strs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var str in strs)
+        {
+            yield return str.ToDateTime(dfltVal, fmts);
         }
     }
 

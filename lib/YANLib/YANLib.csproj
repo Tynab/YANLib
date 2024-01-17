@@ -18,11 +18,13 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>Upgrade all</PackageReleaseNotes>
+		<PackageReleaseNotes>Update
+- DateTime
+- Enumerable</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>4.0.0</Version>
+		<Version>4.0.1</Version>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 

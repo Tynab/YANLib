@@ -52,6 +52,150 @@ public static partial class YANEnumerable
         }
     }
 
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this IEnumerable<IEnumerable<T?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this IEnumerable<ICollection<T?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this IEnumerable<T?[]?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this ICollection<IEnumerable<T?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this ICollection<ICollection<T?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this ICollection<T?[]?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this IEnumerable<T?>?[]? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this ICollection<T?>?[]? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T?>> Cleans<T>(this T?[]?[]? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
     /// <summary>
     /// Cleans a collection of strings by removing <see langword="null"/> and white-space strings.
     /// If the collection is <see langword="null"/> or empty, yields no results.
@@ -117,6 +261,150 @@ public static partial class YANEnumerable
             if (src.IsNotWhiteSpaceAndNull())
             {
                 yield return src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<IEnumerable<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<ICollection<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?[]?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<IEnumerable<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<ICollection<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?[]?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?>?[]? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?>?[]? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
+            }
+        }
+    }
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this string?[]?[]? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            yield break;
+        }
+
+        foreach (var src in srcs)
+        {
+            if (src.IsNotEmptyAndNull())
+            {
+                yield return deepClean.HasValue && deepClean.Value ? src.Clean() : src;
             }
         }
     }
