@@ -1,4 +1,30 @@
-﻿namespace YANLib.Services;
+﻿using DotNetCore.CAP;
+using Id_Generator_Snowflake;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Volo.Abp;
+using Volo.Abp.EventBus.Distributed;
+using YANLib.Core;
+using YANLib.Entities;
+using YANLib.EsIndices;
+using YANLib.EsServices;
+using YANLib.Kafka.Etos;
+using YANLib.RabbitMq.Etos;
+using YANLib.Repositories;
+using YANLib.Requests.Developer;
+using YANLib.Responses;
+using static System.DateTime;
+using static System.Threading.Tasks.Task;
+using static YANLib.Kafka.KafkaTopic;
+using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
+using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
+using static YANLib.YANLibDomainErrorCodes;
+
+namespace YANLib.Services;
 
 public class DeveloperService(
     ILogger<DeveloperService> logger,
@@ -10,7 +36,6 @@ public class DeveloperService(
     ICapPublisher capPublisher
 ) : YANLibAppService, IDeveloperService
 {
-    #region Fields
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
     private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
@@ -19,9 +44,7 @@ public class DeveloperService(
     private readonly IDistributedEventBus _distributedEventBus = distributedEventBus;
     private readonly ICapPublisher _capPublisher = capPublisher;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
-    #endregion
 
-    #region Implements
     public async ValueTask<DeveloperResponse> GetByIdCard(string idCard)
     {
         try
@@ -219,5 +242,4 @@ public class DeveloperService(
             throw;
         }
     }
-    #endregion
 }

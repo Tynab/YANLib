@@ -1,4 +1,7 @@
-﻿namespace YANLib.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using static Volo.Abp.Check;
+
+namespace YANLib.EntityFrameworkCore;
 
 public static class YANLibDbContextModelCreatingExtensions
 {

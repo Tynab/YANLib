@@ -1,4 +1,11 @@
-﻿namespace YANLib.Validations;
+﻿using FluentValidation;
+using System.Collections.Generic;
+using System.Linq;
+using YANLib.Core;
+using YANLib.Requests;
+using static YANLib.YANLibDomainErrorCodes;
+
+namespace YANLib.Validations;
 
 public sealed class CertificateValidator : AbstractValidator<CertificateRequest>
 {
@@ -13,7 +20,6 @@ public sealed class CertificateValidator : AbstractValidator<CertificateRequest>
 
 public sealed class CertificateValidators : AbstractValidator<List<CertificateRequest>>
 {
-    #region Constructors
     public CertificateValidators()
     {
         _ = RuleFor(x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
@@ -23,9 +29,7 @@ public sealed class CertificateValidators : AbstractValidator<List<CertificateRe
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x).Must(DeveloperIdIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_DEV_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_DEV_ID);
     }
-    #endregion
 
-    #region Methods
     private bool IsNotEmptyAndNull(List<CertificateRequest> requests) => requests.IsNotEmptyAndNull();
 
     private bool IdIsNotWhiteSpace(List<CertificateRequest> requests) => requests.Select(x => x.Id).AllNotWhiteSpaceAndNull();
@@ -33,5 +37,4 @@ public sealed class CertificateValidators : AbstractValidator<List<CertificateRe
     private bool NameIsNotWhiteSpace(List<CertificateRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
 
     private bool DeveloperIdIsNotWhiteSpace(List<CertificateRequest> requests) => requests.Select(x => x.DeveloperId).AllNotWhiteSpaceAndNull();
-    #endregion
 }

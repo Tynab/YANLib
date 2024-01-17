@@ -1,16 +1,21 @@
-﻿namespace YANLib.Services;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using YANLib.Core;
+using YANLib.Entities;
+using YANLib.Repositories;
+using YANLib.Requests;
+
+namespace YANLib.Services;
 
 public class CertificateService(
     ILogger<CertificateService> logger,
     ICertificateRepository repository
 ) : YANLibAppService, ICertificateService
 {
-    #region Fields
     private readonly ILogger<CertificateService> _logger = logger;
     private readonly ICertificateRepository _repository = repository;
-    #endregion
 
-    #region Implements
     public async ValueTask<bool> Create(CertificateRequest request)
     {
         try
@@ -36,5 +41,4 @@ public class CertificateService(
             throw;
         }
     }
-    #endregion
 }

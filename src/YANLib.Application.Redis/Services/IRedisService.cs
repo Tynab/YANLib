@@ -1,4 +1,6 @@
-﻿namespace YANLib.Application.Redis.Services;
+﻿using Volo.Abp.Application.Services;
+
+namespace YANLib.Application.Redis.Services;
 
 public interface IRedisService<T> : IApplicationService
 {

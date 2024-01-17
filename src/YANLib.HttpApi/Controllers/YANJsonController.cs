@@ -1,16 +1,22 @@
-﻿namespace YANLib.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Volo.Abp;
+using YANLib.Services;
+
+namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "test")]
 [Route("api/yanlib/json")]
 public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service) : YANLibController
 {
-    #region Fields
     private readonly ILogger<YANJsonController> _logger = logger;
     private readonly IYANJsonService _service = service;
-    #endregion
 
-    #region Methods
     [HttpGet("yan-vs-standards")]
     [SwaggerOperation(Summary = "Đo tốc độ của thư viện YANLib và các chuẩn khác")]
     public async ValueTask<IActionResult> YanVsStandards([Required] uint quantity = 10000, [Required] bool hideSystem = true)
@@ -55,5 +61,4 @@ public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJso
 
         return Ok(await _service.JsonDeserializeOptionalName(json));
     }
-    #endregion
 }

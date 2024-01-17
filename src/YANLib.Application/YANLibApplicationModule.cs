@@ -1,4 +1,10 @@
-﻿namespace YANLib;
+﻿using Volo.Abp.Application;
+using Volo.Abp.AutoMapper;
+using Volo.Abp.FluentValidation;
+using Volo.Abp.Modularity;
+using YANLib.Application.Redis;
+
+namespace YANLib;
 
 [DependsOn(
     typeof(YANLibDomainModule),

@@ -1,17 +1,23 @@
-﻿using YANLib.Application.Redis.ConnectionFactory;
+﻿using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
+using Volo.Abp;
+using YANLib.Application.Redis.ConnectionFactory;
+using YANLib.Core;
+using YANLib.RedisDtos;
+using static System.Text.Encoding;
+using static System.Threading.Tasks.Task;
+using static YANLib.YANLibConsts.RedisConstant;
+using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Application.Redis.Services.Implements;
 
 public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
 {
-    #region Fields
     private readonly ILogger<DeveloperTypeRedisService> _logger;
     private readonly IRedisConnectionFactory _connectionFactory;
     private readonly ConnectionMultiplexer _connectionMultiplexer;
     private readonly IDatabase _database;
-    #endregion
 
-    #region Constructors
     public DeveloperTypeRedisService(ILogger<DeveloperTypeRedisService> logger, IRedisConnectionFactory connectionFactory)
     {
         _logger = logger;
@@ -19,9 +25,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         _connectionMultiplexer = _connectionFactory.Connection();
         _database = _connectionMultiplexer.GetDatabase();
     }
-    #endregion
 
-    #region Implements
     public async ValueTask<DeveloperTypeRedisDto?> Get(string group, string key)
     {
         try
@@ -295,9 +299,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
             throw;
         }
     }
-    #endregion
 
-    #region Methods
     private async ValueTask<RedisResult> GetGroupKeys(string groupPreffix)
     {
         try
@@ -310,5 +312,4 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
             throw;
         }
     }
-    #endregion
 }

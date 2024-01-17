@@ -1,15 +1,21 @@
-﻿using YANLib.EntityFrameworkCore.DbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using YANLib.Core;
+using YANLib.Entities;
+using YANLib.EntityFrameworkCore.DbContext;
+using static System.DateTime;
 
 namespace YANLib.Repositories;
 
 public sealed class CertificateRepository(ILogger<CertificateRepository> logger, IYANLibDbContext dbContext) : ICertificateRepository
 {
-    #region Fields
     private readonly ILogger<CertificateRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
-    #endregion
 
-    #region Implements
     public async ValueTask<IEnumerable<Certificate>> GetByDeveloperId(string developerId)
     {
         try
@@ -61,5 +67,4 @@ public sealed class CertificateRepository(ILogger<CertificateRepository> logger,
             throw;
         }
     }
-    #endregion
 }

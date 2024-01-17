@@ -1,16 +1,23 @@
-﻿namespace YANLib.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Volo.Abp;
+using YANLib.Core;
+using YANLib.EsIndices;
+using YANLib.EsServices;
+
+namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/es")]
 public sealed class ElasticsearchController(ILogger<ElasticsearchController> logger, IDeveloperEsService developerEsService) : YANLibController
 {
-    #region Fields
     private readonly ILogger<ElasticsearchController> _logger = logger;
     private readonly IDeveloperEsService _developerEsService = developerEsService;
-    #endregion
 
-    #region Methods
     [HttpGet("developers/{id}")]
     [SwaggerOperation(Summary = "Lấy Developer theo Id trên Elasticsearch")]
     public async ValueTask<IActionResult> Get(string id)
@@ -28,5 +35,4 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
 
         return Ok(await _developerEsService.Set(request));
     }
-    #endregion
 }

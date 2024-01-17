@@ -1,12 +1,21 @@
-﻿namespace YANLib.Utilities;
+﻿using Elasticsearch.Net;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Nest;
+using System;
+using System.Linq;
+using YANLib.Core;
+using YANLib.EsIndices;
+using static Elasticsearch.Net.CertificateValidations;
+using static System.TimeSpan;
+using static YANLib.YANLibConsts.ElasticsearchIndex;
+
+namespace YANLib.Utilities;
 
 public static class ElasticsearchUtil
 {
-    #region Fields
     private static string _indexSample;
-    #endregion
 
-    #region Extensions
     public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
     {
         var urlTag = "Elasticsearch:Url";
@@ -43,5 +52,4 @@ public static class ElasticsearchUtil
     }
 
     public static DeleteIndexResponse DeleteSampleIndex(this IElasticClient client) => _indexSample.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexSample) : default;
-    #endregion
 }

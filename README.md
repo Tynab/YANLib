@@ -8,21 +8,19 @@ PM> NuGet\Install-Package Tynab.YANLib
 ```
 
 ### EXTENSION
+- Bool
+- Bytes
+- DateTime
+- Enum
+- Enumerable
+- JSON
 - Numeric
 - Text
-- Bool
-- DateTime
+- Object
 - Nullable
-- Model
-- JSON
-- Enumerable
-- Random
 - Process
+- Random
 - Task
-- Bytes
-
-### OTHER
-- Password
 
 [See wiki for more details](https://github.com/Tynab/YANLib/wiki)
 

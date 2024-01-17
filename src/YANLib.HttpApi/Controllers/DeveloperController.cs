@@ -1,16 +1,23 @@
-﻿namespace YANLib.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Volo.Abp;
+using YANLib.Core;
+using YANLib.Requests.Developer;
+using YANLib.Services;
+
+namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/developers")]
 public sealed class DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service) : YANLibController
 {
-    #region Fields
     private readonly ILogger<DeveloperController> _logger = logger;
     private readonly IDeveloperService _service = service;
-    #endregion
 
-    #region Methods
     [HttpGet("{idCard}")]
     [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
     public async ValueTask<IActionResult> GetByIdCard(string idCard)
@@ -59,5 +66,4 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả Developers từ Database lên Elasticsearch")]
     public async ValueTask<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
-    #endregion
 }

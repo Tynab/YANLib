@@ -1,4 +1,12 @@
-﻿namespace YANLib.Mappers;
+﻿using AutoMapper;
+using Volo.Abp.AutoMapper;
+using YANLib.Entities;
+using YANLib.Kafka.Etos;
+using YANLib.RabbitMq.Etos;
+using YANLib.Requests;
+using YANLib.Responses;
+
+namespace YANLib.Mappers;
 
 public sealed class CertificateMapper : Profile
 {
