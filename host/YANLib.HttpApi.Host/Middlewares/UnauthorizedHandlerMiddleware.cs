@@ -1,4 +1,13 @@
-﻿namespace YANLib.Middlewares;
+﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using YANLib.Core;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+using static Serilog.Log;
+using static System.Net.HttpStatusCode;
+
+namespace YANLib.Middlewares;
 
 public class UnauthorizedHandlerMiddleware(RequestDelegate next)
 {

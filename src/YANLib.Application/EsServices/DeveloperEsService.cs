@@ -1,4 +1,15 @@
-﻿using YANLib.Utilities;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Nest;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using YANLib.Core;
+using YANLib.EsIndices;
+using YANLib.Utilities;
+using static System.Threading.Tasks.Task;
+using static YANLib.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.EsServices;
 
@@ -7,13 +18,10 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
     IConfiguration configuration
 ) : YANLibAppService, IDeveloperEsService
 {
-    #region Fields
     private readonly ILogger<DeveloperEsService> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
-    #endregion
 
-    #region Implements
     public async ValueTask<DeveloperIndex> Get(string id)
     {
         try
@@ -108,5 +116,4 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
                     .MatchPhrasePrefix(m => m
                         .Field(c => c.Phone)
                         .Query(searchText))))))).Documents;
-    #endregion
 }

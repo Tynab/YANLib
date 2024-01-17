@@ -35,4 +35,8 @@ switch (choosen)
 }
 #endif
 
+#if DEBUG
+using static System.Console;
+
 _ = ReadLine();
+#endif

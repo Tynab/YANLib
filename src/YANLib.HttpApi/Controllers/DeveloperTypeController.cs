@@ -1,16 +1,23 @@
-﻿namespace YANLib.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Volo.Abp;
+using YANLib.Core;
+using YANLib.Requests.DeveloperType;
+using YANLib.Services;
+
+namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/developer-types")]
 public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service) : YANLibController
 {
-    #region Fields
     private readonly ILogger<DeveloperTypeController> _logger = logger;
     private readonly IDeveloperTypeService _service = service;
-    #endregion
 
-    #region Methods
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa Developer Types")]
     public async ValueTask<IActionResult> GetAll() => Ok(await _service.GetAll());
@@ -45,5 +52,4 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa Developer Types từ Database sang Redis")]
     [HttpPost("sync-db-to-redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
-    #endregion
 }

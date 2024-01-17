@@ -1,6 +1,52 @@
+using DotNetCore.CAP;
+using Elastic.Apm.DiagnosticSource;
+using Elastic.Apm.EntityFrameworkCore;
+using Elastic.Apm.NetCoreAll;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Volo.Abp;
+using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.Autofac;
+using Volo.Abp.Caching;
+using Volo.Abp.Caching.StackExchangeRedis;
+using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.SqlServer;
+using Volo.Abp.EventBus.Azure;
+using Volo.Abp.EventBus.RabbitMq;
+using Volo.Abp.Http.Client;
+using Volo.Abp.Localization;
+using Volo.Abp.Modularity;
+using Volo.Abp.MultiTenancy;
+using Volo.Abp.Swashbuckle;
+using YANLib.Core;
+using YANLib.EntityFrameworkCore;
+using YANLib.Utilities;
+using static Elastic.Apm.Agent;
+using static HealthChecks.UI.Client.UIResponseWriter;
+using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
+using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
+using static System.Convert;
+using static System.StringSplitOptions;
 
-#if !DEBUG
+#if DEBUG
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using YANLib.Middlewares;
+using static Microsoft.OpenApi.Models.ParameterLocation;
+using static Microsoft.OpenApi.Models.SecuritySchemeType;
+using static System.Net.HttpStatusCode;
+using static System.Threading.Tasks.Task;
 #endif
 
 namespace YANLib;
@@ -75,7 +121,7 @@ public class YANLibHttpApiHostModule : AbpModule
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
 
-#if !DEBUG
+#if DEBUG
         o.Events = new JwtBearerEvents
         {
             OnMessageReceived = async c =>
@@ -119,7 +165,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 Version = "test"
             });
 
-#if !DEBUG
+#if DEBUG
             o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
                 In = Header,
@@ -249,7 +295,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = app.UseCapDashboard();
 
-#if !DEBUG
+#if DEBUG
         _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
 #endif
 

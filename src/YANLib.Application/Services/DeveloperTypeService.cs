@@ -1,4 +1,22 @@
-﻿namespace YANLib.Services;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Volo.Abp;
+using Volo.Abp.Domain.Repositories;
+using YANLib.Application.Redis.Services;
+using YANLib.Core;
+using YANLib.Entities;
+using YANLib.RedisDtos;
+using YANLib.Requests.DeveloperType;
+using YANLib.Responses;
+using static System.DateTime;
+using static System.Threading.Tasks.Task;
+using static YANLib.YANLibConsts.RedisConstant;
+using static YANLib.YANLibDomainErrorCodes;
+
+namespace YANLib.Services;
 
 public class DeveloperTypeService(
     ILogger<DeveloperTypeService> logger,
@@ -6,13 +24,10 @@ public class DeveloperTypeService(
     IRedisService<DeveloperTypeRedisDto> redisService
 ) : YANLibAppService, IDeveloperTypeService
 {
-    #region Fields
     private readonly ILogger<DeveloperTypeService> _logger = logger;
     private readonly IRepository<DeveloperType, int> _repository = repository;
     private readonly IRedisService<DeveloperTypeRedisDto> _redisService = redisService;
-    #endregion
 
-    #region Implements
     public async ValueTask<List<DeveloperTypeResponse>> GetAll()
     {
         try
@@ -127,5 +142,4 @@ public class DeveloperTypeService(
             throw;
         }
     }
-    #endregion
 }

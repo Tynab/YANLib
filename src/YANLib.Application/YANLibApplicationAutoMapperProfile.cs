@@ -1,4 +1,8 @@
-﻿namespace YANLib;
+﻿using AutoMapper;
+using YANLib.Entities;
+using YANLib.Requests.Developer;
+
+namespace YANLib;
 
 public class YANLibApplicationAutoMapperProfile : Profile
 {
