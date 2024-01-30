@@ -38,6 +38,8 @@ using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static System.Convert;
 using static System.StringSplitOptions;
+using Volo.Abp.Account.Web;
+
 
 #if DEBUG
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -62,7 +64,8 @@ namespace YANLib;
     typeof(AbpHttpClientModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpEventBusAzureModule),
-    typeof(AbpEventBusRabbitMqModule)
+    typeof(AbpEventBusRabbitMqModule),
+    typeof(AbpAccountWebOpenIddictModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {

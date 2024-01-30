@@ -83,7 +83,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetBulkDeveloperTypeRedisService-Exception: {Group} - {Keys}", group, string.Join(", ", keys));
-            
+
             throw;
         }
     }
@@ -124,7 +124,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetAllDeveloperTypeRedisService-Exception: {Group}", group);
-            
+
             throw;
         }
     }
@@ -142,7 +142,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetDeveloperTypeRedisService-Exception: {Group} - {Key} - {Value}", group, key, jsonVal);
-            
+
             throw;
         }
     }
@@ -163,7 +163,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetBulkDeveloperTypeRedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
-            
+
             throw;
         }
     }
@@ -213,7 +213,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteBulkDeveloperTypeRedisService-Exception: {Group} - {Keys}", group, string.Join(", ", keys));
-            
+
             throw;
         }
     }

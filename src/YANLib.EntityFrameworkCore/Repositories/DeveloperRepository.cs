@@ -41,7 +41,7 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
             if (await _dbContext.SaveChangesAsync() > 0)
             {
                 entity.DeveloperType = await _dbContext.DeveloperTypes.SingleOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
-                
+
                 return entity;
             }
             else
@@ -60,13 +60,17 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
     {
         try
         {
-            var dev = await _dbContext.Developers.FirstOrDefaultAsync(x => x.IdCard == entity.IdCard);
+            var entities = await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard && x.IsActive == true).ToListAsync();
 
-            if (dev.IsNotNull())
+            if (entities.IsNotNull())
             {
-                dev.IsActive = false;
-                dev.UpdatedAt = Now;
+                entities.ForEach(x =>
+                {
+                    x.IsActive = false;
+                    x.UpdatedAt = Now;
+                });
 
+                _dbContext.Developers.UpdateRange(entities);
                 entity.IsActive = true;
                 entity.Version++;
                 entity.CreatedAt = Now;
@@ -75,7 +79,7 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
                 if (await _dbContext.SaveChangesAsync() > 0)
                 {
                     entity.DeveloperType = await _dbContext.DeveloperTypes.SingleOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
-                    
+
                     return entity;
                 }
             }
