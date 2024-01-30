@@ -1,5 +1,7 @@
 ﻿using Localization.Resources.AbpUi;
+using Volo.Abp.Account;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.Identity;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using YANLib.Localization;
@@ -8,7 +10,9 @@ namespace YANLib;
 
 [DependsOn(
     typeof(YANLibApplicationContractsModule),
-    typeof(AbpAspNetCoreMvcModule)
+    typeof(AbpAspNetCoreMvcModule),
+    typeof(AbpIdentityHttpApiModule),
+    typeof(AbpAccountHttpApiModule)
 )]
 public class YANLibHttpApiModule : AbpModule
 {

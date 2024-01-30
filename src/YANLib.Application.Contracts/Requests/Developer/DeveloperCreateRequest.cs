@@ -1,22 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace YANLib.Requests.Developer;
 
 public sealed class DeveloperCreateRequest
 {
-    public required string Name { get; set; }
+    [Required]
+    public string Name { get; set; }
 
     public string Phone { get; set; }
 
-    public required string IdCard { get; set; }
+    [Required]
+    public string IdCard { get; set; }
 
-    public required int DeveloperTypeCode { get; set; }
+    [Required]
+    public int DeveloperTypeCode { get; set; }
 
     public List<Certificate> Certificates { get; set; }
 
     public sealed class Certificate
     {
-        public required string Name { get; set; }
+        [Required]
+        public string Name { get; set; }
 
         public double? GPA { get; set; }
     }

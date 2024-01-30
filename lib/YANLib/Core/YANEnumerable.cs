@@ -102,14 +102,6 @@ public static partial class YANEnumerable
         }
     }
 
-    /// <summary>
-    /// Filters out null values from a collection of nullable types or classes.
-    /// If the collection is <see langword="null"/> or empty, it is returned as-is.
-    /// Applicable to collections of reference types and nullable value types, removing elements that are <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the collection. Can be a class or a nullable value type.</typeparam>
-    /// <param name="srcs">The collection of elements to be filtered. Can be <see langword="null"/>.</param>
-    /// <returns>A filtered collection with null elements removed, or the original collection if it is <see langword="null"/> or empty.</returns>
     public static IEnumerable<T>? Clean<T>(this IEnumerable<T>? srcs)
     {
         if (srcs.IsEmptyOrNull())
@@ -122,14 +114,6 @@ public static partial class YANEnumerable
         return t.IsClass || GetUnderlyingType(t).IsNotNull() ? srcs.Where(x => x.IsNotNull()) : srcs;
     }
 
-    /// <summary>
-    /// Filters out null values from a collection (ICollection) of nullable types or classes.
-    /// If the collection is <see langword="null"/> or empty, it is returned as-is.
-    /// Applicable to collections of reference types and nullable value types, removing elements that are <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the collection. Can be a class or a nullable value type.</typeparam>
-    /// <param name="srcs">The ICollection of elements to be filtered. Can be <see langword="null"/>.</param>
-    /// <returns>A filtered collection with null elements removed, or the original collection if it is <see langword="null"/> or empty.</returns>
     public static IEnumerable<T>? Clean<T>(this ICollection<T>? srcs)
     {
         if (srcs.IsEmptyOrNull())
@@ -142,14 +126,6 @@ public static partial class YANEnumerable
         return t.IsClass || GetUnderlyingType(t).IsNotNull() ? srcs.Where(x => x.IsNotNull()) : srcs;
     }
 
-    /// <summary>
-    /// Filters out null values from an array of nullable types or classes.
-    /// If the array is <see langword="null"/> or empty, it is returned as-is.
-    /// Applicable to arrays of reference types and nullable value types, removing elements that are <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the array. Can be a class or a nullable value type.</typeparam>
-    /// <param name="srcs">The array of elements to be filtered. Can be <see langword="null"/>.</param>
-    /// <returns>A filtered array with null elements removed, or the original array if it is <see langword="null"/> or empty.</returns>
     public static IEnumerable<T>? Clean<T>(params T[]? srcs)
     {
         if (srcs.IsEmptyOrNull())
@@ -160,6 +136,117 @@ public static partial class YANEnumerable
         var t = typeof(T);
 
         return t.IsClass || GetUnderlyingType(t).IsNotNull() ? srcs.Where(x => x.IsNotNull()) : srcs;
+    }
+
+    public static void Clean<T>(this List<T>? srcs)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        var t = typeof(T);
+
+        if (t.IsClass || GetUnderlyingType(t).IsNotNull())
+        {
+            _ = srcs.RemoveAll(x => x.IsNull());
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<IEnumerable<T>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<ICollection<T>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T[]?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<IEnumerable<T>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<ICollection<T>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T[]?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T>?[]? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T>?[]? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this T[]?[]? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static void Cleans<T>(this List<IEnumerable<T>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x = x.Clean());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
+    public static void Cleans<T>(this List<ICollection<T>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x = (ICollection<T>?)x.Clean());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
+    public static void Cleans<T>(this List<T[]?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x = x.Clean()?.ToArray());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
+    public static void Cleans<T>(this List<List<T>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x.Clean());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
     }
 
     /// <summary>
@@ -188,4 +275,101 @@ public static partial class YANEnumerable
     /// <param name="srcs">The array of strings to be filtered. Can be <see langword="null"/>.</param>
     /// <returns>A filtered array with <see langword="null"/>, empty, or white-space strings removed, or the original array if it is <see langword="null"/> or empty.</returns>
     public static IEnumerable<string?>? Clean(params string?[]? srcs) => srcs.IsEmptyOrNull() ? srcs : srcs.Where(x => x.IsNotWhiteSpaceAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<IEnumerable<string?>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<ICollection<string?>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?[]?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<IEnumerable<string?>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<ICollection<string?>?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?[]?>? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?>?[]? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?>?[]? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this string?[]?[]? srcs, bool? deepClean = null) => srcs.IsEmptyOrNull()
+        ? srcs
+        : (deepClean.HasValue && deepClean.Value ? srcs.Select(x => x.Clean()) : srcs).Where(x => x.IsNotEmptyAndNull());
+
+    public static void Cleans(this List<IEnumerable<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x = x.Clean());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
+    public static void Cleans(this List<ICollection<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x = (ICollection<string?>?)x.Clean());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
+    public static void Cleans(this List<string?[]?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x = x.Clean()?.ToArray());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
+    public static void Cleans(this List<List<string?>?>? srcs, bool? deepClean = null)
+    {
+        if (srcs.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        if (deepClean.HasValue && deepClean.Value)
+        {
+            srcs.ForEach(x => x.Clean());
+        }
+
+        _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
+    }
+
 }

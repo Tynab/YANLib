@@ -11,62 +11,155 @@ namespace YANLib.Nullable;
 
 public static partial class YANDateTime
 {
-    /// <summary>
-    /// Converts the specified string representation of a date and time to its <see cref="DateTime"/> equivalent using the specified format.
-    /// Returns the default value if the string is <see langword="null"/>, white-space, or if the conversion fails.
-    /// </summary>
-    /// <param name="str">The string to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input string. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default <see cref="DateTime"/> value to return if the conversion fails. Can be <see langword="null"/>.</param>
-    /// <returns>The <see cref="DateTime"/> equivalent of the input string, or the specified default value if the conversion fails.</returns>
-    public static DateTime? ToDateTime(this string? str, string? fmt = null, DateTime? dfltVal = null) => str.IsWhiteSpaceOrNull()
+    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null) => str.IsWhiteSpaceOrNull()
         ? dfltVal
-        : fmt.IsWhiteSpaceOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : dfltVal
-        : TryParseExact(str, fmt, InvariantCulture, None, out dt)
+        : TryParse(str, out var dt)
         ? dt
         : dfltVal;
 
-    /// <summary>
-    /// Converts a collection of string representations of dates and times to their respective <see cref="DateTime"/> equivalents using the specified format and default value.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// If a string in the collection fails to convert, the specified default value is used, or <see langword="null"/> if no default value is provided.
-    /// </summary>
-    /// <param name="strs">The collection of strings to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input strings. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to return if a string fails to convert. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted string, or the specified default value for strings that fail to convert.</returns>
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, string? fmt = null, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
         ? default
-        : strs.Select(x => x.ToDateTime(fmt, dfltVal));
+        : strs.Select(x => x.ToDateTime(dfltVal));
 
-    /// <summary>
-    /// Converts a collection (ICollection) of string representations of dates and times to their respective <see cref="DateTime"/> equivalents using the specified format and default value.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// If a string in the collection fails to convert, the specified default value is used, or <see langword="null"/> if no default value is provided.
-    /// </summary>
-    /// <param name="strs">The ICollection of strings to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input strings. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to return if a string fails to convert. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted string, or the specified default value for strings that fail to convert.</returns>
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, string? fmt = null, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
         ? default
-        : strs.Select(x => x.ToDateTime(fmt, dfltVal));
+        : strs.Select(x => x.ToDateTime(dfltVal));
 
-    /// <summary>
-    /// Converts an array of string representations of dates and times to their respective <see cref="DateTime"/> equivalents using the specified format and default value.
-    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// If a string in the array fails to convert, the specified default value is used, or <see langword="null"/> if no default value is provided.
-    /// </summary>
-    /// <param name="strs">The array of strings to be converted to <see cref="DateTime"/>. Can be <see langword="null"/>.</param>
-    /// <param name="fmt">The format of the input strings. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to return if a string fails to convert. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of <see cref="DateTime"/> objects for each successfully converted string, or the specified default value for strings that fail to convert.</returns>
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, string? fmt = null, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
         ? default
-        : strs.Select(x => x.ToDateTime(fmt, dfltVal));
+        : strs.Select(x => x.ToDateTime(dfltVal));
+
+    public static DateTime? ToDateTime(this string? str, IEnumerable<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
+        ? default
+        : fmts.IsEmptyOrNull()
+        ? TryParse(str, out var dt)
+            ? dt
+            : default
+        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
+        ? dt
+        : default;
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static DateTime? ToDateTime(this string? str, ICollection<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
+        ? default
+        : fmts.IsEmptyOrNull()
+        ? TryParse(str, out var dt)
+            ? dt
+            : default
+        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
+        ? dt
+        : default;
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static DateTime? ToDateTime(this string? str, params string?[]? fmts) => str.IsWhiteSpaceOrNull()
+        ? default
+        : fmts.IsEmptyOrNull()
+        ? TryParse(str, out var dt)
+            ? dt
+            : default
+        : TryParseExact(str, fmts, InvariantCulture, None, out dt)
+        ? dt
+        : default;
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(fmts));
+
+    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
+        ? dfltVal
+        : fmts.IsEmptyOrNull()
+        ? TryParse(str, out var dt)
+            ? dt
+            : dfltVal
+        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
+        ? dt
+        : dfltVal;
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
+        ? dfltVal
+        : fmts.IsEmptyOrNull()
+        ? TryParse(str, out var dt)
+            ? dt
+            : dfltVal
+        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
+        ? dt
+        : dfltVal;
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null, params string?[]? fmts) => str.IsWhiteSpaceOrNull()
+        ? dfltVal
+        : fmts.IsEmptyOrNull()
+        ? TryParse(str, out var dt)
+            ? dt
+            : dfltVal
+        : TryParseExact(str, fmts, InvariantCulture, None, out dt)
+        ? dt
+        : dfltVal;
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
+
+    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, params string?[]? fmts) => strs.IsEmptyOrNull()
+        ? default
+        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
     /// <summary>
     /// Generates a random <see cref="DateTime"/> within the specified range.

@@ -33,8 +33,7 @@ public class DeveloperService(
     ICertificateRepository certificateRepository,
     IDeveloperEsService esService,
     IDistributedEventBus distributedEventBus,
-    ICapPublisher capPublisher
-) : YANLibAppService, IDeveloperService
+    ICapPublisher capPublisher) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
@@ -54,6 +53,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetByIdCardDeveloperService-Exception: {IdCard}", idCard);
+
             throw;
         }
     }
@@ -62,7 +62,7 @@ public class DeveloperService(
     {
         try
         {
-            if (await _esService.Get(request.IdCard) is not null)
+            if ((await _esService.Get(request.IdCard)).IsNotNull())
             {
                 throw new BusinessException(EXIST_ID_CARD).WithData("IdCard", request.IdCard);
             }
@@ -74,7 +74,7 @@ public class DeveloperService(
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Create(ent));
 
-            if (rslt is not null)
+            if (rslt.IsNotNull())
             {
                 rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
             }
@@ -106,6 +106,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "CreateDeveloperService-Exception: {Request}", request.Serialize());
+
             throw;
         }
     }
@@ -126,7 +127,7 @@ public class DeveloperService(
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
 
-            if (rslt is not null)
+            if (rslt.IsNotNull())
             {
                 rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
             }
@@ -173,6 +174,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "AdjustDeveloperService-Exception: {IdCard} - {DTO}", idCard, dto.Serialize());
+
             throw;
         }
     }
@@ -186,6 +188,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetByPhoneDeveloperService-Exception: {Phone}", phone);
+
             throw;
         }
     }
@@ -199,6 +202,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SearchByPhoneDeveloperService-Exception: {SearchText}", searchText);
+
             throw;
         }
     }
@@ -239,6 +243,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToEsDeveloperService-Exception");
+
             throw;
         }
     }

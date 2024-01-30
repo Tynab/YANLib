@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Account;
 using Volo.Abp.Http.Client;
+using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.VirtualFileSystem;
 
@@ -7,7 +9,9 @@ namespace YANLib;
 
 [DependsOn(
     typeof(YANLibApplicationContractsModule),
-    typeof(AbpHttpClientModule)
+    typeof(AbpHttpClientModule),
+    typeof(AbpIdentityHttpApiClientModule),
+    typeof(AbpAccountHttpApiClientModule)
 )]
 public class YANLibHttpApiClientModule : AbpModule
 {

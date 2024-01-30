@@ -1,4 +1,6 @@
-﻿using Volo.Abp.Localization;
+﻿using Volo.Abp.BackgroundJobs;
+using Volo.Abp.Identity;
+using Volo.Abp.Localization;
 using Volo.Abp.Localization.ExceptionHandling;
 using Volo.Abp.Modularity;
 using Volo.Abp.Validation;
@@ -9,7 +11,9 @@ using YANLib.Localization;
 namespace YANLib;
 
 [DependsOn(
-    typeof(AbpValidationModule)
+    typeof(AbpValidationModule),
+    typeof(AbpIdentityDomainSharedModule),
+    typeof(AbpBackgroundJobsDomainSharedModule)
 )]
 public class YANLibDomainSharedModule : AbpModule
 {
