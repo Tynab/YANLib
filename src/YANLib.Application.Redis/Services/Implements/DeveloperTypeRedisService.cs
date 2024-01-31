@@ -42,7 +42,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetDeveloperTypeRedisService-Exception: {Group} - {Key}", group, key);
-
             throw;
         }
     }
@@ -83,7 +82,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetBulkDeveloperTypeRedisService-Exception: {Group} - {Keys}", group, string.Join(", ", keys));
-
             throw;
         }
     }
@@ -124,7 +122,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetAllDeveloperTypeRedisService-Exception: {Group}", group);
-
             throw;
         }
     }
@@ -135,14 +132,13 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
 
         try
         {
-            return group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value.IsNull()
+            return group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value is null
                 ? throw new BusinessException(BAD_REQUEST)
                 : await _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), jsonVal);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetDeveloperTypeRedisService-Exception: {Group} - {Key} - {Value}", group, key, jsonVal);
-
             throw;
         }
     }
@@ -163,7 +159,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetBulkDeveloperTypeRedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
-
             throw;
         }
     }
@@ -177,7 +172,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteDeveloperTypeRedisService-Exception: {Group} - {Key}", group, key);
-
             throw;
         }
     }
@@ -213,7 +207,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteBulkDeveloperTypeRedisService-Exception: {Group} - {Keys}", group, string.Join(", ", keys));
-
             throw;
         }
     }
@@ -234,7 +227,6 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteAllDeveloperTypeRedisService-Exception: {Group}", group);
-
             throw;
         }
     }
@@ -245,7 +237,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         {
             var redisRslt = await GetGroupKeys(groupPreffix);
 
-            if (redisRslt.IsNotNull())
+            if (redisRslt is not null)
             {
                 var keys = (RedisKey[])redisRslt!;
                 var rslts = new Dictionary<string, IDictionary<string, DeveloperTypeRedisDto?>?>();
@@ -292,7 +284,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         {
             var redisRslt = await GetGroupKeys(groupPreffix);
 
-            if (redisRslt.IsNotNull())
+            if (redisRslt is not null)
             {
                 var keys = (RedisKey[])redisRslt!;
 

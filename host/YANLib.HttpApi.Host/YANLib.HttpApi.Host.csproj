@@ -3,46 +3,44 @@
 	<Import Project="..\..\common.props" />
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>YANLib</RootNamespace>
 		<PreserveCompilationReferences>true</PreserveCompilationReferences>
 		<UserSecretsId>YANLib-4681b4fd-151f-4221-84a4-929d86723e4c</UserSecretsId>
-		<LangVersion>preview</LangVersion>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="6.0.2" />
-		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.5" />
-		<PackageReference Include="DotNetCore.CAP" Version="6.2.1" />
-		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="6.2.1" />
-		<PackageReference Include="DotNetCore.CAP.Kafka" Version="6.2.1" />
-		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="6.2.1" />
-		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="6.2.1" />
-		<PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.25.3" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.26" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.26">
+		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.0" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
+		<PackageReference Include="DotNetCore.CAP" Version="8.0.1" />
+		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.0.1" />
+		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.0.1" />
+		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="8.0.1" />
+		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.0.1" />
+		<PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.23.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
 		<PackageReference Include="Serilog.Formatting.Compact" Version="2.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.Autofac" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.EventBus.Azure" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.Http.Client" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.Swashbuckle" Version="6.0.3" />
+		<PackageReference Include="Volo.Abp.Autofac" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.EventBus.Azure" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.Http.Client" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.Swashbuckle" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

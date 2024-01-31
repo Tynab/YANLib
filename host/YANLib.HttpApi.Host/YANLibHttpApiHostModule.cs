@@ -1,4 +1,3 @@
-using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -15,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Volo.Abp;
-using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
@@ -40,7 +38,7 @@ using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static System.Convert;
 using static System.StringSplitOptions;
 
-#if DEBUG
+#if !DEBUG
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using YANLib.Middlewares;
@@ -53,18 +51,17 @@ using static System.Threading.Tasks.Task;
 namespace YANLib;
 
 [DependsOn(
-    typeof(AbpAutofacModule),
-    typeof(AbpAccountWebOpenIddictModule),
-    typeof(AbpEntityFrameworkCoreSqlServerModule),
-    typeof(AbpHttpClientModule),
-    typeof(AbpSwashbuckleModule),
-    typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpCachingStackExchangeRedisModule),
-    typeof(AbpEventBusAzureModule),
-    typeof(AbpEventBusRabbitMqModule),
     typeof(YANLibHttpApiModule),
     typeof(YANLibApplicationModule),
-    typeof(YANLibEntityFrameworkCoreModule)
+    typeof(YANLibEntityFrameworkCoreModule),
+    typeof(AbpAutofacModule),
+    typeof(AbpAspNetCoreSerilogModule),
+    typeof(AbpSwashbuckleModule),
+    typeof(AbpEntityFrameworkCoreSqlServerModule),
+    typeof(AbpHttpClientModule),
+    typeof(AbpCachingStackExchangeRedisModule),
+    typeof(AbpEventBusAzureModule),
+    typeof(AbpEventBusRabbitMqModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
@@ -123,12 +120,12 @@ public class YANLibHttpApiHostModule : AbpModule
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
 
-#if DEBUG
+#if !DEBUG
         o.Events = new JwtBearerEvents
         {
             OnMessageReceived = async c =>
             {
-                string authorization = c.Request.Headers["Authorization"];
+                string authorization = c.Request.Headers.Authorization;
 
                 if (authorization == configuration["Authorization:Bearer"])
                 {
@@ -167,7 +164,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 Version = "test"
             });
 
-#if DEBUG
+#if !DEBUG
             o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
                 In = Header,
@@ -259,8 +256,8 @@ public class YANLibHttpApiHostModule : AbpModule
         connectionString: configuration["ConnectionStrings:Default"],
         name: "database",
         failureStatus: Degraded,
-        tags: new string[] { "db", "sql", "sqlserver"
-    });
+        tags: ["db", "sql", "sqlserver"]
+    );
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
@@ -295,9 +292,9 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        _ = app.UseCapDashboard();
+        //_ = app.UseCapDashboard();
 
-#if DEBUG
+#if !DEBUG
         _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
 #endif
 

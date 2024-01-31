@@ -1,17 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace YANLib.Requests;
+﻿namespace YANLib.Requests;
 
 public sealed class CertificateRequest
 {
-    [Required]
-    public string Id { get; set; }
+    public required string Id { get; set; }
 
-    [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public double? GPA { get; set; }
 
-    [Required]
-    public string DeveloperId { get; set; }
+    public required string DeveloperId { get; set; }
 }
