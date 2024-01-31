@@ -70,3 +70,7 @@ https://yanlib.yamiannephilim.com/api/yanlib/json/yan-vs-standards?quantity=1000
 ```c#
 var dto = json.Deserialize<JsonDto>();
 ```
+
+### NOTE
+
+- Elastic.Apm.NetCoreAll (~1.24.0) spam logs
