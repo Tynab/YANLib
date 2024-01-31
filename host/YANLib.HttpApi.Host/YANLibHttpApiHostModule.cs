@@ -38,7 +38,7 @@ using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static System.Convert;
 using static System.StringSplitOptions;
 
-#if !DEBUG
+#if DEBUG
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using YANLib.Middlewares;
@@ -120,7 +120,7 @@ public class YANLibHttpApiHostModule : AbpModule
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
 
-#if !DEBUG
+#if DEBUG
         o.Events = new JwtBearerEvents
         {
             OnMessageReceived = async c =>
@@ -164,7 +164,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 Version = "test"
             });
 
-#if !DEBUG
+#if DEBUG
             o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
                 In = Header,
@@ -294,7 +294,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         //_ = app.UseCapDashboard();
 
-#if !DEBUG
+#if DEBUG
         _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
 #endif
 
