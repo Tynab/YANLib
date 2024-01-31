@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Volo.Abp;
+using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
@@ -38,8 +39,6 @@ using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static System.Convert;
 using static System.StringSplitOptions;
-using Volo.Abp.Account.Web;
-
 
 #if DEBUG
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,18 +53,18 @@ using static System.Threading.Tasks.Task;
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibHttpApiModule),
-    typeof(YANLibApplicationModule),
-    typeof(YANLibEntityFrameworkCoreModule),
     typeof(AbpAutofacModule),
-    typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule),
+    typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpHttpClientModule),
+    typeof(AbpSwashbuckleModule),
+    typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpEventBusAzureModule),
     typeof(AbpEventBusRabbitMqModule),
-    typeof(AbpAccountWebOpenIddictModule)
+    typeof(YANLibHttpApiModule),
+    typeof(YANLibApplicationModule),
+    typeof(YANLibEntityFrameworkCoreModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {

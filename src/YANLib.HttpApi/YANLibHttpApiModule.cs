@@ -9,10 +9,10 @@ using YANLib.Localization;
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibApplicationContractsModule),
     typeof(AbpAspNetCoreMvcModule),
     typeof(AbpIdentityHttpApiModule),
-    typeof(AbpAccountHttpApiModule)
+    typeof(AbpAccountHttpApiModule),
+    typeof(YANLibApplicationContractsModule)
 )]
 public class YANLibHttpApiModule : AbpModule
 {

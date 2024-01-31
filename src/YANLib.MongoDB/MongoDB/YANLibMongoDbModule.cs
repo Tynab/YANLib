@@ -7,9 +7,9 @@ using YANLib.MongoDB.DbContext.Implements;
 namespace YANLib.MongoDB;
 
 [DependsOn(
-    typeof(YANLibDomainModule),
     typeof(AbpMongoDbModule),
-    typeof(AbpIdentityMongoDbModule)
+    typeof(AbpIdentityMongoDbModule),
+    typeof(YANLibDomainModule)
 )]
 public class YANLibMongoDbModule : AbpModule
 {

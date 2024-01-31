@@ -6,10 +6,10 @@ using Volo.Abp.Modularity;
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibDomainSharedModule),
     typeof(AbpDddDomainModule),
     typeof(AbpIdentityDomainModule),
-    typeof(AbpBackgroundJobsDomainModule)
+    typeof(AbpBackgroundJobsDomainModule),
+    typeof(YANLibDomainSharedModule)
 )]
 public class YANLibDomainModule : AbpModule
 {

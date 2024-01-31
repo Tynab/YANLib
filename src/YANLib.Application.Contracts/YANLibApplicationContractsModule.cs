@@ -7,11 +7,11 @@ using Volo.Abp.Modularity;
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibDomainSharedModule),
     typeof(AbpDddApplicationContractsModule),
     typeof(AbpAuthorizationModule),
     typeof(AbpIdentityApplicationContractsModule),
-    typeof(AbpAccountApplicationContractsModule)
+    typeof(AbpAccountApplicationContractsModule),
+    typeof(YANLibDomainSharedModule)
 )]
 public class YANLibApplicationContractsModule : AbpModule
 {

@@ -9,10 +9,10 @@ using YANLib.EntityFrameworkCore.DbContext.Implements;
 namespace YANLib.EntityFrameworkCore;
 
 [DependsOn(
-    typeof(YANLibDomainModule),
     typeof(AbpEntityFrameworkCoreModule),
     typeof(AbpIdentityEntityFrameworkCoreModule),
-    typeof(AbpBackgroundJobsEntityFrameworkCoreModule)
+    typeof(AbpBackgroundJobsEntityFrameworkCoreModule),
+    typeof(YANLibDomainModule)
 )]
 public class YANLibEntityFrameworkCoreModule : AbpModule
 {

@@ -11,8 +11,8 @@ namespace YANLib.HttpApi.Client.ConsoleTestApp;
 
 [DependsOn(
     typeof(AbpAutofacModule),
-    typeof(YANLibHttpApiClientModule),
-    typeof(AbpHttpClientIdentityModelModule)
+    typeof(AbpHttpClientIdentityModelModule),
+    typeof(YANLibHttpApiClientModule)
 )]
 public class YANLibConsoleApiClientModule : AbpModule
 {
