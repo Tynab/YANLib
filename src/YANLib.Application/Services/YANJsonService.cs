@@ -12,9 +12,7 @@ using static System.Threading.Tasks.Task;
 
 namespace YANLib.Services;
 
-public class YANJsonService(
-    IJsonSerializer jsonSerializer
-) : YANLibAppService, IYANJsonService
+public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, IYANJsonService
 {
     private readonly IJsonSerializer _jsonSerializer = jsonSerializer;
 

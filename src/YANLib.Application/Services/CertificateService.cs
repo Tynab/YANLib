@@ -20,12 +20,11 @@ public class CertificateService(
     {
         try
         {
-            return (await _repository.Create(ObjectMapper.Map<CertificateRequest, Certificate>(request))).IsNotNull();
+            return await _repository.Create(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "CreateCertificateService-Exception: {Request}", request.Serialize());
-
             throw;
         }
     }
@@ -34,12 +33,11 @@ public class CertificateService(
     {
         try
         {
-            return (await _repository.Update(ObjectMapper.Map<CertificateRequest, Certificate>(request))).IsNotNull();
+            return await _repository.Update(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "UpdateCertificateService-Exception: {Request}", request.Serialize());
-
             throw;
         }
     }

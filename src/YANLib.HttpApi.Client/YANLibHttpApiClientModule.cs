@@ -1,17 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Account;
 using Volo.Abp.Http.Client;
-using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.VirtualFileSystem;
 
 namespace YANLib;
 
 [DependsOn(
-    typeof(AbpHttpClientModule),
-    typeof(AbpIdentityHttpApiClientModule),
-    typeof(AbpAccountHttpApiClientModule),
-    typeof(YANLibApplicationContractsModule)
+    typeof(YANLibApplicationContractsModule),
+    typeof(AbpHttpClientModule)
 )]
 public class YANLibHttpApiClientModule : AbpModule
 {

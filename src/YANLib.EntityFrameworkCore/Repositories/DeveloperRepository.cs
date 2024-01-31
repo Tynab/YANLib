@@ -40,8 +40,7 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
 
             if (await _dbContext.SaveChangesAsync() > 0)
             {
-                entity.DeveloperType = await _dbContext.DeveloperTypes.SingleOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
-
+                entity.DeveloperType = await _dbContext.DeveloperTypes.AsNoTracking().SingleOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
                 return entity;
             }
             else
@@ -60,17 +59,10 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
     {
         try
         {
-            var entities = await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard && x.IsActive == true).ToListAsync();
-
-            if (entities.IsNotNull())
+            if (await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard).ExecuteUpdateAsync(s => s
+                .SetProperty(x => x.IsActive, false)
+                .SetProperty(x => x.UpdatedAt, Now)) > 0)
             {
-                entities.ForEach(x =>
-                {
-                    x.IsActive = false;
-                    x.UpdatedAt = Now;
-                });
-
-                _dbContext.Developers.UpdateRange(entities);
                 entity.IsActive = true;
                 entity.Version++;
                 entity.CreatedAt = Now;
@@ -78,13 +70,18 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
 
                 if (await _dbContext.SaveChangesAsync() > 0)
                 {
-                    entity.DeveloperType = await _dbContext.DeveloperTypes.SingleOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
-
+                    entity.DeveloperType = await _dbContext.DeveloperTypes.AsNoTracking().SingleOrDefaultAsync(x => x.Id == entity.DeveloperTypeCode);
                     return entity;
                 }
+                else
+                {
+                    return default;
+                }
             }
-
-            return default;
+            else
+            {
+                return default;
+            }
         }
         catch (Exception ex)
         {

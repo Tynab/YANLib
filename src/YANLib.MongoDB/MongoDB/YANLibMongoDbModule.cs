@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Identity.MongoDB;
 using Volo.Abp.Modularity;
 using Volo.Abp.MongoDB;
 using YANLib.MongoDB.DbContext.Implements;
@@ -7,9 +6,8 @@ using YANLib.MongoDB.DbContext.Implements;
 namespace YANLib.MongoDB;
 
 [DependsOn(
-    typeof(AbpMongoDbModule),
-    typeof(AbpIdentityMongoDbModule),
-    typeof(YANLibDomainModule)
+    typeof(YANLibDomainModule),
+    typeof(AbpMongoDbModule)
 )]
 public class YANLibMongoDbModule : AbpModule
 {

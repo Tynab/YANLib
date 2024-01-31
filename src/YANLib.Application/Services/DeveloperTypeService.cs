@@ -37,7 +37,6 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetAllDeveloperTypeService-Exception");
-
             throw;
         }
     }
@@ -48,7 +47,7 @@ public class DeveloperTypeService(
         {
             var rslt = ObjectMapper.Map<DeveloperTypeRedisDto, DeveloperTypeResponse>(await _redisService.Get(DeveloperTypeGroup, code.ToString()));
 
-            if (rslt.IsNotNull())
+            if (rslt is not null)
             {
                 rslt.Code = code;
             }
@@ -58,7 +57,6 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetDeveloperTypeService-Exception: {Code}", code);
-
             throw;
         }
     }
@@ -69,7 +67,7 @@ public class DeveloperTypeService(
         {
             var dto = await _redisService.Get(DeveloperTypeGroup, request.Code.ToString());
 
-            if (dto.IsNotNull())
+            if (dto is not null)
             {
                 throw new BusinessException(EXIST_ID).WithData("Code", request.Code);
             }
@@ -80,7 +78,7 @@ public class DeveloperTypeService(
 
             var mdl = await _repository.InsertAsync(ent);
 
-            if (mdl.IsNotNull())
+            if (mdl is not null)
             {
                 _ = await _redisService.Set(DeveloperTypeGroup, mdl.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
             }
@@ -90,7 +88,6 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "CreateDeveloperTypeService-Exception: {Request}", request.Serialize());
-
             throw;
         }
     }
@@ -111,7 +108,7 @@ public class DeveloperTypeService(
 
             var mdl = await _repository.UpdateAsync(ent);
 
-            if (mdl.IsNotNull())
+            if (mdl is not null)
             {
                 _ = await _redisService.Set(DeveloperTypeGroup, mdl.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(mdl));
             }
@@ -121,7 +118,6 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "UpdateDeveloperTypeService-Exception: {Request}", request.Serialize());
-
             throw;
         }
     }
@@ -143,7 +139,6 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToRedisDeveloperTypeService-Exception");
-
             throw;
         }
     }

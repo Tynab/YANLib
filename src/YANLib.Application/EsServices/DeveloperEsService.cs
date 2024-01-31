@@ -31,7 +31,6 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetDeveloperEsService-Exception: {Id}", id);
-
             throw;
         }
     }
@@ -42,12 +41,11 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
 
         try
         {
-            return (await _elasticClient.IndexDocumentAsync(data)).IsNotNull();
+            return await _elasticClient.IndexDocumentAsync(data) is not null;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetDeveloperEsService-Exception: {Data}", data.Serialize());
-
             throw;
         }
     }
@@ -71,12 +69,11 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
                 _ = reqs.Index<DeveloperIndex>(x => x.Document(data).Index(index));
             }
 
-            return (await _elasticClient.BulkAsync(reqs)).IsNotNull();
+            return await _elasticClient.BulkAsync(reqs) is not null;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetBulkDeveloperEsService-Exception: {Datas}", datas.Serialize());
-
             throw;
         }
     }
@@ -92,7 +89,6 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger,
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteAllDeveloperEsService-Exception");
-
             throw;
         }
     }
