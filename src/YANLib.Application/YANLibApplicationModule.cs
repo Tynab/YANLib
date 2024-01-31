@@ -9,14 +9,14 @@ using YANLib.Application.Redis;
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibDomainModule),
-    typeof(YANLibApplicationContractsModule),
-    typeof(YANLibApplicationRedisModule),
     typeof(AbpDddApplicationModule),
+    typeof(AbpIdentityApplicationModule),
+    typeof(AbpAccountApplicationModule),
     typeof(AbpAutoMapperModule),
     typeof(AbpFluentValidationModule),
-    typeof(AbpIdentityApplicationModule),
-    typeof(AbpAccountApplicationModule)
+    typeof(YANLibDomainModule),
+    typeof(YANLibApplicationContractsModule),
+    typeof(YANLibApplicationRedisModule)
 )]
 public class YANLibApplicationModule : AbpModule
 {

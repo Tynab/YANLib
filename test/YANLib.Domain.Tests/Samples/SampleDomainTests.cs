@@ -23,12 +23,12 @@ public class SampleDomainTests : YANLibDomainTestBase
 
         await WithUnitOfWorkAsync(async () =>
         {
-            adminUser = await _identityUserRepository.FindByNormalizedUserNameAsync("ADMIN");
-            _ = await _identityUserManager.SetEmailAsync(adminUser, "newemail@abp.io");
+            adminUser = await _identityUserRepository.FindByNormalizedUserNameAsync("YAN");
+            _ = await _identityUserManager.SetEmailAsync(adminUser, "yamiannephilim@gmail.com");
             _ = await _identityUserRepository.UpdateAsync(adminUser);
         });
 
-        adminUser = await _identityUserRepository.FindByNormalizedUserNameAsync("ADMIN");
-        adminUser.Email.ShouldBe("newemail@abp.io");
+        adminUser = await _identityUserRepository.FindByNormalizedUserNameAsync("YAN");
+        adminUser.Email.ShouldBe("yamiannephilim@gmail.com");
     }
 }

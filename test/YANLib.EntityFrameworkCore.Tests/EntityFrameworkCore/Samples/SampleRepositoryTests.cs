@@ -18,10 +18,10 @@ public class SampleRepositoryTests : YANLibEntityFrameworkCoreTestBase
     [Fact]
     public async Task Should_Query_AppUser() => await WithUnitOfWorkAsync(async () =>
     {
-        //Act
-        var adminUser = await (await _appUserRepository.GetQueryableAsync()).Where(u => u.UserName == "admin").FirstOrDefaultAsync();
+        // Act
+        var adminUser = await (await _appUserRepository.GetQueryableAsync()).Where(u => u.UserName == "yan").FirstOrDefaultAsync();
 
-        //Assert
+        // Assert
         _ = adminUser.ShouldNotBeNull();
     });
 }

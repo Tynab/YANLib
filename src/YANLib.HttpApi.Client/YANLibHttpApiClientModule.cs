@@ -8,10 +8,10 @@ using Volo.Abp.VirtualFileSystem;
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibApplicationContractsModule),
     typeof(AbpHttpClientModule),
     typeof(AbpIdentityHttpApiClientModule),
-    typeof(AbpAccountHttpApiClientModule)
+    typeof(AbpAccountHttpApiClientModule),
+    typeof(YANLibApplicationContractsModule)
 )]
 public class YANLibHttpApiClientModule : AbpModule
 {

@@ -19,6 +19,6 @@ public class SampleAppServiceTests : YANLibApplicationTestBase
 
         // Assert
         result.TotalCount.ShouldBeGreaterThan(0);
-        result.Items.ShouldContain(u => u.UserName == "admin");
+        result.Items.ShouldContain(u => u.UserName == "yan");
     }
 }

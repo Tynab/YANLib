@@ -12,9 +12,9 @@ using YANLib.EntityFrameworkCore.DbContext.Implements;
 namespace YANLib.EntityFrameworkCore;
 
 [DependsOn(
+    typeof(AbpEntityFrameworkCoreSqliteModule),
     typeof(YANLibEntityFrameworkCoreModule),
-    typeof(YANLibTestBaseModule),
-    typeof(AbpEntityFrameworkCoreSqliteModule)
+    typeof(YANLibTestBaseModule)
 )]
 public class YANLibEntityFrameworkCoreTestModule : AbpModule
 {
