@@ -11,11 +11,12 @@ pipeline {
         GIT_AUTHOR = sh(returnStdout: true, script: "git log -n 1 --format=%ae ${GIT_COMMIT}").trim()
         GIT_COMMIT_SHORT = sh(returnStdout: true, script: "git rev-parse --short ${GIT_COMMIT}").trim()
         GIT_INFO = "Branch: ${GIT_BRANCH}\nLast Message: ${GIT_MESSAGE}\nAuthor: ${GIT_AUTHOR}\nCommit: ${GIT_COMMIT_SHORT}"
-        TEXT_BREAK = '--------------------------------------------------------------'
-        TEXT_BUILD = "${TEXT_BREAK}\n${GIT_INFO}\n${JOB_NAME} is Building"
-        TEXT_PUSH = "${TEXT_BREAK}\n${GIT_INFO}\n${JOB_NAME} is Pushing"
-        TEXT_CLEAN = "${TEXT_BREAK}\n${GIT_INFO}\n${JOB_NAME} is Cleaning"
-        TEXT_RUN = "${TEXT_BREAK}\n${GIT_INFO}\n${JOB_NAME} is Running"
+        TEXT_BREAK = '----------------------------------------'
+        TEXT_PRE = "${TEXT_BREAK}\n${GIT_INFO}"
+        TEXT_BUILD = "${JOB_NAME} is Building"
+        TEXT_PUSH = "${JOB_NAME} is Pushing"
+        TEXT_CLEAN = "${JOB_NAME} is Cleaning"
+        TEXT_RUN = "${JOB_NAME} is Running"
 
         // Telegram parameters
         TEXT_SUCCESS_BUILD = "${TEXT_BREAK}\n${JOB_NAME} is Success"
@@ -25,6 +26,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PRE}' --form chat_id='${CHAT_ID}'"
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_BUILD}' --form chat_id='${CHAT_ID}'"
                 sh 'docker build -t yamiannephilim/yanlib:latest .'
             }
