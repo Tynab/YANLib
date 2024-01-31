@@ -19,8 +19,8 @@ pipeline {
         TEXT_RUN = "${JOB_NAME} is Running"
 
         // Telegram parameters
-        TEXT_SUCCESS_BUILD = "${TEXT_BREAK}\n${JOB_NAME} is Success"
-        TEXT_FAILURE_BUILD = "${TEXT_BREAK}\n${JOB_NAME} is Failure"
+        TEXT_SUCCESS_BUILD = "${JOB_NAME} is Success"
+        TEXT_FAILURE_BUILD = "${JOB_NAME} is Failure"
     }
 
     stages {
