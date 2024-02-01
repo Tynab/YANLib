@@ -77,7 +77,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureLocalization();
         ConfigureConventionalControllers();
         ConfigureCors(context, configuration);
-        ConfigureAuthentication(context, configuration);
+        //ConfigureAuthentication(context, configuration);
         ConfigureSwaggerServices(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHealthChecks(context, configuration);
@@ -280,14 +280,15 @@ public class YANLibHttpApiHostModule : AbpModule
             _ = o.AddSupportedUICultures("vi");
         });
 
-#if DEBUG
-        _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
-#endif
-
         _ = app.UseCors();
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
+
+#if DEBUG
+        _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
+        _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
+#endif
 
         _ = app.UseAbpSwaggerUI(c =>
         {
