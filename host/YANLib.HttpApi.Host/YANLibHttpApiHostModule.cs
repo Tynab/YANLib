@@ -121,26 +121,26 @@ public class YANLibHttpApiHostModule : AbpModule
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
 
-//#if !DEBUG
-//        o.Events = new JwtBearerEvents
-//        {
-//            OnMessageReceived = async c =>
-//            {
-//                string authorization = c.Request.Headers.Authorization;
+        //#if !DEBUG
+        //        o.Events = new JwtBearerEvents
+        //        {
+        //            OnMessageReceived = async c =>
+        //            {
+        //                string authorization = c.Request.Headers.Authorization;
 
-//                if (authorization == configuration["Authorization:Bearer"])
-//                {
-//                    await CompletedTask;
-//                }
-//                else
-//                {
-//                    c.Response.StatusCode = Unauthorized.ToInt();
-//                    c.Response.ContentType = "application/json";
-//                    await c.Response.WriteAsync("Access Denied");
-//                }
-//            }
-//        };
-//#endif
+        //                if (authorization == configuration["Authorization:Bearer"])
+        //                {
+        //                    await CompletedTask;
+        //                }
+        //                else
+        //                {
+        //                    c.Response.StatusCode = Unauthorized.ToInt();
+        //                    c.Response.ContentType = "application/json";
+        //                    await c.Response.WriteAsync("Access Denied");
+        //                }
+        //            }
+        //        };
+        //#endif
     });
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
@@ -165,29 +165,29 @@ public class YANLibHttpApiHostModule : AbpModule
                 Version = "test"
             });
 
-//#if !DEBUG
-//            o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
-//            {
-//                In = Header,
-//                Description = "Please insert JWT with Bearer into field",
-//                Name = "Authorization",
-//                Type = ApiKey
-//            });
+            //#if !DEBUG
+            //            o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
+            //            {
+            //                In = Header,
+            //                Description = "Please insert JWT with Bearer into field",
+            //                Name = "Authorization",
+            //                Type = ApiKey
+            //            });
 
-//            o.AddSecurityRequirement(new OpenApiSecurityRequirement
-//            {
-//                {
-//                    new OpenApiSecurityScheme
-//                    {
-//                        Reference = new OpenApiReference
-//                        {
-//                            Id = "Authorization",
-//                            Type = ReferenceType.SecurityScheme
-//                        }
-//                    }, new List<string>()
-//                }
-//            });
-//#endif
+            //            o.AddSecurityRequirement(new OpenApiSecurityRequirement
+            //            {
+            //                {
+            //                    new OpenApiSecurityScheme
+            //                    {
+            //                        Reference = new OpenApiReference
+            //                        {
+            //                            Id = "Authorization",
+            //                            Type = ReferenceType.SecurityScheme
+            //                        }
+            //                    }, new List<string>()
+            //                }
+            //            });
+            //#endif
 
             o.CustomSchemaIds(t => t.FullName.Replace("+", "."));
             o.HideAbpEndpoints();
@@ -257,7 +257,7 @@ public class YANLibHttpApiHostModule : AbpModule
         connectionString: configuration["ConnectionStrings:Default"],
         name: "database",
         failureStatus: Degraded,
-        tags: ["db", "sql", "sqlserver"]
+        tags: new string[] { "db", "sql", "sqlserver" }
     );
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
@@ -272,9 +272,9 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = app.UseAbpRequestLocalization(o =>
         {
-            o.SetDefaultCulture("vi");
-            o.AddSupportedCultures("vi");
-            o.AddSupportedUICultures("vi");
+            _ = o.SetDefaultCulture("vi");
+            _ = o.AddSupportedCultures("vi");
+            _ = o.AddSupportedUICultures("vi");
         });
 
         _ = app.UseSwagger();
@@ -295,9 +295,9 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = app.UseCapDashboard();
 
-//#if !DEBUG
-//        _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
-//#endif
+        //#if !DEBUG
+        //        _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
+        //#endif
 
         _ = app.UseCors();
         _ = app.UseAuthentication();

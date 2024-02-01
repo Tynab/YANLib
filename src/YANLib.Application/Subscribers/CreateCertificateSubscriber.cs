@@ -21,7 +21,7 @@ public class CreateCertificateSubscriber : YANLibAppService, ICapSubscribe
     }
 
     [CapSubscribe(CERT_CRT)]
-    public async Task Subscibe(CertificateCreateEto eventData)
+    public async ValueTask Subscibe(CertificateCreateEto eventData)
     {
         _logger.LogInformation("CreateCertificateSubscriber-Subscribe: {EventData}", eventData.Serialize());
         _logger.LogInformation("CreateCertificateSubscriber-CreateCertificateService: {Responses}", await _certificateService.Create(ObjectMapper.Map<CertificateCreateEto, CertificateRequest>(eventData)));
