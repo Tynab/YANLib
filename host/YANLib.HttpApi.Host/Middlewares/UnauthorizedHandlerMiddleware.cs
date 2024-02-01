@@ -15,7 +15,7 @@ public class UnauthorizedHandlerMiddleware
 
     public UnauthorizedHandlerMiddleware(RequestDelegate next) => _next = next;
 
-    public async Task Invoke(HttpContext context)
+    public async ValueTask Invoke(HttpContext context)
     {
         var writeCustomResponse = false;
         var originalResponse = context.Response.Body;
