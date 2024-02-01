@@ -13,16 +13,10 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/es")]
-public sealed class ElasticsearchController : YANLibController
+public sealed class ElasticsearchController(ILogger<ElasticsearchController> logger, IDeveloperEsService developerEsService) : YANLibController
 {
-    private readonly ILogger<ElasticsearchController> _logger;
-    private readonly IDeveloperEsService _developerEsService;
-
-    public ElasticsearchController(ILogger<ElasticsearchController> logger, IDeveloperEsService developerEsService)
-    {
-        _logger = logger;
-        _developerEsService = developerEsService;
-    }
+    private readonly ILogger<ElasticsearchController> _logger = logger;
+    private readonly IDeveloperEsService _developerEsService = developerEsService;
 
     [HttpGet("developers/{id}")]
     [SwaggerOperation(Summary = "Lấy Developer theo Id trên Elasticsearch")]

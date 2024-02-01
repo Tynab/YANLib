@@ -12,16 +12,10 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "test")]
 [Route("api/yanlib/json")]
-public sealed class YANJsonController : YANLibController
+public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service) : YANLibController
 {
-    private readonly ILogger<YANJsonController> _logger;
-    private readonly IYANJsonService _service;
-
-    public YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service)
-    {
-        _logger = logger;
-        _service = service;
-    }
+    private readonly ILogger<YANJsonController> _logger = logger;
+    private readonly IYANJsonService _service = service;
 
     [HttpGet("yan-vs-standards")]
     [SwaggerOperation(Summary = "Đo tốc độ của thư viện YANLib và các chuẩn khác")]

@@ -6,4 +6,7 @@ namespace YANLib.MongoDB.DbContext;
 [ConnectionStringName("Default")]
 public interface IYANLibMongoDbContext : IAbpMongoDbContext
 {
+    /* Define mongo collections here. Example:
+    * IMongoCollection<Question> Questions { get; }
+    */
 }

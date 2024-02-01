@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
@@ -13,16 +14,10 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/developer-types")]
-public sealed class DeveloperTypeController : YANLibController
+public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service) : YANLibController
 {
-    private readonly ILogger<DeveloperTypeController> _logger;
-    private readonly IDeveloperTypeService _service;
-
-    public DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service)
-    {
-        _logger = logger;
-        _service = service;
-    }
+    private readonly ILogger<DeveloperTypeController> _logger = logger;
+    private readonly IDeveloperTypeService _service = service;
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa Developer Types")]

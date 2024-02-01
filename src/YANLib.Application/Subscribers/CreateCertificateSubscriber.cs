@@ -9,19 +9,16 @@ using static YANLib.Kafka.KafkaTopic;
 
 namespace YANLib.Subscribers;
 
-public class CreateCertificateSubscriber : YANLibAppService, ICapSubscribe
+public class CreateCertificateSubscriber(
+    ILogger<CreateCertificateSubscriber> logger,
+    ICertificateService certificateService
+) : YANLibAppService, ICapSubscribe
 {
-    private readonly ILogger<CreateCertificateSubscriber> _logger;
-    private readonly ICertificateService _certificateService;
-
-    public CreateCertificateSubscriber(ILogger<CreateCertificateSubscriber> logger, ICertificateService certificateService)
-    {
-        _logger = logger;
-        _certificateService = certificateService;
-    }
+    private readonly ILogger<CreateCertificateSubscriber> _logger = logger;
+    private readonly ICertificateService _certificateService = certificateService;
 
     [CapSubscribe(CERT_CRT)]
-    public async ValueTask Subscibe(CertificateCreateEto eventData)
+    public async Task Subscibe(CertificateCreateEto eventData)
     {
         _logger.LogInformation("CreateCertificateSubscriber-Subscribe: {EventData}", eventData.Serialize());
         _logger.LogInformation("CreateCertificateSubscriber-CreateCertificateService: {Responses}", await _certificateService.Create(ObjectMapper.Map<CertificateCreateEto, CertificateRequest>(eventData)));

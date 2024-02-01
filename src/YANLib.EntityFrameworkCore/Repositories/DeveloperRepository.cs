@@ -11,16 +11,10 @@ using static System.DateTime;
 
 namespace YANLib.Repositories;
 
-public sealed class DeveloperRepository : IDeveloperRepository
+public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYANLibDbContext dbContext) : IDeveloperRepository
 {
-    private readonly ILogger<DeveloperRepository> _logger;
-    private readonly IYANLibDbContext _dbContext;
-
-    public DeveloperRepository(ILogger<DeveloperRepository> logger, IYANLibDbContext dbContext)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+    private readonly ILogger<DeveloperRepository> _logger = logger;
+    private readonly IYANLibDbContext _dbContext = dbContext;
 
     public async ValueTask<IEnumerable<Developer>> GetAll()
     {
@@ -65,17 +59,10 @@ public sealed class DeveloperRepository : IDeveloperRepository
     {
         try
         {
-            var entities = await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard && x.IsActive == true).ToListAsync();
-
-            if (entities.IsNotEmptyAndNull())
+            if (await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard).ExecuteUpdateAsync(s => s
+                .SetProperty(x => x.IsActive, false)
+                .SetProperty(x => x.UpdatedAt, Now)) > 0)
             {
-                entities.ForEach(x =>
-                {
-                    x.IsActive = false;
-                    x.UpdatedAt = Now;
-                });
-
-                _dbContext.Developers.UpdateRange(entities);
                 entity.IsActive = true;
                 entity.Version++;
                 entity.CreatedAt = Now;
