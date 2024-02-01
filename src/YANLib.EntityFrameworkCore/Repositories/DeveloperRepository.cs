@@ -59,10 +59,17 @@ public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYA
     {
         try
         {
-            if (await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard).ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.IsActive, false)
-                .SetProperty(x => x.UpdatedAt, Now)) > 0)
+            var entities = await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard && x.IsActive == true).ToListAsync();
+
+            if (entities.IsNotEmptyAndNull())
             {
+                entities.ForEach(x =>
+                {
+                    x.IsActive = false;
+                    x.UpdatedAt = Now;
+                });
+
+                _dbContext.Developers.UpdateRange(entities);
                 entity.IsActive = true;
                 entity.Version++;
                 entity.CreatedAt = Now;
