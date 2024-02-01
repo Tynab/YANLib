@@ -3,14 +3,15 @@
 	<Import Project="..\..\common.props" />
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>YANLib</RootNamespace>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="NEST" Version="7.17.5" />
-		<PackageReference Include="Volo.Abp.Authorization" Version="8.0.2" />
-		<PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="8.0.2" />
+		<PackageReference Include="Volo.Abp.Authorization" Version="7.4.2" />
+		<PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="7.4.2" />
 	</ItemGroup>
 
 	<ItemGroup>
