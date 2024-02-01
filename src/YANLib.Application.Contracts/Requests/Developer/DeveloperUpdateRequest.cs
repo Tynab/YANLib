@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace YANLib.Requests.Developer;
 
@@ -14,7 +15,8 @@ public sealed class DeveloperUpdateRequest
 
     public sealed class Certificate
     {
-        public required string Name { get; set; }
+        [Required]
+        public string Name { get; set; }
 
         public double? GPA { get; set; }
     }
