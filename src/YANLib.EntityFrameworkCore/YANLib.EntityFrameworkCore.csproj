@@ -3,15 +3,16 @@
 	<Import Project="..\..\common.props" />
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>YANLib</RootNamespace>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="6.0.3" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="6.0.3" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.4.5" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="7.4.5" />
 	</ItemGroup>
 
 </Project>
