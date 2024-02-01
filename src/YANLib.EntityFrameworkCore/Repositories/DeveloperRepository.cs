@@ -11,10 +11,16 @@ using static System.DateTime;
 
 namespace YANLib.Repositories;
 
-public sealed class DeveloperRepository(ILogger<DeveloperRepository> logger, IYANLibDbContext dbContext) : IDeveloperRepository
+public sealed class DeveloperRepository : IDeveloperRepository
 {
-    private readonly ILogger<DeveloperRepository> _logger = logger;
-    private readonly IYANLibDbContext _dbContext = dbContext;
+    private readonly ILogger<DeveloperRepository> _logger;
+    private readonly IYANLibDbContext _dbContext;
+
+    public DeveloperRepository(ILogger<DeveloperRepository> logger, IYANLibDbContext dbContext)
+    {
+        _logger = logger;
+        _dbContext = dbContext;
+    }
 
     public async ValueTask<IEnumerable<Developer>> GetAll()
     {

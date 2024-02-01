@@ -10,9 +10,11 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "test")]
 [Route("api/yanlib/id-snowflakes")]
-public sealed class IdSnowflakeController(ILogger<IdSnowflakeController> logger) : YANLibController
+public sealed class IdSnowflakeController : YANLibController
 {
-    private readonly ILogger<IdSnowflakeController> _logger = logger;
+    private readonly ILogger<IdSnowflakeController> _logger;
+
+    public IdSnowflakeController(ILogger<IdSnowflakeController> logger) => _logger = logger;
 
     [HttpGet("extract")]
     [SwaggerOperation(Summary = "Giải mã Id Snowflake")]

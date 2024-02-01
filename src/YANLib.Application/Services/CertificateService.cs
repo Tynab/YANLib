@@ -8,13 +8,16 @@ using YANLib.Requests;
 
 namespace YANLib.Services;
 
-public class CertificateService(
-    ILogger<CertificateService> logger,
-    ICertificateRepository repository
-) : YANLibAppService, ICertificateService
+public class CertificateService : YANLibAppService, ICertificateService
 {
-    private readonly ILogger<CertificateService> _logger = logger;
-    private readonly ICertificateRepository _repository = repository;
+    private readonly ILogger<CertificateService> _logger;
+    private readonly ICertificateRepository _repository;
+
+    public CertificateService(ILogger<CertificateService> logger, ICertificateRepository repository)
+    {
+        _logger = logger;
+        _repository = repository;
+    }
 
     public async ValueTask<bool> Create(CertificateRequest request)
     {

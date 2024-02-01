@@ -8,13 +8,16 @@ using YANLib.Services;
 
 namespace YANLib.Handlers;
 
-public class AdjustCertificateHandler(
-    ILogger<AdjustCertificateHandler> logger,
-    ICertificateService certificateService
-) : YANLibAppService, IDistributedEventHandler<CertificateAdjustEto>
+public class AdjustCertificateHandler : YANLibAppService, IDistributedEventHandler<CertificateAdjustEto>
 {
-    private readonly ILogger<AdjustCertificateHandler> _logger = logger;
-    private readonly ICertificateService _certificateService = certificateService;
+    private readonly ILogger<AdjustCertificateHandler> _logger;
+    private readonly ICertificateService _certificateService;
+
+    public AdjustCertificateHandler(ILogger<AdjustCertificateHandler> logger, ICertificateService certificateService)
+    {
+        _logger = logger;
+        _certificateService = certificateService;
+    }
 
     public async Task HandleEventAsync(CertificateAdjustEto eventData)
     {
