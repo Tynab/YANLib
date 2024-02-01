@@ -5,7 +5,6 @@
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>YANLib</RootNamespace>
-		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.Ddd.Domain" Version="7.4.2" />
+		<PackageReference Include="Volo.Abp.Ddd.Domain" Version="7.4.5" />
 	</ItemGroup>
 
 </Project>

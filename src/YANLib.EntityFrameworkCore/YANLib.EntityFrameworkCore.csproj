@@ -5,14 +5,13 @@
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>YANLib</RootNamespace>
-		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.4.2" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="7.4.2" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.4.5" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="7.4.5" />
 	</ItemGroup>
 
 </Project>

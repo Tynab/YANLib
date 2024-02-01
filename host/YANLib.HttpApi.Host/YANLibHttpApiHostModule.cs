@@ -126,7 +126,7 @@ public class YANLibHttpApiHostModule : AbpModule
         {
             OnMessageReceived = async c =>
             {
-                string authorization = c.Request.Headers["Authorization"];
+                string authorization = c.Request.Headers.Authorization;
 
                 if (authorization == configuration["Authorization:Bearer"])
                 {
@@ -257,8 +257,8 @@ public class YANLibHttpApiHostModule : AbpModule
         connectionString: configuration["ConnectionStrings:Default"],
         name: "database",
         failureStatus: Degraded,
-        tags: new string[] { "db", "sql", "sqlserver"
-    });
+        tags: ["db", "sql", "sqlserver"]
+    );
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
