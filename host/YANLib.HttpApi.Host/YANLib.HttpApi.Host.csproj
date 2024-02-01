@@ -15,11 +15,11 @@
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.0" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
-		<PackageReference Include="DotNetCore.CAP" Version="8.0.1" />
-		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.0.1" />
-		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.0.1" />
-		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="8.0.1" />
-		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.0.1" />
+		<PackageReference Include="DotNetCore.CAP" Version="6.2.1" />
+		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="6.2.1" />
+		<PackageReference Include="DotNetCore.CAP.Kafka" Version="6.2.1" />
+		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="6.2.1" />
+		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="6.2.1" />
 		<PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.23.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">

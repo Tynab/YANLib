@@ -1,3 +1,4 @@
+using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -292,7 +293,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        //_ = app.UseCapDashboard();
+        _ = app.UseCapDashboard();
 
 #if DEBUG
         _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
