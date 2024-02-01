@@ -9,9 +9,11 @@ using static System.Net.HttpStatusCode;
 
 namespace YANLib.Middlewares;
 
-public class UnauthorizedHandlerMiddleware(RequestDelegate next)
+public class UnauthorizedHandlerMiddleware
 {
-    private readonly RequestDelegate _next = next;
+    private readonly RequestDelegate _next;
+
+    public UnauthorizedHandlerMiddleware(RequestDelegate next) => _next = next;
 
     public async Task Invoke(HttpContext context)
     {

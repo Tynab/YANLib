@@ -9,13 +9,16 @@ using static YANLib.Kafka.KafkaTopic;
 
 namespace YANLib.Subscribers;
 
-public class CreateCertificateSubscriber(
-    ILogger<CreateCertificateSubscriber> logger,
-    ICertificateService certificateService
-) : YANLibAppService, ICapSubscribe
+public class CreateCertificateSubscriber : YANLibAppService, ICapSubscribe
 {
-    private readonly ILogger<CreateCertificateSubscriber> _logger = logger;
-    private readonly ICertificateService _certificateService = certificateService;
+    private readonly ILogger<CreateCertificateSubscriber> _logger;
+    private readonly ICertificateService _certificateService;
+
+    public CreateCertificateSubscriber(ILogger<CreateCertificateSubscriber> logger, ICertificateService certificateService)
+    {
+        _logger = logger;
+        _certificateService = certificateService;
+    }
 
     [CapSubscribe(CERT_CRT)]
     public async Task Subscibe(CertificateCreateEto eventData)

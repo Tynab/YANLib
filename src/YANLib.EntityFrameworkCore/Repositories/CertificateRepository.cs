@@ -11,10 +11,16 @@ using static System.DateTime;
 
 namespace YANLib.Repositories;
 
-public sealed class CertificateRepository(ILogger<CertificateRepository> logger, IYANLibDbContext dbContext) : ICertificateRepository
+public sealed class CertificateRepository : ICertificateRepository
 {
-    private readonly ILogger<CertificateRepository> _logger = logger;
-    private readonly IYANLibDbContext _dbContext = dbContext;
+    private readonly ILogger<CertificateRepository> _logger;
+    private readonly IYANLibDbContext _dbContext;
+
+    public CertificateRepository(ILogger<CertificateRepository> logger, IYANLibDbContext dbContext)
+    {
+        _logger = logger;
+        _dbContext = dbContext;
+    }
 
     public async ValueTask<IEnumerable<Certificate>> GetByDeveloperId(string developerId)
     {

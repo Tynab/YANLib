@@ -26,24 +26,27 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services;
 
-public class DeveloperService(
-    ILogger<DeveloperService> logger,
-    IDeveloperRepository repository,
-    IDeveloperTypeService developerTypeService,
-    ICertificateRepository certificateRepository,
-    IDeveloperEsService esService,
-    IDistributedEventBus distributedEventBus,
-    ICapPublisher capPublisher
-) : YANLibAppService, IDeveloperService
+public class DeveloperService : YANLibAppService, IDeveloperService
 {
-    private readonly ILogger<DeveloperService> _logger = logger;
-    private readonly IDeveloperRepository _repository = repository;
-    private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
-    private readonly ICertificateRepository _certificateRepository = certificateRepository;
-    private readonly IDeveloperEsService _esService = esService;
-    private readonly IDistributedEventBus _distributedEventBus = distributedEventBus;
-    private readonly ICapPublisher _capPublisher = capPublisher;
+    private readonly ILogger<DeveloperService> _logger;
+    private readonly IDeveloperRepository _repository;
+    private readonly IDeveloperTypeService _developerTypeService;
+    private readonly ICertificateRepository _certificateRepository;
+    private readonly IDeveloperEsService _esService;
+    private readonly IDistributedEventBus _distributedEventBus;
+    private readonly ICapPublisher _capPublisher;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
+
+    public DeveloperService(ILogger<DeveloperService> logger, IDeveloperRepository repository, IDeveloperTypeService developerTypeService, ICertificateRepository certificateRepository, IDeveloperEsService esService, IDistributedEventBus distributedEventBus, ICapPublisher capPublisher)
+    {
+        _logger = logger;
+        _repository = repository;
+        _developerTypeService = developerTypeService;
+        _certificateRepository = certificateRepository;
+        _esService = esService;
+        _distributedEventBus = distributedEventBus;
+        _capPublisher = capPublisher;
+    }
 
     public async ValueTask<DeveloperResponse> GetByIdCard(string idCard)
     {

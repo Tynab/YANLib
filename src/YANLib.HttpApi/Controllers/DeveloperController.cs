@@ -13,10 +13,16 @@ namespace YANLib.Controllers;
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/yanlib/developers")]
-public sealed class DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service) : YANLibController
+public sealed class DeveloperController : YANLibController
 {
-    private readonly ILogger<DeveloperController> _logger = logger;
-    private readonly IDeveloperService _service = service;
+    private readonly ILogger<DeveloperController> _logger;
+    private readonly IDeveloperService _service;
+
+    public DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service)
+    {
+        _logger = logger;
+        _service = service;
+    }
 
     [HttpGet("{idCard}")]
     [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]

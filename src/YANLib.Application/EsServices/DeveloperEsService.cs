@@ -13,14 +13,18 @@ using static YANLib.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.EsServices;
 
-public class DeveloperEsService(ILogger<DeveloperEsService> logger,
-    IElasticClient elasticClient,
-    IConfiguration configuration
-) : YANLibAppService, IDeveloperEsService
+public class DeveloperEsService : YANLibAppService, IDeveloperEsService
 {
-    private readonly ILogger<DeveloperEsService> _logger = logger;
-    private readonly IElasticClient _elasticClient = elasticClient;
-    private readonly IConfiguration _configuration = configuration;
+    private readonly ILogger<DeveloperEsService> _logger;
+    private readonly IElasticClient _elasticClient;
+    private readonly IConfiguration _configuration;
+
+    public DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClient elasticClient, IConfiguration configuration)
+    {
+        _logger = logger;
+        _elasticClient = elasticClient;
+        _configuration = configuration;
+    }
 
     public async ValueTask<DeveloperIndex> Get(string id)
     {

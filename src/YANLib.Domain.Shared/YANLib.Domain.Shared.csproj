@@ -6,7 +6,6 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace>YANLib</RootNamespace>
 		<GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
