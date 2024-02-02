@@ -18,7 +18,7 @@ public sealed class EcommerceController(ILogger<EcommerceController> logger, IEc
     private readonly ILogger<EcommerceController> _logger = logger;
     private readonly IEcommerceService _service = service;
 
-    [HttpGet("access-token")]
+    [HttpPost("access-token")]
     [SwaggerOperation(Summary = "Lấy access token của API login của trang Ecommerce")]
     public async ValueTask<IActionResult> GetAccessToken([Required] EcommerceLoginRequest request)
     {
@@ -28,7 +28,6 @@ public sealed class EcommerceController(ILogger<EcommerceController> logger, IEc
     }
 
     [HttpGet("refresh-token")]
-
     [SwaggerOperation(Summary = "Lấy refresh token của API refresh của trang Ecommerce")]
     public async ValueTask<IActionResult> GetRefreshToken([Required] string accessToken)
     {
