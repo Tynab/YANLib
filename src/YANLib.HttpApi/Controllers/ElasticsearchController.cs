@@ -12,7 +12,7 @@ namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
-[Route("api/yanlib/es")]
+[Route("api/es")]
 public sealed class ElasticsearchController(ILogger<ElasticsearchController> logger, IDeveloperEsService developerEsService) : YANLibController
 {
     private readonly ILogger<ElasticsearchController> _logger = logger;

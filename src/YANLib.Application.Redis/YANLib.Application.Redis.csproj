@@ -8,6 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Elastic.Apm.StackExchange.Redis" Version="1.23.0" />
 		<PackageReference Include="StackExchange.Redis" Version="2.7.17" />
 	</ItemGroup>
 

@@ -8,6 +8,8 @@ public static class YANLibDomainErrorMessages
     public const string BAD_REQUEST_ID = "Mã truyền vào không hợp lệ!";
     public const string BAD_REQUEST_GPA = "Điểm truyền vào không hợp lệ!";
     public const string BAD_REQUEST_DEV_ID = "Mã hồ sơ lập trình viên truyền vào không hợp lệ!";
+    public const string BAD_REQUEST_USER_NAME = "Tên người dùng truyền vào không hợp lệ!";
+    public const string BAD_REQUEST_PWD = "Mật khẩu truyền vào không hợp lệ!";
 
     public const string BUSINESS_ERROR = "Lỗi quy tắc!";
     public const string EXIST_ID = "Mã đã tồn tại!";

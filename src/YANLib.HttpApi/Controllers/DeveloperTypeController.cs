@@ -12,7 +12,7 @@ namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "sample")]
-[Route("api/yanlib/developer-types")]
+[Route("api/developer-types")]
 public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service) : YANLibController
 {
     private readonly ILogger<DeveloperTypeController> _logger = logger;
@@ -49,7 +49,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         return Ok(await _service.Update(code, request));
     }
 
-    [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa Developer Types từ Database sang Redis")]
     [HttpPost("sync-db-to-redis")]
+    [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa Developer Types từ Database sang Redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
 }
