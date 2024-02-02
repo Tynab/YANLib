@@ -31,6 +31,7 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
 using YANLib.EntityFrameworkCore;
+using YANLib.Middlewares;
 using YANLib.Utilities;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
@@ -38,16 +39,6 @@ using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static System.Convert;
 using static System.StringSplitOptions;
-
-#if DEBUG
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
-using YANLib.Middlewares;
-using static Microsoft.OpenApi.Models.ParameterLocation;
-using static Microsoft.OpenApi.Models.SecuritySchemeType;
-using static System.Net.HttpStatusCode;
-using static System.Threading.Tasks.Task;
-#endif
 
 namespace YANLib;
 
@@ -120,27 +111,6 @@ public class YANLibHttpApiHostModule : AbpModule
         o.Authority = configuration["AuthServer:Authority"];
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
-
-#if DEBUG
-        o.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = async c =>
-            {
-                string authorization = c.Request.Headers.Authorization;
-
-                if (authorization == configuration["Authorization:Bearer"])
-                {
-                    await CompletedTask;
-                }
-                else
-                {
-                    c.Response.StatusCode = Unauthorized.ToInt();
-                    c.Response.ContentType = "application/json";
-                    await c.Response.WriteAsync("Access Denied");
-                }
-            }
-        };
-#endif
     });
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
@@ -164,30 +134,6 @@ public class YANLibHttpApiHostModule : AbpModule
                 Title = $"YANLib API Test - {hostingEnvironment.EnvironmentName}",
                 Version = "test"
             });
-
-#if DEBUG
-            o.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
-            {
-                In = Header,
-                Description = "Please insert JWT with Bearer into field",
-                Name = "Authorization",
-                Type = ApiKey
-            });
-
-            o.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Id = "Authorization",
-                            Type = ReferenceType.SecurityScheme
-                        }
-                    }, new List<string>()
-                }
-            });
-#endif
 
             o.CustomSchemaIds(t => t.FullName.Replace("+", "."));
             o.HideAbpEndpoints();
@@ -265,9 +211,9 @@ public class YANLibHttpApiHostModule : AbpModule
         var app = context.GetApplicationBuilder();
 
         _ = context.GetEnvironment().IsDevelopment() ? app.UseDeveloperExceptionPage() : app.UseHsts();
-        _ = app.UseAllElasticApm(context.GetConfiguration()); // required first
-        _ = Subscribe(new HttpDiagnosticsSubscriber()); // required second
-        _ = Subscribe(new EfCoreDiagnosticsSubscriber()); // required third
+        _ = app.UseAllElasticApm(context.GetConfiguration()); // primary required
+        _ = Subscribe(new HttpDiagnosticsSubscriber()); // secondary required
+        _ = Subscribe(new EfCoreDiagnosticsSubscriber()); // secondary required
         _ = app.UseHttpsRedirection();
         _ = app.UseCorrelationId();
         _ = app.UseStaticFiles();
@@ -280,14 +226,11 @@ public class YANLibHttpApiHostModule : AbpModule
             _ = o.AddSupportedUICultures("vi");
         });
 
-#if DEBUG
-        _ = app.UseMiddleware<UnauthorizedHandlerMiddleware>();
-#endif
-
         _ = app.UseCors();
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
+        _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 
         _ = app.UseAbpSwaggerUI(c =>
         {
