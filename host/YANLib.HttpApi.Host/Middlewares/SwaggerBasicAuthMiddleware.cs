@@ -1,46 +1,40 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using YANLib.Core;
+using static System.Convert;
+using static System.DateTime;
+using static System.Net.HttpStatusCode;
+using static System.StringSplitOptions;
+using static System.Text.Encoding;
 
 namespace YANLib.Middlewares;
 
-public class SwaggerBasicAuthMiddleware
+public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration configuration)
 {
-    private readonly RequestDelegate _next;
-    private readonly IConfiguration _config;
+    private readonly RequestDelegate _next = next;
+    private readonly IConfiguration _configuration = configuration;
 
-    public SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration config)
-    {
-        _next = next;
-        _config = config;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
+    public async Task Invoke(HttpContext context)
     {
         if (context.Request.Path.StartsWithSegments("/swagger"))
         {
             string authHeader = context.Request.Headers["Authorization"];
-            if (authHeader != null && authHeader.StartsWith("Basic "))
+
+            if (authHeader.IsNotWhiteSpaceAndNull() && authHeader.StartsWith("Basic "))
             {
-                var encodedUsernamePassword = authHeader.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[1]?.Trim();
+                var decoded = UTF8.GetString(FromBase64String(authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim()))?.Split(':', 2);
 
-                var decodedUsernamePassword = Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword));
-
-                var username = decodedUsernamePassword.Split(':', 2)[0];
-                var password = decodedUsernamePassword.Split(':', 2)[1];
-
-                if (IsAuthorized(username, password))
+                if (IsAuthorized(decoded[0], decoded[1]))
                 {
                     await _next.Invoke(context);
+
                     return;
                 }
             }
 
             context.Response.Headers["WWW-Authenticate"] = "Basic";
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Response.StatusCode = Unauthorized.ToInt();
         }
         else
         {
@@ -48,11 +42,5 @@ public class SwaggerBasicAuthMiddleware
         }
     }
 
-    private bool IsAuthorized(string username, string password)
-    {
-        var _userName = "qq";
-        var _password = "cc";
-
-        return username.Equals(_userName, StringComparison.InvariantCultureIgnoreCase) && password.Equals(_password);
-    }
+    private bool IsAuthorized(string username, string password) => username.Equals($"{_configuration["Auth:Username"]}{Today.Day}") && password.Equals($"{_configuration["Auth:Password"]}{Now.Minute}");
 }
