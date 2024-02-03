@@ -31,7 +31,6 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
 using YANLib.EntityFrameworkCore;
-using YANLib.Middlewares;
 using YANLib.Utilities;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
@@ -230,7 +229,10 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
+
+#if RELEASE
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
+#endif
 
         _ = app.UseAbpSwaggerUI(c =>
         {

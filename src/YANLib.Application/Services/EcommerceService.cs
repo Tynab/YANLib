@@ -25,7 +25,12 @@ public class EcommerceService(
 
         try
         {
-            return await _remoteService.InvokeApi<string>(Ecommerce, ApiLogin, Post, jsonInput: json);
+            var hdrs = new Dictionary<string, string>
+            {
+                { "Accept", "*/*" },
+                { "Content-Type", "application/x-www-form-urlencoded" }
+            };
+            return await _remoteService.InvokeApi<string>(EcommerceApi, Login, Post, jsonInput: json);
         }
         catch (Exception ex)
         {
@@ -39,7 +44,7 @@ public class EcommerceService(
     {
         try
         {
-            return await _remoteService.InvokeApi<string>(Ecommerce, ApiRefresh, Get, new Dictionary<string, string>
+            return await _remoteService.InvokeApi<string>(EcommerceApi, Refresh, Get, new Dictionary<string, string>
             {
                 { "Authorization", $"Bearer {accessToken}" }
             });

@@ -23,18 +23,20 @@ public class RemoteService(
     private readonly ILogger<RemoteService> _logger = logger;
     private readonly AbpRemoteServiceOptions _remoteServiceOptions = remoteServiceOptions.Value;
 
-    public async ValueTask<T> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string> additionalHeaders = null, string jsonInput = null, Dictionary<string, object> queryParams = null)
+    public async ValueTask<T> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string> headers = null, string jsonInput = null, Dictionary<string, object> queryParams = null)
     {
         try
         {
             var req = new RestRequest(path, method);
 
-            _ = req.AddHeader("Accept", "*/*");
-            _ = req.AddHeader("Content-Type", "application/json");
-
-            if (additionalHeaders.IsNotEmptyAndNull())
+            if (headers.IsNotEmptyAndNull())
             {
-                additionalHeaders.ForEach(x => req.AddHeader(x.Key, x.Value));
+                headers.ForEach(x => req.AddHeader(x.Key, x.Value));
+            }
+            else
+            {
+                _ = req.AddHeader("Accept", "*/*");
+                _ = req.AddHeader("Content-Type", "application/json");
             }
 
             if (jsonInput.IsNotWhiteSpaceAndNull())
@@ -57,14 +59,29 @@ public class RemoteService(
             {
                 _logger.LogError("Invoke API: {PathRoot} - {Code} - {Error} - {Content}", $"{remoteRoot}{path}", res.StatusCode, res.ErrorMessage, res.Content);
 
-                throw new AbpRemoteCallException(res.Content.IsWhiteSpaceOrNull() ? new RemoteServiceErrorInfo
+                if (res.Content.IsWhiteSpaceOrNull())
                 {
-                    Code = NOT_FOUND,
-                    Message = res.ErrorException.Message
-                } : Parse(res.Content)["error"].ToString().Deserialize<RemoteServiceErrorInfo>())
+                    throw new AbpRemoteCallException(new RemoteServiceErrorInfo
+                    {
+                        Code = NOT_FOUND,
+                        Message = res.ErrorException.Message
+                    })
+                    {
+                        HttpStatusCode = res.StatusCode.ToInt()
+                    };
+                }
+                else
                 {
-                    HttpStatusCode = res.StatusCode.ToInt()
-                };
+                    var jtoken = Parse(res.Content)["error"]?.ToString();
+
+                    throw new AbpRemoteCallException(jtoken?.Deserialize<RemoteServiceErrorInfo>() ?? new RemoteServiceErrorInfo
+                    {
+                        Message = jtoken
+                    })
+                    {
+                        HttpStatusCode = res.StatusCode.ToInt()
+                    };
+                }
             }
         }
         catch (Exception ex)

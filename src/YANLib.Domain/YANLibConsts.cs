@@ -45,12 +45,12 @@ public static class YANLibConsts
 
     public readonly struct RemoteService
     {
-        public const string Ecommerce = "Ecommerce";
+        public const string EcommerceApi = "EcommerceApi";
 
         public readonly struct Path
         {
-            public const string ApiLogin = "/api/login";
-            public const string ApiRefresh = "/api/refresh";
+            public const string Login = "login";
+            public const string Refresh = "refresh";
         }
     }
 }
