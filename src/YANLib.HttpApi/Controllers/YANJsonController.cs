@@ -11,7 +11,7 @@ namespace YANLib.Controllers;
 
 [RemoteService]
 [ApiExplorerSettings(GroupName = "test")]
-[Route("api/yanlib/json")]
+[Route("api/json")]
 public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service) : YANLibController
 {
     private readonly ILogger<YANJsonController> _logger = logger;

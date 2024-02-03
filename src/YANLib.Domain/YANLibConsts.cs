@@ -42,4 +42,15 @@ public static class YANLibConsts
 
         public static readonly string DeveloperTypeGroup = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}";
     }
+
+    public readonly struct RemoteService
+    {
+        public const string EcommerceApi = "EcommerceApi";
+
+        public readonly struct Path
+        {
+            public const string Login = "login";
+            public const string Refresh = "refresh";
+        }
+    }
 }

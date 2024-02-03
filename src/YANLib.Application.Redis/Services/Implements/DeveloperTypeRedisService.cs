@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Elastic.Apm.StackExchange.Redis;
+using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Volo.Abp;
 using YANLib.Application.Redis.ConnectionFactory;
@@ -23,6 +24,7 @@ public class DeveloperTypeRedisService : IRedisService<DeveloperTypeRedisDto>
         _logger = logger;
         _connectionFactory = connectionFactory;
         _connectionMultiplexer = _connectionFactory.Connection();
+        _connectionMultiplexer.UseElasticApm();
         _database = _connectionMultiplexer.GetDatabase();
     }
 
