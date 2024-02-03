@@ -32,16 +32,21 @@ public class RemoteService(
             if (headers.IsNotEmptyAndNull())
             {
                 headers.ForEach(x => req.AddHeader(x.Key, x.Value));
+
+                if (jsonInput.IsNotWhiteSpaceAndNull())
+                {
+                    _ = req.AddParameter(headers["Content-Type"], jsonInput, RequestBody);
+                }
             }
             else
             {
                 _ = req.AddHeader("Accept", "*/*");
                 _ = req.AddHeader("Content-Type", "application/json");
-            }
 
-            if (jsonInput.IsNotWhiteSpaceAndNull())
-            {
-                _ = req.AddParameter("application/json", jsonInput, RequestBody);
+                if (jsonInput.IsNotWhiteSpaceAndNull())
+                {
+                    _ = req.AddParameter("application/json", jsonInput, RequestBody);
+                }
             }
 
             if (queryParams.IsNotEmptyAndNull())

@@ -50,7 +50,7 @@ public static class YANLibConsts
         public readonly struct Path
         {
             public const string Login = "login";
-            public const string Refresh = "refresh";
+            public const string TokenRefresh = "token/refresh";
         }
     }
 }

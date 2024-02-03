@@ -6,7 +6,7 @@ namespace YANLib.Services;
 
 public interface IEcommerceService : IApplicationService
 {
-    public ValueTask<string> GetAccessToken(EcommerceLoginRequest request);
+    public ValueTask<object> GetAccessToken(EcommerceLoginRequest request);
 
-    public ValueTask<string> GetRefreshToken(string accessToken);
+    public ValueTask<object> GetRefreshToken(string accessToken);
 }
