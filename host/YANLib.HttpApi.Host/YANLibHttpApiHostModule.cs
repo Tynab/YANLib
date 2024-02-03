@@ -1,3 +1,7 @@
+#if RELEASE
+using YANLib.Middlewares;
+#endif
+
 using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
