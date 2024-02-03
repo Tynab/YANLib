@@ -19,18 +19,17 @@ public class EcommerceService(
     private readonly ILogger<EcommerceService> _logger = logger;
     private readonly IRemoteService _remoteService = remoteService;
 
-    public async ValueTask<string> GetAccessToken(EcommerceLoginRequest request)
+    public async ValueTask<object> GetAccessToken(EcommerceLoginRequest request)
     {
         var json = request.Serialize();
 
         try
         {
-            var hdrs = new Dictionary<string, string>
+            return await _remoteService.InvokeApi<object>(EcommerceApi, Login, Post, headers: new Dictionary<string, string>
             {
                 { "Accept", "*/*" },
                 { "Content-Type", "application/x-www-form-urlencoded" }
-            };
-            return await _remoteService.InvokeApi<string>(EcommerceApi, Login, Post, jsonInput: json);
+            }, queryParams: request.Serialize().Deserialize<Dictionary<string, object>>());
         }
         catch (Exception ex)
         {
@@ -40,11 +39,11 @@ public class EcommerceService(
         }
     }
 
-    public async ValueTask<string> GetRefreshToken(string accessToken)
+    public async ValueTask<object> GetRefreshToken(string accessToken)
     {
         try
         {
-            return await _remoteService.InvokeApi<string>(EcommerceApi, Refresh, Get, new Dictionary<string, string>
+            return await _remoteService.InvokeApi<object>(EcommerceApi, TokenRefresh, Get, new Dictionary<string, string>
             {
                 { "Authorization", $"Bearer {accessToken}" }
             });
