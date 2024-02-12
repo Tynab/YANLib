@@ -9,7 +9,7 @@ resources:
 - repo: self
 
 variables:
-  azureSubscription: '273e60b9-124a-496e-9236-ce1b21005969'
+  azureSubscription: '9b791a50-a9ef-47ec-8062-24f41a8aca2f'
   appName: 'yanlib'
 
   # Container registry service connection established during pipeline creation
