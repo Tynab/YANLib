@@ -9,8 +9,8 @@ resources:
 - repo: self
 
 variables:
-  azureSubscription: 'Azure Subscription'
-  appName: 'yanlib'
+  azureSubscription: <Name of the Azure subscription>
+  appName: <Name of the Web App>
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'ce9f9676-fd62-44d0-b5f0-edbfe9efa601'
