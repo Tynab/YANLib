@@ -68,14 +68,23 @@ public class YANLibHttpApiHostModule : AbpModule
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true);
         Configure<AbpDistributedCacheOptions>(o => o.KeyPrefix = "YANLib:");
-        ConfigureLocalization();
-        ConfigureConventionalControllers();
-        ConfigureCors(context, configuration);
         ConfigureAuthentication(context, configuration);
+        ConfigureConventionalControllers();
+        ConfigureLocalization();
+        ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHealthChecks(context, configuration);
     }
+
+    private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
+    {
+        o.Authority = configuration["AuthServer:Authority"];
+        o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+        o.Audience = configuration["AuthServer:ApiName"];
+    });
+
+    private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
 
     private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(o =>
     {
@@ -102,19 +111,10 @@ public class YANLibHttpApiHostModule : AbpModule
         o.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
     });
 
-    private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
-
     private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddCors(s => s
         .AddDefaultPolicy(b => b
             .WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o
                 .RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
-
-    private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
-    {
-        o.Authority = configuration["AuthServer:Authority"];
-        o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
-        o.Audience = configuration["AuthServer:ApiName"];
-    });
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
@@ -244,8 +244,10 @@ public class YANLibHttpApiHostModule : AbpModule
             c.SwaggerEndpoint("/swagger/test/swagger.json", "YANLib API Test");
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
+            c.DefaultModelsExpandDepth(-1);
         });
 
+        _ = app.UseUnitOfWork();
         _ = app.UseAuditing();
         _ = app.UseAbpSerilogEnrichers();
 
