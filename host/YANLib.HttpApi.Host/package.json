@@ -1,8 +1,5 @@
 {
   "version": "1.0.0",
   "name": "yan-lib",
-  "private": true,
-  "dependencies": {
-    //"@abp/aspnetcore.mvc.ui.theme.leptonxlite": "~1.0.0-rc.7"
-  }
+  "private": true
 }
