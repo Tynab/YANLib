@@ -1,5 +1,5 @@
 # YAMI AN NEPHILIM LIBRARY
-YANLib is based on .NET 6.0 (LTS)
+YANLib is based on .NET 6.0 (LTS).
 
 ### INSTALL
 https://www.nuget.org/packages/Tynab.YANLib
