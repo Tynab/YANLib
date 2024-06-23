@@ -7,13 +7,13 @@ namespace YANLib.Benchmarks.Process.Common;
 
 public class ClassTypeBenchmark
 {
-    private SampleModel? _class;
-    private SampleSealed? _sealed;
-    private SampleRecord? _record;
+    private SampleModel _class;
+    private SampleSealed _sealed;
+    private SampleRecord _record;
     private SampleStruct _struct;
     private SampleStructReadonly _structReadonly;
-    private SampleSealedRecord? _sealedRecord;
-    private SampleRecordClass? _recordClass;
+    private SampleSealedRecord _sealedRecord;
+    private SampleRecordClass _recordClass;
     private SampleRecordStruct _recordStruct;
     private SampleRecordStructReadonly _recordStructReadonly;
 
@@ -27,34 +27,42 @@ public class ClassTypeBenchmark
         {
             Id = NewGuid()
         };
+
         _sealed = new SampleSealed
         {
             Id = NewGuid()
         };
+
         _record = new SampleRecord
         {
             Id = NewGuid()
         };
+
         _struct = new SampleStruct
         {
             Id = NewGuid()
         };
+
         _structReadonly = new SampleStructReadonly
         {
             Id = NewGuid()
         };
+
         _sealedRecord = new SampleSealedRecord
         {
             Id = NewGuid()
         };
+
         _recordClass = new SampleRecordClass
         {
             Id = NewGuid()
         };
+
         _recordStruct = new SampleRecordStruct
         {
             Id = NewGuid()
         };
+
         _recordStructReadonly = new SampleRecordStructReadonly
         {
             Id = NewGuid()
@@ -64,17 +72,17 @@ public class ClassTypeBenchmark
     [Benchmark(Baseline = true)]
     public void Class() => For(0, Size, index => _ = new SampleModel
     {
-        Id = _class!.Id
+        Id = _class.Id
     });
 
     [Benchmark]
     public void Sealed() => For(0, Size, index => _ = new SampleSealed
     {
-        Id = _sealed!.Id
+        Id = _sealed.Id
     });
 
     [Benchmark]
-    public void Record() => For(0, Size, index => _ = _record! with { });
+    public void Record() => For(0, Size, index => _ = _record with { });
 
     [Benchmark]
     public void Struct() => For(0, Size, index => _ = new SampleStruct
@@ -89,12 +97,12 @@ public class ClassTypeBenchmark
     });
 
     [Benchmark]
-    public void Sealed_Record() => For(0, Size, index => _ = _sealedRecord! with { });
+    public void Sealed_Record() => For(0, Size, index => _ = _sealedRecord with { });
 
     [Benchmark]
     public void Record_Class() => For(0, Size, index => _ = new SampleRecordClass
     {
-        Id = _recordClass!.Id
+        Id = _recordClass.Id
     });
 
     [Benchmark]

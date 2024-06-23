@@ -5,7 +5,7 @@ namespace YANLib.Benchmarks.Process.Common;
 
 public class LoopBenchmark
 {
-    private List<int>? _list;
+    private List<int> _list;
 
     [Params(1_000, 10_000, 100_000, 1_000_000)]
     public int Size { get; set; }
@@ -14,6 +14,7 @@ public class LoopBenchmark
     public void Setup()
     {
         _list = new List<int>(Size);
+
         for (var i = 0; i < Size; i++)
         {
             _list.Add(i);
@@ -23,7 +24,7 @@ public class LoopBenchmark
     [Benchmark(Baseline = true)]
     public void For()
     {
-        for (var i = 0; i < _list!.Count; i++)
+        for (var i = 0; i < _list.Count; i++)
         {
             _ = _list[i];
         }
@@ -32,14 +33,14 @@ public class LoopBenchmark
     [Benchmark]
     public void Foreach()
     {
-        foreach (var item in _list!)
+        foreach (var item in _list)
         {
             _ = item;
         }
     }
 
     [Benchmark]
-    public void Foreach_List() => _list!.ForEach(_ => { });
+    public void Foreach_List() => _list.ForEach(_ => { });
 
     [Benchmark]
     public void Foreach_Span()

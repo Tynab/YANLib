@@ -3,7 +3,7 @@ using YANLib.Benchmarks.Process.Common;
 using YANLib.Benchmarks.Process.Library;
 using static BenchmarkDotNet.Running.BenchmarkRunner;
 
-var choosen = 0;
+var choosen = -1;
 
 switch (choosen)
 {

@@ -9,7 +9,7 @@ namespace YANLib.Benchmarks.Process.Library;
 
 public class JsonDeserializeBenchmark
 {
-    private string? _json;
+    private string _json;
 
     [Params(1_000, 10_000, 100_000, 1_000_000)]
     public int Size { get; set; }
@@ -21,8 +21,8 @@ public class JsonDeserializeBenchmark
     }.Serialize();
 
     [Benchmark(Baseline = true)]
-    public void YANLib_Json() => For(0, Size, index => _json!.Deserialize<SampleModel>());
+    public void YANLib_Json() => For(0, Size, index => _json.Deserialize<SampleModel>());
 
     [Benchmark]
-    public void Newtonsoft_Json() => For(0, Size, index => DeserializeObject<SampleModel>(_json!));
+    public void Newtonsoft_Json() => For(0, Size, index => DeserializeObject<SampleModel>(_json));
 }
