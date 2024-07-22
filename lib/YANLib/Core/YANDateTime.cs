@@ -10,24 +10,64 @@ namespace YANLib.Core;
 
 public static partial class YANDateTime
 {
+    /// <summary>
+    /// Converts the specified string to its equivalent DateTime representation.
+    /// If the string is <see langword="null"/> or consists only of white-space characters, returns the specified default value.
+    /// If the conversion fails, returns the specified default value.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime. Can be <see langword="null"/> or white-space.</param>
+    /// <param name="dfltVal">The default DateTime value to return if the string is <see langword="null"/>, white-space, or conversion fails.</param>
+    /// <returns>The DateTime representation of the string, or the specified default value if the string is <see langword="null"/>, white-space, or conversion fails.</returns>
     public static DateTime ToDateTime(this string? str, DateTime dfltVal = default) => str.IsWhiteSpaceOrNull()
         ? dfltVal
         : TryParse(str, out var dt)
         ? dt
         : dfltVal;
 
+    /// <summary>
+    /// Converts the specified collection of strings to their equivalent DateTime representations.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// Each string in the collection that is <see langword="null"/> or white-space, or fails to convert, is replaced with the specified default value.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to use if a string is <see langword="null"/>, white-space, or conversion fails.</param>
+    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime representations of the strings, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal));
 
+    /// <summary>
+    /// Converts the specified collection of strings to their equivalent DateTime representations.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// Each string in the collection that is <see langword="null"/> or white-space, or fails to convert, is replaced with the specified default value.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to use if a string is <see langword="null"/>, white-space, or conversion fails.</param>
+    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime representations of the strings, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal));
 
+    /// <summary>
+    /// Converts the specified array of strings to their equivalent DateTime representations.
+    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// Each string in the array that is <see langword="null"/> or white-space, or fails to convert, is replaced with the specified default value.
+    /// </summary>
+    /// <param name="strs">The array of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to use if a string is <see langword="null"/>, white-space, or conversion fails.</param>
+    /// <returns>An <see cref="IEnumerable{DateTime}"/> containing the DateTime representations of the strings, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal));
 
+    /// <summary>
+    /// Converts the specified string to its equivalent DateTime representation using the provided formats.
+    /// If the string is <see langword="null"/> or white-space, returns the default DateTime value.
+    /// If no formats are provided, attempts to parse the string using the default format.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime value. Can be <see langword="null"/> or white-space.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>The DateTime representation of the string, or the default DateTime value if the string is <see langword="null"/>, white-space, or conversion fails.</returns>
     public static DateTime ToDateTime(this string? str, IEnumerable<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
         ? default
         : fmts.IsEmptyOrNull()
@@ -38,18 +78,46 @@ public static partial class YANDateTime
         ? dt
         : default;
 
+    /// <summary>
+    /// Converts an enumerable collection of strings to their equivalent DateTime representations using the provided formats.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An enumerable collection of DateTime values, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts a collection of strings to their equivalent DateTime representations using the provided formats.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>A collection of DateTime values, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts an array of strings to their equivalent DateTime representations using the provided formats.
+    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The array of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An array of DateTime values, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts a string to its equivalent DateTime representation using the provided formats.
+    /// If the string is <see langword="null"/> or whitespace, returns the default DateTime value.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime value. Can be <see langword="null"/> or whitespace.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>The converted DateTime value, or the default DateTime value if the input string is <see langword="null"/> or whitespace, or if parsing fails.</returns>
     public static DateTime ToDateTime(this string? str, ICollection<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
         ? default
         : fmts.IsEmptyOrNull()
@@ -60,18 +128,46 @@ public static partial class YANDateTime
         ? dt
         : default;
 
+    /// <summary>
+    /// Converts an enumerable of strings to their equivalent DateTime representations using the provided formats.
+    /// If the enumerable is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The enumerable of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An enumerable of converted DateTime values, or <see langword="null"/> if the input enumerable is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts a collection of strings to their equivalent DateTime representations using the provided formats.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>A collection of converted DateTime values, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts an array of strings to their equivalent DateTime representations using the provided formats.
+    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The array of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An array of converted DateTime values, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts a string to its equivalent DateTime representation using the provided formats.
+    /// If the string is <see langword="null"/> or whitespace, returns the default value of DateTime.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime value. Can be <see langword="null"/> or whitespace.</param>
+    /// <param name="fmts">An optional array of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>The converted DateTime value, or the default value of DateTime if the input string is <see langword="null"/> or whitespace, or if the conversion fails.</returns>
     public static DateTime ToDateTime(this string? str, params string?[]? fmts) => str.IsWhiteSpaceOrNull()
         ? default
         : fmts.IsEmptyOrNull()
@@ -82,18 +178,47 @@ public static partial class YANDateTime
         ? dt
         : default;
 
+    /// <summary>
+    /// Converts a collection of strings to their equivalent DateTime representations using the provided formats.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional array of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>A collection of DateTime values converted from the input strings, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts a collection of strings to their equivalent DateTime representations using the provided formats.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional array of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>A collection of DateTime values converted from the input strings, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts an array of strings to their equivalent DateTime representations using the provided formats.
+    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The array of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="fmts">An optional array of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An array of DateTime values converted from the input strings, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(fmts));
 
+    /// <summary>
+    /// Converts a string to its equivalent DateTime representation using the provided formats or the default format.
+    /// If the string is <see langword="null"/> or whitespace, returns the specified default value.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime value. Can be <see langword="null"/> or whitespace.</param>
+    /// <param name="dfltVal">The default DateTime value to return if the conversion fails or the string is <see langword="null"/> or whitespace.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>The DateTime value converted from the input string, or the specified default value if the conversion fails or the string is <see langword="null"/> or whitespace.</returns>
     public static DateTime ToDateTime(this string? str, DateTime dfltVal = default, IEnumerable<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
         ? dfltVal
         : fmts.IsEmptyOrNull()
@@ -104,18 +229,51 @@ public static partial class YANDateTime
         ? dt
         : dfltVal;
 
+    /// <summary>
+    /// Converts an enumerable collection of strings to their equivalent DateTime representations using the provided formats or the default format.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The enumerable collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to use if the conversion of a string fails.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An enumerable collection of DateTime values converted from the input strings, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
+    /// <summary>
+    /// Converts a collection of strings to their equivalent DateTime representations using the provided formats or the default format.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to use if the conversion of a string fails.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An enumerable collection of DateTime values converted from the input strings, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
+    /// <summary>
+    /// Converts an array of strings to their equivalent DateTime representations using the provided formats or the default format.
+    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// </summary>
+    /// <param name="strs">The array of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to use if the conversion of a string fails.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An enumerable collection of DateTime values converted from the input strings, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
+    /// <summary>
+    /// Converts a string to a DateTime value using the provided formats or the default format.
+    /// If the string is <see langword="null"/> or consists only of whitespace, returns the default DateTime value.
+    /// If the string cannot be parsed using the provided formats or the default format, returns the default DateTime value.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime value. Can be <see langword="null"/> or consist only of whitespace.</param>
+    /// <param name="dfltVal">The default DateTime value to return if the string is <see langword="null"/> or cannot be parsed.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>The DateTime value converted from the string, or the default DateTime value if the string cannot be parsed.</returns>
     public static DateTime ToDateTime(this string? str, DateTime dfltVal = default, ICollection<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
         ? dfltVal
         : fmts.IsEmptyOrNull()
@@ -126,18 +284,57 @@ public static partial class YANDateTime
         ? dt
         : dfltVal;
 
+    /// <summary>
+    /// Converts a collection of strings to a collection of DateTime values using the provided formats or the default format.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// Each string that is <see langword="null"/> or consists only of whitespace will be converted to the default DateTime value.
+    /// Each string that cannot be parsed using the provided formats or the default format will be converted to the default DateTime value.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to return if a string is <see langword="null"/>, consists only of whitespace, or cannot be parsed.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing each string. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An IEnumerable of DateTime values converted from the strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
+    /// <summary>
+    /// Converts a collection of strings to a collection of DateTime values using the provided formats or the default format.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// Each string that is <see langword="null"/> or consists only of whitespace will be converted to the default DateTime value.
+    /// Each string that cannot be parsed using the provided formats or the default format will be converted to the default DateTime value.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to return if a string is <see langword="null"/>, consists only of whitespace, or cannot be parsed.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing each string. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An IEnumerable of DateTime values converted from the strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
+    /// <summary>
+    /// Converts an array of strings to a collection of DateTime values using the provided formats or the default format.
+    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// Each string that is <see langword="null"/> or consists only of whitespace will be converted to the default DateTime value.
+    /// Each string that cannot be parsed using the provided formats or the default format will be converted to the default DateTime value.
+    /// </summary>
+    /// <param name="strs">The array of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to return if a string is <see langword="null"/>, consists only of whitespace, or cannot be parsed.</param>
+    /// <param name="fmts">An optional collection of date and time formats to use for parsing each string. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An IEnumerable of DateTime values converted from the strings, or <see langword="null"/> if the array is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
 
+    /// <summary>
+    /// Converts a string to a DateTime value using the provided formats or the default format.
+    /// If the string is <see langword="null"/> or consists only of whitespace, returns the default DateTime value.
+    /// If the string cannot be parsed using the provided formats or the default format, returns the default DateTime value.
+    /// </summary>
+    /// <param name="str">The string to convert to a DateTime value. Can be <see langword="null"/> or consist only of whitespace.</param>
+    /// <param name="dfltVal">The default DateTime value to return if the string is <see langword="null"/>, consists only of whitespace, or cannot be parsed.</param>
+    /// <param name="fmts">An optional array of date and time formats to use for parsing the string. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>A DateTime value converted from the string, or the default DateTime value if the string is <see langword="null"/>, consists only of whitespace, or cannot be parsed.</returns>
     public static DateTime ToDateTime(this string? str, DateTime dfltVal = default, params string?[]? fmts) => str.IsWhiteSpaceOrNull()
         ? dfltVal
         : fmts.IsEmptyOrNull()
@@ -148,6 +345,15 @@ public static partial class YANDateTime
         ? dt
         : dfltVal;
 
+    /// <summary>
+    /// Converts an enumerable collection of strings to an enumerable collection of DateTime values using the provided formats or the default format.
+    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
+    /// For each string, if it is <see langword="null"/> or consists only of whitespace, or cannot be parsed using the provided formats or the default format, returns the default DateTime value.
+    /// </summary>
+    /// <param name="strs">The collection of strings to convert to DateTime values. Can be <see langword="null"/> or empty.</param>
+    /// <param name="dfltVal">The default DateTime value to return for a string if it is <see langword="null"/>, consists only of whitespace, or cannot be parsed.</param>
+    /// <param name="fmts">An optional array of date and time formats to use for parsing each string. If <see langword="null"/> or empty, the default format is used.</param>
+    /// <returns>An enumerable collection of DateTime values converted from the collection of strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default, params string?[]? fmts) => strs.IsEmptyOrNull()
         ? default
         : strs.Select(x => x.ToDateTime(dfltVal, fmts));
