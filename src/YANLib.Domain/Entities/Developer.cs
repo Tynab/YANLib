@@ -18,13 +18,19 @@ public sealed class Developer
 
     public int DeveloperTypeCode { get; set; }
 
-    public bool IsActive { get; set; }
-
     public int Version { get; set; }
+
+    public string CreatedBy { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
+    public string UpdatedBy { get; set; }
+
     public DateTime? UpdatedAt { get; set; }
+
+    public bool IsActive { get; set; }
+
+    public bool IsDeleted { get; set; }
 
     [ForeignKey(nameof(DeveloperTypeCode))]
     public DeveloperType DeveloperType { get; set; }

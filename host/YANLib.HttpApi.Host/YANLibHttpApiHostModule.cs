@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System;
@@ -40,8 +41,12 @@ using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
 using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
+using static Microsoft.OpenApi.Models.ReferenceType;
+using static Microsoft.OpenApi.Models.SecuritySchemeType;
+using static System.Array;
 using static System.Convert;
 using static System.StringSplitOptions;
+using static System.Text.Encoding;
 
 namespace YANLib;
 
@@ -68,7 +73,8 @@ public class YANLibHttpApiHostModule : AbpModule
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true);
         Configure<AbpDistributedCacheOptions>(o => o.KeyPrefix = "YANLib:");
-        ConfigureAuthentication(context, configuration);
+        ConfigureAuthenticationSwagger(context, configuration);
+        //ConfigureAuthentication(context, configuration);
         ConfigureConventionalControllers();
         ConfigureLocalization();
         ConfigureCors(context, configuration);
@@ -77,12 +83,24 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureHealthChecks(context, configuration);
     }
 
-    private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
+    private static void ConfigureAuthenticationSwagger(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
     {
         o.Authority = configuration["AuthServer:Authority"];
         o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
         o.Audience = configuration["AuthServer:ApiName"];
     });
+
+    private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
+        => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["JWT:Issuer"],
+            ValidAudience = configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(UTF8.GetBytes(configuration["JWT:Secret"] ?? string.Empty))
+        });
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
 
@@ -136,6 +154,30 @@ public class YANLibHttpApiHostModule : AbpModule
             {
                 Title = $"YANLib API Test - {hostingEnvironment.EnvironmentName}",
                 Version = "test"
+            });
+
+            o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "JWT Authorization header using the Bearer scheme."
+            });
+
+            o.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    }, Empty<string>()
+                }
             });
 
             o.CustomSchemaIds(t => t.FullName.Replace("+", "."));

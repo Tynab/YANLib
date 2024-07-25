@@ -37,6 +37,7 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetAllDeveloperTypeService-Exception");
+
             throw;
         }
     }
@@ -57,6 +58,7 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetDeveloperTypeService-Exception: {Code}", code);
+
             throw;
         }
     }
@@ -88,6 +90,7 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "CreateDeveloperTypeService-Exception: {Request}", request.Serialize());
+
             throw;
         }
     }
@@ -118,6 +121,7 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "UpdateDeveloperTypeService-Exception: {Request}", request.Serialize());
+
             throw;
         }
     }
@@ -139,6 +143,7 @@ public class DeveloperTypeService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToRedisDeveloperTypeService-Exception");
+
             throw;
         }
     }

@@ -54,6 +54,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetByIdCardDeveloperService-Exception: {IdCard}", idCard);
+
             throw;
         }
     }
@@ -106,6 +107,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "CreateDeveloperService-Exception: {Request}", request.Serialize());
+
             throw;
         }
     }
@@ -173,6 +175,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "AdjustDeveloperService-Exception: {IdCard} - {DTO}", idCard, dto.Serialize());
+
             throw;
         }
     }
@@ -186,6 +189,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetByPhoneDeveloperService-Exception: {Phone}", phone);
+
             throw;
         }
     }
@@ -199,6 +203,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SearchByPhoneDeveloperService-Exception: {SearchText}", searchText);
+
             throw;
         }
     }
@@ -239,6 +244,7 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToEsDeveloperService-Exception");
+
             throw;
         }
     }

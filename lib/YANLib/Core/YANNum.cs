@@ -180,7 +180,7 @@ public static partial class YANNum
     public static IEnumerable<T>? Tans<T>(this ICollection<object?>? vals) where T : unmanaged => vals.IsEmptyOrNull() ? default : vals.Select(x => x.Tan<T>());
 
     public static IEnumerable<T>? Tans<T>(this object?[]? vals) where T : unmanaged => vals.IsEmptyOrNull() ? default : vals.Select(x => x.Tan<T>());
-    
+
     public static T Asin<T>(this object? val) where T : unmanaged => Math.Asin(val.ToDouble()).To<T>();
 
     public static IEnumerable<T>? Asins<T>(this IEnumerable<object?>? vals) where T : unmanaged => vals.IsEmptyOrNull() ? default : vals.Select(x => x.Asin<T>());

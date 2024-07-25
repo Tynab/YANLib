@@ -5,6 +5,8 @@ using Serilog;
 using System;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Builder.WebApplication;
+using static Serilog.Events.LogEventLevel;
+using static System.StringComparison;
 
 namespace YANLib;
 
@@ -12,7 +14,17 @@ public class Program
 {
     public async static Task<int> Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration().MinimumLevel.Information().Enrich.FromLogContext().WriteTo.Async(c => c.Console()).CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+#if DEBUG
+            .MinimumLevel.Debug()
+#else
+            .MinimumLevel.Information()
+#endif
+            .MinimumLevel.Override("Microsoft", Information)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Warning)
+            .Enrich.FromLogContext()
+            .WriteTo.Async(c => c.Console())
+            .CreateLogger();
 
         try
         {
@@ -32,6 +44,11 @@ public class Program
         }
         catch (Exception ex)
         {
+            if (ex.GetType().Name.Equals("StopTheHostException", Ordinal))
+            {
+                throw;
+            }
+
             Log.Fatal(ex, "Host terminated unexpectedly!");
 
             return 1;
