@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.Json;
@@ -154,18 +153,4 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
             return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 6.0.3:\t\t{voloTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
         }
     }
-
-    public ValueTask<string> JsonSerialize(Guid id) => ValueTask.FromResult(new JsonResponse
-    {
-        Id = id
-    }.StandardSerialize());
-
-    public ValueTask<string> JsonSerializeOptionalName(Guid idOptionalName) => ValueTask.FromResult(new JsonOptionalNameResponse
-    {
-        Id = idOptionalName
-    }.StandardSerialize());
-
-    public ValueTask<JsonResponse> JsonDeserialize(string json) => ValueTask.FromResult(json.Deserialize<JsonResponse>());
-
-    public ValueTask<JsonOptionalNameResponse> JsonDeserializeOptionalName(string json) => ValueTask.FromResult(json.Deserialize<JsonOptionalNameResponse>());
 }

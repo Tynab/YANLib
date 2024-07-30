@@ -1,12 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using YANLib.Requests;
+using YANLib.Requests.Certificate;
+using YANLib.Responses;
 
 namespace YANLib.Services;
 
-public interface ICertificateService : IApplicationService
+public interface ICertificateService : ICrudAppService<CertificateResponse, Guid, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest>
 {
-    public ValueTask<bool> Create(CertificateRequest request);
-
-    public ValueTask<bool> Update(CertificateRequest request);
 }

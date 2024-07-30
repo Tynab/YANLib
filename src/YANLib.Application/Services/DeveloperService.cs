@@ -77,7 +77,7 @@ public class DeveloperService(
 
             if (rslt is not null)
             {
-                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeId);
             }
 
             if (request.Certificates.IsNotEmptyAndNull())
@@ -124,13 +124,13 @@ public class DeveloperService(
             ent.Name = dto.Name ?? ent.Name;
             ent.Phone = dto.Phone ?? ent.Phone;
             ent.IdCard = idCard;
-            ent.DeveloperTypeCode = dto.DeveloperTypeCode ?? ent.DeveloperTypeCode;
+            ent.DeveloperTypeId = dto.DeveloperTypeCode ?? ent.DeveloperTypeId;
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
 
             if (rslt is not null)
             {
-                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeId);
             }
 
             if (dto.Certificates.IsNotEmptyAndNull())

@@ -1,5 +1,3 @@
 ﻿namespace YANLib.Settings;
 
-public static class YANLibSettings
-{
-}
+public static class YANLibSettings { }

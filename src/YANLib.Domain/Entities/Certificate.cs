@@ -4,27 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YANLib.Entities;
 
-[Table("Certificates")]
-public sealed class Certificate
+public sealed class Certificate : YANLibEntity
 {
-    [Key]
-    public string Id { get; set; }
+    public string Code { get; set; }
 
     public string Name { get; set; }
 
     public double? GPA { get; set; }
 
-    public string DeveloperId { get; set; }
-
-    public string CreatedBy { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public string UpdatedBy { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public bool IsDeleted { get; set; }
+    public Guid DeveloperId { get; set; }
 }

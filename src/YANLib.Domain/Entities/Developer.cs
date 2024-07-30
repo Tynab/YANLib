@@ -4,34 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YANLib.Entities;
 
-[Table("Developers")]
-public sealed class Developer
+public sealed class Developer : YANLibEntity
 {
-    [Key]
-    public string Id { get; set; }
-
     public string Name { get; set; }
 
     public string Phone { get; set; }
 
     public string IdCard { get; set; }
 
-    public int DeveloperTypeCode { get; set; }
+    public Guid DeveloperTypeId { get; set; }
 
     public int Version { get; set; }
 
-    public string CreatedBy { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public string UpdatedBy { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    [ForeignKey(nameof(DeveloperTypeCode))]
+    [ForeignKey(nameof(DeveloperTypeId))]
     public DeveloperType DeveloperType { get; set; }
 }

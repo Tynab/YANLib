@@ -1,21 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace YANLib.Requests.Developer;
 
-public sealed class DeveloperUpdateRequest
+public sealed class DeveloperUpdateRequest : YANLibUpdateRequest
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public string Phone { get; set; }
 
-    public int? DeveloperTypeCode { get; set; }
+    public required string IdCard { get; set; }
 
-    public List<Certificate> Certificates { get; set; }
+    public required Guid DeveloperTypeId { get; set; }
 
-    public sealed class Certificate
-    {
-        public required string Name { get; set; }
-
-        public double? GPA { get; set; }
-    }
+    public int Version { get; set; }
 }

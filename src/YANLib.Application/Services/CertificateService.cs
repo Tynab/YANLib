@@ -1,46 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
-using YANLib.Core;
+﻿using System;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
 using YANLib.Entities;
-using YANLib.Repositories;
-using YANLib.Requests;
+using YANLib.Requests.Certificate;
+using YANLib.Responses;
 
 namespace YANLib.Services;
 
-public class CertificateService(
-    ILogger<CertificateService> logger,
-    ICertificateRepository repository
-) : YANLibAppService, ICertificateService
+public class CertificateService(IRepository<Certificate, Guid> repository)
+    : CrudAppService<Certificate, CertificateResponse, Guid, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest>(repository), ICertificateService
 {
-    private readonly ILogger<CertificateService> _logger = logger;
-    private readonly ICertificateRepository _repository = repository;
-
-    public async ValueTask<bool> Create(CertificateRequest request)
-    {
-        try
-        {
-            return await _repository.Create(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "CreateCertificateService-Exception: {Request}", request.Serialize());
-
-            throw;
-        }
-    }
-
-    public async ValueTask<bool> Update(CertificateRequest request)
-    {
-        try
-        {
-            return await _repository.Update(ObjectMapper.Map<CertificateRequest, Certificate>(request)) is not null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "UpdateCertificateService-Exception: {Request}", request.Serialize());
-
-            throw;
-        }
-    }
 }

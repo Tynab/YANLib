@@ -19,6 +19,7 @@ public class YANLibDbContext(DbContextOptions<YANLibDbContext> options) : AbpDbC
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
         _ = builder.HasDefaultSchema(Sample);
         builder.ConfigureYANLib();
     }

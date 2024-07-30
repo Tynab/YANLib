@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using YANLib.Core;
 using YANLib.Kafka.Etos;
-using YANLib.Requests;
+using YANLib.Requests.Certificate;
 using YANLib.Services;
 using static YANLib.Kafka.KafkaTopic;
 
@@ -21,6 +21,6 @@ public class CreateCertificateSubscriber(
     public async Task Subscibe(CertificateCreateEto eventData)
     {
         _logger.LogInformation("CreateCertificateSubscriber-Subscribe: {EventData}", eventData.Serialize());
-        _logger.LogInformation("CreateCertificateSubscriber-CreateCertificateService: {Responses}", await _certificateService.Create(ObjectMapper.Map<CertificateCreateEto, CertificateRequest>(eventData)));
+        _logger.LogInformation("CreateCertificateSubscriber-CreateCertificateService: {Responses}", await _certificateService.Create(ObjectMapper.Map<CertificateCreateEto, CertificateCreateRequest>(eventData)));
     }
 }

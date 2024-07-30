@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace YANLib.Requests.Developer;
 
-public sealed class DeveloperCreateRequest
+public sealed class DeveloperCreateRequest : YANLibCreateRequest
 {
     public required string Name { get; set; }
 
@@ -10,14 +11,5 @@ public sealed class DeveloperCreateRequest
 
     public required string IdCard { get; set; }
 
-    public required int DeveloperTypeCode { get; set; }
-
-    public List<Certificate> Certificates { get; set; }
-
-    public sealed class Certificate
-    {
-        public required string Name { get; set; }
-
-        public double? GPA { get; set; }
-    }
+    public required Guid DeveloperTypeId { get; set; }
 }

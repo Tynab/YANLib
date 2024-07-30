@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Volo.Abp.EventBus.Distributed;
 using YANLib.Core;
 using YANLib.RabbitMq.Etos;
-using YANLib.Requests;
+using YANLib.Requests.Certificate;
 using YANLib.Services;
 
 namespace YANLib.Handlers;
@@ -19,6 +19,6 @@ public class AdjustCertificateHandler(
     public async Task HandleEventAsync(CertificateAdjustEto eventData)
     {
         _logger.LogInformation("AdjustCertificateHandler-Subscribe: {EventData}", eventData.Serialize());
-        _logger.LogInformation("AdjustCertificateHandler-UpdateCertificateService: {Responses}", await _certificateService.Update(ObjectMapper.Map<CertificateAdjustEto, CertificateRequest>(eventData)));
+        _logger.LogInformation("AdjustCertificateHandler-UpdateCertificateService: {Responses}", await _certificateService.Update(ObjectMapper.Map<CertificateAdjustEto, CertificateCreateRequest>(eventData)));
     }
 }

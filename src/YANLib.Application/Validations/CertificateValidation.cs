@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using YANLib.Core;
-using YANLib.Requests;
+using YANLib.Requests.Certificate;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class CertificateValidator : AbstractValidator<CertificateRequest>
+public sealed class CertificateValidator : AbstractValidator<CertificateCreateRequest>
 {
     public CertificateValidator()
     {
@@ -18,7 +18,7 @@ public sealed class CertificateValidator : AbstractValidator<CertificateRequest>
     }
 }
 
-public sealed class CertificateValidators : AbstractValidator<List<CertificateRequest>>
+public sealed class CertificateValidators : AbstractValidator<List<CertificateCreateRequest>>
 {
     public CertificateValidators()
     {
@@ -30,11 +30,11 @@ public sealed class CertificateValidators : AbstractValidator<List<CertificateRe
         _ = RuleFor(x => x).Must(DeveloperIdIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_DEV_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_DEV_ID);
     }
 
-    private bool IsNotEmptyAndNull(List<CertificateRequest> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<CertificateCreateRequest> requests) => requests.IsNotEmptyAndNull();
 
-    private bool IdIsNotWhiteSpace(List<CertificateRequest> requests) => requests.Select(x => x.Id).AllNotWhiteSpaceAndNull();
+    private bool IdIsNotWhiteSpace(List<CertificateCreateRequest> requests) => requests.Select(x => x.Id).AllNotWhiteSpaceAndNull();
 
-    private bool NameIsNotWhiteSpace(List<CertificateRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
+    private bool NameIsNotWhiteSpace(List<CertificateCreateRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
 
-    private bool DeveloperIdIsNotWhiteSpace(List<CertificateRequest> requests) => requests.Select(x => x.DeveloperId).AllNotWhiteSpaceAndNull();
+    private bool DeveloperIdIsNotWhiteSpace(List<CertificateCreateRequest> requests) => requests.Select(x => x.DeveloperId).AllNotWhiteSpaceAndNull();
 }

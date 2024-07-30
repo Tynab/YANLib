@@ -2,17 +2,13 @@
 
 namespace YANLib.Responses;
 
-public sealed record CertificateResponse
+public sealed class CertificateResponse : YANLibResponse
 {
-    public string Id { get; set; }
+    public string Code { get; set; }
 
     public string Name { get; set; }
 
     public double? GPA { get; set; }
 
-    public string DeveloperId { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
+    public Guid DeveloperId { get; set; }
 }
