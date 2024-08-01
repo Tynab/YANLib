@@ -30,7 +30,7 @@ public sealed class DeveloperTypeProfile : Profile
             .Ignore(d => d.Code);
 
         _ = CreateMap<DeveloperTypeCreateRequest, DeveloperType>()
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => Now))
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => UtcNow))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => true))
             .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false))
             .Ignore(d => d.UpdatedBy)
@@ -46,7 +46,7 @@ public sealed class DeveloperTypeProfile : Profile
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Request.UpdatedBy))
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => Now))
+            .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => UtcNow))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
             .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false))
             .Ignore(d => d.CreatedBy)

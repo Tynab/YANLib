@@ -42,5 +42,5 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
         }
     }
 
-    private bool IsAuthorized(string username, string password) => username.Equals($"{_configuration["Auth:Username"]}{Today.Day}") && password.Equals($"{_configuration["Auth:Password"]}{Now.Minute}");
+    private bool IsAuthorized(string username, string password) => username.Equals($"{_configuration["Auth:Username"]}{Today.Day}") && password.Equals($"{_configuration["Auth:Password"]}{UtcNow.Minute}");
 }
