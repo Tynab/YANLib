@@ -1,10 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using Volo.Abp.Domain.Entities;
+﻿namespace YANLib.Entities;
 
-namespace YANLib.Entities;
-
-public sealed class DeveloperType : YANLibEntity
+public sealed class DeveloperType : YANLibDomainEntity
 {
     public long Code { get; set; }
 

@@ -5,33 +5,14 @@ using YANLib.Responses;
 
 namespace YANLib.EsIndices;
 
-public sealed class DeveloperIndex
+public sealed class DeveloperIndex : YANLibApplicationEsIndex
 {
-    public string Id { get; set; }
-
-    [Keyword]
-    public Guid DeveloperId { get; set; }
-
     public string Name { get; set; }
 
     [Keyword]
     public string Phone { get; set; }
 
-    public string IdCard { get; set; }
-
-    public int Version { get; set; }
-
-    public Guid CreatedBy { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public Guid UpdatedBy { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public bool IsDeleted { get; set; }
+    public Guid DeveloperId { get; set; }
 
     [Nested]
     public DeveloperTypeResponse DeveloperType { get; set; }

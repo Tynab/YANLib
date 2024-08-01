@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YANLib.Entities;
 
-public sealed class Developer : YANLibEntity
+public sealed class Developer : YANLibDomainEntity
 {
     public string Name { get; set; }
 

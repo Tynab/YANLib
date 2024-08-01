@@ -1,8 +1,8 @@
 ﻿namespace YANLib.Requests.DeveloperType;
 
-public sealed class DeveloperTypeUpdateRequest
+public sealed class DeveloperTypeUpdateRequest : YANLibApplicationUpdateRequest
 {
-    public string Name { get; set; }
+    public required long Code { get; set; }
 
-    public bool? IsActive { get; set; }
+    public string Name { get; set; }
 }

@@ -8,13 +8,15 @@ namespace YANLib.Services;
 
 public interface IDeveloperTypeService : IApplicationService
 {
-    public ValueTask<List<DeveloperTypeResponse>> GetAll();
+    public ValueTask<IEnumerable<DeveloperTypeResponse>> GetAll();
 
-    public ValueTask<DeveloperTypeResponse> Get(int code);
+    public ValueTask<DeveloperTypeResponse> Get(long code);
 
     public ValueTask<DeveloperTypeResponse> Create(DeveloperTypeCreateRequest request);
 
-    public ValueTask<DeveloperTypeResponse> Update(int code, DeveloperTypeUpdateRequest request);
+    public ValueTask<DeveloperTypeResponse> Update(long code, DeveloperTypeUpdateRequest request);
+
+    public ValueTask<DeveloperTypeResponse> Delete(long code);
 
     public ValueTask<bool> SyncDbToRedis();
 }

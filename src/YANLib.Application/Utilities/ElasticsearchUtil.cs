@@ -8,13 +8,14 @@ using YANLib.Core;
 using YANLib.EsIndices;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
-using static YANLib.YANLibConsts.ElasticsearchIndex;
+using static YANLib.Constants.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.Utilities;
 
 public static class ElasticsearchUtil
 {
-    private static string _indexSample;
+    private static string _indexDeveloper;
+    private static string _indexCertificate;
 
     public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
     {
@@ -25,7 +26,7 @@ public static class ElasticsearchUtil
             ? new StaticConnectionPool((configuration.GetSection(urlTag).GetChildren().Any()
                 ? configuration.GetSection(urlTag).GetChildren().ToArray()
                 : (new IConfigurationSection[] { configuration.GetSection(urlTag) })).Select(s => new Uri(s.Value)).ToArray())
-            : new SingleNodeConnectionPool(new Uri(configuration.GetSection(urlTag).Value))).DefaultIndex(configuration.GetSection(Sample)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
+            : new SingleNodeConnectionPool(new Uri(configuration.GetSection(urlTag).Value))).DefaultIndex(configuration.GetSection(Developer)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
 
         if (configuration.GetSection(usernameTag).Value.IsNotWhiteSpaceAndNull())
         {
@@ -34,15 +35,26 @@ public static class ElasticsearchUtil
             _ = settings.BasicAuthentication(configuration.GetSection(usernameTag).Value, configuration.GetSection(pwdTag).Value);
         }
 
-        _indexSample = configuration.GetSection(Sample)?.Value;
-        _ = settings.DefaultMappingFor<DeveloperIndex>(m => m.IndexName(_indexSample));
+        _indexDeveloper = configuration.GetSection(Developer)?.Value;
+        _ = settings.DefaultMappingFor<DeveloperIndex>(m => m.IndexName(_indexDeveloper));
+        _indexCertificate = configuration.GetSection(Certificate)?.Value;
+        _ = settings.DefaultMappingFor<DeveloperIndex>(m => m.IndexName(_indexCertificate));
 
         var client = new ElasticClient(settings);
 
-        if (!client.Indices.Exists(configuration.GetSection(Sample)?.Value).Exists)
+        if (!client.Indices.Exists(configuration.GetSection(Developer)?.Value).Exists)
         {
-            _ = client.Indices.Create(configuration.GetSection(Sample).Value, c => c
+            _ = client.Indices.Create(configuration.GetSection(Developer).Value, c => c
                 .Map<DeveloperIndex>(t => t
+                    .AutoMap().Properties(p => p
+                    .Text(d => d
+                        .Name(x => x.Id)))));
+        }
+
+        if (!client.Indices.Exists(configuration.GetSection(Certificate)?.Value).Exists)
+        {
+            _ = client.Indices.Create(configuration.GetSection(Certificate).Value, c => c
+                .Map<CertificateIndex>(t => t
                     .AutoMap().Properties(p => p
                     .Text(d => d
                         .Name(x => x.Id)))));
@@ -51,5 +63,7 @@ public static class ElasticsearchUtil
         _ = services.AddSingleton<IElasticClient>(client);
     }
 
-    public static DeleteIndexResponse DeleteSampleIndex(this IElasticClient client) => _indexSample.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexSample) : default;
+    public static DeleteIndexResponse DeleteDeveloperIndex(this IElasticClient client) => _indexDeveloper.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexDeveloper) : default;
+
+    public static DeleteIndexResponse DeleteCertificateIndex(this IElasticClient client) => _indexCertificate.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexCertificate) : default;
 }

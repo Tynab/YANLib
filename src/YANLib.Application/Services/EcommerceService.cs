@@ -6,15 +6,12 @@ using YANLib.Core;
 using YANLib.RemoteService;
 using YANLib.Requests;
 using static RestSharp.Method;
-using static YANLib.YANLibConsts.RemoteService;
-using static YANLib.YANLibConsts.RemoteService.Path;
+using static YANLib.Constants.YANLibConsts.RemoteService;
+using static YANLib.Constants.YANLibConsts.RemoteService.Path;
 
 namespace YANLib.Services;
 
-public class EcommerceService(
-    ILogger<EcommerceService> logger,
-    IRemoteService remoteService
-) : YANLibAppService, IEcommerceService
+public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService remoteService) : YANLibAppService, IEcommerceService
 {
     private readonly ILogger<EcommerceService> _logger = logger;
     private readonly IRemoteService _remoteService = remoteService;

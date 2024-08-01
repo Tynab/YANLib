@@ -2,7 +2,7 @@
 
 namespace YANLib.Responses;
 
-public sealed class CertificateResponse : YANLibResponse
+public sealed class CertificateResponse : YANLibApplicationResponse
 {
     public string Code { get; set; }
 

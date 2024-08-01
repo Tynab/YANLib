@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace YANLib.Requests.Developer;
 
-public sealed class DeveloperCreateRequest : YANLibCreateRequest
+public sealed class DeveloperCreateRequest : YANLibApplicationCreateRequest
 {
     public required string Name { get; set; }
 

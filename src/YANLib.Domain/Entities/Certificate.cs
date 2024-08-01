@@ -1,10 +1,8 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YANLib.Entities;
 
-public sealed class Certificate : YANLibEntity
+public sealed class Certificate : YANLibDomainEntity
 {
     public string Code { get; set; }
 

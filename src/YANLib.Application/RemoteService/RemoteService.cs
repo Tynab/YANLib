@@ -15,10 +15,7 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.RemoteService;
 
-public class RemoteService(
-    ILogger<RemoteService> logger,
-    IOptionsSnapshot<AbpRemoteServiceOptions> remoteServiceOptions
-) : YANLibAppService, IRemoteService
+public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRemoteServiceOptions> remoteServiceOptions) : YANLibAppService, IRemoteService
 {
     private readonly ILogger<RemoteService> _logger = logger;
     private readonly AbpRemoteServiceOptions _remoteServiceOptions = remoteServiceOptions.Value;

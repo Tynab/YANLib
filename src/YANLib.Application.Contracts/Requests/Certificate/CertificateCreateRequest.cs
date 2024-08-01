@@ -2,7 +2,7 @@
 
 namespace YANLib.Requests.Certificate;
 
-public sealed class CertificateCreateRequest : YANLibCreateRequest
+public sealed class CertificateCreateRequest : YANLibApplicationCreateRequest
 {
     public required string Name { get; set; }
 
