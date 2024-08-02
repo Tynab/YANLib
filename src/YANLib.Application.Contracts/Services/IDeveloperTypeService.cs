@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using YANLib.Requests.DeveloperType;
@@ -14,9 +15,9 @@ public interface IDeveloperTypeService : IApplicationService
 
     public ValueTask<DeveloperTypeResponse> Create(DeveloperTypeCreateRequest request);
 
-    public ValueTask<DeveloperTypeResponse> Update(long code, DeveloperTypeUpdateRequest request);
+    public ValueTask<DeveloperTypeResponse> Update(DeveloperTypeUpdateRequest request);
 
-    public ValueTask<DeveloperTypeResponse> Delete(long code);
+    public ValueTask<DeveloperTypeResponse> Delete(long code, Guid updatedBy);
 
     public ValueTask<bool> SyncDbToRedis();
 }

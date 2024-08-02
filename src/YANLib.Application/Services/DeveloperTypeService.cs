@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.Domain.Repositories;
 using YANLib.Core;
+using YANLib.Dtos;
 using YANLib.Entities;
-using YANLib.RedisDtos;
+using YANLib.Repositories;
 using YANLib.Requests.DeveloperType;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
@@ -16,17 +16,17 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services;
 
-public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IRepository<DeveloperType, Guid> repository, IRedisService<DeveloperTypeDto> redisService) : YANLibAppService, IDeveloperTypeService
+public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDeveloperTypeRepository repository, IRedisService<RedisDtos.DeveloperTypeDto> redisService) : YANLibAppService, IDeveloperTypeService
 {
     private readonly ILogger<DeveloperTypeService> _logger = logger;
-    private readonly IRepository<DeveloperType, Guid> _repository = repository;
-    private readonly IRedisService<DeveloperTypeDto> _redisService = redisService;
+    private readonly IDeveloperTypeRepository _repository = repository;
+    private readonly IRedisService<RedisDtos.DeveloperTypeDto> _redisService = redisService;
 
     public async ValueTask<IEnumerable<DeveloperTypeResponse>> GetAll()
     {
         try
         {
-            return (await _redisService.GetAll(DeveloperTypeGroup)).Select(ObjectMapper.Map<KeyValuePair<string, DeveloperTypeDto>, DeveloperTypeResponse>);
+            return (await _redisService.GetAll(DeveloperTypeGroup)).Select(ObjectMapper.Map<KeyValuePair<string, RedisDtos.DeveloperTypeDto>, DeveloperTypeResponse>);
         }
         catch (Exception ex)
         {
@@ -40,7 +40,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IReposit
     {
         try
         {
-            var rslt = ObjectMapper.Map<DeveloperTypeDto, DeveloperTypeResponse>(await _redisService.Get(DeveloperTypeGroup, code.ToString()));
+            var rslt = ObjectMapper.Map<RedisDtos.DeveloperTypeDto, DeveloperTypeResponse>(await _redisService.Get(DeveloperTypeGroup, code.ToString()));
 
             if (rslt.IsNotNull())
             {
@@ -73,7 +73,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IReposit
 
             if (mdl.IsNotNull())
             {
-                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeDto>(mdl));
+                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, RedisDtos.DeveloperTypeDto>(mdl));
             }
 
             return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
@@ -90,21 +90,13 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IReposit
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, request.Code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", request.Code);
-
-            request.Name = request.Name.IsWhiteSpaceOrNull() ? dto.Name : request.Name;
-            request.IsActive ??= dto.IsActive;
-
-            var ent = ObjectMapper.Map<(Guid Id, long Code, DeveloperTypeUpdateRequest Request), DeveloperType>((dto.DeveloperTypeId, request.Code, request));
-
-            ent.CreatedBy = dto.CreatedBy;
-            ent.CreatedAt = dto.CreatedAt;
-
-            var mdl = await _repository.UpdateAsync(ent);
+            var mdl = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>(((
+                await _redisService.Get(DeveloperTypeGroup, request.Code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", request.Code)
+            ).DeveloperTypeId, request)));
 
             if (mdl.IsNotNull())
             {
-                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeDto>(mdl));
+                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, RedisDtos.DeveloperTypeDto>(mdl));
             }
 
             return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
@@ -122,9 +114,24 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IReposit
         try
         {
             var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
+
+            var mdl = await _repository.Modify(new DeveloperTypeDto
+            {
+                Id = dto.DeveloperTypeId,
+                UpdatedBy = updatedBy,
+                IsDeleted = true,
+            });
+
+            if (mdl.IsNotNull())
+            {
+                _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, RedisDtos.DeveloperTypeDto>(mdl));
+            }
+
+            return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "DeleteDeveloperTypeService-Exception: {Code} - {UpdatedBy}", code, updatedBy);
 
             throw;
         }
@@ -142,7 +149,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IReposit
             var rslt = await clnTask;
             var mdls = await mdlsTask;
 
-            return mdls.IsNotEmptyAndNull() ? rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeDto>)) : rslt;
+            return mdls.IsNotEmptyAndNull() ? rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, RedisDtos.DeveloperTypeDto>)) : rslt;
         }
         catch (Exception ex)
         {
