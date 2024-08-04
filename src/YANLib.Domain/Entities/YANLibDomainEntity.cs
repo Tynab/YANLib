@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Volo.Abp.Domain.Entities;
 
 namespace YANLib.Entities;
@@ -13,7 +14,9 @@ public class YANLibDomainEntity : Entity<Guid>
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool IsActive { get; set; }
+    [DefaultValue(true)]
+    public bool IsActive { get; set; } = true;
 
-    public bool IsDeleted { get; set; }
+    [DefaultValue(false)]
+    public bool IsDeleted { get; set; } = false;
 }

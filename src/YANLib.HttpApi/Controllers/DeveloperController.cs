@@ -5,8 +5,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.Core;
-using YANLib.CrudService;
-using YANLib.Requests.Developer;
+using YANLib.Requests.Crud.Update;
+using YANLib.Requests.Insert;
+using YANLib.Requests.Modify;
+using YANLib.Services;
 
 namespace YANLib.Controllers;
 
@@ -29,16 +31,16 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới Developer")]
-    public async ValueTask<IActionResult> Create([Required] DeveloperCreateRequest request)
+    public async ValueTask<IActionResult> Insert([Required] DeveloperInsertRequest request)
     {
-        _logger.LogInformation("CreateDeveloperController: {Request}", request.Serialize());
+        _logger.LogInformation("InsertDeveloperController: {Request}", request.Serialize());
 
-        return Ok(await _service.Create(request));
+        return Ok(await _service.Insert(request));
     }
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật Developer")]
-    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperUpdateRequest request)
+    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperModifyRequest request)
     {
         _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 

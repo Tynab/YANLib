@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using YANLib.Core;
-using YANLib.Requests.Certificate;
+using YANLib.Requests.Insert;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class CertificateValidator : AbstractValidator<CertificateCreateRequest>
+public sealed class CertificateValidator : AbstractValidator<CertificateInsertRequest>
 {
     public CertificateValidator()
     {
@@ -18,7 +18,7 @@ public sealed class CertificateValidator : AbstractValidator<CertificateCreateRe
     }
 }
 
-public sealed class CertificateValidators : AbstractValidator<List<CertificateCreateRequest>>
+public sealed class CertificateValidators : AbstractValidator<List<CertificateInsertRequest>>
 {
     public CertificateValidators()
     {
@@ -30,11 +30,11 @@ public sealed class CertificateValidators : AbstractValidator<List<CertificateCr
         _ = RuleFor(x => x).Must(DeveloperIdIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_DEV_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_DEV_ID);
     }
 
-    private bool IsNotEmptyAndNull(List<CertificateCreateRequest> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<CertificateInsertRequest> requests) => requests.IsNotEmptyAndNull();
 
-    private bool IdIsNotWhiteSpace(List<CertificateCreateRequest> requests) => requests.Select(x => x.Id).AllNotWhiteSpaceAndNull();
+    private bool IdIsNotWhiteSpace(List<CertificateInsertRequest> requests) => requests.Select(x => x.Id).AllNotWhiteSpaceAndNull();
 
-    private bool NameIsNotWhiteSpace(List<CertificateCreateRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
+    private bool NameIsNotWhiteSpace(List<CertificateInsertRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
 
-    private bool DeveloperIdIsNotWhiteSpace(List<CertificateCreateRequest> requests) => requests.Select(x => x.DeveloperId).AllNotWhiteSpaceAndNull();
+    private bool DeveloperIdIsNotWhiteSpace(List<CertificateInsertRequest> requests) => requests.Select(x => x.DeveloperId).AllNotWhiteSpaceAndNull();
 }

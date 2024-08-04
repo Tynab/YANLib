@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.Core;
-using YANLib.CrudService;
-using YANLib.Requests.DeveloperType;
+using YANLib.Requests.Insert;
+using YANLib.Requests.Modify;
+using YANLib.Responses;
+using YANLib.Services;
 
 namespace YANLib.Controllers;
 
@@ -20,11 +24,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa Developer Types")]
-    public async ValueTask<IActionResult> GetAll() => Ok(await _service.GetAll());
+    public async ValueTask<ActionResult<IEnumerable<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetAll());
 
     [HttpGet("{code}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa Developer Type theo Code")]
-    public async ValueTask<IActionResult> Get(int code)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long code)
     {
         _logger.LogInformation("GetDeveloperTypeController: {Code}", code);
 
@@ -33,20 +37,29 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa Developer Type")]
-    public async ValueTask<IActionResult> Create([Required] DeveloperTypeCreateRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Insert([Required] DeveloperTypeInsertRequest request)
     {
-        _logger.LogInformation("CreateDeveloperTypeController: {Request}", request.Serialize());
+        _logger.LogInformation("InsertDeveloperTypeController: {Request}", request.Serialize());
 
-        return Ok(await _service.Create(request));
+        return Ok(await _service.Insert(request));
     }
 
-    [HttpPut("{code}")]
+    [HttpPatch("{code}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa Developer Type")]
-    public async ValueTask<IActionResult> Update(int code, [Required] DeveloperTypeUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Modify(long code, [Required] DeveloperTypeModifyRequest request)
     {
-        _logger.LogInformation("UpdateDeveloperTypeController: {Code} - {Request}", code, request.Serialize());
+        _logger.LogInformation("ModifyDeveloperTypeController: {Code} - {Request}", code, request.Serialize());
 
-        return Ok(await _service.Update(code, request));
+        return Ok(await _service.Modify(code, request));
+    }
+
+    [HttpDelete("{code}")]
+    [SwaggerOperation(Summary = "Xóa định nghĩa Developer Type")]
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Delete(long code, [Required] Guid updatedBy)
+    {
+        _logger.LogInformation("DeleteDeveloperTypeController: {Code} - {UpdatedBy}", code, updatedBy);
+
+        return Ok(await _service.Delete(code, updatedBy));
     }
 
     [HttpPost("sync-db-to-redis")]

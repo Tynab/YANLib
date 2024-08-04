@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using YANLib.Core;
-using YANLib.Requests.DeveloperType;
+using YANLib.Requests.Insert;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class DeveloperTypeCreateValidator : AbstractValidator<DeveloperTypeCreateRequest>
+public sealed class DeveloperTypeCreateValidator : AbstractValidator<DeveloperTypeInsertRequest>
 {
     public DeveloperTypeCreateValidator()
     {
@@ -16,7 +16,7 @@ public sealed class DeveloperTypeCreateValidator : AbstractValidator<DeveloperTy
     }
 }
 
-public sealed class DeveloperTypeCreateValidators : AbstractValidator<List<DeveloperTypeCreateRequest>>
+public sealed class DeveloperTypeCreateValidators : AbstractValidator<List<DeveloperTypeInsertRequest>>
 {
     public DeveloperTypeCreateValidators()
     {
@@ -26,7 +26,7 @@ public sealed class DeveloperTypeCreateValidators : AbstractValidator<List<Devel
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
     }
 
-    private bool IsNotEmptyAndNull(List<DeveloperTypeCreateRequest> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<DeveloperTypeInsertRequest> requests) => requests.IsNotEmptyAndNull();
 
-    private bool NameIsNotWhiteSpace(List<DeveloperTypeCreateRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
+    private bool NameIsNotWhiteSpace(List<DeveloperTypeInsertRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
 }

@@ -36,16 +36,16 @@ public static class ElasticsearchUtil
         }
 
         _indexDeveloper = configuration.GetSection(Developer)?.Value;
-        _ = settings.DefaultMappingFor<DeveloperIndex>(m => m.IndexName(_indexDeveloper));
+        _ = settings.DefaultMappingFor<DeveloperEsIndex>(m => m.IndexName(_indexDeveloper));
         _indexCertificate = configuration.GetSection(Certificate)?.Value;
-        _ = settings.DefaultMappingFor<DeveloperIndex>(m => m.IndexName(_indexCertificate));
+        _ = settings.DefaultMappingFor<DeveloperEsIndex>(m => m.IndexName(_indexCertificate));
 
         var client = new ElasticClient(settings);
 
         if (!client.Indices.Exists(configuration.GetSection(Developer)?.Value).Exists)
         {
             _ = client.Indices.Create(configuration.GetSection(Developer).Value, c => c
-                .Map<DeveloperIndex>(t => t
+                .Map<DeveloperEsIndex>(t => t
                     .AutoMap().Properties(p => p
                     .Text(d => d
                         .Name(x => x.Id)))));
@@ -54,7 +54,7 @@ public static class ElasticsearchUtil
         if (!client.Indices.Exists(configuration.GetSection(Certificate)?.Value).Exists)
         {
             _ = client.Indices.Create(configuration.GetSection(Certificate).Value, c => c
-                .Map<CertificateIndex>(t => t
+                .Map<CertificateEsIndex>(t => t
                     .AutoMap().Properties(p => p
                     .Text(d => d
                         .Name(x => x.Id)))));

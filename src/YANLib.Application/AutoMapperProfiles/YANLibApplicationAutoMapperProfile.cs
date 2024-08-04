@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using YANLib.Entities;
-using YANLib.Requests.Developer;
+using YANLib.Requests.Crud.Update;
+using YANLib.Requests.Insert;
 
 namespace YANLib.Profiles;
 
@@ -8,7 +9,7 @@ public class YANLibApplicationAutoMapperProfile : Profile
 {
     public YANLibApplicationAutoMapperProfile()
     {
-        _ = CreateMap<DeveloperCreateRequest.Certificate, Certificate>();
+        _ = CreateMap<DeveloperInsertRequest.Certificate, Certificate>();
 
         _ = CreateMap<DeveloperUpdateRequest.Certificate, Certificate>();
     }

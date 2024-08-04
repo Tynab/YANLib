@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace YANLib.Dtos;
 
@@ -8,7 +9,9 @@ public class YANLibDomainDto
 
     public Guid UpdatedBy { get; set; }
 
-    public bool? IsActive { get; set; }
+    [DefaultValue(true)]
+    public bool? IsActive { get; set; } = true;
 
-    public bool? IsDeleted { get; set; }
+    [DefaultValue(false)]
+    public bool? IsDeleted { get; set; } = false;
 }

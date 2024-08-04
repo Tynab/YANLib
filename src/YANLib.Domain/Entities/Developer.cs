@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace YANLib.Entities;
+﻿namespace YANLib.Entities;
 
 public sealed class Developer : YANLibDomainEntity
 {
@@ -11,10 +8,7 @@ public sealed class Developer : YANLibDomainEntity
 
     public string IdCard { get; set; }
 
-    public Guid DeveloperTypeId { get; set; }
+    public long DeveloperTypeCode { get; set; }
 
     public int Version { get; set; }
-
-    [ForeignKey(nameof(DeveloperTypeId))]
-    public DeveloperType DeveloperType { get; set; }
 }

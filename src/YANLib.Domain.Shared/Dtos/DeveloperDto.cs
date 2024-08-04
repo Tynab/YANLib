@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YANLib.Dtos;
+﻿namespace YANLib.Dtos;
 
 public sealed class DeveloperDto : YANLibDomainDto
 {
@@ -10,5 +8,5 @@ public sealed class DeveloperDto : YANLibDomainDto
 
     public string IdCard { get; set; }
 
-    public Guid? DeveloperTypeId { get; set; }
+    public long? DeveloperTypeCode { get; set; }
 }

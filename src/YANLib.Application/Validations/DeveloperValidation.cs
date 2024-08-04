@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using YANLib.Core;
-using YANLib.Requests.Developer;
+using YANLib.Requests.Crud.Update;
+using YANLib.Requests.Insert;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class DeveloperCreateValidator : AbstractValidator<DeveloperCreateRequest>
+public sealed class DeveloperCreateValidator : AbstractValidator<DeveloperInsertRequest>
 {
     public DeveloperCreateValidator()
     {
         _ = RuleFor(x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
         _ = RuleFor(x => x.IdCard).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_ID_CARD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID_CARD);
-        _ = RuleFor(x => x.DeveloperTypeId).NotNull().NotEmpty().GreaterThanOrEqualTo(0).WithErrorCode(BAD_REQUEST_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID);
+        _ = RuleFor(x => x.DeveloperTypeCode).NotNull().NotEmpty().GreaterThanOrEqualTo(0).WithErrorCode(BAD_REQUEST_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID);
     }
 }
 
-public sealed class DeveloperCreateValidators : AbstractValidator<List<DeveloperCreateRequest>>
+public sealed class DeveloperCreateValidators : AbstractValidator<List<DeveloperInsertRequest>>
 {
     public DeveloperCreateValidators()
     {
@@ -28,14 +29,14 @@ public sealed class DeveloperCreateValidators : AbstractValidator<List<Developer
         _ = RuleFor(x => x).Must(IdCardIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_ID_CARD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID_CARD);
     }
 
-    private bool IsNotEmptyAndNull(List<DeveloperCreateRequest> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<DeveloperInsertRequest> requests) => requests.IsNotEmptyAndNull();
 
-    private bool NameIsNotWhiteSpace(List<DeveloperCreateRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
+    private bool NameIsNotWhiteSpace(List<DeveloperInsertRequest> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
 
-    private bool IdCardIsNotWhiteSpace(List<DeveloperCreateRequest> requests) => requests.Select(x => x.IdCard).AllNotWhiteSpaceAndNull();
+    private bool IdCardIsNotWhiteSpace(List<DeveloperInsertRequest> requests) => requests.Select(x => x.IdCard).AllNotWhiteSpaceAndNull();
 }
 
-public sealed class DeveloperCreateCertificateValidator : AbstractValidator<DeveloperCreateRequest.Certificate>
+public sealed class DeveloperCreateCertificateValidator : AbstractValidator<DeveloperInsertRequest.Certificate>
 {
     public DeveloperCreateCertificateValidator()
     {
@@ -44,7 +45,7 @@ public sealed class DeveloperCreateCertificateValidator : AbstractValidator<Deve
     }
 }
 
-public sealed class DeveloperCreateCertificateValidators : AbstractValidator<List<DeveloperCreateRequest.Certificate>>
+public sealed class DeveloperCreateCertificateValidators : AbstractValidator<List<DeveloperInsertRequest.Certificate>>
 {
     public DeveloperCreateCertificateValidators()
     {
@@ -54,9 +55,9 @@ public sealed class DeveloperCreateCertificateValidators : AbstractValidator<Lis
         _ = RuleFor(x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_NAME);
     }
 
-    private bool IsNotEmptyAndNull(List<DeveloperCreateRequest.Certificate> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<DeveloperInsertRequest.Certificate> requests) => requests.IsNotEmptyAndNull();
 
-    private bool NameIsNotWhiteSpace(List<DeveloperCreateRequest.Certificate> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
+    private bool NameIsNotWhiteSpace(List<DeveloperInsertRequest.Certificate> requests) => requests.Select(x => x.Name).AllNotWhiteSpaceAndNull();
 }
 
 public sealed class DeveloperUpdateCertificateValidator : AbstractValidator<DeveloperUpdateRequest.Certificate>

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Id_Generator_Snowflake;
+using System;
+using static YANLib.Constants.YANLibConsts.SnowflakeId;
+using static YANLib.Constants.YANLibConsts.SnowflakeId.DatacenterId;
 
 namespace YANLib.Entities;
 
@@ -11,4 +14,11 @@ public sealed class Certificate : YANLibDomainEntity
     public double? GPA { get; set; }
 
     public Guid DeveloperId { get; set; }
+
+    public Certificate()
+    {
+        IdGenerator idGenerator = new(WorkerId.DeveloperId, YanlibId);
+
+        Code = idGenerator.NextIdAlphabetic();
+    }
 }

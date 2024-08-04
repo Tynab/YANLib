@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
-using YANLib.Requests.DeveloperType;
+using YANLib.Requests.Insert;
+using YANLib.Requests.Modify;
 using YANLib.Responses;
 
 namespace YANLib.Services;
@@ -13,9 +14,9 @@ public interface IDeveloperTypeService : IApplicationService
 
     public ValueTask<DeveloperTypeResponse> Get(long code);
 
-    public ValueTask<DeveloperTypeResponse> Create(DeveloperTypeCreateRequest request);
+    public ValueTask<DeveloperTypeResponse> Insert(DeveloperTypeInsertRequest request);
 
-    public ValueTask<DeveloperTypeResponse> Update(DeveloperTypeUpdateRequest request);
+    public ValueTask<DeveloperTypeResponse> Modify(long code, DeveloperTypeModifyRequest request);
 
     public ValueTask<DeveloperTypeResponse> Delete(long code, Guid updatedBy);
 
