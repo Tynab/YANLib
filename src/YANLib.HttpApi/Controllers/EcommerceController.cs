@@ -10,7 +10,7 @@ using YANLib.Services;
 
 namespace YANLib.Controllers;
 
-[RemoteService]
+[ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/remote/ecommerce")]
 public sealed class EcommerceController(ILogger<EcommerceController> logger, IEcommerceService service) : YANLibController

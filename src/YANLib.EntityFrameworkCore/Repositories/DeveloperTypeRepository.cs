@@ -26,7 +26,7 @@ public class DeveloperTypeRepository(
     {
         try
         {
-            return await _dbContext.DeveloperTypes.Where(x => x.Id == dto.Id).ExecuteUpdateAsync(s => s
+            return await _dbContext.DeveloperTypes.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.Name, x => dto.Name.IsNull() ? dto.Name : x.Name)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)

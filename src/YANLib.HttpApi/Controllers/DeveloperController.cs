@@ -5,14 +5,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.Core;
-using YANLib.Requests.Crud.Update;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Services;
 
 namespace YANLib.Controllers;
 
-[RemoteService]
+[ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/developers")]
 public sealed class DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service) : YANLibController

@@ -8,7 +8,7 @@ using YANLib.Services;
 
 namespace YANLib.Controllers;
 
-[RemoteService]
+[ApiController]
 [ApiExplorerSettings(GroupName = "test")]
 [Route("api/json")]
 public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service) : YANLibController

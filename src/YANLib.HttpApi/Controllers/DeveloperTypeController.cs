@@ -14,7 +14,7 @@ using YANLib.Services;
 
 namespace YANLib.Controllers;
 
-[RemoteService]
+[ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/developer-types")]
 public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service) : YANLibController

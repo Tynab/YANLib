@@ -22,6 +22,7 @@ using System.Linq;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
@@ -35,6 +36,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
+using YANLib.SignalRHub;
 using YANLib.Utilities;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
@@ -60,7 +62,8 @@ namespace YANLib;
     typeof(AbpHttpClientModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpEventBusAzureModule),
-    typeof(AbpEventBusRabbitMqModule)
+    typeof(AbpEventBusRabbitMqModule),
+    typeof(AbpAspNetCoreSignalRModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
@@ -71,6 +74,7 @@ public class YANLibHttpApiHostModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         context.Services.AddElasticsearch(configuration);
+        _ = context.Services.AddSignalR();
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true);
         Configure<AbpDistributedCacheOptions>(o => o.KeyPrefix = "YANLib:");
@@ -82,6 +86,13 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureSwaggerServices(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHealthChecks(context, configuration);
+        Configure<AbpSignalROptions>(o => o.Hubs.Add(
+            new HubConfig(
+                    typeof(NotificationHub),
+                    "/notification-hub",
+                    hubOption => hubOption.LongPolling.PollTimeout = TimeSpan.FromSeconds(30))
+            )
+        );
     }
 
     private static void ConfigureAuthenticationSwagger(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
@@ -293,6 +304,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseUnitOfWork();
         _ = app.UseAuditing();
         _ = app.UseAbpSerilogEnrichers();
+        //_ = app.UseEndpoints(e => e.MapHub<NotificationHub>("/notification-hub"));
 
         _ = app.UseHealthChecks("/health", new HealthCheckOptions()
         {

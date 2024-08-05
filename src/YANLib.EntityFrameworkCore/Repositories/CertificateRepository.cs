@@ -26,7 +26,7 @@ public class CertificateRepository(
     {
         try
         {
-            return await _dbContext.Certificates.Where(x => x.Id == dto.Id).ExecuteUpdateAsync(s => s
+            return await _dbContext.Certificates.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.Name, x => dto.Name.IsNull() ? dto.Name : x.Name)
                 .SetProperty(x => x.GPA, x => dto.GPA ?? x.GPA)
                 .SetProperty(x => x.DeveloperId, x => dto.DeveloperId ?? x.DeveloperId)

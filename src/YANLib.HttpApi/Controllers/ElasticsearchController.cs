@@ -10,7 +10,7 @@ using YANLib.EsServices;
 
 namespace YANLib.Controllers;
 
-[RemoteService]
+[ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/es")]
 public sealed class ElasticsearchController(ILogger<ElasticsearchController> logger, IDeveloperEsService developerEsService) : YANLibController
