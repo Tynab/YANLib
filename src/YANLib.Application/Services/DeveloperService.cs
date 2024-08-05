@@ -33,11 +33,13 @@ public class DeveloperService(
     private readonly ICertificateRepository _certificateRepository = certificateRepository;
     private readonly IDeveloperEsService _esService = esService;
 
-    public async ValueTask<DeveloperResponse> GetByIdCard(string idCard)
+    public async ValueTask<DeveloperResponse?> GetByIdCard(string idCard)
     {
         try
         {
-            return ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(await _esService.Get(idCard));
+            var dto = await _esService.Get(idCard);
+
+            return dto.IsNull() ? default : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
         }
         catch (Exception ex)
         {
@@ -47,7 +49,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse> Insert(DeveloperInsertRequest request)
+    public async ValueTask<DeveloperResponse?> Insert(DeveloperInsertRequest request)
     {
         try
         {
@@ -59,10 +61,12 @@ public class DeveloperService(
             var ent = ObjectMapper.Map<DeveloperInsertRequest, Developer>(request);
             var mdl = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.InsertAsync(ent));
 
-            if (mdl.IsNotNull())
+            if (mdl.IsNull())
             {
-                mdl.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+                return default;
             }
+
+            mdl.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
 
             return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(mdl)) ? mdl : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
@@ -74,7 +78,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse> Adjust(string idCard, DeveloperModifyRequest dto)
+    public async ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperModifyRequest dto)
     {
         try
         {
@@ -87,12 +91,16 @@ public class DeveloperService(
             ent.DeveloperTypeCode = dto.DeveloperTypeCode ?? ent.DeveloperTypeCode;
             ent.IsActive = dto.IsActive ?? ent.IsActive;
 
-            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(await _repository.Adjust(ent));
+            var res = await _repository.Adjust(ent);
 
-            if (rslt is not null)
+            if (res.IsNull())
             {
-                rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+                return default;
             }
+
+            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(res);
+
+            rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
 
             return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
@@ -104,7 +112,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse> Delete(string idCard, Guid updatedBy)
+    public async ValueTask<DeveloperResponse?> Delete(string idCard, Guid updatedBy)
     {
         try
         {
@@ -117,10 +125,12 @@ public class DeveloperService(
                 IsDeleted = true,
             });
 
-            if (mdl.IsNotNull())
+            if (mdl.IsNull())
             {
-                _ = await _esService.Delete(idCard);
+                return default;
             }
+
+            _ = await _esService.Delete(idCard);
 
             return ObjectMapper.Map<Developer, DeveloperResponse>(mdl);
         }

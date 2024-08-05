@@ -7,16 +7,16 @@ namespace YANLib.EsIndices;
 
 public sealed class DeveloperEsIndex : YANLibApplicationEsIndex
 {
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [Keyword]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     public Guid DeveloperId { get; set; }
 
     [Nested]
-    public DeveloperTypeResponse DeveloperType { get; set; }
+    public DeveloperTypeResponse? DeveloperType { get; set; }
 
     [Nested]
-    public List<CertificateResponse> Certificates { get; set; }
+    public List<CertificateResponse>? Certificates { get; set; }
 }

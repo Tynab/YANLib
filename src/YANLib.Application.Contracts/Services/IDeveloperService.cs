@@ -10,13 +10,13 @@ namespace YANLib.Services;
 
 public interface IDeveloperService : IApplicationService
 {
-    public ValueTask<DeveloperResponse> GetByIdCard(string idCard);
+    public ValueTask<DeveloperResponse?> GetByIdCard(string idCard);
 
-    public ValueTask<DeveloperResponse> Insert(DeveloperInsertRequest request);
+    public ValueTask<DeveloperResponse?> Insert(DeveloperInsertRequest request);
 
-    public ValueTask<DeveloperResponse> Adjust(string idCard, DeveloperModifyRequest dto);
+    public ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperModifyRequest dto);
 
-    public ValueTask<DeveloperResponse> Delete(string idCard, Guid updatedBy);
+    public ValueTask<DeveloperResponse?> Delete(string idCard, Guid updatedBy);
 
     public ValueTask<List<DeveloperResponse>> GetByName(string name);
 

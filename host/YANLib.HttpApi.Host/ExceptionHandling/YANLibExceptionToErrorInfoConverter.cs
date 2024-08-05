@@ -22,7 +22,7 @@ public class YANLibExceptionToErrorInfoConverter(
     IServiceProvider serviceProvider
 ) : DefaultExceptionToErrorInfoConverter(localizationOptions, stringLocalizerFactory, stringLocalizer, serviceProvider), ITransientDependency
 {
-    private readonly HashSet<string> _errorCodes = new(typeof(YANLibDomainErrorCodes).GetFields(Public | Static | FlattenHierarchy)
+    private readonly HashSet<string?> _errorCodes = new(typeof(YANLibDomainErrorCodes).GetFields(Public | Static | FlattenHierarchy)
                                                                                      .Where(x => x.IsLiteral && !x.IsInitOnly)
                                                                                      .Select(x => x.GetRawConstantValue()?.ToString())
                                                                                      .Where(x => x.IsNotNull()));

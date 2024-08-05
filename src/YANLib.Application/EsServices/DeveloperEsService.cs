@@ -20,7 +20,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
 
-    public async ValueTask<DeveloperEsIndex> Get(string id)
+    public async ValueTask<DeveloperEsIndex?> Get(string id)
     {
         try
         {

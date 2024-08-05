@@ -9,5 +9,5 @@ namespace YANLib.Repositories;
 
 public interface ICertificateRepository : IRepository<Certificate, Guid>, ITransientDependency
 {
-    public ValueTask<Certificate> Modify(CertificateDto dto);
+    public ValueTask<Certificate?> Modify(CertificateDto dto);
 }

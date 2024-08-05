@@ -6,7 +6,7 @@ namespace YANLib.EsServices;
 
 public interface IDeveloperEsService
 {
-    public ValueTask<DeveloperEsIndex> Get(string id);
+    public ValueTask<DeveloperEsIndex?> Get(string id);
 
     public ValueTask<bool> Set(DeveloperEsIndex data);
 

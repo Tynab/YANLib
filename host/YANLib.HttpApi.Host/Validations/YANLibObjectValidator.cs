@@ -20,7 +20,7 @@ public class YANLibObjectValidator(IOptions<AbpValidationOptions> options, IServ
 
     protected IServiceScopeFactory ServiceScopeFactory { get; } = serviceScopeFactory;
 
-    public virtual async Task ValidateAsync(object validatingObject, string name = null, bool allowNull = false)
+    public virtual async Task ValidateAsync(object validatingObject, string? name = null, bool allowNull = false)
     {
         var errors = await GetErrorsAsync(validatingObject, name, allowNull);
 
@@ -30,7 +30,7 @@ public class YANLibObjectValidator(IOptions<AbpValidationOptions> options, IServ
         }
     }
 
-    public virtual async Task<List<ValidationResult>> GetErrorsAsync(object validatingObject, string name = null, bool allowNull = false)
+    public virtual async Task<List<ValidationResult>> GetErrorsAsync(object validatingObject, string? name = null, bool allowNull = false)
     {
         if (validatingObject.IsNull())
         {
@@ -44,7 +44,17 @@ public class YANLibObjectValidator(IOptions<AbpValidationOptions> options, IServ
 
         using var scope = ServiceScopeFactory.CreateScope();
 
-        Options.ObjectValidationContributors.ForEach(async x => await (scope.ServiceProvider.GetRequiredService(x) as IObjectValidationContributor).AddErrorsAsync(context));
+        Options.ObjectValidationContributors.ForEach(async x =>
+        {
+            var objectValidationContributor = scope.ServiceProvider.GetRequiredService(x) as IObjectValidationContributor;
+
+            if (objectValidationContributor.IsNull())
+            {
+                return;
+            }
+
+            await objectValidationContributor.AddErrorsAsync(context);
+        });
 
         return await FromResult(context.Errors);
     }

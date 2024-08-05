@@ -22,7 +22,7 @@ public class DeveloperTypeRepository(
     private readonly ILogger<DeveloperTypeRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<DeveloperType> Modify(DeveloperTypeDto dto)
+    public async ValueTask<DeveloperType?> Modify(DeveloperTypeDto dto)
     {
         try
         {

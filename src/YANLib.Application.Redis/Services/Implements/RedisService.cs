@@ -1,6 +1,11 @@
 ﻿using Elastic.Apm.StackExchange.Redis;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.ConnectionFactory;
 using YANLib.Core;
@@ -88,7 +93,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<IDictionary<string, TRedisDto?>?> GetAll(string group)
+    public async ValueTask<IDictionary<string, TRedisDto?>?> GetAll(string? group)
     {
         try
         {
@@ -224,7 +229,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
             var dic = await GetAll(group);
 
-            return dic!.IsEmptyOrNull() || await DeleteBulk(group, dic!.Select(p => p.Key).ToArray());
+            return dic.IsEmptyOrNull() || await DeleteBulk(group, dic.Select(p => p.Key).ToArray());
         }
         catch (Exception ex)
         {
@@ -239,39 +244,39 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         {
             var redisRslt = await GetGroupKeys(groupPreffix);
 
-            if (redisRslt is not null)
+            if (redisRslt.IsNull)
             {
-                var keys = (RedisKey[])redisRslt!;
-                var rslts = new Dictionary<string, IDictionary<string, TRedisDto?>?>();
-
-                if (keys.IsNotEmptyAndNull())
-                {
-                    var semSlim = new SemaphoreSlim(1);
-
-                    await WhenAll(keys.Select(async k =>
-                    {
-                        var dic = await GetAll(k!);
-
-                        if (dic!.IsNotEmptyAndNull())
-                        {
-                            await semSlim.WaitAsync();
-
-                            try
-                            {
-                                rslts.Add(k.ToString().Split(":").Reverse().FirstOrDefault() ?? string.Empty, dic!);
-                            }
-                            finally
-                            {
-                                _ = semSlim.Release();
-                            }
-                        }
-                    }));
-                }
-
-                return rslts;
+                return default;
             }
 
-            return default;
+            var keys = (RedisKey[]?)redisRslt;
+            var rslts = new Dictionary<string, IDictionary<string, TRedisDto?>?>();
+
+            if (keys.IsNotEmptyAndNull())
+            {
+                var semSlim = new SemaphoreSlim(1);
+
+                await WhenAll(keys.Select(async k =>
+                {
+                    var dic = await GetAll(k);
+
+                    if (dic.IsNotEmptyAndNull())
+                    {
+                        await semSlim.WaitAsync();
+
+                        try
+                        {
+                            rslts.Add(k.ToString().Split(":").Reverse().FirstOrDefault() ?? string.Empty, dic);
+                        }
+                        finally
+                        {
+                            _ = semSlim.Release();
+                        }
+                    }
+                }));
+            }
+
+            return rslts;
         }
         catch (Exception ex)
         {
@@ -286,14 +291,14 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         {
             var redisRslt = await GetGroupKeys(groupPreffix);
 
-            if (redisRslt is not null)
+            if (redisRslt.IsNull)
             {
-                var keys = (RedisKey[])redisRslt!;
-
-                return keys.IsEmptyOrNull() || await _database.KeyDeleteAsync(keys) > 0;
+                return default;
             }
 
-            return default;
+            var keys = (RedisKey[]?)redisRslt;
+
+            return keys.IsEmptyOrNull() || await _database.KeyDeleteAsync(keys) > 0;
         }
         catch (Exception ex)
         {

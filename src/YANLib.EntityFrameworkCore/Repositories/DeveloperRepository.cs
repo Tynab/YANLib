@@ -22,7 +22,7 @@ public class DeveloperRepository(
     private readonly ILogger<DeveloperRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<Developer> Modify(DeveloperDto dto)
+    public async ValueTask<Developer?> Modify(DeveloperDto dto)
     {
         try
         {
@@ -45,7 +45,7 @@ public class DeveloperRepository(
         }
     }
 
-    public async ValueTask<Developer> Adjust(Developer entity)
+    public async ValueTask<Developer?> Adjust(Developer entity)
     {
         try
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using StackExchange.Redis;
+using System;
 using Volo.Abp.DependencyInjection;
 using YANLib.Options;
 using static StackExchange.Redis.ConnectionMultiplexer;

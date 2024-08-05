@@ -6,7 +6,7 @@ public sealed class DeveloperCreateRequest : YANLibApplicationCreateRequest
 {
     public required string Name { get; set; }
 
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     public required string IdCard { get; set; }
 

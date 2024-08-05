@@ -9,7 +9,7 @@ namespace YANLib.Benchmarks.Process.Library;
 
 public class JsonSerializeBenchmark
 {
-    private SampleModel _model;
+    private SampleModel? _model;
 
     [Params(1_000, 10_000, 100_000, 1_000_000)]
     public int Size { get; set; }

@@ -4,7 +4,7 @@ namespace YANLib.EsIndices;
 
 public class YANLibApplicationEsIndex
 {
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     public Guid CreatedBy { get; set; }
 

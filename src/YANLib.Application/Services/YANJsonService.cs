@@ -38,7 +38,19 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
             for (var i = 0; i < quantity; i++)
             {
-                var dto = DeserializeObject<JsonResponse>(i is 0 ? json : jsonCamel);
+                var curJson = i is 0 ? json : jsonCamel;
+
+                if (curJson.IsWhiteSpaceOrNull())
+                {
+                    return default;
+                }
+
+                var dto = DeserializeObject<JsonResponse>(curJson);
+
+                if (dto.IsNull())
+                {
+                    return default;
+                }
 
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -60,7 +72,14 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
             for (var i = 0; i < quantity; i++)
             {
-                var dto = (JsonResponse)_jsonSerializer.Deserialize(typeof(JsonResponse), i is 0 ? json : jsonCamel);
+                var curJson = i is 0 ? json : jsonCamel;
+
+                if (curJson.IsWhiteSpaceOrNull())
+                {
+                    return default;
+                }
+
+                var dto = (JsonResponse)_jsonSerializer.Deserialize(typeof(JsonResponse), curJson);
 
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -84,6 +103,11 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
             {
                 var dto = (i is 0 ? json : jsonCamel).Deserialize<JsonResponse>();
 
+                if (dto.IsNull())
+                {
+                    return default;
+                }
+
                 first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
             }
@@ -106,7 +130,19 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
                 for (var i = 0; i < quantity; i++)
                 {
-                    var dto = Deserialize<JsonResponse>(i is 0 ? json : jsonCamel);
+                    var curJson = i is 0 ? json : jsonCamel;
+
+                    if (curJson.IsWhiteSpaceOrNull())
+                    {
+                        return default;
+                    }
+
+                    var dto = Deserialize<JsonResponse>(curJson);
+
+                    if (dto.IsNull())
+                    {
+                        return default;
+                    }
 
                     first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                     last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
@@ -128,10 +164,22 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
                 for (var i = 0; i < quantity; i++)
                 {
-                    var dto = Deserialize<JsonResponse>(i is 0 ? json : jsonCamel, new JsonSerializerOptions
+                    var curJson = i is 0 ? json : jsonCamel;
+
+                    if (curJson.IsWhiteSpaceOrNull())
+                    {
+                        return default;
+                    }
+
+                    var dto = Deserialize<JsonResponse>(curJson, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
+
+                    if (dto.IsNull())
+                    {
+                        return default;
+                    }
 
                     first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
                     last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;

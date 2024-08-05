@@ -31,12 +31,10 @@ using Volo.Abp.EntityFrameworkCore.SqlServer;
 using Volo.Abp.EventBus.Azure;
 using Volo.Abp.EventBus.RabbitMq;
 using Volo.Abp.Http.Client;
-using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
-using YANLib.SignalRHub;
 using YANLib.Utilities;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
@@ -46,7 +44,6 @@ using static Microsoft.OpenApi.Models.ReferenceType;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Array;
 using static System.Convert;
-using static System.StringSplitOptions;
 using static System.Text.Encoding;
 
 namespace YANLib;
@@ -74,25 +71,17 @@ public class YANLibHttpApiHostModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         context.Services.AddElasticsearch(configuration);
-        _ = context.Services.AddSignalR();
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true);
         Configure<AbpDistributedCacheOptions>(o => o.KeyPrefix = "YANLib:");
         ConfigureAuthenticationSwagger(context, configuration);
         //ConfigureAuthentication(context, configuration);
         ConfigureConventionalControllers();
-        ConfigureLocalization();
+        //ConfigureLocalization();
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHealthChecks(context, configuration);
-        Configure<AbpSignalROptions>(o => o.Hubs.Add(
-            new HubConfig(
-                    typeof(NotificationHub),
-                    "/notification-hub",
-                    hubOption => hubOption.LongPolling.PollTimeout = TimeSpan.FromSeconds(30))
-            )
-        );
     }
 
     private static void ConfigureAuthenticationSwagger(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
@@ -116,41 +105,54 @@ public class YANLibHttpApiHostModule : AbpModule
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
 
-    private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(o =>
-    {
-        o.Languages.Add(new LanguageInfo("ar", "ar", "العربية"));
-        o.Languages.Add(new LanguageInfo("cs", "cs", "Čeština"));
-        o.Languages.Add(new LanguageInfo("en", "en", "English"));
-        o.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
-        o.Languages.Add(new LanguageInfo("fi", "fi", "Finnish"));
-        o.Languages.Add(new LanguageInfo("fr", "fr", "Français"));
-        o.Languages.Add(new LanguageInfo("hi", "hi", "Hindi", "in"));
-        o.Languages.Add(new LanguageInfo("is", "is", "Icelandic", "is"));
-        o.Languages.Add(new LanguageInfo("it", "it", "Italiano", "it"));
-        o.Languages.Add(new LanguageInfo("hu", "hu", "Magyar"));
-        o.Languages.Add(new LanguageInfo("pt-BR", "pt-BR", "Português"));
-        o.Languages.Add(new LanguageInfo("ro-RO", "ro-RO", "Română"));
-        o.Languages.Add(new LanguageInfo("ru", "ru", "Русский"));
-        o.Languages.Add(new LanguageInfo("sk", "sk", "Slovak"));
-        o.Languages.Add(new LanguageInfo("tr", "tr", "Türkçe"));
-        o.Languages.Add(new LanguageInfo("zh-Hans", "zh-Hans", "简体中文"));
-        o.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "繁體中文"));
-        o.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch", "de"));
-        o.Languages.Add(new LanguageInfo("es", "es", "Español", "es"));
-        o.Languages.Add(new LanguageInfo("el", "el", "Ελληνικά"));
-        o.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
-    });
+    //private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(o =>
+    //{
+    //    o.Languages.Add(new LanguageInfo("ar", "ar", "العربية"));
+    //    o.Languages.Add(new LanguageInfo("cs", "cs", "Čeština"));
+    //    o.Languages.Add(new LanguageInfo("en", "en", "English"));
+    //    o.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
+    //    o.Languages.Add(new LanguageInfo("fi", "fi", "Finnish"));
+    //    o.Languages.Add(new LanguageInfo("fr", "fr", "Français"));
+    //    o.Languages.Add(new LanguageInfo("hi", "hi", "Hindi", "in"));
+    //    o.Languages.Add(new LanguageInfo("is", "is", "Icelandic", "is"));
+    //    o.Languages.Add(new LanguageInfo("it", "it", "Italiano", "it"));
+    //    o.Languages.Add(new LanguageInfo("hu", "hu", "Magyar"));
+    //    o.Languages.Add(new LanguageInfo("pt-BR", "pt-BR", "Português"));
+    //    o.Languages.Add(new LanguageInfo("ro-RO", "ro-RO", "Română"));
+    //    o.Languages.Add(new LanguageInfo("ru", "ru", "Русский"));
+    //    o.Languages.Add(new LanguageInfo("sk", "sk", "Slovak"));
+    //    o.Languages.Add(new LanguageInfo("tr", "tr", "Türkçe"));
+    //    o.Languages.Add(new LanguageInfo("zh-Hans", "zh-Hans", "简体中文"));
+    //    o.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "繁體中文"));
+    //    o.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch", "de"));
+    //    o.Languages.Add(new LanguageInfo("es", "es", "Español", "es"));
+    //    o.Languages.Add(new LanguageInfo("el", "el", "Ελληνικά"));
+    //    o.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
+    //});
 
-    private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddCors(s => s
-        .AddDefaultPolicy(b => b
-            .WithOrigins(configuration["App:CorsOrigins"].Split(",", RemoveEmptyEntries).Select(o => o
-                .RemovePostFix("/")).ToArray()).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+    private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        var corsOrigins = configuration["App:CorsOrigins"]?.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(origin => origin.RemovePostFix("/")).ToArray();
+
+        if (corsOrigins.IsEmptyOrNull())
+        {
+            return;
+        }
+
+        _ = context.Services.AddCors(s => s.AddDefaultPolicy(b => b.WithOrigins(corsOrigins).WithAbpExposedHeaders().SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+    }
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
+        var authority = configuration["AuthServer:Authority"];
 
-        _ = context.Services.AddAbpSwaggerGenWithOAuth(configuration["AuthServer:Authority"], new Dictionary<string, string>
+        if (authority.IsWhiteSpaceOrNull())
+        {
+            return;
+        }
+
+        _ = context.Services.AddAbpSwaggerGenWithOAuth(authority, new Dictionary<string, string>
         {
             {"YANLib Sample", "YANLib API Sample"},
             {"YANLib Test", "YANLib API Test"}
@@ -192,7 +194,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
-            o.CustomSchemaIds(t => t.FullName.Replace("+", "."));
+            o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
             o.HideAbpEndpoints();
             o.EnableAnnotations();
         });
@@ -208,24 +210,43 @@ public class YANLibHttpApiHostModule : AbpModule
 
             _ = c.UseMongoDB(o =>
             {
-                o.DatabaseName = configuration["CAP:DBName"];
-                o.DatabaseConnection = configuration["CAP:ConnectionString"];
+                var dbName = configuration["CAP:DBName"];
+                var connectionString = configuration["CAP:ConnectionString"];
+
+                if (dbName.IsWhiteSpaceOrNull() || connectionString.IsWhiteSpaceOrNull())
+                {
+                    return;
+                }
+
+                o.DatabaseName = dbName;
+                o.DatabaseConnection = connectionString;
             });
 
             _ = c.UseKafka(o =>
             {
-                o.Servers = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
+                var connection = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
+
+                if (connection.IsWhiteSpaceOrNull())
+                {
+                    return;
+                }
+
+                o.Servers = connection;
                 o.MainConfig.Add("security.protocol", "SASL_PLAINTEXT");
                 o.MainConfig.Add("sasl.mechanism", "PLAIN");
 
-                if (configuration["CAP:Kafka:Username"].IsNotWhiteSpaceAndNull())
+                var username = configuration["CAP:Kafka:Username"];
+
+                if (username.IsNotWhiteSpaceAndNull())
                 {
-                    o.MainConfig.Add("sasl.username", configuration["CAP:Kafka:Username"]);
+                    o.MainConfig.Add("sasl.username", username);
                 }
 
-                if (configuration["CAP:Kafka:Password"].IsNotWhiteSpaceAndNull())
+                var password = configuration["CAP:Kafka:Password"];
+
+                if (password.IsNotWhiteSpaceAndNull())
                 {
-                    o.MainConfig.Add("sasl.password", configuration["CAP:Kafka:Password"]);
+                    o.MainConfig.Add("sasl.password", password);
                 }
             });
 
@@ -256,12 +277,17 @@ public class YANLibHttpApiHostModule : AbpModule
         });
     }
 
-    private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHealthChecks().AddSqlServer(
-        connectionString: configuration["ConnectionStrings:Default"],
-        name: "database",
-        failureStatus: Degraded,
-        tags: ["db", "sql", "sqlserver"]
-    );
+    private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        var connectionString = configuration["ConnectionStrings:Default"];
+
+        if (connectionString.IsWhiteSpaceOrNull())
+        {
+            return;
+        }
+
+        _ = context.Services.AddHealthChecks().AddSqlServer(connectionString: connectionString, name: "database", failureStatus: Degraded, tags: ["db", "sql", "sqlserver"]);
+    }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
@@ -304,7 +330,6 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseUnitOfWork();
         _ = app.UseAuditing();
         _ = app.UseAbpSerilogEnrichers();
-        //_ = app.UseEndpoints(e => e.MapHub<NotificationHub>("/notification-hub"));
 
         _ = app.UseHealthChecks("/health", new HealthCheckOptions()
         {

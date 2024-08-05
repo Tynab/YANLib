@@ -14,8 +14,8 @@ namespace YANLib.Utilities;
 
 public static class ElasticsearchUtil
 {
-    private static string _indexDeveloper;
-    private static string _indexCertificate;
+    private static string? _indexDeveloper;
+    private static string? _indexCertificate;
 
     public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
     {
@@ -63,7 +63,7 @@ public static class ElasticsearchUtil
         _ = services.AddSingleton<IElasticClient>(client);
     }
 
-    public static DeleteIndexResponse DeleteDeveloperIndex(this IElasticClient client) => _indexDeveloper.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexDeveloper) : default;
+    public static DeleteIndexResponse? DeleteDeveloperIndex(this IElasticClient client) => _indexDeveloper.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexDeveloper) : default;
 
-    public static DeleteIndexResponse DeleteCertificateIndex(this IElasticClient client) => _indexCertificate.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexCertificate) : default;
+    public static DeleteIndexResponse? DeleteCertificateIndex(this IElasticClient client) => _indexCertificate.IsNotWhiteSpaceAndNull() ? client.Indices.Delete(_indexCertificate) : default;
 }

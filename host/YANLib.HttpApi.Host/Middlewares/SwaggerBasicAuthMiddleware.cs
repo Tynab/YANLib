@@ -19,13 +19,20 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
     {
         if (context.Request.Path.StartsWithSegments("/swagger"))
         {
-            string authHeader = context.Request.Headers["Authorization"];
+            string? authHeader = context.Request.Headers.Authorization;
 
             if (authHeader.IsNotWhiteSpaceAndNull() && authHeader.StartsWith("Basic "))
             {
-                var decoded = UTF8.GetString(FromBase64String(authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim()))?.Split(':', 2);
+                var newVarName = authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim();
 
-                if (IsAuthorized(decoded[0], decoded[1]))
+                if (newVarName.IsWhiteSpaceOrNull())
+                {
+                    return;
+                }
+
+                var decoded = UTF8.GetString(FromBase64String(newVarName))?.Split(':', 2);
+
+                if (decoded.IsNotEmptyAndNull() && IsAuthorized(decoded[0], decoded[1]))
                 {
                     await _next.Invoke(context);
 
@@ -33,7 +40,7 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
                 }
             }
 
-            context.Response.Headers["WWW-Authenticate"] = "Basic";
+            context.Response.Headers.WWWAuthenticate = "Basic";
             context.Response.StatusCode = Unauthorized.ToInt();
         }
         else

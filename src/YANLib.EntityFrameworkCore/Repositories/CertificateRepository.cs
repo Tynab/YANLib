@@ -22,7 +22,7 @@ public class CertificateRepository(
     private readonly ILogger<CertificateRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<Certificate> Modify(CertificateDto dto)
+    public async ValueTask<Certificate?> Modify(CertificateDto dto)
     {
         try
         {

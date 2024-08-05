@@ -20,7 +20,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
     private readonly ILogger<RemoteService> _logger = logger;
     private readonly AbpRemoteServiceOptions _remoteServiceOptions = remoteServiceOptions.Value;
 
-    public async ValueTask<T> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string> headers = null, string jsonInput = null, Dictionary<string, object> queryParams = null)
+    public async ValueTask<T?> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string>? headers = null, string? jsonInput = null, Dictionary<string, object>? queryParams = null)
     {
         try
         {
@@ -66,7 +66,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
                     throw new AbpRemoteCallException(new RemoteServiceErrorInfo
                     {
                         Code = NOT_FOUND,
-                        Message = res.ErrorException.Message
+                        Message = res.ErrorException?.Message
                     })
                     {
                         HttpStatusCode = res.StatusCode.ToInt()
