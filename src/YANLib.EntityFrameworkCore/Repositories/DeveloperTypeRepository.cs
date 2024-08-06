@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using YANLib.Core;
-using YANLib.DbContext;
+using YANLib.DbContexts;
 using YANLib.Dtos;
 using YANLib.Entities;
 using static System.DateTime;

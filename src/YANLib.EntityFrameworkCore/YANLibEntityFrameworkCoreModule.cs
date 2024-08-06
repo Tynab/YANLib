@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Modularity;
-using YANLib.DbContext.Implements;
+using YANLib.DbContexts.Implements;
 
 namespace YANLib;
 

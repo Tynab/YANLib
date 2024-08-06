@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 
-namespace YANLib.RemoteService;
+namespace YANLib.RemoteServices;
 
 public interface IRemoteService : IApplicationService
 {

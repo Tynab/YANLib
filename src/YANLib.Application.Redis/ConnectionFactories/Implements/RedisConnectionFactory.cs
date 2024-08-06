@@ -5,7 +5,7 @@ using Volo.Abp.DependencyInjection;
 using YANLib.Options;
 using static StackExchange.Redis.ConnectionMultiplexer;
 
-namespace YANLib.ConnectionFactory.Implements;
+namespace YANLib.ConnectionFactories.Implements;
 
 public class RedisConnectionFactory : IRedisConnectionFactory, ISingletonDependency
 {

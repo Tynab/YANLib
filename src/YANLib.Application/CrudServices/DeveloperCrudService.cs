@@ -7,6 +7,6 @@ using YANLib.Requests.Crud.Create;
 using YANLib.Requests.Crud.Update;
 using YANLib.Responses;
 
-namespace YANLib.CrudService;
+namespace YANLib.CrudServices;
 
 public class DeveloperCrudService(IRepository<Developer, Guid> repository) : CrudAppService<Developer, DeveloperResponse, Guid, PagedAndSortedResultRequestDto, DeveloperCreateRequest, DeveloperUpdateRequest>(repository), IDeveloperCrudService { }

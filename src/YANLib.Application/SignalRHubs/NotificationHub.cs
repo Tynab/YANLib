@@ -1,6 +1,6 @@
 ﻿using Volo.Abp.AspNetCore.SignalR;
 
-namespace YANLib.SignalRHub;
+namespace YANLib.SignalRHubs;
 
 /* 
 {

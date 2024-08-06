@@ -155,7 +155,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = context.Services.AddAbpSwaggerGenWithOAuth(authority, new Dictionary<string, string>
         {
             {"YANLib Sample", "YANLib API Sample"},
-            {"YANLib Test", "YANLib API Test"}
+            {"YANLib CRUD", "YANLib API CRUD"}
         }, o =>
         {
             o.SwaggerDoc("sample", new OpenApiInfo
@@ -164,10 +164,10 @@ public class YANLibHttpApiHostModule : AbpModule
                 Version = "sample"
             });
 
-            o.SwaggerDoc("test", new OpenApiInfo
+            o.SwaggerDoc("crud", new OpenApiInfo
             {
-                Title = $"YANLib API Test - {hostingEnvironment.EnvironmentName}",
-                Version = "test"
+                Title = $"YANLib API CRUD - {hostingEnvironment.EnvironmentName}",
+                Version = "crud"
             });
 
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -321,7 +321,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAbpSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/sample/swagger.json", "YANLib API Sample");
-            c.SwaggerEndpoint("/swagger/test/swagger.json", "YANLib API Test");
+            c.SwaggerEndpoint("/swagger/crud/swagger.json", "YANLib API CRUD");
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
             c.DefaultModelsExpandDepth(-1);

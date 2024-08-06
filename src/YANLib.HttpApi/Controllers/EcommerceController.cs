@@ -11,7 +11,7 @@ namespace YANLib.Controllers;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
-[Route("api/remote/ecommerce")]
+[Route("api/remote/[controller]")]
 public sealed class EcommerceController(ILogger<EcommerceController> logger, IEcommerceService service) : YANLibController
 {
     private readonly ILogger<EcommerceController> _logger = logger;

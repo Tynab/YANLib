@@ -15,7 +15,7 @@ namespace YANLib.Controllers;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
-[Route("api/developer-types")]
+[Route("api/[controller]")]
 public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service) : YANLibController
 {
     private readonly ILogger<DeveloperTypeController> _logger = logger;

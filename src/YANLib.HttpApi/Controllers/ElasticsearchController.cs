@@ -11,7 +11,7 @@ namespace YANLib.Controllers;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
-[Route("api/es")]
+[Route("api/[controller]")]
 public sealed class ElasticsearchController(ILogger<ElasticsearchController> logger, IDeveloperEsService developerEsService) : YANLibController
 {
     private readonly ILogger<ElasticsearchController> _logger = logger;

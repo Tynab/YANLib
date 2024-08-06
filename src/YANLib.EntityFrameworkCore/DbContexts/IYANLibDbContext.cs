@@ -4,7 +4,7 @@ using Volo.Abp.EntityFrameworkCore;
 using YANLib.Entities;
 using static YANLib.Constants.YANLibConsts.ConnectionStringName;
 
-namespace YANLib.DbContext;
+namespace YANLib.DbContexts;
 
 [ConnectionStringName(Default)]
 public interface IYANLibDbContext : IEfCoreDbContext

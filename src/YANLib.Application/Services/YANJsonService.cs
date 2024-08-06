@@ -194,13 +194,13 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
 
             _ = await WhenAll(newtonsoftTask, voloTask, textTask, textOptTask, yanTask);
 
-            return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 6.0.3:\t\t{voloTask.Result}\nSystem.Text:\t\t{textTask.Result}\nSystem.Text (option):\t{textOptTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
+            return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 8.2.1:\t\t{voloTask.Result}\nSystem.Text:\t\t{textTask.Result}\nSystem.Text (option):\t{textOptTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
         }
         else
         {
             _ = await WhenAll(newtonsoftTask, voloTask, yanTask);
 
-            return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 6.0.3:\t\t{voloTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
+            return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 8.2.1:\t\t{voloTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
         }
     }
 }

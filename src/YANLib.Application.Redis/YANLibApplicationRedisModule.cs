@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp;
 using Volo.Abp.Modularity;
-using YANLib.ConnectionFactory;
+using YANLib.ConnectionFactories;
 using YANLib.Options;
 using YANLib.RedisDtos;
 using YANLib.Services;

@@ -13,7 +13,7 @@ using static RestSharp.ParameterType;
 using static System.Net.HttpStatusCode;
 using static YANLib.YANLibDomainErrorCodes;
 
-namespace YANLib.RemoteService;
+namespace YANLib.RemoteServices;
 
 public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRemoteServiceOptions> remoteServiceOptions) : YANLibAppService, IRemoteService
 {

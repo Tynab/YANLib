@@ -6,7 +6,7 @@ namespace YANLib.EsServices;
 
 public interface ICertificateEsService
 {
-    public ValueTask<CertificateEsIndex> Get(string id);
+    public ValueTask<CertificateEsIndex?> Get(string id);
 
     public ValueTask<bool> Set(CertificateEsIndex data);
 

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
-using YANLib.ConnectionFactory;
+using YANLib.ConnectionFactories;
 using YANLib.Core;
 using YANLib.RedisDtos;
 using static System.Text.Encoding;

@@ -5,7 +5,7 @@ using YANLib.Entities;
 using static YANLib.Constants.YANLibConsts.ConnectionStringName;
 using static YANLib.Constants.YANLibConsts.DbSchema;
 
-namespace YANLib.DbContext.Implements;
+namespace YANLib.DbContexts.Implements;
 
 [ConnectionStringName(Default)]
 public class YANLibDbContext(DbContextOptions<YANLibDbContext> options) : AbpDbContext<YANLibDbContext>(options), IYANLibDbContext

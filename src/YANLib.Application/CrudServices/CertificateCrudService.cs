@@ -7,6 +7,6 @@ using YANLib.Requests.Crud.Create;
 using YANLib.Requests.Crud.Update;
 using YANLib.Responses;
 
-namespace YANLib.CrudService;
+namespace YANLib.CrudServices;
 
 public class CertificateCrudService(IRepository<Certificate, Guid> repository) : CrudAppService<Certificate, CertificateResponse, Guid, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest>(repository), ICertificateCrudService { }

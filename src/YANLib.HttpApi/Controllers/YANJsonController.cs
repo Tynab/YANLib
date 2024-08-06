@@ -8,8 +8,8 @@ using YANLib.Services;
 namespace YANLib.Controllers;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "test")]
-[Route("api/json")]
+[ApiExplorerSettings(GroupName = "sample")]
+[Route("api/[controller]")]
 public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJsonService service) : YANLibController
 {
     private readonly ILogger<YANJsonController> _logger = logger;
