@@ -9,5 +9,5 @@ public class YANLibExtensibleRemoteServiceErrorInfo : RemoteServiceErrorInfo, IH
 
     public YANLibExtensibleRemoteServiceErrorInfo(string message, string? details = null, string? code = null) : base(message, details, code) { }
 
-    public ExtraPropertyDictionary ExtraProperties { get; set; }
+    public ExtraPropertyDictionary ExtraProperties { get; set; } = [];
 }

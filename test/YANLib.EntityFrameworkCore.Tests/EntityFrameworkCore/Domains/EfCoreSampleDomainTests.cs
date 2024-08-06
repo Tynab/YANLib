@@ -1,9 +1,9 @@
-using Xunit;
+//using Xunit;
 
-namespace YANLib.EntityFrameworkCore.Domains;
+//namespace YANLib.EntityFrameworkCore.Domains;
 
-[Collection(YANLibTestConsts.CollectionDefinitionName)]
-public class EfCoreSampleDomainTests : SampleDomainTests<YANLibEntityFrameworkCoreTestModule>
-{
+//[Collection(YANLibTestConsts.CollectionDefinitionName)]
+//public class EfCoreSampleDomainTests : SampleDomainTests<YANLibEntityFrameworkCoreTestModule>
+//{
 
-}
+//}

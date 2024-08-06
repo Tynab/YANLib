@@ -4,6 +4,4 @@ using Volo.Abp.DependencyInjection;
 
 namespace YANLib.ExceptionHandling;
 
-public class YANLibHttpExceptionStatusCodeFinder(IOptions<AbpExceptionHttpStatusCodeOptions> options) : DefaultHttpExceptionStatusCodeFinder(options), ITransientDependency
-{
-}
+public class YANLibHttpExceptionStatusCodeFinder(IOptions<AbpExceptionHttpStatusCodeOptions> options) : DefaultHttpExceptionStatusCodeFinder(options), ITransientDependency { }

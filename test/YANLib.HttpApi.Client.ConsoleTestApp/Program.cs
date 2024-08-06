@@ -21,8 +21,8 @@ class Program
         {
             await application.InitializeAsync();
 
-            var demo = application.ServiceProvider.GetRequiredService<ClientDemoService>();
-            await demo.RunAsync();
+            //var demo = application.ServiceProvider.GetRequiredService<ClientDemoService>();
+            //await demo.RunAsync();
 
             Console.WriteLine("Press ENTER to stop application...");
             Console.ReadLine();

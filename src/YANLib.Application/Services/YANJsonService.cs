@@ -171,10 +171,12 @@ public class YANJsonService(IJsonSerializer jsonSerializer) : YANLibAppService, 
                         return default;
                     }
 
-                    var dto = Deserialize<JsonResponse>(curJson, new JsonSerializerOptions
+                    var jsonOpt = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
-                    });
+                    };
+
+                    var dto = Deserialize<JsonResponse>(curJson, jsonOpt);
 
                     if (dto.IsNull())
                     {

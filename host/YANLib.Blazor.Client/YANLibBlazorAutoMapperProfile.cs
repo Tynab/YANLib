@@ -6,7 +6,7 @@ public class YANLibBlazorAutoMapperProfile : Profile
 {
     public YANLibBlazorAutoMapperProfile()
     {
-        CreateMap<BookDto, CreateUpdateBookDto>();
+        //CreateMap<BookDto, CreateUpdateBookDto>();
 
         //Define your AutoMapper configuration here for the Blazor project.
     }

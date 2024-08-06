@@ -22,11 +22,25 @@ public static class ElasticsearchUtil
         var urlTag = "Elasticsearch:Url";
         var usernameTag = "Elasticsearch:Username";
         var pwdTag = "Elasticsearch:Password";
-        var settings = new ConnectionSettings(configuration.GetSection(urlTag).GetChildren().Any()
-            ? new StaticConnectionPool((configuration.GetSection(urlTag).GetChildren().Any()
+
+        ConnectionSettings? settings;
+        if (configuration.GetSection(urlTag).GetChildren().Any())
+        {
+            settings = new ConnectionSettings(new StaticConnectionPool((configuration.GetSection(urlTag).GetChildren().Any()
                 ? configuration.GetSection(urlTag).GetChildren().ToArray()
-                : (new IConfigurationSection[] { configuration.GetSection(urlTag) })).Select(s => new Uri(s.Value)).ToArray())
-            : new SingleNodeConnectionPool(new Uri(configuration.GetSection(urlTag).Value))).DefaultIndex(configuration.GetSection(Developer)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
+                : ([configuration.GetSection(urlTag)])).Select(s => s.Value.IsWhiteSpaceOrNull() ? default : new Uri(s.Value)).ToArray())).DefaultIndex(configuration.GetSection(Developer)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
+        }
+        else
+        {
+            var esUrl = configuration.GetSection(urlTag).Value;
+
+            if (esUrl.IsWhiteSpaceOrNull())
+            {
+                return;
+            }
+
+            settings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri(esUrl))).DefaultIndex(configuration.GetSection(Developer)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
+        }
 
         if (configuration.GetSection(usernameTag).Value.IsNotWhiteSpaceAndNull())
         {

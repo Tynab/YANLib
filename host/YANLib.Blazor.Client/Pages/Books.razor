@@ -1,4 +1,4 @@
-﻿@page "/books"
+﻿@* @page "/books"
 @attribute [Authorize(YANLibPermissions.Books.Default)]
 @using YANLib.Permissions
 @using Microsoft.AspNetCore.Authorization
@@ -200,4 +200,4 @@
 
         LocalizationResource = typeof(YANLibResource);
     }
-}
+} *@

@@ -51,7 +51,18 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
                 queryParams.ForEach(x => req.AddParameter(x.Key, x.Value, QueryString));
             }
 
-            var res = await new RestClient(_remoteServiceOptions.RemoteServices.GetConfigurationOrDefaultOrNull(remoteRoot)?.BaseUrl)?.ExecuteAsync(req);
+            var remSvcConfig = _remoteServiceOptions.RemoteServices.GetConfigurationOrDefaultOrNull(remoteRoot)?.BaseUrl;
+
+            if (remSvcConfig.IsWhiteSpaceOrNull())
+            {
+                throw new AbpRemoteCallException(new RemoteServiceErrorInfo
+                {
+                    Code = NOT_FOUND,
+                    Message = "RemoteServiceNotFound"
+                });
+            }
+
+            var res = await new RestClient(remSvcConfig).ExecuteAsync(req);
 
             if (res.StatusCode is OK)
             {
