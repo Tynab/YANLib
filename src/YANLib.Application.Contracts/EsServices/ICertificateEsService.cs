@@ -12,9 +12,7 @@ public interface ICertificateEsService
 
     public ValueTask<bool> SetBulk(List<CertificateEsIndex> datas);
 
+    public ValueTask<bool> Delete(string id);
+
     public ValueTask<bool> DeleteAll();
-
-    public ValueTask<IReadOnlyCollection<CertificateEsIndex>> GetByName(string name);
-
-    public ValueTask<IReadOnlyCollection<CertificateEsIndex>> SearchByName(string searchText);
 }

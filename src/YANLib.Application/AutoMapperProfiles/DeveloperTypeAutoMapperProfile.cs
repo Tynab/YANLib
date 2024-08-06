@@ -5,6 +5,7 @@ using Volo.Abp.AutoMapper;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
+using YANLib.RedisDtos;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
@@ -16,7 +17,10 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
 {
     public DeveloperTypeAutoMapperProfile()
     {
-        _ = CreateMap<DeveloperTypeInsertRequest, DeveloperType>()
+        _ = CreateMap<(long Code, DeveloperTypeInsertRequest Request), DeveloperType>()
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
+            .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Request.CreatedBy))
             .ForMember(d => d.CreatedAt, o => o.MapFrom(s => UtcNow))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => true))
             .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false))
@@ -30,16 +34,22 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
             .Ignore(d => d.IsDeleted);
 
-        _ = CreateMap<DeveloperType, RedisDtos.DeveloperRedisTypeDto>()
+        _ = CreateMap<DeveloperType, DeveloperRedisTypeDto>()
             .ForMember(d => d.DeveloperTypeId, o => o.MapFrom(s => s.Id));
 
         _ = CreateMap<DeveloperType, DeveloperTypeResponse>();
 
-        _ = CreateMap<RedisDtos.DeveloperRedisTypeDto, DeveloperTypeResponse>()
-            .ForMember(d => d.Id, o => o.MapFrom(s => s.DeveloperTypeId))
-            .Ignore(d => d.Code);
+        _ = CreateMap<(long Code, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>()
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Dto.DeveloperTypeId))
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Dto.Name))
+            .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Dto.CreatedBy))
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.Dto.CreatedAt))
+            .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Dto.UpdatedBy))
+            .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.Dto.UpdatedAt))
+            .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Dto.IsActive));
 
-        _ = CreateMap<KeyValuePair<string, RedisDtos.DeveloperRedisTypeDto>, DeveloperTypeResponse>()
+        _ = CreateMap<KeyValuePair<string, DeveloperRedisTypeDto>, DeveloperTypeResponse>()
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Key.ToLong(default)))
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Value.DeveloperTypeId))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Value.Name))

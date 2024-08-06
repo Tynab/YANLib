@@ -30,7 +30,7 @@ public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService r
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAccessTokenEcommerceService-Exception: {Request}", json);
+            _logger.LogError(ex, "GetAccessToken-EcommerceService-Exception: {Request}", json);
 
             throw;
         }
@@ -47,7 +47,7 @@ public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService r
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetRefreshTokenEcommerceService-Exception: {AccessToken}", accessToken);
+            _logger.LogError(ex, "GetRefreshToken-EcommerceService-Exception: {AccessToken}", accessToken);
 
             throw;
         }

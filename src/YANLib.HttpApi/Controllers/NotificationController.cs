@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using YANLib.Core;
+using YANLib.Requests;
 using YANLib.Services;
 
 namespace YANLib.Controllers;
@@ -17,10 +19,10 @@ public sealed class NotificationController(ILogger<NotificationController> logge
 
     [HttpPost]
     [SwaggerOperation(summary: "Gởi thông báo")]
-    public async Task<IActionResult> SendNotification([Required] string message)
+    public async Task<IActionResult> Send([Required] NotificationRequest request)
     {
-        _logger.LogInformation("SendNotificationNotificationController: {Message}", message);
-        await _service.SendNotification(message);
+        _logger.LogInformation("Send-NotificationController: {Request}", request.Serialize());
+        await _service.Send(request);
 
         return Ok();
     }

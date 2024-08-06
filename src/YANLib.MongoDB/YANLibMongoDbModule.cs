@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
 using Volo.Abp.MongoDB;
-using YANLib.MongoDB.DbContext.Implements;
+using YANLib.MongoDB.DbContexts.Implements;
 
 namespace YANLib.MongoDB;
 

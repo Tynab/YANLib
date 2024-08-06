@@ -22,7 +22,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
     public async ValueTask<IActionResult> GetByIdCard(string idCard)
     {
-        _logger.LogInformation("GetByIdCardDeveloperController: {IdCard}", idCard);
+        _logger.LogInformation("GetById-CardDeveloperController: {IdCard}", idCard);
 
         return Ok(await _service.GetByIdCard(idCard));
     }
@@ -31,7 +31,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Thêm mới Developer")]
     public async ValueTask<IActionResult> Insert([Required] DeveloperInsertRequest request)
     {
-        _logger.LogInformation("InsertDeveloperController: {Request}", request.Serialize());
+        _logger.LogInformation("Insert-DeveloperController: {Request}", request.Serialize());
 
         return Ok(await _service.Insert(request));
     }
@@ -40,7 +40,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Cập nhật Developer")]
     public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperModifyRequest request)
     {
-        _logger.LogInformation("AdjustDeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
+        _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 
         return Ok(await _service.Adjust(idCard, request));
     }
@@ -49,7 +49,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Lấy tất cả Developers theo Phone")]
     public async ValueTask<IActionResult> GetByPhone([Required] string phone)
     {
-        _logger.LogInformation("GetByPhoneDeveloperController: {Phone}", phone);
+        _logger.LogInformation("GetByPhone-DeveloperController: {Phone}", phone);
 
         return Ok(await _service.GetByPhone(phone));
     }
@@ -58,7 +58,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Tìm tất cả Developers theo Phone")]
     public async ValueTask<IActionResult> SearchByPhone([Required] string searchText)
     {
-        _logger.LogInformation("SearchByPhoneDeveloperController: {SearchText}", searchText);
+        _logger.LogInformation("SearchByPhone-DeveloperController: {SearchText}", searchText);
 
         return Ok(await _service.SearchByPhone(searchText));
     }

@@ -38,7 +38,7 @@ public class CertificateRepository(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ModifyCertificateRepository-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "Modify-CertificateRepository-Exception: {DTO}", dto.Serialize());
 
             throw;
         }

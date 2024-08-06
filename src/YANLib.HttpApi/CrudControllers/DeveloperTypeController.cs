@@ -25,7 +25,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [HttpGet("{id}")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(Guid id)
     {
-        _logger.LogInformation("GetDeveloperTypeCrudController: {Id}", id);
+        _logger.LogInformation("Get-DeveloperTypeCrudController: {Id}", id);
 
         return Ok(await _service.GetAsync(id));
     }
@@ -33,7 +33,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [HttpPost]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest request)
     {
-        _logger.LogInformation("CreateDeveloperTypeCrudController: {Request}", request.Serialize());
+        _logger.LogInformation("Create-DeveloperTypeCrudController: {Request}", request.Serialize());
 
         return Ok(await _service.CreateAsync(request));
     }
@@ -41,7 +41,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [HttpPut("{id}")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(Guid id, DeveloperTypeUpdateRequest request)
     {
-        _logger.LogInformation("UpdateDeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
 
         return Ok(await _service.UpdateAsync(id, request));
     }
@@ -49,7 +49,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [HttpDelete("{id}")]
     public async ValueTask<IActionResult> Delete(Guid id)
     {
-        _logger.LogInformation("DeleteDeveloperTypeCrudController: {Id}", id);
+        _logger.LogInformation("Delete-DeveloperTypeCrudController: {Id}", id);
         await _service.DeleteAsync(id);
 
         return Ok();

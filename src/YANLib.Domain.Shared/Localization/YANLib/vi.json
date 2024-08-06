@@ -15,6 +15,7 @@
     "YANLib:404": "Không tìm thấy dữ liệu!",
     "YANLib:414": "Không tìm thấy hồ sơ lập trình viên có mã định danh {IdCard}!",
     "YANLib:424": "Không tìm thấy định nghĩa loại lập trình viên có mã {Code}!",
+    "YANLib:434": "Không tìm thấy chứng chỉ có mã {Code}!",
     "YANLib:500": "Lỗi trong quá trình xử lý!"
   }
 }

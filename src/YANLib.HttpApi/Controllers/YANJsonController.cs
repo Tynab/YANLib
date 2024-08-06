@@ -19,7 +19,7 @@ public sealed class YANJsonController(ILogger<YANJsonController> logger, IYANJso
     [SwaggerOperation(Summary = "Đo tốc độ của thư viện YANLib và các chuẩn khác")]
     public async ValueTask<IActionResult> YanVsStandards([Required] uint quantity = 10000, [Required] bool hideSystem = true)
     {
-        _logger.LogInformation("YanVsStandardsYANJsonController: {Quantity} - {HideSystem}", quantity, hideSystem);
+        _logger.LogInformation("YanVsStandards-YANJsonController: {Quantity} - {HideSystem}", quantity, hideSystem);
 
         return Ok(await _service.YanVsStandards(quantity, hideSystem));
     }

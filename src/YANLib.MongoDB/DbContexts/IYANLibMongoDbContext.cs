@@ -1,7 +1,7 @@
 ﻿using Volo.Abp.Data;
 using Volo.Abp.MongoDB;
 
-namespace YANLib.MongoDB.DbContext;
+namespace YANLib.MongoDB.DbContexts;
 
 [ConnectionStringName("Default")]
 public interface IYANLibMongoDbContext : IAbpMongoDbContext

@@ -12,7 +12,7 @@ public sealed class CertificateAutoMapperProfile : Profile
 {
     public CertificateAutoMapperProfile()
     {
-        _ = CreateMap<CertificateAdjustEto, CertificateInsertRequest>();
+        _ = CreateMap<NotificationEto, CertificateInsertRequest>();
 
         _ = CreateMap<CertificateInsertRequest, Certificate>()
             .Ignore(d => d.CreatedAt)
@@ -22,7 +22,7 @@ public sealed class CertificateAutoMapperProfile : Profile
 
         _ = CreateMap<Certificate, CertificateResponse>();
 
-        _ = CreateMap<CertificateResponse, CertificateAdjustEto>();
+        _ = CreateMap<CertificateResponse, NotificationEto>();
 
         _ = CreateMap<CertificateCreateEto, CertificateInsertRequest>();
     }

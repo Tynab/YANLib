@@ -32,13 +32,13 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var dtos = await _redisService.GetAll(DeveloperTypeGroup);
+            var mdls = await _redisService.GetAll(DeveloperTypeGroup);
 
-            return dtos.IsEmptyOrNull() ? default : dtos.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>);
+            return mdls.IsEmptyOrNull() ? default : mdls.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAllDeveloperTypeService-Exception");
+            _logger.LogError(ex, "GetAll-DeveloperTypeService-Exception");
 
             throw;
         }
@@ -48,25 +48,13 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString());
+            var mdl = await _redisService.Get(DeveloperTypeGroup, code.ToString());
 
-            if (dto.IsNull())
-            {
-                return default;
-            }
-
-            var rslt = ObjectMapper.Map<DeveloperRedisTypeDto, DeveloperTypeResponse>(dto);
-
-            if (rslt.IsNotNull())
-            {
-                rslt.Code = code;
-            }
-
-            return rslt;
+            return mdl.IsNull() ? default : ObjectMapper.Map<(long Code, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>((code, mdl));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetDeveloperTypeService-Exception: {Code}", code);
+            _logger.LogError(ex, "Get-DeveloperTypeService-Exception: {Code}", code);
 
             throw;
         }
@@ -76,25 +64,15 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var ent = ObjectMapper.Map<DeveloperTypeInsertRequest, DeveloperType>(request);
-            var code = _idGenerator.NextId();
+            var ent = await _repository.InsertAsync(ObjectMapper.Map<(long Code, DeveloperTypeInsertRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
 
-            ent.Code = code;
-
-            var mdl = await _repository.InsertAsync(ent);
-
-            if (mdl.IsNull())
-            {
-                return default;
-            }
-
-            _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(mdl));
-
-            return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
+            return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
+                ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
+                : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InsertDeveloperTypeService-Exception: {Request}", request.Serialize());
+            _logger.LogError(ex, "Insert-DeveloperTypeService-Exception: {Request}", request.Serialize());
 
             throw;
         }
@@ -104,22 +82,17 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var mdl = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeModifyRequest Request), DeveloperTypeDto>(((
+            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeModifyRequest Request), DeveloperTypeDto>(((
                 await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)
             ).DeveloperTypeId, request)));
 
-            if (mdl.IsNull())
-            {
-                return default;
-            }
-
-            _ = await _redisService.Set(DeveloperTypeGroup, mdl.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(mdl));
-
-            return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
+            return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
+                ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
+                : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ModifyDeveloperTypeService-Exception: {Code} - {Request}", code, request.Serialize());
+            _logger.LogError(ex, "Modify-DeveloperTypeService-Exception: {Code} - {Request}", code, request.Serialize());
 
             throw;
         }
@@ -129,27 +102,18 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
-
-            var mdl = await _repository.Modify(new DeveloperTypeDto
+            var ent = await _repository.Modify(new DeveloperTypeDto
             {
-                Id = dto.DeveloperTypeId,
+                Id = (await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)).DeveloperTypeId,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             });
 
-            if (mdl.IsNull())
-            {
-                return default;
-            }
-
-            _ = await _redisService.Delete(DeveloperTypeGroup, mdl.Code.ToString());
-
-            return ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(mdl);
+            return ent.IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, ent.Code.ToString()) ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent) : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteDeveloperTypeService-Exception: {Code} - {UpdatedBy}", code, updatedBy);
+            _logger.LogError(ex, "Delete-DeveloperTypeService-Exception: {Code} - {UpdatedBy}", code, updatedBy);
 
             throw;
         }
@@ -171,7 +135,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SyncDbToRedisDeveloperTypeService-Exception");
+            _logger.LogError(ex, "SyncDbToRedis-DeveloperTypeService-Exception");
 
             throw;
         }

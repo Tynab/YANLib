@@ -21,7 +21,7 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
     [SwaggerOperation(Summary = "Lấy Developer theo Id trên Elasticsearch")]
     public async ValueTask<IActionResult> Get(string id)
     {
-        _logger.LogInformation("GetElasticsearchController: {Id}", id);
+        _logger.LogInformation("Get-ElasticsearchController: {Id}", id);
 
         return Ok(await _developerEsService.Get(id));
     }
@@ -30,7 +30,7 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
     [SwaggerOperation(Summary = "Thêm mới Developer trên Elasticsearch")]
     public async ValueTask<IActionResult> Set([Required] DeveloperEsIndex request)
     {
-        _logger.LogInformation("SetElasticsearchController: {Request}", request.Serialize());
+        _logger.LogInformation("Set-ElasticsearchController: {Request}", request.Serialize());
 
         return Ok(await _developerEsService.Set(request));
     }

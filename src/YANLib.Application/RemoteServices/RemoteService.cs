@@ -99,7 +99,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InvokeApiRemoteService-Exception: {PathRoot} - {Method} - {JsonInput} - {QueryParams}", $"{remoteRoot}{path}", method.ToString(), jsonInput, queryParams.Serialize());
+            _logger.LogError(ex, "InvokeApi-RemoteService-Exception: {PathRoot} - {Method} - {JsonInput} - {QueryParams}", $"{remoteRoot}{path}", method.ToString(), jsonInput, queryParams.Serialize());
 
             throw;
         }

@@ -1,16 +1,10 @@
-﻿//using AutoMapper;
-//using YANLib.Entities;
-//using YANLib.Requests.Crud.Update;
-//using YANLib.Requests.Insert;
+﻿using AutoMapper;
+using YANLib.RabbitMq.Etos;
+using YANLib.Requests;
 
-//namespace YANLib.Profiles;
+namespace YANLib.AutoMapperProfiles;
 
-//public class YANLibApplicationAutoMapperProfile : Profile
-//{
-//    public YANLibApplicationAutoMapperProfile()
-//    {
-//        _ = CreateMap<DeveloperInsertRequest.Certificate, Certificate>();
-
-//        _ = CreateMap<DeveloperUpdateRequest.Certificate, Certificate>();
-//    }
-//}
+public class YANLibApplicationAutoMapperProfile : Profile
+{
+    public YANLibApplicationAutoMapperProfile() => CreateMap<NotificationRequest, NotificationEto>();
+}

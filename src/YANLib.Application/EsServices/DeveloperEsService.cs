@@ -28,7 +28,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetDeveloperEsService-Exception: {Id}", id);
+            _logger.LogError(ex, "Get-DeveloperEsService-Exception: {Id}", id);
 
             throw;
         }
@@ -42,7 +42,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetDeveloperEsService-Exception: {Data}", data.Serialize());
+            _logger.LogError(ex, "Set-DeveloperEsService-Exception: {Data}", data.Serialize());
 
             throw;
         }
@@ -67,7 +67,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulkDeveloperEsService-Exception: {Datas}", datas.Serialize());
+            _logger.LogError(ex, "SetBulk-DeveloperEsService-Exception: {Datas}", datas.Serialize());
 
             throw;
         }
@@ -81,7 +81,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteDeveloperEsService-Exception: {Id}", id);
+            _logger.LogError(ex, "Delete-DeveloperEsService-Exception: {Id}", id);
 
             throw;
         }
@@ -97,7 +97,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAllDeveloperEsService-Exception");
+            _logger.LogError(ex, "DeleteAll-DeveloperEsService-Exception");
 
             throw;
         }
@@ -116,7 +116,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByNameDeveloperEsService-Exception: {Name}", name);
+            _logger.LogError(ex, "GetByName-DeveloperEsService-Exception: {Name}", name);
 
             throw;
         }
@@ -136,7 +136,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByPhoneDeveloperEsService-Exception: {Phone}", phone);
+            _logger.LogError(ex, "GetByPhone-DeveloperEsService-Exception: {Phone}", phone);
 
             throw;
         }
@@ -156,7 +156,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchByNameDeveloperEsService-Exception: {SearchText}", searchText);
+            _logger.LogError(ex, "SearchByName-DeveloperEsService-Exception: {SearchText}", searchText);
 
             throw;
         }
@@ -176,7 +176,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchByPhoneDeveloperEsService-Exception: {SearchText}", searchText);
+            _logger.LogError(ex, "SearchByPhone-DeveloperEsService-Exception: {SearchText}", searchText);
 
             throw;
         }

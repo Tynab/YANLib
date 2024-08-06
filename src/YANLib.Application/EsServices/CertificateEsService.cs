@@ -28,7 +28,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetCertificateEsService-Exception: {Id}", id);
+            _logger.LogError(ex, "Get-CertificateEsService-Exception: {Id}", id);
 
             throw;
         }
@@ -42,7 +42,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetCertificateEsService-Exception: {Data}", data.Serialize());
+            _logger.LogError(ex, "Set-CertificateEsService-Exception: {Data}", data.Serialize());
 
             throw;
         }
@@ -67,7 +67,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulkCertificateEsService-Exception: {Datas}", datas.Serialize());
+            _logger.LogError(ex, "SetBulk-CertificateEsService-Exception: {Datas}", datas.Serialize());
 
             throw;
         }
@@ -81,7 +81,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteCertificateEsService-Exception: {Id}", id);
+            _logger.LogError(ex, "Delete-CertificateEsService-Exception: {Id}", id);
 
             throw;
         }
@@ -97,46 +97,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAllCertificateEsService-Exception");
-
-            throw;
-        }
-    }
-    public async ValueTask<IReadOnlyCollection<CertificateEsIndex>> GetByName(string name)
-    {
-        try
-        {
-            return (await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
-                .Query(q => q
-                    .Bool(b => b
-                        .Must(d => d
-                            .Match(m => m
-                                .Field(c => c.Name)
-                                .Query(name))))))).Documents;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByNameCertificateEsService-Exception: {Name}", name);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<IReadOnlyCollection<CertificateEsIndex>> SearchByName(string searchText)
-    {
-        try
-        {
-            return (await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
-                .Query(q => q
-                    .Bool(b => b
-                        .Must(d => d
-                            .MatchPhrasePrefix(m => m
-                                .Field(c => c.Name)
-                                .Query(searchText))))))).Documents;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchByNameCertificateEsService-Exception: {SearchText}", searchText);
+            _logger.LogError(ex, "DeleteAll-CertificateEsService-Exception");
 
             throw;
         }

@@ -36,7 +36,7 @@ public class DeveloperTypeRepository(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ModifyDeveloperTypeRepository-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "Modify-DeveloperTypeRepository-Exception: {DTO}", dto.Serialize());
 
             throw;
         }
