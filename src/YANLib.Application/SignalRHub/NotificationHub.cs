@@ -2,6 +2,12 @@
 
 namespace YANLib.SignalRHub;
 
-// Route: /signalr-hubs/notification
+/* 
+{
+  "protocol": "json",
+  "version": 1
+}
+*/
+
 [HubRoute("/yanlib/notification")]
 public class NotificationHub : AbpHub { }
