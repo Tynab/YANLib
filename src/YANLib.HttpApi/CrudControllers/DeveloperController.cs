@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -20,9 +21,11 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     private readonly IDeveloperCrudService _service = service;
 
     [HttpGet]
+    [SwaggerOperation(Summary = "Lấy tất cả lập trình viên")]
     public async ValueTask<ActionResult<PagedResultDto<DeveloperResponse>>> GetAll() => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto()));
 
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Lấy lập trình viên theo Id")]
     public async ValueTask<ActionResult<DeveloperResponse>> Get(Guid id)
     {
         _logger.LogInformation("Get-DeveloperCrudController: {Id}", id);
@@ -31,6 +34,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     }
 
     [HttpPost]
+    [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
     public async ValueTask<ActionResult<DeveloperResponse>> Create(DeveloperCreateRequest request)
     {
         _logger.LogInformation("Create-DeveloperCrudController: {Request}", request.Serialize());
@@ -39,6 +43,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     }
 
     [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
     public async ValueTask<ActionResult<DeveloperResponse>> Update(Guid id, DeveloperUpdateRequest request)
     {
         _logger.LogInformation("Update-DeveloperCrudController: {Id} - {Request}", id, request.Serialize());
@@ -47,6 +52,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     }
 
     [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Xóa lập trình viên")]
     public async ValueTask<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Delete-DeveloperCrudController: {Id}", id);

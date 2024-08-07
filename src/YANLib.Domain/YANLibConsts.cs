@@ -40,6 +40,10 @@ public static class YANLibConsts
         public const string YanlibPrefix = "yanlib";
         public const string SamplePrefix = "sample";
         public const string DeveloperTypePrefix = "developertype";
+        public const string DeveloperPrefix = "developer";
+        public const string CertificatePrefix = "certificate";
+
+        public static readonly string DeveloperCertificateGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}{CertificatePrefix}";
 
         public static readonly string DeveloperTypeGroup = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}";
     }

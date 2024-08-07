@@ -48,6 +48,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "Get-RedisService-Exception: {Group} - {Key}", group, key);
+
             throw;
         }
     }
@@ -88,6 +89,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetBulk-RedisService-Exception: {Group} - {Keys}", group, string.Join(", ", keys));
+
             throw;
         }
     }
@@ -128,6 +130,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetAll-RedisService-Exception: {Group}", group);
+
             throw;
         }
     }
@@ -138,13 +141,14 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
         try
         {
-            return group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value is null
+            return group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value.IsNull()
                 ? throw new BusinessException(BAD_REQUEST)
                 : await _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), jsonVal);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Set-RedisService-Exception: {Group} - {Key} - {Value}", group, key, jsonVal);
+
             throw;
         }
     }
@@ -165,6 +169,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "SetBulk-RedisService-Exception: {Group} - {Fields}", group, fields.Serialize());
+
             throw;
         }
     }
@@ -178,6 +183,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "Delete-RedisService-Exception: {Group} - {Key}", group, key);
+
             throw;
         }
     }
@@ -213,6 +219,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteBulk-RedisService-Exception: {Group} - {Keys}", group, string.Join(", ", keys));
+
             throw;
         }
     }
@@ -233,6 +240,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteAll-RedisService-Exception: {Group}", group);
+
             throw;
         }
     }
@@ -280,6 +288,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetGroup-RedisService-Exception: {GroupPreffix}", groupPreffix);
+
             throw;
         }
     }
@@ -302,6 +311,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteGroup-RedisService-Exception: {GroupPreffix}", groupPreffix);
+
             throw;
         }
     }
@@ -315,6 +325,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetGroupKeys-RedisService-Exception: {GroupPreffix}", groupPreffix);
+
             throw;
         }
     }

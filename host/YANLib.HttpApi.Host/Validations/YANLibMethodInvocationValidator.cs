@@ -69,8 +69,9 @@ public class YANLibMethodInvocationValidator(IObjectValidator objectValidator) :
         }
     }
 
-    protected virtual async Task AddMethodParameterValidationErrorsAsync(IAbpValidationResult context, ParameterInfo parameterInfo, object parameterValue)
-        => context.Errors.AddRange(await _objectValidator.GetErrorsAsync(parameterValue, parameterInfo.Name, parameterInfo.IsOptional
-            || parameterInfo.IsOut
-            || IsPrimitiveExtended(parameterInfo.ParameterType, includeEnums: true)));
+    protected virtual async Task AddMethodParameterValidationErrorsAsync(IAbpValidationResult context, ParameterInfo parameterInfo, object parameterValue) => context.Errors.AddRange(await _objectValidator.GetErrorsAsync(
+        parameterValue,
+        parameterInfo.Name,
+        parameterInfo.IsOptional || parameterInfo.IsOut || IsPrimitiveExtended(parameterInfo.ParameterType, includeEnums: true)
+    ));
 }

@@ -34,7 +34,9 @@ public static partial class YANNum
     /// </summary>
     /// <typeparam name="T">The type of elements in the array. Must implement <see cref="IComparable{T}"/>.</typeparam>
     /// <param name="nums">The array of nullable elements. Can be <see langword="null"/>.</param>
-    /// <returns>The minimum value among the non-null elements in the array, or the default value of type <typeparamref name="T"/> if the array is <see langword="null"/>, empty, or contains only <see langword="null"/> elements.</returns>
+    /// <returns>
+    /// The minimum value among the non-null elements in the array, or the default value of type <typeparamref name="T"/> if the array is <see langword="null"/>, empty, or contains only <see langword="null"/> elements.
+    /// </returns>
     public static T? Min<T>(params T?[]? nums) where T : IComparable<T>
     {
         if (nums.IsEmptyOrNull())
@@ -62,7 +64,9 @@ public static partial class YANNum
     /// </summary>
     /// <typeparam name="T">The type of elements in the array. Must implement <see cref="IComparable{T}"/>.</typeparam>
     /// <param name="nums">The array of nullable elements. Can be <see langword="null"/>.</param>
-    /// <returns>The maximum value among the non-null elements in the array, or the default value of type <typeparamref name="T"/> if the array is <see langword="null"/>, empty, or contains only <see langword="null"/> elements.</returns>
+    /// <returns>
+    /// The maximum value among the non-null elements in the array, or the default value of type <typeparamref name="T"/> if the array is <see langword="null"/>, empty, or contains only <see langword="null"/> elements.
+    /// </returns>
     public static T? Max<T>(params T?[]? nums) where T : IComparable<T>
     {
         if (nums.IsEmptyOrNull())

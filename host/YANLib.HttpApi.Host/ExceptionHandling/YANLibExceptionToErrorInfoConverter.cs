@@ -23,15 +23,13 @@ public class YANLibExceptionToErrorInfoConverter(
 ) : DefaultExceptionToErrorInfoConverter(localizationOptions, stringLocalizerFactory, stringLocalizer, serviceProvider), ITransientDependency
 {
     private readonly HashSet<string?> _errorCodes = new(typeof(YANLibDomainErrorCodes).GetFields(Public | Static | FlattenHierarchy)
-                                                                                     .Where(x => x.IsLiteral && !x.IsInitOnly)
-                                                                                     .Select(x => x.GetRawConstantValue()?.ToString())
-                                                                                     .Where(x => x.IsNotNull()));
+                                                                                      .Where(x => x.IsLiteral && !x.IsInitOnly)
+                                                                                      .Select(x => x.GetRawConstantValue()?.ToString())
+                                                                                      .Where(x => x.IsNotNull()));
 
     protected override RemoteServiceErrorInfo CreateErrorInfoWithoutCode(Exception exception, AbpExceptionHandlingOptions options)
     {
-        var code = exception.GetType()?
-                            .GetProperty("Code")?
-                            .GetValue(exception);
+        var code = exception.GetType()?.GetProperty("Code")?.GetValue(exception);
 
         if (code.IsNull())
         {
@@ -41,9 +39,7 @@ public class YANLibExceptionToErrorInfoConverter(
         {
             if (exception.Message.IsNotWhiteSpaceAndNull() && !_errorCodes.Contains(code))
             {
-                var details = exception.GetType()?
-                                       .GetProperty("Details")?
-                                       .GetValue(exception);
+                var details = exception.GetType()?.GetProperty("Details")?.GetValue(exception);
 
                 return details.IsNull()
                     ? new YANLibExtensibleRemoteServiceErrorInfo(exception.Message, string.Empty, code.ToString())

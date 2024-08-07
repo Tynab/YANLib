@@ -22,11 +22,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     private readonly IDeveloperTypeService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả định nghĩa Developer Types")]
+    [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<IEnumerable<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetAll());
 
     [HttpGet("{code}")]
-    [SwaggerOperation(Summary = "Lấy định nghĩa Developer Type theo Code")]
+    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Code")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long code)
     {
         _logger.LogInformation("Get-DeveloperTypeController: {Code}", code);
@@ -35,7 +35,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới định nghĩa Developer Type")]
+    [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Insert([Required] DeveloperTypeInsertRequest request)
     {
         _logger.LogInformation("Insert-DeveloperTypeController: {Request}", request.Serialize());
@@ -44,7 +44,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPatch("{code}")]
-    [SwaggerOperation(Summary = "Cập nhật định nghĩa Developer Type")]
+    [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Modify(long code, [Required] DeveloperTypeModifyRequest request)
     {
         _logger.LogInformation("Modify-DeveloperTypeController: {Code} - {Request}", code, request.Serialize());
@@ -53,7 +53,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpDelete("{code}")]
-    [SwaggerOperation(Summary = "Xóa định nghĩa Developer Type")]
+    [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Delete(long code, [Required] Guid updatedBy)
     {
         _logger.LogInformation("Delete-DeveloperTypeController: {Code} - {UpdatedBy}", code, updatedBy);
@@ -62,6 +62,6 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPost("sync-db-to-redis")]
-    [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa Developer Types từ Database sang Redis")]
+    [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
 }

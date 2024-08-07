@@ -59,6 +59,7 @@
 		<ProjectReference Include="..\..\src\YANLib.Application\YANLib.Application.csproj" />
 		<ProjectReference Include="..\..\src\YANLib.EntityFrameworkCore\YANLib.EntityFrameworkCore.csproj" />
 		<ProjectReference Include="..\..\src\YANLib.HttpApi\YANLib.HttpApi.csproj" />
+		<ProjectReference Include="..\..\src\YANLib.ServiceDefaults\YANLib.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>

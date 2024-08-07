@@ -20,11 +20,7 @@ public class Program
 #else
             .MinimumLevel.Information()
 #endif
-            .MinimumLevel.Override("Microsoft", Information)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Warning)
-            .Enrich.FromLogContext()
-            .WriteTo.Async(c => c.Console())
-            .CreateLogger();
+            .MinimumLevel.Override("Microsoft", Information).MinimumLevel.Override("Microsoft.EntityFrameworkCore", Warning).Enrich.FromLogContext().WriteTo.Async(c => c.Console()).CreateLogger();
 
         try
         {
@@ -33,10 +29,12 @@ public class Program
             var builder = CreateBuilder(args);
 
             _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog((t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
+            _ = builder.AddServiceDefaults();
             _ = await builder.AddApplicationAsync<YANLibHttpApiHostModule>();
 
             var app = builder.Build();
 
+            _ = app.MapDefaultEndpoints();
             await app.InitializeApplicationAsync();
             await app.RunAsync();
 

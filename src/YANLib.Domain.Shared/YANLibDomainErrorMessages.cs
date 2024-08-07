@@ -19,6 +19,7 @@ public static class YANLibDomainErrorMessages
     public const string NOT_FOUND_DEV = "Không tìm thấy hồ sơ lập trình viên!";
     public const string NOT_FOUND_DEV_TYPE = "Không tìm thấy định nghĩa loại lập trình viên!";
     public const string NOT_FOUND_CERT = "Không tìm thấy chứng chỉ!";
+    public const string NOT_FOUND_DEV_CERT = "Không tìm thấy chứng chỉ của lập trình viên!";
 
     public const string INTERNAL_SERVER_ERROR = "Lỗi trong quá trình xử lý!";
 }

@@ -19,7 +19,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     private readonly IDeveloperService _service = service;
 
     [HttpGet("{idCard}")]
-    [SwaggerOperation(Summary = "Lấy Developer theo Id Card")]
+    [SwaggerOperation(Summary = "Lấy Developer theo mã định danh")]
     public async ValueTask<IActionResult> GetByIdCard(string idCard)
     {
         _logger.LogInformation("GetById-CardDeveloperController: {IdCard}", idCard);
@@ -28,7 +28,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới Developer")]
+    [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
     public async ValueTask<IActionResult> Insert([Required] DeveloperInsertRequest request)
     {
         _logger.LogInformation("Insert-DeveloperController: {Request}", request.Serialize());
@@ -37,7 +37,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     }
 
     [HttpPatch("{idCard}")]
-    [SwaggerOperation(Summary = "Cập nhật Developer")]
+    [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
     public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperModifyRequest request)
     {
         _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());

@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace YANLib.Tests.Tests;
 
 public class IntegrationTest1

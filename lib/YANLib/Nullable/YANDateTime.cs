@@ -57,7 +57,7 @@ public static partial class YANDateTime
         ? TryParse(str, out var dt)
             ? dt
             : default
-        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
+        : TryParseExact(str, [.. fmts], InvariantCulture, None, out dt)
         ? dt
         : default;
 
@@ -123,7 +123,7 @@ public static partial class YANDateTime
         ? TryParse(str, out var dt)
             ? dt
             : dfltVal
-        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
+        : TryParseExact(str, [.. fmts], InvariantCulture, None, out dt)
         ? dt
         : dfltVal;
 

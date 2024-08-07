@@ -11,7 +11,11 @@ public static partial class YANBool
     /// </summary>
     /// <param name="val">The object to be converted to <see cref="bool"/>. Can be <see langword="null"/>.</param>
     /// <param name="dfltVal">The default value to be used if the conversion of <paramref name="val"/> fails. Can be <see langword="null"/>.</param>
-    /// <returns>The <see cref="bool"/> equivalent of the input object, or the converted default value if the input conversion fails, or <see langword="null"/> if both the input conversion fails and the default value is <see langword="null"/>.</returns>
+    /// <returns>
+    /// The <see cref="bool"/> equivalent of the input object,
+    /// or the converted default value if the input conversion fails,
+    /// or <see langword="null"/> if both the input conversion fails and the default value is <see langword="null"/>.
+    /// </returns>
     public static bool? ToBool(this object? val, object? dfltVal = null)
     {
         try

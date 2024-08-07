@@ -266,7 +266,8 @@ public static partial class YANJson
     /// <summary>
     /// Deserializes a collection of UTF-8 JSON byte arrays into their respective objects of type <typeparamref name="T"/> using a custom JSON deserializer with optional deserialization options.
     /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each UTF-8 JSON byte array in the collection is deserialized into an object of type <typeparamref name="T"/> using the provided deserialization options; if deserialization fails, a <see langword="null"/> value is yielded.
+    /// Each UTF-8 JSON byte array in the collection is deserialized into an object of type <typeparamref name="T"/> using the provided deserialization options;
+    /// if deserialization fails, a <see langword="null"/> value is yielded.
     /// </summary>
     /// <typeparam name="T">The type of objects to which the UTF-8 JSON byte arrays are to be deserialized.</typeparam>
     /// <param name="utf8Jsons">The collection of UTF-8 JSON byte arrays to be deserialized. Can be <see langword="null"/>.</param>
@@ -288,7 +289,8 @@ public static partial class YANJson
     /// <summary>
     /// Deserializes a collection (ICollection) of UTF-8 JSON byte arrays into their respective objects of type <typeparamref name="T"/> using a custom JSON deserializer with optional deserialization options.
     /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each UTF-8 JSON byte array in the collection is deserialized into an object of type <typeparamref name="T"/> using the provided deserialization options; if deserialization fails, a <see langword="null"/> value is yielded.
+    /// Each UTF-8 JSON byte array in the collection is deserialized into an object of type <typeparamref name="T"/> using the provided deserialization options;
+    /// if deserialization fails, a <see langword="null"/> value is yielded.
     /// </summary>
     /// <typeparam name="T">The type of objects to which the UTF-8 JSON byte arrays are to be deserialized.</typeparam>
     /// <param name="utf8Jsons">The ICollection of UTF-8 JSON byte arrays to be deserialized. Can be <see langword="null"/>.</param>

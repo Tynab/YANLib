@@ -290,7 +290,8 @@ public static partial class YANJson
         : utf8Jsons.Select(x => x.Deserialize<T>(options));
 
     /// <summary>
-    /// Deserializes a collection (ICollection) of UTF-8 JSON byte arrays into a collection of objects of type <typeparamref name="T"/> using the provided JsonSerializerOptions, with a default case-insensitive property name policy.
+    /// Deserializes a collection (ICollection) of UTF-8 JSON byte arrays into a collection of objects of type <typeparamref name="T"/> using the provided JsonSerializerOptions,
+    /// with a default case-insensitive property name policy.
     /// Returns <see langword="null"/> if the collection is <see langword="null"/> or empty, or if deserialization of any byte array fails.
     /// Uses case-insensitive property name deserialization settings if no JsonSerializerOptions are provided.
     /// </summary>

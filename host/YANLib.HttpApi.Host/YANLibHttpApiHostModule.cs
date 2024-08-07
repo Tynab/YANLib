@@ -282,7 +282,8 @@ public class YANLibHttpApiHostModule : AbpModule
         });
     }
 
-    private static void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHangfire(c => c.UseSqlServerStorage(configuration.GetConnectionString(ConnectionStringName.Default)));
+    private static void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
+        => context.Services.AddHangfire(c => c.UseSqlServerStorage(configuration.GetConnectionString(ConnectionStringName.Default)));
 
     private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration)
     {
@@ -345,7 +346,7 @@ public class YANLibHttpApiHostModule : AbpModule
         });
 
         _ = app.UseCapDashboard(); // "/cap"
-        _ = app.UseHangfireDashboard();
+        _ = app.UseHangfireDashboard(); // "/hangfire"
         _ = app.UseConfiguredEndpoints();
     }
 }

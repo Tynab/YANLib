@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using YANLib.Requests.Insert;
@@ -12,15 +10,17 @@ namespace YANLib.Services;
 
 public interface IDeveloperCertificateService : IApplicationService
 {
-    public ValueTask<IEnumerable<DeveloperCertificateResponse>?> GetAll();
+    public ValueTask<IEnumerable<DeveloperCertificateResponse>?> GetByDeveloper(string idCard);
 
-    public ValueTask<DeveloperCertificateResponse?> Get(string idCard, long code);
+    public ValueTask<DeveloperCertificateResponse?> GetByDeveloperAndCertificate(string idCard, long code);
 
     public ValueTask<DeveloperCertificateResponse?> Insert(DeveloperCertificateInsertRequest request);
 
-    public ValueTask<DeveloperCertificateResponse?> Modify(string idCard, long code, DeveloperCertificateModifyRequest request);
+    public ValueTask<DeveloperCertificateResponse?> Modify(DeveloperCertificateModifyRequest request);
 
     public ValueTask<DeveloperCertificateResponse?> Delete(string idCard, long code, Guid updatedBy);
 
     public ValueTask<bool> SyncDbToRedis();
+
+    public ValueTask<bool> SyncDbToRedisByDeveloper(string idCard);
 }

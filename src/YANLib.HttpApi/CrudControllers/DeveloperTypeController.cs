@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -20,9 +21,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     private readonly IDeveloperTypeCrudService _service = service;
 
     [HttpGet]
+    [SwaggerOperation(Summary = "Lấy tất cả đinh nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto()));
 
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Id")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(Guid id)
     {
         _logger.LogInformation("Get-DeveloperTypeCrudController: {Id}", id);
@@ -31,6 +34,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPost]
+    [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest request)
     {
         _logger.LogInformation("Create-DeveloperTypeCrudController: {Request}", request.Serialize());
@@ -39,6 +43,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(Guid id, DeveloperTypeUpdateRequest request)
     {
         _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
@@ -47,6 +52,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
     public async ValueTask<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Delete-DeveloperTypeCrudController: {Id}", id);

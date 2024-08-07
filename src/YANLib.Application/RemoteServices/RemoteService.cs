@@ -26,16 +26,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
         {
             var req = new RestRequest(path, method);
 
-            if (headers.IsNotEmptyAndNull())
-            {
-                headers.ForEach(x => req.AddHeader(x.Key, x.Value));
-
-                if (jsonInput.IsNotWhiteSpaceAndNull())
-                {
-                    _ = req.AddParameter(headers["Content-Type"], jsonInput, RequestBody);
-                }
-            }
-            else
+            if (headers.IsEmptyOrNull())
             {
                 _ = req.AddHeader("Accept", "*/*");
                 _ = req.AddHeader("Content-Type", "application/json");
@@ -43,6 +34,15 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
                 if (jsonInput.IsNotWhiteSpaceAndNull())
                 {
                     _ = req.AddParameter("application/json", jsonInput, RequestBody);
+                }
+            }
+            else
+            {
+                headers.ForEach(x => req.AddHeader(x.Key, x.Value));
+
+                if (jsonInput.IsNotWhiteSpaceAndNull())
+                {
+                    _ = req.AddParameter(headers["Content-Type"], jsonInput, RequestBody);
                 }
             }
 

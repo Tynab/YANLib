@@ -67,7 +67,8 @@ public static partial class YANBytes
     /// <summary>
     /// Converts a collection of byte arrays to their respective objects of type <typeparamref name="T"/>.
     /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each byte array in the collection is converted to an object of type <typeparamref name="T"/>; if conversion fails or the byte array is <see langword="null"/>, a <see langword="null"/> value of type <typeparamref name="T"/> is yielded.
+    /// Each byte array in the collection is converted to an object of type <typeparamref name="T"/>;
+    /// if conversion fails or the byte array is <see langword="null"/>, a <see langword="null"/> value of type <typeparamref name="T"/> is yielded.
     /// </summary>
     /// <param name="arrs">The collection of byte arrays to be converted. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays.</returns>
@@ -87,7 +88,8 @@ public static partial class YANBytes
     /// <summary>
     /// Converts a collection (ICollection) of byte arrays to their respective objects of type <typeparamref name="T"/>.
     /// If the collection is <see langword="null"/> or empty, yields no results.
-    /// Each byte array in the collection is converted to an object of type <typeparamref name="T"/>; if conversion fails or the byte array is <see langword="null"/>, a <see langword="null"/> value of type <typeparamref name="T"/> is yielded.
+    /// Each byte array in the collection is converted to an object of type <typeparamref name="T"/>;
+    /// if conversion fails or the byte array is <see langword="null"/>, a <see langword="null"/> value of type <typeparamref name="T"/> is yielded.
     /// </summary>
     /// <param name="arrs">The ICollection of byte arrays to be converted. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays.</returns>
@@ -107,7 +109,8 @@ public static partial class YANBytes
     /// <summary>
     /// Converts an array of byte arrays to their respective objects of type <typeparamref name="T"/>.
     /// If the array is <see langword="null"/> or empty, yields no results.
-    /// Each byte array in the array is converted to an object of type <typeparamref name="T"/>; if conversion fails or the byte array is <see langword="null"/>, a <see langword="null"/> value of type <typeparamref name="T"/> is yielded.
+    /// Each byte array in the array is converted to an object of type <typeparamref name="T"/>;
+    /// if conversion fails or the byte array is <see langword="null"/>, a <see langword="null"/> value of type <typeparamref name="T"/> is yielded.
     /// </summary>
     /// <param name="arrs">The array of byte arrays to be converted. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays.</returns>

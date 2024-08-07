@@ -408,7 +408,9 @@ public static partial class YANDateTime
     /// Each <see cref="DateTime"/> object in the collection is evaluated to find its corresponding week number in the year.
     /// </summary>
     /// <param name="dts">The collection of <see cref="DateTime"/> objects. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers for each <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    /// <returns>
+    /// An enumerable collection of integers representing the week numbers for each <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
+    /// </returns>
     public static IEnumerable<int>? GetWeekOfYears(this IEnumerable<DateTime>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>
@@ -417,7 +419,9 @@ public static partial class YANDateTime
     /// Each <see cref="DateTime"/> object in the collection is evaluated to find its corresponding week number in the year.
     /// </summary>
     /// <param name="dts">The ICollection of <see cref="DateTime"/> objects. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers for each <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    /// <returns>
+    /// An enumerable collection of integers representing the week numbers for each <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
+    /// </returns>
     public static IEnumerable<int>? GetWeekOfYears(this ICollection<DateTime>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>
@@ -435,7 +439,9 @@ public static partial class YANDateTime
     /// Each nullable <see cref="DateTime"/> object in the collection is evaluated to find its corresponding week number in the year. Null values are ignored.
     /// </summary>
     /// <param name="dts">The collection of nullable <see cref="DateTime"/> objects. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers for each non-null <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    /// <returns>
+    /// An enumerable collection of integers representing the week numbers for each non-null <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
+    /// </returns>
     public static IEnumerable<int>? GetWeekOfYears(this IEnumerable<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>
@@ -444,7 +450,9 @@ public static partial class YANDateTime
     /// Each nullable <see cref="DateTime"/> object in the collection is evaluated to find its corresponding week number in the year. Null values are ignored.
     /// </summary>
     /// <param name="dts">The ICollection of nullable <see cref="DateTime"/> objects. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of integers representing the week numbers for each non-null <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    /// <returns>
+    /// An enumerable collection of integers representing the week numbers for each non-null <see cref="DateTime"/> object in the collection, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
+    /// </returns>
     public static IEnumerable<int>? GetWeekOfYears(this ICollection<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>

@@ -151,7 +151,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
                 }
             }));
 
-            return mdls.IsNotEmptyAndNull() ? rslt && await _esService.SetBulk(datas) : rslt;
+            return mdls.IsEmptyOrNull() ? rslt : rslt && await _esService.SetBulk(datas);
         }
         catch (Exception ex)
         {

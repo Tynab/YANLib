@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -20,9 +21,11 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     private readonly ICertificateCrudService _service = service;
 
     [HttpGet]
+    [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ")]
     public async ValueTask<ActionResult<PagedResultDto<CertificateResponse>>> GetAll() => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto()));
 
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id")]
     public async ValueTask<ActionResult<CertificateResponse>> Get(Guid id)
     {
         _logger.LogInformation("Get-CertificateCrudController: {Id}", id);
@@ -31,6 +34,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     }
 
     [HttpPost]
+    [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
     public async ValueTask<ActionResult<CertificateResponse>> Create(CertificateCreateRequest request)
     {
         _logger.LogInformation("Create-CertificateCrudController: {Request}", request.Serialize());
@@ -39,6 +43,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     }
 
     [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
     public async ValueTask<ActionResult<CertificateResponse>> Update(Guid id, CertificateUpdateRequest request)
     {
         _logger.LogInformation("Update-CertificateCrudController: {Id} - {Request}", id, request.Serialize());
@@ -47,6 +52,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     }
 
     [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Xóa chứng chỉ")]
     public async ValueTask<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Delete-CertificateCrudController: {Id}", id);

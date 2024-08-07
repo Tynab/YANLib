@@ -168,11 +168,11 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if any element is not <see langword="null"/> or does not have all properties set to default values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyNotEmptyAndNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
-    public static List<T> AsList<T>(this T obj) => new() { obj };
+    public static List<T> AsList<T>(this T obj) => [obj];
 
-    public static HashSet<T> AsHashSet<T>(this T obj) => new() { obj };
+    public static HashSet<T> AsHashSet<T>(this T obj) => [obj];
 
-    public static T[] AsArray<T>(this T obj) => new T[1] { obj };
+    public static T[] AsArray<T>(this T obj) => [obj];
 
     public static T Copy<T>(this T src) where T : new()
     {

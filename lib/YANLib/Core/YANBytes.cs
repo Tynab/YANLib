@@ -56,7 +56,9 @@ public static partial class YANBytes
     /// </summary>
     /// <typeparam name="T">The type of objects to which the byte arrays are to be deserialized.</typeparam>
     /// <param name="arrs">The collection of byte arrays to be deserialized. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    /// <returns>
+    /// An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
+    /// </returns>
     public static IEnumerable<T?>? FromByteArrays<T>(this IEnumerable<byte[]?>? arrs) => arrs.IsEmptyOrNull() ? default : arrs.Select(x => x.FromByteArray<T>());
 
     /// <summary>
@@ -66,7 +68,9 @@ public static partial class YANBytes
     /// </summary>
     /// <typeparam name="T">The type of objects to which the byte arrays are to be deserialized.</typeparam>
     /// <param name="arrs">The ICollection of byte arrays to be deserialized. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
+    /// <returns>
+    /// An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
+    /// </returns>
     public static IEnumerable<T?>? FromByteArrays<T>(this ICollection<byte[]?>? arrs) => arrs.IsEmptyOrNull() ? default : arrs.Select(x => x.FromByteArray<T>());
 
     /// <summary>

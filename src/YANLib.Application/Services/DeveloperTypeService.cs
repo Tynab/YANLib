@@ -131,7 +131,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var rslt = await clnTask;
             var mdls = await mdlsTask;
 
-            return mdls.IsNotEmptyAndNull() ? rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>)) : rslt;
+            return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>));
         }
         catch (Exception ex)
         {

@@ -59,18 +59,19 @@ public class DeveloperService(
             }
 
             var entTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperInsertRequest, Developer>(request));
-            var redisTask = _developerTypeService.Get(request.DeveloperTypeCode).AsTask();
+            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeCode).AsTask();
 
-            await WhenAll(entTask, redisTask);
+            await WhenAll(entTask, devTypeTask);
 
-            var mdl = ObjectMapper.Map<Developer, DeveloperResponse>(await entTask);
+            var ent = await entTask;
+            var devType = await devTypeTask;
 
-            if (mdl.IsNull())
+            if (ent.IsNull())
             {
                 return default;
             }
 
-            mdl.DeveloperType = await redisTask;
+            var mdl = ObjectMapper.Map<(DeveloperTypeResponse? DeveloperType, Developer Entity), DeveloperResponse>((devType, ent));
 
             return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(mdl)) ? mdl : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
@@ -233,7 +234,7 @@ public class DeveloperService(
                 }
             }));
 
-            return mdls.IsNotEmptyAndNull() ? rslt && await _esService.SetBulk(datas) : rslt;
+            return mdls.IsEmptyOrNull() ? rslt : rslt && await _esService.SetBulk(datas);
         }
         catch (Exception ex)
         {

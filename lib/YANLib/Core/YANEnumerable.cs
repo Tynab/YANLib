@@ -371,5 +371,4 @@ public static partial class YANEnumerable
 
         _ = srcs.RemoveAll(x => x.IsEmptyOrNull());
     }
-
 }

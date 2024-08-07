@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace YANLib.Requests.Modify;
 
-namespace YANLib.Requests.Modify;
+public sealed class DeveloperCertificateModifyRequest : YANLibApplicationModifyRequest
+{
+    public required string DeveloperIdCard { get; set; }
 
-public sealed class DeveloperCertificateModifyRequest : YANLibApplicationModifyRequest { }
+    public required long CertificateCode { get; set; }
+}
