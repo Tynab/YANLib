@@ -42,7 +42,7 @@ public class Program
 
             return default;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not HostAbortedException && ex.Source is not "Microsoft.EntityFrameworkCore.Design")
         {
             if (ex.GetType().Name.Equals("StopTheHostException", Ordinal))
             {
