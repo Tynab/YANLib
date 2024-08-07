@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YANLib.Requests.Insert;
+namespace YANLib;
 
 public class YANLibApplicationInsertRequest
 {

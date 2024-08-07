@@ -2,17 +2,13 @@
 using System.ComponentModel;
 using static System.DateTime;
 
-namespace YANLib.Requests.Crud.Update;
+namespace YANLib;
 
-public class YANLibApplicationUpdateRequest
+public class YANLibApplicationCreateRequest
 {
     public required Guid CreatedBy { get; set; }
 
-    public required DateTime CreatedAt { get; set; }
-
-    public required Guid UpdatedBy { get; set; }
-
-    public required DateTime UpdatedAt { get; set; } = UtcNow;
+    public required DateTime CreatedAt { get; set; } = UtcNow;
 
     [DefaultValue(true)]
     public required bool IsActive { get; set; } = true;

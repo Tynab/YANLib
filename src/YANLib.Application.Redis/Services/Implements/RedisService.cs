@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.ConnectionFactories;
 using YANLib.Core;
-using YANLib.RedisDtos;
 using static System.Text.Encoding;
 using static System.Threading.Tasks.Task;
-using static YANLib.Constants.YANLibConsts.RedisConstant;
+using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.Implements;

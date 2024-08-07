@@ -6,8 +6,8 @@ using YANLib.Core;
 using YANLib.RemoteServices;
 using YANLib.Requests;
 using static RestSharp.Method;
-using static YANLib.Constants.YANLibConsts.RemoteService;
-using static YANLib.Constants.YANLibConsts.RemoteService.Path;
+using static YANLib.YANLibConsts.RemoteService;
+using static YANLib.YANLibConsts.RemoteService.Path;
 
 namespace YANLib.Services;
 

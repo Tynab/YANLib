@@ -2,8 +2,8 @@
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using YANLib.Entities;
-using static YANLib.Constants.YANLibConsts.ConnectionStringName;
-using static YANLib.Constants.YANLibConsts.DbSchema;
+using static YANLib.YANLibConsts.ConnectionStringName;
+using static YANLib.YANLibConsts.DbSchema;
 
 namespace YANLib.DbContexts.Implements;
 
@@ -15,6 +15,8 @@ public class YANLibDbContext(DbContextOptions<YANLibDbContext> options) : AbpDbC
     public DbSet<DeveloperType> DeveloperTypes { get; set; }
 
     public DbSet<Certificate> Certificates { get; set; }
+
+    public DbSet<DeveloperCertificate> DeveloperCertificates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

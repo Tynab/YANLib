@@ -2,7 +2,6 @@
 using Volo.Abp;
 using Volo.Abp.Modularity;
 using YANLib.ConnectionFactories;
-using YANLib.Options;
 using YANLib.RedisDtos;
 using YANLib.Services;
 using YANLib.Services.Implements;
@@ -21,6 +20,7 @@ public class YANLibApplicationRedisModule : AbpModule
 
         Configure<RedisOptions>(o => o.RedisConnectionString = configuration["Redis:Configuration"]);
         _ = context.Services.AddSingleton<IRedisService<DeveloperRedisTypeDto>, RedisService<DeveloperRedisTypeDto>>();
+        _ = context.Services.AddSingleton<IRedisService<DeveloperCertificateRedisDto>, RedisService<DeveloperCertificateRedisDto>>();
     }
 
     public override void OnApplicationShutdown(ApplicationShutdownContext context) => context.ServiceProvider.GetRequiredService<IRedisConnectionFactory>().Connection().CloseAsync();

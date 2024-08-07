@@ -10,7 +10,7 @@ using YANLib.Core;
 using YANLib.EsIndices;
 using YANLib.Utilities;
 using static System.Threading.Tasks.Task;
-using static YANLib.Constants.YANLibConsts.ElasticsearchIndex;
+using static YANLib.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.EsServices;
 

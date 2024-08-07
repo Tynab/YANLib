@@ -1,7 +1,7 @@
 ﻿using Id_Generator_Snowflake;
 using System;
-using static YANLib.Constants.YANLibConsts.SnowflakeId;
-using static YANLib.Constants.YANLibConsts.SnowflakeId.DatacenterId;
+using static YANLib.YANLibConsts.SnowflakeId;
+using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 
 namespace YANLib.Entities;
 

@@ -14,9 +14,9 @@ using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
-using static YANLib.Constants.YANLibConsts.RedisConstant;
-using static YANLib.Constants.YANLibConsts.SnowflakeId.DatacenterId;
-using static YANLib.Constants.YANLibConsts.SnowflakeId.WorkerId;
+using static YANLib.YANLibConsts.RedisConstant;
+using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
+using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services;

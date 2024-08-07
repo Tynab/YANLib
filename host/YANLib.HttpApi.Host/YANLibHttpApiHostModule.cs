@@ -6,6 +6,7 @@ using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -24,6 +25,7 @@ using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
+using Volo.Abp.BackgroundJobs.Hangfire;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.EntityFrameworkCore;
@@ -45,6 +47,7 @@ using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Array;
 using static System.Convert;
 using static System.Text.Encoding;
+using static YANLib.YANLibConsts;
 
 namespace YANLib;
 
@@ -60,7 +63,8 @@ namespace YANLib;
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpEventBusAzureModule),
     typeof(AbpEventBusRabbitMqModule),
-    typeof(AbpAspNetCoreSignalRModule)
+    typeof(AbpAspNetCoreSignalRModule),
+    typeof(AbpBackgroundJobsHangfireModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
@@ -81,6 +85,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
         ConfigureCap(context, configuration);
+        ConfigureHangfire(context, configuration);
         ConfigureHealthChecks(context, configuration);
     }
 
@@ -277,6 +282,8 @@ public class YANLibHttpApiHostModule : AbpModule
         });
     }
 
+    private static void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHangfire(c => c.UseSqlServerStorage(configuration.GetConnectionString(ConnectionStringName.Default)));
+
     private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration)
     {
         var connectionString = configuration["ConnectionStrings:Default"];
@@ -337,7 +344,8 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
+        _ = app.UseCapDashboard(); // "/cap"
+        _ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
-        _ = app.UseCapDashboard();
     }
 }

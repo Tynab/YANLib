@@ -1,6 +1,6 @@
 ﻿using Id_Generator_Snowflake;
-using static YANLib.Constants.YANLibConsts.SnowflakeId.DatacenterId;
-using static YANLib.Constants.YANLibConsts.SnowflakeId.WorkerId;
+using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
+using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Entities;
 

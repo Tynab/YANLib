@@ -1,4 +1,4 @@
-﻿namespace YANLib.Options;
+﻿namespace YANLib;
 
 public class RedisOptions
 {

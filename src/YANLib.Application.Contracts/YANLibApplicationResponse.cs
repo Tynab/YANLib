@@ -1,8 +1,9 @@
 ﻿using System;
+using Volo.Abp.Application.Dtos;
 
-namespace YANLib.RedisDtos;
+namespace YANLib;
 
-public class YANLibApplicationRedisDto
+public class YANLibApplicationResponse : AuditedEntityDto<Guid>
 {
     public Guid CreatedBy { get; set; }
 

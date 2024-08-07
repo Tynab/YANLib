@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using Volo.Abp.Domain.Entities;
 
-namespace YANLib.Entities;
+namespace YANLib;
 
 public class YANLibDomainEntity : Entity<Guid>
 {

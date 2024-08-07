@@ -8,7 +8,7 @@ using YANLib.Core;
 using YANLib.EsIndices;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
-using static YANLib.Constants.YANLibConsts.ElasticsearchIndex;
+using static YANLib.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.Utilities;
 

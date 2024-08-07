@@ -2,7 +2,7 @@
 using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
 
-namespace YANLib.AutoMapperProfiles;
+namespace YANLib;
 
 public class YANLibApplicationAutoMapperProfile : Profile
 {

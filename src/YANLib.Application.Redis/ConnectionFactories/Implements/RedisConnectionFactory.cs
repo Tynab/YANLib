@@ -2,7 +2,6 @@
 using StackExchange.Redis;
 using System;
 using Volo.Abp.DependencyInjection;
-using YANLib.Options;
 using static StackExchange.Redis.ConnectionMultiplexer;
 
 namespace YANLib.ConnectionFactories.Implements;

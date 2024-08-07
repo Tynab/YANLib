@@ -1,4 +1,4 @@
-﻿namespace YANLib.Constants;
+﻿namespace YANLib;
 
 public static class YANLibConsts
 {
