@@ -32,7 +32,7 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
-            .Ignore(d => d.IsDeleted);
+            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false));
 
         _ = CreateMap<DeveloperType, DeveloperRedisTypeDto>()
             .ForMember(d => d.DeveloperTypeId, o => o.MapFrom(s => s.Id));
@@ -49,14 +49,14 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.Dto.UpdatedAt))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Dto.IsActive));
 
-        _ = CreateMap<KeyValuePair<string, DeveloperRedisTypeDto>, DeveloperTypeResponse>()
+        _ = CreateMap<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>()
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Key.ToLong(default)))
-            .ForMember(d => d.Id, o => o.MapFrom(s => s.Value.DeveloperTypeId))
-            .ForMember(d => d.Name, o => o.MapFrom(s => s.Value.Name))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Value.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.Value.CreatedAt))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Value.UpdatedBy))
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.Value.UpdatedAt))
-            .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Value.IsActive));
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.DeveloperTypeId))
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.Name))
+            .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.CreatedBy))
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.CreatedAt))
+            .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.UpdatedBy))
+            .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.UpdatedAt))
+            .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Value.IsNotNull() && s.Value.IsActive));
     }
 }

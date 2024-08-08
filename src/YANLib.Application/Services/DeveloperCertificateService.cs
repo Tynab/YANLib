@@ -44,7 +44,7 @@ public class DeveloperCertificateService(
         {
             var mdls = await _redisService.GetAll($"{DeveloperCertificateGroupPrefix}:{idCard}");
 
-            return mdls.IsEmptyOrNull() ? default : mdls.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperCertificateRedisDto?>, DeveloperCertificateResponse>);
+            return mdls.IsEmptyOrNull() ? default : mdls.Select(x => ObjectMapper.Map<(string IdCard, KeyValuePair<string, DeveloperCertificateRedisDto?> Pair), DeveloperCertificateResponse>((idCard, x)));
         }
         catch (Exception ex)
         {
@@ -60,7 +60,7 @@ public class DeveloperCertificateService(
         {
             var mdl = await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{idCard}", code.ToString());
 
-            return mdl.IsNull() ? default : ObjectMapper.Map<DeveloperCertificateRedisDto, DeveloperCertificateResponse>(mdl);
+            return mdl.IsNull() ? default : ObjectMapper.Map<(string IdCard, long Code, DeveloperCertificateRedisDto Dto), DeveloperCertificateResponse>((idCard, code, mdl));
         }
         catch (Exception ex)
         {
@@ -96,7 +96,7 @@ public class DeveloperCertificateService(
 
             return ent.IsNotNull()
                 && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
-                ? ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateResponse>(ent)
+                ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((dev.IdCard, cert.Code.ToLong(), ent))
                 : default;
         }
         catch (Exception ex)
@@ -118,7 +118,7 @@ public class DeveloperCertificateService(
 
             return ent.IsNotNull()
                 && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
-                ? ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateResponse>(ent)
+                ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((request.DeveloperIdCard, request.CertificateCode, ent))
                 : default;
         }
         catch (Exception ex)
@@ -140,7 +140,9 @@ public class DeveloperCertificateService(
                 IsDeleted = true,
             });
 
-            return ent.IsNotNull() && await _redisService.Delete($"{DeveloperCertificateGroupPrefix}:{idCard}", code.ToString()) ? ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateResponse>(ent) : default;
+            return ent.IsNotNull() && await _redisService.Delete($"{DeveloperCertificateGroupPrefix}:{idCard}", code.ToString())
+                ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((idCard, code, ent))
+                : default;
         }
         catch (Exception ex)
         {

@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace YANLib.Responses;
+﻿namespace YANLib.Responses;
 
 public sealed class DeveloperCertificateResponse : YANLibApplicationResponse
 {
-    public Guid DeveloperId { get; set; }
+    public string? DeveloperIdCard { get; set; }
 
-    public Guid CertificateId { get; set; }
+    public long CertificateCode { get; set; }
 }
