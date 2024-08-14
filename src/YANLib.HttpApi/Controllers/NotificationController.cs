@@ -22,7 +22,8 @@ public sealed class NotificationController(ILogger<NotificationController> logge
     public async Task<IActionResult> Send([Required] NotificationRequest request)
     {
         _logger.LogInformation("Send-NotificationController: {Request}", request.Serialize());
-        await _service.Send(request);
+        //await _service.Send(request);
+        await _service.Schedule(request);
 
         return Ok();
     }
