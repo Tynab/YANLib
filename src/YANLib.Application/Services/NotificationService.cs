@@ -1,16 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.EventBus.Distributed;
-using YANLib.Args;
+using YANLib.BackgroundArgs;
 using YANLib.Core;
 using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
-using static System.Guid;
-using static YANLib.Core.YANNum;
-using static YANLib.Core.YANText;
+using static System.TimeSpan;
 
 namespace YANLib.Services;
 
@@ -44,7 +41,7 @@ public class NotificationService(ILogger<NotificationService> logger, IDistribut
             var args = new NotificationArgs(request.Message, request.SentBy);
 
             _logger.LogInformation("Schedule-NotificationService: {Args}", args.Serialize());
-            _ = await _backgroundJobManager.EnqueueAsync(args, delay: TimeSpan.FromSeconds(60));
+            _ = await _backgroundJobManager.EnqueueAsync(args, delay: FromSeconds(10));
         }
         catch (Exception ex)
         {

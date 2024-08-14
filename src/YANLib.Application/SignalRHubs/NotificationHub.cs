@@ -1,4 +1,6 @@
-﻿using Volo.Abp.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
+using Volo.Abp.AspNetCore.SignalR;
 
 namespace YANLib.SignalRHubs;
 
@@ -10,4 +12,7 @@ namespace YANLib.SignalRHubs;
 */
 
 [HubRoute("/yanlib/notification")]
-public class NotificationHub : AbpHub { }
+public class NotificationHub : AbpHub
+{
+    public override async Task OnConnectedAsync() => await Clients.Caller.SendAsync("ReceiveMessage", "Welcome to YANLib!");
+}

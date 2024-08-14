@@ -16,6 +16,6 @@ public class NotificationHandler(ILogger<NotificationHandler> logger, IHubContex
     public async Task HandleEventAsync(NotificationEto eventData)
     {
         _logger.LogInformation("NotificationHandler-Subscribe: {EventData}", eventData.Serialize());
-        await _hubContext.Clients.All.SendAsync("ReceiveMessage", eventData.Message);
+        await _hubContext.Clients.All.SendAsync("ReceiveNotification", eventData.Message);
     }
 }

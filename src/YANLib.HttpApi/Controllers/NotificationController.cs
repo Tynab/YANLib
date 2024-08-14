@@ -17,12 +17,21 @@ public sealed class NotificationController(ILogger<NotificationController> logge
     private readonly ILogger<NotificationController> _logger = logger;
     private readonly INotificationService _service = service;
 
-    [HttpPost]
+    [HttpPost("send")]
     [SwaggerOperation(summary: "Gởi thông báo")]
     public async Task<IActionResult> Send([Required] NotificationRequest request)
     {
         _logger.LogInformation("Send-NotificationController: {Request}", request.Serialize());
-        //await _service.Send(request);
+        await _service.Send(request);
+
+        return Ok();
+    }
+
+    [HttpPost("schedule")]
+    [SwaggerOperation(summary: "Lập lịch gởi thông báo")]
+    public async Task<IActionResult> Schedule([Required] NotificationRequest request)
+    {
+        _logger.LogInformation("Schedule-NotificationController: {Request}", request.Serialize());
         await _service.Schedule(request);
 
         return Ok();

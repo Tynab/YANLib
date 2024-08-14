@@ -1,7 +1,7 @@
 ﻿using System;
 using Volo.Abp.BackgroundJobs;
 
-namespace YANLib.Args;
+namespace YANLib.BackgroundArgs;
 
-[BackgroundJobName("notifications")]
+[BackgroundJobName("notification")]
 public sealed record NotificationArgs(string? Message, Guid SentBy);
