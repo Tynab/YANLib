@@ -53,11 +53,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.Blazor", "host\YANLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.Blazor.Client", "host\YANLib.Blazor.Client\YANLib.Blazor.Client.csproj", "{6B2C8A73-D8ED-46E5-A14C-3276B84599FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.ServiceDefaults", "src\YANLib.ServiceDefaults\YANLib.ServiceDefaults.csproj", "{7833D720-1851-4249-9401-60C35AEF6D7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.ServiceDefaults", "src\YANLib.ServiceDefaults\YANLib.ServiceDefaults.csproj", "{7833D720-1851-4249-9401-60C35AEF6D7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.AppHost", "host\YANLib.AppHost\YANLib.AppHost.csproj", "{61FED06D-F59A-43DF-A281-359CC40B4B66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.AppHost", "host\YANLib.AppHost\YANLib.AppHost.csproj", "{61FED06D-F59A-43DF-A281-359CC40B4B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.Tests", "test\YANLib.Tests\YANLib.Tests.csproj", "{0EF83C10-07A9-476D-B922-ECBC689F0972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.Tests", "test\YANLib.Tests\YANLib.Tests.csproj", "{0EF83C10-07A9-476D-B922-ECBC689F0972}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

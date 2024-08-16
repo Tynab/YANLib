@@ -1,0 +1,10 @@
+GET {{HostAddress}}/{{Certificate}}
+
+###
+POST {{HostAddress}}/{{Certificate}}
+
+###
+PUT {{HostAddress}}/{{Certificate}}
+
+###
+DELETE {{HostAddress}}/{{Certificate}}
