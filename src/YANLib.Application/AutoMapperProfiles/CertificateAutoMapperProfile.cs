@@ -3,6 +3,8 @@ using Volo.Abp.AutoMapper;
 using YANLib.Entities;
 using YANLib.Kafka.Etos;
 using YANLib.RabbitMq.Etos;
+using YANLib.Requests.Crud.Create;
+using YANLib.Requests.Crud.Update;
 using YANLib.Requests.Insert;
 using YANLib.Responses;
 
@@ -12,7 +14,15 @@ public sealed class CertificateAutoMapperProfile : Profile
 {
     public CertificateAutoMapperProfile()
     {
-        _ = CreateMap<NotificationEto, CertificateInsertRequest>();
+        _ = CreateMap<CertificateCreateRequest, Certificate>()
+            .Ignore(d => d.UpdatedBy)
+            .Ignore(d => d.UpdatedAt);
+
+        _ = CreateMap<CertificateUpdateRequest, Certificate>();
+
+        _ = CreateMap<Certificate, CertificateResponse>();
+
+        //
 
         _ = CreateMap<CertificateInsertRequest, Certificate>()
             .Ignore(d => d.CreatedAt)

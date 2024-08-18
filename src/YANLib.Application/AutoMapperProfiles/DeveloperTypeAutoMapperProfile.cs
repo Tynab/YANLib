@@ -6,6 +6,8 @@ using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
+using YANLib.Requests.Crud.Create;
+using YANLib.Requests.Crud.Update;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
@@ -17,6 +19,16 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
 {
     public DeveloperTypeAutoMapperProfile()
     {
+        _ = CreateMap<DeveloperTypeCreateRequest, DeveloperType>()
+            .Ignore(d => d.UpdatedBy)
+            .Ignore(d => d.UpdatedAt);
+
+        _ = CreateMap<DeveloperTypeUpdateRequest, DeveloperType>();
+
+        _ = CreateMap<DeveloperType, DeveloperTypeResponse>();
+
+        //
+
         _ = CreateMap<(long Code, DeveloperTypeInsertRequest Request), DeveloperType>()
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))

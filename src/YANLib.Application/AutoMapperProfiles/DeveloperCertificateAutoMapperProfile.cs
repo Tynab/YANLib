@@ -6,6 +6,8 @@ using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
+using YANLib.Requests.Crud.Create;
+using YANLib.Requests.Crud.Update;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
@@ -17,6 +19,16 @@ public sealed class DeveloperCertificateAutoMapperProfile : Profile
 {
     public DeveloperCertificateAutoMapperProfile()
     {
+        _ = CreateMap<DeveloperCertificateCreateRequest, DeveloperCertificate>()
+            .Ignore(d => d.UpdatedBy)
+            .Ignore(d => d.UpdatedAt);
+
+        _ = CreateMap<DeveloperCertificateUpdateRequest, DeveloperCertificate>();
+
+        _ = CreateMap<DeveloperCertificate, DeveloperCertificateResponse>();
+
+        //
+
         _ = CreateMap<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateInsertRequest Request), DeveloperCertificate>()
             .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.DeveloperId))
             .ForMember(d => d.CertificateId, o => o.MapFrom(s => s.CertificateId))

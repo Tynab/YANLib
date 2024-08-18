@@ -22,7 +22,11 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperCertificateResponse>>> GetAll() => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto()));
+    public async ValueTask<ActionResult<PagedResultDto<DeveloperCertificateResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
+    {
+        SkipCount = (pageNumber - 1) * pageSize,
+        MaxResultCount = pageSize
+    }));
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ của lập trình viên theo Id")]

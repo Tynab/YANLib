@@ -1,10 +1,11 @@
 ﻿using System;
-using Volo.Abp.Application.Dtos;
 
 namespace YANLib;
 
-public class YANLibApplicationResponse : AuditedEntityDto<Guid>
+public class YANLibApplicationResponse
 {
+    public Guid Id { get; set; }
+
     public Guid CreatedBy { get; set; }
 
     public DateTime CreatedAt { get; set; }

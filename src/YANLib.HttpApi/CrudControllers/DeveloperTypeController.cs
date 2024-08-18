@@ -21,8 +21,13 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     private readonly IDeveloperTypeCrudService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả đinh nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto()));
+    [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
+    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
+    {
+        SkipCount = (pageNumber - 1) * pageSize,
+        MaxResultCount = pageSize,
+        Sorting = $"{nameof(DeveloperResponse.Name)} ASC,{nameof(DeveloperResponse.CreatedAt)} DESC"
+    }));
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Id")]

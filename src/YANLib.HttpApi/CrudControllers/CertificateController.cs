@@ -22,7 +22,12 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ")]
-    public async ValueTask<ActionResult<PagedResultDto<CertificateResponse>>> GetAll() => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto()));
+    public async ValueTask<ActionResult<PagedResultDto<CertificateResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
+    {
+        SkipCount = (pageNumber - 1) * pageSize,
+        MaxResultCount = pageSize,
+        Sorting = $"{nameof(DeveloperResponse.Name)} ASC,{nameof(DeveloperResponse.CreatedAt)} DESC"
+    }));
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id")]
