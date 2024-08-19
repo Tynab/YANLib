@@ -7,7 +7,6 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Entities;
 using YANLib.Core;
 using YANLib.Dtos;
@@ -84,7 +83,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
 
             return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
-                : default;
+                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse));
         }
         catch (Exception ex)
         {
@@ -98,13 +97,12 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeModifyRequest Request), DeveloperTypeDto>(((
-                await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)
-            ).DeveloperTypeId, request)));
+            var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
+            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeModifyRequest Request), DeveloperTypeDto>((dto.DeveloperTypeId, request)));
 
             return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
-                : default;
+                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse), dto.DeveloperTypeId);
         }
         catch (Exception ex)
         {

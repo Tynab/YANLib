@@ -27,12 +27,12 @@ public class DeveloperTypeRepository(
         try
         {
             return await _dbContext.DeveloperTypes.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.Name, x => dto.Name.IsNull() ? dto.Name : x.Name)
+                .SetProperty(x => x.Name, x => dto.Name.IsNull() ? x.Name : dto.Name)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-            ) > 0 ? await _dbContext.SaveChangesAsync() > 0 ? await _dbContext.DeveloperTypes.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id) : default : default;
+            ) > 0 ? await _dbContext.DeveloperTypes.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id) : default;
         }
         catch (Exception ex)
         {

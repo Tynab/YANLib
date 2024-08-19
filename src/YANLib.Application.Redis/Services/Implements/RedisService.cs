@@ -141,9 +141,11 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
         try
         {
-            return group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value.IsNull()
+            _ = group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value.IsNull()
                 ? throw new BusinessException(BAD_REQUEST)
                 : await _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), jsonVal);
+
+            return true;
         }
         catch (Exception ex)
         {
