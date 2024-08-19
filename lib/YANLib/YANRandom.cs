@@ -11,24 +11,24 @@ public static partial class YANRandom
 
     public static float NextSingle(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? float.MinValue : min.ToFloat();
-        var maxValue = max.IsNull() ? float.MaxValue : max.ToFloat();
+        var minValue = min.IsNull() ? float.MinValue * 1 / 100 : min.ToFloat();
+        var maxValue = max.IsNull() ? float.MaxValue * 1 / 100 : max.ToFloat();
 
         return minValue < maxValue ? rnd.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static double NextDouble(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? double.MinValue : min.ToDouble();
-        var maxValue = max.IsNull() ? double.MaxValue : max.ToDouble();
+        var minValue = min.IsNull() ? double.MinValue * 1 / 100 : min.ToDouble();
+        var maxValue = max.IsNull() ? double.MaxValue * 1 / 100 : max.ToDouble();
 
         return minValue < maxValue ? rnd.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static decimal NextDecimal(this Random rnd, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? decimal.MinValue : min.ToDecimal();
-        var maxValue = max.IsNull() ? decimal.MaxValue : max.ToDecimal();
+        var minValue = min.IsNull() ? decimal.MinValue * 1 / 100 : min.ToDecimal();
+        var maxValue = max.IsNull() ? decimal.MaxValue * 1 / 100 : max.ToDecimal();
 
         return minValue < maxValue ? rnd.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }

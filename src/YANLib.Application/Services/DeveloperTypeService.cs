@@ -3,8 +3,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Authorization;
+using Volo.Abp.Domain.Entities;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -28,13 +32,25 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     private readonly IRedisService<DeveloperRedisTypeDto> _redisService = redisService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async ValueTask<IEnumerable<DeveloperTypeResponse>?> GetAll()
+    public async ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto dto)
     {
         try
         {
             var mdls = await _redisService.GetAll(DeveloperTypeGroup);
 
-            return mdls.IsEmptyOrNull() ? default : mdls.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>);
+            if (mdls.IsEmptyOrNull())
+            {
+                return new PagedResultDto<DeveloperTypeResponse>();
+            }
+
+            var queryableItems = mdls.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>).AsQueryable();
+
+            if (dto.Sorting.IsNotWhiteSpaceAndNull())
+            {
+                queryableItems = queryableItems.OrderBy(dto.Sorting);
+            }
+
+            return new PagedResultDto<DeveloperTypeResponse>(queryableItems.Count(), [.. queryableItems.Skip(dto.SkipCount).Take(dto.MaxResultCount)]);
         }
         catch (Exception ex)
         {
@@ -50,7 +66,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         {
             var mdl = await _redisService.Get(DeveloperTypeGroup, code.ToString());
 
-            return mdl.IsNull() ? default : ObjectMapper.Map<(long Code, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>((code, mdl));
+            return mdl.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), code) : ObjectMapper.Map<(long Code, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>((code, mdl));
         }
         catch (Exception ex)
         {
@@ -98,7 +114,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Delete(long code, Guid updatedBy)
+    public async ValueTask<bool> Delete(long code, Guid updatedBy)
     {
         try
         {
@@ -109,7 +125,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
                 IsDeleted = true,
             });
 
-            return ent.IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, ent.Code.ToString()) ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent) : default;
+            return ent.IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, ent.Code.ToString());
         }
         catch (Exception ex)
         {

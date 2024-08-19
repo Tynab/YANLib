@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
@@ -23,7 +23,12 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<IEnumerable<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetAll());
+    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
+    {
+        SkipCount = (pageNumber - 1) * pageSize,
+        MaxResultCount = pageSize,
+        Sorting = $"{nameof(DeveloperTypeResponse.Name)} ASC,{nameof(DeveloperTypeResponse.CreatedAt)} DESC"
+    }));
 
     [HttpGet("{code}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Code")]
@@ -54,7 +59,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpDelete("{code}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Delete(long code, [Required] Guid updatedBy)
+    public async ValueTask<IActionResult> Delete(long code, [Required] Guid updatedBy)
     {
         _logger.LogInformation("Delete-DeveloperTypeController: {Code} - {UpdatedBy}", code, updatedBy);
 

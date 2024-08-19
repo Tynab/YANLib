@@ -244,7 +244,7 @@ public static partial class YANText
     {
         var chars = "abcdefghijklmnopqrstuvwxyz";
 
-        return chars[GenerateRandomByte(chars.Length)];
+        return chars[GenerateRandomByte(byte.MinValue, chars.Length)];
     }
 
     public static IEnumerable<char> GenerateRandomCharacters(object? size) => Range(0, (int)size.ToUint()).Select(i => GenerateRandomCharacter());

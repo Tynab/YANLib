@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Core;
@@ -36,6 +37,33 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
         return Ok(await _developerEsService.Set(request));
     }
 
+    [HttpPost("developers/bulk")]
+    [SwaggerOperation(Summary = "Thêm mới lập trình viên theo danh sách trên Elasticsearch")]
+    public async ValueTask<IActionResult> SetDeveloperBulk([Required] List<DeveloperEsIndex> requests)
+    {
+        _logger.LogInformation("SetDeveloperBulk-ElasticsearchController: {Requests}", requests.Serialize());
+
+        return Ok(await _developerEsService.SetBulk(requests));
+    }
+
+    [HttpDelete("developers/{id}")]
+    [SwaggerOperation(Summary = "Xóa lập trình viên theo Id trên Elasticsearch")]
+    public async ValueTask<IActionResult> DeleteDeveloper(string id)
+    {
+        _logger.LogInformation("DeleteDeveloper-ElasticsearchController: {Id}", id);
+
+        return Ok(await _developerEsService.Delete(id));
+    }
+
+    [HttpDelete("developers")]
+    [SwaggerOperation(Summary = "Xóa tất cả lập trình viên trên Elasticsearch")]
+    public async ValueTask<IActionResult> DeleteAllDeveloper()
+    {
+        _logger.LogInformation("DeleteAllDeveloper-ElasticsearchController");
+
+        return Ok(await _developerEsService.DeleteAll());
+    }
+
     [HttpGet("certificates/{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id trên Elasticsearch")]
     public async ValueTask<ActionResult<CertificateEsIndex>> GetCertificate(string id)
@@ -52,5 +80,32 @@ public sealed class ElasticsearchController(ILogger<ElasticsearchController> log
         _logger.LogInformation("SetCertificate-ElasticsearchController: {Request}", request.Serialize());
 
         return Ok(await _certificateEsService.Set(request));
+    }
+
+    [HttpPost("certificates/bulk")]
+    [SwaggerOperation(Summary = "Thêm mới chứng chỉ theo danh sách trên Elasticsearch")]
+    public async ValueTask<IActionResult> SetCertificateBulk([Required] List<CertificateEsIndex> requests)
+    {
+        _logger.LogInformation("SetCertificateBulk-ElasticsearchController: {Requests}", requests.Serialize());
+
+        return Ok(await _certificateEsService.SetBulk(requests));
+    }
+
+    [HttpDelete("certificates/{id}")]
+    [SwaggerOperation(Summary = "Xóa chứng chỉ theo Id trên Elasticsearch")]
+    public async ValueTask<IActionResult> DeleteCertificate(string id)
+    {
+        _logger.LogInformation("DeleteCertificate-ElasticsearchController: {Id}", id);
+
+        return Ok(await _certificateEsService.Delete(id));
+    }
+
+    [HttpDelete("certificates")]
+    [SwaggerOperation(Summary = "Xóa tất cả chứng chỉ trên Elasticsearch")]
+    public async ValueTask<IActionResult> DeleteAllCertificate()
+    {
+        _logger.LogInformation("DeleteAllCertificate-ElasticsearchController");
+
+        return Ok(await _certificateEsService.DeleteAll());
     }
 }

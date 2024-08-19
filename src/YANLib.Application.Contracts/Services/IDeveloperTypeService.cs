@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
@@ -10,7 +10,7 @@ namespace YANLib.Services;
 
 public interface IDeveloperTypeService : IApplicationService
 {
-    public ValueTask<IEnumerable<DeveloperTypeResponse>?> GetAll();
+    public ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto dto);
 
     public ValueTask<DeveloperTypeResponse?> Get(long code);
 
@@ -18,7 +18,7 @@ public interface IDeveloperTypeService : IApplicationService
 
     public ValueTask<DeveloperTypeResponse?> Modify(long code, DeveloperTypeModifyRequest request);
 
-    public ValueTask<DeveloperTypeResponse?> Delete(long code, Guid updatedBy);
+    public ValueTask<bool> Delete(long code, Guid updatedBy);
 
     public ValueTask<bool> SyncDbToRedis();
 }
