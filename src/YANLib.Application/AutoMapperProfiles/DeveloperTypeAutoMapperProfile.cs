@@ -27,8 +27,6 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
 
         _ = CreateMap<DeveloperType, DeveloperTypeResponse>();
 
-        //
-
         _ = CreateMap<(long Code, DeveloperTypeInsertRequest Request), DeveloperType>()
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))

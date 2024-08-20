@@ -32,7 +32,7 @@ public class DeveloperTypeRepository(
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-            ) > 0 ? await _dbContext.DeveloperTypes.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id) : default;
+            ) > 0 ? await _dbContext.DeveloperTypes.FindAsync(dto.Id) : default;
         }
         catch (Exception ex)
         {

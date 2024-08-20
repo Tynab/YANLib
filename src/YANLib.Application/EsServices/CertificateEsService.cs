@@ -91,9 +91,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
     {
         try
         {
-            _ = _elasticClient.DeleteCertificateIndex();
-
-            return await FromResult(true);
+            return await FromResult(_elasticClient.DeleteCertificateIndex().IsNotNull());
         }
         catch (Exception ex)
         {

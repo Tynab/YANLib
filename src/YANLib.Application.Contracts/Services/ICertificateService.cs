@@ -14,7 +14,7 @@ public interface ICertificateService
 
     public ValueTask<CertificateResponse?> Modify(string code, CertificateModifyRequest dto);
 
-    public ValueTask<CertificateResponse?> Delete(string code, Guid updatedBy);
+    public ValueTask<bool> Delete(string code, Guid updatedBy);
 
     public ValueTask<bool> SyncDbToEs();
 }

@@ -116,14 +116,12 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var ent = await _repository.Modify(new DeveloperTypeDto
+            return (await _repository.Modify(new DeveloperTypeDto
             {
                 Id = (await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)).DeveloperTypeId,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            });
-
-            return ent.IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, ent.Code.ToString());
+            })).IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, code.ToString());
         }
         catch (Exception ex)
         {

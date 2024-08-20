@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.ObjectMapping;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -49,17 +51,11 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            var dto = ObjectMapper.Map<CertificateInsertRequest, Certificate>(request);
+            var ent = await _repository.InsertAsync(ObjectMapper.Map<(string Code, CertificateInsertRequest Request), Certificate>((_idGenerator.NextIdAlphabetic(), request)));
 
-            dto.Code = _idGenerator.NextIdAlphabetic();
-
-            var ent = await _repository.InsertAsync(dto);
-
-            return ent.IsNull()
-                ? default
-                : await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
+            return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
                 ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
-                : throw new BusinessException(INTERNAL_SERVER_ERROR);
+                : throw new EntityNotFoundException(typeof(CertificateResponse));
         }
         catch (Exception ex)
         {
@@ -69,49 +65,35 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
     }
 
-    public async ValueTask<CertificateResponse?> Modify(string code, CertificateModifyRequest dto)
+    public async ValueTask<CertificateResponse?> Modify(string code, CertificateModifyRequest request)
     {
         try
         {
-            _ = await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code);
+            var dto = await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code);
+            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, CertificateModifyRequest Request), CertificateDto>((dto.CertificateId, request)));
 
-            var ent = await _repository.Modify(ObjectMapper.Map<CertificateModifyRequest, CertificateDto>(dto));
-
-            return ent.IsNull()
-                ? default
-                : await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
+            return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
                 ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
-                : throw new BusinessException(INTERNAL_SERVER_ERROR);
+                : throw new EntityNotFoundException(typeof(CertificateResponse), dto.CertificateId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-CertificateService-Exception: {Code} - {Dto}", code, dto.Serialize());
+            _logger.LogError(ex, "Modify-CertificateService-Exception: {Code} - {Dto}", code, request.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<CertificateResponse?> Delete(string code, Guid updatedBy)
+    public async ValueTask<bool> Delete(string code, Guid updatedBy)
     {
         try
         {
-            var mdl = await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code);
-
-            var ent = await _repository.Modify(new CertificateDto
+            return (await _repository.Modify(new CertificateDto
             {
-                Id = mdl.CertificateId,
+                Id = (await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code)).CertificateId,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            });
-
-            if (ent.IsNull())
-            {
-                return default;
-            }
-
-            _ = await _esService.Delete(code);
-
-            return ObjectMapper.Map<Certificate, CertificateResponse>(ent);
+            })).IsNotNull() && await _esService.Delete(code);
         }
         catch (Exception ex)
         {

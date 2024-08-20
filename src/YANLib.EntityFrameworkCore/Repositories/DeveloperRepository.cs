@@ -27,15 +27,15 @@ public class DeveloperRepository(
         try
         {
             return await _dbContext.Developers.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.Name, x => dto.Name.IsNull() ? dto.Name : x.Name)
-                .SetProperty(x => x.Phone, x => dto.Phone.IsNull() ? dto.Phone : x.Phone)
-                .SetProperty(x => x.IdCard, x => dto.IdCard.IsNull() ? dto.IdCard : x.IdCard)
+                .SetProperty(x => x.Name, x => dto.Name.IsNull() ? x.Name : dto.Name)
+                .SetProperty(x => x.Phone, x => dto.Phone.IsNull() ? x.Phone : dto.Phone)
+                .SetProperty(x => x.IdCard, x => dto.IdCard.IsNull() ? x.IdCard : dto.IdCard)
                 .SetProperty(x => x.DeveloperTypeCode, x => dto.DeveloperTypeCode ?? x.DeveloperTypeCode)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-            ) > 0 ? await _dbContext.SaveChangesAsync() > 0 ? await _dbContext.Developers.FindAsync(dto.Id) : default : default;
+            ) > 0 ? await _dbContext.Developers.FindAsync(dto.Id) : default;
         }
         catch (Exception ex)
         {
@@ -55,11 +55,11 @@ public class DeveloperRepository(
                 .SetProperty(x => x.UpdatedBy, entity.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsDeleted, true)
-            ) > 0 ? await _dbContext.SaveChangesAsync() > 0 ? rslt.Entity : default : default;
+            ) > 0 ? rslt.Entity : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustDeveloperRepository-Exception: {Entity}", entity.Serialize());
+            _logger.LogError(ex, "Adjust-DeveloperRepository-Exception: {Entity}", entity.Serialize());
 
             throw;
         }

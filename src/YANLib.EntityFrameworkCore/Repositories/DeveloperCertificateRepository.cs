@@ -31,7 +31,7 @@ public class DeveloperCertificateRepository(
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-            ) > 0 ? await _dbContext.SaveChangesAsync() > 0 ? await _dbContext.DeveloperCertificates.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id) : default : default;
+            ) > 0 ? await _dbContext.DeveloperCertificates.FindAsync(dto.Id) : default;
         }
         catch (Exception ex)
         {
