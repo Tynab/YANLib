@@ -4,8 +4,6 @@ using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.Kafka.Etos;
-using YANLib.RabbitMq.Etos;
 using YANLib.Requests.Crud.Create;
 using YANLib.Requests.Crud.Update;
 using YANLib.Requests.Insert;
@@ -53,5 +51,9 @@ public sealed class CertificateAutoMapperProfile : Profile
             .ForMember(d => d.CertificateId, o => o.MapFrom(s => s.Id));
 
         _ = CreateMap<Certificate, CertificateResponse>();
+
+        _ = CreateMap<CertificateEsIndex, CertificateResponse>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.CertificateId))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Id));
     }
 }
