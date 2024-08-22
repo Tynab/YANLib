@@ -22,7 +22,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     private readonly IDeveloperTypeService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
+    [SwaggerOperation(Summary = "Lấy danh sách định nghĩa loại lập trình viên")]
     public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
     {
         SkipCount = (pageNumber - 1) * pageSize,

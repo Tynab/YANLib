@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp;
 using YANLib.Core;
 using YANLib.EsIndices;
 using YANLib.Utilities;
@@ -19,6 +21,40 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
     private readonly ILogger<CertificateEsService> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
+
+    public async ValueTask<ISearchResponse<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto dto)
+    {
+        try
+        {
+            var res = await _elasticClient.SearchAsync<CertificateEsIndex>(new SearchRequest<CertificateEsIndex>(Certificate)
+            {
+                From = dto.SkipCount,
+                Size = dto.MaxResultCount,
+                Sort = dto.Sorting.IsWhiteSpaceOrNull() ? default : new List<ISort>
+                {
+                    new FieldSort
+                    {
+                        Field = dto.Sorting, Order = SortOrder.Ascending
+                    }
+                }
+            });
+
+            if (!res.IsValid)
+            {
+                _logger.LogError("GetAll-CertificateEsService-SearchError: {Error}", res.ServerError.Error.Reason);
+
+                throw new BusinessException("Error retrieving data from Elasticsearch");
+            }
+
+            return res;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAll-CertificateEsService-Exception: {DTO}", dto.Serialize());
+
+            throw;
+        }
+    }
 
     public async ValueTask<CertificateEsIndex?> Get(string id)
     {
@@ -52,7 +88,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
     {
         try
         {
-            var index = _configuration.GetSection(Developer)?.Value;
+            var index = _configuration.GetSection(Certificate)?.Value;
 
             if (index.IsWhiteSpaceOrNull())
             {
@@ -96,6 +132,46 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteAll-CertificateEsService-Exception");
+
+            throw;
+        }
+    }
+
+    public async ValueTask<IReadOnlyCollection<CertificateEsIndex>> GetByName(string name)
+    {
+        try
+        {
+            return (await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(d => d
+                            .Match(m => m
+                                .Field(c => c.Name)
+                                .Query(name))))))).Documents;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetByName-CertificateEsService-Exception: {Name}", name);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<IReadOnlyCollection<CertificateEsIndex>> SearchByName(string searchText)
+    {
+        try
+        {
+            return (await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(d => d
+                            .MatchPhrasePrefix(m => m
+                                .Field(c => c.Name)
+                                .Query(searchText))))))).Documents;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchByName-CertificateEsService-Exception: {SearchText}", searchText);
 
             throw;
         }

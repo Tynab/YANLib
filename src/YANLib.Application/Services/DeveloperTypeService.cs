@@ -53,7 +53,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-DeveloperTypeService-Exception");
+            _logger.LogError(ex, "GetAll-DeveloperTypeService-Exception: {DTO}", dto.Serialize());
 
             throw;
         }

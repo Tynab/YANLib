@@ -10,7 +10,7 @@ public class YANLibApplicationEsIndex
 
     public DateTime CreatedAt { get; set; }
 
-    public Guid UpdatedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 

@@ -100,6 +100,7 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
             throw;
         }
     }
+
     public async ValueTask<IReadOnlyCollection<DeveloperEsIndex>> GetByName(string name)
     {
         try

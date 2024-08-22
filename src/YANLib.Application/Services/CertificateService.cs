@@ -1,11 +1,13 @@
 ﻿using Id_Generator_Snowflake;
 using Microsoft.Extensions.Logging;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Core;
 using YANLib.Dtos;
@@ -30,6 +32,22 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     private readonly ICertificateEsService _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
+    public async ValueTask<PagedResultDto<CertificateResponse>> GetAll(PagedAndSortedResultRequestDto dto)
+    {
+        try
+        {
+            var res = await _esService.GetAll(dto);
+
+            return new(res.Total, ObjectMapper.Map<List<CertificateEsIndex>, List<CertificateResponse>>([.. res.Documents]));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAll-CertificateService-Exception: {DTO}", dto.Serialize());
+
+            throw;
+        }
+    }
+
     public async ValueTask<CertificateResponse?> GetByCode(string code)
     {
         try
@@ -41,6 +59,34 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetByCode-CertificateService-Exception: {Code}", code);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<IReadOnlyCollection<CertificateResponse>> GetByName(string name)
+    {
+        try
+        {
+            return (await _esService.GetByName(name)).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetByName-CertificateService-Exception: {Name}", name);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<IReadOnlyCollection<CertificateResponse>> SearchByName(string searchText)
+    {
+        try
+        {
+            return (await _esService.SearchByName(searchText)).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchByName-CertificateService-Exception: {SearchText}", searchText);
 
             throw;
         }

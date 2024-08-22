@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
@@ -18,6 +19,15 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     private readonly ILogger<CertificateController> _logger = logger;
     private readonly ICertificateService _service = service;
 
+    [HttpGet]
+    [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ")]
+    public async ValueTask<IActionResult> GetAll([Required] PagedAndSortedResultRequestDto dto)
+    {
+        _logger.LogInformation("GetAll-CardCertificateController: {DTO}", dto.Serialize());
+
+        return Ok(await _service.GetAll(dto));
+    }
+
     [HttpGet("{code}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
     public async ValueTask<IActionResult> GetByCode(string code)
@@ -25,6 +35,24 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
         _logger.LogInformation("GetByCode-CardCertificateController: {Code}", code);
 
         return Ok(await _service.GetByCode(code));
+    }
+
+    [HttpGet("get-by-name")]
+    [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ theo tên")]
+    public async ValueTask<IActionResult> GetByName([Required] string name)
+    {
+        _logger.LogInformation("GetByName-CardCertificateController: {Name}", name);
+
+        return Ok(await _service.GetByName(name));
+    }
+
+    [HttpGet("search-by-name")]
+    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo tên")]
+    public async ValueTask<IActionResult> SearchByName([Required] string searchText)
+    {
+        _logger.LogInformation("SearchByName-CardCertificateController: {SearchText}", searchText);
+
+        return Ok(await _service.SearchByName(searchText));
     }
 
     [HttpPost]

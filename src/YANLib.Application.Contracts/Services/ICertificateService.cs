@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
@@ -8,7 +10,13 @@ namespace YANLib.Services;
 
 public interface ICertificateService
 {
+    public ValueTask<PagedResultDto<CertificateResponse>> GetAll(PagedAndSortedResultRequestDto dto);
+
     public ValueTask<CertificateResponse?> GetByCode(string code);
+
+    public ValueTask<IReadOnlyCollection<CertificateResponse>> GetByName(string name);
+
+    public ValueTask<IReadOnlyCollection<CertificateResponse>> SearchByName(string searchText);
 
     public ValueTask<CertificateResponse?> Insert(CertificateInsertRequest request);
 

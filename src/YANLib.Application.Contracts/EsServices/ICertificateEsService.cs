@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using Nest;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using YANLib.EsIndices;
 
 namespace YANLib.EsServices;
 
 public interface ICertificateEsService
 {
+    public ValueTask<ISearchResponse<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto dto);
+
     public ValueTask<CertificateEsIndex?> Get(string id);
 
     public ValueTask<bool> Set(CertificateEsIndex data);
@@ -15,4 +19,8 @@ public interface ICertificateEsService
     public ValueTask<bool> Delete(string id);
 
     public ValueTask<bool> DeleteAll();
+
+    public ValueTask<IReadOnlyCollection<CertificateEsIndex>> GetByName(string name);
+
+    public ValueTask<IReadOnlyCollection<CertificateEsIndex>> SearchByName(string searchText);
 }

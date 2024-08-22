@@ -24,6 +24,7 @@ public static class ElasticsearchUtil
         var pwdTag = "Elasticsearch:Password";
 
         ConnectionSettings? settings;
+
         if (configuration.GetSection(urlTag).GetChildren().IsEmptyOrNull())
         {
             var esUrl = configuration.GetSection(urlTag).Value;
@@ -55,7 +56,7 @@ public static class ElasticsearchUtil
         _ = settings.DefaultMappingFor<DeveloperEsIndex>(m => m.IndexName(_indexDeveloper));
 
         _indexCertificate = configuration.GetSection(Certificate)?.Value;
-        _ = settings.DefaultMappingFor<DeveloperEsIndex>(m => m.IndexName(_indexCertificate));
+        _ = settings.DefaultMappingFor<CertificateEsIndex>(m => m.IndexName(_indexCertificate));
 
         var client = new ElasticClient(settings);
 

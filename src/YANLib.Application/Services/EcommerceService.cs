@@ -26,7 +26,7 @@ public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService r
             {
                 { "Accept", "*/*" },
                 { "Content-Type", "application/x-www-form-urlencoded" }
-            }, queryParams: request.Serialize().Deserialize<Dictionary<string, object>>());
+            }, queryParams: json.Deserialize<Dictionary<string, object>>());
         }
         catch (Exception ex)
         {
