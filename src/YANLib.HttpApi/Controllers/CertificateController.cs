@@ -7,6 +7,7 @@ using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
+using YANLib.Responses;
 using YANLib.Services;
 
 namespace YANLib.Controllers;
@@ -21,11 +22,16 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ")]
-    public async ValueTask<IActionResult> GetAll([Required] PagedAndSortedResultRequestDto dto)
+    public async ValueTask<ActionResult<PagedResultDto<CertificateResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
-        _logger.LogInformation("GetAll-CardCertificateController: {DTO}", dto.Serialize());
+        _logger.LogInformation("GetAll-CardCertificateController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
-        return Ok(await _service.GetAll(dto));
+        return Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
+        {
+            SkipCount = (pageNumber - 1) * pageSize,
+            MaxResultCount = pageSize,
+            Sorting = $"{nameof(DeveloperTypeResponse.Name)} ASC,{nameof(DeveloperTypeResponse.CreatedAt)} DESC"
+        }));
     }
 
     [HttpGet("{code}")]

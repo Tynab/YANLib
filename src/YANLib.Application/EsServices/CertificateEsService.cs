@@ -13,6 +13,8 @@ using YANLib.EsIndices;
 using YANLib.Utilities;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
+using static System.StringComparison;
+using static Nest.SortOrder;
 
 namespace YANLib.EsServices;
 
@@ -22,35 +24,43 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
 
-    public async ValueTask<ISearchResponse<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto dto)
+    public async ValueTask<PagedResultDto<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            var res = await _elasticClient.SearchAsync<CertificateEsIndex>(new SearchRequest<CertificateEsIndex>(Certificate)
-            {
-                From = dto.SkipCount,
-                Size = dto.MaxResultCount,
-                Sort = dto.Sorting.IsWhiteSpaceOrNull() ? default : new List<ISort>
-                {
-                    new FieldSort
-                    {
-                        Field = dto.Sorting, Order = SortOrder.Ascending
-                    }
-                }
-            });
+            var res = await _elasticClient.SearchAsync<CertificateEsIndex>(x => x.From(input.SkipCount)
+                                                                                 .Size(input.MaxResultCount)
+                                                                                 .Sort(y =>
+                                                                                 {
+                                                                                     //input.Sorting?.Split(',').ForEach(z =>
+                                                                                     //{
+                                                                                     //    var sortParams = z.Trim().Split(' ');
 
-            if (!res.IsValid)
-            {
-                _logger.LogError("GetAll-CertificateEsService-SearchError: {Error}", res.ServerError.Error.Reason);
+                                                                                     //    _ = y.Field(sortParams[0], sortParams.Length > 1 && sortParams[1].Equals("DESC", OrdinalIgnoreCase) ? Descending : Ascending);
+                                                                                     //});
 
-                throw new BusinessException("Error retrieving data from Elasticsearch");
-            }
+                                                                                     //return y;
 
-            return res;
+                                                                                     input.Sorting?.Split(',').ForEach(z =>
+                                                                                     {
+                                                                                         var sortParams = z.Trim().Split(' ');
+
+                                                                                         if (sortParams.Length > 0 && !string.IsNullOrEmpty(sortParams[0]))
+                                                                                         {
+                                                                                             _ = y.Field(sortParams[0], sortParams.Length > 1 && sortParams[1].Equals("DESC", OrdinalIgnoreCase) ? Descending : Ascending);
+                                                                                         }
+                                                                                     });
+
+                                                                                     return y;
+                                                                                 })
+                                                                                 .Query(q => q.MatchAll())
+            );
+
+            return new PagedResultDto<CertificateEsIndex>(res.Total, [.. res.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-CertificateEsService-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "GetAll-CertificateEsService-Exception with paging");
 
             throw;
         }

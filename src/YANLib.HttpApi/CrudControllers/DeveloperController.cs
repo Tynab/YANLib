@@ -22,12 +22,17 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
+    public async ValueTask<ActionResult<PagedResultDto<DeveloperResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
-        SkipCount = (pageNumber - 1) * pageSize,
-        MaxResultCount = pageSize,
-        Sorting = $"{nameof(DeveloperResponse.Name)} ASC,{nameof(DeveloperResponse.CreatedAt)} DESC"
-    }));
+        _logger.LogInformation("GetAll-DeveloperCrudController: {PageNumber} - {PageSize}", pageNumber, pageSize);
+
+        return Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
+        {
+            SkipCount = (pageNumber - 1) * pageSize,
+            MaxResultCount = pageSize,
+            Sorting = $"{nameof(DeveloperResponse.Name)} ASC,{nameof(DeveloperResponse.CreatedAt)} DESC"
+        }));
+    }
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy lập trình viên theo Id")]

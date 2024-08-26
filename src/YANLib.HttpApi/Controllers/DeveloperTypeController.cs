@@ -23,12 +23,17 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy danh sách định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10) => Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
+    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
-        SkipCount = (pageNumber - 1) * pageSize,
-        MaxResultCount = pageSize,
-        Sorting = $"{nameof(DeveloperTypeResponse.Name)} ASC,{nameof(DeveloperTypeResponse.CreatedAt)} DESC"
-    }));
+        _logger.LogInformation("GetAll-DeveloperTypeController: {PageNumber} - {PageSize}", pageNumber, pageSize);
+
+        return Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
+        {
+            SkipCount = (pageNumber - 1) * pageSize,
+            MaxResultCount = pageSize,
+            Sorting = $"{nameof(DeveloperTypeResponse.Name)} ASC,{nameof(DeveloperTypeResponse.CreatedAt)} DESC"
+        }));
+    }
 
     [HttpGet("{code}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Code")]

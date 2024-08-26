@@ -36,9 +36,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            var res = await _esService.GetAll(dto);
-
-            return new(res.Total, ObjectMapper.Map<List<CertificateEsIndex>, List<CertificateResponse>>([.. res.Documents]));
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.GetAll(dto));
         }
         catch (Exception ex)
         {

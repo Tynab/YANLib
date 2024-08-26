@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using System;
+using System.Collections.Generic;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -55,5 +57,8 @@ public sealed class CertificateAutoMapperProfile : Profile
         _ = CreateMap<CertificateEsIndex, CertificateResponse>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.CertificateId))
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Id));
+
+        CreateMap<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>().ConvertUsing((source, dest, context)
+            => new PagedResultDto<CertificateResponse>(source.TotalCount, context.Mapper.Map<IReadOnlyList<CertificateResponse>>(source.Items)));
     }
 }
