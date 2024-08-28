@@ -1,6 +1,5 @@
 ﻿using Id_Generator_Snowflake;
 using Microsoft.Extensions.Logging;
-using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;

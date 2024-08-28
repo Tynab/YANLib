@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Nest;
+using System;
 
 namespace YANLib;
 
 public class YANLibApplicationEsIndex
 {
+    [Keyword]
     public string? Id { get; set; }
 
     public Guid CreatedBy { get; set; }
@@ -14,5 +16,6 @@ public class YANLibApplicationEsIndex
 
     public DateTime? UpdatedAt { get; set; }
 
+    [Keyword]
     public bool IsActive { get; set; }
 }

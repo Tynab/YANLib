@@ -30,7 +30,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
         {
             SkipCount = (pageNumber - 1) * pageSize,
             MaxResultCount = pageSize,
-            Sorting = $"{nameof(DeveloperTypeResponse.Name)} ASC,{nameof(DeveloperTypeResponse.CreatedAt)} DESC"
+            Sorting = $"{nameof(CertificateResponse.Name)} ASC,{nameof(CertificateResponse.CreatedAt)} DESC"
         }));
     }
 
