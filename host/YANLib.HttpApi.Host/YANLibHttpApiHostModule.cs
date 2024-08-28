@@ -79,9 +79,8 @@ public class YANLibHttpApiHostModule : AbpModule
         Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true);
         Configure<AbpDistributedCacheOptions>(o => o.KeyPrefix = "YANLib:");
         ConfigureAuthenticationSwagger(context, configuration);
-        //ConfigureAuthentication(context, configuration);
+        ConfigureAuthentication(context, configuration);
         ConfigureConventionalControllers();
-        //ConfigureLocalization();
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
         ConfigureCap(context, configuration);
@@ -109,31 +108,6 @@ public class YANLibHttpApiHostModule : AbpModule
         });
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
-
-    //private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(o =>
-    //{
-    //    o.Languages.Add(new LanguageInfo("ar", "ar", "العربية"));
-    //    o.Languages.Add(new LanguageInfo("cs", "cs", "Čeština"));
-    //    o.Languages.Add(new LanguageInfo("en", "en", "English"));
-    //    o.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
-    //    o.Languages.Add(new LanguageInfo("fi", "fi", "Finnish"));
-    //    o.Languages.Add(new LanguageInfo("fr", "fr", "Français"));
-    //    o.Languages.Add(new LanguageInfo("hi", "hi", "Hindi", "in"));
-    //    o.Languages.Add(new LanguageInfo("is", "is", "Icelandic", "is"));
-    //    o.Languages.Add(new LanguageInfo("it", "it", "Italiano", "it"));
-    //    o.Languages.Add(new LanguageInfo("hu", "hu", "Magyar"));
-    //    o.Languages.Add(new LanguageInfo("pt-BR", "pt-BR", "Português"));
-    //    o.Languages.Add(new LanguageInfo("ro-RO", "ro-RO", "Română"));
-    //    o.Languages.Add(new LanguageInfo("ru", "ru", "Русский"));
-    //    o.Languages.Add(new LanguageInfo("sk", "sk", "Slovak"));
-    //    o.Languages.Add(new LanguageInfo("tr", "tr", "Türkçe"));
-    //    o.Languages.Add(new LanguageInfo("zh-Hans", "zh-Hans", "简体中文"));
-    //    o.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "繁體中文"));
-    //    o.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch", "de"));
-    //    o.Languages.Add(new LanguageInfo("es", "es", "Español", "es"));
-    //    o.Languages.Add(new LanguageInfo("el", "el", "Ελληνικά"));
-    //    o.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
-    //});
 
     private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration)
     {
