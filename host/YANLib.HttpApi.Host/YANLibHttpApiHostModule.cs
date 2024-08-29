@@ -68,18 +68,14 @@ namespace YANLib;
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
-    public override void PreConfigureServices(ServiceConfigurationContext context) => PreConfigure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
-
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var configuration = context.Services.GetConfiguration();
 
         context.Services.AddElasticsearch(configuration);
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
-        Configure<AbpMultiTenancyOptions>(o => o.IsEnabled = true);
-        Configure<AbpDistributedCacheOptions>(o => o.KeyPrefix = "YANLib:");
-        ConfigureAuthenticationSwagger(context, configuration);
         ConfigureAuthentication(context, configuration);
+        ConfigureAuthenticationSwagger(context, configuration);
         ConfigureConventionalControllers();
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
@@ -87,13 +83,6 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureHangfire(context, configuration);
         ConfigureHealthChecks(context, configuration);
     }
-
-    private static void ConfigureAuthenticationSwagger(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
-    {
-        o.Authority = configuration["AuthServer:Authority"];
-        o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
-        o.Audience = configuration["AuthServer:ApiName"];
-    });
 
     private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
         => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
@@ -106,6 +95,13 @@ public class YANLibHttpApiHostModule : AbpModule
             ValidAudience = configuration["JWT:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(UTF8.GetBytes(configuration["JWT:Secret"] ?? string.Empty))
         });
+
+    private static void ConfigureAuthenticationSwagger(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
+    {
+        o.Authority = configuration["AuthServer:Authority"];
+        o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+        o.Audience = configuration["AuthServer:ApiName"];
+    });
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
 

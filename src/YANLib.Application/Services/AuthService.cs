@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using YANLib.Core;
 using YANLib.Dtos;
@@ -20,9 +19,9 @@ using static System.Text.Encoding;
 
 namespace YANLib.Services;
 
-public class JwtTokenService(ILogger<JwtTokenService> logger, IConfiguration configuration) : YANLibAppService, IJwtTokenService
+public class AuthService(ILogger<AuthService> logger, IConfiguration configuration) : YANLibAppService, IAuthService
 {
-    private readonly ILogger<JwtTokenService> _logger = logger;
+    private readonly ILogger<AuthService> _logger = logger;
     private readonly IConfiguration _configuration = configuration;
 
     public async ValueTask<string?> GenerateToken(string username, string password)
