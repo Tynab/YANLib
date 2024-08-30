@@ -26,7 +26,6 @@ using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
 using Volo.Abp.BackgroundJobs.Hangfire;
-using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.SqlServer;
@@ -34,7 +33,6 @@ using Volo.Abp.EventBus.Azure;
 using Volo.Abp.EventBus.RabbitMq;
 using Volo.Abp.Http.Client;
 using Volo.Abp.Modularity;
-using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
 using YANLib.Utilities;
@@ -45,7 +43,6 @@ using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static Microsoft.OpenApi.Models.ReferenceType;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Array;
-using static System.Convert;
 using static System.Text.Encoding;
 using static YANLib.YANLibConsts;
 
@@ -75,7 +72,6 @@ public class YANLibHttpApiHostModule : AbpModule
         context.Services.AddElasticsearch(configuration);
         Configure<AbpDbContextOptions>(o => o.UseSqlServer());
         ConfigureAuthentication(context, configuration);
-        ConfigureAuthenticationSwagger(context, configuration);
         ConfigureConventionalControllers();
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
@@ -84,8 +80,12 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureHealthChecks(context, configuration);
     }
 
-    private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
-        => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
+    private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
+    {
+        o.Authority = configuration["AuthServer:Authority"];
+        o.RequireHttpsMetadata = configuration["AuthServer:RequireHttpsMetadata"].ToBool();
+        o.Audience = configuration["AuthServer:ApiName"];
+        o.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -94,13 +94,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ValidIssuer = configuration["JWT:Issuer"],
             ValidAudience = configuration["JWT:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(UTF8.GetBytes(configuration["JWT:Secret"] ?? string.Empty))
-        });
-
-    private static void ConfigureAuthenticationSwagger(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
-    {
-        o.Authority = configuration["AuthServer:Authority"];
-        o.RequireHttpsMetadata = ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
-        o.Audience = configuration["AuthServer:ApiName"];
+        };
     });
 
     private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));

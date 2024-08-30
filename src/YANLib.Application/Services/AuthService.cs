@@ -63,7 +63,7 @@ public class AuthService(ILogger<AuthService> logger, IConfiguration configurati
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GenerateToken-JwtTokenService-Exception: {Username} - {Password}", username, password);
+            _logger.LogError(ex, "GenerateToken-AuthService-Exception: {Username} - {Password}", username, password);
 
             throw;
         }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -10,9 +13,13 @@ using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
 using YANLib.Services;
+using static Nest.SortOrder;
 
 namespace YANLib.Controllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/[controller]")]
@@ -27,12 +34,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     {
         _logger.LogInformation("GetAll-DeveloperTypeController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
-        return Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
-        {
-            SkipCount = (pageNumber - 1) * pageSize,
-            MaxResultCount = pageSize,
-            Sorting = $"{nameof(DeveloperTypeResponse.Name)} ASC,{nameof(DeveloperTypeResponse.CreatedAt)} DESC"
-        }));
+        return Ok(await _service.GetAll(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        ))));
     }
 
     [HttpGet("{code}")]
@@ -71,6 +77,9 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         return Ok(await _service.Delete(code, updatedBy));
     }
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());

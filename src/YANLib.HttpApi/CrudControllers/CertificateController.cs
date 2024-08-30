@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -9,9 +12,13 @@ using YANLib.CrudServices;
 using YANLib.Requests.Crud.Create;
 using YANLib.Requests.Crud.Update;
 using YANLib.Responses;
+using static Nest.SortOrder;
 
 namespace YANLib.CrudControllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "crud")]
 [Route("api/certificates")]
@@ -26,12 +33,11 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     {
         _logger.LogInformation("GetAll-CertificateCrudController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
-        return Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
-        {
-            SkipCount = (pageNumber - 1) * pageSize,
-            MaxResultCount = pageSize,
-            Sorting = $"{nameof(DeveloperResponse.Name)} ASC,{nameof(DeveloperResponse.CreatedAt)} DESC"
-        }));
+        return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        ))));
     }
 
     [HttpGet("{id}")]

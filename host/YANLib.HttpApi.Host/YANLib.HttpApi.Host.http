@@ -1,10 +1,16 @@
-GET {{HostAddress}}/{{Certificate}}
+GET {{HostAddress}}/{{DeveloperType}}?pageNumber=1&pageSize=10
+Authorization: Bearer {{Token}}
 
 ###
-POST {{HostAddress}}/{{Certificate}}
+GET {{HostAddress}}/{{Developer}}?pageNumber=1&pageSize=10
+Authorization: Bearer {{Token}}
 
 ###
-PUT {{HostAddress}}/{{Certificate}}
+GET {{HostAddress}}/{{Certificate}}?pageNumber=1&pageSize=10
+Authorization: Bearer {{Token}}
 
 ###
-DELETE {{HostAddress}}/{{Certificate}}
+GET {{HostAddress}}/{{DeveloperCertificate}}?pageNumber=1&pageSize=10
+Authorization: Bearer {{Token}}
+
+###

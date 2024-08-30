@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -12,6 +15,9 @@ using YANLib.Responses;
 
 namespace YANLib.CrudControllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "crud")]
 [Route("api/developer-certificates")]
@@ -26,11 +32,7 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
     {
         _logger.LogInformation("GetAll-DeveloperCertificateCrudController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
-        return Ok(await _service.GetListAsync(new PagedAndSortedResultRequestDto
-        {
-            SkipCount = (pageNumber - 1) * pageSize,
-            MaxResultCount = pageSize
-        }));
+        return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize), PagedAndSortedResultRequestDto>((pageNumber, pageSize))));
     }
 
     [HttpGet("{id}")]

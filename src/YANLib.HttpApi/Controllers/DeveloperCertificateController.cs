@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -13,6 +16,9 @@ using YANLib.Services;
 
 namespace YANLib.Controllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/[controller]")]
@@ -66,10 +72,16 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
         return Ok(await _service.Delete(idCard, code, updatedBy));
     }
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole")]
+#endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ của lập trình viên từ Database sang Redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole")]
+#endif
     [HttpPost("sync-db-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ chứng chỉ của lập trình viên từ Database sang Redis theo mã định danh")]
     public async ValueTask<IActionResult> SyncDbToRedisByDeveloper([Required] string idCard)

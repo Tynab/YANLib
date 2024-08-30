@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -10,6 +13,9 @@ using YANLib.EsServices;
 
 namespace YANLib.Controllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/[controller]")]

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
@@ -10,6 +13,9 @@ using YANLib.Services;
 
 namespace YANLib.Controllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/[controller]")]
@@ -63,6 +69,9 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
         return Ok(await _service.SearchByPhone(searchText));
     }
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole")]
+#endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả Developers từ Database lên Elasticsearch")]
     public async ValueTask<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());

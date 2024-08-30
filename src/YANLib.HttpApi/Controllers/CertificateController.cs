@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
@@ -9,9 +12,13 @@ using YANLib.Requests.Insert;
 using YANLib.Requests.Modify;
 using YANLib.Responses;
 using YANLib.Services;
+using static Nest.SortOrder;
 
 namespace YANLib.Controllers;
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole, OtherRole")]
+#endif
 [ApiController]
 [ApiExplorerSettings(GroupName = "sample")]
 [Route("api/[controller]")]
@@ -26,12 +33,11 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     {
         _logger.LogInformation("GetAll-CardCertificateController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
-        return Ok(await _service.GetAll(new PagedAndSortedResultRequestDto
-        {
-            SkipCount = (pageNumber - 1) * pageSize,
-            MaxResultCount = pageSize,
-            Sorting = $"{nameof(CertificateResponse.Name)} ASC,{nameof(CertificateResponse.CreatedAt)} DESC"
-        }));
+        return Ok(await _service.GetAll(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        ))));
     }
 
     [HttpGet("{code}")]
@@ -79,6 +85,9 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
         return Ok(await _service.Modify(code, request));
     }
 
+#if RELEASE
+[Authorize(Roles = "GlobalRole")]
+#endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ từ Database sang Elasticsearch")]
     public async ValueTask<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
