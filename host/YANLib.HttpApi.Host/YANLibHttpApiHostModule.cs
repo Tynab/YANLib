@@ -309,7 +309,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        _ = app.UseCapDashboard(); // "/cap"
+        //_ = app.UseCapDashboard(); // "/cap"
         _ = app.UseHangfireDashboard(); // "/hangfire"
         _ = app.UseConfiguredEndpoints();
     }
