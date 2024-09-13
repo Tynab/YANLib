@@ -2,7 +2,6 @@
 using YANLib.Middlewares;
 #endif
 
-using DotNetCore.CAP;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -176,6 +175,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = context.Services.AddCap(c =>
         {
             _ = c.UseDashboard(o => o.PathMatch = "/cap");
+            //_ = c.UseSqlServer(configuration.GetConnectionString(ConnectionStringName.Default) ?? string.Empty);
 
             _ = c.UseMongoDB(o =>
             {
@@ -309,8 +309,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        //_ = app.UseCapDashboard(); // "/cap"
-        _ = app.UseHangfireDashboard(); // "/hangfire"
+        _ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
 }

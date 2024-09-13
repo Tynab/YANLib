@@ -22,6 +22,7 @@
 		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.2.0" />
 		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="8.2.0" />
 		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.2.0" />
+		<PackageReference Include="DotNetCore.CAP.SqlServer" Version="8.2.0" />
 		<PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.23.0" />
 		<PackageReference Include="Hangfire.SqlServer" Version="1.8.14" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
