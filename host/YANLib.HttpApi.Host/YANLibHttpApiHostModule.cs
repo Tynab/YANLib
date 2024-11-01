@@ -162,9 +162,10 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
-            o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
+            //o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
             o.HideAbpEndpoints();
             o.EnableAnnotations();
+            o.DescribeAllParametersInCamelCase();
         });
     }
 
