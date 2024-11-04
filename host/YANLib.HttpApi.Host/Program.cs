@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using YANLib.Utilities;
 using static Microsoft.AspNetCore.Builder.WebApplication;
 using static Serilog.Events.LogEventLevel;
 using static System.StringComparison;
@@ -27,6 +29,8 @@ public class Program
             Log.Information("Starting YANLib.HttpApi.Host.");
 
             var builder = CreateBuilder(args);
+
+            await builder.Configuration.AddConfigFromAws();
 
             _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog((t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
             _ = builder.AddServiceDefaults();

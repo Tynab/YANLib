@@ -17,6 +17,7 @@
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.2" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
+		<PackageReference Include="AWSSDK.SecretsManager" Version="3.7.400.45" />
 		<PackageReference Include="DotNetCore.CAP" Version="8.2.0" />
 		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.2.0" />
 		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.2.0" />
