@@ -1,14 +1,10 @@
 ﻿using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using NUglify.Helpers;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
-using System.Text.Json;
 
 namespace YANLib.Options;
 

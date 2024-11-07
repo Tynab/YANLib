@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.Insert;
@@ -21,8 +20,6 @@ namespace YANLib.Controllers.v2;
 #if RELEASE
 [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
-[Area("Certificates")]
-//[RemoteService(Name = "Certificates")]
 [ApiVersion(2)]
 [ApiController]
 [Route("api/certificates")]

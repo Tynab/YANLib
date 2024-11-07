@@ -24,7 +24,6 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
-[RemoteService(false)]
 public class CertificateService(ILogger<CertificateService> logger, ICertificateRepository repository, ICertificateEsService esService) : YANLibAppService, ICertificateService
 {
     private readonly ILogger<CertificateService> _logger = logger;

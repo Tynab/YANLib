@@ -24,7 +24,6 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
-[RemoteService(false)]
 public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDeveloperTypeRepository repository, IRedisService<DeveloperRedisTypeDto> redisService) : YANLibAppService, IDeveloperTypeService
 {
     private readonly ILogger<DeveloperTypeService> _logger = logger;

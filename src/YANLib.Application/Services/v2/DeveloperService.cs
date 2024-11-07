@@ -19,7 +19,6 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
-[RemoteService(false)]
 public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,

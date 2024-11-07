@@ -8,7 +8,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.Insert;
@@ -22,8 +21,6 @@ namespace YANLib.Controllers.v2;
 #if RELEASE
 [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
-[Area("DeveloperTypes")]
-//[RemoteService(Name = "DeveloperTypes")]
 [ApiVersion(2)]
 [ApiController]
 [Route("api/developer-types")]

@@ -2,8 +2,8 @@
 using YANLib.Middlewares;
 #endif
 
+using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Asp.Versioning.ApplicationModels;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -62,11 +62,11 @@ namespace YANLib;
     typeof(AbpSwashbuckleModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpHttpClientModule),
-    typeof(AbpCachingStackExchangeRedisModule)
-    //typeof(AbpEventBusAzureModule),
-    //typeof(AbpEventBusRabbitMqModule),
-    //typeof(AbpAspNetCoreSignalRModule),
-    //typeof(AbpBackgroundJobsHangfireModule)
+    typeof(AbpCachingStackExchangeRedisModule),
+    typeof(AbpEventBusAzureModule),
+    typeof(AbpEventBusRabbitMqModule),
+    typeof(AbpAspNetCoreSignalRModule),
+    typeof(AbpBackgroundJobsHangfireModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
@@ -75,29 +75,27 @@ public class YANLibHttpApiHostModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         ConfigureSqlServer();
-        ConfigureConventionalControllers();
         ConfigureApiVersioning(context);
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        //ConfigureElasticsearch(context, configuration);
-        //ConfigureCap(context, configuration);
-        //ConfigureHangfire(context, configuration);
+        ConfigureElasticsearch(context, configuration);
+        ConfigureCap(context, configuration);
+        ConfigureHangfire(context, configuration);
         ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
 
-    private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
-
     private void ConfigureApiVersioning(ServiceConfigurationContext context)
     {
-        _ = context.Services.AddTransient<IApiControllerFilter, NoControllerFilter>();
         _ = context.Services.AddAbpApiVersioning(o =>
         {
             o.ReportApiVersions = true;
             o.AssumeDefaultVersionWhenUnspecified = true;
-        }).AddApiExplorer(o => {
+            o.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(), new HeaderApiVersionReader("X-Api-Version"));
+        }).AddApiExplorer(o =>
+        {
             o.GroupNameFormat = "'v'VVV";
             o.SubstituteApiVersionInUrl = true;
         });
@@ -175,7 +173,6 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
-            //o.DocInclusionPredicate((docName, description) => true);
             //o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
             o.HideAbpEndpoints();
             o.EnableAnnotations();
@@ -283,9 +280,9 @@ public class YANLibHttpApiHostModule : AbpModule
         var app = context.GetApplicationBuilder();
 
         _ = context.GetEnvironment().IsDevelopment() ? app.UseDeveloperExceptionPage() : app.UseHsts();
-        //_ = app.UseAllElasticApm(context.GetConfiguration()); // primary required
-        //_ = Subscribe(new HttpDiagnosticsSubscriber()); // secondary required
-        //_ = Subscribe(new EfCoreDiagnosticsSubscriber()); // secondary required
+        _ = app.UseAllElasticApm(context.GetConfiguration()); // primary required
+        _ = Subscribe(new HttpDiagnosticsSubscriber()); // secondary required
+        _ = Subscribe(new EfCoreDiagnosticsSubscriber()); // secondary required
         _ = app.UseHttpsRedirection();
         _ = app.UseCorrelationId();
         _ = app.UseStaticFiles();
@@ -325,7 +322,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        //_ = app.UseHangfireDashboard();
+        _ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
 }

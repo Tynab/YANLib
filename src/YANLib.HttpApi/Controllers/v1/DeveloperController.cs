@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.Crud.Create;
@@ -21,8 +20,6 @@ namespace YANLib.Controllers.v1;
 #if RELEASE
 [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
-[Area("Developers")]
-//[RemoteService(Name = "Developers")]
 [ApiVersion(1, Deprecated = true)]
 [ApiController]
 [Route("api/developers")]

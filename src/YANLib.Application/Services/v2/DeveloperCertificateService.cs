@@ -20,7 +20,6 @@ using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
-[RemoteService(false)]
 public class DeveloperCertificateService(
     ILogger<DeveloperCertificateService> logger,
     IDeveloperCertificateRepository repository,

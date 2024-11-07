@@ -1,5 +1,4 @@
 ﻿using System;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -10,5 +9,4 @@ using YANLib.Responses;
 
 namespace YANLib.Services.v1;
 
-[RemoteService(false)]
 public class DeveloperTypeService(IRepository<DeveloperType, Guid> repository) : CrudAppService<DeveloperType, DeveloperTypeResponse, Guid, PagedAndSortedResultRequestDto, DeveloperTypeCreateRequest, DeveloperTypeUpdateRequest>(repository), IDeveloperTypeService { }
