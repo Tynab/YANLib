@@ -2,6 +2,8 @@
 using YANLib.Middlewares;
 #endif
 
+using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.ApplicationModels;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -13,9 +15,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using NUglify.Helpers;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +39,7 @@ using Volo.Abp.Http.Client;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
+using YANLib.Options;
 using YANLib.Utilities;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
@@ -56,11 +62,11 @@ namespace YANLib;
     typeof(AbpSwashbuckleModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpHttpClientModule),
-    typeof(AbpCachingStackExchangeRedisModule),
-    typeof(AbpEventBusAzureModule),
-    typeof(AbpEventBusRabbitMqModule),
-    typeof(AbpAspNetCoreSignalRModule),
-    typeof(AbpBackgroundJobsHangfireModule)
+    typeof(AbpCachingStackExchangeRedisModule)
+    //typeof(AbpEventBusAzureModule),
+    //typeof(AbpEventBusRabbitMqModule),
+    //typeof(AbpAspNetCoreSignalRModule),
+    //typeof(AbpBackgroundJobsHangfireModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
@@ -68,15 +74,35 @@ public class YANLibHttpApiHostModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
 
-        context.Services.AddElasticsearch(configuration);
-        Configure<AbpDbContextOptions>(o => o.UseSqlServer());
-        ConfigureAuthentication(context, configuration);
+        ConfigureSqlServer();
         ConfigureConventionalControllers();
+        ConfigureApiVersioning(context);
+        ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        ConfigureCap(context, configuration);
-        ConfigureHangfire(context, configuration);
+        //ConfigureElasticsearch(context, configuration);
+        //ConfigureCap(context, configuration);
+        //ConfigureHangfire(context, configuration);
         ConfigureHealthChecks(context, configuration);
+    }
+
+    private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
+
+    private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
+
+    private void ConfigureApiVersioning(ServiceConfigurationContext context)
+    {
+        _ = context.Services.AddTransient<IApiControllerFilter, NoControllerFilter>();
+        _ = context.Services.AddAbpApiVersioning(o =>
+        {
+            o.ReportApiVersions = true;
+            o.AssumeDefaultVersionWhenUnspecified = true;
+        }).AddApiExplorer(o => {
+            o.GroupNameFormat = "'v'VVV";
+            o.SubstituteApiVersionInUrl = true;
+        });
+
+        Configure<AbpAspNetCoreMvcOptions>(o => o.ChangeControllerModelApiExplorerGroupName = false);
     }
 
     private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
@@ -96,8 +122,6 @@ public class YANLibHttpApiHostModule : AbpModule
         };
     });
 
-    private void ConfigureConventionalControllers() => Configure<AbpAspNetCoreMvcOptions>(o => o.ConventionalControllers.Create(typeof(YANLibApplicationModule).Assembly));
-
     private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration)
     {
         var corsOrigins = configuration["App:CorsOrigins"]?.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(origin => origin.RemovePostFix("/")).ToArray();
@@ -112,7 +136,8 @@ public class YANLibHttpApiHostModule : AbpModule
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
-        var hostingEnvironment = context.Services.GetHostingEnvironment();
+        _ = context.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
         var authority = configuration["AuthServer:Authority"];
 
         if (authority.IsWhiteSpaceOrNull())
@@ -122,22 +147,10 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = context.Services.AddAbpSwaggerGenWithOAuth(authority, new Dictionary<string, string>
         {
-            {"YANLib Sample", "YANLib API Sample"},
-            {"YANLib CRUD", "YANLib API CRUD"}
+            {"YANLib", "YANLib API"}
         }, o =>
         {
-            o.SwaggerDoc("sample", new OpenApiInfo
-            {
-                Title = $"YANLib API Sample - {hostingEnvironment.EnvironmentName}",
-                Version = "sample"
-            });
-
-            o.SwaggerDoc("crud", new OpenApiInfo
-            {
-                Title = $"YANLib API CRUD - {hostingEnvironment.EnvironmentName}",
-                Version = "crud"
-            });
-
+            o.OperationFilter<SwaggerDefaultValues>();
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -162,12 +175,15 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
+            //o.DocInclusionPredicate((docName, description) => true);
             //o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
             o.HideAbpEndpoints();
             o.EnableAnnotations();
             o.DescribeAllParametersInCamelCase();
         });
     }
+
+    private static void ConfigureElasticsearch(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddElasticsearch(configuration);
 
     private static void ConfigureCap(ServiceConfigurationContext context, IConfiguration configuration)
     {
@@ -267,9 +283,9 @@ public class YANLibHttpApiHostModule : AbpModule
         var app = context.GetApplicationBuilder();
 
         _ = context.GetEnvironment().IsDevelopment() ? app.UseDeveloperExceptionPage() : app.UseHsts();
-        _ = app.UseAllElasticApm(context.GetConfiguration()); // primary required
-        _ = Subscribe(new HttpDiagnosticsSubscriber()); // secondary required
-        _ = Subscribe(new EfCoreDiagnosticsSubscriber()); // secondary required
+        //_ = app.UseAllElasticApm(context.GetConfiguration()); // primary required
+        //_ = Subscribe(new HttpDiagnosticsSubscriber()); // secondary required
+        //_ = Subscribe(new EfCoreDiagnosticsSubscriber()); // secondary required
         _ = app.UseHttpsRedirection();
         _ = app.UseCorrelationId();
         _ = app.UseStaticFiles();
@@ -293,8 +309,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = app.UseAbpSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/sample/swagger.json", "YANLib API Sample");
-            c.SwaggerEndpoint("/swagger/crud/swagger.json", "YANLib API CRUD");
+            app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions.ForEach(x => c.SwaggerEndpoint($"/swagger/{x.GroupName}/swagger.json", x.GroupName.ToLowerInvariant()));
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
             c.DefaultModelsExpandDepth(-1);
@@ -310,7 +325,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        _ = app.UseHangfireDashboard();
+        //_ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
 }
