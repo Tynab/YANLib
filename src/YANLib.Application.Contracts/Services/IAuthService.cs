@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace YANLib.Services.v1;
+namespace YANLib.Services;
 
 public interface IAuthService
 {

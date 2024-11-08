@@ -1,7 +1,6 @@
 #if RELEASE
 using YANLib.Middlewares;
 #endif
-
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Elastic.Apm.DiagnosticSource;
@@ -50,6 +49,7 @@ using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Array;
 using static System.Text.Encoding;
 using static YANLib.YANLibConsts;
+using static Asp.Versioning.ApiVersionReader;
 
 namespace YANLib;
 
@@ -58,15 +58,15 @@ namespace YANLib;
     typeof(YANLibApplicationModule),
     typeof(YANLibEntityFrameworkCoreModule),
     typeof(AbpAutofacModule),
-    typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpHttpClientModule),
     typeof(AbpCachingStackExchangeRedisModule),
-    typeof(AbpEventBusAzureModule),
-    typeof(AbpEventBusRabbitMqModule),
-    typeof(AbpAspNetCoreSignalRModule),
-    typeof(AbpBackgroundJobsHangfireModule)
+    //typeof(AbpEventBusAzureModule),
+    //typeof(AbpEventBusRabbitMqModule),
+    //typeof(AbpAspNetCoreSignalRModule),
+    //typeof(AbpBackgroundJobsHangfireModule),
+    typeof(AbpAspNetCoreSerilogModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
 {
@@ -79,10 +79,10 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        ConfigureElasticsearch(context, configuration);
-        ConfigureCap(context, configuration);
-        ConfigureHangfire(context, configuration);
-        ConfigureHealthChecks(context, configuration);
+        //ConfigureElasticsearch(context, configuration);
+        //ConfigureCap(context, configuration);
+        //ConfigureHangfire(context, configuration);
+        //ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
@@ -93,7 +93,7 @@ public class YANLibHttpApiHostModule : AbpModule
         {
             o.ReportApiVersions = true;
             o.AssumeDefaultVersionWhenUnspecified = true;
-            o.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(), new HeaderApiVersionReader("X-Api-Version"));
+            o.ApiVersionReader = Combine(new UrlSegmentApiVersionReader(), new HeaderApiVersionReader("x-api-version"), new MediaTypeApiVersionReader("version"));
         }).AddApiExplorer(o =>
         {
             o.GroupNameFormat = "'v'VVV";
@@ -173,6 +173,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
+            o.CustomSchemaIds(t => t.FullName);
             //o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
             o.HideAbpEndpoints();
             o.EnableAnnotations();
@@ -306,7 +307,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = app.UseAbpSwaggerUI(c =>
         {
-            app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions.ForEach(x => c.SwaggerEndpoint($"/swagger/{x.GroupName}/swagger.json", x.GroupName.ToLowerInvariant()));
+            app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions.ForEach(x => c.SwaggerEndpoint($"/swagger/{x.GroupName}/swagger.json", x.GroupName.ToUpperInvariant()));
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
             c.DefaultModelsExpandDepth(-1);
@@ -322,7 +323,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        _ = app.UseHangfireDashboard();
+        //_ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
 }

@@ -9,7 +9,7 @@ using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
 using static System.TimeSpan;
 
-namespace YANLib.Services.v1;
+namespace YANLib.Services;
 
 public class NotificationService(ILogger<NotificationService> logger, IDistributedEventBus distributedEventBus, IBackgroundJobManager backgroundJobManager) : YANLibAppService, INotificationService
 {

@@ -74,7 +74,6 @@ var dto = json.Deserialize<JsonDto>();
 ### NOTE
 
 - Elastic.Apm... (v.1.24.x and above) is spam logs.
-- DotNetCap.CAP... (v.7.x.x and above) is MongoDB error.
 - Do not [Remove Unused References...] in layers:
     - Host:
         - Microsoft.EntityFrameworkCore.Tools

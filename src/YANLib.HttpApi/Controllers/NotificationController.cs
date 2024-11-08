@@ -8,9 +8,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Core;
 using YANLib.Requests;
-using YANLib.Services.v1;
+using YANLib.Services;
 
-namespace YANLib.Controllers.v1;
+namespace YANLib.Controllers;
 
 #if RELEASE
 [Authorize(Roles = "GlobalRole, OtherRole")]

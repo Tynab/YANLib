@@ -11,7 +11,7 @@ using YANLib.Core;
 using YANLib.EsIndices;
 using YANLib.EsServices;
 
-namespace YANLib.Controllers.v1;
+namespace YANLib.Controllers;
 
 #if RELEASE
 [Authorize(Roles = "GlobalRole, OtherRole")]

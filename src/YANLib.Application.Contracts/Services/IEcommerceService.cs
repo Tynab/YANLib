@@ -2,7 +2,7 @@
 using Volo.Abp.Application.Services;
 using YANLib.Requests;
 
-namespace YANLib.Services.v1;
+namespace YANLib.Services;
 
 public interface IEcommerceService : IApplicationService
 {

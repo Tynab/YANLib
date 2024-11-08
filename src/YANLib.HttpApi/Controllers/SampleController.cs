@@ -1,38 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Requests;
-using YANLib.Services.v1;
+using YANLib.Services;
 using static System.Guid;
 using static System.Threading.Tasks.Task;
 using static YANLib.Core.YANBool;
 using static YANLib.Core.YANNum;
 using static YANLib.Core.YANText;
 
-namespace YANLib.Controllers.v1;
+namespace YANLib.Controllers;
 
+[ApiVersion(1, Deprecated = true)]
+[ApiVersion(2)]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{v:apiVersion}/[controller]")]
 public sealed class SampleController(ILogger<SampleController> logger, ISampleService service) : YANLibController
 {
     private readonly ILogger<SampleController> _logger = logger;
     private readonly ISampleService _service = service;
 
-    [HttpGet("json-test")]
+    [MapToApiVersion(1)]
+    [HttpGet("test")]
     [SwaggerOperation(Summary = "Đo tốc độ xử lý JSON của thư viện YANLib và các chuẩn khác")]
-    public async ValueTask<IActionResult> JsonTest([Required] uint quantity = 10000, [Required] bool hideSystem = true)
+    public async ValueTask<IActionResult> Test([Required] uint quantity = 10000, [Required] bool hideSystem = true)
     {
         _logger.LogInformation("JsonTest-SampleController: {Quantity} - {HideSystem}", quantity, hideSystem);
 
-        return Ok(await _service.JsonTest(quantity, hideSystem));
+        return Ok(await _service.Test(quantity, hideSystem));
     }
 
-    [HttpGet("flexible-response")]
+    [MapToApiVersion(2)]
+    [HttpGet("test")]
     [SwaggerOperation(Summary = "Trả về dữ liệu linh hoạt")]
-    public async ValueTask<IActionResult> FlexibleResponse() => (GenerateRandomByte(1, byte.MaxValue) % 7) switch
+    public async ValueTask<IActionResult> TestV2() => (GenerateRandomByte(1, byte.MaxValue) % 7) switch
     {
         1 => await FromResult(Ok(GenerateRandomBool())),
         2 => await FromResult(Ok(GenerateRandomCharacter())),

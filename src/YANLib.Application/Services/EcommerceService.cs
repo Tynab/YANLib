@@ -9,7 +9,7 @@ using static RestSharp.Method;
 using static YANLib.YANLibConsts.RemoteService;
 using static YANLib.YANLibConsts.RemoteService.Path;
 
-namespace YANLib.Services.v1;
+namespace YANLib.Services;
 
 public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService remoteService) : YANLibAppService, IEcommerceService
 {

@@ -17,7 +17,7 @@ using static System.IO.File;
 using static System.Security.Claims.ClaimTypes;
 using static System.Text.Encoding;
 
-namespace YANLib.Services.v1;
+namespace YANLib.Services;
 
 public class AuthService(ILogger<AuthService> logger, IConfiguration configuration) : YANLibAppService, IAuthService
 {
