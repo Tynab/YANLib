@@ -14,10 +14,10 @@ namespace YANLib.Utilities;
 
 public static class ConfigurationBuilderExtensions
 {
-    public static async ValueTask<IConfigurationBuilder> AddConfigFromAws(this IConfigurationBuilder configurationBuilder)
+    public static async ValueTask<IConfigurationBuilder> AddConfigFromAws(this IConfigurationBuilder configurationBuilder, string environment)
     {
         var profileName = "Tynab";
-        var secretId = "dev/yanlib/appsettings";
+        var secretId = $"{environment}/YANLib/appsettings";
         var profileSource = new SharedCredentialsFile();
 
         if (profileSource.TryGetProfile(profileName, out var profile) && TryGetAWSCredentials(profile, profileSource, out var credentials))

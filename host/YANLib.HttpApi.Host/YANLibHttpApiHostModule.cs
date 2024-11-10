@@ -1,6 +1,10 @@
 #if RELEASE
+using Confluent.Kafka;
 using YANLib.Middlewares;
 #endif
+using Amazon.CloudWatch;
+using Amazon.Runtime.CredentialManagement;
+using Amazon.S3;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Elastic.Apm.DiagnosticSource;
@@ -19,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using NUglify.Helpers;
+using RabbitMQ.Client;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
@@ -38,18 +43,20 @@ using Volo.Abp.Http.Client;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using YANLib.Core;
+using YANLib.Filters;
 using YANLib.Options;
 using YANLib.Utilities;
+using static Amazon.RegionEndpoint;
+using static Amazon.Runtime.CredentialManagement.AWSCredentialsFactory;
+using static Asp.Versioning.ApiVersionReader;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
 using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
-using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus;
 using static Microsoft.OpenApi.Models.ReferenceType;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
-using static System.Array;
 using static System.Text.Encoding;
+using static YANLib.Core.YANText;
 using static YANLib.YANLibConsts;
-using static Asp.Versioning.ApiVersionReader;
 
 namespace YANLib;
 
@@ -62,10 +69,10 @@ namespace YANLib;
     typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpHttpClientModule),
     typeof(AbpCachingStackExchangeRedisModule),
-    //typeof(AbpEventBusAzureModule),
-    //typeof(AbpEventBusRabbitMqModule),
-    //typeof(AbpAspNetCoreSignalRModule),
-    //typeof(AbpBackgroundJobsHangfireModule),
+    typeof(AbpEventBusAzureModule),
+    typeof(AbpEventBusRabbitMqModule),
+    typeof(AbpAspNetCoreSignalRModule),
+    typeof(AbpBackgroundJobsHangfireModule),
     typeof(AbpAspNetCoreSerilogModule)
 )]
 public class YANLibHttpApiHostModule : AbpModule
@@ -79,10 +86,10 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        //ConfigureElasticsearch(context, configuration);
-        //ConfigureCap(context, configuration);
-        //ConfigureHangfire(context, configuration);
-        //ConfigureHealthChecks(context, configuration);
+        ConfigureElasticsearch(context, configuration);
+        ConfigureCap(context, configuration);
+        ConfigureHangfire(context, configuration);
+        ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
@@ -169,13 +176,12 @@ public class YANLibHttpApiHostModule : AbpModule
                             Type = SecurityScheme,
                             Id = "Bearer"
                         }
-                    }, Empty<string>()
+                    }, []
                 }
             });
 
-            o.CustomSchemaIds(t => t.FullName);
             //o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
-            o.HideAbpEndpoints();
+            o.DocumentFilter<CustomSwaggerFilter>(); //o.HideAbpEndpoints();
             o.EnableAnnotations();
             o.DescribeAllParametersInCamelCase();
         });
@@ -186,12 +192,10 @@ public class YANLibHttpApiHostModule : AbpModule
     private static void ConfigureCap(ServiceConfigurationContext context, IConfiguration configuration)
     {
         _ = context.Services.AddSingleton<IMongoClient>(new MongoClient(configuration["CAP:ConnectionString"]));
-
         _ = context.Services.AddCap(c =>
         {
             _ = c.UseDashboard(o => o.PathMatch = "/cap");
             //_ = c.UseSqlServer(configuration.GetConnectionString(ConnectionStringName.Default) ?? string.Empty);
-
             _ = c.UseMongoDB(o =>
             {
                 var dbName = configuration["CAP:DBName"];
@@ -261,19 +265,134 @@ public class YANLibHttpApiHostModule : AbpModule
         });
     }
 
-    private static void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
-        => context.Services.AddHangfire(c => c.UseSqlServerStorage(configuration.GetConnectionString(ConnectionStringName.Default)));
+    private static void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddHangfire(c => c.UseSqlServerStorage(configuration.GetConnectionString(ConnectionStringName.Default)));
 
     private static void ConfigureHealthChecks(ServiceConfigurationContext context, IConfiguration configuration)
     {
-        var connectionString = configuration["ConnectionStrings:Default"];
+        var healthChecksBuilder = context.Services.AddHealthChecks();
+        var sql = configuration["ConnectionStrings:Default"];
 
-        if (connectionString.IsWhiteSpaceOrNull())
+        if (sql.IsNotWhiteSpaceAndNull())
         {
-            return;
+            healthChecksBuilder.AddSqlServer(sql!, tags: ["db", "sql", "mssql"]);
         }
 
-        _ = context.Services.AddHealthChecks().AddSqlServer(connectionString: connectionString, name: "database", failureStatus: Degraded, tags: ["db", "sql", "sqlserver"]);
+        var mongo = configuration["CAP:ConnectionString"];
+
+        if (mongo.IsNotWhiteSpaceAndNull())
+        {
+            healthChecksBuilder.AddMongoDb(mongo!, tags: ["db", "nosql", "mongo"]);
+        }
+
+        var esUrl = configuration["Elasticsearch:Url"];
+        var esUsername = configuration["Elasticsearch:Username"];
+        var esPassword = configuration["Elasticsearch:Password"];
+
+        if (AllNotWhiteSpaceAndNull(esUrl, esUsername, esPassword))
+        {
+            healthChecksBuilder.AddElasticsearch(x => x.UseServer(esUrl!).UseBasicAuthentication(esUsername!, esPassword!), tags: ["db", "nosql", "es"]);
+        }
+
+        var redis = configuration["Redis:Configuration"];
+
+        if (redis.IsNotWhiteSpaceAndNull())
+        {
+            healthChecksBuilder.AddRedis(redis!, tags: ["db", "nosql", "redis"]);
+        }
+
+#if RELEASE
+        var kafka = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
+
+        if (kafka.IsNotWhiteSpaceAndNull())
+        {
+            healthChecksBuilder.AddKafka(new ProducerConfig(new Dictionary<string, string>
+            {
+                { "bootstrap.servers", kafka }
+            }), tags: ["db", "nosql", "kafka"]);
+        }
+#endif
+
+        var rabbitHostName = configuration["RabbitMQ:Connections:Default:HostName"];
+        var rabbitPort = configuration["RabbitMQ:Connections:Default:Port"].ToInt(5672);
+        var rabbitUsername = configuration["RabbitMQ:Connections:Default:Username"];
+        var rabbitPassword = configuration["RabbitMQ:Connections:Default:Password"];
+        var rabbitVirtualHost = configuration["RabbitMQ:Connections:Default:VirtualHost"] ?? string.Empty;
+        //var rabbitSsl = configuration["RabbitMQ:Connections:Default:Ssl:Enabled"].ToBool();
+        //var rabbitServerName = configuration["RabbitMQ:Connections:Default:Ssl:ServerName"];
+
+        if (AllNotWhiteSpaceAndNull(rabbitHostName, rabbitUsername, rabbitPassword))
+        {
+            healthChecksBuilder.AddRabbitMQ((serviceProvider, rabbitOptions) =>
+            {
+                rabbitOptions.ConnectionFactory = new ConnectionFactory
+                {
+                    HostName = rabbitHostName,
+                    Port = rabbitPort,
+                    UserName = rabbitUsername,
+                    Password = rabbitPassword,
+                    //VirtualHost = rabbitVirtualHost,
+                    //Ssl = new SslOption
+                    //{
+                    //    Enabled = rabbitSsl,
+                    //    ServerName = rabbitServerName
+                    //}
+                };
+
+                rabbitOptions.Connection = rabbitOptions.ConnectionFactory.CreateConnection();
+            }, tags: ["db", "nosql", "rabbit"]);
+        }
+
+        //var asb = configuration["Azure:ServiceBus:Connections:Default:ConnectionString"];
+        //var asbTopic = configuration["Azure:EventBus:TopicName"];
+
+        //if (AllNotWhiteSpaceAndNull(asb, asbTopic))
+        //{
+        //    healthChecksBuilder.AddAzureServiceBusTopic(asb!, asbTopic!, tags: ["db", "cloud", "asb"]);
+        //}
+
+        healthChecksBuilder.AddHangfire(c =>
+        {
+            c.MaximumJobsFailed = 1;
+            c.MinimumAvailableServers = 1;
+        }, tags: ["service", "job", "hangfire"]).AddSignalRHub("https://localhost:44380/yanlib/notification", tags: ["service", "noti", "signalr"]);
+
+        var profileName = "Tynab";
+        var profileSource = new SharedCredentialsFile();
+
+        if (profileSource.TryGetProfile(profileName, out var profile) && TryGetAWSCredentials(profile, profileSource, out var credentials))
+        {
+            var bucketName = configuration["AwsS3:BucketName"];
+
+            if (bucketName.IsNotWhiteSpaceAndNull())
+            {
+                healthChecksBuilder.AddS3(x =>
+                {
+                    x.Credentials = credentials;
+                    x.BucketName = bucketName;
+                    x.S3Config = new AmazonS3Config
+                    {
+                        RegionEndpoint = APSoutheast1
+                    };
+                }, tags: ["storage", "cloud", "s3"]);
+            }
+
+            var environmentName = context.Services.GetHostingEnvironment().EnvironmentName;
+            var secretId = $"{environmentName}/YANLib/appsettings";
+
+            healthChecksBuilder.AddSecretsManager(x =>
+            {
+                x.Credentials = credentials;
+                x.RegionEndpoint = APSoutheast1;
+                _ = x.AddSecret(secretId);
+            }, tags: ["secrets", "cloud", "sm"]).AddCloudWatchPublisher(x =>
+            {
+                x.ClientBuilder = o => new AmazonCloudWatchClient(credentials, APSoutheast1);
+                x.Namespace = "YANLib";
+                x.ServiceCheckName = environmentName;
+            });
+        }
+
+        _ = context.Services.AddHealthChecksUI().AddSqlServerStorage(sql!);
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
@@ -307,7 +426,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         _ = app.UseAbpSwaggerUI(c =>
         {
-            app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions.ForEach(x => c.SwaggerEndpoint($"/swagger/{x.GroupName}/swagger.json", x.GroupName.ToUpperInvariant()));
+            app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions.ForEach(x => c.SwaggerEndpoint($"/swagger/{x.GroupName}/swagger.json", x.GroupName.ToLowerInvariant()));
             c.OAuthClientId(context.ServiceProvider.GetRequiredService<IConfiguration>()["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("YANLib");
             c.DefaultModelsExpandDepth(-1);
@@ -316,14 +435,14 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseUnitOfWork();
         _ = app.UseAuditing();
         _ = app.UseAbpSerilogEnrichers();
-
-        _ = app.UseHealthChecks("/health", new HealthCheckOptions()
+        _ = app.UseHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = _ => true,
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        //_ = app.UseHangfireDashboard();
+        _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI());
+        _ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
 }
