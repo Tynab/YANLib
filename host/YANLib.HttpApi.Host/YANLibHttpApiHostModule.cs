@@ -83,6 +83,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         ConfigureSqlServer();
         ConfigureApiVersioning(context);
+        ConfigureAzureApplicationInsights(context);
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
@@ -109,6 +110,8 @@ public class YANLibHttpApiHostModule : AbpModule
 
         Configure<AbpAspNetCoreMvcOptions>(o => o.ChangeControllerModelApiExplorerGroupName = false);
     }
+
+    private static void ConfigureAzureApplicationInsights(ServiceConfigurationContext context) => context.Services.AddApplicationInsightsTelemetry();
 
     private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
     {
@@ -361,7 +364,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (profileSource.TryGetProfile(profileName, out var profile) && TryGetAWSCredentials(profile, profileSource, out var credentials))
         {
-            var bucketName = configuration["AwsS3:BucketName"];
+            var bucketName = configuration["AWS:S3:BucketName"];
 
             if (bucketName.IsNotWhiteSpaceAndNull())
             {
@@ -392,7 +395,16 @@ public class YANLibHttpApiHostModule : AbpModule
             });
         }
 
-        _ = context.Services.AddHealthChecksUI().AddSqlServerStorage(sql!);
+        var aai = configuration["Azure:ApplicationInsights:ConnectionString"];
+
+        if (aai.IsNotWhiteSpaceAndNull())
+        {
+            healthChecksBuilder.AddApplicationInsightsPublisher(aai);
+        }
+
+        _ = context.Services.AddHealthChecksUI()
+            //.AddSqlServerStorage(sql!)
+            .AddInMemoryStorage();
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
