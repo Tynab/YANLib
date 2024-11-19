@@ -8,8 +8,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Core;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Services.v2;
 
 namespace YANLib.Controllers.v2;
@@ -36,7 +36,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
-    public async ValueTask<IActionResult> Insert([Required] DeveloperInsertRequest request)
+    public async ValueTask<IActionResult> Insert([Required] DeveloperCreateRequest request)
     {
         _logger.LogInformation("Insert-DeveloperController: {Request}", request.Serialize());
 
@@ -45,7 +45,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
-    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperModifyRequest request)
+    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperUpdateRequest request)
     {
         _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 

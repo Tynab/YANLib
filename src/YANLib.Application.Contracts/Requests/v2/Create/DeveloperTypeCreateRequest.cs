@@ -1,8 +1,6 @@
-﻿namespace YANLib.Requests.Crud.Create;
+﻿namespace YANLib.Requests.v2.Create;
 
 public sealed class DeveloperTypeCreateRequest : YANLibApplicationCreateRequest
 {
-    public required long Code { get; set; }
-
     public required string Name { get; set; }
 }

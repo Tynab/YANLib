@@ -11,8 +11,8 @@ using YANLib.Entities;
 using YANLib.EsIndices;
 using YANLib.EsServices;
 using YANLib.Repositories;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibDomainErrorCodes;
@@ -49,7 +49,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Insert(DeveloperInsertRequest request)
+    public async ValueTask<DeveloperResponse?> Insert(DeveloperCreateRequest request)
     {
         try
         {
@@ -58,7 +58,7 @@ public class DeveloperService(
                 throw new BusinessException(EXIST_ID_CARD).WithData("IdCard", request.IdCard);
             }
 
-            var entTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperInsertRequest, Developer>(request));
+            var entTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request));
             var devTypeTask = _developerTypeService.Get(request.DeveloperTypeCode).AsTask();
 
             await WhenAll(entTask, devTypeTask);
@@ -83,7 +83,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperModifyRequest dto)
+    public async ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest dto)
     {
         try
         {

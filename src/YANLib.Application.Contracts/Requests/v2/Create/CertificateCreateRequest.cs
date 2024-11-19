@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YANLib.Requests.Insert;
+namespace YANLib.Requests.v2.Create;
 
-public sealed class CertificateInsertRequest : YANLibApplicationInsertRequest
+public sealed class CertificateCreateRequest : YANLibApplicationCreateRequest
 {
     public required string Name { get; set; }
 

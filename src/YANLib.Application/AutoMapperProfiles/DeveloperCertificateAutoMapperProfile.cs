@@ -6,10 +6,6 @@ using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
-using YANLib.Requests.Crud.Create;
-using YANLib.Requests.Crud.Update;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
 using YANLib.Responses;
 using static System.DateTime;
 
@@ -19,17 +15,17 @@ public sealed class DeveloperCertificateAutoMapperProfile : Profile
 {
     public DeveloperCertificateAutoMapperProfile()
     {
-        _ = CreateMap<DeveloperCertificateCreateRequest, DeveloperCertificate>()
+        _ = CreateMap<Requests.v1.Create.DeveloperCertificateCreateRequest, DeveloperCertificate>()
             .Ignore(d => d.UpdatedBy)
             .Ignore(d => d.UpdatedAt);
 
-        _ = CreateMap<DeveloperCertificateUpdateRequest, DeveloperCertificate>();
+        _ = CreateMap<Requests.v1.Update.DeveloperCertificateUpdateRequest, DeveloperCertificate>();
 
         _ = CreateMap<DeveloperCertificate, DeveloperCertificateResponse>();
 
         //
 
-        _ = CreateMap<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateInsertRequest Request), DeveloperCertificate>()
+        _ = CreateMap<(Guid DeveloperId, Guid CertificateId, Requests.v1.Create.DeveloperCertificateCreateRequest Request), DeveloperCertificate>()
             .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.DeveloperId))
             .ForMember(d => d.CertificateId, o => o.MapFrom(s => s.CertificateId))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Request.CreatedBy))
@@ -39,7 +35,7 @@ public sealed class DeveloperCertificateAutoMapperProfile : Profile
             .Ignore(d => d.UpdatedBy)
             .Ignore(d => d.UpdatedAt);
 
-        _ = CreateMap<(Guid Id, DeveloperCertificateModifyRequest Request), DeveloperCertificateDto>()
+        _ = CreateMap<(Guid Id, Requests.v2.Update.DeveloperCertificateUpdateRequest Request), DeveloperCertificateDto>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))

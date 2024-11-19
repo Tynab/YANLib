@@ -10,8 +10,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
 using static Nest.SortOrder;
@@ -53,7 +53,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Insert([Required] DeveloperTypeInsertRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Insert([Required] DeveloperTypeCreateRequest request)
     {
         _logger.LogInformation("Insert-DeveloperTypeController: {Request}", request.Serialize());
 
@@ -62,7 +62,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPatch("{code}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Modify(long code, [Required] DeveloperTypeModifyRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Modify(long code, [Required] DeveloperTypeUpdateRequest request)
     {
         _logger.LogInformation("Modify-DeveloperTypeController: {Code} - {Request}", code, request.Serialize());
 

@@ -1,6 +1,6 @@
-﻿namespace YANLib.Requests.Modify;
+﻿namespace YANLib.Requests.v2.Update;
 
-public sealed class DeveloperModifyRequest : YANLibApplicationModifyRequest
+public sealed class DeveloperUpdateRequest : YANLibApplicationUpdateRequest
 {
     public string? Name { get; set; }
 

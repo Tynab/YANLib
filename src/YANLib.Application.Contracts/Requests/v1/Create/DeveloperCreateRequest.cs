@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace YANLib.Requests.Crud.Create;
+namespace YANLib.Requests.v1.Create;
 
 public sealed class DeveloperCreateRequest : YANLibApplicationCreateRequest
 {

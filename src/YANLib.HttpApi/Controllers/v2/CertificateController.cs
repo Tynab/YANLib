@@ -9,8 +9,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
 using static Nest.SortOrder;
@@ -70,7 +70,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    public async ValueTask<IActionResult> Insert([Required] CertificateInsertRequest request)
+    public async ValueTask<IActionResult> Insert([Required] CertificateCreateRequest request)
     {
         _logger.LogInformation("Insert-CertificateController: {Request}", request.Serialize());
 
@@ -79,7 +79,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpPatch("{code}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<IActionResult> Modify(string code, [Required] CertificateModifyRequest request)
+    public async ValueTask<IActionResult> Modify(string code, [Required] CertificateUpdateRequest request)
     {
         _logger.LogInformation("Modify-CertificateController: {Code} - {Request}", code, request.Serialize());
 

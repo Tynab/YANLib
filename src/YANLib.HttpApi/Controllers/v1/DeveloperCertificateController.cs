@@ -9,8 +9,6 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
-using YANLib.Requests.Crud.Create;
-using YANLib.Requests.Crud.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
 
@@ -47,7 +45,7 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Create(DeveloperCertificateCreateRequest request)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Create(Requests.v1.Create.DeveloperCertificateCreateRequest request)
     {
         _logger.LogInformation("Create-DeveloperCertificateCrudController: {Request}", request.Serialize());
 
@@ -56,7 +54,7 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Update(Guid id, DeveloperCertificateUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Update(Guid id, Requests.v1.Update.DeveloperCertificateUpdateRequest request)
     {
         _logger.LogInformation("Update-DeveloperCertificateCrudController: {Id} - {Request}", id, request.Serialize());
 

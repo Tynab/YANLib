@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YANLib.Requests.Crud.Update;
+namespace YANLib.Requests.v1.Update;
 
 public sealed class CertificateUpdateRequest : YANLibApplicationUpdateRequest
 {

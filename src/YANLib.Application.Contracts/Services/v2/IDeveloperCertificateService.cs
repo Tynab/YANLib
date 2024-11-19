@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 
 namespace YANLib.Services.v2;
@@ -14,9 +14,9 @@ public interface IDeveloperCertificateService : IApplicationService
 
     public ValueTask<DeveloperCertificateResponse?> GetByDeveloperAndCertificate(string idCard, long code);
 
-    public ValueTask<DeveloperCertificateResponse?> Insert(DeveloperCertificateInsertRequest request);
+    public ValueTask<DeveloperCertificateResponse?> Insert(DeveloperCertificateCreateRequest request);
 
-    public ValueTask<DeveloperCertificateResponse?> Modify(DeveloperCertificateModifyRequest request);
+    public ValueTask<DeveloperCertificateResponse?> Modify(DeveloperCertificateUpdateRequest request);
 
     public ValueTask<DeveloperCertificateResponse?> Delete(string idCard, long code, Guid updatedBy);
 

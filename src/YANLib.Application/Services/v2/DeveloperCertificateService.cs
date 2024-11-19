@@ -11,8 +11,8 @@ using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
@@ -70,7 +70,7 @@ public class DeveloperCertificateService(
         }
     }
 
-    public async ValueTask<DeveloperCertificateResponse?> Insert(DeveloperCertificateInsertRequest request)
+    public async ValueTask<DeveloperCertificateResponse?> Insert(DeveloperCertificateCreateRequest request)
     {
         try
         {
@@ -92,7 +92,7 @@ public class DeveloperCertificateService(
                 throw new BusinessException(NOT_FOUND_CERT).WithData("Code", request.CertificateCode);
             }
 
-            var ent = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateInsertRequest Request), DeveloperCertificate>((dev.Id, cert.Id, request)));
+            var ent = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateCreateRequest Request), DeveloperCertificate>((dev.Id, cert.Id, request)));
 
             return ent.IsNotNull()
                 && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
@@ -107,11 +107,11 @@ public class DeveloperCertificateService(
         }
     }
 
-    public async ValueTask<DeveloperCertificateResponse?> Modify(DeveloperCertificateModifyRequest request)
+    public async ValueTask<DeveloperCertificateResponse?> Modify(DeveloperCertificateUpdateRequest request)
     {
         try
         {
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperCertificateModifyRequest Request), DeveloperCertificateDto>(((
+            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperCertificateUpdateRequest Request), DeveloperCertificateDto>(((
                 await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString())
                 ?? throw new BusinessException(NOT_FOUND_DEV_CERT).WithData("Code", request.CertificateCode).WithData("IdCard", request.DeveloperIdCard)
             ).Id, request)));

@@ -49,8 +49,9 @@
 		<PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.2" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.1" />
-		<PackageReference Include="AspNetCore.HealthChecks.UI.SqlServer.Storage" Version="8.0.1" />
-		<PackageReference Include="AWSSDK.SecretsManager" Version="3.7.400.50" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.SqlServer.Storage" Version="8.0.1">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
 		<PackageReference Include="DotNetCore.CAP" Version="8.3.1">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
@@ -72,7 +73,6 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.11" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 		<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0">
 		  <TreatAsUsed>true</TreatAsUsed>
@@ -86,16 +86,16 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
-		<PackageReference Include="Serilog.Sinks.OpenSearch" Version="1.2.0" />
-		<PackageReference Include="Volo.Abp.Autofac" Version="8.3.3" />
-		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.3.3" />
-		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.3" />
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="8.3.3">
+		<PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="8.3.4">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
-		<PackageReference Include="Volo.Abp.EventBus.Azure" Version="8.3.3" />
-		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="8.3.3" />
-		<PackageReference Include="Volo.Abp.Swashbuckle" Version="8.3.3" />
+		<PackageReference Include="Volo.Abp.EventBus.Azure" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.Swashbuckle" Version="8.3.4" />
 	</ItemGroup>
 
 	<ItemGroup>

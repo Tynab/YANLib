@@ -13,8 +13,8 @@ using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
@@ -75,11 +75,11 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Insert(DeveloperTypeInsertRequest request)
+    public async ValueTask<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request)
     {
         try
         {
-            var ent = await _repository.InsertAsync(ObjectMapper.Map<(long Code, DeveloperTypeInsertRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
+            var ent = await _repository.InsertAsync(ObjectMapper.Map<(long Code, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
 
             return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
@@ -93,12 +93,12 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Modify(long code, DeveloperTypeModifyRequest request)
+    public async ValueTask<DeveloperTypeResponse?> Modify(long code, DeveloperTypeUpdateRequest request)
     {
         try
         {
             var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeModifyRequest Request), DeveloperTypeDto>((dto.DeveloperTypeId, request)));
+            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((dto.DeveloperTypeId, request)));
 
             return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)

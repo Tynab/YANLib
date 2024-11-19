@@ -1,6 +1,6 @@
-﻿namespace YANLib.Requests.Insert;
+﻿namespace YANLib.Requests.v1.Update;
 
-public sealed class DeveloperInsertRequest : YANLibApplicationInsertRequest
+public sealed class DeveloperUpdateRequest : YANLibApplicationUpdateRequest
 {
     public required string Name { get; set; }
 
@@ -9,4 +9,6 @@ public sealed class DeveloperInsertRequest : YANLibApplicationInsertRequest
     public required string IdCard { get; set; }
 
     public required long DeveloperTypeCode { get; set; }
+
+    public required int Version { get; set; }
 }

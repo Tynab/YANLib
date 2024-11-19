@@ -6,10 +6,8 @@ using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
-using YANLib.Requests.Crud.Create;
-using YANLib.Requests.Crud.Update;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v1.Create;
+using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using static System.DateTime;
 
@@ -23,11 +21,11 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .Ignore(d => d.UpdatedBy)
             .Ignore(d => d.UpdatedAt);
 
-        _ = CreateMap<DeveloperTypeUpdateRequest, DeveloperType>();
+        _ = CreateMap<DeveloperUpdateRequest, DeveloperType>();
 
         _ = CreateMap<DeveloperType, DeveloperTypeResponse>();
 
-        _ = CreateMap<(long Code, DeveloperTypeInsertRequest Request), DeveloperType>()
+        _ = CreateMap<(long Code, Requests.v2.Create.DeveloperTypeCreateRequest Request), DeveloperType>()
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Request.CreatedBy))
@@ -37,12 +35,12 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .Ignore(d => d.UpdatedBy)
             .Ignore(d => d.UpdatedAt);
 
-        _ = CreateMap<(Guid Id, DeveloperTypeModifyRequest Request), DeveloperTypeDto>()
+        _ = CreateMap<(Guid Id, Requests.v2.Update.DeveloperTypeUpdateRequest Request), DeveloperTypeDto>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
-            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false));
+            .Ignore(d => d.IsDeleted);
 
         _ = CreateMap<DeveloperType, DeveloperRedisTypeDto>()
             .ForMember(d => d.DeveloperTypeId, o => o.MapFrom(s => s.Id));

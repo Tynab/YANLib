@@ -14,8 +14,8 @@ using YANLib.Entities;
 using YANLib.EsIndices;
 using YANLib.EsServices;
 using YANLib.Repositories;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
@@ -89,11 +89,11 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
     }
 
-    public async ValueTask<CertificateResponse?> Insert(CertificateInsertRequest request)
+    public async ValueTask<CertificateResponse?> Insert(CertificateCreateRequest request)
     {
         try
         {
-            var ent = await _repository.InsertAsync(ObjectMapper.Map<(string Code, CertificateInsertRequest Request), Certificate>((_idGenerator.NextIdAlphabetic(), request)));
+            var ent = await _repository.InsertAsync(ObjectMapper.Map<(string Code, CertificateCreateRequest Request), Certificate>((_idGenerator.NextIdAlphabetic(), request)));
 
             return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
                 ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
@@ -107,12 +107,12 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
     }
 
-    public async ValueTask<CertificateResponse?> Modify(string code, CertificateModifyRequest request)
+    public async ValueTask<CertificateResponse?> Modify(string code, CertificateUpdateRequest request)
     {
         try
         {
             var dto = await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code);
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, CertificateModifyRequest Request), CertificateDto>((dto.CertificateId, request)));
+            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, CertificateUpdateRequest Request), CertificateDto>((dto.CertificateId, request)));
 
             return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
                 ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)

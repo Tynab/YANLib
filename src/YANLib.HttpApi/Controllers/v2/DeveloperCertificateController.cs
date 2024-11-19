@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Core;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
 
@@ -48,7 +48,7 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Insert(DeveloperCertificateInsertRequest request)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Insert(DeveloperCertificateCreateRequest request)
     {
         _logger.LogInformation("Insert-DeveloperCertificateController: {Request}", request.Serialize());
 
@@ -57,7 +57,7 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpPatch]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Modify(DeveloperCertificateModifyRequest request)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Modify(DeveloperCertificateUpdateRequest request)
     {
         _logger.LogInformation("Modify-DeveloperCertificateController: {Request}", request.Serialize());
 

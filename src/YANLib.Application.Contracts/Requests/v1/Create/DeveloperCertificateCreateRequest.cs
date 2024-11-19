@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YANLib.Requests.Crud.Create;
+namespace YANLib.Requests.v1.Create;
 
 public sealed class DeveloperCertificateCreateRequest : YANLibApplicationCreateRequest
 {

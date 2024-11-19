@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YANLib.Requests.Modify;
+namespace YANLib.Requests.v2.Update;
 
-public sealed class CertificateModifyRequest : YANLibApplicationModifyRequest
+public sealed class CertificateUpdateRequest : YANLibApplicationUpdateRequest
 {
     public string? Name { get; set; }
 

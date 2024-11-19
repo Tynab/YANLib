@@ -6,10 +6,8 @@ using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.Requests.Crud.Create;
-using YANLib.Requests.Crud.Update;
-using YANLib.Requests.Insert;
-using YANLib.Requests.Modify;
+using YANLib.Requests.v1.Create;
+using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using static System.DateTime;
 
@@ -27,7 +25,7 @@ public sealed class CertificateAutoMapperProfile : Profile
 
         _ = CreateMap<Certificate, CertificateResponse>();
 
-        _ = CreateMap<(string Code, CertificateInsertRequest Request), Certificate>()
+        _ = CreateMap<(string Code, Requests.v2.Create.CertificateCreateRequest Request), Certificate>()
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Code))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.GPA, o => o.MapFrom(s => s.Request.GPA))
@@ -39,14 +37,14 @@ public sealed class CertificateAutoMapperProfile : Profile
             .Ignore(d => d.UpdatedBy)
             .Ignore(d => d.UpdatedAt);
 
-        _ = CreateMap<(Guid Id, CertificateModifyRequest Request), CertificateDto>()
+        _ = CreateMap<(Guid Id, Requests.v2.Update.CertificateUpdateRequest Request), CertificateDto>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.GPA, o => o.MapFrom(s => s.Request.GPA))
             .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.Request.DeveloperId))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
-            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false));
+            .Ignore(d => d.IsDeleted);
 
         _ = CreateMap<Certificate, CertificateEsIndex>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Code))
