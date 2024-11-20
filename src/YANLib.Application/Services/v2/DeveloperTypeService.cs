@@ -81,9 +81,10 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         {
             var ent = await _repository.InsertAsync(ObjectMapper.Map<(long Code, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
 
-            return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
-                ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
-                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse));
+            //return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
+            //    ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
+            //    : throw new EntityNotFoundException(typeof(DeveloperTypeResponse));
+            return default;
         }
         catch (Exception ex)
         {
@@ -100,9 +101,10 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
             var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((dto.DeveloperTypeId, request)));
 
-            return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
-                ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
-                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse), dto.DeveloperTypeId);
+            //return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
+            //    ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
+            //    : throw new EntityNotFoundException(typeof(DeveloperTypeResponse), dto.DeveloperTypeId);
+            return default;
         }
         catch (Exception ex)
         {
@@ -116,12 +118,13 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            return (await _repository.Modify(new DeveloperTypeDto
-            {
-                Id = (await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)).DeveloperTypeId,
-                UpdatedBy = updatedBy,
-                IsDeleted = true,
-            })).IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, code.ToString());
+            //return (await _repository.Modify(new DeveloperTypeDto
+            //{
+            //    Id = (await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)).DeveloperTypeId,
+            //    UpdatedBy = updatedBy,
+            //    IsDeleted = true,
+            //})).IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, code.ToString());
+            return default;
         }
         catch (Exception ex)
         {
@@ -143,7 +146,8 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var rslt = await clnTask;
             var mdls = await mdlsTask;
 
-            return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>));
+            //return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>));
+            return default;
         }
         catch (Exception ex)
         {

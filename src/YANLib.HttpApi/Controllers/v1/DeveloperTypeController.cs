@@ -43,7 +43,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Id")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(Guid id)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long id)
     {
         _logger.LogInformation("Get-DeveloperTypeCrudController: {Id}", id);
 
@@ -61,7 +61,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(Guid id, DeveloperTypeUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(long id, DeveloperTypeUpdateRequest request)
     {
         _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
 
@@ -70,7 +70,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    public async ValueTask<IActionResult> Delete(Guid id)
+    public async ValueTask<IActionResult> Delete(long id)
     {
         _logger.LogInformation("Delete-DeveloperTypeCrudController: {Id}", id);
         await _service.DeleteAsync(id);

@@ -112,11 +112,12 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         try
         {
             var dto = await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code);
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, CertificateUpdateRequest Request), CertificateDto>((dto.CertificateId, request)));
+            //var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, CertificateUpdateRequest Request), CertificateDto>((dto.CertificateId, request)));
 
-            return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
-                ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
-                : throw new EntityNotFoundException(typeof(CertificateResponse), dto.CertificateId);
+            //return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
+            //    ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
+            //    : throw new EntityNotFoundException(typeof(CertificateResponse), dto.CertificateId);
+            return default;
         }
         catch (Exception ex)
         {

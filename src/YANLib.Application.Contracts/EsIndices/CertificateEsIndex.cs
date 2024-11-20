@@ -5,7 +5,7 @@ namespace YANLib.EsIndices;
 
 public sealed class CertificateEsIndex : YANLibApplicationEsIndex
 {
-    public Guid CertificateId { get; set; }
+    public string? CertificateId { get; set; }
 
     [Keyword]
     public string? Name { get; set; }

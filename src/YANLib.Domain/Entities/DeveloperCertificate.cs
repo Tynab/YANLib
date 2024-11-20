@@ -2,9 +2,9 @@
 
 namespace YANLib.Entities;
 
-public sealed class DeveloperCertificate : YANLibDomainEntity
+public sealed class DeveloperCertificate : YANLibDomainEntity<Guid>
 {
     public Guid DeveloperId { get; set; }
 
-    public Guid CertificateId { get; set; }
+    public required string CertificateId { get; set; }
 }

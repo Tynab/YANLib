@@ -27,7 +27,7 @@ public class DeveloperCertificateService(
     IDeveloperService developerService,
     ICertificateService certificateService,
     IRepository<Developer, Guid> developerRepository,
-    IRepository<Certificate, Guid> certificateCrudRepository
+    IRepository<Certificate, string> certificateCrudRepository
 ) : YANLibAppService, IDeveloperCertificateService
 {
     private readonly ILogger<DeveloperCertificateService> _logger = logger;
@@ -36,7 +36,7 @@ public class DeveloperCertificateService(
     private readonly IDeveloperService _developerService = developerService;
     private readonly ICertificateService _certificateService = certificateService;
     private readonly IRepository<Developer, Guid> _developerRepository = developerRepository;
-    private readonly IRepository<Certificate, Guid> _certificateCrudRepository = certificateCrudRepository;
+    private readonly IRepository<Certificate, string> _certificateCrudRepository = certificateCrudRepository;
 
     public async ValueTask<IEnumerable<DeveloperCertificateResponse>?> GetByDeveloper(string idCard)
     {
@@ -92,12 +92,13 @@ public class DeveloperCertificateService(
                 throw new BusinessException(NOT_FOUND_CERT).WithData("Code", request.CertificateCode);
             }
 
-            var ent = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateCreateRequest Request), DeveloperCertificate>((dev.Id, cert.Id, request)));
+            //var ent = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateCreateRequest Request), DeveloperCertificate>((dev.Id, cert.Id, request)));
 
-            return ent.IsNotNull()
-                && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
-                ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((dev.IdCard, cert.Code.ToLong(), ent))
-                : default;
+            //return ent.IsNotNull()
+            //    && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
+            //    ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((dev.IdCard, cert.Id.ToLong(), ent))
+            //    : default;
+            return default;
         }
         catch (Exception ex)
         {
@@ -173,7 +174,7 @@ public class DeveloperCertificateService(
                     DevCert = m
                 }).Join(await _certificateCrudRepository.GetListAsync(x => mdls.Select(x => x.CertificateId).Distinct().Contains(x.Id)), x => x.DevCert.CertificateId, c => c.Id, (x, c) => new
                 {
-                    Code = c.Code ?? string.Empty,
+                    Code = c.Id ?? string.Empty,
                     x.DevCert,
                     x.DevIdCard
                 }).GroupBy(x => x.DevIdCard).ForEach(async g => rslt &= await _redisService.SetBulk(
@@ -205,14 +206,15 @@ public class DeveloperCertificateService(
             var rslt = await clnTask;
             var mdls = await mdlsTask;
 
-            return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(
-                $"{DeveloperCertificateGroupPrefix}:{idCard}",
-                (await _certificateCrudRepository.GetListAsync(x => mdls.Select(x => x.CertificateId).Contains(x.Id))).Join(mdls, c => c.DeveloperId, m => m.DeveloperId, (c, m) => new
-                {
-                    Code = c.Code ?? string.Empty,
-                    DevCert = m
-                }).ToDictionary(x => x.Code.ToString(), x => ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(x.DevCert))
-            );
+            //return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(
+            //    $"{DeveloperCertificateGroupPrefix}:{idCard}",
+            //    (await _certificateCrudRepository.GetListAsync(x => mdls.Select(x => x.CertificateId).Contains(x.Id))).Join(mdls, c => c.DeveloperId, m => m.DeveloperId, (c, m) => new
+            //    {
+            //        Code = c.Id ?? string.Empty,
+            //        DevCert = m
+            //    }).ToDictionary(x => x.Code.ToString(), x => ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(x.DevCert))
+            //);
+            return default;
         }
         catch (Exception ex)
         {

@@ -26,10 +26,8 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
     private readonly Dictionary<string, Expression<Func<CertificateEsIndex, object?>>> _fieldSelectors = new()
     {
         { nameof(CertificateResponse.Id), x => x.CertificateId.Suffix("keyword") },
-        { nameof(CertificateResponse.Code), x => x.Id.Suffix("keyword") },
         { nameof(CertificateResponse.Name), x => x.Name.Suffix("keyword") },
         { nameof(CertificateResponse.GPA), x => x.GPA },
-        { nameof(CertificateResponse.DeveloperId), x => x.DeveloperId.Suffix("keyword") },
         { nameof(CertificateResponse.CreatedBy), x => x.CreatedBy.Suffix("keyword") },
         { nameof(CertificateResponse.CreatedAt), x => x.CreatedAt },
         { nameof(CertificateResponse.UpdatedBy), x => x.UpdatedBy.Suffix("keyword") },

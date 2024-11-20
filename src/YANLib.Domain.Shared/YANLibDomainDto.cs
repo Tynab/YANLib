@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace YANLib;
 
-public class YANLibDomainDto
+public class YANLibDomainDto<T>
 {
-    public Guid Id { get; set; }
+    public T? Id { get; set; }
 
     public Guid UpdatedBy { get; set; }
 

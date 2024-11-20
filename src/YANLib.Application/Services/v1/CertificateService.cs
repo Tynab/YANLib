@@ -9,4 +9,4 @@ using YANLib.Responses;
 
 namespace YANLib.Services.v1;
 
-public class CertificateService(IRepository<Certificate, Guid> repository) : CrudAppService<Certificate, CertificateResponse, Guid, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest>(repository), ICertificateService { }
+public class CertificateService(IRepository<Certificate, string> repository) : CrudAppService<Certificate, CertificateResponse, string, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest>(repository), ICertificateService { }

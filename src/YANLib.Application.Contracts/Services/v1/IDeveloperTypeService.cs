@@ -7,4 +7,4 @@ using YANLib.Responses;
 
 namespace YANLib.Services.v1;
 
-public interface IDeveloperTypeService : ICrudAppService<DeveloperTypeResponse, Guid, PagedAndSortedResultRequestDto, DeveloperTypeCreateRequest, DeveloperTypeUpdateRequest> { }
+public interface IDeveloperTypeService : ICrudAppService<DeveloperTypeResponse, long, PagedAndSortedResultRequestDto, DeveloperTypeCreateRequest, DeveloperTypeUpdateRequest> { }

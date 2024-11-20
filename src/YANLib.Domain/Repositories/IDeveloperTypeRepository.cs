@@ -7,7 +7,7 @@ using YANLib.Entities;
 
 namespace YANLib.Repositories;
 
-public interface IDeveloperTypeRepository : IRepository<DeveloperType, Guid>, ITransientDependency
+public interface IDeveloperTypeRepository : IRepository<DeveloperType, long>, ITransientDependency
 {
     public ValueTask<DeveloperType?> Modify(DeveloperTypeDto dto);
 }

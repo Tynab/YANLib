@@ -17,7 +17,7 @@ public class DeveloperTypeRepository(
     ILogger<DeveloperTypeRepository> logger,
     IDbContextProvider<IYANLibDbContext> dbContextProvider,
     IYANLibDbContext dbContext
-) : EfCoreRepository<IYANLibDbContext, DeveloperType, Guid>(dbContextProvider), IDeveloperTypeRepository
+) : EfCoreRepository<IYANLibDbContext, DeveloperType, long>(dbContextProvider), IDeveloperTypeRepository
 {
     private readonly ILogger<DeveloperTypeRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;

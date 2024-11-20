@@ -2,9 +2,9 @@
 
 namespace YANLib;
 
-public class YANLibApplicationResponse
+public class YANLibApplicationResponse<T>
 {
-    public Guid Id { get; set; }
+    public T? Id { get; set; }
 
     public Guid CreatedBy { get; set; }
 

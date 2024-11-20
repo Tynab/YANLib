@@ -9,4 +9,4 @@ using YANLib.Responses;
 
 namespace YANLib.Services.v1;
 
-public class DeveloperTypeService(IRepository<DeveloperType, Guid> repository) : CrudAppService<DeveloperType, DeveloperTypeResponse, Guid, PagedAndSortedResultRequestDto, DeveloperTypeCreateRequest, DeveloperTypeUpdateRequest>(repository), IDeveloperTypeService { }
+public class DeveloperTypeService(IRepository<DeveloperType, long> repository) : CrudAppService<DeveloperType, DeveloperTypeResponse, long, PagedAndSortedResultRequestDto, DeveloperTypeCreateRequest, DeveloperTypeUpdateRequest>(repository), IDeveloperTypeService { }

@@ -7,4 +7,4 @@ using YANLib.Responses;
 
 namespace YANLib.Services.v1;
 
-public interface ICertificateService : ICrudAppService<CertificateResponse, Guid, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest> { }
+public interface ICertificateService : ICrudAppService<CertificateResponse, string, PagedAndSortedResultRequestDto, CertificateCreateRequest, CertificateUpdateRequest> { }

@@ -2,13 +2,9 @@
 
 namespace YANLib.Responses;
 
-public sealed class CertificateResponse : YANLibApplicationResponse
+public sealed class CertificateResponse : YANLibApplicationResponse<string>
 {
-    public string? Code { get; set; }
-
     public string? Name { get; set; }
 
     public double? GPA { get; set; }
-
-    public Guid DeveloperId { get; set; }
 }

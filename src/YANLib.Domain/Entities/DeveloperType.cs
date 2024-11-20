@@ -4,16 +4,14 @@ using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Entities;
 
-public sealed class DeveloperType : YANLibDomainEntity
+public sealed class DeveloperType : YANLibDomainEntity<long>
 {
-    public long Code { get; set; }
-
     public string? Name { get; set; }
 
     public DeveloperType()
     {
         IdGenerator idGenerator = new(DeveloperId, YanlibId);
 
-        Code = idGenerator.NextId();
+        Id = idGenerator.NextId();
     }
 }

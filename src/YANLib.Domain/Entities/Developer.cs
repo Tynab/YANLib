@@ -1,6 +1,8 @@
-﻿namespace YANLib.Entities;
+﻿using System;
 
-public sealed class Developer : YANLibDomainEntity
+namespace YANLib.Entities;
+
+public sealed class Developer : YANLibDomainEntity<Guid>
 {
     public string? Name { get; set; }
 
@@ -8,7 +10,7 @@ public sealed class Developer : YANLibDomainEntity
 
     public string? IdCard { get; set; }
 
-    public long DeveloperTypeCode { get; set; }
+    public long DeveloperTypeId { get; set; }
 
     public int Version { get; set; }
 }

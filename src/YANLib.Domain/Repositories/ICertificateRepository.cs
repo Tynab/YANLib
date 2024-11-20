@@ -7,7 +7,7 @@ using YANLib.Entities;
 
 namespace YANLib.Repositories;
 
-public interface ICertificateRepository : IRepository<Certificate, Guid>, ITransientDependency
+public interface ICertificateRepository : IRepository<Certificate, string>, ITransientDependency
 {
     public ValueTask<Certificate?> Modify(CertificateDto dto);
 }

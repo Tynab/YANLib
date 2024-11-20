@@ -17,7 +17,7 @@ public class CertificateRepository(
     ILogger<CertificateRepository> logger,
     IDbContextProvider<IYANLibDbContext> dbContextProvider,
     IYANLibDbContext dbContext
-) : EfCoreRepository<IYANLibDbContext, Certificate, Guid>(dbContextProvider), ICertificateRepository
+) : EfCoreRepository<IYANLibDbContext, Certificate, string>(dbContextProvider), ICertificateRepository
 {
     private readonly ILogger<CertificateRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
@@ -29,7 +29,6 @@ public class CertificateRepository(
             return await _dbContext.Certificates.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.Name, x => dto.Name.IsNull() ? x.Name : dto.Name)
                 .SetProperty(x => x.GPA, x => dto.GPA ?? x.GPA)
-                .SetProperty(x => x.DeveloperId, x => dto.DeveloperId ?? x.DeveloperId)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)

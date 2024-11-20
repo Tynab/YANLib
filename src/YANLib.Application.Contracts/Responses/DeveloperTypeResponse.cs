@@ -1,8 +1,6 @@
 ﻿namespace YANLib.Responses;
 
-public sealed class DeveloperTypeResponse : YANLibApplicationResponse
+public sealed class DeveloperTypeResponse : YANLibApplicationResponse<long>
 {
-    public long Code { get; set; }
-
     public string? Name { get; set; }
 }

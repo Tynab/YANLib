@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace YANLib.Responses;
 
-public sealed class DeveloperResponse : YANLibApplicationResponse
+public sealed class DeveloperResponse : YANLibApplicationResponse<Guid>
 {
     public string? Name { get; set; }
 

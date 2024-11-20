@@ -43,7 +43,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id")]
-    public async ValueTask<ActionResult<CertificateResponse>> Get(Guid id)
+    public async ValueTask<ActionResult<CertificateResponse>> Get(string id)
     {
         _logger.LogInformation("Get-CertificateCrudController: {Id}", id);
 
@@ -61,7 +61,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<ActionResult<CertificateResponse>> Update(Guid id, CertificateUpdateRequest request)
+    public async ValueTask<ActionResult<CertificateResponse>> Update(string id, CertificateUpdateRequest request)
     {
         _logger.LogInformation("Update-CertificateCrudController: {Id} - {Request}", id, request.Serialize());
 
@@ -70,7 +70,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    public async ValueTask<IActionResult> Delete(Guid id)
+    public async ValueTask<IActionResult> Delete(string id)
     {
         _logger.LogInformation("Delete-CertificateCrudController: {Id}", id);
         await _service.DeleteAsync(id);

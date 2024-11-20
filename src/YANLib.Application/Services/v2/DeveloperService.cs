@@ -93,7 +93,7 @@ public class DeveloperService(
             ent.Name = dto.Name ?? ent.Name;
             ent.Phone = dto.Phone ?? ent.Phone;
             ent.IdCard = idCard;
-            ent.DeveloperTypeCode = dto.DeveloperTypeCode ?? ent.DeveloperTypeCode;
+            ent.DeveloperTypeId = dto.DeveloperTypeCode ?? ent.DeveloperTypeId;
             ent.IsActive = dto.IsActive ?? ent.IsActive;
 
             var res = await _repository.Adjust(ent);
@@ -105,7 +105,7 @@ public class DeveloperService(
 
             var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(res);
 
-            rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeCode);
+            rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeId);
 
             return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
@@ -225,7 +225,7 @@ public class DeveloperService(
 
                 try
                 {
-                    dto.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(await _certificateRepository.GetListAsync(y => y.DeveloperId == x.Id && y.IsDeleted == false)));
+                    //dto.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(await _certificateRepository.GetListAsync(y => y.DeveloperId == x.Id && y.IsDeleted == false)));
                     datas.Add(dto);
                 }
                 finally

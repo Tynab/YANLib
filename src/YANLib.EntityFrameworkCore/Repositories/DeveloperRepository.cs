@@ -30,7 +30,7 @@ public class DeveloperRepository(
                 .SetProperty(x => x.Name, x => dto.Name.IsNull() ? x.Name : dto.Name)
                 .SetProperty(x => x.Phone, x => dto.Phone.IsNull() ? x.Phone : dto.Phone)
                 .SetProperty(x => x.IdCard, x => dto.IdCard.IsNull() ? x.IdCard : dto.IdCard)
-                .SetProperty(x => x.DeveloperTypeCode, x => dto.DeveloperTypeCode ?? x.DeveloperTypeCode)
+                //.SetProperty(x => x.DeveloperTypeId, x => dto.DeveloperTypeId ?? x.DeveloperTypeId)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
