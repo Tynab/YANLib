@@ -35,15 +35,23 @@ public class DeveloperService(
         try
         {
             var result = await base.GetListAsync(dto);
-            var developerTypes = await _developerTypeRepository.GetListAsync(x => result.Items.Where(x => x.DeveloperType.IsNotNull()).Select(x => x.DeveloperType!.Id).Distinct().Contains(x.Id));
-            var developerCertificates = await _developerCertificateRepository.GetListAsync(x => result.Items.Select(x => x.Id).Contains(x.DeveloperId));
-            var certificates = await _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateId).Distinct().Contains(x.Id));
+            var developerTypeIds = result.Items.Where(x => x.DeveloperType.IsNotNull()).Select(x => x.DeveloperType!.Id).Distinct();
+            var developerTypesTask = _developerTypeRepository.GetListAsync(x => developerTypeIds.Contains(x.Id));
+            var developerIds = result.Items.Select(x => x.Id);
+            var developerCertificatesTask = _developerCertificateRepository.GetListAsync(x => developerIds.Contains(x.DeveloperId));
+
+            _ = await WhenAny(developerTypesTask, developerCertificatesTask);
+
+            var developerTypes = await developerTypesTask;
+            var developerCertificates = await developerCertificatesTask;
+            var certificateIds = developerCertificates.Select(x => x.CertificateId).Distinct();
+            var certificates = await _certificateRepository.GetListAsync(x => certificateIds.Contains(x.Id));
 
             result.Items = result.Items.Select(x =>
             {
                 x.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(y => y.Id == x.DeveloperType?.Id));
                 x.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(
-                    developerCertificates.Where(y => y.DeveloperId == x.Id).Select(y => certificates.FirstOrDefault(z => z.Id == y.CertificateId)).Where(z => z.IsNotNull()).ToList()
+                    developerCertificates.Where(y => y.DeveloperId == x.Id).Select(y => certificates.FirstOrDefault(z => z.Id == y.CertificateId)).ToList()
                 );
 
                 return x;
@@ -51,9 +59,40 @@ public class DeveloperService(
 
             return result;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("GetList-DeveloperService: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "GetList-DeveloperService: {DTO}", dto.Serialize());
+
+            throw;
+        }
+    }
+
+    public override async Task<DeveloperResponse> GetAsync(Guid id)
+    {
+        try
+        {
+            var resultTask = base.GetAsync(id);
+            var developerCertificatesTask = _developerCertificateRepository.GetListAsync(x => x.DeveloperId == id);
+
+            _ = await WhenAny(resultTask, developerCertificatesTask);
+
+            var developerCertificates = await developerCertificatesTask;
+            var certificatesTask = _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateId).Distinct().Contains(x.Id));
+            var result = await resultTask;
+            var developerTypeTask = _developerTypeRepository.FindAsync(result.DeveloperType!.Id);
+
+            _ = await WhenAny(developerTypeTask, certificatesTask);
+
+            var certificates = await certificatesTask;
+
+            result.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(developerCertificates.Select(x => certificates.FirstOrDefault(y => y.Id == x.CertificateId)).ToList());
+            result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(await developerTypeTask);
+            
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Get-DeveloperService: {Id}", id);
 
             throw;
         }
@@ -67,9 +106,9 @@ public class DeveloperService(
 
             return await base.CreateAsync(request);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("Create-DeveloperService: {Request}", request.Serialize());
+            _logger.LogError(ex, "Create-DeveloperService: {Request}", request.Serialize());
 
             throw;
         }
@@ -83,9 +122,9 @@ public class DeveloperService(
 
             return await base.UpdateAsync(id, request);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("Update-DeveloperService: {Id} - {Request}", id, request.Serialize());
+            _logger.LogError(ex, "Update-DeveloperService: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }
