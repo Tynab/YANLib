@@ -31,31 +31,31 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     private readonly ICertificateEsService _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async ValueTask<PagedResultDto<CertificateResponse>> GetAll(PagedAndSortedResultRequestDto dto)
+    public async ValueTask<PagedResultDto<CertificateResponse>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.GetAll(dto));
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.GetAll(input));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-CertificateService-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "GetAll-CertificateService-Exception: {Input}", input.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<CertificateResponse?> GetByCode(string code)
+    public async ValueTask<CertificateResponse?> Get(string id)
     {
         try
         {
-            var mdl = await _esService.Get(code);
+            var dto = await _esService.Get(id);
 
-            return mdl.IsNull() ? default : ObjectMapper.Map<CertificateEsIndex, CertificateResponse>(mdl);
+            return dto.IsNull() ? default : ObjectMapper.Map<CertificateEsIndex, CertificateResponse>(dto);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByCode-CertificateService-Exception: {Code}", code);
+            _logger.LogError(ex, "GetByCode-CertificateService-Exception: {Id}", id);
 
             throw;
         }
@@ -93,11 +93,11 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            var ent = await _repository.InsertAsync(ObjectMapper.Map<(string Code, CertificateCreateRequest Request), Certificate>((_idGenerator.NextIdAlphabetic(), request)));
+            var entity = await _repository.InsertAsync(ObjectMapper.Map<(string Id, CertificateCreateRequest Request), Certificate>((_idGenerator.NextIdAlphabetic(), request)));
 
-            return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
-                ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
-                : throw new EntityNotFoundException(typeof(CertificateResponse));
+            return entity.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(entity))
+                ? ObjectMapper.Map<Certificate, CertificateResponse>(entity)
+                : throw new EntityNotFoundException(typeof(Certificate));
         }
         catch (Exception ex)
         {
@@ -107,40 +107,39 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
     }
 
-    public async ValueTask<CertificateResponse?> Modify(string code, CertificateUpdateRequest request)
+    public async ValueTask<CertificateResponse?> Modify(string id, CertificateUpdateRequest request)
     {
         try
         {
-            var dto = await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code);
-            //var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, CertificateUpdateRequest Request), CertificateDto>((dto.CertificateId, request)));
+            var dto = await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(CertificateEsIndex), id);
+            var entity = await _repository.Modify(ObjectMapper.Map<(string Id, CertificateUpdateRequest Request), CertificateDto>((id, request)));
 
-            //return ent.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(ent))
-            //    ? ObjectMapper.Map<Certificate, CertificateResponse>(ent)
-            //    : throw new EntityNotFoundException(typeof(CertificateResponse), dto.CertificateId);
-            return default;
+            return entity.IsNotNull() && await _esService.Set(ObjectMapper.Map<Certificate, CertificateEsIndex>(entity))
+                ? ObjectMapper.Map<Certificate, CertificateResponse>(entity)
+                : throw new EntityNotFoundException(typeof(Certificate), id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-CertificateService-Exception: {Code} - {Dto}", code, request.Serialize());
+            _logger.LogError(ex, "Modify-CertificateService-Exception: {Id} - {Dto}", id, request.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<bool> Delete(string code, Guid updatedBy)
+    public async ValueTask<bool> Delete(string id, Guid updatedBy)
     {
         try
         {
             return (await _repository.Modify(new CertificateDto
             {
-                Id = (await _esService.Get(code) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("Code", code)).CertificateId,
+                Id = (await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(CertificateEsIndex), id)).Id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            })).IsNotNull() && await _esService.Delete(code);
+            })).IsNotNull() && await _esService.Delete(id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-CertificateService-Exception: {Code} - {UpdatedBy}", code, updatedBy);
+            _logger.LogError(ex, "Delete-CertificateService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
 
             throw;
         }
@@ -150,21 +149,21 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            var clnTask = _esService.DeleteAll().AsTask();
-            var mdlsTask = _repository.GetListAsync(x => x.IsDeleted == false);
+            var cleanTask = _esService.DeleteAll().AsTask();
+            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
-            await WhenAll(clnTask, mdlsTask);
+            await WhenAll(cleanTask, entitiesTask);
 
-            var rslt = await clnTask;
-            var mdls = await mdlsTask;
+            var result = await cleanTask;
+            var entities = await entitiesTask;
             var datas = new List<CertificateEsIndex>();
-            var semSlim = new SemaphoreSlim(1);
+            var semaphoreSlim = new SemaphoreSlim(1);
 
-            await WhenAll(mdls.Select(async x =>
+            await WhenAll(entities.Select(async x =>
             {
                 var dto = ObjectMapper.Map<Certificate, CertificateEsIndex>(x);
 
-                await semSlim.WaitAsync();
+                await semaphoreSlim.WaitAsync();
 
                 try
                 {
@@ -172,11 +171,11 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
                 }
                 finally
                 {
-                    _ = semSlim.Release();
+                    _ = semaphoreSlim.Release();
                 }
             }));
 
-            return mdls.IsEmptyOrNull() ? rslt : rslt && await _esService.SetBulk(datas);
+            return entities.IsEmptyOrNull() ? result : result && await _esService.SetBulk(datas);
         }
         catch (Exception ex)
         {

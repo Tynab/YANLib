@@ -10,7 +10,7 @@ namespace YANLib.Services.v2;
 
 public interface IDeveloperTypeService : IApplicationService
 {
-    public ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto dto);
+    public ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input);
 
     public ValueTask<DeveloperTypeResponse?> Get(long code);
 

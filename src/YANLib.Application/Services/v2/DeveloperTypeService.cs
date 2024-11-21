@@ -31,7 +31,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     private readonly IRedisService<DeveloperRedisTypeDto> _redisService = redisService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto dto)
+    public async ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
@@ -44,16 +44,16 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
 
             var queryableItems = mdls.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>).AsQueryable();
 
-            if (dto.Sorting.IsNotWhiteSpaceAndNull())
+            if (input.Sorting.IsNotWhiteSpaceAndNull())
             {
-                queryableItems = queryableItems.OrderBy(dto.Sorting);
+                queryableItems = queryableItems.OrderBy(input.Sorting);
             }
 
-            return new PagedResultDto<DeveloperTypeResponse>(queryableItems.Count(), [.. queryableItems.Skip(dto.SkipCount).Take(dto.MaxResultCount)]);
+            return new PagedResultDto<DeveloperTypeResponse>(queryableItems.Count(), [.. queryableItems.Skip(input.SkipCount).Take(input.MaxResultCount)]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-DeveloperTypeService-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "GetAll-DeveloperTypeService-Exception: {Input}", input.Serialize());
 
             throw;
         }

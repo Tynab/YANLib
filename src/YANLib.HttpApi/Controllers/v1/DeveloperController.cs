@@ -52,20 +52,20 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperResponse>> Create(DeveloperCreateRequest request)
+    public async ValueTask<ActionResult<DeveloperResponse>> Create(DeveloperCreateRequest input)
     {
-        _logger.LogInformation("Create-DeveloperCrudController: {Request}", request.Serialize());
+        _logger.LogInformation("Create-DeveloperCrudController: {Input}", input.Serialize());
 
-        return Ok(await _service.CreateAsync(request));
+        return Ok(await _service.CreateAsync(input));
     }
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperResponse>> Update(Guid id, DeveloperUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperResponse>> Update(Guid id, DeveloperUpdateRequest input)
     {
-        _logger.LogInformation("Update-DeveloperCrudController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Update-DeveloperCrudController: {Id} - {Input}", id, input.Serialize());
 
-        return Ok(await _service.UpdateAsync(id, request));
+        return Ok(await _service.UpdateAsync(id, input));
     }
 
     [HttpDelete("{id}")]

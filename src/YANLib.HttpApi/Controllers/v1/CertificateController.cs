@@ -52,20 +52,20 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    public async ValueTask<ActionResult<CertificateResponse>> Create(CertificateCreateRequest request)
+    public async ValueTask<ActionResult<CertificateResponse>> Create(CertificateCreateRequest input)
     {
-        _logger.LogInformation("Create-CertificateCrudController: {Request}", request.Serialize());
+        _logger.LogInformation("Create-CertificateCrudController: {Input}", input.Serialize());
 
-        return Ok(await _service.CreateAsync(request));
+        return Ok(await _service.CreateAsync(input));
     }
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<ActionResult<CertificateResponse>> Update(string id, CertificateUpdateRequest request)
+    public async ValueTask<ActionResult<CertificateResponse>> Update(string id, CertificateUpdateRequest input)
     {
-        _logger.LogInformation("Update-CertificateCrudController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Update-CertificateCrudController: {Id} - {Input}", id, input.Serialize());
 
-        return Ok(await _service.UpdateAsync(id, request));
+        return Ok(await _service.UpdateAsync(id, input));
     }
 
     [HttpDelete("{id}")]

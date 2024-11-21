@@ -47,7 +47,7 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
     {
         _logger.LogInformation("GetByCode-CardCertificateController: {Code}", code);
 
-        return Ok(await _service.GetByCode(code));
+        return Ok(await _service.Get(code));
     }
 
     [HttpGet("get-by-name")]

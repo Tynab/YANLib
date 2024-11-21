@@ -45,20 +45,20 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Create(Requests.v1.Create.DeveloperCertificateCreateRequest request)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Create(Requests.v1.Create.DeveloperCertificateCreateRequest input)
     {
-        _logger.LogInformation("Create-DeveloperCertificateCrudController: {Request}", request.Serialize());
+        _logger.LogInformation("Create-DeveloperCertificateCrudController: {Input}", input.Serialize());
 
-        return Ok(await _service.CreateAsync(request));
+        return Ok(await _service.CreateAsync(input));
     }
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Update(Guid id, Requests.v1.Update.DeveloperCertificateUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Update(Guid id, Requests.v1.Update.DeveloperCertificateUpdateRequest input)
     {
-        _logger.LogInformation("Update-DeveloperCertificateCrudController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Update-DeveloperCertificateCrudController: {Id} - {Input}", id, input.Serialize());
 
-        return Ok(await _service.UpdateAsync(id, request));
+        return Ok(await _service.UpdateAsync(id, input));
     }
 
     [HttpDelete("{id}")]

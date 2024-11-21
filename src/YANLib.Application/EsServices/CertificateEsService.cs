@@ -25,7 +25,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
 
     private readonly Dictionary<string, Expression<Func<CertificateEsIndex, object?>>> _fieldSelectors = new()
     {
-        { nameof(CertificateResponse.Id), x => x.CertificateId.Suffix("keyword") },
+        { nameof(CertificateResponse.Id), x => x.Id },
         { nameof(CertificateResponse.Name), x => x.Name.Suffix("keyword") },
         { nameof(CertificateResponse.GPA), x => x.GPA },
         { nameof(CertificateResponse.CreatedBy), x => x.CreatedBy.Suffix("keyword") },
@@ -39,7 +39,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
     {
         try
         {
-            var res = await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
+            var response = await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
                 .Sort(d => d
@@ -62,7 +62,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
                 .Query(q => q.MatchAll())
             );
 
-            return new PagedResultDto<CertificateEsIndex>(res.Total, [.. res.Documents]);
+            return new PagedResultDto<CertificateEsIndex>(response.Total, [.. response.Documents]);
         }
         catch (Exception ex)
         {
@@ -111,11 +111,11 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
                 return false;
             }
 
-            var reqs = new BulkDescriptor();
+            var requests = new BulkDescriptor();
 
-            datas.OrderBy(x => x.CreatedAt).ForEach(data => reqs.Index<CertificateEsIndex>(x => x.Document(data).Index(index)));
+            datas.OrderBy(x => x.CreatedAt).ForEach(data => requests.Index<CertificateEsIndex>(x => x.Document(data).Index(index)));
 
-            return (await _elasticClient.BulkAsync(reqs)).IsNotNull();
+            return (await _elasticClient.BulkAsync(requests)).IsNotNull();
         }
         catch (Exception ex)
         {

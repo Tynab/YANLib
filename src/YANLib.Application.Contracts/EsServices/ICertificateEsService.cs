@@ -7,7 +7,7 @@ namespace YANLib.EsServices;
 
 public interface ICertificateEsService
 {
-    public ValueTask<PagedResultDto<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto dto);
+    public ValueTask<PagedResultDto<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto input);
 
     public ValueTask<CertificateEsIndex?> Get(string id);
 

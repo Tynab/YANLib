@@ -52,20 +52,20 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest input)
     {
-        _logger.LogInformation("Create-DeveloperTypeCrudController: {Request}", request.Serialize());
+        _logger.LogInformation("Create-DeveloperTypeCrudController: {Input}", input.Serialize());
 
-        return Ok(await _service.CreateAsync(request));
+        return Ok(await _service.CreateAsync(input));
     }
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(long id, DeveloperTypeUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(long id, DeveloperTypeUpdateRequest input)
     {
-        _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Input}", id, input.Serialize());
 
-        return Ok(await _service.UpdateAsync(id, request));
+        return Ok(await _service.UpdateAsync(id, input));
     }
 
     [HttpDelete("{id}")]

@@ -14,6 +14,9 @@ using YANLib.Responses;
 using static YANLib.YANLibDomainErrorCodes;
 using static System.Threading.Tasks.Task;
 using System.Collections.Generic;
+using NUglify.Helpers;
+using Volo.Abp.Domain.Entities;
+using Nest;
 
 namespace YANLib.Services.v1;
 
@@ -30,38 +33,31 @@ public class DeveloperService(
     private readonly IRepository<DeveloperCertificate, Guid> _developerCertificateRepository = developerCertificateRepository;
     private readonly IRepository<Certificate, string> _certificateRepository = certificateRepository;
 
-    public override async Task<PagedResultDto<DeveloperResponse>> GetListAsync(PagedAndSortedResultRequestDto dto)
+    public override async Task<PagedResultDto<DeveloperResponse>> GetListAsync(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            var result = await base.GetListAsync(dto);
+            var result = await base.GetListAsync(input);
             var developerTypeIds = result.Items.Where(x => x.DeveloperType.IsNotNull()).Select(x => x.DeveloperType!.Id).Distinct();
-            var developerTypesTask = _developerTypeRepository.GetListAsync(x => developerTypeIds.Contains(x.Id));
-            var developerIds = result.Items.Select(x => x.Id);
-            var developerCertificatesTask = _developerCertificateRepository.GetListAsync(x => developerIds.Contains(x.DeveloperId));
-
-            _ = await WhenAny(developerTypesTask, developerCertificatesTask);
-
-            var developerTypes = await developerTypesTask;
-            var developerCertificates = await developerCertificatesTask;
+            var developerTypes = await _developerTypeRepository.GetListAsync(x => developerTypeIds.Contains(x.Id));
+            var developerIds = result.Items.Select(x => x.Id).Distinct();
+            var developerCertificates = await _developerCertificateRepository.GetListAsync(x => developerIds.Contains(x.DeveloperId));
             var certificateIds = developerCertificates.Select(x => x.CertificateId).Distinct();
             var certificates = await _certificateRepository.GetListAsync(x => certificateIds.Contains(x.Id));
 
-            result.Items = result.Items.Select(x =>
+            result.Items.ForEach(x =>
             {
                 x.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(y => y.Id == x.DeveloperType?.Id));
                 x.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(
                     developerCertificates.Where(y => y.DeveloperId == x.Id).Select(y => certificates.FirstOrDefault(z => z.Id == y.CertificateId)).ToList()
                 );
-
-                return x;
-            }).ToList();
+            });
 
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetList-DeveloperService: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "GetList-DeveloperService: {Input}", input.Serialize());
 
             throw;
         }
@@ -71,23 +67,13 @@ public class DeveloperService(
     {
         try
         {
-            var resultTask = base.GetAsync(id);
-            var developerCertificatesTask = _developerCertificateRepository.GetListAsync(x => x.DeveloperId == id);
+            var result = await base.GetAsync(id);
+            var developerCertificates = await _developerCertificateRepository.GetListAsync(x => x.DeveloperId == id);
+            var certificates = await _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateId).Distinct().Contains(x.Id));
 
-            _ = await WhenAny(resultTask, developerCertificatesTask);
-
-            var developerCertificates = await developerCertificatesTask;
-            var certificatesTask = _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateId).Distinct().Contains(x.Id));
-            var result = await resultTask;
-            var developerTypeTask = _developerTypeRepository.FindAsync(result.DeveloperType!.Id);
-
-            _ = await WhenAny(developerTypeTask, certificatesTask);
-
-            var certificates = await certificatesTask;
-
+            result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(await _developerTypeRepository.FindAsync(result.DeveloperType!.Id));
             result.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(developerCertificates.Select(x => certificates.FirstOrDefault(y => y.Id == x.CertificateId)).ToList());
-            result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(await developerTypeTask);
-            
+
             return result;
         }
         catch (Exception ex)
@@ -98,33 +84,45 @@ public class DeveloperService(
         }
     }
 
-    public override async Task<DeveloperResponse> CreateAsync(DeveloperCreateRequest request)
+    public override async Task<DeveloperResponse> CreateAsync(DeveloperCreateRequest input)
     {
         try
         {
-            _ = await _developerTypeRepository.FindAsync(request.DeveloperTypeId) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", request.DeveloperTypeId);
+            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeId) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeId);
+            var result = await base.CreateAsync(input);
 
-            return await base.CreateAsync(request);
+            if (developerType.IsNotNull())
+            {
+                result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerType);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Create-DeveloperService: {Request}", request.Serialize());
+            _logger.LogError(ex, "Create-DeveloperService: {Input}", input.Serialize());
 
             throw;
         }
     }
 
-    public override async Task<DeveloperResponse> UpdateAsync(Guid id, DeveloperUpdateRequest request)
+    public override async Task<DeveloperResponse> UpdateAsync(Guid id, DeveloperUpdateRequest input)
     {
         try
         {
-            _ = await _developerTypeRepository.FindAsync(request.DeveloperTypeId) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", request.DeveloperTypeId);
+            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeId) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeId);
+            var result = await base.UpdateAsync(id, input);
 
-            return await base.UpdateAsync(id, request);
+            if (developerType.IsNotNull())
+            {
+                result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerType);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Update-DeveloperService: {Id} - {Request}", id, request.Serialize());
+            _logger.LogError(ex, "Update-DeveloperService: {Id} - {Input}", id, input.Serialize());
 
             throw;
         }

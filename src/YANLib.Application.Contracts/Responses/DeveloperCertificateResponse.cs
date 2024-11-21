@@ -4,7 +4,7 @@ namespace YANLib.Responses;
 
 public sealed class DeveloperCertificateResponse : YANLibApplicationResponse<Guid>
 {
-    public DeveloperResponse? Developer { get; set; }
+    public Guid DeveloperId { get; set; }
 
-    public CertificateResponse? Certificate { get; set; }
+    public string? CertificateId { get; set; }
 }

@@ -75,7 +75,7 @@ public class DeveloperCertificateService(
         try
         {
             var devTask = _developerService.GetByIdCard(request.DeveloperIdCard).AsTask();
-            var certTask = _certificateService.GetByCode(request.CertificateCode.ToString()).AsTask();
+            var certTask = _certificateService.Get(request.CertificateCode.ToString()).AsTask();
 
             await WhenAll(devTask, certTask);
 
