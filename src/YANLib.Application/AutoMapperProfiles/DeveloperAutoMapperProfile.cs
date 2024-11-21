@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Volo.Abp.AutoMapper;
+using YANLib.Core;
 using YANLib.Entities;
 using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
@@ -17,7 +18,21 @@ public sealed class DeveloperAutoMapperProfile : Profile
 
         _ = CreateMap<DeveloperUpdateRequest, Developer>();
 
-        _ = CreateMap<Developer, DeveloperResponse>();
+        _ = CreateMap<Developer, DeveloperResponse>()
+            .AfterMap((s, d) =>
+            {
+                if (d.DeveloperType.IsNull())
+                {
+                    d.DeveloperType = new DeveloperTypeResponse
+                    {
+                        Id = s.DeveloperTypeId
+                    };
+                }
+                else
+                {
+                    d.DeveloperType.Id = s.DeveloperTypeId;
+                }
+            });
 
         //
 

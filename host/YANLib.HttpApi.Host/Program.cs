@@ -30,7 +30,7 @@ public class Program
 
             var builder = CreateBuilder(args);
 
-            await builder.Configuration.AddConfigFromAws(builder.Environment.EnvironmentName);
+            //await builder.Configuration.AddConfigFromAws(builder.Environment.EnvironmentName);
 
             _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog((t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
             _ = builder.AddServiceDefaults();

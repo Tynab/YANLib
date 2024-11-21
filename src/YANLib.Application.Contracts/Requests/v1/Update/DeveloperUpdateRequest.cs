@@ -8,7 +8,7 @@ public sealed class DeveloperUpdateRequest : YANLibApplicationUpdateRequest
 
     public required string IdCard { get; set; }
 
-    public required long DeveloperTypeCode { get; set; }
+    public required long DeveloperTypeId { get; set; }
 
     public required int Version { get; set; }
 }

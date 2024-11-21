@@ -10,12 +10,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Migrations\**" />
-	  <EmbeddedResource Remove="Migrations\**" />
-	  <None Remove="Migrations\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
 		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="8.3.4" />

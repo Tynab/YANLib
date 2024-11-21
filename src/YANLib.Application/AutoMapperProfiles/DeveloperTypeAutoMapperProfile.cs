@@ -21,7 +21,7 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .Ignore(d => d.UpdatedBy)
             .Ignore(d => d.UpdatedAt);
 
-        _ = CreateMap<DeveloperUpdateRequest, DeveloperType>();
+        _ = CreateMap<DeveloperTypeUpdateRequest, DeveloperType>();
 
         _ = CreateMap<DeveloperType, DeveloperTypeResponse>();
 

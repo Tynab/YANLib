@@ -90,7 +90,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureElasticsearch(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHangfire(context, configuration);
-        ConfigureHealthChecks(context, configuration);
+        //ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());

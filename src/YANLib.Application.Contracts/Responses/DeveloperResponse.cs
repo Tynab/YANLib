@@ -13,5 +13,5 @@ public sealed class DeveloperResponse : YANLibApplicationResponse<Guid>
 
     public DeveloperTypeResponse? DeveloperType { get; set; }
 
-    public List<CertificateResponse>? Certificates { get; set; }
+    public List<CertificateResponse?>? Certificates { get; set; }
 }
