@@ -55,7 +55,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByCode-CertificateService-Exception: {Id}", id);
+            _logger.LogError(ex, "Get-CertificateService-Exception: {Id}", id);
 
             throw;
         }
@@ -65,7 +65,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            return (await _esService.GetByName(name)).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
+            return (await _esService.GetByKeywords(name, nameof(CertificateEsIndex.Name))).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
         }
         catch (Exception ex)
         {
@@ -79,7 +79,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            return (await _esService.SearchByName(searchText)).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
+            return (await _esService.SearchKeywordsByString(searchText, nameof(CertificateEsIndex.Name))).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
         }
         catch (Exception ex)
         {

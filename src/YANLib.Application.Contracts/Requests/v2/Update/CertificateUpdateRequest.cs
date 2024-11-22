@@ -8,5 +8,5 @@ public sealed class CertificateUpdateRequest : YANLibApplicationUpdateRequest
 
     public double? GPA { get; set; }
 
-    public Guid? DeveloperId { get; set; }
+    public string? Description { get; set; }
 }

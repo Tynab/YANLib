@@ -29,6 +29,7 @@ public sealed class CertificateAutoMapperProfile : Profile
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.GPA, o => o.MapFrom(s => s.Request.GPA))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Request.Description))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Request.CreatedBy))
             .ForMember(d => d.CreatedAt, o => o.MapFrom(s => UtcNow))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => true))
@@ -40,6 +41,7 @@ public sealed class CertificateAutoMapperProfile : Profile
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
             .ForMember(d => d.GPA, o => o.MapFrom(s => s.Request.GPA))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Request.Description))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
             .Ignore(d => d.IsDeleted);

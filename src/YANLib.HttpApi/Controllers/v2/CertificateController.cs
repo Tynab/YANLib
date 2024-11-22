@@ -41,13 +41,13 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
         ))));
     }
 
-    [HttpGet("{code}")]
+    [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
-    public async ValueTask<IActionResult> GetByCode(string code)
+    public async ValueTask<IActionResult> Get(string id)
     {
-        _logger.LogInformation("GetByCode-CardCertificateController: {Code}", code);
+        _logger.LogInformation("Get-CardCertificateController: {Id}", id);
 
-        return Ok(await _service.Get(code));
+        return Ok(await _service.Get(id));
     }
 
     [HttpGet("get-by-name")]
@@ -77,13 +77,13 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
         return Ok(await _service.Insert(request));
     }
 
-    [HttpPatch("{code}")]
+    [HttpPatch("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<IActionResult> Modify(string code, [Required] CertificateUpdateRequest request)
+    public async ValueTask<IActionResult> Modify(string id, [Required] CertificateUpdateRequest request)
     {
-        _logger.LogInformation("Modify-CertificateController: {Code} - {Request}", code, request.Serialize());
+        _logger.LogInformation("Modify-CertificateController: {Id} - {Request}", id, request.Serialize());
 
-        return Ok(await _service.Modify(code, request));
+        return Ok(await _service.Modify(id, request));
     }
 
 #if RELEASE

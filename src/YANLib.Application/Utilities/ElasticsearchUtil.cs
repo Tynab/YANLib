@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using System;
+using System.Configuration;
 using System.Linq;
 using YANLib.Core;
 using YANLib.EsIndices;
@@ -81,7 +82,10 @@ public static class ElasticsearchUtil
         _ = services.AddSingleton<IElasticClient>(client);
     }
 
-    public static DeleteIndexResponse? DeleteDeveloperIndex(this IElasticClient client) => _indexDeveloper.IsWhiteSpaceOrNull() ? default : client.Indices.Delete(_indexDeveloper);
+    public static DeleteIndexResponse? DeleteIndex(this IElasticClient client, IConfiguration configuration, string indexPath)
+    {
+        var index = configuration.GetSection(indexPath)?.Value;
 
-    public static DeleteIndexResponse? DeleteCertificateIndex(this IElasticClient client) => _indexCertificate.IsWhiteSpaceOrNull() ? default : client.Indices.Delete(_indexCertificate);
+        return index.IsWhiteSpaceOrNull() ? default : client.Indices.Delete(index);
+    }
 }

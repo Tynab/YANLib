@@ -11,6 +11,8 @@ public sealed class Certificate : YANLibDomainEntity<string>
 
     public double? GPA { get; set; }
 
+    public string? Description { get; set; }
+
     public Certificate()
     {
         IdGenerator idGenerator = new(WorkerId.DeveloperId, YanlibId);

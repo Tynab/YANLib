@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Elastic.Apm.Api;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nest;
 using NUglify.Helpers;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.EsIndices;
@@ -17,9 +19,9 @@ using static YANLib.YANLibConsts.ElasticsearchIndex;
 
 namespace YANLib.EsServices;
 
-public class CertificateEsService(ILogger<CertificateEsService> logger, IElasticClient elasticClient, IConfiguration configuration) : YANLibAppService, ICertificateEsService
+public class CertificateEsService(ILogger<EsService<CertificateEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration) : EsService<CertificateEsIndex>(logger, elasticClient, configuration), ICertificateEsService
 {
-    private readonly ILogger<CertificateEsService> _logger = logger;
+    private readonly ILogger<EsService<CertificateEsIndex>> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
 
@@ -28,14 +30,15 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         { nameof(CertificateResponse.Id), x => x.Id },
         { nameof(CertificateResponse.Name), x => x.Name.Suffix("keyword") },
         { nameof(CertificateResponse.GPA), x => x.GPA },
+        { nameof(CertificateResponse.Description), x => x.Description.Suffix("text") },
         { nameof(CertificateResponse.CreatedBy), x => x.CreatedBy.Suffix("keyword") },
         { nameof(CertificateResponse.CreatedAt), x => x.CreatedAt },
-        { nameof(CertificateResponse.UpdatedBy), x => x.UpdatedBy.Suffix("keyword") },
+        { nameof(CertificateResponse.UpdatedBy), x => x.UpdatedBy },
         { nameof(CertificateResponse.UpdatedAt), x => x.UpdatedAt },
-        { nameof(CertificateResponse.IsActive), x => x.IsActive }
+        { nameof(CertificateResponse.IsActive), x => x.IsActive.Suffix("keyword") }
     };
 
-    public async ValueTask<PagedResultDto<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
+    public new async ValueTask<PagedResultDto<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
@@ -72,7 +75,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
     }
 
-    public async ValueTask<CertificateEsIndex?> Get(string id)
+    public new async ValueTask<CertificateEsIndex?> Get(string id)
     {
         try
         {
@@ -86,7 +89,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
     }
 
-    public async ValueTask<bool> Set(CertificateEsIndex data)
+    public new async ValueTask<bool> Set(CertificateEsIndex data)
     {
         try
         {
@@ -100,32 +103,7 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         }
     }
 
-    public async ValueTask<bool> SetBulk(List<CertificateEsIndex> datas)
-    {
-        try
-        {
-            var index = _configuration.GetSection(Certificate)?.Value;
-
-            if (index.IsWhiteSpaceOrNull())
-            {
-                return false;
-            }
-
-            var requests = new BulkDescriptor();
-
-            datas.OrderBy(x => x.CreatedAt).ForEach(data => requests.Index<CertificateEsIndex>(x => x.Document(data).Index(index)));
-
-            return (await _elasticClient.BulkAsync(requests)).IsNotNull();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SetBulk-CertificateEsService-Exception: {Datas}", datas.Serialize());
-
-            throw;
-        }
-    }
-
-    public async ValueTask<bool> Delete(string id)
+    public new async ValueTask<bool> Delete(string id)
     {
         try
         {
@@ -134,20 +112,6 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
         catch (Exception ex)
         {
             _logger.LogError(ex, "Delete-CertificateEsService-Exception: {Id}", id);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<bool> DeleteAll()
-    {
-        try
-        {
-            return await FromResult(_elasticClient.DeleteCertificateIndex().IsNotNull());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "DeleteAll-CertificateEsService-Exception");
 
             throw;
         }
@@ -190,4 +154,44 @@ public class CertificateEsService(ILogger<CertificateEsService> logger, IElastic
             throw;
         }
     }
+
+    public async ValueTask<bool> SetBulk(List<CertificateEsIndex> datas)
+    {
+        try
+        {
+            var index = _configuration.GetSection(Certificate)?.Value;
+
+            if (index.IsWhiteSpaceOrNull())
+            {
+                return false;
+            }
+
+            var requests = new BulkDescriptor();
+
+            datas.OrderBy(x => x.CreatedAt).ForEach(data => requests.Index<CertificateEsIndex>(x => x.Document(data).Index(index)));
+
+            return (await _elasticClient.BulkAsync(requests)).IsNotNull();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SetBulk-CertificateEsService-Exception: {Datas}", datas.Serialize());
+
+            throw;
+        }
+    }
+
+    public async ValueTask<bool> DeleteAll()
+    {
+        try
+        {
+            return await FromResult(_elasticClient.DeleteIndex(_configuration, Certificate).IsNotNull());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "DeleteAll-CertificateEsService-Exception");
+
+            throw;
+        }
+    }
 }
+

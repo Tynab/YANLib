@@ -9,4 +9,7 @@ public sealed class CertificateEsIndex : YANLibApplicationEsIndex
     public string? Name { get; set; }
 
     public double? GPA { get; set; }
+
+    [Text]
+    public string? Description { get; set; }
 }

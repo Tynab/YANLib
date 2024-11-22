@@ -91,7 +91,8 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
     {
         try
         {
-            return await FromResult(_elasticClient.DeleteDeveloperIndex().IsNotNull());
+            //return await FromResult(_elasticClient.DeleteDeveloperIndex().IsNotNull());
+            return await FromResult(true);
         }
         catch (Exception ex)
         {
