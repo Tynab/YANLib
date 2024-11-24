@@ -13,7 +13,7 @@ public static partial class YANEnum
     /// <returns>
     /// The equivalent enumeration value of type <typeparamref name="T"/> if the conversion is successful, or the default value of the enum type if the conversion fails or the string is <see langword="null"/> or white space.
     /// </returns>
-    public static T? ToEnum<T>(this string? val) where T : struct => val.IsWhiteSpaceOrNull() ? default : TryParse<T>(val, out var result) ? result : default;
+    public static T? ToEnumeration<T>(this string? val) where T : struct => val.IsWhiteSpaceOrNull() ? default : TryParse<T>(val, out var result) ? result : default;
 
     /// <summary>
     /// Converts a collection of strings to an enumerable collection of enumeration values of type <typeparamref name="T"/>.
@@ -21,7 +21,7 @@ public static partial class YANEnum
     /// </summary>
     /// <param name="vals">The collection of strings to be converted to enumeration values of type <typeparamref name="T"/>. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of enumeration values of type <typeparamref name="T"/>, or <see langword="null"/> for any string that does not correspond to a valid enumeration value.</returns>
-    public static IEnumerable<T?>? ToEnums<T>(this IEnumerable<string?>? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnum<T>());
+    public static IEnumerable<T?>? ToEnumerations<T>(this IEnumerable<string?>? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnumeration<T>());
 
     /// <summary>
     /// Converts a collection (ICollection) of strings to an enumerable collection of enumeration values of type <typeparamref name="T"/>.
@@ -29,7 +29,7 @@ public static partial class YANEnum
     /// </summary>
     /// <param name="vals">The ICollection of strings to be converted to enumeration values of type <typeparamref name="T"/>. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of enumeration values of type <typeparamref name="T"/>, or <see langword="null"/> for any string that does not correspond to a valid enumeration value.</returns>
-    public static IEnumerable<T?>? ToEnums<T>(this ICollection<string?>? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnum<T>());
+    public static IEnumerable<T?>? ToEnumerations<T>(this ICollection<string?>? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnumeration<T>());
 
     /// <summary>
     /// Converts an array of strings to an enumerable collection of enumeration values of type <typeparamref name="T"/>.
@@ -37,5 +37,5 @@ public static partial class YANEnum
     /// </summary>
     /// <param name="vals">The array of strings to be converted to enumeration values of type <typeparamref name="T"/>. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of enumeration values of type <typeparamref name="T"/>, or <see langword="null"/> for any string that does not correspond to a valid enumeration value.</returns>
-    public static IEnumerable<T?>? ToEnums<T>(params string?[]? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnum<T>());
+    public static IEnumerable<T?>? ToEnumerations<T>(params string?[]? vals) where T : struct => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToEnumeration<T>());
 }

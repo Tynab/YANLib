@@ -14,6 +14,13 @@ using YANLib.Utilities;
 using static System.Linq.Expressions.Expression;
 using static System.Threading.Tasks.Task;
 using static System.Math;
+using YANLib.EsIndices;
+using YANLib.Responses;
+using static System.Reflection.BindingFlags;
+using static Nest.SuffixExtensions;
+using static Nest.SortOrder;
+using System.Xml.Linq;
+using static YANLib.Core.YANExpression;
 
 namespace YANLib.EsServices;
 
@@ -23,50 +30,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
 
-    private static Dictionary<string, Expression<Func<TEsIndex, object?>>> CreateFieldSelectors()
-    {
-        var selectors = new Dictionary<string, Expression<Func<TEsIndex, object?>>>();
-
-        typeof(TEsIndex).GetProperties().ForEach(x =>
-        {
-            var parameter = Parameter(typeof(TEsIndex), "x");
-            var suffix = GetSuffixFromAttribute(x);
-            Expression finalExpression = Property(parameter, x.Name);
-
-            if (suffix.IsNotWhiteSpaceAndNull())
-            {
-                finalExpression = AddSuffixExpression(finalExpression, suffix);
-            }
-
-            finalExpression = Convert(finalExpression, typeof(object));
-            selectors[x.Name] = Lambda<Func<TEsIndex, object?>>(finalExpression, parameter);
-        });
-
-        return selectors;
-    }
-
-    private static string? GetSuffixFromAttribute(PropertyInfo property)
-    {
-        foreach (var attribute in property.GetCustomAttributes())
-        {
-            var attributeName = attribute.GetType().Name.ToLower();
-
-            if (attributeName.IsNotWhiteSpaceAndNull())
-            {
-                return attributeName;
-            }
-        }
-
-        return default;
-    }
-
-    private static MethodCallExpression AddSuffixExpression(Expression propertyAccess, string suffix) => Call(propertyAccess, typeof(string).GetMethod("Suffix", [typeof(string)])!, Constant(suffix));
-
     public async ValueTask<PagedResultDto<TEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            var fieldSelectors = CreateFieldSelectors();
+            var fieldSelectors = ToFieldSelectorDictionary();
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
@@ -82,7 +50,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 _ = f.Field(fieldSelector).MissingLast();
                             }
 
-                            _ = sortParams.Length > 1 && sortParams[1].EqualsIgnoreCase("DESC") ? f.Descending() : f.Ascending();
+                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
                         });
 
                         return f;
@@ -181,45 +149,89 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<TEsIndex>> GetByKeywords(string keyword, params string[] fieldNames)
+    public async ValueTask<PagedResultDto<TEsIndex>> GetByKeywords(PagedAndSortedResultRequestDto input, string keyword, params string[] fieldNames)
     {
         try
         {
-            return (await _elasticClient.SearchAsync<TEsIndex>(s => s
+            var fieldSelectors = ToFieldSelectorDictionary();
+            var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
+                .From(input.SkipCount)
+                .Size(input.MaxResultCount)
+                .Sort(d => d
+                    .Field(f =>
+                    {
+                        input.Sorting?.Split(',').Reverse().ForEach(x =>
+                        {
+                            var sortParams = x.Trim().Split(' ');
+
+                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                            {
+                                _ = f.Field(fieldSelector).MissingLast();
+                            }
+
+                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                        });
+
+                        return f;
+                    }))
                 .Query(q => q
                     .Bool(b => b
-                        .Should(fieldNames.Select(fieldName =>
+                        .Should(fieldNames.Select(x =>
                             new Func<QueryContainerDescriptor<TEsIndex>, QueryContainer>(d =>
                                 d.Match(m => m
-                                    .Field(fieldName)
+                                    .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(keyword))
-                            )).ToArray()))))).Documents;
+                            )).ToArray()))));
+
+            return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByKeywords-EsService-Exception: {Keyword} - {FieldNames}", keyword, fieldNames);
+            _logger.LogError(ex, "GetByKeywords-EsService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), keyword, fieldNames);
 
             throw;
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<TEsIndex>> SearchKeywordsByString(string searchString, params string[] fieldNames)
+    public async ValueTask<PagedResultDto<TEsIndex>> SearchKeywordsByString(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames)
     {
         try
         {
-            return (await _elasticClient.SearchAsync<TEsIndex>(s => s
+            var fieldSelectors = ToFieldSelectorDictionary();
+            var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
+                .From(input.SkipCount)
+                .Size(input.MaxResultCount)
+                .Sort(d => d
+                    .Field(f =>
+                    {
+                        input.Sorting?.Split(',').Reverse().ForEach(x =>
+                        {
+                            var sortParams = x.Trim().Split(' ');
+
+                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                            {
+                                _ = f.Field(fieldSelector).MissingLast();
+                            }
+
+                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                        });
+
+                        return f;
+                    }))
                 .Query(q => q
                     .Bool(b => b
-                        .Should(fieldNames.Select(fieldName =>
+                        .Should(fieldNames.Select(x =>
                             new Func<QueryContainerDescriptor<TEsIndex>, QueryContainer>(d =>
                                 d.Wildcard(w => w
-                                    .Field(fieldName)
+                                    .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Value($"*{searchString}*"))
-                            )).ToArray()))))).Documents;
+                            )).ToArray()))));
+
+            return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchKeywordsByString-EsService-Exception: {SearchString} - {FieldNames}", searchString, fieldNames);
+            _logger.LogError(ex, "SearchKeywordsByString-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchString, fieldNames);
 
             throw;
         }
@@ -232,10 +244,10 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             return (await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .Query(q => q
                     .Bool(b => b
-                        .Should(fieldNames.Select(fieldName =>
+                        .Should(fieldNames.Select(x =>
                             new Func<QueryContainerDescriptor<TEsIndex>, QueryContainer>(d =>
                                 d.MatchPhrasePrefix(m => m
-                                    .Field(fieldName)
+                                    .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchString))
                             )).ToArray()))))).Documents;
         }
@@ -254,10 +266,10 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             return (await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .Query(q => q
                     .Bool(b => b
-                        .Should(fieldNames.Select(fieldName =>
+                        .Should(fieldNames.Select(x =>
                             new Func<QueryContainerDescriptor<TEsIndex>, QueryContainer>(d =>
                                 d.MatchPhrase(m => m
-                                    .Field(fieldName)
+                                    .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchWords))
                             )).ToArray()))))).Documents;
         }
@@ -267,5 +279,24 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
 
             throw;
         }
+    }
+
+    private static Dictionary<string, Expression<Func<TEsIndex, object?>>> ToFieldSelectorDictionary()
+    {
+        var fieldSelectors = new Dictionary<string, Expression<Func<TEsIndex, object?>>>();
+
+        typeof(TEsIndex).GetProperties(Public | Instance).ForEach(x =>
+        {
+            var parameter = Parameter(typeof(TEsIndex), "x");
+            var propertyAccess = Property(parameter, x);
+
+            fieldSelectors.Add(x.Name, Lambda<Func<TEsIndex, object?>>(x.PropertyType == typeof(string) || x.PropertyType == typeof(Guid) ? Call(typeof(SuffixExtensions).GetMethod(nameof(SuffixExtensions.Suffix), new[]
+            {
+                typeof(object),
+                typeof(string)
+            })!, Convert(propertyAccess, typeof(object)), Constant("keyword")) : Convert(propertyAccess, typeof(object)), parameter));
+        });
+
+        return fieldSelectors;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Id_Generator_Snowflake;
 using Microsoft.Extensions.Logging;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,29 +62,29 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<CertificateResponse>> GetByName(string name)
+    public async ValueTask<PagedResultDto<CertificateResponse>> GetByName(PagedAndSortedResultRequestDto input, string name)
     {
         try
         {
-            return (await _esService.GetByKeywords(name, nameof(CertificateEsIndex.Name))).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.GetByKeywords(input, name, nameof(CertificateEsIndex.Name)));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByName-CertificateService-Exception: {Name}", name);
+            _logger.LogError(ex, "GetByName-CertificateService-Exception: {Input} - {Name}", input.Serialize(), name);
 
             throw;
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<CertificateResponse>> SearchByName(string searchText)
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchByName(PagedAndSortedResultRequestDto input, string searchString)
     {
         try
         {
-            return (await _esService.SearchKeywordsByString(searchText, nameof(CertificateEsIndex.Name))).Select(ObjectMapper.Map<CertificateEsIndex, CertificateResponse>).ToList();
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchKeywordsByString(input, searchString, nameof(CertificateEsIndex.Name)));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchByName-CertificateService-Exception: {SearchText}", searchText);
+            _logger.LogError(ex, "SearchByName-CertificateService-Exception: {SearchText}", searchString);
 
             throw;
         }

@@ -22,155 +22,12 @@ namespace YANLib.EsServices;
 public class CertificateEsService(ILogger<EsService<CertificateEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration) : EsService<CertificateEsIndex>(logger, elasticClient, configuration), ICertificateEsService
 {
     private readonly ILogger<EsService<CertificateEsIndex>> _logger = logger;
-    private readonly IElasticClient _elasticClient = elasticClient;
-    private readonly IConfiguration _configuration = configuration;
-
-    private readonly Dictionary<string, Expression<Func<CertificateEsIndex, object?>>> _fieldSelectors = new()
-    {
-        { nameof(CertificateResponse.Id), x => x.Id },
-        { nameof(CertificateResponse.Name), x => x.Name.Suffix("keyword") },
-        { nameof(CertificateResponse.GPA), x => x.GPA },
-        { nameof(CertificateResponse.Description), x => x.Description.Suffix("text") },
-        { nameof(CertificateResponse.CreatedBy), x => x.CreatedBy.Suffix("keyword") },
-        { nameof(CertificateResponse.CreatedAt), x => x.CreatedAt },
-        { nameof(CertificateResponse.UpdatedBy), x => x.UpdatedBy },
-        { nameof(CertificateResponse.UpdatedAt), x => x.UpdatedAt },
-        { nameof(CertificateResponse.IsActive), x => x.IsActive.Suffix("keyword") }
-    };
-
-    public new async ValueTask<PagedResultDto<CertificateEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
-    {
-        try
-        {
-            var response = await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
-                .From(input.SkipCount)
-                .Size(input.MaxResultCount)
-                .Sort(d => d
-                    .Field(f =>
-                    {
-                        input.Sorting?.Split(',').Reverse().ForEach(x =>
-                        {
-                            var sortParams = x.Trim().Split(' ');
-
-                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && _fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
-                            {
-                                _ = f.Field(fieldSelector).MissingLast();
-                            }
-
-                            _ = sortParams.Length > 1 && sortParams[1].EqualsIgnoreCase("DESC") ? f.Descending() : f.Ascending();
-                        });
-
-                        return f;
-                    }))
-                .Query(q => q.MatchAll())
-            );
-
-            return new PagedResultDto<CertificateEsIndex>(response.Total, [.. response.Documents]);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetAll-CertificateEsService-Exception with paging");
-
-            throw;
-        }
-    }
-
-    public new async ValueTask<CertificateEsIndex?> Get(string id)
-    {
-        try
-        {
-            return (await _elasticClient.GetAsync<CertificateEsIndex>(id)).Source ?? default;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Get-CertificateEsService-Exception: {Id}", id);
-
-            throw;
-        }
-    }
-
-    public new async ValueTask<bool> Set(CertificateEsIndex data)
-    {
-        try
-        {
-            return (await _elasticClient.IndexDocumentAsync(data)).IsNotNull();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Set-CertificateEsService-Exception: {Data}", data.Serialize());
-
-            throw;
-        }
-    }
-
-    public new async ValueTask<bool> Delete(string id)
-    {
-        try
-        {
-            return (await _elasticClient.DeleteAsync<CertificateEsIndex>(id)).IsNotNull();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Delete-CertificateEsService-Exception: {Id}", id);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<IReadOnlyCollection<CertificateEsIndex>> GetByName(string name)
-    {
-        try
-        {
-            return (await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
-                .Query(q => q
-                    .Bool(b => b
-                        .Must(d => d
-                            .Match(m => m
-                                .Field(c => c.Name)
-                                .Query(name))))))).Documents;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByName-CertificateEsService-Exception: {Name}", name);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<IReadOnlyCollection<CertificateEsIndex>> SearchByName(string searchText)
-    {
-        try
-        {
-            return (await _elasticClient.SearchAsync<CertificateEsIndex>(s => s
-                .Query(q => q
-                    .Wildcard(w => w
-                        .Field(c => c.Name)
-                        .Value($"*{searchText}*"))))).Documents;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchByName-CertificateEsService-Exception: {SearchText}", searchText);
-
-            throw;
-        }
-    }
 
     public async ValueTask<bool> SetBulk(List<CertificateEsIndex> datas)
     {
         try
         {
-            var index = _configuration.GetSection(Certificate)?.Value;
-
-            if (index.IsWhiteSpaceOrNull())
-            {
-                return false;
-            }
-
-            var requests = new BulkDescriptor();
-
-            datas.OrderBy(x => x.CreatedAt).ForEach(data => requests.Index<CertificateEsIndex>(x => x.Document(data).Index(index)));
-
-            return (await _elasticClient.BulkAsync(requests)).IsNotNull();
+            return await SetBulk(datas, Certificate);
         }
         catch (Exception ex)
         {
@@ -184,7 +41,7 @@ public class CertificateEsService(ILogger<EsService<CertificateEsIndex>> logger,
     {
         try
         {
-            return await FromResult(_elasticClient.DeleteIndex(_configuration, Certificate).IsNotNull());
+            return await DeleteAll(Certificate);
         }
         catch (Exception ex)
         {

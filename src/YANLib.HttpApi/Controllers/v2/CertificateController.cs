@@ -52,20 +52,24 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpGet("get-by-name")]
     [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ theo tên")]
-    public async ValueTask<IActionResult> GetByName([Required] string name)
+    public async ValueTask<IActionResult> GetByName([Required] string name, byte pageNumber = 1, byte pageSize = 10)
     {
-        _logger.LogInformation("GetByName-CardCertificateController: {Name}", name);
+        _logger.LogInformation("GetByName-CardCertificateController: {Name} - {PageNumber} - {PageSize}", name, pageNumber, pageSize);
 
-        return Ok(await _service.GetByName(name));
+        return Ok(await _service.GetByName(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.GPA)} {Descending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        )), name));
     }
 
     [HttpGet("search-by-name")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo tên")]
-    public async ValueTask<IActionResult> SearchByName([Required] string searchText)
+    public async ValueTask<IActionResult> SearchByName([Required] string searchString, byte pageNumber = 1, byte pageSize = 10)
     {
-        _logger.LogInformation("SearchByName-CardCertificateController: {SearchText}", searchText);
+        _logger.LogInformation("SearchByName-CardCertificateController: {SearchText}", searchString);
 
-        return Ok(await _service.SearchByName(searchText));
+        return Ok(await _service.SearchByName(searchString));
     }
 
     [HttpPost]

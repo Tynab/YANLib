@@ -21,7 +21,7 @@ public static partial class YANEnum
 
         foreach (var val in vals)
         {
-            yield return val.ToEnum<T>();
+            yield return val.ToEnumeration<T>();
         }
     }
 
@@ -42,7 +42,7 @@ public static partial class YANEnum
 
         foreach (var val in vals)
         {
-            yield return val.ToEnum<T>();
+            yield return val.ToEnumeration<T>();
         }
     }
 
@@ -63,7 +63,7 @@ public static partial class YANEnum
 
         foreach (var val in vals)
         {
-            yield return val.ToEnum<T>();
+            yield return val.ToEnumeration<T>();
         }
     }
 }

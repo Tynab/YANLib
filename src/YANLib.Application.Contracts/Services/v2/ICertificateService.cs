@@ -14,7 +14,7 @@ public interface ICertificateService
 
     public ValueTask<CertificateResponse?> Get(string id);
 
-    public ValueTask<IReadOnlyCollection<CertificateResponse>> GetByName(string name);
+    public ValueTask<PagedResultDto<CertificateResponse>> GetByName(PagedAndSortedResultRequestDto input, string name);
 
     public ValueTask<IReadOnlyCollection<CertificateResponse>> SearchByName(string searchText);
 
