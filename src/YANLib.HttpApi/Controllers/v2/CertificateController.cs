@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -63,13 +64,43 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
         )), name));
     }
 
-    [HttpGet("search-by-name")]
+    [HttpGet("search-name-by-text")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo tên")]
-    public async ValueTask<IActionResult> SearchByName([Required] string searchString, byte pageNumber = 1, byte pageSize = 10)
+    public async ValueTask<IActionResult> SearchNameByText([Required] string searchString, byte pageNumber = 1, byte pageSize = 10)
     {
-        _logger.LogInformation("SearchByName-CardCertificateController: {SearchText}", searchString);
+        _logger.LogInformation("SearchNameByText-CardCertificateController: {SearchString} - {PageNumber} - {PageSize}", searchString, pageNumber, pageSize);
 
-        return Ok(await _service.SearchByName(searchString));
+        return Ok(await _service.SearchNameByText(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        )), searchString));
+    }
+
+    [HttpGet("search-description-by-text")]
+    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo mô tả")]
+    public async ValueTask<IActionResult> SearchDescriptionByText([Required] string searchString, byte pageNumber = 1, byte pageSize = 10)
+    {
+        _logger.LogInformation("SearchDescriptionByText-CardCertificateController: {SearchString} - {PageNumber} - {PageSize}", searchString, pageNumber, pageSize);
+
+        return Ok(await _service.SearchDescriptionByText(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        )), searchString));
+    }
+    
+    [HttpGet("search-description-by-words")]
+    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo từ khóa trong mô tả")]
+    public async ValueTask<IActionResult> SearchDescriptionByWords([Required] string searchWords, byte pageNumber = 1, byte pageSize = 10)
+    {
+        _logger.LogInformation("SearchDescriptionByWords-CardCertificateController: {SearchString} - {PageNumber} - {PageSize}", searchWords, pageNumber, pageSize);
+
+        return Ok(await _service.SearchDescriptionByWords(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+        )), searchWords));
     }
 
     [HttpPost]

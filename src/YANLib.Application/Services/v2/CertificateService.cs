@@ -66,7 +66,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.GetByKeywords(input, name, nameof(CertificateEsIndex.Name)));
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithKeywords(input, name, nameof(CertificateEsIndex.Name)));
         }
         catch (Exception ex)
         {
@@ -76,15 +76,43 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         }
     }
 
-    public async ValueTask<PagedResultDto<CertificateResponse>> SearchByName(PagedAndSortedResultRequestDto input, string searchString)
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchNameByText(PagedAndSortedResultRequestDto input, string searchString)
     {
         try
         {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchKeywordsByString(input, searchString, nameof(CertificateEsIndex.Name)));
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithWildcard(input, searchString, nameof(CertificateEsIndex.Name)));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchByName-CertificateService-Exception: {SearchText}", searchString);
+            _logger.LogError(ex, "SearchNameByText-CertificateService-Exception: {Input} - {SearchString}", input.Serialize(), searchString);
+
+            throw;
+        }
+    }
+    
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByText(PagedAndSortedResultRequestDto input, string searchString)
+    {
+        try
+        {
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithPhrasePrefix(input, searchString, nameof(CertificateEsIndex.Description)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchDescriptionByText-CertificateService-Exception: {Input} - {SearchString}", input.Serialize(), searchString);
+
+            throw;
+        }
+    }
+    
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByWords(PagedAndSortedResultRequestDto input, string searchWords)
+    {
+        try
+        {
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithExactPhrase(input, searchWords, nameof(CertificateEsIndex.Name), nameof(CertificateEsIndex.Description)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchDescriptionByWords-CertificateService-Exception: {Input} - {SearchWords}", input.Serialize(), searchWords);
 
             throw;
         }

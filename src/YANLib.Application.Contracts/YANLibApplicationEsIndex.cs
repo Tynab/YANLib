@@ -5,7 +5,6 @@ namespace YANLib;
 
 public class YANLibApplicationEsIndex
 {
-    [Keyword]
     public string? Id { get; set; }
 
     public Guid CreatedBy { get; set; }

@@ -149,51 +149,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> GetByKeywords(PagedAndSortedResultRequestDto input, string keyword, params string[] fieldNames)
-    {
-        try
-        {
-            var fieldSelectors = ToFieldSelectorDictionary();
-            var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
-                .From(input.SkipCount)
-                .Size(input.MaxResultCount)
-                .Sort(d => d
-                    .Field(f =>
-                    {
-                        input.Sorting?.Split(',').Reverse().ForEach(x =>
-                        {
-                            var sortParams = x.Trim().Split(' ');
-
-                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
-                            {
-                                _ = f.Field(fieldSelector).MissingLast();
-                            }
-
-                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
-                        });
-
-                        return f;
-                    }))
-                .Query(q => q
-                    .Bool(b => b
-                        .Should(fieldNames.Select(x =>
-                            new Func<QueryContainerDescriptor<TEsIndex>, QueryContainer>(d =>
-                                d.Match(m => m
-                                    .Field(PropertyExpression<TEsIndex>("c", x))
-                                    .Query(keyword))
-                            )).ToArray()))));
-
-            return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByKeywords-EsService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), keyword, fieldNames);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchKeywordsByString(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames)
+    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames)
     {
         try
         {
@@ -237,11 +193,31 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<TEsIndex>> SearchTextsByString(string searchString, params string[] fieldNames)
+    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames)
     {
         try
         {
-            return (await _elasticClient.SearchAsync<TEsIndex>(s => s
+            var fieldSelectors = ToFieldSelectorDictionary();
+            var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
+                .From(input.SkipCount)
+                .Size(input.MaxResultCount)
+                .Sort(d => d
+                    .Field(f =>
+                    {
+                        input.Sorting?.Split(',').Reverse().ForEach(x =>
+                        {
+                            var sortParams = x.Trim().Split(' ');
+
+                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                            {
+                                _ = f.Field(fieldSelector).MissingLast();
+                            }
+
+                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                        });
+
+                        return f;
+                    }))
                 .Query(q => q
                     .Bool(b => b
                         .Should(fieldNames.Select(x =>
@@ -249,21 +225,43 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 d.MatchPhrasePrefix(m => m
                                     .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchString))
-                            )).ToArray()))))).Documents;
+                            )).ToArray()))));
+
+            return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchTextsByString-EsService-Exception: {SearchString} - {FieldNames}", searchString, fieldNames);
+            _logger.LogError(ex, "SearchTextsByString-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchString, fieldNames);
 
             throw;
         }
     }
 
-    public async ValueTask<IReadOnlyCollection<TEsIndex>> SearchTextsByWords(string searchWords, params string[] fieldNames)
+    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchWords, params string[] fieldNames)
     {
         try
         {
-            return (await _elasticClient.SearchAsync<TEsIndex>(s => s
+            var fieldSelectors = ToFieldSelectorDictionary();
+            var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
+                .From(input.SkipCount)
+                .Size(input.MaxResultCount)
+                .Sort(d => d
+                    .Field(f =>
+                    {
+                        input.Sorting?.Split(',').Reverse().ForEach(x =>
+                        {
+                            var sortParams = x.Trim().Split(' ');
+
+                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                            {
+                                _ = f.Field(fieldSelector).MissingLast();
+                            }
+
+                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                        });
+
+                        return f;
+                    }))
                 .Query(q => q
                     .Bool(b => b
                         .Should(fieldNames.Select(x =>
@@ -271,11 +269,57 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 d.MatchPhrase(m => m
                                     .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchWords))
-                            )).ToArray()))))).Documents;
+                            )).ToArray()))));
+
+            return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchTextsByWords-EsService-Exception: {SearchWords} - {FieldNames}", searchWords, fieldNames);
+            _logger.LogError(ex, "SearchTextsByWords-EsService-Exception: {Input} - {SearchWords} - {FieldNames}", input.Serialize(), searchWords, fieldNames);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string keyword, params string[] fieldNames)
+    {
+        try
+        {
+            var fieldSelectors = ToFieldSelectorDictionary();
+            var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
+                .From(input.SkipCount)
+                .Size(input.MaxResultCount)
+                .Sort(d => d
+                    .Field(f =>
+                    {
+                        input.Sorting?.Split(',').Reverse().ForEach(x =>
+                        {
+                            var sortParams = x.Trim().Split(' ');
+
+                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                            {
+                                _ = f.Field(fieldSelector).MissingLast();
+                            }
+
+                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                        });
+
+                        return f;
+                    }))
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(fieldNames.Select(x =>
+                            new Func<QueryContainerDescriptor<TEsIndex>, QueryContainer>(d =>
+                                d.Match(m => m
+                                    .Field(PropertyExpression<TEsIndex>("c", x))
+                                    .Query(keyword))
+                            )).ToArray()))));
+
+            return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetByKeywords-EsService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), keyword, fieldNames);
 
             throw;
         }

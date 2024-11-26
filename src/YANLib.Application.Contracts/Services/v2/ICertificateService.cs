@@ -16,7 +16,11 @@ public interface ICertificateService
 
     public ValueTask<PagedResultDto<CertificateResponse>> GetByName(PagedAndSortedResultRequestDto input, string name);
 
-    public ValueTask<IReadOnlyCollection<CertificateResponse>> SearchByName(string searchText);
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchNameByText(PagedAndSortedResultRequestDto input, string searchString);
+
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByText(PagedAndSortedResultRequestDto input, string searchString);
+
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByWords(PagedAndSortedResultRequestDto input, string searchWords);
 
     public ValueTask<CertificateResponse?> Insert(CertificateCreateRequest request);
 

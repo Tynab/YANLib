@@ -22,11 +22,11 @@ public interface IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex
 
     public ValueTask<bool> DeleteAll(string indexPath);
 
-    public ValueTask<PagedResultDto<TEsIndex>> GetByKeywords(PagedAndSortedResultRequestDto input, string keyword, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames);
 
-    public ValueTask<PagedResultDto<TEsIndex>> SearchKeywordsByString(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames);
 
-    public ValueTask<IReadOnlyCollection<TEsIndex>> SearchTextsByString(string searchString, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchWords, params string[] fieldNames);
 
-    public ValueTask<IReadOnlyCollection<TEsIndex>> SearchTextsByWords(string searchWords, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string keyword, params string[] fieldNames);
 }
