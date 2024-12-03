@@ -8,6 +8,7 @@ namespace YANLib;
 [DependsOn(
     typeof(YANLibDomainModule),
     typeof(YANLibApplicationContractsModule),
+    typeof(YANLibApplicationElasticsearchModule),
     typeof(YANLibApplicationRedisModule),
     typeof(AbpDddApplicationModule),
     typeof(AbpAutoMapperModule),

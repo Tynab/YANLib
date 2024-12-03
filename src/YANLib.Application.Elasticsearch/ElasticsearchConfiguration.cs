@@ -3,17 +3,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using System;
-using System.Configuration;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using YANLib.Core;
 using YANLib.EsIndices;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
 
-namespace YANLib.Utilities;
+namespace YANLib;
 
-public static class ElasticsearchUtil
+public static class ElasticsearchConfiguration
 {
     private static string? _indexDeveloper;
     private static string? _indexCertificate;

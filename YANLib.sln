@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YANLib.Tests", "test\YANLib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.DbMigrator", "src\YANLib.DbMigrator\YANLib.DbMigrator.csproj", "{CF5DA2FA-CA25-4DFE-A94A-DD357FBE309D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YANLib.Application.Elasticsearch", "src\YANLib.Application.Elasticsearch\YANLib.Application.Elasticsearch.csproj", "{1BA3C64C-1054-4748-AA6D-F1EC0EB9F6AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,10 @@ Global
 		{CF5DA2FA-CA25-4DFE-A94A-DD357FBE309D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF5DA2FA-CA25-4DFE-A94A-DD357FBE309D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF5DA2FA-CA25-4DFE-A94A-DD357FBE309D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BA3C64C-1054-4748-AA6D-F1EC0EB9F6AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA3C64C-1054-4748-AA6D-F1EC0EB9F6AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA3C64C-1054-4748-AA6D-F1EC0EB9F6AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA3C64C-1054-4748-AA6D-F1EC0EB9F6AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -191,6 +197,7 @@ Global
 		{61FED06D-F59A-43DF-A281-359CC40B4B66} = {A557D922-FC5A-424D-BC90-42CD293DB79C}
 		{0EF83C10-07A9-476D-B922-ECBC689F0972} = {495944F0-A2C2-4CD9-8462-E84C3BD041B4}
 		{CF5DA2FA-CA25-4DFE-A94A-DD357FBE309D} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
+		{1BA3C64C-1054-4748-AA6D-F1EC0EB9F6AB} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28315BFD-90E7-4E14-A2EA-F3D23AF4126F}

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<RootNamespace>YANLib</RootNamespace>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
+		<ProjectReference Include="..\YANLib.Application.Contracts\YANLib.Application.Contracts.csproj" />
+		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
+	</ItemGroup>
+
+</Project>

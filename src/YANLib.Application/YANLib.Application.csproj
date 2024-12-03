@@ -11,6 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
+		<ProjectReference Include="..\YANLib.Application.Elasticsearch\YANLib.Application.Elasticsearch.csproj" />
 		<ProjectReference Include="..\YANLib.Application.Redis\YANLib.Application.Redis.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
 		<ProjectReference Include="..\YANLib.Application.Contracts\YANLib.Application.Contracts.csproj" />
