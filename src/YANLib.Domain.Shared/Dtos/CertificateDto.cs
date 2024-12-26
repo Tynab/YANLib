@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YANLib.Dtos;
+﻿namespace YANLib.Dtos;
 
 public sealed class CertificateDto : YANLibDomainDto<string>
 {

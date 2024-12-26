@@ -1,19 +1,16 @@
 ﻿using Id_Generator_Snowflake;
 using Microsoft.Extensions.Logging;
-using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.EsServices;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
@@ -21,7 +18,6 @@ using YANLib.Responses;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
-using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
@@ -57,62 +53,6 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         catch (Exception ex)
         {
             _logger.LogError(ex, "Get-CertificateService-Exception: {Id}", id);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<PagedResultDto<CertificateResponse>> GetByName(PagedAndSortedResultRequestDto input, string name)
-    {
-        try
-        {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithKeywords(input, name, nameof(CertificateEsIndex.Name)));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByName-CertificateService-Exception: {Input} - {Name}", input.Serialize(), name);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<PagedResultDto<CertificateResponse>> SearchNameByText(PagedAndSortedResultRequestDto input, string searchString)
-    {
-        try
-        {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithWildcard(input, searchString, nameof(CertificateEsIndex.Name)));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchNameByText-CertificateService-Exception: {Input} - {SearchString}", input.Serialize(), searchString);
-
-            throw;
-        }
-    }
-    
-    public async ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByText(PagedAndSortedResultRequestDto input, string searchString)
-    {
-        try
-        {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithPhrasePrefix(input, searchString, nameof(CertificateEsIndex.Description)));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchDescriptionByText-CertificateService-Exception: {Input} - {SearchString}", input.Serialize(), searchString);
-
-            throw;
-        }
-    }
-    
-    public async ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByWords(PagedAndSortedResultRequestDto input, string searchWords)
-    {
-        try
-        {
-            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithExactPhrase(input, searchWords, nameof(CertificateEsIndex.Name), nameof(CertificateEsIndex.Description)));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchDescriptionByWords-CertificateService-Exception: {Input} - {SearchWords}", input.Serialize(), searchWords);
 
             throw;
         }
@@ -209,6 +149,62 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToEs-CertificateService-Exception");
+
+            throw;
+        }
+    }
+
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText)
+    {
+        try
+        {
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithWildcard(input, searchText, nameof(CertificateEsIndex.Name), nameof(CertificateEsIndex.Description)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchWithWildcard-CertificateService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText)
+    {
+        try
+        {
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithPhrasePrefix(input, searchText, nameof(CertificateEsIndex.Name), nameof(CertificateEsIndex.Description)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchWithPhrasePrefix-CertificateService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText)
+    {
+        try
+        {
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithExactPhrase(input, searchText, nameof(CertificateEsIndex.Name), nameof(CertificateEsIndex.Description)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchWithExactPhrase-CertificateService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+
+            throw;
+        }
+    }
+
+    public async ValueTask<PagedResultDto<CertificateResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText)
+    {
+        try
+        {
+            return ObjectMapper.Map<PagedResultDto<CertificateEsIndex>, PagedResultDto<CertificateResponse>>(await _esService.SearchWithKeywords(input, searchText, nameof(CertificateEsIndex.Name), nameof(CertificateEsIndex.Description)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SearchWithKeywords-CertificateService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
 
             throw;
         }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YANLib.Requests.v2.Update;
+﻿namespace YANLib.Requests.v2.Update;
 
 public sealed class CertificateUpdateRequest : YANLibApplicationUpdateRequest
 {

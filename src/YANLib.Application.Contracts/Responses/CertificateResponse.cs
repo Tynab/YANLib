@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YANLib.Responses;
+﻿namespace YANLib.Responses;
 
 public sealed class CertificateResponse : YANLibApplicationResponse<string>
 {

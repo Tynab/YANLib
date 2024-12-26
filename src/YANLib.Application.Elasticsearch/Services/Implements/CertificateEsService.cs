@@ -1,24 +1,14 @@
-﻿using Elastic.Apm.Api;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nest;
-using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.EsIndices;
-using YANLib.Responses;
-using YANLib.Services.Implements;
-using YANLib.Utilities;
-using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
 
-namespace YANLib.EsServices;
+namespace YANLib.Services.Implements;
 
 public class CertificateEsService(ILogger<EsService<CertificateEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration) : EsService<CertificateEsIndex>(logger, elasticClient, configuration), ICertificateEsService
 {

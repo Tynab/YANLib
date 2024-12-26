@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-using YANLib.EsIndices;
 
 namespace YANLib.Services;
 
@@ -22,11 +18,11 @@ public interface IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex
 
     public ValueTask<bool> DeleteAll(string indexPath);
 
-    public ValueTask<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames);
 
-    public ValueTask<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchString, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames);
 
-    public ValueTask<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchWords, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames);
 
-    public ValueTask<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string keyword, params string[] fieldNames);
+    public ValueTask<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames);
 }

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using YANLib.EsIndices;
 
-namespace YANLib.EsServices;
+namespace YANLib.Services;
 
 public interface IDeveloperEsService
 {

@@ -9,7 +9,6 @@ using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.EsServices;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.Requests.v2.Create;
@@ -14,14 +13,6 @@ public interface ICertificateService
 
     public ValueTask<CertificateResponse?> Get(string id);
 
-    public ValueTask<PagedResultDto<CertificateResponse>> GetByName(PagedAndSortedResultRequestDto input, string name);
-
-    public ValueTask<PagedResultDto<CertificateResponse>> SearchNameByText(PagedAndSortedResultRequestDto input, string searchString);
-
-    public ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByText(PagedAndSortedResultRequestDto input, string searchString);
-
-    public ValueTask<PagedResultDto<CertificateResponse>> SearchDescriptionByWords(PagedAndSortedResultRequestDto input, string searchWords);
-
     public ValueTask<CertificateResponse?> Insert(CertificateCreateRequest request);
 
     public ValueTask<CertificateResponse?> Modify(string id, CertificateUpdateRequest dto);
@@ -29,4 +20,12 @@ public interface ICertificateService
     public ValueTask<bool> Delete(string id, Guid updatedBy);
 
     public ValueTask<bool> SyncDbToEs();
+
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText);
+
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText);
+
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText);
+
+    public ValueTask<PagedResultDto<CertificateResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText);
 }

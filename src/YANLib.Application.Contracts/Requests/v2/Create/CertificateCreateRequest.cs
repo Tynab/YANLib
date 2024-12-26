@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YANLib.Requests.v2.Create;
+﻿namespace YANLib.Requests.v2.Create;
 
 public sealed class CertificateCreateRequest : YANLibApplicationCreateRequest
 {

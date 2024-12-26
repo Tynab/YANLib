@@ -1,5 +1,4 @@
 ﻿using Nest;
-using System;
 
 namespace YANLib.EsIndices;
 

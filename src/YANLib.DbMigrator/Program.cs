@@ -1,14 +1,12 @@
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
+using System.Threading.Tasks;
+using static Microsoft.Extensions.Hosting.Host;
 using static Serilog.Events.LogEventLevel;
 using static System.DateTime;
-using static Microsoft.Extensions.Hosting.Host;
 
 namespace YANLib.DbMigrator;
 

@@ -1,8 +1,8 @@
 ﻿using Id_Generator_Snowflake;
 using System.ComponentModel.DataAnnotations.Schema;
+using static System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
-using static System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption;
 
 namespace YANLib.Entities;
 

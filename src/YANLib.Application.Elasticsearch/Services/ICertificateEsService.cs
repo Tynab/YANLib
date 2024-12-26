@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 using YANLib.EsIndices;
 
-namespace YANLib.EsServices;
+namespace YANLib.Services;
 
 public interface ICertificateEsService : IEsService<CertificateEsIndex>
 {

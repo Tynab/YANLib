@@ -1,20 +1,18 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nest;
-using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YANLib.Core;
 using YANLib.EsIndices;
-using YANLib.Utilities;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
 
-namespace YANLib.EsServices;
+namespace YANLib.Services.Implements;
 
-public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClient elasticClient, IConfiguration configuration) : YANLibAppService, IDeveloperEsService
+public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClient elasticClient, IConfiguration configuration) : IDeveloperEsService
 {
     private readonly ILogger<DeveloperEsService> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
@@ -61,7 +59,10 @@ public class DeveloperEsService(ILogger<DeveloperEsService> logger, IElasticClie
 
             var reqs = new BulkDescriptor();
 
-            datas.OrderBy(x => x.CreatedAt).ForEach(data => reqs.Index<DeveloperEsIndex>(x => x.Document(data).Index(index)));
+            foreach (var data in datas.OrderBy(x => x.CreatedAt))
+            {
+                _ = reqs.Index<DeveloperEsIndex>(x => x.Document(data).Index(index));
+            }
 
             return (await _elasticClient.BulkAsync(reqs)).IsNotNull();
         }
