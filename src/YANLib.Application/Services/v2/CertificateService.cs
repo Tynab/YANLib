@@ -16,16 +16,17 @@ using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
+using static YANLib.YANLibConsts;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Services.v2;
 
-public class CertificateService(ILogger<CertificateService> logger, ICertificateRepository repository, ICertificateEsService esService) : YANLibAppService, ICertificateService
+public class CertificateService(ILogger<CertificateService> logger, ICertificateRepository repository, IEsService<CertificateEsIndex> esService) : YANLibAppService, ICertificateService
 {
     private readonly ILogger<CertificateService> _logger = logger;
     private readonly ICertificateRepository _repository = repository;
-    private readonly ICertificateEsService _esService = esService;
+    private readonly IEsService<CertificateEsIndex> _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
     public async ValueTask<PagedResultDto<CertificateResponse>> GetAll(PagedAndSortedResultRequestDto input)
@@ -118,7 +119,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
     {
         try
         {
-            var cleanTask = _esService.DeleteAll().AsTask();
+            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Certificate).AsTask();
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
             await WhenAll(cleanTask, entitiesTask);
@@ -144,7 +145,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
                 }
             }));
 
-            return entities.IsEmptyOrNull() ? result : result && await _esService.SetBulk(datas);
+            return entities.IsEmptyOrNull() ? result : result && await _esService.SetBulk(datas, ElasticsearchIndex.Certificate);
         }
         catch (Exception ex)
         {

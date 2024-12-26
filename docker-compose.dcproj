@@ -23,6 +23,7 @@
     <None Include="es-ingest\Dockerfile" />
     <None Include="extensions\curator\.dockerignore" />
     <None Include="extensions\curator\config\curator.yml" />
+    <None Include="extensions\curator\config\delete_indices.yml" />
     <None Include="extensions\curator\config\delete_log_files_curator.yml" />
     <None Include="extensions\curator\curator-compose.yml" />
     <None Include="extensions\curator\Dockerfile" />

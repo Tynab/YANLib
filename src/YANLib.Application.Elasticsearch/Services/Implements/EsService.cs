@@ -31,24 +31,20 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
-                .Sort(d => d
-                    .Field(f =>
+                .Sort(d => input.Sorting.IsWhiteSpaceOrNull() ? d : d.Field(f =>
+                {
+                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotWhiteSpaceAndNull()).Select(x => x.Trim().Split(' ')))
                     {
-                        foreach (var sortParams in from sortField in input.Sorting?.Split(',').Reverse()
-                                                   where sortField.IsNotWhiteSpaceAndNull()
-                                                   let sortParams = sortField.Trim().Split(' ')
-                                                   select sortParams)
+                        if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
                         {
-                            if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
-                            {
-                                _ = f.Field(fieldSelector).MissingLast();
-                            }
-
-                            _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                            _ = f.Field(fieldSelector).MissingLast();
                         }
 
-                        return f;
-                    }))
+                        _ = sortParams.Length > 1 && sortParams[1].ToEnum<SortOrder>() is Descending ? f.Descending() : f.Ascending();
+                    }
+
+                    return f;
+                }))
                 .Query(q => q.MatchAll())
             );
 
