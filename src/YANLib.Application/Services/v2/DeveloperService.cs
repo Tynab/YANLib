@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -21,28 +22,26 @@ namespace YANLib.Services.v2;
 public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,
-    IDeveloperEsService esService,
+    IEsService<DeveloperEsIndex> esService,
     IDeveloperTypeService developerTypeService,
     ICertificateRepository certificateRepository
 ) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
-    private readonly IDeveloperEsService _esService = esService;
+    private readonly IEsService<DeveloperEsIndex> _esService = esService;
     private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
     private readonly ICertificateRepository _certificateRepository = certificateRepository;
 
-    public async ValueTask<DeveloperResponse?> GetByIdCard(string idCard)
+    public async ValueTask<PagedResultDto<DeveloperResponse>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            var dto = await _esService.Get(idCard);
-
-            return dto.IsNull() ? default : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
+            return ObjectMapper.Map<PagedResultDto<DeveloperEsIndex>, PagedResultDto<DeveloperResponse>>(await _esService.GetAll(input));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByIdCard-DeveloperService-Exception: {IdCard}", idCard);
+            _logger.LogError(ex, "GetAll-DeveloperService-Exception: {Input}", input.Serialize());
 
             throw;
         }
@@ -57,12 +56,12 @@ public class DeveloperService(
                 throw new BusinessException(EXIST_ID_CARD).WithData("IdCard", request.IdCard);
             }
 
-            var entTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request));
-            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeCode).AsTask();
+            var entityTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request));
+            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeId).AsTask();
 
-            await WhenAll(entTask, devTypeTask);
+            await WhenAll(entityTask, devTypeTask);
 
-            var ent = await entTask;
+            var ent = await entityTask;
             var devType = await devTypeTask;
 
             if (ent.IsNull())
@@ -146,62 +145,6 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<List<DeveloperResponse>> GetByName(string name)
-    {
-        try
-        {
-            return ObjectMapper.Map<IEnumerable<DeveloperEsIndex>, IEnumerable<DeveloperResponse>>(await _esService.GetByName(name)).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByName-DeveloperService-Exception: {Name}", name);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<List<DeveloperResponse>> GetByPhone(string phone)
-    {
-        try
-        {
-            return ObjectMapper.Map<IEnumerable<DeveloperEsIndex>, IEnumerable<DeveloperResponse>>(await _esService.GetByPhone(phone)).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByPhone-DeveloperService-Exception: {Phone}", phone);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<List<DeveloperResponse>> SearchByName(string searchText)
-    {
-        try
-        {
-            return ObjectMapper.Map<IEnumerable<DeveloperEsIndex>, IEnumerable<DeveloperResponse>>(await _esService.SearchByName(searchText)).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchByName-DeveloperService-Exception: {SearchText}", searchText);
-
-            throw;
-        }
-    }
-
-    public async ValueTask<List<DeveloperResponse>> SearchByPhone(string searchText)
-    {
-        try
-        {
-            return ObjectMapper.Map<IEnumerable<DeveloperEsIndex>, IEnumerable<DeveloperResponse>>(await _esService.SearchByPhone(searchText)).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "SearchByPhone-DeveloperService-Exception: {SearchText}", searchText);
-
-            throw;
-        }
-    }
-
     public async ValueTask<bool> SyncDbToEs()
     {
         try
@@ -238,6 +181,22 @@ public class DeveloperService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToEs-DeveloperService-Exception");
+
+            throw;
+        }
+    }
+
+    public async ValueTask<DeveloperResponse?> GetByIdCard(string idCard)
+    {
+        try
+        {
+            var dto = await _esService.Get(idCard);
+
+            return dto.IsNull() ? default : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetByIdCard-DeveloperService-Exception: {IdCard}", idCard);
 
             throw;
         }

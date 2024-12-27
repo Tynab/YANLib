@@ -42,13 +42,13 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         ))));
     }
 
-    [HttpGet("{code}")]
-    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Code")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long code)
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long id)
     {
-        _logger.LogInformation("Get-DeveloperTypeController: {Code}", code);
+        _logger.LogInformation("Get-DeveloperTypeController: {Id}", id);
 
-        return Ok(await _service.Get(code));
+        return Ok(await _service.Get(id));
     }
 
     [HttpPost]
@@ -60,22 +60,22 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         return Ok(await _service.Insert(request));
     }
 
-    [HttpPatch("{code}")]
+    [HttpPatch("{id}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Modify(long code, [Required] DeveloperTypeUpdateRequest request)
+    public async ValueTask<ActionResult<DeveloperTypeResponse>> Modify(long id, [Required] DeveloperTypeUpdateRequest request)
     {
-        _logger.LogInformation("Modify-DeveloperTypeController: {Code} - {Request}", code, request.Serialize());
+        _logger.LogInformation("Modify-DeveloperTypeController: {Id} - {Request}", id, request.Serialize());
 
-        return Ok(await _service.Modify(code, request));
+        return Ok(await _service.Modify(id, request));
     }
 
-    [HttpDelete("{code}")]
+    [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    public async ValueTask<IActionResult> Delete(long code, [Required] Guid updatedBy)
+    public async ValueTask<IActionResult> Delete(long id, [Required] Guid updatedBy)
     {
-        _logger.LogInformation("Delete-DeveloperTypeController: {Code} - {UpdatedBy}", code, updatedBy);
+        _logger.LogInformation("Delete-DeveloperTypeController: {Id} - {UpdatedBy}", id, updatedBy);
 
-        return Ok(await _service.Delete(code, updatedBy));
+        return Ok(await _service.Delete(id, updatedBy));
     }
 
 #if RELEASE

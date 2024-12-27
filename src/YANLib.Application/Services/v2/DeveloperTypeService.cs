@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Core;
@@ -20,7 +19,6 @@ using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
-using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
@@ -35,14 +33,14 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var mdls = await _redisService.GetAll(DeveloperTypeGroup);
+            var dtos = await _redisService.GetAll(DeveloperTypeGroup);
 
-            if (mdls.IsEmptyOrNull())
+            if (dtos.IsEmptyOrNull())
             {
                 return new PagedResultDto<DeveloperTypeResponse>();
             }
 
-            var queryableItems = mdls.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>).AsQueryable();
+            var queryableItems = dtos.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>).AsQueryable();
 
             if (input.Sorting.IsNotWhiteSpaceAndNull())
             {
@@ -59,17 +57,17 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Get(long code)
+    public async ValueTask<DeveloperTypeResponse?> Get(long id)
     {
         try
         {
-            var mdl = await _redisService.Get(DeveloperTypeGroup, code.ToString());
+            var dto = await _redisService.Get(DeveloperTypeGroup, id.ToString());
 
-            return mdl.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), code) : ObjectMapper.Map<(long Code, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>((code, mdl));
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id) : ObjectMapper.Map<(long Id, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>((id, dto));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Get-DeveloperTypeService-Exception: {Code}", code);
+            _logger.LogError(ex, "Get-DeveloperTypeService-Exception: {Id}", id);
 
             throw;
         }
@@ -79,12 +77,11 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var ent = await _repository.InsertAsync(ObjectMapper.Map<(long Code, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
+            var entity = await _repository.InsertAsync(ObjectMapper.Map<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
 
-            //return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
-            //    ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
-            //    : throw new EntityNotFoundException(typeof(DeveloperTypeResponse));
-            return default;
+            return entity.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(entity))
+                ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
+                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse));
         }
         catch (Exception ex)
         {
@@ -94,41 +91,39 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Modify(long code, DeveloperTypeUpdateRequest request)
+    public async ValueTask<DeveloperTypeResponse?> Modify(long id, DeveloperTypeUpdateRequest request)
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code);
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((dto.DeveloperTypeId, request)));
+            var dto = await _redisService.Get(DeveloperTypeGroup, id.ToString()) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
+            var entity = await _repository.Modify(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)));
 
-            //return ent.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, ent.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(ent))
-            //    ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(ent)
-            //    : throw new EntityNotFoundException(typeof(DeveloperTypeResponse), dto.DeveloperTypeId);
-            return default;
+            return entity.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(entity))
+                ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
+                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-DeveloperTypeService-Exception: {Code} - {Request}", code, request.Serialize());
+            _logger.LogError(ex, "Modify-DeveloperTypeService-Exception: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<bool> Delete(long code, Guid updatedBy)
+    public async ValueTask<bool> Delete(long id, Guid updatedBy)
     {
         try
         {
-            //return (await _repository.Modify(new DeveloperTypeDto
-            //{
-            //    Id = (await _redisService.Get(DeveloperTypeGroup, code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_TYPE).WithData("Code", code)).DeveloperTypeId,
-            //    UpdatedBy = updatedBy,
-            //    IsDeleted = true,
-            //})).IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, code.ToString());
-            return default;
+            return (await _repository.Modify(new DeveloperTypeDto
+            {
+                Id = id,
+                UpdatedBy = updatedBy,
+                IsDeleted = true,
+            })).IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, id.ToString());
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-DeveloperTypeService-Exception: {Code} - {UpdatedBy}", code, updatedBy);
+            _logger.LogError(ex, "Delete-DeveloperTypeService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
 
             throw;
         }
@@ -138,16 +133,15 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var clnTask = _redisService.DeleteAll(DeveloperTypeGroup).AsTask();
-            var mdlsTask = _repository.GetListAsync(x => x.IsDeleted == false);
+            var cleanTask = _redisService.DeleteAll(DeveloperTypeGroup).AsTask();
+            var entitiesTask = _repository.GetListAsync(x => x.IsDeleted == false);
 
-            await WhenAll(clnTask, mdlsTask);
+            await WhenAll(cleanTask, entitiesTask);
 
-            var rslt = await clnTask;
-            var mdls = await mdlsTask;
+            var result = await cleanTask;
+            var entities = await entitiesTask;
 
-            //return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(DeveloperTypeGroup, mdls.ToDictionary(x => x.Code.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>));
-            return default;
+            return entities.IsEmptyOrNull() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>));
         }
         catch (Exception ex)
         {

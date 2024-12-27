@@ -71,11 +71,11 @@ public sealed class CertificateController(ILogger<CertificateController> logger,
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    public async ValueTask<IActionResult> Delete(string id)
+    public async ValueTask<IActionResult> Delete(string id, [Required] Guid updatedBy)
     {
-        _logger.LogInformation("Delete-CertificateController: {Id}", id);
+        _logger.LogInformation("Delete-CertificateController: {Id} - {UpdatedBy}", id, updatedBy);
 
-        return Ok(await _service.Delete(id, new Guid()));
+        return Ok(await _service.Delete(id, updatedBy));
     }
 
 #if RELEASE
