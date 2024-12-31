@@ -3,26 +3,8 @@ using static System.Linq.Enumerable;
 
 namespace YANLib.Core;
 
-public static partial class YANNum
+public static partial class YANUnmanaged
 {
-    public static ulong ToUlong(this object? val, object? dfltVal = null)
-    {
-        try
-        {
-            return Convert.ToUInt64(val);
-        }
-        catch
-        {
-            return dfltVal.IsNull() ? default : dfltVal.ToUlong();
-        }
-    }
-
-    public static IEnumerable<ulong>? ToUlongs(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUlong(dfltVal));
-
-    public static IEnumerable<ulong>? ToUlongs(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUlong(dfltVal));
-
-    public static IEnumerable<ulong>? ToUlongs(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUlong(dfltVal));
-
     public static ulong GenerateRandomUlong(object? min = null, object? max = null)
     {
         var minValue = min.IsNull() ? ulong.MinValue : min.ToUlong();

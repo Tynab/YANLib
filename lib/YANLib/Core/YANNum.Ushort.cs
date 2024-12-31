@@ -2,26 +2,8 @@
 
 namespace YANLib.Core;
 
-public static partial class YANNum
+public static partial class YANUnmanaged
 {
-    public static ushort ToUshort(this object? val, object? dfltVal = null)
-    {
-        try
-        {
-            return Convert.ToUInt16(val);
-        }
-        catch
-        {
-            return dfltVal.IsNull() ? default : dfltVal.ToUshort();
-        }
-    }
-
-    public static IEnumerable<ushort>? ToUshorts(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUshort(dfltVal));
-
-    public static IEnumerable<ushort>? ToUshorts(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUshort(dfltVal));
-
-    public static IEnumerable<ushort>? ToUshorts(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToUshort(dfltVal));
-
     public static ushort GenerateRandomUshort(object? min = null, object? max = null)
     {
         var minValue = min.IsNull() ? ushort.MinValue : min.ToUshort();

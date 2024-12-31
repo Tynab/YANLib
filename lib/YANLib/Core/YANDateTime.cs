@@ -4,7 +4,7 @@ using static System.Globalization.DateTimeFormatInfo;
 using static System.Globalization.DateTimeStyles;
 using static System.Linq.Enumerable;
 using static System.Math;
-using static YANLib.Core.YANNum;
+using static YANLib.Core.YANUnmanaged;
 
 namespace YANLib.Core;
 
@@ -383,7 +383,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value that can be generated for each object.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value that can be generated for each object.</param>
     /// <returns>An enumerable collection of randomly generated <see cref="DateTime"/> objects within the specified range.</returns>
-    public static IEnumerable<DateTime> GenerateRandomDateTimes(object? size, DateTime min, DateTime max) => Range(0, (int)size.ToUint()).Select(i => GenerateRandomDateTime(min, max));
+    public static IEnumerable<DateTime> GenerateRandomDateTimes(object? size, DateTime min, DateTime max) => Range(0, size.To<uint>().To<int>()).Select(i => GenerateRandomDateTime(min, max));
 
     /// <summary>
     /// Gets the week of the year for the specified <see cref="DateTime"/>.
@@ -483,7 +483,7 @@ public static partial class YANDateTime
     /// <returns>A <see cref="DateTime"/> object adjusted to the new time zone, or the original <see cref="DateTime"/> if the adjustment is not feasible.</returns>
     public static DateTime ChangeTimeZone(this DateTime dt, object? tzSrc = null, object? tzDst = null)
     {
-        var diff = tzDst.ToInt() - tzSrc.ToInt();
+        var diff = tzDst.To<int>() - tzSrc.To<int>();
 
         return diff switch
         {
@@ -566,7 +566,7 @@ public static partial class YANDateTime
             return default;
         }
 
-        var diff = tzDst.ToInt() - tzSrc.ToInt();
+        var diff = tzDst.To<int>() - tzSrc.To<int>();
 
         return diff switch
         {

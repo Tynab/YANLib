@@ -14,7 +14,7 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source collection.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this IEnumerable<T>? srcs, object? chunkSize)
     {
-        var size = (int)chunkSize.ToUint();
+        var size = chunkSize.To<uint>().To<int>();
 
         if (srcs.IsEmptyOrNull() || size is 0)
         {
@@ -39,7 +39,7 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source collection.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this ICollection<T>? srcs, object? chunkSize)
     {
-        var size = (int)chunkSize.ToUint();
+        var size = chunkSize.To<uint>().To<int>();
 
         if (srcs.IsEmptyOrNull() || size is 0)
         {
@@ -63,7 +63,7 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source array.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this T[]? srcs, object? chunkSize)
     {
-        var size = (int)chunkSize.ToUint();
+        var size = chunkSize.To<uint>().To<int>();
 
         if (srcs.IsEmptyOrNull() || size is 0)
         {
@@ -87,7 +87,7 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source list.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this List<T>? srcs, object? chunkSize)
     {
-        var size = (int)chunkSize.ToUint();
+        var size = chunkSize.To<uint>().To<int>();
 
         if (srcs.IsEmptyOrNull() || size is 0)
         {

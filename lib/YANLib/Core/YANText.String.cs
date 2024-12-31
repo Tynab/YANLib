@@ -2,7 +2,7 @@
 using System.Globalization;
 using static System.Linq.Enumerable;
 using static System.StringComparison;
-using static YANLib.Core.YANNum;
+using static YANLib.Core.YANUnmanaged;
 
 namespace YANLib.Core;
 

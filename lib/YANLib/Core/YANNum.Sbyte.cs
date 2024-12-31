@@ -2,58 +2,8 @@
 
 namespace YANLib.Core;
 
-public static partial class YANNum
+public static partial class YANUnmanaged
 {
-    /// <summary>
-    /// Converts the specified object to a signed byte (sbyte) value.
-    /// If the conversion fails, attempts to use the provided default value for conversion.
-    /// If both conversions fail, returns the default value of a signed byte.
-    /// </summary>
-    /// <param name="val">The object to be converted to a signed byte. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to use if conversion fails. Can be <see langword="null"/>.</param>
-    /// <returns>The signed byte value of the converted object, or the converted default value, or the default value of a signed byte if both conversions fail.</returns>
-    public static sbyte ToSbyte(this object? val, object? dfltVal = null)
-    {
-        try
-        {
-            return Convert.ToSByte(val);
-        }
-        catch
-        {
-            return dfltVal.IsNull() ? default : dfltVal.ToSbyte();
-        }
-    }
-
-    /// <summary>
-    /// Converts a collection of objects to their respective signed byte (sbyte) values.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// Each object in the collection is converted to a signed byte; if conversion fails, uses the provided default value.
-    /// </summary>
-    /// <param name="vals">The collection of objects to be converted to signed bytes. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to use if conversion fails. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of signed bytes representing the converted values, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<sbyte>? ToSbytes(this IEnumerable<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToSbyte(dfltVal));
-
-    /// <summary>
-    /// Converts a collection (ICollection) of objects to their respective signed byte (sbyte) values.
-    /// If the collection is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// Each object in the collection is converted to a signed byte; if conversion fails, uses the provided default value.
-    /// </summary>
-    /// <param name="vals">The ICollection of objects to be converted to signed bytes. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to use if conversion fails. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of signed bytes representing the converted values, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<sbyte>? ToSbytes(this ICollection<object?>? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToSbyte(dfltVal));
-
-    /// <summary>
-    /// Converts an array of objects to their respective signed byte (sbyte) values.
-    /// If the array is <see langword="null"/> or empty, returns <see langword="null"/>.
-    /// Each object in the array is converted to a signed byte; if conversion fails, uses the provided default value.
-    /// </summary>
-    /// <param name="vals">The array of objects to be converted to signed bytes. Can be <see langword="null"/>.</param>
-    /// <param name="dfltVal">The default value to use if conversion fails. Can be <see langword="null"/>.</param>
-    /// <returns>An array of signed bytes representing the converted values, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<sbyte>? ToSbytes(this object?[]? vals, object? dfltVal = null) => vals.IsEmptyOrNull() ? default : vals.Select(x => x.ToSbyte(dfltVal));
-
     /// <summary>
     /// Generates a random signed byte (sbyte) value within the specified minimum and maximum bounds.
     /// If the minimum or maximum values are invalid or unspecified, defaults to the minimum and maximum limits of a signed byte.
