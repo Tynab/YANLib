@@ -10,7 +10,7 @@ public sealed class Developer : YANLibDomainEntity<Guid>
 
     public string? IdCard { get; set; }
 
-    public long DeveloperTypeId { get; set; }
+    public long DeveloperTypeCode { get; set; }
 
     public int Version { get; set; }
 }

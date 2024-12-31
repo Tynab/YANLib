@@ -25,12 +25,12 @@ public sealed class DeveloperAutoMapperProfile : Profile
                 {
                     d.DeveloperType = new DeveloperTypeResponse
                     {
-                        Id = s.DeveloperTypeId
+                        Id = s.DeveloperTypeCode
                     };
                 }
                 else
                 {
-                    d.DeveloperType.Id = s.DeveloperTypeId;
+                    d.DeveloperType.Id = s.DeveloperTypeCode;
                 }
             });
 

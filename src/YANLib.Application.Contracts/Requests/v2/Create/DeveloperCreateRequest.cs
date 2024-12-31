@@ -8,5 +8,5 @@ public sealed class DeveloperCreateRequest : YANLibApplicationCreateRequest
 
     public required string IdCard { get; set; }
 
-    public required long DeveloperTypeId { get; set; }
+    public required long DeveloperTypeCode { get; set; }
 }

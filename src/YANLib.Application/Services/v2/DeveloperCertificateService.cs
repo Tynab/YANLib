@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Entities;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -25,9 +27,7 @@ public class DeveloperCertificateService(
     IDeveloperCertificateRepository repository,
     IRedisService<DeveloperCertificateRedisDto> redisService,
     IDeveloperService developerService,
-    ICertificateService certificateService,
-    IRepository<Developer, Guid> developerRepository,
-    IRepository<Certificate, string> certificateCrudRepository
+    ICertificateService certificateService
 ) : YANLibAppService, IDeveloperCertificateService
 {
     private readonly ILogger<DeveloperCertificateService> _logger = logger;
@@ -35,36 +35,48 @@ public class DeveloperCertificateService(
     private readonly IRedisService<DeveloperCertificateRedisDto> _redisService = redisService;
     private readonly IDeveloperService _developerService = developerService;
     private readonly ICertificateService _certificateService = certificateService;
-    private readonly IRepository<Developer, Guid> _developerRepository = developerRepository;
-    private readonly IRepository<Certificate, string> _certificateCrudRepository = certificateCrudRepository;
 
-    public async ValueTask<IEnumerable<DeveloperCertificateResponse>?> GetByDeveloper(string idCard)
+    public async ValueTask<PagedResultDto<DeveloperCertificateResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId)
     {
         try
         {
-            var mdls = await _redisService.GetAll($"{DeveloperCertificateGroupPrefix}:{idCard}");
+            var dtos = await _redisService.GetAll($"{DeveloperCertificateGroupPrefix}:{developerId}");
 
-            return mdls.IsEmptyOrNull() ? default : mdls.Select(x => ObjectMapper.Map<(string IdCard, KeyValuePair<string, DeveloperCertificateRedisDto?> Pair), DeveloperCertificateResponse>((idCard, x)));
+            if (dtos.IsEmptyOrNull())
+            {
+                return new PagedResultDto<DeveloperCertificateResponse>();
+            }
+
+            var queryableItems = dtos.Select(x => ObjectMapper.Map<(Guid DeveloperId, KeyValuePair<string, DeveloperCertificateRedisDto?> Pair), DeveloperCertificateResponse>((developerId, x))).AsQueryable();
+
+            if (input.Sorting.IsNotWhiteSpaceAndNull())
+            {
+                queryableItems = queryableItems.OrderBy(input.Sorting);
+            }
+
+            return new PagedResultDto<DeveloperCertificateResponse>(queryableItems.Count(), [.. queryableItems.Skip(input.SkipCount).Take(input.MaxResultCount)]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByDeveloper-DeveloperCertificateService-Exception: {IdCard}", idCard);
+            _logger.LogError(ex, "GetByDeveloper-DeveloperCertificateService-Exception: {DeveloperId}", developerId);
 
             throw;
         }
     }
 
-    public async ValueTask<DeveloperCertificateResponse?> GetByDeveloperAndCertificate(string idCard, long code)
+    public async ValueTask<DeveloperCertificateResponse?> GetByDeveloperAndCertificate(Guid developerId, string certificateCode)
     {
         try
         {
-            var mdl = await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{idCard}", code.ToString());
+            var dto = await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{developerId}", certificateCode);
 
-            return mdl.IsNull() ? default : ObjectMapper.Map<(string IdCard, long Code, DeveloperCertificateRedisDto Dto), DeveloperCertificateResponse>((idCard, code, mdl));
+            return dto.IsNull()
+                ? throw new EntityNotFoundException(typeof(DeveloperCertificateRedisDto), certificateCode)
+                : ObjectMapper.Map<(Guid DeveloperId, string CertificateCode, DeveloperCertificateRedisDto Dto), DeveloperCertificateResponse>((developerId, certificateCode, dto));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByDeveloperAndCertificate-DeveloperCertificateService-Exception: {IdCard} - {Code}", idCard, code);
+            _logger.LogError(ex, "GetByDeveloperAndCertificate-DeveloperCertificateService-Exception: {DeveloperId} - {CertificateCode}", developerId, certificateCode);
 
             throw;
         }
@@ -74,31 +86,32 @@ public class DeveloperCertificateService(
     {
         try
         {
-            var devTask = _developerService.GetByIdCard(request.DeveloperIdCard).AsTask();
-            var certTask = _certificateService.Get(request.CertificateCode.ToString()).AsTask();
+            var devTask = _developerService.Get(request.DeveloperId).AsTask();
+            var certTask = _certificateService.Get(request.CertificateCode).AsTask();
 
-            await WhenAll(devTask, certTask);
+            _ = await WhenAny(devTask, certTask);
 
             var dev = await devTask;
-            var cert = await certTask;
 
             if (dev.IsNull())
             {
-                throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", request.DeveloperIdCard);
+                throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
             }
+
+            var cert = await certTask;
 
             if (cert.IsNull())
             {
-                throw new BusinessException(NOT_FOUND_CERT).WithData("Code", request.CertificateCode);
+                throw new EntityNotFoundException(typeof(Certificate), request.CertificateCode);
             }
 
-            //var ent = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, Guid CertificateId, DeveloperCertificateCreateRequest Request), DeveloperCertificate>((dev.Id, cert.Id, request)));
+            var entity = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, string CertificateCode, DeveloperCertificateCreateRequest Request), DeveloperCertificate>((dev.Id, cert.Id, request)));
 
-            //return ent.IsNotNull()
-            //    && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
-            //    ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((dev.IdCard, cert.Id.ToLong(), ent))
-            //    : default;
-            return default;
+            return entity.IsNull()
+                ? throw new BusinessException(SQL_SERVER_ERROR)
+                : await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperId}", request.CertificateCode, ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(entity))
+                ? ObjectMapper.Map<(Guid DeveloperId, string CertificateCode, DeveloperCertificate Entity), DeveloperCertificateResponse>((dev.Id, cert.Id, entity))
+                : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -112,15 +125,16 @@ public class DeveloperCertificateService(
     {
         try
         {
-            var ent = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperCertificateUpdateRequest Request), DeveloperCertificateDto>(((
-                await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString())
-                ?? throw new BusinessException(NOT_FOUND_DEV_CERT).WithData("Code", request.CertificateCode).WithData("IdCard", request.DeveloperIdCard)
+            var entity = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperCertificateUpdateRequest Request), DeveloperCertificateDto>(((
+                await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{request.DeveloperId}", request.CertificateCode)
+                ?? throw new EntityNotFoundException(typeof(DeveloperCertificateRedisDto))
             ).Id, request)));
 
-            return ent.IsNotNull()
-                && await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperIdCard}", request.CertificateCode.ToString(), ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(ent))
-                ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((request.DeveloperIdCard, request.CertificateCode, ent))
-                : default;
+            return entity.IsNull()
+                ? throw new BusinessException(SQL_SERVER_ERROR)
+                : await _redisService.Set($"{DeveloperCertificateGroupPrefix}:{request.DeveloperId}", request.CertificateCode, ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(entity))
+                ? ObjectMapper.Map<(Guid DeveloperId, string CertificateCode, DeveloperCertificate Entity), DeveloperCertificateResponse>((request.DeveloperId, request.CertificateCode, entity))
+                : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -130,24 +144,22 @@ public class DeveloperCertificateService(
         }
     }
 
-    public async ValueTask<DeveloperCertificateResponse?> Delete(string idCard, long code, Guid updatedBy)
+    public async ValueTask<bool?> Delete(Guid developerId, string certificateCode, Guid updatedBy)
     {
         try
         {
-            var ent = await _repository.Modify(new DeveloperCertificateDto
+            var entity = await _repository.Modify(new DeveloperCertificateDto
             {
-                Id = (await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{idCard}", code.ToString()) ?? throw new BusinessException(NOT_FOUND_DEV_CERT).WithData("Code", code).WithData("IdCard", idCard)).Id,
+                Id = (await _redisService.Get($"{DeveloperCertificateGroupPrefix}:{developerId}", certificateCode) ?? throw new EntityNotFoundException(typeof(DeveloperCertificateRedisDto))).Id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             });
 
-            return ent.IsNotNull() && await _redisService.Delete($"{DeveloperCertificateGroupPrefix}:{idCard}", code.ToString())
-                ? ObjectMapper.Map<(string? IdCard, long Code, DeveloperCertificate Entity), DeveloperCertificateResponse>((idCard, code, ent))
-                : default;
+            return entity.IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.Delete($"{DeveloperCertificateGroupPrefix}:{developerId}", certificateCode);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-DeveloperCertificateService-Exception: {IdCard} - {Code} - {UpdatedBy}", idCard, code, updatedBy);
+            _logger.LogError(ex, "Delete-DeveloperCertificateService-Exception: {DeveloperId} - {CertificateCode} - {UpdatedBy}", developerId, certificateCode, updatedBy);
 
             throw;
         }
@@ -157,33 +169,36 @@ public class DeveloperCertificateService(
     {
         try
         {
-            var clnTask = _redisService.DeleteGroup($"{DeveloperCertificateGroupPrefix}:").AsTask();
-            var mdlsTask = _repository.GetListAsync(x => x.IsDeleted == false);
+            var cleanTask = _redisService.DeleteGroup($"{DeveloperCertificateGroupPrefix}:").AsTask();
+            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
-            await WhenAll(clnTask, mdlsTask);
+            _ = await WhenAny(cleanTask, entitiesTask);
 
-            var rslt = await clnTask;
-            var mdls = await mdlsTask;
+            var result = await cleanTask;
+            var entities = await entitiesTask;
 
-            if (mdls.IsNotEmptyAndNull())
+            if (entities.IsEmptyOrNull())
             {
-                mdls.Join(await _developerRepository.GetListAsync(x => mdls.Select(x => x.DeveloperId).Distinct().Contains(x.Id)), m => m.DeveloperId, d => d.Id, (m, d) => new
-                {
-                    DevId = d.Id,
-                    DevIdCard = d.IdCard,
-                    DevCert = m
-                }).Join(await _certificateCrudRepository.GetListAsync(x => mdls.Select(x => x.CertificateId).Distinct().Contains(x.Id)), x => x.DevCert.CertificateId, c => c.Id, (x, c) => new
-                {
-                    Code = c.Id ?? string.Empty,
-                    x.DevCert,
-                    x.DevIdCard
-                }).GroupBy(x => x.DevIdCard).ForEach(async g => rslt &= await _redisService.SetBulk(
-                    $"{DeveloperCertificateGroupPrefix}:{g.Key}",
-                    g.ToDictionary(x => x.Code.ToString(), x => ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(x.DevCert))
-                ));
+                return result;
             }
 
-            return rslt;
+            var ss = new SemaphoreSlim(1);
+
+            await WhenAll(entities.GroupBy(x => x.DeveloperId).Select(async g =>
+            {
+                await ss.WaitAsync();
+
+                try
+                {
+                    result &= await _redisService.SetBulk($"{DeveloperCertificateGroupPrefix}:{g.Key}", g.ToDictionary(y => y.CertificateCode, y => ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(y)));
+                }
+                finally
+                {
+                    _ = ss.Release();
+                }
+            }));
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -193,32 +208,25 @@ public class DeveloperCertificateService(
         }
     }
 
-    public async ValueTask<bool> SyncDbToRedisByDeveloper(string idCard)
+    public async ValueTask<bool> SyncDbToRedisByDeveloper(Guid developerId)
     {
         try
         {
-            var devId = (await _developerService.GetByIdCard(idCard) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", idCard)).Id;
-            var clnTask = _redisService.DeleteAll($"{DeveloperCertificateGroupPrefix}:{idCard}").AsTask();
-            var mdlsTask = _repository.GetListAsync(x => x.DeveloperId == devId && x.IsDeleted == false);
+            var cleanTask = _redisService.DeleteAll($"{DeveloperCertificateGroupPrefix}:{developerId}").AsTask();
+            var entitiesTask = _repository.GetListAsync(x => x.DeveloperId == developerId && !x.IsDeleted);
 
-            await WhenAll(clnTask, mdlsTask);
+            _ = await WhenAny(cleanTask, entitiesTask);
 
-            var rslt = await clnTask;
-            var mdls = await mdlsTask;
+            var result = await cleanTask;
+            var entities = await entitiesTask;
 
-            //return mdls.IsEmptyOrNull() ? rslt : rslt && await _redisService.SetBulk(
-            //    $"{DeveloperCertificateGroupPrefix}:{idCard}",
-            //    (await _certificateCrudRepository.GetListAsync(x => mdls.Select(x => x.CertificateId).Contains(x.Id))).Join(mdls, c => c.DeveloperId, m => m.DeveloperId, (c, m) => new
-            //    {
-            //        Code = c.Id ?? string.Empty,
-            //        DevCert = m
-            //    }).ToDictionary(x => x.Code.ToString(), x => ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>(x.DevCert))
-            //);
-            return default;
+            return entities.IsEmptyOrNull()
+                ? result
+                : (result &= await _redisService.SetBulk($"{DeveloperCertificateGroupPrefix}:{developerId}", entities.ToDictionary(x => x.CertificateCode, ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>)));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SyncDbToRedisByDeveloper-DeveloperCertificateService-Exception: {IdCard}", idCard);
+            _logger.LogError(ex, "SyncDbToRedisByDeveloper-DeveloperCertificateService-Exception: {DeveloperId}", developerId);
 
             throw;
         }

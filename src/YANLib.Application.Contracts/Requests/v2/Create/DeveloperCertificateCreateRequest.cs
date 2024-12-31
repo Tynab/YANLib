@@ -1,8 +1,10 @@
-﻿namespace YANLib.Requests.v2.Create;
+﻿using System;
+
+namespace YANLib.Requests.v2.Create;
 
 public sealed class DeveloperCertificateCreateRequest : YANLibApplicationCreateRequest
 {
-    public required string DeveloperIdCard { get; set; }
+    public required Guid DeveloperId { get; set; }
 
-    public required long CertificateCode { get; set; }
+    public required string CertificateCode { get; set; }
 }

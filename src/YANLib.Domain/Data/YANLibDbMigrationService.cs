@@ -93,7 +93,7 @@ public class YANLibDbMigrationService(
         var fe = await _developerRepository.InsertAsync(new()
         {
             Name = "Nguyễn Văn A",
-            DeveloperTypeId = feType.Id,
+            DeveloperTypeCode = feType.Id,
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
@@ -105,7 +105,7 @@ public class YANLibDbMigrationService(
         var be = await _developerRepository.InsertAsync(new()
         {
             Name = "Trần Thị B",
-            DeveloperTypeId = beType.Id,
+            DeveloperTypeCode = beType.Id,
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
@@ -117,7 +117,7 @@ public class YANLibDbMigrationService(
         var fs = await _developerRepository.InsertAsync(new()
         {
             Name = "Lê Văn C",
-            DeveloperTypeId = fsType.Id,
+            DeveloperTypeCode = fsType.Id,
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
@@ -184,7 +184,7 @@ public class YANLibDbMigrationService(
             new()
             {
                 DeveloperId = be.Id,
-                CertificateId = java.Id,
+                CertificateCode = java.Id,
                 CreatedBy = createdBy,
                 CreatedAt = Now,
                 IsActive = true,
@@ -193,7 +193,7 @@ public class YANLibDbMigrationService(
             new()
             {
                 DeveloperId = be.Id,
-                CertificateId = csharp.Id,
+                CertificateCode = csharp.Id,
                 CreatedBy = createdBy,
                 CreatedAt = Now,
                 IsActive = true,
@@ -202,7 +202,7 @@ public class YANLibDbMigrationService(
             new()
             {
                 DeveloperId = fs.Id,
-                CertificateId = python.Id,
+                CertificateCode = python.Id,
                 CreatedBy = createdBy,
                 CreatedAt = Now,
                 IsActive = true,

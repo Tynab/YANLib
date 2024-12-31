@@ -29,7 +29,7 @@ public class DeveloperCertificateService(
         try
         {
             _ = await _developerRepository.FindAsync(x => x.Id == input.DeveloperId) ?? throw new EntityNotFoundException(typeof(Developer), input.DeveloperId);
-            _ = await _certificateRepository.FindAsync(x => x.Id == input.CertificateId) ?? throw new EntityNotFoundException(typeof(Certificate), input.CertificateId);
+            _ = await _certificateRepository.FindAsync(x => x.Id == input.CertificateCode) ?? throw new EntityNotFoundException(typeof(Certificate), input.CertificateCode);
 
             return await base.CreateAsync(input);
         }
@@ -46,7 +46,7 @@ public class DeveloperCertificateService(
         try
         {
             _ = await _developerRepository.FindAsync(x => x.Id == input.DeveloperId) ?? throw new EntityNotFoundException(typeof(Developer), input.DeveloperId);
-            _ = await _certificateRepository.FindAsync(x => x.Id == input.CertificateId) ?? throw new EntityNotFoundException(typeof(Certificate), input.CertificateId);
+            _ = await _certificateRepository.FindAsync(x => x.Id == input.CertificateCode) ?? throw new EntityNotFoundException(typeof(Certificate), input.CertificateCode);
 
             return await base.UpdateAsync(id, input);
         }

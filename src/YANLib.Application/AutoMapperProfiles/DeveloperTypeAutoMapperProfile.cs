@@ -41,9 +41,9 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Request.IsActive))
             .Ignore(d => d.IsDeleted);
 
-        _ = CreateMap<DeveloperType, DeveloperRedisTypeDto>();
+        _ = CreateMap<DeveloperType, DeveloperTypeRedisDto>();
 
-        _ = CreateMap<(long Id, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>()
+        _ = CreateMap<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Dto.Name))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Dto.CreatedBy))
@@ -52,7 +52,7 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.Dto.UpdatedAt))
             .ForMember(d => d.IsActive, o => o.MapFrom(s => s.Dto.IsActive));
 
-        _ = CreateMap<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>()
+        _ = CreateMap<KeyValuePair<string, DeveloperTypeRedisDto?>, DeveloperTypeResponse>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Key.ToLong(default)))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.Name))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Value.IsNull() ? default : s.Value.CreatedBy))

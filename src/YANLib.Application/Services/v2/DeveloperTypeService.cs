@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Core;
@@ -19,14 +20,15 @@ using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
+using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
 
-public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDeveloperTypeRepository repository, IRedisService<DeveloperRedisTypeDto> redisService) : YANLibAppService, IDeveloperTypeService
+public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDeveloperTypeRepository repository, IRedisService<DeveloperTypeRedisDto> redisService) : YANLibAppService, IDeveloperTypeService
 {
     private readonly ILogger<DeveloperTypeService> _logger = logger;
     private readonly IDeveloperTypeRepository _repository = repository;
-    private readonly IRedisService<DeveloperRedisTypeDto> _redisService = redisService;
+    private readonly IRedisService<DeveloperTypeRedisDto> _redisService = redisService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
     public async ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input)
@@ -40,7 +42,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
                 return new PagedResultDto<DeveloperTypeResponse>();
             }
 
-            var queryableItems = dtos.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperRedisTypeDto?>, DeveloperTypeResponse>).AsQueryable();
+            var queryableItems = dtos.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperTypeRedisDto?>, DeveloperTypeResponse>).AsQueryable();
 
             if (input.Sorting.IsNotWhiteSpaceAndNull())
             {
@@ -63,7 +65,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         {
             var dto = await _redisService.Get(DeveloperTypeGroup, id.ToString());
 
-            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id) : ObjectMapper.Map<(long Id, DeveloperRedisTypeDto Dto), DeveloperTypeResponse>((id, dto));
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id) : ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((id, dto));
         }
         catch (Exception ex)
         {
@@ -79,9 +81,11 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         {
             var entity = await _repository.InsertAsync(ObjectMapper.Map<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
 
-            return entity.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(entity))
+            return entity.IsNull()
+                ? throw new BusinessException(SQL_SERVER_ERROR)
+                : await _redisService.Set(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
-                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse));
+                : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -98,9 +102,11 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var dto = await _redisService.Get(DeveloperTypeGroup, id.ToString()) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
             var entity = await _repository.Modify(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)));
 
-            return entity.IsNotNull() && await _redisService.Set(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>(entity))
+            return entity.IsNull()
+                ? throw new BusinessException(SQL_SERVER_ERROR)
+                : await _redisService.Set(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
-                : throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
+                : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -119,7 +125,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
                 Id = id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            })).IsNotNull() && await _redisService.Delete(DeveloperTypeGroup, id.ToString());
+            })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.Delete(DeveloperTypeGroup, id.ToString());
         }
         catch (Exception ex)
         {
@@ -134,14 +140,14 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         try
         {
             var cleanTask = _redisService.DeleteAll(DeveloperTypeGroup).AsTask();
-            var entitiesTask = _repository.GetListAsync(x => x.IsDeleted == false);
+            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
-            await WhenAll(cleanTask, entitiesTask);
+            _ = await WhenAny(cleanTask, entitiesTask);
 
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsEmptyOrNull() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperRedisTypeDto>));
+            return entities.IsEmptyOrNull() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
         }
         catch (Exception ex)
         {

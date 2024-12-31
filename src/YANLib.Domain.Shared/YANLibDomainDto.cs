@@ -5,7 +5,7 @@ namespace YANLib;
 
 public class YANLibDomainDto<T>
 {
-    public T? Id { get; set; }
+    public required T Id { get; set; }
 
     public Guid UpdatedBy { get; set; }
 

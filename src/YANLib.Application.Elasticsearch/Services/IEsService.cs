@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using Nest;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
 namespace YANLib.Services;
 
-public interface IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex
+public interface IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
 {
     public ValueTask<PagedResultDto<TEsIndex>> GetAll(PagedAndSortedResultRequestDto input);
 
-    public ValueTask<TEsIndex?> Get(string id);
+    public ValueTask<TEsIndex?> Get(DocumentPath<TEsIndex> id);
 
     public ValueTask<bool> Set(TEsIndex data);
 
     public ValueTask<bool> SetBulk(List<TEsIndex> datas, string indexPath);
 
-    public ValueTask<bool> Delete(string id);
+    public ValueTask<bool> Delete(DocumentPath<TEsIndex> id);
 
     public ValueTask<bool> DeleteAll(string indexPath);
 

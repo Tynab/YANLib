@@ -10,5 +10,5 @@ public sealed class DeveloperDto : YANLibDomainDto<Guid>
 
     public string? IdCard { get; set; }
 
-    public long DeveloperTypeId { get; set; }
+    public long DeveloperTypeCode { get; set; }
 }

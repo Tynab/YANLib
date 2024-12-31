@@ -38,14 +38,14 @@ public class DeveloperService(
             var developerTypes = await _developerTypeRepository.GetListAsync(x => developerTypeIds.Contains(x.Id));
             var developerIds = result.Items.Select(x => x.Id).Distinct();
             var developerCertificates = await _developerCertificateRepository.GetListAsync(x => developerIds.Contains(x.DeveloperId));
-            var certificateIds = developerCertificates.Select(x => x.CertificateId).Distinct();
+            var certificateIds = developerCertificates.Select(x => x.CertificateCode).Distinct();
             var certificates = await _certificateRepository.GetListAsync(x => certificateIds.Contains(x.Id));
 
             result.Items.ForEach(x =>
             {
                 x.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(y => y.Id == x.DeveloperType?.Id));
                 x.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(
-                    developerCertificates.Where(y => y.DeveloperId == x.Id).Select(y => certificates.FirstOrDefault(z => z.Id == y.CertificateId)).ToList()
+                    developerCertificates.Where(y => y.DeveloperId == x.Id).Select(y => certificates.FirstOrDefault(z => z.Id == y.CertificateCode)).ToList()
                 );
             });
 
@@ -65,10 +65,10 @@ public class DeveloperService(
         {
             var result = await base.GetAsync(id);
             var developerCertificates = await _developerCertificateRepository.GetListAsync(x => x.DeveloperId == id);
-            var certificates = await _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateId).Distinct().Contains(x.Id));
+            var certificates = await _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateCode).Distinct().Contains(x.Id));
 
             result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(await _developerTypeRepository.FindAsync(result.DeveloperType!.Id));
-            result.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(developerCertificates.Select(x => certificates.FirstOrDefault(y => y.Id == x.CertificateId)).ToList());
+            result.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(developerCertificates.Select(x => certificates.FirstOrDefault(y => y.Id == x.CertificateCode)).ToList());
 
             return result;
         }
@@ -84,7 +84,7 @@ public class DeveloperService(
     {
         try
         {
-            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeId) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeId);
+            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeCode) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeCode);
             var result = await base.CreateAsync(input);
 
             if (developerType.IsNotNull())
@@ -106,7 +106,7 @@ public class DeveloperService(
     {
         try
         {
-            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeId) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeId);
+            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeCode) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeCode);
             var result = await base.UpdateAsync(id, input);
 
             if (developerType.IsNotNull())

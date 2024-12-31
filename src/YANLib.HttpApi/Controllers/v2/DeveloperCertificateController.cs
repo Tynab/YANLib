@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using YANLib.Core;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
+using static Nest.SortOrder;
 
 namespace YANLib.Controllers.v2;
 
@@ -30,20 +31,24 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpGet("get-by-developer")]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ của lập trình viên theo mã định danh")]
-    public async ValueTask<ActionResult<IEnumerable<DeveloperCertificateResponse>>> GetByDeveloper([Required] string idCard)
+    public async ValueTask<ActionResult<PagedResultDto<DeveloperCertificateResponse>>> GetByDeveloper([Required] Guid developerId, byte pageNumber = 1, byte pageSize = 10)
     {
-        _logger.LogInformation("GetByDeveloper-DeveloperCertificateController: {IdCard}", idCard);
+        _logger.LogInformation("GetByDeveloper-DeveloperCertificateController: {DeveloperId}", developerId);
 
-        return Ok(await _service.GetByDeveloper(idCard));
+        return Ok(await _service.GetByDeveloper(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            pageNumber,
+            pageSize,
+            $"{nameof(DeveloperCertificateResponse.CreatedAt)} {Descending}"
+        )), developerId));
     }
 
     [HttpGet("get-by-developer-and-certificate")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ của lập trình viên theo mã định danh và mã chứng chỉ")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> GetByDeveloperAndCertificate([Required] string idCard, [Required] long code)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> GetByDeveloperAndCertificate([Required] Guid developerId, [Required] string certificateCode)
     {
-        _logger.LogInformation("GetByDeveloperAndCertificate-DeveloperCertificateController: {IdCard} - {Code}", idCard, code);
+        _logger.LogInformation("GetByDeveloperAndCertificate-DeveloperCertificateController: {DeveloperId} - {CertificateCode}", developerId, certificateCode);
 
-        return Ok(await _service.GetByDeveloperAndCertificate(idCard, code));
+        return Ok(await _service.GetByDeveloperAndCertificate(developerId, certificateCode));
     }
 
     [HttpPost]
@@ -66,11 +71,11 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 
     [HttpDelete]
     [SwaggerOperation(Summary = "Xóa chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Delete([Required] string idCard, [Required] long code, [Required] Guid updatedBy)
+    public async ValueTask<ActionResult<DeveloperCertificateResponse>> Delete([Required] Guid developerId, [Required] string certificateCode, [Required] Guid updatedBy)
     {
-        _logger.LogInformation("Delete-DeveloperCertificateController: {IdCard} - {Code} - {UpdatedBy}", idCard, code, updatedBy);
+        _logger.LogInformation("Delete-DeveloperCertificateController: {DeveloperId} - {CertificateCode} - {UpdatedBy}", developerId, certificateCode, updatedBy);
 
-        return Ok(await _service.Delete(idCard, code, updatedBy));
+        return Ok(await _service.Delete(developerId, certificateCode, updatedBy));
     }
 
 #if RELEASE
@@ -85,10 +90,10 @@ public sealed class DeveloperCertificateController(ILogger<DeveloperCertificateC
 #endif
     [HttpPost("sync-db-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ chứng chỉ của lập trình viên từ Database sang Redis theo mã định danh")]
-    public async ValueTask<IActionResult> SyncDbToRedisByDeveloper([Required] string idCard)
+    public async ValueTask<IActionResult> SyncDbToRedisByDeveloper([Required] Guid developerId)
     {
-        _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperCertificateController: {IdCard}", idCard);
+        _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperCertificateController: {DeveloperId}", developerId);
 
-        return Ok(await _service.SyncDbToRedisByDeveloper(idCard));
+        return Ok(await _service.SyncDbToRedisByDeveloper(developerId));
     }
 }

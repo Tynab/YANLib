@@ -102,7 +102,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
         {
             return (await _repository.Modify(new CertificateDto
             {
-                Id = (await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(CertificateEsIndex), id)).Id,
+                Id = (await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(CertificateEsIndex), id)).Id.ToString(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             })).IsNotNull() && await _esService.Delete(id);
@@ -122,18 +122,24 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
             var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Certificate).AsTask();
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
-            await WhenAll(cleanTask, entitiesTask);
+            _ = await WhenAny(cleanTask, entitiesTask);
 
             var result = await cleanTask;
             var entities = await entitiesTask;
+
+            if (entities.IsEmptyOrNull())
+            {
+                return result;
+            }
+
             var datas = new List<CertificateEsIndex>();
-            var semaphoreSlim = new SemaphoreSlim(1);
+            var ss = new SemaphoreSlim(1);
 
             await WhenAll(entities.Select(async x =>
             {
                 var dto = ObjectMapper.Map<Certificate, CertificateEsIndex>(x);
 
-                await semaphoreSlim.WaitAsync();
+                await ss.WaitAsync();
 
                 try
                 {
@@ -141,11 +147,11 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
                 }
                 finally
                 {
-                    _ = semaphoreSlim.Release();
+                    _ = ss.Release();
                 }
             }));
 
-            return entities.IsEmptyOrNull() ? result : result && await _esService.SetBulk(datas, ElasticsearchIndex.Certificate);
+            return result && await _esService.SetBulk(datas, ElasticsearchIndex.Certificate);
         }
         catch (Exception ex)
         {

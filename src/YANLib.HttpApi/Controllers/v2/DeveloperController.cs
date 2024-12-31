@@ -5,6 +5,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Core;
@@ -25,13 +26,13 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     private readonly ILogger<DeveloperController> _logger = logger;
     private readonly IDeveloperService _service = service;
 
-    [HttpGet("{idCard}")]
+    [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy Developer theo mã định danh")]
-    public async ValueTask<IActionResult> GetByIdCard(string idCard)
+    public async ValueTask<IActionResult> GetByIdCard(Guid id)
     {
-        _logger.LogInformation("GetById-CardDeveloperController: {IdCard}", idCard);
+        _logger.LogInformation("GetById-CardDeveloperController: {Id}", id);
 
-        return Ok(await _service.GetByIdCard(idCard));
+        return Ok(await _service.Get(id));
     }
 
     [HttpPost]
@@ -50,24 +51,6 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
         _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 
         return Ok(await _service.Adjust(idCard, request));
-    }
-
-    [HttpGet("get-by-phone")]
-    [SwaggerOperation(Summary = "Lấy tất cả Developers theo Phone")]
-    public async ValueTask<IActionResult> GetByPhone([Required] string phone)
-    {
-        _logger.LogInformation("GetByPhone-DeveloperController: {Phone}", phone);
-
-        return Ok(await _service.GetByPhone(phone));
-    }
-
-    [HttpGet("search-by-phone")]
-    [SwaggerOperation(Summary = "Tìm tất cả Developers theo Phone")]
-    public async ValueTask<IActionResult> SearchByPhone([Required] string searchText)
-    {
-        _logger.LogInformation("SearchByPhone-DeveloperController: {SearchText}", searchText);
-
-        return Ok(await _service.SearchByPhone(searchText));
     }
 
 #if RELEASE

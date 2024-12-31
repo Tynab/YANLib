@@ -3,9 +3,9 @@ using System;
 
 namespace YANLib;
 
-public class YANLibApplicationEsIndex
+public class YANLibApplicationEsIndex<T>
 {
-    public string? Id { get; set; }
+    public required T Id { get; set; }
 
     public Guid CreatedBy { get; set; }
 

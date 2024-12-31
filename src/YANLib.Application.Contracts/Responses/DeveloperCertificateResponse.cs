@@ -6,5 +6,5 @@ public sealed class DeveloperCertificateResponse : YANLibApplicationResponse<Gui
 {
     public Guid DeveloperId { get; set; }
 
-    public string? CertificateId { get; set; }
+    public required string CertificateCode { get; set; }
 }

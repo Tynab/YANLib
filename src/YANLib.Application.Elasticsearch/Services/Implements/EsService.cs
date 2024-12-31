@@ -17,7 +17,7 @@ using static YANLib.Core.YANExpression;
 
 namespace YANLib.Services.Implements;
 
-public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration) : IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex
+public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration) : IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
 {
     private readonly ILogger<EsService<TEsIndex>> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
@@ -58,11 +58,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<TEsIndex?> Get(string id)
+    public async ValueTask<TEsIndex?> Get(DocumentPath<TEsIndex> id)
     {
         try
         {
-            return (await _elasticClient.GetAsync<TEsIndex>(id)).Source ?? default;
+            return (await _elasticClient.GetAsync(id)).Source ?? default;
         }
         catch (Exception ex)
         {
@@ -114,7 +114,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<bool> Delete(string id)
+    public async ValueTask<bool> Delete(DocumentPath<TEsIndex> id)
     {
         try
         {

@@ -16,9 +16,11 @@ public static class YANLibDomainErrorCodes
     public const string EXIST_ID_CARD = "YANLib:423";
 
     public const string NOT_FOUND = "YANLib:404";
-    public const string NOT_FOUND_DEV = "YANLib:414";
     public const string NOT_FOUND_CERT = "YANLib:434";
     public const string NOT_FOUND_DEV_CERT = "YANLib:444";
 
     public const string INTERNAL_SERVER_ERROR = "YANLib:500";
+    public const string SQL_SERVER_ERROR = "YANLib:501";
+    public const string ES_SERVER_ERROR = "YANLib:502";
+    public const string REDIS_SERVER_ERROR = "YANLib:503";
 }

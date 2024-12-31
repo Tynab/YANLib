@@ -6,5 +6,5 @@ public sealed class DeveloperCertificateCreateRequest : YANLibApplicationCreateR
 {
     public required Guid DeveloperId { get; set; }
 
-    public required string CertificateId { get; set; }
+    public required string CertificateCode { get; set; }
 }

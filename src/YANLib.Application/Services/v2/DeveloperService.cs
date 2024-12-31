@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Entities;
 using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -15,6 +16,7 @@ using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
+using static YANLib.YANLibConsts;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
@@ -47,6 +49,22 @@ public class DeveloperService(
         }
     }
 
+    public async ValueTask<DeveloperResponse?> Get(Guid id)
+    {
+        try
+        {
+            var dto = await _esService.Get(id);
+
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperEsIndex), id) : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Get-DeveloperService-Exception: {Id}", id);
+
+            throw;
+        }
+    }
+
     public async ValueTask<DeveloperResponse?> Insert(DeveloperCreateRequest request)
     {
         try
@@ -57,21 +75,20 @@ public class DeveloperService(
             }
 
             var entityTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request));
-            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeId).AsTask();
+            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeCode).AsTask();
 
-            await WhenAll(entityTask, devTypeTask);
+            _ = await WhenAny(entityTask, devTypeTask);
 
-            var ent = await entityTask;
-            var devType = await devTypeTask;
+            var entity = await entityTask;
 
-            if (ent.IsNull())
+            if (entity.IsNull())
             {
-                return default;
+                throw new BusinessException(SQL_SERVER_ERROR);
             }
 
-            var mdl = ObjectMapper.Map<(DeveloperTypeResponse? DeveloperType, Developer Entity), DeveloperResponse>((devType, ent));
+            var result = ObjectMapper.Map<(DeveloperTypeResponse? DeveloperType, Developer Entity), DeveloperResponse>((await devTypeTask, entity));
 
-            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(mdl)) ? mdl : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result)) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -81,61 +98,52 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest dto)
+    public async ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest request)
     {
         try
         {
-            var mdl = await _esService.Get(idCard) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", idCard);
-            var ent = ObjectMapper.Map<DeveloperEsIndex, Developer>(mdl);
+            var dto = await _esService.Get(idCard) ?? throw new EntityNotFoundException(typeof(DeveloperEsIndex));
+            var model = ObjectMapper.Map<DeveloperEsIndex, Developer>(dto);
 
-            ent.Name = dto.Name ?? ent.Name;
-            ent.Phone = dto.Phone ?? ent.Phone;
-            ent.IdCard = idCard;
-            ent.DeveloperTypeId = dto.DeveloperTypeCode ?? ent.DeveloperTypeId;
-            ent.IsActive = dto.IsActive ?? ent.IsActive;
+            model.Name = request.Name ?? model.Name;
+            model.Phone = request.Phone ?? model.Phone;
+            model.IdCard = idCard;
+            model.DeveloperTypeCode = request.DeveloperTypeCode ?? model.DeveloperTypeCode;
+            model.IsActive = request.IsActive ?? model.IsActive;
 
-            var res = await _repository.Adjust(ent);
+            var entity = await _repository.Adjust(model);
 
-            if (res.IsNull())
+            if (entity.IsNull())
             {
-                return default;
+                throw new BusinessException(SQL_SERVER_ERROR);
             }
 
-            var rslt = ObjectMapper.Map<Developer, DeveloperResponse>(res);
+            var result = ObjectMapper.Map<Developer, DeveloperResponse>(entity);
 
-            rslt.DeveloperType = await _developerTypeService.Get(ent.DeveloperTypeId);
+            result.DeveloperType = await _developerTypeService.Get(model.DeveloperTypeCode);
 
-            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(rslt)) ? rslt : throw new BusinessException(INTERNAL_SERVER_ERROR);
+            return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result)) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Adjust-DeveloperService-Exception: {IdCard} - {DTO}", idCard, dto.Serialize());
+            _logger.LogError(ex, "Adjust-DeveloperService-Exception: {IdCard} - {Request}", idCard, request.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Delete(string idCard, Guid updatedBy)
+    public async ValueTask<bool> Delete(string idCard, Guid updatedBy)
     {
         try
         {
-            var dto = await _esService.Get(idCard) ?? throw new BusinessException(NOT_FOUND_DEV).WithData("IdCard", idCard);
+            var dto = await _esService.Get(idCard) ?? throw new EntityNotFoundException(typeof(DeveloperEsIndex));
 
-            var mdl = await _repository.Modify(new DeveloperDto
+            return (await _repository.Modify(new DeveloperDto
             {
-                Id = dto.DeveloperId,
+                Id = dto.Id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            });
-
-            if (mdl.IsNull())
-            {
-                return default;
-            }
-
-            _ = await _esService.Delete(idCard);
-
-            return ObjectMapper.Map<Developer, DeveloperResponse>(mdl);
+            })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _esService.Delete(idCard);
         }
         catch (Exception ex)
         {
@@ -149,21 +157,27 @@ public class DeveloperService(
     {
         try
         {
-            var clnTask = _esService.DeleteAll().AsTask();
-            var mdlsTask = _repository.GetListAsync(x => x.IsDeleted == false);
+            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Developer).AsTask();
+            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
-            await WhenAll(clnTask, mdlsTask);
+            _ = await WhenAny(cleanTask, entitiesTask);
 
-            var rslt = await clnTask;
-            var mdls = await mdlsTask;
+            var result = await cleanTask;
+            var entities = await entitiesTask;
+
+            if (entities.IsEmptyOrNull())
+            {
+                return result;
+            }
+
             var datas = new List<DeveloperEsIndex>();
-            var semSlim = new SemaphoreSlim(1);
+            var ss = new SemaphoreSlim(1);
 
-            await WhenAll(mdls.Select(async x =>
+            await WhenAll(entities.Select(async x =>
             {
                 var dto = ObjectMapper.Map<Developer, DeveloperEsIndex>(x);
 
-                await semSlim.WaitAsync();
+                await ss.WaitAsync();
 
                 try
                 {
@@ -172,31 +186,15 @@ public class DeveloperService(
                 }
                 finally
                 {
-                    _ = semSlim.Release();
+                    _ = ss.Release();
                 }
             }));
 
-            return mdls.IsEmptyOrNull() ? rslt : rslt && await _esService.SetBulk(datas);
+            return result && await _esService.SetBulk(datas, ElasticsearchIndex.Developer);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SyncDbToEs-DeveloperService-Exception");
-
-            throw;
-        }
-    }
-
-    public async ValueTask<DeveloperResponse?> GetByIdCard(string idCard)
-    {
-        try
-        {
-            var dto = await _esService.Get(idCard);
-
-            return dto.IsNull() ? default : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetByIdCard-DeveloperService-Exception: {IdCard}", idCard);
 
             throw;
         }

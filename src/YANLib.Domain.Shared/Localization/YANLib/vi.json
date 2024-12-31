@@ -16,6 +16,9 @@
     "YANLib:414": "Không tìm thấy hồ sơ lập trình viên có mã định danh {IdCard}!",
     "YANLib:434": "Không tìm thấy chứng chỉ có mã {Code}!",
     "YANLib:444": "Không tìm thấy chứng chỉ có mã {Code} của lập trình viên có mã định danh {IdCard}!",
-    "YANLib:500": "Lỗi trong quá trình xử lý!"
+    "YANLib:500": "Lỗi trong quá trình xử lý!",
+    "YANLib:501": "Lỗi trong quá trình xử lý SQL!",
+    "YANLib:502": "Lỗi trong quá trình xử lý Elasticsearch!",
+    "YANLib:503": "Lỗi trong quá trình xử lý Redis!"
   }
 }

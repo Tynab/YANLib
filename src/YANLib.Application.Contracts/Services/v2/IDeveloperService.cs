@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -13,13 +12,15 @@ public interface IDeveloperService : IApplicationService
 {
     public ValueTask<PagedResultDto<DeveloperResponse>> GetAll(PagedAndSortedResultRequestDto input);
 
+    public ValueTask<DeveloperResponse?> Get(Guid id);
+
     public ValueTask<DeveloperResponse?> Insert(DeveloperCreateRequest request);
 
-    public ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest dto);
+    public ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest request);
 
-    public ValueTask<DeveloperResponse?> Delete(string idCard, Guid updatedBy);
+    public ValueTask<bool> Delete(string idCard, Guid updatedBy);
 
     public ValueTask<bool> SyncDbToEs();
 
-    public ValueTask<DeveloperResponse?> GetByIdCard(string idCard);
+    //public ValueTask<DeveloperResponse?> GetByIdCard(string idCard);
 }
