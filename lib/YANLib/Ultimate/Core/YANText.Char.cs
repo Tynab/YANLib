@@ -1,4 +1,5 @@
 ﻿using YANLib.Core;
+using static YANLib.YANRandom;
 
 namespace YANLib.Ultimate.Core;
 
@@ -6,9 +7,9 @@ public static partial class YANText
 {
     public static IEnumerable<char> GenerateRandomCharacters(object? size)
     {
-        for (var i = 0ul; i < size.ToUlong(); i++)
+        for (var i = 0ul; i < size.To<ulong>(); i++)
         {
-            yield return YANLib.Core.YANText.GenerateRandomCharacter();
+            yield return GenerateRandom<char>();
         }
     }
 

@@ -9,9 +9,7 @@ using YANLib.Requests;
 using YANLib.Services;
 using static System.Guid;
 using static System.Threading.Tasks.Task;
-using static YANLib.Core.YANBool;
-using static YANLib.Core.YANUnmanaged;
-using static YANLib.Core.YANText;
+using static YANLib.YANRandom;
 
 namespace YANLib.Controllers;
 
@@ -37,13 +35,13 @@ public sealed class SampleController(ILogger<SampleController> logger, ISampleSe
     [MapToApiVersion(2)]
     [HttpGet("test")]
     [SwaggerOperation(Summary = "Trả về dữ liệu linh hoạt")]
-    public async ValueTask<IActionResult> TestV2() => (GenerateRandomByte(1, byte.MaxValue) % 7) switch
+    public async ValueTask<IActionResult> TestV2() => (GenerateRandom<byte>(1, byte.MaxValue) % 7) switch
     {
-        1 => await FromResult(Ok(GenerateRandomBool())),
-        2 => await FromResult(Ok(GenerateRandomCharacter())),
-        3 => await FromResult(Ok(GenerateRandomString())),
-        4 => await FromResult(Ok(GenerateRandomByte())),
-        5 => await FromResult(Ok(GenerateRandomFloat())),
+        1 => await FromResult(Ok(GenerateRandom<bool>())),
+        2 => await FromResult(Ok(GenerateRandom<char>())),
+        3 => await FromResult(Ok(GenerateRandom<string>())),
+        4 => await FromResult(Ok(GenerateRandom<byte>())),
+        5 => await FromResult(Ok(GenerateRandom<float>())),
         6 => await FromResult(Ok(new List<NotificationRequest>
         {
             new("Hi, YAN!", NewGuid()),

@@ -4,7 +4,7 @@ using static System.Globalization.DateTimeFormatInfo;
 using static System.Globalization.DateTimeStyles;
 using static System.Linq.Enumerable;
 using static System.Math;
-using static YANLib.Core.YANUnmanaged;
+using static YANLib.YANRandom;
 
 namespace YANLib.Core;
 
@@ -373,7 +373,7 @@ public static partial class YANDateTime
     /// <param name="min">The minimum <see cref="DateTime"/> value that can be generated.</param>
     /// <param name="max">The maximum <see cref="DateTime"/> value that can be generated.</param>
     /// <returns>A randomly generated <see cref="DateTime"/> object between the specified minimum and maximum values, or the default <see cref="DateTime"/> if min is greater than max.</returns>
-    public static DateTime GenerateRandomDateTime(DateTime min, DateTime max) => min > max ? default : min.AddTicks((long)GenerateRandomUlong((max - min).Ticks));
+    public static DateTime GenerateRandomDateTime(DateTime min, DateTime max) => min > max ? default : min.AddTicks(GenerateRandom<long>((max - min).Ticks));
 
     /// <summary>
     /// Generates a collection of random <see cref="DateTime"/> objects of the specified size, each within the specified minimum and maximum range.

@@ -41,7 +41,7 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
             }
 
             context.Response.Headers.WWWAuthenticate = "Basic";
-            context.Response.StatusCode = Unauthorized.ToInt();
+            context.Response.StatusCode = Unauthorized.To<int>();
         }
         else
         {

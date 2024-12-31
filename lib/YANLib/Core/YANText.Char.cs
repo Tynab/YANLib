@@ -1,5 +1,4 @@
 ﻿using static System.Linq.Enumerable;
-using static YANLib.Core.YANUnmanaged;
 
 namespace YANLib.Core;
 
@@ -239,15 +238,6 @@ public static partial class YANText
     public static bool AnyNotEqualsIgnoreCase(this ICollection<char> cs) => !cs.AllEqualsIgnoreCase();
 
     public static bool AnyNotEqualsIgnoreCase(params char[] cs) => !cs.AllEqualsIgnoreCase();
-
-    public static char GenerateRandomCharacter()
-    {
-        var chars = "abcdefghijklmnopqrstuvwxyz";
-
-        return chars[GenerateRandomByte(byte.MinValue, chars.Length)];
-    }
-
-    public static IEnumerable<char> GenerateRandomCharacters(object? size) => Range(0, (int)size.ToUint()).Select(i => GenerateRandomCharacter());
 
     public static char Lower(this char c) => c.IsWhiteSpaceOrEmpty() ? c : char.ToLower(c);
 

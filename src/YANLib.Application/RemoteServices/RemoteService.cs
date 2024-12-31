@@ -80,7 +80,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
                         Message = res.ErrorException?.Message
                     })
                     {
-                        HttpStatusCode = res.StatusCode.ToInt()
+                        HttpStatusCode = res.StatusCode.To<int>()
                     };
                 }
                 else
@@ -92,7 +92,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
                         Message = jtoken
                     })
                     {
-                        HttpStatusCode = res.StatusCode.ToInt()
+                        HttpStatusCode = res.StatusCode.To<int>()
                     };
                 }
             }

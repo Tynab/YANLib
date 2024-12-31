@@ -2,7 +2,6 @@
 using System.Globalization;
 using static System.Linq.Enumerable;
 using static System.StringComparison;
-using static YANLib.Core.YANUnmanaged;
 
 namespace YANLib.Core;
 
@@ -154,10 +153,6 @@ public static partial class YANText
     public static bool AnyNotEqualsIgnoreCase(this ICollection<string?> strs) => !strs.AllEqualsIgnoreCase();
 
     public static bool AnyNotEqualsIgnoreCase(params string?[] strs) => !strs.AllEqualsIgnoreCase();
-
-    public static string GenerateRandomString(object? size = null) => string.Concat(GenerateRandomCharacters(size ?? GenerateRandomByte()));
-
-    public static IEnumerable<string> GenerateRandomStrings(object? size) => Range(0, (int)size.ToUint()).Select(i => GenerateRandomString());
 
     public static string? Lower(this string? str) => str.IsWhiteSpaceOrNull() ? str : str.ToLower();
 

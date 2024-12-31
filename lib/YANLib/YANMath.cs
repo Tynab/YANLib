@@ -1,34 +1,9 @@
-﻿using static System.Guid;
+﻿using YANLib.Core;
 
-namespace YANLib.Core;
+namespace YANLib;
 
-public static partial class YANUnmanaged
+public static partial class YANMath
 {
-    public static T To<T>(this object? input, object? defaultValue = null) where T : unmanaged
-    {
-        try
-        {
-            return input.IsNull() ? defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T)) : (T)Convert.ChangeType(input, typeof(T));
-        }
-        catch
-        {
-            try
-            {
-                return defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T));
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
-
-    public static IEnumerable<T>? Tos<T>(this IEnumerable<object?>? input, object? defaultValue = null) where T : unmanaged => input.IsEmptyOrNull() ? default : input.Select(x => x.To<T>(defaultValue));
-
-    public static IEnumerable<T>? Tos<T>(this ICollection<object?>? input, object? defaultValue = null) where T : unmanaged => input.IsEmptyOrNull() ? default : input.Select(x => x.To<T>(defaultValue));
-
-    public static IEnumerable<T>? Tos<T>(this object?[]? input, object? defaultValue = null) where T : unmanaged => input.IsEmptyOrNull() ? default : input.Select(x => x.To<T>(defaultValue));
-
     /// <summary>
     /// Finds the minimum value in an array of nullable elements that implement <see cref="IComparable{T}"/>.
     /// If the array is <see langword="null"/>, empty, or all elements are <see langword="null"/>, returns the default value of type <typeparamref name="T"/>.

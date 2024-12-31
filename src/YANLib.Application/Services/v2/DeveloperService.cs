@@ -140,7 +140,7 @@ public class DeveloperService(
 
             return (await _repository.Modify(new DeveloperDto
             {
-                Id = dto.Id,
+                Id = dto.Id.To<Guid>(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _esService.Delete(idCard);

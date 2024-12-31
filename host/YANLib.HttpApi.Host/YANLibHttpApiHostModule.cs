@@ -115,7 +115,7 @@ public class YANLibHttpApiHostModule : AbpModule
     private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
     {
         o.Authority = configuration["AuthServer:Authority"];
-        o.RequireHttpsMetadata = configuration["AuthServer:RequireHttpsMetadata"].ToBool();
+        o.RequireHttpsMetadata = configuration["AuthServer:RequireHttpsMetadata"].To<bool>();
         o.Audience = configuration["AuthServer:ApiName"];
         o.TokenValidationParameters = new TokenValidationParameters
         {
@@ -263,7 +263,7 @@ public class YANLibHttpApiHostModule : AbpModule
             //});
 
             c.DefaultGroupName = configuration["Cap:DefaultGroupName"] ?? c.DefaultGroupName;
-            c.FailedRetryCount = configuration["Cap:FailedRetryCount"].ToInt(0);
+            c.FailedRetryCount = configuration["Cap:FailedRetryCount"].To<int>();
         });
     }
 
@@ -315,7 +315,7 @@ public class YANLibHttpApiHostModule : AbpModule
 #endif
 
         var rabbitHostName = configuration["RabbitMQ:Connections:Default:HostName"];
-        var rabbitPort = configuration["RabbitMQ:Connections:Default:Port"].ToInt(5672);
+        var rabbitPort = configuration["RabbitMQ:Connections:Default:Port"].To<int>(5672);
         var rabbitUsername = configuration["RabbitMQ:Connections:Default:Username"];
         var rabbitPassword = configuration["RabbitMQ:Connections:Default:Password"];
         var rabbitVirtualHost = configuration["RabbitMQ:Connections:Default:VirtualHost"] ?? string.Empty;

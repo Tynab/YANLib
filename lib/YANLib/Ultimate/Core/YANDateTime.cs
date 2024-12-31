@@ -288,7 +288,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of randomly generated <see cref="DateTime"/> objects within the specified range.</returns>
     public static IEnumerable<DateTime> GenerateRandomDateTimes(object? size, DateTime min, DateTime max)
     {
-        for (var i = 0ul; i < size.ToUlong(); i++)
+        for (var i = 0ul; i < size.To<ulong>(); i++)
         {
             yield return GenerateRandomDateTime(min, max);
         }
