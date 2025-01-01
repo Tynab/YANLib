@@ -1,4 +1,4 @@
-﻿using YANLib.Core;
+﻿using YANLib.Object;
 
 namespace YANLib.Ultimate.Core;
 
@@ -14,14 +14,14 @@ public static partial class YANEnum
     /// <returns>An enumerable collection of nullable enum values of type <typeparamref name="T"/>.</returns>
     public static IEnumerable<T?> ToEnums<T>(this IEnumerable<string?>? vals) where T : struct
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
 
         foreach (var val in vals)
         {
-            yield return val.ToEnumeration<T>();
+            yield return val.ToE<T>();
         }
     }
 
@@ -35,14 +35,14 @@ public static partial class YANEnum
     /// <returns>An enumerable collection of nullable enum values of type <typeparamref name="T"/>.</returns>
     public static IEnumerable<T?> ToEnums<T>(this ICollection<string?>? vals) where T : struct
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
 
         foreach (var val in vals)
         {
-            yield return val.ToEnumeration<T>();
+            yield return val.ToE<T>();
         }
     }
 
@@ -56,14 +56,14 @@ public static partial class YANEnum
     /// <returns>An enumerable collection of nullable enum values of type <typeparamref name="T"/>.</returns>
     public static IEnumerable<T?> ToEnums<T>(this string?[]? vals) where T : struct
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
 
         foreach (var val in vals)
         {
-            yield return val.ToEnumeration<T>();
+            yield return val.ToE<T>();
         }
     }
 }

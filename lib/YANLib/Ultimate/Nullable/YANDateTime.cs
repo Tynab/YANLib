@@ -1,283 +1,10 @@
-﻿using YANLib.Core;
-using static YANLib.Nullable.YANDateTime;
+﻿using YANLib.Object;
+using YANLib.Unmanaged;
 
 namespace YANLib.Ultimate.Nullable;
 
 public static partial class YANDateTime
 {
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return YANLib.Nullable.YANDateTime.ToDateTime(str, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
     /// <summary>
     /// Generates a collection of random nullable <see cref="DateTime"/> values within the specified range and of the specified size.
     /// </summary>
@@ -302,7 +29,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int?> GetWeekOfYears(this IEnumerable<DateTime?>? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -322,7 +49,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int?> GetWeekOfYears(this ICollection<DateTime?>? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -342,7 +69,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int?> GetWeekOfYears(this DateTime?[]? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -364,7 +91,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime?> ChangeTimeZones(this IEnumerable<DateTime?>? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -386,7 +113,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime?> ChangeTimeZones(this ICollection<DateTime?>? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -408,7 +135,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime?> ChangeTimeZones(this DateTime?[]? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }

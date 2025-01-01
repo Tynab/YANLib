@@ -1,207 +1,208 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using YANLib.Core;
 using static System.Reflection.BindingFlags;
 
-namespace YANLib.Core;
+namespace YANLib.Object;
 
 public static partial class YANObject
 {
-    public static bool IsNull([NotNullWhen(false)] this object? obj) => obj is null;
+    public static bool IsNull([NotNullWhen(false)] this object? input) => input is null;
 
-    public static bool IsNotNull([NotNullWhen(true)] this object? obj) => obj is not null;
+    public static bool IsNotNull([NotNullWhen(true)] this object? input) => input is not null;
 
     /// <summary>
     /// Determines whether the specified IEnumerable collection is <see langword="null"/> or contains no elements.
     /// </summary>
-    /// <param name="srcs">The IEnumerable collection to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The IEnumerable collection to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if the collection is <see langword="null"/> or empty; otherwise, <see langword="false"/>.</returns>
-    public static bool IsEmptyOrNull<T>([NotNullWhen(false)] this IEnumerable<T>? srcs) => srcs.IsNull() || !srcs.Any();
+    public static bool IsNullOEmpty<T>([NotNullWhen(false)] this IEnumerable<T>? input) => input.IsNull() || !input.Any();
 
     /// <summary>
     /// Determines whether the specified ICollection collection is <see langword="null"/> or contains no elements.
     /// </summary>
-    /// <param name="srcs">The ICollection collection to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The ICollection collection to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if the collection is <see langword="null"/> or empty; otherwise, <see langword="false"/>.</returns>
-    public static bool IsEmptyOrNull<T>([NotNullWhen(false)] this ICollection<T>? srcs) => srcs.IsNull() || srcs.Count is 0;
+    public static bool IsNullOEmpty<T>([NotNullWhen(false)] this ICollection<T>? input) => input.IsNull() || input.Count is 0;
 
     /// <summary>
     /// Determines whether the specified array is <see langword="null"/> or contains no elements.
     /// </summary>
-    /// <param name="srcs">The array to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The array to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if the array is <see langword="null"/> or empty; otherwise, <see langword="false"/>.</returns>
-    public static bool IsEmptyOrNull<T>([NotNullWhen(false)] params T[]? srcs) => srcs.IsNull() || srcs.Length is 0;
+    public static bool IsNullOEmpty<T>([NotNullWhen(false)] params T[]? input) => input.IsNull() || input.Length is 0;
 
     /// <summary>
     /// Determines whether the specified IEnumerable collection is not <see langword="null"/> and contains at least one element.
     /// </summary>
-    /// <param name="srcs">The IEnumerable collection to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The IEnumerable collection to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if the collection is not <see langword="null"/> and not empty; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyAndNull<T>([NotNullWhen(true)] this IEnumerable<T>? srcs) => srcs.IsNotNull() && srcs.Any();
+    public static bool IsNotNullNEmpty<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNull() && input.Any();
 
     /// <summary>
     /// Determines whether the specified ICollection collection is not <see langword="null"/> and contains at least one element.
     /// </summary>
-    /// <param name="srcs">The ICollection collection to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The ICollection collection to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if the collection is not <see langword="null"/> and not empty; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyAndNull<T>([NotNullWhen(true)] this ICollection<T>? srcs) => srcs.IsNotNull() && srcs.Count is not 0;
+    public static bool IsNotNullNEmpty<T>([NotNullWhen(true)] this ICollection<T>? input) => input.IsNotNull() && input.Count is not 0;
 
     /// <summary>
     /// Determines whether the specified array is not <see langword="null"/> and contains at least one element.
     /// </summary>
-    /// <param name="srcs">The array to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The array to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if the array is not <see langword="null"/> and not empty; otherwise, <see langword="false"/>.</returns>
-    public static bool IsNotEmptyAndNull<T>([NotNullWhen(true)] params T[]? srcs) => srcs.IsNotNull() && srcs.Length is not 0;
+    public static bool IsNotNullNEmpty<T>([NotNullWhen(true)] params T[]? input) => input.IsNotNull() && input.Length is not 0;
 
-    public static bool AllNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNotNull());
+    public static bool AllNull<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNotNull());
 
-    public static bool AllNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNotNull());
+    public static bool AllNull<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNotNull());
 
-    public static bool AllNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNotNull());
+    public static bool AllNull<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNotNull());
 
     /// <summary>
     /// Determines whether all elements in the specified IEnumerable collection of class type are either <see langword="null"/> or have all properties set to default values.
     /// Returns <see langword="true"/> only if the collection is not <see langword="null"/>, not empty, and all elements are <see langword="null"/> or have default property values.
     /// </summary>
-    /// <param name="srcs">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if all elements are <see langword="null"/> or have default property values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllEmptyOrNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    public static bool AllNullOEmpty<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
     /// <summary>
     /// Determines whether all elements in the specified ICollection collection of class type are either <see langword="null"/> or have all properties set to default values.
     /// Returns <see langword="true"/> only if the collection is not <see langword="null"/>, not empty, and all elements are <see langword="null"/> or have default property values.
     /// </summary>
-    /// <param name="srcs">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if all elements are <see langword="null"/> or have default property values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllEmptyOrNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    public static bool AllNullOEmpty<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
     /// <summary>
     /// Determines whether all elements in the specified array of class type are either <see langword="null"/> or have all properties set to default values.
     /// Returns <see langword="true"/> only if the array is not <see langword="null"/>, not empty, and all elements are <see langword="null"/> or have default property values.
     /// </summary>
-    /// <param name="srcs">The array of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The array of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if all elements are <see langword="null"/> or have default property values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllEmptyOrNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    public static bool AllNullOEmpty<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
-    public static bool AnyNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNull());
+    public static bool AnyNull<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNull());
 
-    public static bool AnyNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNull());
+    public static bool AnyNull<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNull());
 
-    public static bool AnyNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNull());
+    public static bool AnyNull<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNull());
 
     /// <summary>
     /// Determines whether any element in the specified IEnumerable collection of class type is either <see langword="null"/> or has all properties set to default values.
     /// Returns <see langword="true"/> if the collection is not <see langword="null"/>, not empty, and any element is <see langword="null"/> or has default property values.
     /// </summary>
-    /// <param name="srcs">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if any element is <see langword="null"/> or has all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyEmptyOrNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    public static bool AnyNullOEmpty<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
     /// <summary>
     /// Determines whether any element in the specified ICollection collection of class type is either <see langword="null"/> or has all properties set to default values.
     /// Returns <see langword="true"/> if the collection is not <see langword="null"/>, not empty, and any element is <see langword="null"/> or has default property values.
     /// </summary>
-    /// <param name="srcs">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if any element is <see langword="null"/> or has all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyEmptyOrNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    public static bool AnyNullOEmpty<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
     /// <summary>
     /// Determines whether any element in the specified array of class type is either <see langword="null"/> or has all properties set to default values.
     /// Returns <see langword="true"/> if the array is not <see langword="null"/>, not empty, and any element is <see langword="null"/> or has default property values.
     /// </summary>
-    /// <param name="srcs">The array of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The array of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if any element is <see langword="null"/> or has all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyEmptyOrNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    public static bool AnyNullOEmpty<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
-    public static bool AllNotNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNull());
+    public static bool AllNotNull<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNull());
 
-    public static bool AllNotNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNull());
+    public static bool AllNotNull<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNull());
 
-    public static bool AllNotNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNull());
+    public static bool AllNotNull<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNull());
 
     /// <summary>
     /// Determines whether all elements in the specified IEnumerable collection of class type are not <see langword="null"/> and do not have all properties set to default values.
     /// Returns <see langword="true"/> if the collection is not <see langword="null"/>, not empty, and no element is <see langword="null"/> or has all properties set to default values.
     /// </summary>
-    /// <param name="srcs">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if no element is <see langword="null"/> or has all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotEmptyAndNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    public static bool AllNotNullNEmpty<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
     /// <summary>
     /// Determines whether all elements in the specified ICollection collection of class type are not <see langword="null"/> and do not have all properties set to default values.
     /// Returns <see langword="true"/> if the collection is not <see langword="null"/>, not empty, and no element is <see langword="null"/> or has all properties set to default values.
     /// </summary>
-    /// <param name="srcs">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if no element is <see langword="null"/> or has all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotEmptyAndNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    public static bool AllNotNullNEmpty<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
     /// <summary>
     /// Determines whether all elements in the specified array of class type are not <see langword="null"/> and do not have all properties set to default values.
     /// Returns <see langword="true"/> if the array is not <see langword="null"/>, not empty, and no element is <see langword="null"/> or has all properties set to default values.
     /// </summary>
-    /// <param name="srcs">The array of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The array of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if no element is <see langword="null"/> or has all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotEmptyAndNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && !srcs.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    public static bool AllNotNullNEmpty<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
-    public static bool AnyNotNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNotNull());
+    public static bool AnyNotNull<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNotNull());
 
     /// <summary>
     /// Determines whether any element in the specified IEnumerable collection of class type is not <see langword="null"/> or does not have all properties set to default values.
     /// Returns <see langword="true"/> if the collection is not <see langword="null"/>, not empty, and any element is not <see langword="null"/> or does not have all properties set to default values.
     /// </summary>
-    /// <param name="srcs">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The IEnumerable collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if any element is not <see langword="null"/> or does not have all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyNotEmptyAndNull<T>(this IEnumerable<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    public static bool AnyNotNullNEmpty<T>(this IEnumerable<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
     /// <summary>
     /// Determines whether any element in the specified ICollection collection of class type is not <see langword="null"/> or does not have all properties set to default values.
     /// Returns <see langword="true"/> if the collection is not <see langword="null"/>, not empty, and any element is not <see langword="null"/> or does not have all properties set to default values.
     /// </summary>
-    /// <param name="srcs">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The ICollection collection of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if any element is not <see langword="null"/> or does not have all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyNotEmptyAndNull<T>(this ICollection<T>? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    public static bool AnyNotNullNEmpty<T>(this ICollection<T>? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
     /// <summary>
     /// Determines whether any element in the specified array of class type is not <see langword="null"/> or does not have all properties set to default values.
     /// Returns <see langword="true"/> if the array is not <see langword="null"/>, not empty, and any element is not <see langword="null"/> or does not have all properties set to default values.
     /// </summary>
-    /// <param name="srcs">The array of class type elements to check. Can be <see langword="null"/>.</param>
+    /// <param name="input">The array of class type elements to check. Can be <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if any element is not <see langword="null"/> or does not have all properties set to default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyNotEmptyAndNull<T>(params T[]? srcs) where T : class => srcs.IsNotEmptyAndNull() && srcs.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    public static bool AnyNotNullNEmpty<T>(params T[]? input) where T : class => input.IsNotNullNEmpty() && input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
 
-    public static List<T> AsList<T>(this T obj) => [obj];
+    public static List<T> AsList<T>(this T input) => [input];
 
-    public static HashSet<T> AsHashSet<T>(this T obj) => [obj];
+    public static HashSet<T> AsHashSet<T>(this T input) => [input];
 
-    public static T[] AsArray<T>(this T obj) => [obj];
+    public static T[] AsArray<T>(this T input) => [input];
 
-    public static T Copy<T>(this T src) where T : new()
+    public static T Copy<T>(this T input) where T : new()
     {
-        if (src.IsNull())
+        if (input.IsNull())
         {
-            return src;
+            return input;
         }
 
-        var rslt = new T();
+        var result = new T();
         var props = typeof(T).GetProperties(Public | Instance);
 
         foreach (var prop in props)
         {
             if (prop.CanRead && prop.CanWrite)
             {
-                var val = prop.GetValue(src);
+                var val = prop.GetValue(input);
 
-                prop.SetValue(rslt, val);
+                prop.SetValue(result, val);
             }
         }
 
-        return rslt;
+        return result;
     }
 
-    public static T? ChangeTimeZoneAllProperty<T>(this T? obj, object? tzSrc = null, object? tzDst = null) where T : class
+    public static T? ChangeTimeZoneAllProperty<T>(this T? input, object? tzSrc = null, object? tzDst = null) where T : class
     {
-        if (obj.IsNull())
+        if (input.IsNull())
         {
-            return obj;
+            return input;
         }
 
         var props = typeof(T).GetProperties(Public | Instance).Where(x => x.CanRead && x.CanWrite);
@@ -215,7 +216,7 @@ public static partial class YANObject
                     continue;
                 }
 
-                var val = prop.GetValue(obj);
+                var val = prop.GetValue(input);
 
                 if (val.IsNull())
                 {
@@ -224,15 +225,15 @@ public static partial class YANObject
 
                 if (val is DateTime dt)
                 {
-                    prop.SetValue(obj, dt.ChangeTimeZone(tzSrc, tzDst));
+                    prop.SetValue(input, dt.ChangeTimeZone(tzSrc, tzDst));
                 }
                 else if (val.GetType().IsClass)
                 {
-                    var chgedVal = ChangeTimeZoneAllProperty(val, tzSrc, tzDst);
+                    var changedVal = val.ChangeTimeZoneAllProperty(tzSrc, tzDst);
 
-                    if (chgedVal.IsNotNull())
+                    if (changedVal.IsNotNull())
                     {
-                        prop.SetValue(obj, chgedVal);
+                        prop.SetValue(input, changedVal);
                     }
                 }
                 else if (val.GetType().IsGenericType && val.GetType().GetGenericTypeDefinition() == typeof(IList<>))
@@ -248,11 +249,11 @@ public static partial class YANObject
                                 continue;
                             }
 
-                            var chgedItem = ChangeTimeZoneAllProperty(list[i], tzSrc, tzDst);
+                            var changedItem = list[i].ChangeTimeZoneAllProperty(tzSrc, tzDst);
 
-                            if (chgedItem.IsNotNull())
+                            if (changedItem.IsNotNull())
                             {
-                                list[i] = chgedItem;
+                                list[i] = changedItem;
                             }
                         }
                     }
@@ -260,18 +261,18 @@ public static partial class YANObject
             }
         }
 
-        return obj;
+        return input;
     }
 
-    public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this IEnumerable<T?>? objs, object? tzSrc = null, object? tzDst = null) where T : class => objs.IsEmptyOrNull()
-        ? objs
-        : objs.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
+    public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class => input.IsNullOEmpty()
+        ? input
+        : input.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
 
-    public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this ICollection<T?>? objs, object? tzSrc = null, object? tzDst = null) where T : class => objs.IsEmptyOrNull()
-        ? objs
-        : objs.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
+    public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this ICollection<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class => input.IsNullOEmpty()
+        ? input
+        : input.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
 
-    public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this T?[]? objs, object? tzSrc = null, object? tzDst = null) where T : class => objs.IsEmptyOrNull()
-        ? objs
-        : objs.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
+    public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this T?[]? input, object? tzSrc = null, object? tzDst = null) where T : class => input.IsNullOEmpty()
+        ? input
+        : input.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
 }

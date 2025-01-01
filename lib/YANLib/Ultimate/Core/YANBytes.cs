@@ -1,4 +1,4 @@
-﻿using YANLib.Core;
+﻿using YANLib.Object;
 
 namespace YANLib.Ultimate.Core;
 
@@ -13,7 +13,7 @@ public static partial class YANBytes
     /// <returns>An enumerable collection of byte arrays representing each object's byte array representation.</returns>
     public static IEnumerable<byte[]?> ToByteArrays(this IEnumerable<object?>? vals)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -33,7 +33,7 @@ public static partial class YANBytes
     /// <returns>An enumerable collection of byte arrays representing each object's byte array representation.</returns>
     public static IEnumerable<byte[]?> ToByteArrays(this ICollection<object?>? vals)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -53,7 +53,7 @@ public static partial class YANBytes
     /// <returns>An enumerable collection of byte arrays representing each object's byte array representation.</returns>
     public static IEnumerable<byte[]?> ToByteArrays(this object?[]? vals)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -74,7 +74,7 @@ public static partial class YANBytes
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays.</returns>
     public static IEnumerable<T?> FromByteArrays<T>(this IEnumerable<byte[]?>? arrs)
     {
-        if (arrs.IsEmptyOrNull())
+        if (arrs.IsNullOEmpty())
         {
             yield break;
         }
@@ -95,7 +95,7 @@ public static partial class YANBytes
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays.</returns>
     public static IEnumerable<T?> FromByteArrays<T>(this ICollection<byte[]?>? arrs)
     {
-        if (arrs.IsEmptyOrNull())
+        if (arrs.IsNullOEmpty())
         {
             yield break;
         }
@@ -116,7 +116,7 @@ public static partial class YANBytes
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays.</returns>
     public static IEnumerable<T?> FromByteArrays<T>(this byte[]?[]? arrs)
     {
-        if (arrs.IsEmptyOrNull())
+        if (arrs.IsNullOEmpty())
         {
             yield break;
         }

@@ -42,9 +42,11 @@ using Volo.Abp.EventBus.RabbitMq;
 using Volo.Abp.Http.Client;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
-using YANLib.Core;
 using YANLib.Filters;
+using YANLib.Object;
 using YANLib.Options;
+using YANLib.Text;
+using YANLib.Unmanaged;
 using static Amazon.RegionEndpoint;
 using static Amazon.Runtime.CredentialManagement.AWSCredentialsFactory;
 using static Asp.Versioning.ApiVersionReader;
@@ -54,7 +56,7 @@ using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
 using static Microsoft.OpenApi.Models.ReferenceType;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Text.Encoding;
-using static YANLib.Core.YANText;
+using static YANLib.Text.YANText;
 using static YANLib.YANLibConsts;
 
 namespace YANLib;
@@ -133,7 +135,7 @@ public class YANLibHttpApiHostModule : AbpModule
     {
         var corsOrigins = configuration["App:CorsOrigins"]?.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(origin => origin.RemovePostFix("/")).ToArray();
 
-        if (corsOrigins.IsEmptyOrNull())
+        if (corsOrigins.IsNullOEmpty())
         {
             return;
         }
@@ -147,7 +149,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         var authority = configuration["AuthServer:Authority"];
 
-        if (authority.IsWhiteSpaceOrNull())
+        if (authority.IsNullOWhiteSpace())
         {
             return;
         }
@@ -203,7 +205,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 var dbName = configuration["CAP:DBName"];
                 var connectionString = configuration["CAP:ConnectionString"];
 
-                if (dbName.IsWhiteSpaceOrNull() || connectionString.IsWhiteSpaceOrNull())
+                if (dbName.IsNullOWhiteSpace() || connectionString.IsNullOWhiteSpace())
                 {
                     return;
                 }
@@ -216,7 +218,7 @@ public class YANLibHttpApiHostModule : AbpModule
             {
                 var connection = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
 
-                if (connection.IsWhiteSpaceOrNull())
+                if (connection.IsNullOWhiteSpace())
                 {
                     return;
                 }
@@ -227,14 +229,14 @@ public class YANLibHttpApiHostModule : AbpModule
 
                 var username = configuration["CAP:Kafka:Username"];
 
-                if (username.IsNotWhiteSpaceAndNull())
+                if (username.IsNotNullNWhiteSpace())
                 {
                     o.MainConfig.Add("sasl.username", username);
                 }
 
                 var password = configuration["CAP:Kafka:Password"];
 
-                if (password.IsNotWhiteSpaceAndNull())
+                if (password.IsNotNullNWhiteSpace())
                 {
                     o.MainConfig.Add("sasl.password", password);
                 }
@@ -274,14 +276,14 @@ public class YANLibHttpApiHostModule : AbpModule
         var healthChecksBuilder = context.Services.AddHealthChecks();
         var sql = configuration["ConnectionStrings:Default"];
 
-        if (sql.IsNotWhiteSpaceAndNull())
+        if (sql.IsNotNullNWhiteSpace())
         {
             healthChecksBuilder.AddSqlServer(sql!, tags: ["db", "sql", "mssql"]);
         }
 
         var mongo = configuration["CAP:ConnectionString"];
 
-        if (mongo.IsNotWhiteSpaceAndNull())
+        if (mongo.IsNotNullNWhiteSpace())
         {
             healthChecksBuilder.AddMongoDb(mongo!, tags: ["db", "nosql", "mongo"]);
         }
@@ -290,14 +292,14 @@ public class YANLibHttpApiHostModule : AbpModule
         var esUsername = configuration["Elasticsearch:Username"];
         var esPassword = configuration["Elasticsearch:Password"];
 
-        if (AllNotWhiteSpaceAndNull(esUrl, esUsername, esPassword))
+        if (AllNotNullNWhiteSpace(esUrl, esUsername, esPassword))
         {
             healthChecksBuilder.AddElasticsearch(x => x.UseServer(esUrl!).UseBasicAuthentication(esUsername!, esPassword!), tags: ["db", "nosql", "es"]);
         }
 
         var redis = configuration["Redis:Configuration"];
 
-        if (redis.IsNotWhiteSpaceAndNull())
+        if (redis.IsNotNullNWhiteSpace())
         {
             healthChecksBuilder.AddRedis(redis!, tags: ["db", "nosql", "redis"]);
         }
@@ -322,7 +324,7 @@ public class YANLibHttpApiHostModule : AbpModule
         //var rabbitSsl = configuration["RabbitMQ:Connections:Default:Ssl:Enabled"].ToBool();
         //var rabbitServerName = configuration["RabbitMQ:Connections:Default:Ssl:ServerName"];
 
-        if (AllNotWhiteSpaceAndNull(rabbitHostName, rabbitUsername, rabbitPassword))
+        if (AllNotNullNWhiteSpace(rabbitHostName, rabbitUsername, rabbitPassword))
         {
             healthChecksBuilder.AddRabbitMQ((serviceProvider, rabbitOptions) =>
             {
@@ -365,7 +367,7 @@ public class YANLibHttpApiHostModule : AbpModule
         {
             var bucketName = configuration["AWS:S3:BucketName"];
 
-            if (bucketName.IsNotWhiteSpaceAndNull())
+            if (bucketName.IsNotNullNWhiteSpace())
             {
                 healthChecksBuilder.AddS3(x =>
                 {
@@ -396,7 +398,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         var aai = configuration["Azure:ApplicationInsights:ConnectionString"];
 
-        if (aai.IsNotWhiteSpaceAndNull())
+        if (aai.IsNotNullNWhiteSpace())
         {
             healthChecksBuilder.AddApplicationInsightsPublisher(aai);
         }

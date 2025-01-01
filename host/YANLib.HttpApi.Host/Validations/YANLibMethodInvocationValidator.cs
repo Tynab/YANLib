@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Validation;
-using YANLib.Core;
+using YANLib.Object;
 using static Volo.Abp.Check;
 using static Volo.Abp.Reflection.ReflectionHelper;
 using static Volo.Abp.Reflection.TypeHelper;
@@ -21,7 +21,7 @@ public class YANLibMethodInvocationValidator(IObjectValidator objectValidator) :
     {
         _ = NotNull(context, nameof(context));
 
-        if (context.Parameters.IsEmptyOrNull())
+        if (context.Parameters.IsNullOEmpty())
         {
             return;
         }
@@ -41,14 +41,14 @@ public class YANLibMethodInvocationValidator(IObjectValidator objectValidator) :
             throw new ArgumentException("Method parameter count does not match with argument count!");
         }
 
-        if (context.Errors.IsNotEmptyAndNull() && HasSingleNullArgument(context))
+        if (context.Errors.IsNotNullNEmpty() && HasSingleNullArgument(context))
         {
             ThrowValidationError(context);
         }
 
         await AddMethodParameterValidationErrorsAsync(context);
 
-        if (context.Errors.IsNotEmptyAndNull())
+        if (context.Errors.IsNotNullNEmpty())
         {
             ThrowValidationError(context);
         }

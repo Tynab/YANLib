@@ -4,7 +4,6 @@ using Amazon.SecretsManager.Model;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Threading.Tasks;
-using YANLib.Core;
 using static Amazon.RegionEndpoint;
 using static Amazon.Runtime.CredentialManagement.AWSCredentialsFactory;
 using static Newtonsoft.Json.Linq.JObject;
@@ -28,7 +27,7 @@ public static class ConfigurationBuilderExtensions
                 SecretId = secretId
             });
 
-            if (response.SecretString.IsNotWhiteSpaceAndNull())
+            if (response.SecretString.IsNotNullNWhiteSpace())
             {
                 using var memoryStream = new MemoryStream(UTF8.GetBytes(Parse(response.SecretString).ToString()));
 

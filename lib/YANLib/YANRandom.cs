@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
-using YANLib.Core;
+using YANLib.Object;
+using YANLib.Unmanaged;
 using static System.Linq.Enumerable;
 
 namespace YANLib;

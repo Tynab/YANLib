@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.ConnectionFactories;
-using YANLib.Core;
+using YANLib.Object;
 using static System.Text.Encoding;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
@@ -36,7 +36,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            if (group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull())
+            if (group.IsNullOWhiteSpace() || key.IsNullOWhiteSpace())
             {
                 throw new BusinessException(BAD_REQUEST);
             }
@@ -57,7 +57,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            if (group.IsWhiteSpaceOrNull() || keys.AllWhiteSpaceOrNull())
+            if (group.IsNullOWhiteSpace() || keys.AllNullOWhiteSpace())
             {
                 throw new BusinessException(BAD_REQUEST);
             }
@@ -98,7 +98,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            if (group.IsWhiteSpaceOrNull())
+            if (group.IsNullOWhiteSpace())
             {
                 throw new BusinessException(BAD_REQUEST);
             }
@@ -141,7 +141,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
         try
         {
-            _ = group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() || value.IsNull()
+            _ = group.IsNullOWhiteSpace() || key.IsNullOWhiteSpace() || value.IsNull()
                 ? throw new BusinessException(BAD_REQUEST)
                 : await _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), jsonVal);
 
@@ -159,7 +159,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            if (group.IsWhiteSpaceOrNull() || fields.IsEmptyOrNull())
+            if (group.IsNullOWhiteSpace() || fields.IsNullOEmpty())
             {
                 throw new BusinessException(BAD_REQUEST);
             }
@@ -180,7 +180,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            return group.IsWhiteSpaceOrNull() || key.IsWhiteSpaceOrNull() ? throw new BusinessException(BAD_REQUEST) : await _database.HashDeleteAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant());
+            return group.IsNullOWhiteSpace() || key.IsNullOWhiteSpace() ? throw new BusinessException(BAD_REQUEST) : await _database.HashDeleteAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant());
         }
         catch (Exception ex)
         {
@@ -194,7 +194,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            if (group.IsWhiteSpaceOrNull() || keys.AllWhiteSpaceOrNull())
+            if (group.IsNullOWhiteSpace() || keys.AllNullOWhiteSpace())
             {
                 throw new BusinessException(BAD_REQUEST);
             }
@@ -202,7 +202,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
             var result = true;
             var ss = new SemaphoreSlim(1);
 
-            await WhenAll(keys.Where(k => k.IsNotWhiteSpaceAndNull()).Select(async k =>
+            await WhenAll(keys.Where(k => k.IsNotNullNWhiteSpace()).Select(async k =>
             {
                 await ss.WaitAsync();
 
@@ -230,14 +230,14 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            if (group.IsWhiteSpaceOrNull())
+            if (group.IsNullOWhiteSpace())
             {
                 throw new BusinessException(BAD_REQUEST);
             }
 
             var dic = await GetAll(group);
 
-            return dic.IsEmptyOrNull() || await DeleteBulk(group, dic.Select(p => p.Key).ToArray());
+            return dic.IsNullOEmpty() || await DeleteBulk(group, dic.Select(p => p.Key).ToArray());
         }
         catch (Exception ex)
         {
@@ -261,7 +261,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
             var keys = (RedisKey[]?)redisResult;
             var result = new Dictionary<string, IDictionary<string, TRedisDto?>?>();
 
-            if (keys.IsNotEmptyAndNull())
+            if (keys.IsNotNullNEmpty())
             {
                 var ss = new SemaphoreSlim(1);
 
@@ -269,7 +269,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
                 {
                     var dic = await GetAll(k);
 
-                    if (dic.IsNotEmptyAndNull())
+                    if (dic.IsNotNullNEmpty())
                     {
                         await ss.WaitAsync();
 
@@ -308,7 +308,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
             var keys = (RedisKey[]?)redisResult;
 
-            return keys.IsEmptyOrNull() || await _database.KeyDeleteAsync(keys) > 0;
+            return keys.IsNullOEmpty() || await _database.KeyDeleteAsync(keys) > 0;
         }
         catch (Exception ex)
         {
@@ -322,7 +322,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
     {
         try
         {
-            return groupPreffix.IsWhiteSpaceOrNull() ? throw new BusinessException(BAD_REQUEST) : await _database.ExecuteAsync(KeyCommand, $"{groupPreffix}*");
+            return groupPreffix.IsNullOWhiteSpace() ? throw new BusinessException(BAD_REQUEST) : await _database.ExecuteAsync(KeyCommand, $"{groupPreffix}*");
         }
         catch (Exception ex)
         {

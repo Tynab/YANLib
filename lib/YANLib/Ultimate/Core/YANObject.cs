@@ -1,4 +1,4 @@
-﻿using YANLib.Core;
+﻿using YANLib.Object;
 
 namespace YANLib.Ultimate.Core;
 
@@ -16,7 +16,7 @@ public static partial class YANObject
     /// <returns>An enumerable collection of objects with their <see cref="DateTime"/> properties and nested class properties adjusted to the new time zone.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T>(this IEnumerable<T?>? objs, object? tzSrc = null, object? tzDst = null) where T : class
     {
-        if (objs.IsEmptyOrNull())
+        if (objs.IsNullOEmpty())
         {
             yield break;
         }
@@ -39,7 +39,7 @@ public static partial class YANObject
     /// <returns>An enumerable collection of objects with their <see cref="DateTime"/> properties and nested class properties adjusted to the new time zone.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T>(this ICollection<T?>? objs, object? tzSrc = null, object? tzDst = null) where T : class
     {
-        if (objs.IsEmptyOrNull())
+        if (objs.IsNullOEmpty())
         {
             yield break;
         }
@@ -62,7 +62,7 @@ public static partial class YANObject
     /// <returns>An enumerable collection of objects with their <see cref="DateTime"/> properties and nested class properties adjusted to the new time zone.</returns>
     public static IEnumerable<T?> ChangeTimeZoneAllProperties<T>(this T?[]? objs, object? tzSrc = null, object? tzDst = null) where T : class
     {
-        if (objs.IsEmptyOrNull())
+        if (objs.IsNullOEmpty())
         {
             yield break;
         }

@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using NUglify.Helpers;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
-using YANLib.Core;
+using YANLib.Object;
 using static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory;
 using static System.Text.Json.JsonSerializer;
 
@@ -30,7 +30,7 @@ public class SwaggerDefaultValues : IOperationFilter
             });
         });
 
-        if (operation.Parameters.IsEmptyOrNull())
+        if (operation.Parameters.IsNullOEmpty())
         {
             return;
         }
@@ -44,7 +44,7 @@ public class SwaggerDefaultValues : IOperationFilter
                 return;
             }
 
-            if (x.Description.IsEmptyOrNull())
+            if (x.Description.IsNullOEmpty())
             {
                 x.Description = description.ModelMetadata?.Description;
             }

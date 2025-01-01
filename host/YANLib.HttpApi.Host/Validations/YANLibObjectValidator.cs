@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Validation;
-using YANLib.Core;
+using YANLib.Object;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibDomainErrorCodes;
 
@@ -24,7 +24,7 @@ public class YANLibObjectValidator(IOptions<AbpValidationOptions> options, IServ
     {
         var errors = await GetErrorsAsync(validatingObject, name, allowNull);
 
-        if (errors.IsNotEmptyAndNull())
+        if (errors.IsNotNullNEmpty())
         {
             throw new YANLibValidationException(BAD_REQUEST, "Object state is not valid!", errors);
         }

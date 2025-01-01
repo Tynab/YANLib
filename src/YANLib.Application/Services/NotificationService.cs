@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.EventBus.Distributed;
 using YANLib.BackgroundArgs;
-using YANLib.Core;
 using YANLib.RabbitMq.Etos;
 using YANLib.Requests;
 using static System.TimeSpan;

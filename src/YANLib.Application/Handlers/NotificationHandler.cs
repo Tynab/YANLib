@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Volo.Abp.EventBus.Distributed;
-using YANLib.Core;
 using YANLib.RabbitMq.Etos;
 using YANLib.SignalRHubs;
 

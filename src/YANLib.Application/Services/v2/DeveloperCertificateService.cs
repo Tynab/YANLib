@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
-using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
+using YANLib.Object;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
@@ -42,14 +42,14 @@ public class DeveloperCertificateService(
         {
             var dtos = await _redisService.GetAll($"{DeveloperCertificateGroupPrefix}:{developerId}");
 
-            if (dtos.IsEmptyOrNull())
+            if (dtos.IsNullOEmpty())
             {
                 return new PagedResultDto<DeveloperCertificateResponse>();
             }
 
             var queryableItems = dtos.Select(x => ObjectMapper.Map<(Guid DeveloperId, KeyValuePair<string, DeveloperCertificateRedisDto?> Pair), DeveloperCertificateResponse>((developerId, x))).AsQueryable();
 
-            if (input.Sorting.IsNotWhiteSpaceAndNull())
+            if (input.Sorting.IsNotNullNWhiteSpace())
             {
                 queryableItems = queryableItems.OrderBy(input.Sorting);
             }
@@ -177,7 +177,7 @@ public class DeveloperCertificateService(
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            if (entities.IsEmptyOrNull())
+            if (entities.IsNullOEmpty())
             {
                 return result;
             }
@@ -220,7 +220,7 @@ public class DeveloperCertificateService(
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsEmptyOrNull()
+            return entities.IsNullOEmpty()
                 ? result
                 : (result &= await _redisService.SetBulk($"{DeveloperCertificateGroupPrefix}:{developerId}", entities.ToDictionary(x => x.CertificateCode, ObjectMapper.Map<DeveloperCertificate, DeveloperCertificateRedisDto>)));
         }

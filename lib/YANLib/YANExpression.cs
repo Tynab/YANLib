@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using static System.Linq.Expressions.Expression;
 
-namespace YANLib.Core;
+namespace YANLib;
 
 public static class YANExpression
 {

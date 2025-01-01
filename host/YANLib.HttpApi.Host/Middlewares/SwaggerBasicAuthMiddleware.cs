@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using YANLib.Core;
+using YANLib.Object;
+using YANLib.Unmanaged;
 using static System.Convert;
 using static System.DateTime;
 using static System.Net.HttpStatusCode;
@@ -21,18 +22,18 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
         {
             string? authHeader = context.Request.Headers.Authorization;
 
-            if (authHeader.IsNotWhiteSpaceAndNull() && authHeader.StartsWith("Basic "))
+            if (authHeader.IsNotNullNWhiteSpace() && authHeader.StartsWith("Basic "))
             {
                 var newVarName = authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim();
 
-                if (newVarName.IsWhiteSpaceOrNull())
+                if (newVarName.IsNullOWhiteSpace())
                 {
                     return;
                 }
 
                 var decoded = UTF8.GetString(FromBase64String(newVarName))?.Split(':', 2);
 
-                if (decoded.IsNotEmptyAndNull() && IsAuthorized(decoded[0], decoded[1]))
+                if (decoded.IsNotNullNEmpty() && IsAuthorized(decoded[0], decoded[1]))
                 {
                     await _next.Invoke(context);
 

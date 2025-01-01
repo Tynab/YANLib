@@ -2,7 +2,7 @@
 using Volo.Abp.AspNetCore.Mvc.Validation;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Validation;
-using YANLib.Core;
+using YANLib.Object;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
@@ -17,7 +17,7 @@ public class YANLibModelStateValidator : ModelStateValidator
 
         base.AddErrors(validationResult, modelState);
 
-        if (validationResult.Errors.IsNotEmptyAndNull())
+        if (validationResult.Errors.IsNotNullNEmpty())
         {
             throw new YANLibValidationException(BAD_REQUEST, "Model state is not valid!", validationResult.Errors);
         }

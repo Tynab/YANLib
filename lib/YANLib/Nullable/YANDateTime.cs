@@ -1,190 +1,15 @@
-﻿using YANLib.Core;
+﻿using YANLib.Object;
+using YANLib.Text;
+using YANLib.Unmanaged;
 using static System.DateTime;
-using static System.Globalization.CultureInfo;
 using static System.Globalization.DateTimeFormatInfo;
-using static System.Globalization.DateTimeStyles;
 using static System.Linq.Enumerable;
 using static System.Math;
-using static YANLib.YANRandom;
 
 namespace YANLib.Nullable;
 
 public static partial class YANDateTime
 {
-    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null) => str.IsWhiteSpaceOrNull()
-        ? dfltVal
-        : TryParse(str, out var dt)
-        ? dt
-        : dfltVal;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal));
-
-    public static DateTime? ToDateTime(this string? str, IEnumerable<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
-        ? default
-        : fmts.IsEmptyOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : default
-        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
-        ? dt
-        : default;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static DateTime? ToDateTime(this string? str, ICollection<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
-        ? default
-        : fmts.IsEmptyOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : default
-        : TryParseExact(str, [.. fmts], InvariantCulture, None, out dt)
-        ? dt
-        : default;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static DateTime? ToDateTime(this string? str, params string?[]? fmts) => str.IsWhiteSpaceOrNull()
-        ? default
-        : fmts.IsEmptyOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : default
-        : TryParseExact(str, fmts, InvariantCulture, None, out dt)
-        ? dt
-        : default;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, params string?[]? fmts) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(fmts));
-
-    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
-        ? dfltVal
-        : fmts.IsEmptyOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : dfltVal
-        : TryParseExact(str, fmts.ToArray(), InvariantCulture, None, out dt)
-        ? dt
-        : dfltVal;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, IEnumerable<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => str.IsWhiteSpaceOrNull()
-        ? dfltVal
-        : fmts.IsEmptyOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : dfltVal
-        : TryParseExact(str, [.. fmts], InvariantCulture, None, out dt)
-        ? dt
-        : dfltVal;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, ICollection<string?>? fmts = null) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static DateTime? ToDateTime(this string? str, DateTime? dfltVal = null, params string?[]? fmts) => str.IsWhiteSpaceOrNull()
-        ? dfltVal
-        : fmts.IsEmptyOrNull()
-        ? TryParse(str, out var dt)
-            ? dt
-            : dfltVal
-        : TryParseExact(str, fmts, InvariantCulture, None, out dt)
-        ? dt
-        : dfltVal;
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this IEnumerable<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this ICollection<string?>? strs, DateTime? dfltVal = null, params string?[]? fmts) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    public static IEnumerable<DateTime?>? ToDateTimes(this string?[]? strs, DateTime? dfltVal = null, params string?[]? fmts) => strs.IsEmptyOrNull()
-        ? default
-        : strs.Select(x => x.ToDateTime(dfltVal, fmts));
-
-    /// <summary>
-    /// Generates a random <see cref="DateTime"/> within the specified range.
-    /// Returns <see langword="null"/> if the minimum date is greater than the maximum date.
-    /// </summary>
-    /// <param name="min">The minimum <see cref="DateTime"/> value. Can be <see langword="null"/>.</param>
-    /// <param name="max">The maximum <see cref="DateTime"/> value. Can be <see langword="null"/>.</param>
-    /// <returns>A randomly generated <see cref="DateTime"/>, or <see langword="null"/> if the range is invalid.</returns>
-    public static DateTime? GenerateRandomDateTime(DateTime? min = null, DateTime? max = null)
-    {
-        var minDt = min ?? MinValue;
-        var maxDt = max ?? MaxValue;
-
-        return minDt > maxDt ? default : minDt.AddTicks(GenerateRandom<long>((maxDt - minDt).Ticks));
-    }
-
-    /// <summary>
-    /// Generates a collection of random <see cref="DateTime"/> values within the specified range and of the specified size.
-    /// </summary>
-    /// <param name="size">The number of random <see cref="DateTime"/> values to generate. Can be <see langword="null"/>.</param>
-    /// <param name="min">The minimum <see cref="DateTime"/> value for each generated value. Can be <see langword="null"/>.</param>
-    /// <param name="max">The maximum <see cref="DateTime"/> value for each generated value. Can be <see langword="null"/>.</param>
-    /// <returns>An enumerable collection of randomly generated <see cref="DateTime"/> values.</returns>
-    public static IEnumerable<DateTime?> GenerateRandomDateTimes(object? size, DateTime? min = null, DateTime? max = null) => Range(0, size.To<uint>().To<int>()).Select(i => GenerateRandomDateTime(min, max));
-
     /// <summary>
     /// Gets the week of the year for a specified <see cref="DateTime"/>.
     /// Returns <see langword="null"/> if the <see cref="DateTime"/> is <see langword="null"/>.
@@ -200,7 +25,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="dts">The collection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int?>? GetWeekOfYears(this IEnumerable<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+    public static IEnumerable<int?>? GetWeekOfYears(this IEnumerable<DateTime?>? dts) => dts.IsNullOEmpty() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>
     /// Converts a collection (ICollection) of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
@@ -209,7 +34,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="dts">The ICollection of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value, or <see langword="null"/> if the input ICollection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int?>? GetWeekOfYears(this ICollection<DateTime?>? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+    public static IEnumerable<int?>? GetWeekOfYears(this ICollection<DateTime?>? dts) => dts.IsNullOEmpty() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>
     /// Converts an array of nullable <see cref="DateTime"/> values to their respective week numbers of the year.
@@ -218,7 +43,7 @@ public static partial class YANDateTime
     /// </summary>
     /// <param name="dts">The array of nullable <see cref="DateTime"/> values. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<int?>? GetWeekOfYears(this DateTime?[]? dts) => dts.IsEmptyOrNull() ? default : dts.Select(x => x.GetWeekOfYear());
+    public static IEnumerable<int?>? GetWeekOfYears(this DateTime?[]? dts) => dts.IsNullOEmpty() ? default : dts.Select(x => x.GetWeekOfYear());
 
     /// <summary>
     /// Changes the time zone of a given <see cref="DateTime"/>.
@@ -254,7 +79,7 @@ public static partial class YANDateTime
     /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
     /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zone, or <see langword="null"/> for dates that result in an invalid conversion.</returns>
-    public static IEnumerable<DateTime?>? ChangeTimeZones(this IEnumerable<DateTime?>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
+    public static IEnumerable<DateTime?>? ChangeTimeZones(this IEnumerable<DateTime?>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsNullOEmpty()
         ? default
         : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
 
@@ -267,7 +92,7 @@ public static partial class YANDateTime
     /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
     /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zone, or <see langword="null"/> for dates that result in an invalid conversion.</returns>
-    public static IEnumerable<DateTime?>? ChangeTimeZones(this ICollection<DateTime?>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
+    public static IEnumerable<DateTime?>? ChangeTimeZones(this ICollection<DateTime?>? dts, object? tzSrc = null, object? tzDst = null) => dts.IsNullOEmpty()
         ? default
         : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
 
@@ -280,7 +105,7 @@ public static partial class YANDateTime
     /// <param name="tzSrc">The source time zone. Can be <see langword="null"/>.</param>
     /// <param name="tzDst">The destination time zone. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of nullable <see cref="DateTime"/> values adjusted to the new time zone, or <see langword="null"/> for dates that result in an invalid conversion.</returns>
-    public static IEnumerable<DateTime?>? ChangeTimeZones(this DateTime?[]? dts, object? tzSrc = null, object? tzDst = null) => dts.IsEmptyOrNull()
+    public static IEnumerable<DateTime?>? ChangeTimeZones(this DateTime?[]? dts, object? tzSrc = null, object? tzDst = null) => dts.IsNullOEmpty()
         ? default
         : dts.Select(x => x.ChangeTimeZone(tzSrc, tzDst));
 }

@@ -1,283 +1,12 @@
 ﻿using YANLib.Core;
+using YANLib.Object;
+using YANLib.Unmanaged;
 using static YANLib.Core.YANDateTime;
 
 namespace YANLib.Ultimate.Core;
 
 public static partial class YANDateTime
 {
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default, IEnumerable<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default, ICollection<string?>? fmts = null)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this IEnumerable<string?>? strs, DateTime dfltVal = default, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this ICollection<string?>? strs, DateTime dfltVal = default, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
-    public static IEnumerable<DateTime>? ToDateTimes(this string?[]? strs, DateTime dfltVal = default, params string?[]? fmts)
-    {
-        if (strs.IsEmptyOrNull())
-        {
-            yield break;
-        }
-
-        foreach (var str in strs)
-        {
-            yield return str.ToDateTime(dfltVal, fmts);
-        }
-    }
-
     /// <summary>
     /// Generates a collection of random <see cref="DateTime"/> objects of the specified size, each within the specified minimum and maximum range.
     /// If the specified size is invalid (non-positive), yields no results.
@@ -303,7 +32,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this IEnumerable<DateTime>? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -323,7 +52,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this ICollection<DateTime>? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -343,7 +72,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this DateTime[]? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -363,7 +92,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this IEnumerable<DateTime?>? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -383,7 +112,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this ICollection<DateTime?>? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -403,7 +132,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of integers representing the week numbers of the year for each <see cref="DateTime"/> value.</returns>
     public static IEnumerable<int> GetWeekOfYears(this DateTime?[]? dts)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -425,7 +154,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZones(this IEnumerable<DateTime?>? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -447,7 +176,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZones(this IEnumerable<DateTime>? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -469,7 +198,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZones(this ICollection<DateTime?>? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -491,7 +220,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZones(this ICollection<DateTime>? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -513,7 +242,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZones(this DateTime?[]? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }
@@ -535,7 +264,7 @@ public static partial class YANDateTime
     /// <returns>An enumerable collection of <see cref="DateTime"/> values adjusted to the new time zone.</returns>
     public static IEnumerable<DateTime> ChangeTimeZones(this DateTime[]? dts, object? tzSrc = null, object? tzDst = null)
     {
-        if (dts.IsEmptyOrNull())
+        if (dts.IsNullOEmpty())
         {
             yield break;
         }

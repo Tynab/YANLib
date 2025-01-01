@@ -7,13 +7,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-using YANLib.Core;
+using YANLib.Object;
 using static Nest.SortOrder;
 using static System.Linq.Expressions.Expression;
 using static System.Math;
 using static System.Reflection.BindingFlags;
 using static System.Threading.Tasks.Task;
-using static YANLib.Core.YANExpression;
+using static YANLib.YANExpression;
 
 namespace YANLib.Services.Implements;
 
@@ -31,11 +31,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
-                .Sort(d => input.Sorting.IsWhiteSpaceOrNull() ? d : d.Field(f =>
+                .Sort(d => input.Sorting.IsNullOWhiteSpace() ? d : d.Field(f =>
                 {
-                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotWhiteSpaceAndNull()).Select(x => x.Trim().Split(' ')))
+                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotNullNWhiteSpace()).Select(x => x.Trim().Split(' ')))
                     {
-                        if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                        if (sortParams.Length > 0 && sortParams[0].IsNotNullNWhiteSpace() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
                         {
                             _ = f.Field(fieldSelector).MissingLast();
                         }
@@ -92,7 +92,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         {
             var index = _configuration.GetSection(indexPath)?.Value;
 
-            if (index.IsWhiteSpaceOrNull())
+            if (index.IsNullOWhiteSpace())
             {
                 return false;
             }
@@ -150,11 +150,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
-                .Sort(d => input.Sorting.IsWhiteSpaceOrNull() ? d : d.Field(f =>
+                .Sort(d => input.Sorting.IsNullOWhiteSpace() ? d : d.Field(f =>
                 {
-                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotWhiteSpaceAndNull()).Select(x => x.Trim().Split(' ')))
+                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotNullNWhiteSpace()).Select(x => x.Trim().Split(' ')))
                     {
-                        if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                        if (sortParams.Length > 0 && sortParams[0].IsNotNullNWhiteSpace() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
                         {
                             _ = f.Field(fieldSelector).MissingLast();
                         }
@@ -191,11 +191,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
-                .Sort(d => input.Sorting.IsWhiteSpaceOrNull() ? d : d.Field(f =>
+                .Sort(d => input.Sorting.IsNullOWhiteSpace() ? d : d.Field(f =>
                 {
-                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotWhiteSpaceAndNull()).Select(x => x.Trim().Split(' ')))
+                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotNullNWhiteSpace()).Select(x => x.Trim().Split(' ')))
                     {
-                        if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                        if (sortParams.Length > 0 && sortParams[0].IsNotNullNWhiteSpace() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
                         {
                             _ = f.Field(fieldSelector).MissingLast();
                         }
@@ -232,11 +232,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
-                .Sort(d => input.Sorting.IsWhiteSpaceOrNull() ? d : d.Field(f =>
+                .Sort(d => input.Sorting.IsNullOWhiteSpace() ? d : d.Field(f =>
                 {
-                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotWhiteSpaceAndNull()).Select(x => x.Trim().Split(' ')))
+                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotNullNWhiteSpace()).Select(x => x.Trim().Split(' ')))
                     {
-                        if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                        if (sortParams.Length > 0 && sortParams[0].IsNotNullNWhiteSpace() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
                         {
                             _ = f.Field(fieldSelector).MissingLast();
                         }
@@ -273,11 +273,11 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
-                .Sort(d => input.Sorting.IsWhiteSpaceOrNull() ? d : d.Field(f =>
+                .Sort(d => input.Sorting.IsNullOWhiteSpace() ? d : d.Field(f =>
                 {
-                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotWhiteSpaceAndNull()).Select(x => x.Trim().Split(' ')))
+                    foreach (var sortParams in input.Sorting.Split(',').Reverse().Where(x => x.IsNotNullNWhiteSpace()).Select(x => x.Trim().Split(' ')))
                     {
-                        if (sortParams.Length > 0 && sortParams[0].IsNotWhiteSpaceAndNull() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
+                        if (sortParams.Length > 0 && sortParams[0].IsNotNullNWhiteSpace() && fieldSelectors.TryGetValue(sortParams[0], out var fieldSelector))
                         {
                             _ = f.Field(fieldSelector).MissingLast();
                         }

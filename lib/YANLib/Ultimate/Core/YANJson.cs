@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using YANLib.Core;
+using YANLib.Object;
 
 namespace YANLib.Ultimate.Core;
 
@@ -15,7 +15,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string?> StandardSerializes(this IEnumerable<object?>? vals, JsonSerializerOptions? options = null)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -36,7 +36,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string?> StandardSerializes(this ICollection<object?>? vals, JsonSerializerOptions? options = null)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -57,7 +57,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of JSON strings representing the serialized objects.</returns>
     public static IEnumerable<string?> StandardSerializes(this object?[]? vals, JsonSerializerOptions? options = null)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -78,7 +78,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of JSON strings representing the serialized objects with custom settings.</returns>
     public static IEnumerable<string?> Serializes(this IEnumerable<object?>? vals, JsonSerializerOptions? options = null)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -99,7 +99,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of JSON strings representing the serialized objects with custom settings.</returns>
     public static IEnumerable<string?> Serializes(this ICollection<object?>? vals, JsonSerializerOptions? options = null)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -120,7 +120,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of JSON strings representing the serialized objects with custom settings.</returns>
     public static IEnumerable<string?> Serializes(this object?[]? vals, JsonSerializerOptions? options = null)
     {
-        if (vals.IsEmptyOrNull())
+        if (vals.IsNullOEmpty())
         {
             yield break;
         }
@@ -142,7 +142,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the JSON strings.</returns>
     public static IEnumerable<T?> StandardDeserializes<T>(this IEnumerable<string?>? strs, JsonSerializerOptions? options = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -164,7 +164,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the JSON strings.</returns>
     public static IEnumerable<T?> StandardDeserializes<T>(this ICollection<string?>? strs, JsonSerializerOptions? options = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -186,7 +186,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the JSON strings.</returns>
     public static IEnumerable<T?> StandardDeserializes<T>(this string?[]? strs, JsonSerializerOptions? options = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -208,7 +208,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the JSON strings.</returns>
     public static IEnumerable<T?> Deserializes<T>(this IEnumerable<string?>? strs, JsonSerializerOptions? options = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -230,7 +230,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the JSON strings.</returns>
     public static IEnumerable<T?> Deserializes<T>(this ICollection<string?>? strs, JsonSerializerOptions? options = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -252,7 +252,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the JSON strings.</returns>
     public static IEnumerable<T?> Deserializes<T>(this string?[]? strs, JsonSerializerOptions? options = null)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -275,7 +275,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the UTF-8 JSON byte arrays.</returns>
     public static IEnumerable<T?> Deserializes<T>(this IEnumerable<byte[]?>? utf8Jsons, JsonSerializerOptions? options = null)
     {
-        if (utf8Jsons.IsEmptyOrNull())
+        if (utf8Jsons.IsNullOEmpty())
         {
             yield break;
         }
@@ -298,7 +298,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the UTF-8 JSON byte arrays.</returns>
     public static IEnumerable<T?> Deserializes<T>(this ICollection<byte[]?>? utf8Jsons, JsonSerializerOptions? options = null)
     {
-        if (utf8Jsons.IsEmptyOrNull())
+        if (utf8Jsons.IsNullOEmpty())
         {
             yield break;
         }
@@ -320,7 +320,7 @@ public static partial class YANJson
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the UTF-8 JSON byte arrays.</returns>
     public static IEnumerable<T?> Deserializes<T>(this byte[]?[]? utf8Jsons, JsonSerializerOptions? options = null)
     {
-        if (utf8Jsons.IsEmptyOrNull())
+        if (utf8Jsons.IsNullOEmpty())
         {
             yield break;
         }

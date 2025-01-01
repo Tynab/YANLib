@@ -1,4 +1,5 @@
-﻿using YANLib.Core;
+﻿using YANLib.Object;
+using YANLib.Text;
 
 namespace YANLib.Ultimate.Core;
 
@@ -6,7 +7,7 @@ public static partial class YANText
 {
     public static IEnumerable<string?> Lowers(this IEnumerable<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -19,7 +20,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> Lowers(this ICollection<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -32,7 +33,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> Lowers(params string?[]? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -45,7 +46,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> LowerInvariants(this IEnumerable<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -58,7 +59,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> LowerInvariants(this ICollection<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -71,7 +72,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> LowerInvariants(params string?[]? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -84,7 +85,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> Uppers(this IEnumerable<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -97,7 +98,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> Uppers(this ICollection<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -110,7 +111,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> Uppers(params string?[]? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -123,7 +124,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> UpperInvariants(this IEnumerable<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -136,7 +137,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> UpperInvariants(this ICollection<string?>? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }
@@ -149,7 +150,7 @@ public static partial class YANText
 
     public static IEnumerable<string?> UpperInvariants(params string?[]? strs)
     {
-        if (strs.IsEmptyOrNull())
+        if (strs.IsNullOEmpty())
         {
             yield break;
         }

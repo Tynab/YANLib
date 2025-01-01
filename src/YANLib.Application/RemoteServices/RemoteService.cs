@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Http;
 using Volo.Abp.Http.Client;
-using YANLib.Core;
+using YANLib.Object;
+using YANLib.Unmanaged;
 using static Newtonsoft.Json.Linq.JObject;
 using static RestSharp.ParameterType;
 using static System.Net.HttpStatusCode;
@@ -26,12 +27,12 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
         {
             var req = new RestRequest(path, method);
 
-            if (headers.IsEmptyOrNull())
+            if (headers.IsNullOEmpty())
             {
                 _ = req.AddHeader("Accept", "*/*");
                 _ = req.AddHeader("Content-Type", "application/json");
 
-                if (jsonInput.IsNotWhiteSpaceAndNull())
+                if (jsonInput.IsNotNullNWhiteSpace())
                 {
                     _ = req.AddParameter("application/json", jsonInput, RequestBody);
                 }
@@ -40,20 +41,20 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
             {
                 headers.ForEach(x => req.AddHeader(x.Key, x.Value));
 
-                if (jsonInput.IsNotWhiteSpaceAndNull())
+                if (jsonInput.IsNotNullNWhiteSpace())
                 {
                     _ = req.AddParameter(headers["Content-Type"], jsonInput, RequestBody);
                 }
             }
 
-            if (queryParams.IsNotEmptyAndNull())
+            if (queryParams.IsNotNullNEmpty())
             {
                 queryParams.ForEach(x => req.AddParameter(x.Key, x.Value, QueryString));
             }
 
             var remSvcConfig = _remoteServiceOptions.RemoteServices.GetConfigurationOrDefaultOrNull(remoteRoot)?.BaseUrl;
 
-            if (remSvcConfig.IsWhiteSpaceOrNull())
+            if (remSvcConfig.IsNullOWhiteSpace())
             {
                 throw new AbpRemoteCallException(new RemoteServiceErrorInfo
                 {
@@ -72,7 +73,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
             {
                 _logger.LogError("Invoke API: {PathRoot} - {Code} - {Error} - {Content}", $"{remoteRoot}{path}", res.StatusCode, res.ErrorMessage, res.Content);
 
-                if (res.Content.IsWhiteSpaceOrNull())
+                if (res.Content.IsNullOWhiteSpace())
                 {
                     throw new AbpRemoteCallException(new RemoteServiceErrorInfo
                     {

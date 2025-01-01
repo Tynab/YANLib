@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using System.Collections.Generic;
-using YANLib.Core;
+using YANLib.Object;
 using YANLib.Responses;
 using static YANLib.YANLibDomainErrorCodes;
 
@@ -20,5 +20,5 @@ public sealed class SampleValidators : AbstractValidator<List<JsonResponse>>
         _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
     }
 
-    private bool IsNotEmptyAndNull(List<JsonResponse> requests) => requests.IsNotEmptyAndNull();
+    private bool IsNotEmptyAndNull(List<JsonResponse> requests) => requests.IsNotNullNEmpty();
 }

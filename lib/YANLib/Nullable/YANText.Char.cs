@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using YANLib.Core;
+using YANLib.Object;
+using YANLib.Text;
 
 namespace YANLib.Nullable;
 
@@ -216,7 +217,7 @@ public static partial class YANText
 
     public static void Lower(this List<char?>? cs)
     {
-        if (cs.IsEmptyOrNull())
+        if (cs.IsNullOEmpty())
         {
             return;
         }
@@ -224,17 +225,17 @@ public static partial class YANText
         cs.ForEach(x => x = x.Lower());
     }
 
-    public static IEnumerable<char?>? Lowers(this IEnumerable<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.Lower());
+    public static IEnumerable<char?>? Lowers(this IEnumerable<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.Lower());
 
-    public static IEnumerable<char?>? Lowers(this ICollection<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.Lower());
+    public static IEnumerable<char?>? Lowers(this ICollection<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.Lower());
 
-    public static IEnumerable<char?>? Lowers(params char?[]? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.Lower());
+    public static IEnumerable<char?>? Lowers(params char?[]? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.Lower());
 
     public static char? LowerInvariant(this char? c) => c.IsWhiteSpaceOrNull() ? default : char.ToLowerInvariant(c.Value);
 
     public static void LowerInvariant(this List<char?>? cs)
     {
-        if (cs.IsEmptyOrNull())
+        if (cs.IsNullOEmpty())
         {
             return;
         }
@@ -242,17 +243,17 @@ public static partial class YANText
         cs.ForEach(x => x = x.LowerInvariant());
     }
 
-    public static IEnumerable<char?>? LowerInvariants(this IEnumerable<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.LowerInvariant());
+    public static IEnumerable<char?>? LowerInvariants(this IEnumerable<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.LowerInvariant());
 
-    public static IEnumerable<char?>? LowerInvariants(this ICollection<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.LowerInvariant());
+    public static IEnumerable<char?>? LowerInvariants(this ICollection<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.LowerInvariant());
 
-    public static IEnumerable<char?>? LowerInvariants(params char?[]? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.LowerInvariant());
+    public static IEnumerable<char?>? LowerInvariants(params char?[]? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.LowerInvariant());
 
     public static char? Upper(this char? c) => c.IsWhiteSpaceOrNull() ? default : char.ToUpper(c.Value);
 
     public static void Upper(this List<char?>? cs)
     {
-        if (cs.IsEmptyOrNull())
+        if (cs.IsNullOEmpty())
         {
             return;
         }
@@ -260,17 +261,17 @@ public static partial class YANText
         cs.ForEach(x => x = x.Upper());
     }
 
-    public static IEnumerable<char?>? Uppers(this IEnumerable<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.Upper());
+    public static IEnumerable<char?>? Uppers(this IEnumerable<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.Upper());
 
-    public static IEnumerable<char?>? Uppers(this ICollection<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.Upper());
+    public static IEnumerable<char?>? Uppers(this ICollection<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.Upper());
 
-    public static IEnumerable<char?>? Uppers(params char?[]? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.Upper());
+    public static IEnumerable<char?>? Uppers(params char?[]? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.Upper());
 
     public static char? UpperInvariant(this char? c) => c.IsWhiteSpaceOrNull() ? default : char.ToUpperInvariant(c.Value);
 
     public static void UpperInvariant(this List<char?>? cs)
     {
-        if (cs.IsEmptyOrNull())
+        if (cs.IsNullOEmpty())
         {
             return;
         }
@@ -278,11 +279,11 @@ public static partial class YANText
         cs.ForEach(x => x = x.UpperInvariant());
     }
 
-    public static IEnumerable<char?>? UpperInvariants(this IEnumerable<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.UpperInvariant());
+    public static IEnumerable<char?>? UpperInvariants(this IEnumerable<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.UpperInvariant());
 
-    public static IEnumerable<char?>? UpperInvariants(this ICollection<char?>? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.UpperInvariant());
+    public static IEnumerable<char?>? UpperInvariants(this ICollection<char?>? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.UpperInvariant());
 
-    public static IEnumerable<char?>? UpperInvariants(params char?[]? cs) => cs.IsEmptyOrNull() ? default : cs.Select(x => x.UpperInvariant());
+    public static IEnumerable<char?>? UpperInvariants(params char?[]? cs) => cs.IsNullOEmpty() ? default : cs.Select(x => x.UpperInvariant());
 
     public static bool IsLower(this char? c) => c.HasValue && char.IsLower(c.Value);
 

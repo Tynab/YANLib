@@ -8,7 +8,7 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.ExceptionHandling.Localization;
 using Volo.Abp.Http;
 using Volo.Abp.Localization.ExceptionHandling;
-using YANLib.Core;
+using YANLib.Object;
 using static System.Reflection.BindingFlags;
 using static YANLib.YANLibDomainErrorMessages;
 
@@ -37,7 +37,7 @@ public class YANLibExceptionToErrorInfoConverter(
         }
         else
         {
-            if (exception.Message.IsNotWhiteSpaceAndNull() && !_errorCodes.Contains(code))
+            if (exception.Message.IsNotNullNWhiteSpace() && !_errorCodes.Contains(code))
             {
                 var details = exception.GetType()?.GetProperty("Details")?.GetValue(exception);
 

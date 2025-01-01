@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
-using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
+using YANLib.Object;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
@@ -37,14 +37,14 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         {
             var dtos = await _redisService.GetAll(DeveloperTypeGroup);
 
-            if (dtos.IsEmptyOrNull())
+            if (dtos.IsNullOEmpty())
             {
                 return new PagedResultDto<DeveloperTypeResponse>();
             }
 
             var queryableItems = dtos.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperTypeRedisDto?>, DeveloperTypeResponse>).AsQueryable();
 
-            if (input.Sorting.IsNotWhiteSpaceAndNull())
+            if (input.Sorting.IsNotNullNWhiteSpace())
             {
                 queryableItems = queryableItems.OrderBy(input.Sorting);
             }
@@ -147,7 +147,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsEmptyOrNull() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
+            return entities.IsNullOEmpty() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
         }
         catch (Exception ex)
         {

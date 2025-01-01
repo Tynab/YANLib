@@ -6,7 +6,6 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Threading;
 using YANLib.BackgroundArgs;
-using YANLib.Core;
 using YANLib.RabbitMq.Etos;
 
 namespace YANLib.BackgroundJobs;

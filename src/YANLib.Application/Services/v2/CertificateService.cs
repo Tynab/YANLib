@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
-using YANLib.Core;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
+using YANLib.Object;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
@@ -127,7 +127,7 @@ public class CertificateService(ILogger<CertificateService> logger, ICertificate
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            if (entities.IsEmptyOrNull())
+            if (entities.IsNullOEmpty())
             {
                 return result;
             }

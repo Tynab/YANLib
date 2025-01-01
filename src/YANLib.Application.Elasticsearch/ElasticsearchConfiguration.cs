@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using System;
 using System.Linq;
-using YANLib.Core;
 using YANLib.EsIndices;
+using YANLib.Object;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
@@ -25,11 +25,11 @@ public static class ElasticsearchConfiguration
 
         ConnectionSettings? settings;
 
-        if (configuration.GetSection(urlTag).GetChildren().IsEmptyOrNull())
+        if (configuration.GetSection(urlTag).GetChildren().IsNullOEmpty())
         {
             var esUrl = configuration.GetSection(urlTag).Value;
 
-            if (esUrl.IsWhiteSpaceOrNull())
+            if (esUrl.IsNullOWhiteSpace())
             {
                 return;
             }
@@ -40,12 +40,12 @@ public static class ElasticsearchConfiguration
         {
             settings = new ConnectionSettings(new StaticConnectionPool((configuration.GetSection(urlTag).GetChildren().Any()
                 ? configuration.GetSection(urlTag).GetChildren().ToArray()
-                : ([configuration.GetSection(urlTag)])).Select(s => s.Value.IsWhiteSpaceOrNull()
+                : ([configuration.GetSection(urlTag)])).Select(s => s.Value.IsNullOWhiteSpace()
                 ? default
                 : new Uri(s.Value)).ToArray())).DefaultIndex(configuration.GetSection(Developer)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
         }
 
-        if (configuration.GetSection(usernameTag).Value.IsNotWhiteSpaceAndNull())
+        if (configuration.GetSection(usernameTag).Value.IsNotNullNWhiteSpace())
         {
             _ = settings.ServerCertificateValidationCallback((o, certificate, chain, errors) => true);
             _ = settings.ServerCertificateValidationCallback(AllowAll);
@@ -85,6 +85,6 @@ public static class ElasticsearchConfiguration
     {
         var index = configuration.GetSection(indexPath)?.Value;
 
-        return index.IsWhiteSpaceOrNull() ? default : client.Indices.Delete(index);
+        return index.IsNullOWhiteSpace() ? default : client.Indices.Delete(index);
     }
 }

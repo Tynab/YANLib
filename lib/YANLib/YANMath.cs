@@ -1,4 +1,5 @@
-﻿using YANLib.Core;
+﻿using YANLib.Object;
+using YANLib.Unmanaged;
 
 namespace YANLib;
 
@@ -16,7 +17,7 @@ public static partial class YANMath
     /// </returns>
     public static T? Min<T>(params T?[]? nums) where T : IComparable<T>
     {
-        if (nums.IsEmptyOrNull())
+        if (nums.IsNullOEmpty())
         {
             return default;
         }
@@ -46,7 +47,7 @@ public static partial class YANMath
     /// </returns>
     public static T? Max<T>(params T?[]? nums) where T : IComparable<T>
     {
-        if (nums.IsEmptyOrNull())
+        if (nums.IsNullOEmpty())
         {
             return default;
         }
@@ -66,11 +67,11 @@ public static partial class YANMath
 
     public static T Ceiling<T>(this object? input) where T : unmanaged => typeof(T) == typeof(double) ? Math.Ceiling(input.To<double>()).To<T>() : Math.Ceiling(input.To<decimal>()).To<T>();
 
-    public static IEnumerable<T>? Ceilings<T>(this IEnumerable<object?>? input) where T : unmanaged => input.IsEmptyOrNull() ? default : input.Select(x => x.Ceiling<T>());
+    public static IEnumerable<T>? Ceilings<T>(this IEnumerable<object?>? input) where T : unmanaged => input.IsNullOEmpty() ? default : input.Select(x => x.Ceiling<T>());
 
-    public static IEnumerable<T>? Ceilings<T>(this ICollection<object?>? input) where T : unmanaged => input.IsEmptyOrNull() ? default : input.Select(x => x.Ceiling<T>());
+    public static IEnumerable<T>? Ceilings<T>(this ICollection<object?>? input) where T : unmanaged => input.IsNullOEmpty() ? default : input.Select(x => x.Ceiling<T>());
 
-    public static IEnumerable<T>? Ceilings<T>(this object?[]? input) where T : unmanaged => input.IsEmptyOrNull() ? default : input.Select(x => x.Ceiling<T>());
+    public static IEnumerable<T>? Ceilings<T>(this object?[]? input) where T : unmanaged => input.IsNullOEmpty() ? default : input.Select(x => x.Ceiling<T>());
 
     // TODO: Math lib
 }
