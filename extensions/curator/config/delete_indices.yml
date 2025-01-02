@@ -8,6 +8,6 @@
       - filtertype: age
         source: creation_date
         direction: older
-        unit: "days"
+        unit: days
         unit_count: 30
     timestring: '%Y.%m.%d'
