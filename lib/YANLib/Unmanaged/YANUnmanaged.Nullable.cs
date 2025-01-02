@@ -32,12 +32,6 @@ public static partial class YANUnmanaged
         }
     }
 
-    private static bool Cc(this object? input)
-    {
-        var qq = input.To<DateTime?>();
-        return input.IsNull();
-    }
-
     public static IEnumerable<T?>? Tos<T>(this IEnumerable<object?>? input) => input.IsNullOEmpty() ? default : input.Select(x => x.To<T?>());
 
     public static IEnumerable<T?>? Tos<T>(this ICollection<object?>? input) => input.IsNullOEmpty() ? default : input.Select(x => x.To<T?>());

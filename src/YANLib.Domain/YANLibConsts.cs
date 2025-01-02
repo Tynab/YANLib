@@ -7,7 +7,7 @@ public static class YANLibConsts
     public readonly struct ElasticsearchIndex
     {
         public const string Developer = "Elasticsearch:Indices:Developer";
-        public const string Certificate = "Elasticsearch:Indices:Certificate";
+        public const string Project = "Elasticsearch:Indices:Project";
     }
 
     public readonly struct DbSchema
@@ -41,9 +41,9 @@ public static class YANLibConsts
         public const string SamplePrefix = "sample";
         public const string DeveloperTypePrefix = "developertype";
         public const string DeveloperPrefix = "developer";
-        public const string CertificatePrefix = "certificate";
+        public const string ProjectPrefix = "project";
 
-        public static readonly string DeveloperCertificateGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}{CertificatePrefix}";
+        public static readonly string DeveloperProjectGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}{ProjectPrefix}";
 
         public static readonly string DeveloperTypeGroup = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}";
     }

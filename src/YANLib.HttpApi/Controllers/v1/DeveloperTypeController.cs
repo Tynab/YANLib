@@ -35,7 +35,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
             pageNumber,
             pageSize,
-            $"{nameof(CertificateResponse.Name)} {Ascending},{nameof(CertificateResponse.CreatedAt)} {Descending}"
+            $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
         ))));
     }
 

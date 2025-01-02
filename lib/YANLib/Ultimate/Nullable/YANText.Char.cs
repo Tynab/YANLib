@@ -1,4 +1,5 @@
 ﻿using YANLib.Object;
+using YANLib.Text;
 
 namespace YANLib.Ultimate.Nullable;
 
@@ -13,7 +14,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.Lower(c);
+            yield return Text.YANText.Lower(c);
         }
     }
 
@@ -26,7 +27,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.Lower(c);
+            yield return Text.YANText.Lower(c);
         }
     }
 
@@ -39,7 +40,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.Lower(c);
+            yield return Text.YANText.Lower(c);
         }
     }
 
@@ -52,7 +53,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.LowerInvariant(c);
+            yield return Text.YANText.LowerInvariant(c);
         }
     }
 
@@ -65,7 +66,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.LowerInvariant(c);
+            yield return Text.YANText.LowerInvariant(c);
         }
     }
 
@@ -78,7 +79,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.LowerInvariant(c);
+            yield return Text.YANText.LowerInvariant(c);
         }
     }
 
@@ -91,7 +92,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.Upper(c);
+            yield return Text.YANText.Upper(c);
         }
     }
 
@@ -104,7 +105,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.Upper(c);
+            yield return Text.YANText.Upper(c);
         }
     }
 
@@ -117,7 +118,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.Upper(c);
+            yield return Text.YANText.Upper(c);
         }
     }
 
@@ -130,7 +131,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.UpperInvariant(c);
+            yield return Text.YANText.UpperInvariant(c);
         }
     }
 
@@ -143,7 +144,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.UpperInvariant(c);
+            yield return Text.YANText.UpperInvariant(c);
         }
     }
 
@@ -156,7 +157,7 @@ public static partial class YANText
 
         foreach (var c in cs)
         {
-            yield return YANLib.Nullable.YANText.UpperInvariant(c);
+            yield return Text.YANText.UpperInvariant(c);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace YANLib;
 public static class ElasticsearchConfiguration
 {
     private static string? _indexDeveloper;
-    private static string? _indexCertificate;
+    private static string? _indexProject;
 
     public static void AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
     {
@@ -55,8 +55,8 @@ public static class ElasticsearchConfiguration
         _indexDeveloper = configuration.GetSection(Developer)?.Value;
         _ = settings.DefaultMappingFor<DeveloperEsIndex>(m => m.IndexName(_indexDeveloper));
 
-        _indexCertificate = configuration.GetSection(Certificate)?.Value;
-        _ = settings.DefaultMappingFor<CertificateEsIndex>(m => m.IndexName(_indexCertificate));
+        _indexProject = configuration.GetSection(Project)?.Value;
+        _ = settings.DefaultMappingFor<ProjectEsIndex>(m => m.IndexName(_indexProject));
 
         var client = new ElasticClient(settings);
 
@@ -69,10 +69,10 @@ public static class ElasticsearchConfiguration
                         .Name(x => x.Id)))));
         }
 
-        if (!client.Indices.Exists(configuration.GetSection(Certificate)?.Value).Exists)
+        if (!client.Indices.Exists(configuration.GetSection(Project)?.Value).Exists)
         {
-            _ = client.Indices.Create(configuration.GetSection(Certificate).Value, c => c
-                .Map<CertificateEsIndex>(t => t
+            _ = client.Indices.Create(configuration.GetSection(Project).Value, c => c
+                .Map<ProjectEsIndex>(t => t
                     .AutoMap().Properties(p => p
                     .Text(d => d
                         .Name(x => x.Id)))));

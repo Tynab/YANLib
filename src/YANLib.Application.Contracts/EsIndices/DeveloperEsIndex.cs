@@ -18,5 +18,5 @@ public sealed class DeveloperEsIndex : YANLibApplicationEsIndex<DocumentPath<Dev
     public DeveloperTypeResponse? DeveloperType { get; set; }
 
     [Nested]
-    public List<CertificateResponse>? Certificates { get; set; }
+    public List<ProjectResponse>? Projects { get; set; }
 }

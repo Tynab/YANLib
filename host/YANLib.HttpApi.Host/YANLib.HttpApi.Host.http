@@ -6,11 +6,11 @@ GET {{HostAddress}}/{{Developer}}?pageNumber=1&pageSize=10
 Authorization: Bearer {{Token}}
 
 ###
-GET {{HostAddress}}/{{Certificate}}?pageNumber=1&pageSize=10
+GET {{HostAddress}}/{{Project}}?pageNumber=1&pageSize=10
 Authorization: Bearer {{Token}}
 
 ###
-GET {{HostAddress}}/{{DeveloperCertificate}}?pageNumber=1&pageSize=10
+GET {{HostAddress}}/{{DeveloperProject}}?pageNumber=1&pageSize=10
 Authorization: Bearer {{Token}}
 
 ###

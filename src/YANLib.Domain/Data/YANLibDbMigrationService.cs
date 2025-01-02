@@ -13,15 +13,15 @@ public class YANLibDbMigrationService(
     IEnumerable<IYANLibDbSchemaMigrator> dbSchemaMigrators,
     IDeveloperTypeRepository developerTypeRepository,
     IDeveloperRepository developerRepository,
-    IDeveloperCertificateRepository developerCertificateRepository,
-    ICertificateRepository certificateRepository
+    IDeveloperProjectRepository developerProjectRepository,
+    IProjectRepository projectRepository
 ) : ITransientDependency
 {
     private readonly IEnumerable<IYANLibDbSchemaMigrator> _dbSchemaMigrators = dbSchemaMigrators;
     private readonly IDeveloperTypeRepository _developerTypeRepository = developerTypeRepository;
     private readonly IDeveloperRepository _developerRepository = developerRepository;
-    private readonly IDeveloperCertificateRepository _developerCertificateRepository = developerCertificateRepository;
-    private readonly ICertificateRepository _certificateRepository = certificateRepository;
+    private readonly IDeveloperProjectRepository _developerProjectRepository = developerProjectRepository;
+    private readonly IProjectRepository _projectRepository = projectRepository;
 
     public ILogger<YANLibDbMigrationService> Logger { get; set; } = NullLogger<YANLibDbMigrationService>.Instance;
 
@@ -126,65 +126,74 @@ public class YANLibDbMigrationService(
 
         Logger.LogInformation("Developer {Developer} created", fs.Name);
 
-        if (await _certificateRepository.GetCountAsync() > 0)
+        if (await _projectRepository.GetCountAsync() > 0)
         {
-            await _certificateRepository.DeleteManyAsync(await _certificateRepository.GetListAsync());
+            await _projectRepository.DeleteManyAsync(await _projectRepository.GetListAsync());
 
-            Logger.LogInformation("Certificates deleted");
+            Logger.LogInformation("Projects deleted");
         }
 
-        var java = await _certificateRepository.InsertAsync(new()
+        var retail = await _projectRepository.InsertAsync(new()
         {
-            Name = "Java",
-            GPA = 8.5,
-            Description = "This certificate demonstrates proficiency in Java programming and OOP concepts.",
+            Name = "Retail Insights",
+            Description = "A project to provide customer insights and sales trends in the retail domain.",
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
             IsDeleted = false
         });
 
-        Logger.LogInformation("Certificate {Certificate} created", java.Name);
+        Logger.LogInformation("Project {Project} created", retail.Name);
 
-        var python = await _certificateRepository.InsertAsync(new()
+        var banking = await _projectRepository.InsertAsync(new()
         {
-            Name = "Python",
-            GPA = 8.0,
-            Description = "This certificate validates expertise in Python programming, data analysis, and scripting.",
+            Name = "Banking Customer Insights",
+            Description = "A system to analyze customer behaviors and trends in banking operations.",
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
             IsDeleted = false
         });
 
-        Logger.LogInformation("Certificate {Certificate} created", python.Name);
+        Logger.LogInformation("Project {Project} created", banking.Name);
 
-        var csharp = await _certificateRepository.InsertAsync(new()
+        var edu = await _projectRepository.InsertAsync(new()
         {
-            Name = "C#",
-            GPA = 9.0,
-            Description = "This certificate proves skills in C# development for web and desktop applications.",
+            Name = "Edu Analytics",
+            Description = "A platform that tracks educational performance and trends across institutions.",
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
             IsDeleted = false
         });
 
-        Logger.LogInformation("Certificate {Certificate} created", csharp.Name);
+        Logger.LogInformation("Project {Project} created", edu.Name);
 
-        if (await _developerCertificateRepository.GetCountAsync() > 0)
+        var blockchain = await _projectRepository.InsertAsync(new()
         {
-            await _developerCertificateRepository.DeleteManyAsync(await _developerCertificateRepository.GetListAsync());
+            Name = "Blockchain Analysis",
+            Description = "A project to analyze trends and transactions in blockchain ecosystems.",
+            CreatedBy = createdBy,
+            CreatedAt = Now,
+            IsActive = true,
+            IsDeleted = false
+        });
 
-            Logger.LogInformation("Developer certificates deleted");
+        Logger.LogInformation("Project {Project} created", blockchain.Name);
+
+        if (await _developerProjectRepository.GetCountAsync() > 0)
+        {
+            await _developerProjectRepository.DeleteManyAsync(await _developerProjectRepository.GetListAsync());
+
+            Logger.LogInformation("Developer projects deleted");
         }
 
-        await _developerCertificateRepository.InsertManyAsync(
+        await _developerProjectRepository.InsertManyAsync(
         [
             new()
             {
                 DeveloperId = be.Id,
-                CertificateCode = java.Id,
+                ProjectId = retail.Id,
                 CreatedBy = createdBy,
                 CreatedAt = Now,
                 IsActive = true,
@@ -193,7 +202,7 @@ public class YANLibDbMigrationService(
             new()
             {
                 DeveloperId = be.Id,
-                CertificateCode = csharp.Id,
+                ProjectId = edu.Id,
                 CreatedBy = createdBy,
                 CreatedAt = Now,
                 IsActive = true,
@@ -202,7 +211,7 @@ public class YANLibDbMigrationService(
             new()
             {
                 DeveloperId = fs.Id,
-                CertificateCode = python.Id,
+                ProjectId = banking.Id,
                 CreatedBy = createdBy,
                 CreatedAt = Now,
                 IsActive = true,
@@ -210,6 +219,6 @@ public class YANLibDbMigrationService(
             },
         ]);
 
-        Logger.LogInformation("Developer certificates created");
+        Logger.LogInformation("Developer projects created");
     }
 }

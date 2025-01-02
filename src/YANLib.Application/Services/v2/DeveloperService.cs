@@ -27,14 +27,14 @@ public class DeveloperService(
     IDeveloperRepository repository,
     IEsService<DeveloperEsIndex> esService,
     IDeveloperTypeService developerTypeService,
-    ICertificateRepository certificateRepository
+    IProjectRepository projectRepository
 ) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
     private readonly IEsService<DeveloperEsIndex> _esService = esService;
     private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
-    private readonly ICertificateRepository _certificateRepository = certificateRepository;
+    private readonly IProjectRepository _projectRepository = projectRepository;
 
     public async ValueTask<PagedResultDto<DeveloperResponse>> GetAll(PagedAndSortedResultRequestDto input)
     {

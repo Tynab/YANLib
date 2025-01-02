@@ -13,7 +13,7 @@ public interface IYANLibDbContext : IEfCoreDbContext
 
     public DbSet<DeveloperType>? DeveloperTypes { get; }
 
-    public DbSet<Certificate>? Certificates { get; }
+    public DbSet<Project>? Projects { get; }
 
-    public DbSet<DeveloperCertificate>? DeveloperCertificates { get; }
+    public DbSet<DeveloperProject>? DeveloperProjects { get; }
 }

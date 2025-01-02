@@ -14,9 +14,9 @@ public class YANLibDbContext(DbContextOptions<YANLibDbContext> options) : AbpDbC
 
     public DbSet<DeveloperType>? DeveloperTypes { get; set; }
 
-    public DbSet<Certificate>? Certificates { get; set; }
+    public DbSet<Project>? Projects { get; set; }
 
-    public DbSet<DeveloperCertificate>? DeveloperCertificates { get; set; }
+    public DbSet<DeveloperProject>? DeveloperProjects { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

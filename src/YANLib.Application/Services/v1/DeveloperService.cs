@@ -20,14 +20,14 @@ public class DeveloperService(
     ILogger<DeveloperService> logger,
     IRepository<Developer, Guid> repository,
     IRepository<DeveloperType, long> developerTypeRepository,
-    IRepository<DeveloperCertificate, Guid> developerCertificateRepository,
-    IRepository<Certificate, string> certificateRepository
+    IRepository<DeveloperProject, Guid> developerProjectRepository,
+    IRepository<Project, string> projectRepository
 ) : CrudAppService<Developer, DeveloperResponse, Guid, PagedAndSortedResultRequestDto, DeveloperCreateRequest, DeveloperUpdateRequest>(repository), IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IRepository<DeveloperType, long> _developerTypeRepository = developerTypeRepository;
-    private readonly IRepository<DeveloperCertificate, Guid> _developerCertificateRepository = developerCertificateRepository;
-    private readonly IRepository<Certificate, string> _certificateRepository = certificateRepository;
+    private readonly IRepository<DeveloperProject, Guid> _developerProjectRepository = developerProjectRepository;
+    private readonly IRepository<Project, string> _projectRepository = projectRepository;
 
     public override async Task<PagedResultDto<DeveloperResponse>> GetListAsync(PagedAndSortedResultRequestDto input)
     {
@@ -37,15 +37,15 @@ public class DeveloperService(
             var developerTypeIds = result.Items.Where(x => x.DeveloperType.IsNotNull()).Select(x => x.DeveloperType!.Id).Distinct();
             var developerTypes = await _developerTypeRepository.GetListAsync(x => developerTypeIds.Contains(x.Id));
             var developerIds = result.Items.Select(x => x.Id).Distinct();
-            var developerCertificates = await _developerCertificateRepository.GetListAsync(x => developerIds.Contains(x.DeveloperId));
-            var certificateIds = developerCertificates.Select(x => x.CertificateCode).Distinct();
-            var certificates = await _certificateRepository.GetListAsync(x => certificateIds.Contains(x.Id));
+            var developerProjects = await _developerProjectRepository.GetListAsync(x => developerIds.Contains(x.DeveloperId));
+            var projectIds = developerProjects.Select(x => x.ProjectId).Distinct();
+            var projects = await _projectRepository.GetListAsync(x => projectIds.Contains(x.Id));
 
             result.Items.ForEach(x =>
             {
                 x.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(y => y.Id == x.DeveloperType?.Id));
-                x.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(
-                    developerCertificates.Where(y => y.DeveloperId == x.Id).Select(y => certificates.FirstOrDefault(z => z.Id == y.CertificateCode)).ToList()
+                x.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>(
+                    developerProjects.Where(y => y.DeveloperId == x.Id).Select(y => projects.FirstOrDefault(z => z.Id == y.ProjectId)).ToList()
                 );
             });
 
@@ -64,11 +64,11 @@ public class DeveloperService(
         try
         {
             var result = await base.GetAsync(id);
-            var developerCertificates = await _developerCertificateRepository.GetListAsync(x => x.DeveloperId == id);
-            var certificates = await _certificateRepository.GetListAsync(x => developerCertificates.Select(x => x.CertificateCode).Distinct().Contains(x.Id));
+            var developerProjects = await _developerProjectRepository.GetListAsync(x => x.DeveloperId == id);
+            var projects = await _projectRepository.GetListAsync(x => developerProjects.Select(x => x.ProjectId).Distinct().Contains(x.Id));
 
             result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(await _developerTypeRepository.FindAsync(result.DeveloperType!.Id));
-            result.Certificates = ObjectMapper.Map<List<Certificate?>, List<CertificateResponse?>>(developerCertificates.Select(x => certificates.FirstOrDefault(y => y.Id == x.CertificateCode)).ToList());
+            result.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>(developerProjects.Select(x => projects.FirstOrDefault(y => y.Id == x.ProjectId)).ToList());
 
             return result;
         }

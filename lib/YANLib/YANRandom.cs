@@ -117,6 +117,14 @@ public static partial class YANRandom
         return minValue < maxValue ? random.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
+    public static DateTime NextDateTime(this Random random, object? min = null, object? max = null)
+    {
+        var minValue = min.IsNull() ? DateTime.MinValue : min.To<DateTime>();
+        var maxValue = max.IsNull() ? DateTime.MaxValue : max.To<DateTime>();
+
+        return minValue > maxValue ? default : minValue.AddTicks(random.NextUlong(max: (maxValue - minValue).Ticks).To<long>());
+    }
+
     public static char NextChar(this Random random)
     {
         var chars = "abcdefghijklmnopqrstuvwxyz";
@@ -156,6 +164,8 @@ public static partial class YANRandom
             ? random.NextDouble(min, max).To<T>()
             : typeof(T) == typeof(decimal)
             ? random.NextDecimal(min, max).To<T>()
+            : typeof(T) == typeof(DateTime)
+            ? random.NextDateTime(min, max).To<T>()
             : random.NextBool().To<T>();
     }
 
@@ -189,6 +199,8 @@ public static partial class YANRandom
             ? random.NextDouble().To<T>()
             : typeof(T) == typeof(decimal)
             ? random.NextDecimal().To<T>()
+            : typeof(T) == typeof(DateTime)
+            ? random.NextDateTime().To<T>()
             : typeof(T) == typeof(char)
             ? random.NextChar().To<T>()
             : typeof(T) == typeof(string)
