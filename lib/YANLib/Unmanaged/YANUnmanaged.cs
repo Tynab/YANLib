@@ -8,9 +8,9 @@ namespace YANLib.Unmanaged;
 
 public static partial class YANUnmanaged
 {
-    private static DateTime ToDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullOWhiteSpace()
+    private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpace()
         ? defaultValue
-        : format.IsNullOEmpty()
+        : format.IsNullEmpty()
         ? TryParse(input, out var dt)
             ? dt
             : defaultValue
@@ -18,31 +18,11 @@ public static partial class YANUnmanaged
         ? dt
         : defaultValue;
 
-    private static DateTime ToDateTime(this string? input, DateTime defaultValue = default, ICollection<string?>? format = null) => input.IsNullOWhiteSpace()
-        ? defaultValue
-        : format.IsNullOEmpty()
-        ? TryParse(input, out var dt)
-            ? dt
-            : defaultValue
-        : TryParseExact(input, [.. format], InvariantCulture, None, out dt)
-        ? dt
-        : defaultValue;
-
-    private static DateTime ToDateTime(this string? input, DateTime defaultValue = default, params string?[]? format) => input.IsNullOWhiteSpace()
-        ? defaultValue
-        : format.IsNullOEmpty()
-        ? TryParse(input, out var dt)
-            ? dt
-            : defaultValue
-        : TryParseExact(input, format, InvariantCulture, None, out dt)
-        ? dt
-        : defaultValue;
-
-    public static T To<T>(this object? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
+    public static T Parse<T>(this object? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
     {
         if (typeof(T) == typeof(DateTime))
         {
-            return (T)(object)(input?.ToString() ?? default).ToDateTime((defaultValue?.ToString() ?? default).ToDateTime(default, format), format);
+            return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
         }
 
         try
@@ -62,78 +42,30 @@ public static partial class YANUnmanaged
         }
     }
 
-    public static T To<T>(this object? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
-    {
-        if (typeof(T) == typeof(DateTime))
-        {
-            return (T)(object)(input?.ToString() ?? default).ToDateTime((defaultValue?.ToString() ?? default).ToDateTime(default, format), format);
-        }
+    public static IEnumerable<T>? Parses<T>(this IEnumerable<object?>? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-        try
-        {
-            return input.IsNull() ? defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T)) : (T)Convert.ChangeType(input, typeof(T));
-        }
-        catch
-        {
-            try
-            {
-                return defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T));
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
+    public static IEnumerable<T>? Parses<T>(this ICollection<object?>? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-    public static T To<T>(this object? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
-    {
-        if (typeof(T) == typeof(DateTime))
-        {
-            return (T)(object)(input?.ToString() ?? default).ToDateTime((defaultValue?.ToString() ?? default).ToDateTime(format: format), format);
-        }
+    public static IEnumerable<T>? Parses<T>(this object?[]? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-        try
-        {
-            return input.IsNull() ? defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T)) : (T)Convert.ChangeType(input, typeof(T));
-        }
-        catch
-        {
-            try
-            {
-                return defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T));
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
+    public static IEnumerable<T>? Parses<T>(this IEnumerable<object?>? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-    public static IEnumerable<T>? Tos<T>(this IEnumerable<object?>? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
+    public static IEnumerable<T>? Parses<T>(this ICollection<object?>? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-    public static IEnumerable<T>? Tos<T>(this ICollection<object?>? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
+    public static IEnumerable<T>? Parses<T>(this object?[]? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-    public static IEnumerable<T>? Tos<T>(this object?[]? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
+    public static IEnumerable<T>? Parses<T>(this IEnumerable<object?>? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-    public static IEnumerable<T>? Tos<T>(this IEnumerable<object?>? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
+    public static IEnumerable<T>? Parses<T>(this ICollection<object?>? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
-    public static IEnumerable<T>? Tos<T>(this ICollection<object?>? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Tos<T>(this object?[]? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Tos<T>(this IEnumerable<object?>? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Tos<T>(this ICollection<object?>? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Tos<T>(this object?[]? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
-        => input.IsNullOEmpty() ? default : input.Select(x => x.To<T>(defaultValue, format));
+    public static IEnumerable<T>? Parses<T>(this object?[]? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
+        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 }

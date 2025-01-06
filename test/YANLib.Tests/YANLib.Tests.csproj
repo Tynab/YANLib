@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Aspire.Hosting.Testing" />
     <Using Include="Xunit" />
   </ItemGroup>

@@ -20,5 +20,5 @@ public sealed class SampleValidators : AbstractValidator<List<JsonResponse>>
         _ = RuleFor(x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
     }
 
-    private bool IsNotEmptyAndNull(List<JsonResponse> requests) => requests.IsNotNullNEmpty();
+    private bool IsNotEmptyAndNull(List<JsonResponse> requests) => requests.IsNotNullEmpty();
 }

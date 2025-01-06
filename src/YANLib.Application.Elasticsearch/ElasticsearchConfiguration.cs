@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using YANLib.EsIndices;
 using YANLib.Object;
+using YANLib.Text;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
 using static YANLib.YANLibConsts.ElasticsearchIndex;
@@ -25,11 +26,11 @@ public static class ElasticsearchConfiguration
 
         ConnectionSettings? settings;
 
-        if (configuration.GetSection(urlTag).GetChildren().IsNullOEmpty())
+        if (configuration.GetSection(urlTag).GetChildren().IsNullEmpty())
         {
             var esUrl = configuration.GetSection(urlTag).Value;
 
-            if (esUrl.IsNullOWhiteSpace())
+            if (esUrl.IsNullWhiteSpace())
             {
                 return;
             }
@@ -40,12 +41,12 @@ public static class ElasticsearchConfiguration
         {
             settings = new ConnectionSettings(new StaticConnectionPool((configuration.GetSection(urlTag).GetChildren().Any()
                 ? configuration.GetSection(urlTag).GetChildren().ToArray()
-                : ([configuration.GetSection(urlTag)])).Select(s => s.Value.IsNullOWhiteSpace()
+                : ([configuration.GetSection(urlTag)])).Select(s => s.Value.IsNullWhiteSpace()
                 ? default
                 : new Uri(s.Value)).ToArray())).DefaultIndex(configuration.GetSection(Developer)?.Value).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(2));
         }
 
-        if (configuration.GetSection(usernameTag).Value.IsNotNullNWhiteSpace())
+        if (configuration.GetSection(usernameTag).Value.IsNotNullWhiteSpace())
         {
             _ = settings.ServerCertificateValidationCallback((o, certificate, chain, errors) => true);
             _ = settings.ServerCertificateValidationCallback(AllowAll);
@@ -85,6 +86,6 @@ public static class ElasticsearchConfiguration
     {
         var index = configuration.GetSection(indexPath)?.Value;
 
-        return index.IsNullOWhiteSpace() ? default : client.Indices.Delete(index);
+        return index.IsNullWhiteSpace() ? default : client.Indices.Delete(index);
     }
 }

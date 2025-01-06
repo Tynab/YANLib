@@ -27,7 +27,6 @@ public sealed class ProjectAutoMapperProfile : Profile
         _ = CreateMap<(string Id, Requests.v2.Create.ProjectCreateRequest Request), Project>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Request.Name))
-            .ForMember(d => d.GPA, o => o.MapFrom(s => s.Request.GPA))
             .ForMember(d => d.Description, o => o.MapFrom(s => s.Request.Description))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(s => s.Request.CreatedBy))
             .ForMember(d => d.CreatedAt, o => o.MapFrom(s => UtcNow))

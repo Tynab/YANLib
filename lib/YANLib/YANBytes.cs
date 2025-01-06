@@ -21,8 +21,7 @@ public static partial class YANBytes
     /// </summary>
     /// <param name="input">The collection of objects to be converted to byte arrays. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of byte arrays representing the UTF-8 encoded serializations of the input objects, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<byte[]?>? ToByteArrays(this IEnumerable<object?>? input, bool? isLarge = null)
-        => isLarge is true ? Ultimate.YANBytes.ToByteArrays(input) : input.IsNullOEmpty() ? default : input.Select(x => x.ToByteArray());
+    public static IEnumerable<byte[]?>? ToByteArrays(this IEnumerable<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.ToByteArray());
 
     /// <summary>
     /// Converts a collection (ICollection) of objects into their respective byte array representations using UTF-8 encoding.
@@ -31,8 +30,7 @@ public static partial class YANBytes
     /// </summary>
     /// <param name="input">The ICollection of objects to be converted to byte arrays. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of byte arrays representing the UTF-8 encoded serializations of the input objects, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<byte[]?>? ToByteArrays(this ICollection<object?>? input, bool? isLarge = null)
-        => isLarge is true ? Ultimate.YANBytes.ToByteArrays(input) : input.IsNullOEmpty() ? default : input.Select(x => x.ToByteArray());
+    public static IEnumerable<byte[]?>? ToByteArrays(this ICollection<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.ToByteArray());
 
     /// <summary>
     /// Converts an array of objects into their respective byte array representations using UTF-8 encoding.
@@ -41,8 +39,7 @@ public static partial class YANBytes
     /// </summary>
     /// <param name="input">The array of objects to be converted to byte arrays. Can be <see langword="null"/>.</param>
     /// <returns>An array of byte arrays representing the UTF-8 encoded serializations of the input objects, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<byte[]?>? ToByteArrays(this object?[]? input, bool? isLarge = null)
-        => isLarge is true ? Ultimate.YANBytes.ToByteArrays(input) : input.IsNullOEmpty() ? default : input.Select(x => x.ToByteArray());
+    public static IEnumerable<byte[]?>? ToByteArrays(this object?[]? input) => input.IsNullEmpty() ? default : input.Select(x => x.ToByteArray());
 
     /// <summary>
     /// Converts a byte array to its equivalent object of type <typeparamref name="T"/>.
@@ -63,8 +60,7 @@ public static partial class YANBytes
     /// <returns>
     /// An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
     /// </returns>
-    public static IEnumerable<T?>? FromByteArrays<T>(this IEnumerable<byte[]?>? input, bool? isLarge = null)
-        => isLarge is true ? Ultimate.YANBytes.FromByteArrays<T?>(input) : input.IsNullOEmpty() ? default : input.Select(x => x.FromByteArray<T>());
+    public static IEnumerable<T?>? FromByteArrays<T>(this IEnumerable<byte[]?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.FromByteArray<T>());
 
     /// <summary>
     /// Deserializes a collection (ICollection) of byte arrays into their respective objects of type <typeparamref name="T"/>.
@@ -76,8 +72,7 @@ public static partial class YANBytes
     /// <returns>
     /// An enumerable collection of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input collection is <see langword="null"/> or empty.
     /// </returns>
-    public static IEnumerable<T?>? FromByteArrays<T>(this ICollection<byte[]?>? input, bool? isLarge = null)
-        => isLarge is true ? Ultimate.YANBytes.FromByteArrays<T?>(input) : input.IsNullOEmpty() ? default : input.Select(x => x.FromByteArray<T>());
+    public static IEnumerable<T?>? FromByteArrays<T>(this ICollection<byte[]?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.FromByteArray<T>());
 
     /// <summary>
     /// Deserializes an array of byte arrays into their respective objects of type <typeparamref name="T"/>.
@@ -87,6 +82,5 @@ public static partial class YANBytes
     /// <typeparam name="T">The type of objects to which the byte arrays are to be deserialized.</typeparam>
     /// <param name="input">The array of byte arrays to be deserialized. Can be <see langword="null"/>.</param>
     /// <returns>An array of objects of type <typeparamref name="T"/> representing the deserialized results from the byte arrays, or <see langword="null"/> if the input array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<T?>? FromByteArrays<T>(this byte[]?[]? input, bool? isLarge = null)
-        => isLarge is true ? Ultimate.YANBytes.FromByteArrays<T?>(input) : input.IsNullOEmpty() ? default : input.Select(x => x.FromByteArray<T>());
+    public static IEnumerable<T?>? FromByteArrays<T>(this byte[]?[]? input) => input.IsNullEmpty() ? default : input.Select(x => x.FromByteArray<T>());
 }

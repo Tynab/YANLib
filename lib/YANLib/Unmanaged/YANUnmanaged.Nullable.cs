@@ -1,16 +1,14 @@
 ﻿using YANLib.Object;
 using YANLib.Text;
 using static System.DateTime;
-using static System.Globalization.CultureInfo;
-using static System.Globalization.DateTimeStyles;
 
 namespace YANLib.Unmanaged;
 
 public static partial class YANUnmanaged
 {
-    private static DateTime ToDateTime(this string? input) => input.IsNullOWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
+    private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
 
-    public static T? To<T>(this object? input)
+    public static T? Parse<T>(this object? input)
     {
         if (typeof(T) == typeof(string))
         {
@@ -19,7 +17,7 @@ public static partial class YANUnmanaged
 
         if (typeof(T) == typeof(DateTime))
         {
-            return (T?)(object?)(input?.ToString() ?? default).ToDateTime();
+            return (T?)(object?)(input?.ToString() ?? default).ParseDateTime();
         }
 
         try
@@ -32,9 +30,9 @@ public static partial class YANUnmanaged
         }
     }
 
-    public static IEnumerable<T?>? Tos<T>(this IEnumerable<object?>? input) => input.IsNullOEmpty() ? default : input.Select(x => x.To<T?>());
+    public static IEnumerable<T?>? Parses<T>(this IEnumerable<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 
-    public static IEnumerable<T?>? Tos<T>(this ICollection<object?>? input) => input.IsNullOEmpty() ? default : input.Select(x => x.To<T?>());
+    public static IEnumerable<T?>? Parses<T>(this ICollection<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 
-    public static IEnumerable<T?>? Tos<T>(this object?[]? input) => input.IsNullOEmpty() ? default : input.Select(x => x.To<T?>());
+    public static IEnumerable<T?>? Parses<T>(this object?[]? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 }

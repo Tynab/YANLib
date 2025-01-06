@@ -17,7 +17,7 @@ public static partial class YANMath
     /// </returns>
     public static T? Min<T>(params T?[]? nums) where T : IComparable<T>
     {
-        if (nums.IsNullOEmpty())
+        if (nums.IsNullEmpty())
         {
             return default;
         }
@@ -47,7 +47,7 @@ public static partial class YANMath
     /// </returns>
     public static T? Max<T>(params T?[]? nums) where T : IComparable<T>
     {
-        if (nums.IsNullOEmpty())
+        if (nums.IsNullEmpty())
         {
             return default;
         }
@@ -65,13 +65,13 @@ public static partial class YANMath
         return max;
     }
 
-    public static T Ceiling<T>(this object? input) where T : unmanaged => typeof(T) == typeof(double) ? Math.Ceiling(input.To<double>()).To<T>() : Math.Ceiling(input.To<decimal>()).To<T>();
+    public static T Ceiling<T>(this object? input) where T : unmanaged => typeof(T) == typeof(double) ? Math.Ceiling(input.Parse<double>()).Parse<T>() : Math.Ceiling(input.Parse<decimal>()).Parse<T>();
 
-    public static IEnumerable<T>? Ceilings<T>(this IEnumerable<object?>? input) where T : unmanaged => input.IsNullOEmpty() ? default : input.Select(x => x.Ceiling<T>());
+    public static IEnumerable<T>? Ceilings<T>(this IEnumerable<object?>? input) where T : unmanaged => input.IsNullEmpty() ? default : input.Select(x => x.Ceiling<T>());
 
-    public static IEnumerable<T>? Ceilings<T>(this ICollection<object?>? input) where T : unmanaged => input.IsNullOEmpty() ? default : input.Select(x => x.Ceiling<T>());
+    public static IEnumerable<T>? Ceilings<T>(this ICollection<object?>? input) where T : unmanaged => input.IsNullEmpty() ? default : input.Select(x => x.Ceiling<T>());
 
-    public static IEnumerable<T>? Ceilings<T>(this object?[]? input) where T : unmanaged => input.IsNullOEmpty() ? default : input.Select(x => x.Ceiling<T>());
+    public static IEnumerable<T>? Ceilings<T>(this object?[]? input) where T : unmanaged => input.IsNullEmpty() ? default : input.Select(x => x.Ceiling<T>());
 
     // TODO: Math lib
 }

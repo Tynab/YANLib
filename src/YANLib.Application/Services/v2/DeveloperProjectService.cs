@@ -16,6 +16,7 @@ using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
+using YANLib.Text;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
@@ -42,14 +43,14 @@ public class DeveloperProjectService(
         {
             var dtos = await _redisService.GetAll($"{DeveloperProjectGroupPrefix}:{developerId}");
 
-            if (dtos.IsNullOEmpty())
+            if (dtos.IsNullEmpty())
             {
                 return new PagedResultDto<DeveloperProjectResponse>();
             }
 
             var queryableItems = dtos.Select(x => ObjectMapper.Map<(Guid DeveloperId, KeyValuePair<string, DeveloperProjectRedisDto?> Pair), DeveloperProjectResponse>((developerId, x))).AsQueryable();
 
-            if (input.Sorting.IsNotNullNWhiteSpace())
+            if (input.Sorting.IsNotNullWhiteSpace())
             {
                 queryableItems = queryableItems.OrderBy(input.Sorting);
             }
@@ -177,7 +178,7 @@ public class DeveloperProjectService(
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            if (entities.IsNullOEmpty())
+            if (entities.IsNullEmpty())
             {
                 return result;
             }
@@ -220,7 +221,7 @@ public class DeveloperProjectService(
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsNullOEmpty()
+            return entities.IsNullEmpty()
                 ? result
                 : (result &= await _redisService.SetBulk($"{DeveloperProjectGroupPrefix}:{developerId}", entities.ToDictionary(x => x.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>)));
         }

@@ -17,9 +17,9 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source collection.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this IEnumerable<T>? input, object? chunkSize)
     {
-        var size = chunkSize.To<uint>().To<int>();
+        var size = chunkSize.Parse<uint>().Parse<int>();
 
-        if (input.IsNullOEmpty() || size is 0)
+        if (input.IsNullEmpty() || size is 0)
         {
             yield break;
         }
@@ -42,9 +42,9 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source collection.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this ICollection<T>? input, object? chunkSize)
     {
-        var size = chunkSize.To<uint>().To<int>();
+        var size = chunkSize.Parse<uint>().Parse<int>();
 
-        if (input.IsNullOEmpty() || size is 0)
+        if (input.IsNullEmpty() || size is 0)
         {
             yield break;
         }
@@ -66,9 +66,9 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source array.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this T[]? input, object? chunkSize)
     {
-        var size = chunkSize.To<uint>().To<int>();
+        var size = chunkSize.Parse<uint>().Parse<int>();
 
-        if (input.IsNullOEmpty() || size is 0)
+        if (input.IsNullEmpty() || size is 0)
         {
             yield break;
         }
@@ -90,9 +90,9 @@ public static partial class YANEnumerable
     /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source list.</returns>
     public static IEnumerable<List<T>> ChunkBySize<T>(this List<T>? input, object? chunkSize)
     {
-        var size = chunkSize.To<uint>().To<int>();
+        var size = chunkSize.Parse<uint>().Parse<int>();
 
-        if (input.IsNullOEmpty() || size is 0)
+        if (input.IsNullEmpty() || size is 0)
         {
             yield break;
         }
@@ -107,7 +107,7 @@ public static partial class YANEnumerable
 
     public static IEnumerable<T>? Clean<T>(this IEnumerable<T>? input)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return input;
         }
@@ -119,7 +119,7 @@ public static partial class YANEnumerable
 
     public static IEnumerable<T>? Clean<T>(this ICollection<T>? input)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return input;
         }
@@ -131,7 +131,7 @@ public static partial class YANEnumerable
 
     public static IEnumerable<T>? Clean<T>(params T[]? input)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return input;
         }
@@ -143,7 +143,7 @@ public static partial class YANEnumerable
 
     public static void Clean<T>(this List<T>? input)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -156,45 +156,45 @@ public static partial class YANEnumerable
         }
     }
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<IEnumerable<T>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<IEnumerable<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<ICollection<T>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<ICollection<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T[]?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<IEnumerable<T>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<IEnumerable<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<ICollection<T>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<ICollection<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T[]?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T>?[]? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T>?[]? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this T[]?[]? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this T[]?[]? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
     public static void Cleans<T>(this List<IEnumerable<T>?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -204,12 +204,12 @@ public static partial class YANEnumerable
             input.ForEach(x => x = x.Clean());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     public static void Cleans<T>(this List<ICollection<T>?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -219,12 +219,12 @@ public static partial class YANEnumerable
             input.ForEach(x => x = (ICollection<T>?)x.Clean());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     public static void Cleans<T>(this List<T[]?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -234,12 +234,12 @@ public static partial class YANEnumerable
             input.ForEach(x => x = x.Clean()?.ToArray());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     public static void Cleans<T>(this List<List<T>?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -249,7 +249,7 @@ public static partial class YANEnumerable
             input.ForEach(x => x.Clean());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     /// <summary>
@@ -259,7 +259,7 @@ public static partial class YANEnumerable
     /// </summary>
     /// <param name="input">The collection of strings to be filtered. Can be <see langword="null"/>.</param>
     /// <returns>A filtered collection with <see langword="null"/>, empty, or white-space strings removed, or the original collection if it is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this IEnumerable<string?>? input) => input.IsNullOEmpty() ? input : input.Where(x => x.IsNotNullNWhiteSpace());
+    public static IEnumerable<string?>? Clean(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Where(x => x.IsNotNullWhiteSpace());
 
     /// <summary>
     /// Filters out <see langword="null"/>, empty, or white-space strings from a collection (ICollection) of strings.
@@ -268,7 +268,7 @@ public static partial class YANEnumerable
     /// </summary>
     /// <param name="input">The ICollection of strings to be filtered. Can be <see langword="null"/>.</param>
     /// <returns>A filtered collection with <see langword="null"/>, empty, or white-space strings removed, or the original collection if it is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this ICollection<string?>? input) => input.IsNullOEmpty() ? input : input.Where(x => x.IsNotNullNWhiteSpace());
+    public static IEnumerable<string?>? Clean(this ICollection<string?>? input) => input.IsNullEmpty() ? input : input.Where(x => x.IsNotNullWhiteSpace());
 
     /// <summary>
     /// Filters out <see langword="null"/>, empty, or white-space strings from an array of strings.
@@ -277,47 +277,47 @@ public static partial class YANEnumerable
     /// </summary>
     /// <param name="input">The array of strings to be filtered. Can be <see langword="null"/>.</param>
     /// <returns>A filtered array with <see langword="null"/>, empty, or white-space strings removed, or the original array if it is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(params string?[]? input) => input.IsNullOEmpty() ? input : input.Where(x => x.IsNotNullNWhiteSpace());
+    public static IEnumerable<string?>? Clean(params string?[]? input) => input.IsNullEmpty() ? input : input.Where(x => x.IsNotNullWhiteSpace());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<IEnumerable<string?>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<IEnumerable<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<ICollection<string?>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<ICollection<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?[]?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<IEnumerable<string?>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<IEnumerable<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<ICollection<string?>?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<ICollection<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?[]?>? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?>?[]? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?>?[]? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this string?[]?[]? input, bool? deepClean = null) => input.IsNullOEmpty()
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this string?[]?[]? input, bool? deepClean = null) => input.IsNullEmpty()
         ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullNEmpty());
+        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
 
     public static void Cleans(this List<IEnumerable<string?>?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -327,12 +327,12 @@ public static partial class YANEnumerable
             input.ForEach(x => x = x.Clean());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     public static void Cleans(this List<ICollection<string?>?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -342,12 +342,12 @@ public static partial class YANEnumerable
             input.ForEach(x => x = (ICollection<string?>?)x.Clean());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     public static void Cleans(this List<string?[]?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -357,12 +357,12 @@ public static partial class YANEnumerable
             input.ForEach(x => x = x.Clean()?.ToArray());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 
     public static void Cleans(this List<List<string?>?>? input, bool? deepClean = null)
     {
-        if (input.IsNullOEmpty())
+        if (input.IsNullEmpty())
         {
             return;
         }
@@ -372,6 +372,6 @@ public static partial class YANEnumerable
             input.ForEach(x => x.Clean());
         }
 
-        _ = input.RemoveAll(x => x.IsNullOEmpty());
+        _ = input.RemoveAll(x => x.IsNullEmpty());
     }
 }

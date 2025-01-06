@@ -21,7 +21,7 @@ public class YANLibMethodInvocationValidator(IObjectValidator objectValidator) :
     {
         _ = NotNull(context, nameof(context));
 
-        if (context.Parameters.IsNullOEmpty())
+        if (context.Parameters.IsNullEmpty())
         {
             return;
         }
@@ -41,14 +41,14 @@ public class YANLibMethodInvocationValidator(IObjectValidator objectValidator) :
             throw new ArgumentException("Method parameter count does not match with argument count!");
         }
 
-        if (context.Errors.IsNotNullNEmpty() && HasSingleNullArgument(context))
+        if (context.Errors.IsNotNullEmpty() && HasSingleNullArgument(context))
         {
             ThrowValidationError(context);
         }
 
         await AddMethodParameterValidationErrorsAsync(context);
 
-        if (context.Errors.IsNotNullNEmpty())
+        if (context.Errors.IsNotNullEmpty())
         {
             ThrowValidationError(context);
         }

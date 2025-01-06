@@ -141,7 +141,7 @@ public class DeveloperService(
 
             return (await _repository.Modify(new DeveloperDto
             {
-                Id = dto.Id.To<Guid>(),
+                Id = dto.Id.Parse<Guid>(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _esService.Delete(idCard);
@@ -166,7 +166,7 @@ public class DeveloperService(
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            if (entities.IsNullOEmpty())
+            if (entities.IsNullEmpty())
             {
                 return result;
             }

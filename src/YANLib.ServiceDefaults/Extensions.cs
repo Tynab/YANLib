@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using YANLib.Text;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult;
 
 namespace Microsoft.Extensions.Hosting;
@@ -45,7 +46,7 @@ public static class Extensions
 
     private static IHostApplicationBuilder AddOpenTelemetryExporters(this IHostApplicationBuilder builder)
     {
-        if (builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"].IsNotNullNWhiteSpace())
+        if (builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"].IsNotNullWhiteSpace())
         {
             _ = builder.Services.AddOpenTelemetry().UseOtlpExporter();
         }

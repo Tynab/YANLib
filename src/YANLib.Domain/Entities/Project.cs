@@ -1,5 +1,4 @@
 ﻿using Id_Generator_Snowflake;
-using System.ComponentModel.DataAnnotations.Schema;
 using static YANLib.YANLibConsts.SnowflakeId;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 

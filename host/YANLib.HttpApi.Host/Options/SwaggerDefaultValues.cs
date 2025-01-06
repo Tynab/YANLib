@@ -30,7 +30,7 @@ public class SwaggerDefaultValues : IOperationFilter
             });
         });
 
-        if (operation.Parameters.IsNullOEmpty())
+        if (operation.Parameters.IsNullEmpty())
         {
             return;
         }
@@ -44,7 +44,7 @@ public class SwaggerDefaultValues : IOperationFilter
                 return;
             }
 
-            if (x.Description.IsNullOEmpty())
+            if (x.Description.IsNullEmpty())
             {
                 x.Description = description.ModelMetadata?.Description;
             }

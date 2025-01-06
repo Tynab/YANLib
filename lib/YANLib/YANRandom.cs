@@ -15,114 +15,114 @@ public static partial class YANRandom
 
     public static byte NextByte(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? byte.MinValue : min.To<byte>();
-        var maxValue = max.IsNull() ? byte.MaxValue : max.To<byte>();
+        var minValue = min.IsNull() ? byte.MinValue : min.Parse<byte>();
+        var maxValue = max.IsNull() ? byte.MaxValue : max.Parse<byte>();
 
-        return minValue > maxValue ? default : random.Next(minValue, maxValue).To<byte>();
+        return minValue > maxValue ? default : random.Next(minValue, maxValue).Parse<byte>();
     }
 
     public static sbyte NextSbyte(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? sbyte.MinValue : min.To<sbyte>();
-        var maxValue = max.IsNull() ? sbyte.MaxValue : max.To<sbyte>();
+        var minValue = min.IsNull() ? sbyte.MinValue : min.Parse<sbyte>();
+        var maxValue = max.IsNull() ? sbyte.MaxValue : max.Parse<sbyte>();
 
-        return minValue > maxValue ? default : random.Next(minValue, maxValue).To<sbyte>();
+        return minValue > maxValue ? default : random.Next(minValue, maxValue).Parse<sbyte>();
     }
 
     public static short NextShort(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? short.MinValue : min.To<short>();
-        var maxValue = max.IsNull() ? short.MaxValue : max.To<short>();
+        var minValue = min.IsNull() ? short.MinValue : min.Parse<short>();
+        var maxValue = max.IsNull() ? short.MaxValue : max.Parse<short>();
 
-        return minValue > maxValue ? default : random.Next(minValue, maxValue).To<short>();
+        return minValue > maxValue ? default : random.Next(minValue, maxValue).Parse<short>();
     }
 
     public static ushort NextUshort(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? ushort.MinValue : min.To<ushort>();
-        var maxValue = max.IsNull() ? ushort.MaxValue : max.To<ushort>();
+        var minValue = min.IsNull() ? ushort.MinValue : min.Parse<ushort>();
+        var maxValue = max.IsNull() ? ushort.MaxValue : max.Parse<ushort>();
 
-        return minValue > maxValue ? default : random.Next(minValue, maxValue).To<ushort>();
+        return minValue > maxValue ? default : random.Next(minValue, maxValue).Parse<ushort>();
     }
 
     public static int NextInt(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? int.MinValue : min.To<int>();
-        var maxValue = max.IsNull() ? int.MaxValue : max.To<int>();
+        var minValue = min.IsNull() ? int.MinValue : min.Parse<int>();
+        var maxValue = max.IsNull() ? int.MaxValue : max.Parse<int>();
 
         return minValue > maxValue ? default : random.Next(minValue, maxValue);
     }
 
     public static uint NextUint(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? uint.MinValue : min.To<uint>();
-        var maxValue = max.IsNull() ? uint.MaxValue : max.To<uint>();
+        var minValue = min.IsNull() ? uint.MinValue : min.Parse<uint>();
+        var maxValue = max.IsNull() ? uint.MaxValue : max.Parse<uint>();
 
-        return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).To<uint>();
+        return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).Parse<uint>();
     }
 
     public static long NextLong(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? long.MinValue : min.To<long>();
-        var maxValue = max.IsNull() ? long.MaxValue : max.To<long>();
+        var minValue = min.IsNull() ? long.MinValue : min.Parse<long>();
+        var maxValue = max.IsNull() ? long.MaxValue : max.Parse<long>();
 
         return minValue > maxValue ? default : random.NextInt64(minValue, maxValue);
     }
 
     public static ulong NextUlong(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? ulong.MinValue : min.To<ulong>();
-        var maxValue = max.IsNull() ? ulong.MaxValue : max.To<ulong>();
+        var minValue = min.IsNull() ? ulong.MinValue : min.Parse<ulong>();
+        var maxValue = max.IsNull() ? ulong.MaxValue : max.Parse<ulong>();
 
-        return minValue > maxValue ? default : (random.NextInt64(long.MinValue, (long)(maxValue - (minValue - (BigInteger)long.MinValue))) - long.MinValue).To<ulong>() + minValue;
+        return minValue > maxValue ? default : (random.NextInt64(long.MinValue, (long)(maxValue - (minValue - (BigInteger)long.MinValue))) - long.MinValue).Parse<ulong>() + minValue;
     }
 
     public static nint NextNint(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? nint.MinValue : min.To<nint>();
-        var maxValue = max.IsNull() ? nint.MaxValue : max.To<nint>();
+        var minValue = min.IsNull() ? nint.MinValue : min.Parse<nint>();
+        var maxValue = max.IsNull() ? nint.MaxValue : max.Parse<nint>();
 
-        return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).To<nint>();
+        return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).Parse<nint>();
     }
 
     public static nuint NextNuint(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? nuint.MinValue : min.To<nuint>();
-        var maxValue = max.IsNull() ? nuint.MaxValue : max.To<nuint>();
+        var minValue = min.IsNull() ? nuint.MinValue : min.Parse<nuint>();
+        var maxValue = max.IsNull() ? nuint.MaxValue : max.Parse<nuint>();
 
-        return minValue > maxValue ? default : (random.NextInt64(nint.MinValue, (long)(maxValue - (minValue - (BigInteger)nint.MinValue))) - nint.MinValue).To<nuint>() + minValue;
+        return minValue > maxValue ? default : (random.NextInt64(nint.MinValue, (long)(maxValue - (minValue - (BigInteger)nint.MinValue))) - nint.MinValue).Parse<nuint>() + minValue;
     }
 
     public static float NextSingle(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? float.MinValue * 1 / 100 : min.To<float>();
-        var maxValue = max.IsNull() ? float.MaxValue * 1 / 100 : max.To<float>();
+        var minValue = min.IsNull() ? float.MinValue * 1 / 100 : min.Parse<float>();
+        var maxValue = max.IsNull() ? float.MaxValue * 1 / 100 : max.Parse<float>();
 
         return minValue < maxValue ? random.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static double NextDouble(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? double.MinValue * 1 / 100 : min.To<double>();
-        var maxValue = max.IsNull() ? double.MaxValue * 1 / 100 : max.To<double>();
+        var minValue = min.IsNull() ? double.MinValue * 1 / 100 : min.Parse<double>();
+        var maxValue = max.IsNull() ? double.MaxValue * 1 / 100 : max.Parse<double>();
 
         return minValue < maxValue ? random.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static decimal NextDecimal(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? decimal.MinValue * 1 / 100 : min.To<decimal>();
-        var maxValue = max.IsNull() ? decimal.MaxValue * 1 / 100 : max.To<decimal>();
+        var minValue = min.IsNull() ? decimal.MinValue * 1 / 100 : min.Parse<decimal>();
+        var maxValue = max.IsNull() ? decimal.MaxValue * 1 / 100 : max.Parse<decimal>();
 
         return minValue < maxValue ? random.NextDecimal() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
 
     public static DateTime NextDateTime(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNull() ? DateTime.MinValue : min.To<DateTime>();
-        var maxValue = max.IsNull() ? DateTime.MaxValue : max.To<DateTime>();
+        var minValue = min.IsNull() ? DateTime.MinValue : min.Parse<DateTime>();
+        var maxValue = max.IsNull() ? DateTime.MaxValue : max.Parse<DateTime>();
 
-        return minValue > maxValue ? default : minValue.AddTicks(random.NextUlong(max: (maxValue - minValue).Ticks).To<long>());
+        return minValue > maxValue ? default : minValue.AddTicks(random.NextUlong(max: (maxValue - minValue).Ticks).Parse<long>());
     }
 
     public static char NextChar(this Random random)
@@ -139,34 +139,34 @@ public static partial class YANRandom
         var random = new Random();
 
         return typeof(T) == typeof(byte)
-            ? random.NextByte(min, max).To<T>()
+            ? random.NextByte(min, max).Parse<T>()
             : typeof(T) == typeof(sbyte)
-            ? random.NextSbyte(min, max).To<T>()
+            ? random.NextSbyte(min, max).Parse<T>()
             : typeof(T) == typeof(short)
-            ? random.NextShort(min, max).To<T>()
+            ? random.NextShort(min, max).Parse<T>()
             : typeof(T) == typeof(ushort)
-            ? random.NextUshort(min, max).To<T>()
+            ? random.NextUshort(min, max).Parse<T>()
             : typeof(T) == typeof(int)
-            ? random.NextInt(min, max).To<T>()
+            ? random.NextInt(min, max).Parse<T>()
             : typeof(T) == typeof(uint)
-            ? random.NextUint(min, max).To<T>()
+            ? random.NextUint(min, max).Parse<T>()
             : typeof(T) == typeof(long)
-            ? random.NextLong(min, max).To<T>()
+            ? random.NextLong(min, max).Parse<T>()
             : typeof(T) == typeof(ulong)
-            ? random.NextUlong(min, max).To<T>()
+            ? random.NextUlong(min, max).Parse<T>()
             : typeof(T) == typeof(nint)
-            ? random.NextNint(min, max).To<T>()
+            ? random.NextNint(min, max).Parse<T>()
             : typeof(T) == typeof(nuint)
-            ? random.NextNuint(min, max).To<T>()
+            ? random.NextNuint(min, max).Parse<T>()
             : typeof(T) == typeof(float)
-            ? random.NextSingle(min, max).To<T>()
+            ? random.NextSingle(min, max).Parse<T>()
             : typeof(T) == typeof(double)
-            ? random.NextDouble(min, max).To<T>()
+            ? random.NextDouble(min, max).Parse<T>()
             : typeof(T) == typeof(decimal)
-            ? random.NextDecimal(min, max).To<T>()
+            ? random.NextDecimal(min, max).Parse<T>()
             : typeof(T) == typeof(DateTime)
-            ? random.NextDateTime(min, max).To<T>()
-            : random.NextBool().To<T>();
+            ? random.NextDateTime(min, max).Parse<T>()
+            : random.NextBool().Parse<T>();
     }
 
     public static T? GenerateRandom<T>()
@@ -174,41 +174,41 @@ public static partial class YANRandom
         var random = new Random();
 
         return typeof(T) == typeof(byte)
-            ? random.NextByte().To<T>()
+            ? random.NextByte().Parse<T>()
             : typeof(T) == typeof(sbyte)
-            ? random.NextSbyte().To<T>()
+            ? random.NextSbyte().Parse<T>()
             : typeof(T) == typeof(short)
-            ? random.NextShort().To<T>()
+            ? random.NextShort().Parse<T>()
             : typeof(T) == typeof(ushort)
-            ? random.NextUshort().To<T>()
+            ? random.NextUshort().Parse<T>()
             : typeof(T) == typeof(int)
-            ? random.NextInt().To<T>()
+            ? random.NextInt().Parse<T>()
             : typeof(T) == typeof(uint)
-            ? random.NextUint().To<T>()
+            ? random.NextUint().Parse<T>()
             : typeof(T) == typeof(long)
-            ? random.NextLong().To<T>()
+            ? random.NextLong().Parse<T>()
             : typeof(T) == typeof(ulong)
-            ? random.NextUlong().To<T>()
+            ? random.NextUlong().Parse<T>()
             : typeof(T) == typeof(nint)
-            ? random.NextNint().To<T>()
+            ? random.NextNint().Parse<T>()
             : typeof(T) == typeof(nuint)
-            ? random.NextNuint().To<T>()
+            ? random.NextNuint().Parse<T>()
             : typeof(T) == typeof(float)
-            ? random.NextSingle().To<T>()
+            ? random.NextSingle().Parse<T>()
             : typeof(T) == typeof(double)
-            ? random.NextDouble().To<T>()
+            ? random.NextDouble().Parse<T>()
             : typeof(T) == typeof(decimal)
-            ? random.NextDecimal().To<T>()
+            ? random.NextDecimal().Parse<T>()
             : typeof(T) == typeof(DateTime)
-            ? random.NextDateTime().To<T>()
+            ? random.NextDateTime().Parse<T>()
             : typeof(T) == typeof(char)
-            ? random.NextChar().To<T>()
+            ? random.NextChar().Parse<T>()
             : typeof(T) == typeof(string)
-            ? random.NextString().To<T>()
-            : random.NextBool().To<T>();
+            ? random.NextString().Parse<T>()
+            : random.NextBool().Parse<T>();
     }
 
-    public static IEnumerable<T> GenerateRandoms<T>(object? min = null, object? max = null, object? size = null) where T : unmanaged => Range(0, size.To<uint>().To<int>()).Select(i => GenerateRandom<T>(min, max));
+    public static IEnumerable<T> GenerateRandoms<T>(object? min = null, object? max = null, object? size = null) where T : unmanaged => Range(0, size.Parse<uint>().Parse<int>()).Select(i => GenerateRandom<T>(min, max));
 
-    public static IEnumerable<T?> GenerateRandoms<T>(object? size = null) => Range(0, size.To<uint>().To<int>()).Select(i => GenerateRandom<T>());
+    public static IEnumerable<T?> GenerateRandoms<T>(object? size = null) => Range(0, size.Parse<uint>().Parse<int>()).Select(i => GenerateRandom<T>());
 }

@@ -24,7 +24,7 @@ public class YANLibObjectValidator(IOptions<AbpValidationOptions> options, IServ
     {
         var errors = await GetErrorsAsync(validatingObject, name, allowNull);
 
-        if (errors.IsNotNullNEmpty())
+        if (errors.IsNotNullEmpty())
         {
             throw new YANLibValidationException(BAD_REQUEST, "Object state is not valid!", errors);
         }

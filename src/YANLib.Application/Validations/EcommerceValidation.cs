@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using YANLib.Object;
 using YANLib.Requests;
+using YANLib.Text;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;
@@ -27,9 +28,9 @@ public sealed class EcommerceValidators : AbstractValidator<List<EcommerceLoginR
         _ = RuleFor(x => x).Must(PasswordIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_PWD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_PWD);
     }
 
-    private bool IsNotEmptyAndNull(List<EcommerceLoginRequest> requests) => requests.IsNotNullNEmpty();
+    private bool IsNotEmptyAndNull(List<EcommerceLoginRequest> requests) => requests.IsNotNullEmpty();
 
-    private bool UsernameIsNotWhiteSpace(List<EcommerceLoginRequest> requests) => requests.Select(x => x.Username).AllNotNullNWhiteSpace();
+    private bool UsernameIsNotWhiteSpace(List<EcommerceLoginRequest> requests) => requests.Select(x => x.Username).AllNotNullWhiteSpace();
 
-    private bool PasswordIsNotWhiteSpace(List<EcommerceLoginRequest> requests) => requests.Select(x => x.Password).AllNotNullNWhiteSpace();
+    private bool PasswordIsNotWhiteSpace(List<EcommerceLoginRequest> requests) => requests.Select(x => x.Password).AllNotNullWhiteSpace();
 }

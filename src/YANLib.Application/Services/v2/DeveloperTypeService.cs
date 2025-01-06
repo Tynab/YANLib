@@ -16,6 +16,7 @@ using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
+using YANLib.Text;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
@@ -37,14 +38,14 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         {
             var dtos = await _redisService.GetAll(DeveloperTypeGroup);
 
-            if (dtos.IsNullOEmpty())
+            if (dtos.IsNullEmpty())
             {
                 return new PagedResultDto<DeveloperTypeResponse>();
             }
 
             var queryableItems = dtos.Select(ObjectMapper.Map<KeyValuePair<string, DeveloperTypeRedisDto?>, DeveloperTypeResponse>).AsQueryable();
 
-            if (input.Sorting.IsNotNullNWhiteSpace())
+            if (input.Sorting.IsNotNullWhiteSpace())
             {
                 queryableItems = queryableItems.OrderBy(input.Sorting);
             }
@@ -147,7 +148,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsNullOEmpty() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
+            return entities.IsNullEmpty() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
         }
         catch (Exception ex)
         {

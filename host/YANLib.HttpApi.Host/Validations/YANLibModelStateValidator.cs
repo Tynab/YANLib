@@ -17,7 +17,7 @@ public class YANLibModelStateValidator : ModelStateValidator
 
         base.AddErrors(validationResult, modelState);
 
-        if (validationResult.Errors.IsNotNullNEmpty())
+        if (validationResult.Errors.IsNotNullEmpty())
         {
             throw new YANLibValidationException(BAD_REQUEST, "Model state is not valid!", validationResult.Errors);
         }

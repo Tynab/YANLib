@@ -7,7 +7,7 @@ public static partial class YANTask
 {
     public static async ValueTask<T?> WaitAnyWithCondition<T>(this IEnumerable<ValueTask<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var completeTask = await WhenAny(tasks.Select(x => x.AsTask())).ConfigureAwait(false);
             var result = await completeTask;
@@ -23,7 +23,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WaitAnyWithCondition<T>(this ICollection<ValueTask<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var completeTask = await WhenAny(tasks.Select(x => x.AsTask())).ConfigureAwait(false);
             var result = await completeTask;
@@ -39,7 +39,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WaitAnyWithCondition<T>(this ValueTask<T>[]? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var completeTask = await WhenAny(tasks.Select(x => x.AsTask())).ConfigureAwait(false);
             var result = await completeTask;
@@ -55,7 +55,7 @@ public static partial class YANTask
 
     public static async Task<T?> WaitAnyWithCondition<T>(this IEnumerable<Task<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var completeTask = await WhenAny(tasks).ConfigureAwait(false);
             var result = await completeTask;
@@ -71,7 +71,7 @@ public static partial class YANTask
 
     public static async Task<T?> WaitAnyWithCondition<T>(this ICollection<Task<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var completeTask = await WhenAny(tasks).ConfigureAwait(false);
             var result = await completeTask;
@@ -87,7 +87,7 @@ public static partial class YANTask
 
     public static async Task<T?> WaitAnyWithCondition<T>(this Task<T>[]? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var completeTask = await WhenAny(tasks).ConfigureAwait(false);
             var result = await completeTask;
@@ -103,7 +103,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WhenAnyWithCondition<T>(this IEnumerable<ValueTask<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
 
@@ -127,7 +127,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WhenAnyWithCondition<T>(this ICollection<ValueTask<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
 
@@ -151,7 +151,7 @@ public static partial class YANTask
 
     public static async ValueTask<T?> WhenAnyWithCondition<T>(this ValueTask<T>[]? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var taskSet = tasks.Select(x => x.AsTask()).ToHashSet();
 
@@ -175,7 +175,7 @@ public static partial class YANTask
 
     public static async Task<T?> WhenAnyWithCondition<T>(this IEnumerable<Task<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var taskSet = tasks.ToHashSet();
 
@@ -199,7 +199,7 @@ public static partial class YANTask
 
     public static async Task<T?> WhenAnyWithCondition<T>(this ICollection<Task<T>>? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var taskSet = tasks.ToHashSet();
 
@@ -223,7 +223,7 @@ public static partial class YANTask
 
     public static async Task<T?> WhenAnyWithCondition<T>(this Task<T>[]? tasks, T goodResult) where T : IComparable<T>
     {
-        if (tasks.IsNotNullNEmpty())
+        if (tasks.IsNotNullEmpty())
         {
             var taskSet = tasks.ToHashSet();
 

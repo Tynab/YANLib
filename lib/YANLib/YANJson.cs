@@ -39,7 +39,7 @@ public static partial class YANJson
     /// <param name="input">The collection of objects to be serialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of JSON strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? StandardSerializes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<string?>? StandardSerializes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.StandardSerialize())
@@ -53,7 +53,7 @@ public static partial class YANJson
     /// <param name="input">The ICollection of objects to be serialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of JSON strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? StandardSerializes(this ICollection<object?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<string?>? StandardSerializes(this ICollection<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.StandardSerialize())
@@ -67,7 +67,7 @@ public static partial class YANJson
     /// <param name="input">The array of objects to be serialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of JSON strings, or <see langword="null"/> if the array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? StandardSerializes(this object?[]? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<string?>? StandardSerializes(this object?[]? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.StandardSerialize())
@@ -95,7 +95,7 @@ public static partial class YANJson
     /// <param name="input">The collection of objects to be serialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of JSON strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Serializes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<string?>? Serializes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Serialize())
@@ -109,7 +109,7 @@ public static partial class YANJson
     /// <param name="input">The ICollection of objects to be serialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of JSON strings, or <see langword="null"/> if the collection is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Serializes(this ICollection<object?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<string?>? Serializes(this ICollection<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Serialize())
@@ -123,7 +123,7 @@ public static partial class YANJson
     /// <param name="input">The array of objects to be serialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of JSON strings, or <see langword="null"/> if the array is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Serializes(this object?[]? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<string?>? Serializes(this object?[]? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Serialize())
@@ -143,7 +143,7 @@ public static partial class YANJson
     {
         try
         {
-            return input.IsNullOWhiteSpace() ? default : options.IsNull() ? JsonSerializer.Deserialize<T>(input) : JsonSerializer.Deserialize<T>(input, options);
+            return input.IsNullWhiteSpace() ? default : options.IsNull() ? JsonSerializer.Deserialize<T>(input) : JsonSerializer.Deserialize<T>(input, options);
         }
         catch
         {
@@ -159,7 +159,7 @@ public static partial class YANJson
     /// <param name="input">The collection of JSON strings to be deserialized. Can be <see langword="null"/> or contain white-space strings.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the collection is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? StandardDeserializes<T>(this IEnumerable<string?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? StandardDeserializes<T>(this IEnumerable<string?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.StandardDeserialize<T>())
@@ -173,7 +173,7 @@ public static partial class YANJson
     /// <param name="input">The ICollection of JSON strings to be deserialized. Can be <see langword="null"/> or contain white-space strings.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the collection is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? StandardDeserializes<T>(this ICollection<string?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? StandardDeserializes<T>(this ICollection<string?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.StandardDeserialize<T>())
@@ -187,7 +187,7 @@ public static partial class YANJson
     /// <param name="input">The array of JSON strings to be deserialized. Can be <see langword="null"/> or contain white-space strings.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the array is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? StandardDeserializes<T>(this string?[]? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? StandardDeserializes<T>(this string?[]? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.StandardDeserialize<T>())
@@ -207,7 +207,7 @@ public static partial class YANJson
     {
         try
         {
-            return input.IsNullOWhiteSpace() ? default : options.IsNull() ? JsonSerializer.Deserialize<T>(input, IsPropertyNameCaseInsensitive) : JsonSerializer.Deserialize<T>(input, options);
+            return input.IsNullWhiteSpace() ? default : options.IsNull() ? JsonSerializer.Deserialize<T>(input, IsPropertyNameCaseInsensitive) : JsonSerializer.Deserialize<T>(input, options);
         }
         catch
         {
@@ -223,7 +223,7 @@ public static partial class YANJson
     /// <param name="input">The collection of JSON strings to be deserialized. Can be <see langword="null"/> or contain white-space strings.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the collection is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<string?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<string?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Deserialize<T>())
@@ -237,7 +237,7 @@ public static partial class YANJson
     /// <param name="input">The ICollection of JSON strings to be deserialized. Can be <see langword="null"/> or contain white-space strings.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the collection is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? Deserializes<T>(this ICollection<string?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? Deserializes<T>(this ICollection<string?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Deserialize<T>())
@@ -251,7 +251,7 @@ public static partial class YANJson
     /// <param name="input">The array of JSON strings to be deserialized. Can be <see langword="null"/> or contain white-space strings.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the array is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? Deserializes<T>(this string?[]? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? Deserializes<T>(this string?[]? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Deserialize<T>())
@@ -285,7 +285,7 @@ public static partial class YANJson
     /// <param name="input">The collection of UTF-8 JSON byte arrays to be deserialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the collection is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<byte[]?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<byte[]?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Deserialize<T>())
@@ -300,7 +300,7 @@ public static partial class YANJson
     /// <param name="input">The ICollection of UTF-8 JSON byte arrays to be deserialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the collection is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? Deserializes<T>(this ICollection<byte[]?>? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? Deserializes<T>(this ICollection<byte[]?>? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Deserialize<T>())
@@ -314,7 +314,7 @@ public static partial class YANJson
     /// <param name="input">The array of UTF-8 JSON byte arrays to be deserialized. Can be <see langword="null"/>.</param>
     /// <param name="options">The options to control the behavior of the JsonSerializer. Can be <see langword="null"/>.</param>
     /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>, or <see langword="null"/> if the array is <see langword="null"/> or deserialization fails.</returns>
-    public static IEnumerable<T?>? Deserializes<T>(this byte[]?[]? input, JsonSerializerOptions? options = null) => input.IsNullOEmpty()
+    public static IEnumerable<T?>? Deserializes<T>(this byte[]?[]? input, JsonSerializerOptions? options = null) => input.IsNullEmpty()
         ? default
         : options.IsNull()
         ? input.Select(x => x.Deserialize<T>())

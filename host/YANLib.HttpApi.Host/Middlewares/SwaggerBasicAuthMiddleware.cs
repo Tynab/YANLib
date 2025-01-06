@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using YANLib.Object;
+using YANLib.Text;
 using YANLib.Unmanaged;
 using static System.Convert;
 using static System.DateTime;
@@ -22,18 +23,18 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
         {
             string? authHeader = context.Request.Headers.Authorization;
 
-            if (authHeader.IsNotNullNWhiteSpace() && authHeader.StartsWith("Basic "))
+            if (authHeader.IsNotNullWhiteSpace() && authHeader.StartsWith("Basic "))
             {
                 var newVarName = authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim();
 
-                if (newVarName.IsNullOWhiteSpace())
+                if (newVarName.IsNullWhiteSpace())
                 {
                     return;
                 }
 
                 var decoded = UTF8.GetString(FromBase64String(newVarName))?.Split(':', 2);
 
-                if (decoded.IsNotNullNEmpty() && IsAuthorized(decoded[0], decoded[1]))
+                if (decoded.IsNotNullEmpty() && IsAuthorized(decoded[0], decoded[1]))
                 {
                     await _next.Invoke(context);
 
@@ -42,7 +43,7 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
             }
 
             context.Response.Headers.WWWAuthenticate = "Basic";
-            context.Response.StatusCode = Unauthorized.To<int>();
+            context.Response.StatusCode = Unauthorized.Parse<int>();
         }
         else
         {

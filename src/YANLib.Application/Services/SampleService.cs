@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Json;
 using YANLib.Object;
 using YANLib.Responses;
+using YANLib.Text;
 using static Newtonsoft.Json.JsonConvert;
 using static System.Guid;
 using static System.Text.Json.JsonSerializer;
@@ -40,7 +41,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
             {
                 var curJson = i is 0 ? json : jsonCamel;
 
-                if (curJson.IsNullOWhiteSpace())
+                if (curJson.IsNullWhiteSpace())
                 {
                     return default;
                 }
@@ -74,7 +75,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
             {
                 var curJson = i is 0 ? json : jsonCamel;
 
-                if (curJson.IsNullOWhiteSpace())
+                if (curJson.IsNullWhiteSpace())
                 {
                     return default;
                 }
@@ -132,7 +133,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
                 {
                     var curJson = i is 0 ? json : jsonCamel;
 
-                    if (curJson.IsNullOWhiteSpace())
+                    if (curJson.IsNullWhiteSpace())
                     {
                         return default;
                     }
@@ -166,7 +167,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
                 {
                     var curJson = i is 0 ? json : jsonCamel;
 
-                    if (curJson.IsNullOWhiteSpace())
+                    if (curJson.IsNullWhiteSpace())
                     {
                         return default;
                     }

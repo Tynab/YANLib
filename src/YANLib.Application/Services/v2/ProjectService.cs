@@ -127,7 +127,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            if (entities.IsNullOEmpty())
+            if (entities.IsNullEmpty())
             {
                 return result;
             }

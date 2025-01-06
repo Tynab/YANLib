@@ -27,7 +27,6 @@ public class ProjectRepository(
         {
             return await _dbContext.Projects!.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.Name, x => dto.Name ?? x.Name)
-                .SetProperty(x => x.GPA, x => dto.GPA ?? x.GPA)
                 .SetProperty(x => x.Description, x => dto.Description ?? x.Description)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
