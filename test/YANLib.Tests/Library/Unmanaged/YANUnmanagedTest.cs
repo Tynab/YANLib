@@ -5,7 +5,6 @@ namespace YANLib.Tests.Library.Unmanaged;
 public class YANUnmanagedTest
 {
     #region DateTime
-
     [Fact]
     public void Parse_DateTime_ValidString_ReturnsExpectedValue()
     {
@@ -63,11 +62,9 @@ public class YANUnmanagedTest
         // Assert
         Assert.Equal(expected, actual);
     }
-
     #endregion
 
     #region numeric types
-
     [Theory]
     [InlineData("0", 0)]
     [InlineData("1.2", 0)]
@@ -159,11 +156,9 @@ public class YANUnmanagedTest
         // Assert
         Assert.Equal(expected, actual);
     }
-
     #endregion
 
     #region collections
-
     [Fact]
     public void Parses_DateTime_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
@@ -319,6 +314,5 @@ public class YANUnmanagedTest
         Assert.NotNull(actual);
         Assert.Equal(expected, actual);
     }
-
     #endregion
 }

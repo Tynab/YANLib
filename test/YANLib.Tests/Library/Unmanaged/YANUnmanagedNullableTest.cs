@@ -5,7 +5,6 @@ namespace YANLib.Tests.Library.Unmanaged;
 public class YANUnmanagedNullableTest
 {
     #region string
-
     [Fact]
     public void Parse_String_ValidString_ReturnsExpectedValue()
     {
@@ -61,11 +60,9 @@ public class YANUnmanagedNullableTest
         // Assert
         Assert.Equal(expected, actual);
     }
-
     #endregion
 
     #region DateTime
-
     [Fact]
     public void Parse_NullableDateTime_ValidString_ReturnsExpectedValue()
     {
@@ -153,11 +150,9 @@ public class YANUnmanagedNullableTest
         // Assert
         Assert.Equal(expected, actual);
     }
-
     #endregion
 
     #region numeric types
-
     [Fact]
     public void Parse_NullableInt_ValidString_ReturnsExpectedValue()
     {
@@ -213,11 +208,9 @@ public class YANUnmanagedNullableTest
         // Assert
         Assert.Equal(expected, actual);
     }
-
     #endregion
 
     #region collections
-
     [Fact]
     public void Parse_String_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
@@ -412,14 +405,14 @@ public class YANUnmanagedNullableTest
             "invalid-guid"
         };
 
-        var expected = new List<Guid?>
+        var expected = new List<Guid>
         {
             guid1,
             guid2
         };
 
         // Act
-        var actual = input.Parses<Guid?>();
+        var actual = input.Parses<Guid>();
 
         // Assert
         Assert.NotNull(actual);
@@ -582,6 +575,5 @@ public class YANUnmanagedNullableTest
         Assert.NotNull(actual);
         Assert.Equal(expected, actual);
     }
-
     #endregion
 }
