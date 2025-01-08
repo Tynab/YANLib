@@ -64,6 +64,52 @@ public class YANUnmanagedTest
     }
     #endregion
 
+    #region Boolean
+    [Theory]
+    [InlineData("true", true)]
+    [InlineData("false", false)]
+    public void Parse_Boolean_ValidString_ReturnsExpectedValue(string input, bool? expected)
+    {
+        // Arrange
+        object? val = input;
+
+        // Act
+        var actual = val.Parse<bool>();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parse_Boolean_InvalidString_ReturnsDefault()
+    {
+        // Arrange
+        object? input = "invalid";
+        var expected = default(bool);
+
+        // Act
+        var actual = input.Parse<bool>();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parse_Boolean_InvalidString_WithDefaultValue_ReturnsDefaultValue()
+    {
+        // Arrange
+        object? input = "invalid";
+        object? defaultValue = true;
+        var expected = true;
+
+        // Act
+        var actual = input.Parse<bool>(defaultValue);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+    #endregion
+
     #region numeric types
     [Theory]
     [InlineData("0", 0)]
@@ -205,6 +251,57 @@ public class YANUnmanagedTest
 
         // Act
         var actual = input.Parses<DateTime>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Boolean_Enumerable_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var input = new object?[]
+        {
+            "true",
+            0,
+            1
+        };
+        var expected = new List<bool>
+        {
+            true,
+            false,
+            true
+        };
+
+        // Act
+        var actual = input.Parses<bool>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Boolean_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var input = new object?[]
+        {
+            "true",
+            "invalid",
+            0
+        };
+
+        var expected = new List<bool>
+        {
+            true,
+            false,
+            false
+        };
+
+        // Act
+        var actual = input.Parses<bool>();
 
         // Assert
         Assert.NotNull(actual);

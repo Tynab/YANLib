@@ -1,6 +1,8 @@
 ﻿using YANLib.Object;
 using YANLib.Text;
 using static System.DateTime;
+using static System.Nullable;
+using static System.Convert;
 
 namespace YANLib.Unmanaged;
 
@@ -37,11 +39,11 @@ public static partial class YANUnmanaged
             return Guid.TryParse(input?.ToString(), out var guidValue) ? (T?)(object?)guidValue : default;
         }
 
-        if (Nullable.GetUnderlyingType(typeof(T)) is Type underlyingType)
+        if (GetUnderlyingType(typeof(T)) is Type underlyingType)
         {
             try
             {
-                return input.IsNull() ? default : (T?)Convert.ChangeType(input, underlyingType);
+                return input.IsNull() ? default : (T?)ChangeType(input, underlyingType);
             }
             catch
             {
@@ -51,7 +53,7 @@ public static partial class YANUnmanaged
 
         try
         {
-            return input.IsNull() ? default : (T)Convert.ChangeType(input, typeof(T));
+            return input.IsNull() ? default : (T)ChangeType(input, typeof(T));
         }
         catch
         {
@@ -63,5 +65,5 @@ public static partial class YANUnmanaged
 
     public static IEnumerable<T?>? Parses<T>(this ICollection<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 
-    public static IEnumerable<T?>? Parses<T>(this object?[]? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
+    public static IEnumerable<T?>? Parses<T>(params object?[]? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 }

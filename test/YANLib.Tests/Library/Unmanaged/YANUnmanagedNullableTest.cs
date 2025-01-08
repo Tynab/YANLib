@@ -90,11 +90,9 @@ public class YANUnmanagedNullableTest
         // Assert
         Assert.Equal(expected, actual);
     }
-
     #endregion
 
     #region Guid
-
     [Fact]
     public void Parse_Guid_ValidString_ReturnsExpectedValue()
     {
@@ -219,18 +217,18 @@ public class YANUnmanagedNullableTest
         {
             1,
             "2",
-            3
+            -3
         };
 
-        var expected = new List<string?>
+        var expected = new List<string>
         {
             "1",
             "2",
-            "3"
+            "-3"
         };
 
         // Act
-        var actual = input.Parses<string?>();
+        var actual = input.Parses<string>();
 
         // Assert
         Assert.NotNull(actual);
@@ -238,25 +236,17 @@ public class YANUnmanagedNullableTest
     }
 
     [Fact]
-    public void Parse_String_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_String_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var input = new object?[]
-        {
-            1,
-            null,
-            "3"
-        };
-
-        var expected = new List<string?>
+        var expected = new List<string>
         {
             "1",
-            null,
-            "3"
+            "world"
         };
 
         // Act
-        var actual = input.Parses<string?>();
+        var actual = YANUnmanaged.Parses<string>(1, "world");
 
         // Assert
         Assert.NotNull(actual);
@@ -303,7 +293,7 @@ public class YANUnmanagedNullableTest
         var expected = new List<string?>
         {
             "1",
-            null,
+            default,
             "3"
         };
 
@@ -316,14 +306,51 @@ public class YANUnmanagedNullableTest
     }
 
     [Fact]
+    public void Parses_Params_NullableString_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<string?>
+        {
+            "1",
+            "world"
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<string?>(1, "world");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableString_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<string?>
+        {
+            "-1.23",
+            default,
+            "world"
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<string?>(-1.23, null, "world");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Parse_NullableDateTime_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
         var input = new object?[]
         {
-                "2023-01-01 13:45:59",
-                "2023-02-02 14:46:00",
-                "2023-03-03 15:47:01"
+            "2023-01-01 13:45:59",
+            "2023-02-02 14:46:00",
+            "2023-03-03 15:47:01"
         };
 
         var expected = new List<DateTime?>
@@ -347,9 +374,9 @@ public class YANUnmanagedNullableTest
         // Arrange
         var input = new object?[]
         {
-                "2023-01-01 13:45:59",
-                "invalid",
-                "2023-03-03 15:47:01"
+            "2023-01-01 13:45:59",
+            "invalid",
+            "2023-03-03 15:47:01"
         };
 
         var expected = new List<DateTime?>
@@ -361,6 +388,43 @@ public class YANUnmanagedNullableTest
 
         // Act
         var actual = input.Parses<DateTime?>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableDateTime_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<DateTime?>
+        {
+            new DateTime(2023, 1, 1),
+            new DateTime(2023, 2, 2)
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<DateTime?>("2023-01-01", "2023-02-02");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableDateTime_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<DateTime?>
+        {
+            new DateTime(2023, 1, 1),
+            default,
+            new DateTime(2023, 2, 2)
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<DateTime?>("2023-01-01", "invalid-date", "2023-02-02");
 
         // Assert
         Assert.NotNull(actual);
@@ -420,6 +484,42 @@ public class YANUnmanagedNullableTest
     }
 
     [Fact]
+    public void Parses_Params_Guid_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<Guid>
+        {
+            new("da03fa84-8172-4ad1-8284-fa89ef52d0de"),
+            new("83af426c-dab9-4a58-8784-8f4ac109e988")
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<Guid>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "83af426c-dab9-4a58-8784-8f4ac109e988");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_Guid_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<Guid>
+        {
+            new("da03fa84-8172-4ad1-8284-fa89ef52d0de"),
+            default
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<Guid>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "invalid-guid");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Parse_NullableGuid_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
@@ -464,6 +564,42 @@ public class YANUnmanagedNullableTest
 
         // Act
         var actual = input.Parses<Guid?>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableGuid_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<Guid?>
+        {
+            new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de"),
+            new Guid("83af426c-dab9-4a58-8784-8f4ac109e988")
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<Guid?>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "83af426c-dab9-4a58-8784-8f4ac109e988");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableGuid_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<Guid?>
+        {
+            new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de"),
+            default
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<Guid?>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "invalid-guid");
 
         // Assert
         Assert.NotNull(actual);
@@ -523,6 +659,44 @@ public class YANUnmanagedNullableTest
     }
 
     [Fact]
+    public void Parses_Params_NullableInt_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<int?>
+        {
+            1,
+            0,
+            -2
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<int?>(1, 0, "-2");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableInt_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<int?>
+        {
+            1,
+            default,
+            -3
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<int?>(1.2, "invalid", "-3");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Parse_NullableDouble_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
@@ -570,6 +744,44 @@ public class YANUnmanagedNullableTest
 
         // Act
         var actual = input.Parses<double?>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableDouble_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<double?>
+        {
+            -1.0,
+            0.0,
+            2.34
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<double?>(-1, 0, "2.34");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_NullableDouble_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<double?>
+        {
+            -3.14,
+            default,
+            2.71828
+        };
+
+        // Act
+        var actual = YANUnmanaged.Parses<double?>("-3.14", "abc", "2.71828");
 
         // Assert
         Assert.NotNull(actual);

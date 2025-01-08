@@ -3,6 +3,7 @@ using YANLib.Text;
 using static System.DateTime;
 using static System.Globalization.CultureInfo;
 using static System.Globalization.DateTimeStyles;
+using static System.Convert;
 
 namespace YANLib.Unmanaged;
 
@@ -27,13 +28,13 @@ public static partial class YANUnmanaged
 
         try
         {
-            return input.IsNull() ? defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T)) : (T)Convert.ChangeType(input, typeof(T));
+            return input.IsNull() ? defaultValue.IsNull() ? default : (T)ChangeType(defaultValue, typeof(T)) : (T)ChangeType(input, typeof(T));
         }
         catch
         {
             try
             {
-                return defaultValue.IsNull() ? default : (T)Convert.ChangeType(defaultValue, typeof(T));
+                return defaultValue.IsNull() ? default : (T)ChangeType(defaultValue, typeof(T));
             }
             catch
             {
@@ -49,15 +50,6 @@ public static partial class YANUnmanaged
         => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
     public static IEnumerable<T>? Parses<T>(this object?[]? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Parses<T>(this IEnumerable<object?>? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
-        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Parses<T>(this ICollection<object?>? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
-        => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
-
-    public static IEnumerable<T>? Parses<T>(this object?[]? input, object? defaultValue = null, ICollection<string?>? format = null) where T : unmanaged
         => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T>(defaultValue, format));
 
     public static IEnumerable<T>? Parses<T>(this IEnumerable<object?>? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
