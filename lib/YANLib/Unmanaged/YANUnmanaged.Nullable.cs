@@ -63,7 +63,5 @@ public static partial class YANUnmanaged
 
     public static IEnumerable<T?>? Parses<T>(this IEnumerable<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 
-    public static IEnumerable<T?>? Parses<T>(this ICollection<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
-
     public static IEnumerable<T?>? Parses<T>(params object?[]? input) => input.IsNullEmpty() ? default : input.Select(x => x.Parse<T?>());
 }
