@@ -58,7 +58,7 @@ public static partial class YANObject
 
     public static bool AllPropertiesDefaults<T>(params T[]? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.AnyPropertiesNotDefault());
 
-    public static bool AnyPropertiesNotDefault<T>(this T input) where T : class
+    public static bool AnyPropertiesNotDefault<T>(this T? input) where T : class
     {
         if (input.IsNull())
         {
@@ -69,7 +69,7 @@ public static partial class YANObject
         {
             var type = prop.PropertyType;
 
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : null))
             {
                 return true;
             }
