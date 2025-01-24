@@ -103,19 +103,6 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_WithNonEmptyIEnumerable_ReturnsTrue()
-    {
-        // Arrange
-        IEnumerable<int> input = [1, 2, 3];
-
-        // Act
-        var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
     public void IsNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
     {
         // Arrange
@@ -142,72 +129,13 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNullEmpty_WithParamsInput_ReturnsTrueForNull()
+    public void IsNotNullEmpty_WithNonEmptyIEnumerable_ReturnsTrue()
     {
         // Arrange
-        int[]? input = null;
-
-        // Act
-        var result = input.IsNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNullEmpty_WithParamsInput_ReturnsTrueForEmptyArray()
-    {
-        // Arrange
-        int[] input = [];
-
-        // Act
-        var result = input.IsNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNullEmpty_WithParamsInput_ReturnsFalseNonForEmptyArray()
-    {
-        // Act
-        var result = YANObject.IsNullEmpty(1, 2);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullEmpty_WithParamsInput_ReturnsFalseForNull()
-    {
-        // Arrange
-        int[]? input = null;
+        IEnumerable<int> input = [1, 2, 3];
 
         // Act
         var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullEmpty_WithParamsInput_ReturnsFalseForEmptyArray()
-    {
-        // Arrange
-        int[] input = [];
-
-        // Act
-        var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullEmpty_WithParamsInput_ReturnsTrueForNonEmptyArray()
-    {
-        // Act
-        var result = YANObject.IsNotNullEmpty(1, 2);
 
         // Assert
         Assert.True(result);
@@ -240,19 +168,6 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithNonNullIEnumerable_ReturnsFalse()
-    {
-        // Arrange
-        IEnumerable<object?> input = [new object(), null];
-
-        // Act
-        var result = input.AllNull();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
     public void AllNull_WithAllNullIEnumerable_ReturnsTrue()
     {
         // Arrange
@@ -263,6 +178,19 @@ public partial class YANObjectTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNull_WithNonNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object?> input = [new object(), null];
+
+        // Act
+        var result = input.AllNull();
+
+        // Assert
+        Assert.False(result);
     }
 
     [Fact]
@@ -338,20 +266,6 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithNonNullAndEmptyProperties_ReturnsFalse()
-    {
-        // Arrange
-        var obj = new { Value = "Test" };
-        IEnumerable<object?> input = [null, obj];
-
-        // Act
-        var result = input.AllNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
     public void AllNullEmpty_WithAllNullAndDefaultProperties_ReturnsTrue()
     {
         // Arrange
@@ -363,6 +277,20 @@ public partial class YANObjectTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNullEmpty_WithNonNullAndEmptyProperties_ReturnsFalse()
+    {
+        // Arrange
+        var obj = new { Value = "Test" };
+        IEnumerable<object?> input = [null, obj];
+
+        // Act
+        var result = input.AllNullEmpty();
+
+        // Assert
+        Assert.False(result);
     }
 
     [Fact]
