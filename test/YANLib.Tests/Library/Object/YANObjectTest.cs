@@ -11,6 +11,7 @@ namespace YANLib.Tests.Library.Object;
 
 public partial class YANObjectTest
 {
+    #region IsNull
     [Fact]
     public void IsNull_WithNullObject_ReturnsTrue()
     {
@@ -36,7 +37,9 @@ public partial class YANObjectTest
         // Assert
         Assert.False(result);
     }
+    #endregion
 
+    #region IsNotNull
     [Fact]
     public void IsNotNull_WithNullObject_ReturnsFalse()
     {
@@ -62,7 +65,9 @@ public partial class YANObjectTest
         // Assert
         Assert.True(result);
     }
+    #endregion
 
+    #region IsNullEmpty
     [Fact]
     public void IsNullEmpty_WithNullIEnumerable_ReturnsTrue()
     {
@@ -93,7 +98,7 @@ public partial class YANObjectTest
     public void IsNullEmpty_WithNonEmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
-        IEnumerable<int> input = [1, 2, 3];
+        IEnumerable<int> input = [1, 2];
 
         // Act
         var result = input.IsNullEmpty();
@@ -101,7 +106,9 @@ public partial class YANObjectTest
         // Assert
         Assert.False(result);
     }
+    #endregion
 
+    #region IsNotNullEmpty
     [Fact]
     public void IsNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
     {
@@ -132,7 +139,7 @@ public partial class YANObjectTest
     public void IsNotNullEmpty_WithNonEmptyIEnumerable_ReturnsTrue()
     {
         // Arrange
-        IEnumerable<int> input = [1, 2, 3];
+        IEnumerable<int> input = [1, 2];
 
         // Act
         var result = input.IsNotNullEmpty();
@@ -140,7 +147,9 @@ public partial class YANObjectTest
         // Assert
         Assert.True(result);
     }
+    #endregion
 
+    #region AllNull
     [Fact]
     public void AllNull_WithNullIEnumerable_ReturnsFalse()
     {
@@ -200,7 +209,7 @@ public partial class YANObjectTest
         object[]? input = null;
 
         // Act
-        var result = input.AllNull();
+        var result = YANObject.AllNull(input);
 
         // Assert
         Assert.False(result);
@@ -213,7 +222,7 @@ public partial class YANObjectTest
         object[] input = [];
 
         // Act
-        var result = input.AllNull();
+        var result = YANObject.AllNull(input);
 
         // Assert
         Assert.False(result);
@@ -238,7 +247,9 @@ public partial class YANObjectTest
         // Assert
         Assert.False(result);
     }
+    #endregion
 
+    #region AllNullEmpty
     [Fact]
     public void AllNullEmpty_WithNullIEnumerable_ReturnsFalse()
     {
@@ -269,7 +280,11 @@ public partial class YANObjectTest
     public void AllNullEmpty_WithAllNullAndDefaultProperties_ReturnsTrue()
     {
         // Arrange
-        var obj = new { Value = default(string) };
+        var obj = new
+        {
+            Value = default(string)
+        };
+
         IEnumerable<object?> input = [null, obj];
 
         // Act
@@ -283,7 +298,11 @@ public partial class YANObjectTest
     public void AllNullEmpty_WithNonNullAndEmptyProperties_ReturnsFalse()
     {
         // Arrange
-        var obj = new { Value = "Test" };
+        var obj = new
+        {
+            Value = "Test"
+        };
+
         IEnumerable<object?> input = [null, obj];
 
         // Act
@@ -323,7 +342,11 @@ public partial class YANObjectTest
     public void AllNullEmpty_WithAllNullAndDefaultParams_ReturnsTrue()
     {
         // Act
-        var obj = new { Value = default(string) };
+        var obj = new
+        {
+            Value = default(string)
+        };
+
         var result = YANObject.AllNullEmpty<object>(null, obj);
 
         // Assert
@@ -334,10 +357,1101 @@ public partial class YANObjectTest
     public void AllNullEmpty_WithNonNullAndNonDefaultParams_ReturnsFalse()
     {
         // Act
-        var obj = new { Value = "Test" };
+        var obj = new
+        {
+            Value = "Test"
+        };
+
         var result = YANObject.AllNullEmpty<object>(null, obj);
 
         // Assert
         Assert.False(result);
     }
+    #endregion
+
+    #region AnyNull
+    [Fact]
+    public void AnyNull_WithNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object>? input = null;
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithEmptyIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [];
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithAtLeastOneNullElementInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, new object()];
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithAllNonNullElementsInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [new object(), new object()];
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithNullParams_ReturnsFalse()
+    {
+        // Arrange
+        object[]? input = null;
+
+        // Act
+        var result = YANObject.AnyNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithEmptyParams_ReturnsFalse()
+    {
+        // Arrange
+        object[] input = [];
+
+        // Act
+        var result = YANObject.AnyNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithAtLeastOneNullParams_ReturnsTrue()
+    {
+        // Act
+        var result = YANObject.AnyNull(null, new object());
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNull_WithAllNonNullParams_ReturnsFalse()
+    {
+        // Act
+        var result = YANObject.AnyNull(new object(), new object());
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AnyNullEmpty
+    [Fact]
+    public void AnyNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object>? input = null;
+
+        // Act
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [];
+
+        // Act
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithAtLeastOneNullElementInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, new object()];
+
+        // Act
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        var obj = new
+        {
+            Value = default(string)
+        };
+
+        IEnumerable<object> input = [new object(), obj];
+
+        // Act
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithAllElementsNonNullAndNonDefaultInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        var obj1 = new
+        {
+            Value = "Test 1"
+        };
+
+        var obj2 = new
+        {
+            Value = "Test 2"
+        };
+
+        IEnumerable<object> input = [obj1, obj2];
+
+        // Act
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithNullParams_ReturnsFalse()
+    {
+        // Arrange
+        object[]? input = null;
+
+        // Act
+        var result = YANObject.AnyNullEmpty(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithEmptyParams_ReturnsFalse()
+    {
+        // Arrange
+        object[] input = [];
+
+        // Act
+        var result = YANObject.AnyNullEmpty(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithAtLeastOneNullParams_ReturnsTrue()
+    {
+        // Act
+        var result = YANObject.AnyNullEmpty(null, new object());
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInParams_ReturnsTrue()
+    {
+        // Arrange
+        var obj = new
+        {
+            Value = default(string)
+        };
+
+        // Act
+        var result = YANObject.AnyNullEmpty(new object(), obj);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_WithAllElementsNonNullAndNonDefaultParams_ReturnsFalse()
+    {
+        // Arrange
+        var obj1 = new
+        {
+            Value = "Test 1"
+        };
+
+        var obj2 = new
+        {
+            Value = "Test 2"
+        };
+
+        // Act
+        var result = YANObject.AnyNullEmpty(obj1, obj2);
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AllNotNull
+    [Fact]
+    public void AllNotNull_WithNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object>? input = null;
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithEmptyIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [];
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithAllNonNullElementsInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        IEnumerable<object> input = [new object(), new object()];
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithAtLeastOneNullElementInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, new object()];
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithNullParams_ReturnsFalse()
+    {
+        // Arrange
+        object[]? input = null;
+
+        // Act
+        var result = YANObject.AllNotNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithEmptyParams_ReturnsFalse()
+    {
+        // Arrange
+        object[] input = [];
+
+        // Act
+        var result = YANObject.AllNotNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithAllNonNullParams_ReturnsTrue()
+    {
+        // Act
+        var result = YANObject.AllNotNull(new object(), new object());
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNull_WithAtLeastOneNullParams_ReturnsFalse()
+    {
+        // Act
+        var result = YANObject.AllNotNull(null, new object());
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AllNotNullEmpty
+    [Fact]
+    public void AllNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object>? input = null;
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [];
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithAllNonNullAndNonDefaultElementsInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        var obj1 = new
+        {
+            Value = "Test 1"
+        };
+
+        var obj2 = new
+        {
+            Value = "Test 2"
+        };
+
+        IEnumerable<object> input = [obj1, obj2];
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithAtLeastOneNullElementInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, new object()];
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        var obj = new
+        {
+            Value = default(string)
+        };
+
+        IEnumerable<object> input = [new object(), obj];
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithNullParams_ReturnsFalse()
+    {
+        // Arrange
+        object[]? input = null;
+
+        // Act
+        var result = YANObject.AllNotNullEmpty(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithEmptyParams_ReturnsFalse()
+    {
+        // Arrange
+        object[] input = [];
+
+        // Act
+        var result = YANObject.AllNotNullEmpty(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithAllNonNullAndNonDefaultParams_ReturnsTrue()
+    {
+        // Arrange
+        var obj1 = new
+        {
+            Value = "Test 1"
+        };
+
+        var obj2 = new
+        {
+            Value = "Test 2"
+        };
+
+        // Act
+        var result = YANObject.AllNotNullEmpty(obj1, obj2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithAtLeastOneNullParams_ReturnsFalse()
+    {
+        // Act
+        var result = YANObject.AllNotNullEmpty(null, new object());
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInParams_ReturnsFalse()
+    {
+        // Arrange
+        var obj = new
+        {
+            Value = default(string)
+        };
+
+        // Act
+        var result = YANObject.AllNotNullEmpty(new object(), obj);
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AnyNotNull
+    [Fact]
+    public void AnyNotNull_WithNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object>? input = null;
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_WithEmptyIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [];
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_WithAllNullElementsInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, null];
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_WithAtLeastOneNonNullElementInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, new object()];
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_Params_WithNullInput_ReturnsFalse()
+    {
+        // Arrange
+        object?[]? input = null;
+
+        // Act
+        var result = YANObject.AnyNotNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_Params_WithEmptyInput_ReturnsFalse()
+    {
+        // Arrange
+        object?[] input = [];
+
+        // Act
+        var result = YANObject.AnyNotNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_Params_WithAllNullElements_ReturnsFalse()
+    {
+        // Arrange
+        object?[] input = [null, null];
+
+        // Act
+        var result = YANObject.AnyNotNull(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_Params_WithAtLeastOneNonNullElement_ReturnsTrue()
+    {
+        // Arrange
+        object?[] input = [null, new object()];
+
+        // Act
+        var result = YANObject.AnyNotNull(input);
+
+        // Assert
+        Assert.True(result);
+    }
+    #endregion
+
+    #region AnyNotNullEmpty
+    [Fact]
+    public void AnyNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object>? input = null;
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object> input = [];
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithAllNullElementsInIEnumerable_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, null];
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithAtLeastOneNonNullElementInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        IEnumerable<object?> input = [null, new object()];
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsTrue()
+    {
+        // Arrange
+        var obj = new
+        {
+            Value = default(string)
+        };
+
+        IEnumerable<object?> input = [null, obj];
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithNullParams_ReturnsFalse()
+    {
+        // Arrange
+        object[]? input = null;
+
+        // Act
+        var result = YANObject.AnyNotNullEmpty(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithEmptyParams_ReturnsFalse()
+    {
+        // Arrange
+        object[] input = [];
+
+        // Act
+        var result = YANObject.AnyNotNullEmpty(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithAllNullParams_ReturnsFalse()
+    {
+        // Act
+        var result = YANObject.AnyNotNullEmpty<object>(null, null);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithAtLeastOneNonNullParams_ReturnsTrue()
+    {
+        // Act
+        var result = YANObject.AnyNotNullEmpty(null, new object());
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInParams_ReturnsTrue()
+    {
+        // Arrange
+        var obj = new
+        {
+            Value = default(string)
+        };
+
+        // Act
+        var result = YANObject.AnyNotNullEmpty(null, obj);
+
+        // Assert
+        Assert.True(result);
+    }
+    #endregion
+
+    #region AsList
+    [Fact]
+    public void AsList_WithNonNullInput_ReturnsListContainingInput()
+    {
+        // Arrange
+        var input = "Test";
+
+        // Act
+        var result = input.AsList();
+
+        // Assert
+        Assert.NotNull(result);
+        _ = Assert.Single(result);
+        Assert.Equal(input, result[0]);
+    }
+
+    [Fact]
+    public void AsList_WithNullInput_ReturnsListContainingNull()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.AsList();
+
+        // Assert
+        Assert.NotNull(result);
+        _ = Assert.Single(result);
+        Assert.Null(result[0]);
+    }
+    #endregion
+
+    #region AsHashSet
+    [Fact]
+    public void AsHashSet_WithNonNullInput_ReturnsHashSetContainingInput()
+    {
+        // Arrange
+        var input = 42;
+
+        // Act
+        var result = input.AsHashSet();
+
+        // Assert
+        Assert.NotNull(result);
+        _ = Assert.Single(result);
+        Assert.Contains(input, result);
+    }
+
+    [Fact]
+    public void AsHashSet_WithNullInput_ReturnsHashSetContainingNull()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.AsHashSet();
+
+        // Assert
+        Assert.NotNull(result);
+        _ = Assert.Single(result);
+        Assert.Contains(input, result);
+    }
+    #endregion
+
+    #region AsArray
+    [Fact]
+    public void AsArray_WithNonNullInput_ReturnsArrayContainingInput()
+    {
+        // Arrange
+        var input = 3.14;
+
+        // Act
+        var result = input.AsArray();
+
+        // Assert
+        Assert.NotNull(result);
+        _ = Assert.Single(result);
+        Assert.Equal(input, result[0]);
+    }
+
+    [Fact]
+    public void AsArray_WithNullInput_ReturnsArrayContainingNull()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.AsArray();
+
+        // Assert
+        Assert.NotNull(result);
+        _ = Assert.Single(result);
+        Assert.Null(result[0]);
+    }
+    #endregion
+
+    #region Copy
+    [Fact]
+    public void Copy_WithNullInput_ReturnsNull()
+    {
+        // Arrange
+        TestCopyClass? input = null;
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Copy_WithNonNullInput_ReturnsCopyWithSameProperties()
+    {
+        // Arrange
+        var input = new TestCopyClass
+        {
+            Number = 10,
+            Text = "Hello"
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotSame(input, result);
+        Assert.Equal(input.Number, result.Number);
+        Assert.Equal(input.Text, result.Text);
+    }
+    #endregion
+
+    #region ChangeTimeZoneAllProperty
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WithNullInput_ReturnsNull()
+    {
+        // Arrange
+        TestTimeZoneClass? input = null;
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperty(new object(), new object());
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WithDateTimeProperty_UpdatesDateTime()
+    {
+        // Arrange
+        var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = "7";
+        var input = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Test"
+        };
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperty(tzSrc, tzDst);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), result.Date);
+        Assert.Equal("Test", result.Name);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WithNestedObject_UpdatesNestedDateTime()
+    {
+        // Arrange
+        var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = "7";
+        var nested = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Nested"
+        };
+
+        var input = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Parent",
+            Nested = nested
+        };
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperty(tzSrc, tzDst);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), result.Date);
+        Assert.NotNull(result.Nested);
+        Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), result.Nested.Date);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WithListProperty_UpdatesDateTimeInListItems()
+    {
+        // Arrange
+        var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = "7";
+        var item1 = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Item 1"
+        };
+
+        var item2 = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Item 2"
+        };
+
+        var input = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Parent",
+            List = [item1, item2]
+        };
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperty(tzSrc, tzDst);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), result.Date);
+        Assert.NotNull(result.List);
+
+        foreach (var item in result.List)
+        {
+            Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), item.Date);
+        }
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WithNullTimeZoneParameters_DoesNotChangeDateTime()
+    {
+        // Arrange
+        var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
+        var input = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Test"
+        };
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperty();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(originalDate, result.Date);
+    }
+    #endregion
+
+    #region ChangeTimeZoneAllProperties
+    [Fact]
+    public void ChangeTimeZoneAllProperties_WithNullIEnumerable_ReturnsNull()
+    {
+        // Arrange
+        IEnumerable<TestTimeZoneClass>? input = null;
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(new object(), new object());
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_WithEmptyIEnumerable_ReturnsEmpty()
+    {
+        // Arrange
+        IEnumerable<TestTimeZoneClass> input = [];
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(new object(), new object());
+
+        // Assert
+        Assert.Empty(result!);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_WithValidIEnumerable_UpdatesDateTime()
+    {
+        // Arrange
+        var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = "7";
+        var obj1 = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Test 1"
+        };
+
+        var obj2 = new TestTimeZoneClass
+        {
+            Date = originalDate,
+            Name = "Test 2"
+        };
+
+        IEnumerable<TestTimeZoneClass> input = [obj1, obj2];
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(tzSrc, tzDst);
+
+        // Assert
+        Assert.NotNull(result);
+
+        foreach (var item in result)
+        {
+            Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), item!.Date);
+        }
+    }
+    #endregion
+}
+
+public class TestCopyClass
+{
+    public int Number { get; set; }
+
+    public string? Text { get; set; }
+}
+
+public class TestTimeZoneClass
+{
+    public DateTime Date { get; set; }
+
+    public string? Name { get; set; }
+
+    public TestTimeZoneClass? Nested { get; set; }
+
+    public List<TestTimeZoneClass>? List { get; set; }
 }

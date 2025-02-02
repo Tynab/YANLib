@@ -39,11 +39,11 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in typeof(T).GetProperties(Public | Instance | DeclaredOnly))
+        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly))
         {
             var type = prop.PropertyType;
 
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default(T)))
+            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
             {
                 return false;
             }
