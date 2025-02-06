@@ -9,6 +9,7 @@ namespace YANLib.Unmanaged;
 
 public static partial class YANUnmanaged
 {
+    #region Private
     private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpace()
         ? defaultValue
         : format.IsNullEmpty()
@@ -18,6 +19,7 @@ public static partial class YANUnmanaged
         : TryParseExact(input, format.ToArray(), InvariantCulture, None, out dt)
         ? dt
         : defaultValue;
+    #endregion
 
     /// <summary>
     /// Parses an input object to a value of type <typeparamref name="T"/>.

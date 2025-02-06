@@ -1,10 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YANLib.Object;
+﻿using YANLib.Object;
 using YANLib.Unmanaged;
 
 namespace YANLib.Tests.Library.Object;
@@ -1215,41 +1209,6 @@ public partial class YANObjectTest
     }
     #endregion
 
-    #region Copy
-    [Fact]
-    public void Copy_WithNullInput_ReturnsNull()
-    {
-        // Arrange
-        TestCopyClass? input = null;
-
-        // Act
-        var result = input.Copy();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Copy_WithNonNullInput_ReturnsCopyWithSameProperties()
-    {
-        // Arrange
-        var input = new TestCopyClass
-        {
-            Number = 10,
-            Text = "Hello"
-        };
-
-        // Act
-        var result = input.Copy();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotSame(input, result);
-        Assert.Equal(input.Number, result.Number);
-        Assert.Equal(input.Text, result.Text);
-    }
-    #endregion
-
     #region ChangeTimeZoneAllProperty
     [Fact]
     public void ChangeTimeZoneAllProperty_WithNullInput_ReturnsNull()
@@ -1434,6 +1393,41 @@ public partial class YANObjectTest
         {
             Assert.Equal(originalDate.AddHours(Math.Abs(tzDst.Parse<double>() - tzSrc)), item!.Date);
         }
+    }
+    #endregion
+
+    #region Copy
+    [Fact]
+    public void Copy_WithNullInput_ReturnsNull()
+    {
+        // Arrange
+        TestCopyClass? input = null;
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Copy_WithNonNullInput_ReturnsCopyWithSameProperties()
+    {
+        // Arrange
+        var input = new TestCopyClass
+        {
+            Number = 10,
+            Text = "Hello"
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotSame(input, result);
+        Assert.Equal(input.Number, result.Number);
+        Assert.Equal(input.Text, result.Text);
     }
     #endregion
 }

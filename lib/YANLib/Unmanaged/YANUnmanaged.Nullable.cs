@@ -8,9 +8,11 @@ namespace YANLib.Unmanaged;
 
 public static partial class YANUnmanaged
 {
+    #region Private
     private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
 
     private static DateTime? ParseDateTimeNullable (this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
+    #endregion
 
     /// <summary>
     /// Parses an input object to a value of type <typeparamref name="T"/>.

@@ -35,7 +35,7 @@ public partial class YANUnmanagedTest
     }
     #endregion
 
-    #region numeric types
+    #region Numeric types
     [Theory]
     [InlineData("0", 0)]
     [InlineData("1.2", default)]
@@ -189,7 +189,7 @@ public partial class YANUnmanagedTest
     }
     #endregion
 
-    #region collections
+    #region Collections
     [Fact]
     public void Parse_NullableBool_Enumerable_ValidValues_ReturnsExpectedCollection()
     {

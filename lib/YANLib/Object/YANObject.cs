@@ -6,6 +6,7 @@ namespace YANLib.Object;
 
 public static partial class YANObject
 {
+    #region Is
     /// <summary>
     /// Checks if the specified object is <see langword="null"/>.
     /// </summary>
@@ -35,7 +36,9 @@ public static partial class YANObject
     /// <param name="input">The collection to check.</param>
     /// <returns><see langword="true"/> if the collection is not <see langword="null"/> and contains elements; otherwise, <see langword="false"/>.</returns>
     public static bool IsNotNullEmpty<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNull() && input.Any();
+    #endregion
 
+    #region All
     /// <summary>
     /// Determines whether all elements in a collection are <see langword="null"/>.
     /// </summary>
@@ -69,6 +72,40 @@ public static partial class YANObject
     public static bool AllNullEmpty<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNotNull() && x.AnyPropertiesNotDefault());
 
     /// <summary>
+    /// Determines whether all elements in the specified collection are not <see langword="null"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the collection.</typeparam>
+    /// <param name="input">The collection to check.</param>
+    /// <returns><see langword="true"/> if all elements are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotNull<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull());
+
+    /// <summary>
+    /// Determines whether all elements in the specified array are not <see langword="null"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <param name="input">The array to check.</param>
+    /// <returns><see langword="true"/> if all elements are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotNull<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull());
+
+    /// <summary>
+    /// Determines whether all elements in the specified collection are not <see langword="null"/> and do not have all properties set to their default values.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the collection.</typeparam>
+    /// <param name="input">The collection to check.</param>
+    /// <returns><see langword="true"/> if all elements are not <see langword="null"/> and have at least one non-default property; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
+
+    /// <summary>
+    /// Determines whether all elements in the specified array are not <see langword="null"/> and do not have all properties set to their default values.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <param name="input">The array to check.</param>
+    /// <returns><see langword="true"/> if all elements are not <see langword="null"/> and have at least one non-default property; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotNullEmpty<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
+    #endregion
+
+    #region Any
+    /// <summary>
     /// Determines whether any element in a collection is <see langword="null"/>.
     /// </summary>
     /// <typeparam name="T">The type of elements in the collection.</typeparam>
@@ -101,38 +138,6 @@ public static partial class YANObject
     public static bool AnyNullEmpty<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && input.Any(x => x.IsNull() || x.AllPropertiesDefault());
 
     /// <summary>
-    /// Determines whether all elements in the specified collection are not <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the collection.</typeparam>
-    /// <param name="input">The collection to check.</param>
-    /// <returns><see langword="true"/> if all elements are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotNull<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull());
-
-    /// <summary>
-    /// Determines whether all elements in the specified array are not <see langword="null"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the array.</typeparam>
-    /// <param name="input">The array to check.</param>
-    /// <returns><see langword="true"/> if all elements are not <see langword="null"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotNull<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull());
-
-    /// <summary>
-    /// Determines whether all elements in the specified collection are not <see langword="null"/> and do not have all properties set to their default values.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the collection.</typeparam>
-    /// <param name="input">The collection to check.</param>
-    /// <returns><see langword="true"/> if all elements are not <see langword="null"/> and have at least one non-default property; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
-
-    /// <summary>
-    /// Determines whether all elements in the specified array are not <see langword="null"/> and do not have all properties set to their default values.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the array.</typeparam>
-    /// <param name="input">The array to check.</param>
-    /// <returns><see langword="true"/> if all elements are not <see langword="null"/> and have at least one non-default property; otherwise, <see langword="false"/>.</returns>
-    public static bool AllNotNullEmpty<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.IsNull() || x.AllPropertiesDefault());
-
-    /// <summary>
     /// Determines whether at least one element in the specified collection is not <see langword="null"/>.
     /// </summary>
     /// <typeparam name="T">The type of elements in the collection.</typeparam>
@@ -163,7 +168,9 @@ public static partial class YANObject
     /// <param name="input">The array to check.</param>
     /// <returns><see langword="true"/> if at least one element is not <see langword="null"/> or has properties that are not set to their default values; otherwise, <see langword="false"/>.</returns>
     public static bool AnyNotNullEmpty<T>(params T?[]? input) where T : class => input.IsNotNullEmpty() && input.Any(x => x.IsNotNull() || x.AnyPropertiesNotDefault());
+    #endregion
 
+    #region As
     /// <summary>
     /// Creates a <see cref="List{T}"/> containing a single element.
     /// </summary>
@@ -187,36 +194,9 @@ public static partial class YANObject
     /// <param name="input">The element to be added to the array.</param>
     /// <returns>An array containing the specified element.</returns>
     public static T[] AsArray<T>(this T input) => [input];
+    #endregion
 
-    /// <summary>
-    /// Creates a copy of an object by copying its properties.
-    /// </summary>
-    /// <typeparam name="T">The type of the object.</typeparam>
-    /// <param name="input">The object to copy.</param>
-    /// <returns>A new object with the same values as the input object.</returns>
-    public static T Copy<T>(this T input) where T : new()
-    {
-        if (input.IsNull())
-        {
-            return input;
-        }
-
-        var result = new T();
-        var props = input.GetType().GetProperties(Public | Instance);
-
-        foreach (var prop in props)
-        {
-            if (prop.CanRead && prop.CanWrite)
-            {
-                var val = prop.GetValue(input);
-
-                prop.SetValue(result, val);
-            }
-        }
-
-        return result;
-    }
-
+    #region DateTimeZone
     /// <summary>
     /// Adjusts all <see cref="DateTime"/> properties of an object to a specified time zone.
     /// </summary>
@@ -293,4 +273,34 @@ public static partial class YANObject
     /// <param name="tzDst">The destination time zone.</param>
     /// <returns>A collection of objects with adjusted time zones. Returns <see langword="null"/> if the input collection is <see langword="null"/> or empty.</returns>
     public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class => input.IsNullEmpty() ? input : input.Select(x => x.ChangeTimeZoneAllProperty(tzSrc, tzDst));
+    #endregion
+
+    /// <summary>
+    /// Creates a copy of an object by copying its properties.
+    /// </summary>
+    /// <typeparam name="T">The type of the object.</typeparam>
+    /// <param name="input">The object to copy.</param>
+    /// <returns>A new object with the same values as the input object.</returns>
+    public static T Copy<T>(this T input) where T : new()
+    {
+        if (input.IsNull())
+        {
+            return input;
+        }
+
+        var result = new T();
+        var props = input.GetType().GetProperties(Public | Instance);
+
+        foreach (var prop in props)
+        {
+            if (prop.CanRead && prop.CanWrite)
+            {
+                var val = prop.GetValue(input);
+
+                prop.SetValue(result, val);
+            }
+        }
+
+        return result;
+    }
 }
