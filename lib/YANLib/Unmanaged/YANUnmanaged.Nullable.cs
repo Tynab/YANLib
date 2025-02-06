@@ -1,8 +1,8 @@
 ﻿using YANLib.Object;
 using YANLib.Text;
+using static System.Convert;
 using static System.DateTime;
 using static System.Nullable;
-using static System.Convert;
 
 namespace YANLib.Unmanaged;
 
@@ -11,7 +11,7 @@ public static partial class YANUnmanaged
     #region Private
     private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
 
-    private static DateTime? ParseDateTimeNullable (this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
+    private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
     #endregion
 
     /// <summary>
@@ -33,7 +33,7 @@ public static partial class YANUnmanaged
         {
             return (T)(object)(input?.ToString() ?? default).ParseDateTime();
         }
-        
+
         if (typeof(T) == typeof(DateTime?))
         {
             return (T?)(object?)(input?.ToString() ?? default).ParseDateTimeNullable();
@@ -43,7 +43,7 @@ public static partial class YANUnmanaged
         {
             return Guid.TryParse(input?.ToString(), out var guidValue) ? (T)(object)guidValue : default;
         }
-        
+
         if (typeof(T) == typeof(Guid?))
         {
             return Guid.TryParse(input?.ToString(), out var guidValue) ? (T?)(object?)guidValue : default;

@@ -1416,7 +1416,7 @@ public partial class YANObjectTest
         // Arrange
         var input = new TestCopyClass
         {
-            Number = 10,
+            Number = 1,
             Text = "Hello"
         };
 

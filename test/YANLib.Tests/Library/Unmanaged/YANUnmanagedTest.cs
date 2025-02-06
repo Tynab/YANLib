@@ -283,20 +283,8 @@ public partial class YANUnmanagedTest
     public void Parses_Bool_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "true",
-            "false",
-            0,
-            1
-        };
-        var expected = new List<bool>
-        {
-            true,
-            false,
-            false,
-            true
-        };
+        var input = new object?[] { "true", "false", 0, 1 };
+        var expected = new List<bool> { true, false, false, true };
 
         // Act
         var actual = input.Parses<bool>();
@@ -310,23 +298,8 @@ public partial class YANUnmanagedTest
     public void Parses_Bool_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "true",
-            "false",
-            "invalid",
-            0,
-            1
-        };
-
-        var expected = new List<bool>
-        {
-            true,
-            false,
-            default,
-            false,
-            true
-        };
+        var input = new object?[] { "true", "false", "invalid", 0, 1 };
+        var expected = new List<bool> { true, false, default, false, true };
 
         // Act
         var actual = input.Parses<bool>();
@@ -340,13 +313,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Bool_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var expected = new List<bool>
-        {
-            true,
-            false,
-            true,
-            false
-        };
+        var expected = new List<bool> { true, false, true, false };
 
         // Act
         var actual = YANUnmanaged.Parses<bool>(1, 0, "true", "false");
@@ -360,14 +327,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Bool_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var expected = new List<bool>
-        {
-            true,
-            false,
-            default,
-            true,
-            false
-        };
+        var expected = new List<bool> { true, false, default, true, false };
 
         // Act
         var actual = YANUnmanaged.Parses<bool>(1, 0, "invalid", "true", "false");
@@ -381,23 +341,8 @@ public partial class YANUnmanagedTest
     public void Parses_Int_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "1",
-            "-2",
-            0,
-            4.5,
-            6.6
-        };
-
-        var expected = new List<int>
-        {
-            1,
-            -2,
-            0,
-            4,
-            7
-        };
+        var input = new object?[] { "1", "-2", 0, 4.5, 6.6 };
+        var expected = new List<int> { 1, -2, 0, 4, 7 };
 
         // Act
         var actual = input.Parses<int>();
@@ -411,25 +356,8 @@ public partial class YANUnmanagedTest
     public void Parses_Int_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "1",
-            "-2",
-            "0.0",
-            "invalid",
-            -4.5,
-            -6.6
-        };
-
-        var expected = new List<int>
-        {
-            1,
-            -2,
-            default,
-            default,
-            -4,
-            -7
-        };
+        var input = new object?[] { "1", "-2", "0.0", "invalid", -4.5, -6.6 };
+        var expected = new List<int> { 1, -2, default, default, -4, -7 };
 
         // Act
         var actual = input.Parses<int>();
@@ -443,12 +371,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Int_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var expected = new List<int>
-        {
-            1,
-            0,
-            -2
-        };
+        var expected = new List<int> { 1, 0, -2 };
 
         // Act
         var actual = YANUnmanaged.Parses<int>(1, false, "-2");
@@ -462,12 +385,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_eInt_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var expected = new List<int>
-        {
-            -1,
-            default,
-            1
-        };
+        var expected = new List<int> { -1, default, 1 };
 
         // Act
         var actual = YANUnmanaged.Parses<int>(-1.2, "invalid", true);
@@ -481,21 +399,8 @@ public partial class YANUnmanagedTest
     public void Parses_Double_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "1.23",
-            "-4",
-            0,
-            5
-        };
-
-        var expected = new List<double>
-        {
-            1.23,
-            -4.0,
-            0.0,
-            5.0
-        };
+        var input = new object?[] { "1.23", "-4", 0, 5 };
+        var expected = new List<double> { 1.23, -4.0, 0.0, 5.0 };
 
         // Act
         var actual = input.Parses<double>();
@@ -509,23 +414,8 @@ public partial class YANUnmanagedTest
     public void Parses_Double_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "1.23",
-            "-4",
-            "0",
-            "invalid",
-            -5
-        };
-
-        var expected = new List<double>
-        {
-            1.23,
-            -4.0,
-            0.0,
-            default,
-            -5.0
-        };
+        var input = new object?[] { "1.23", "-4", "0", "invalid", -5 };
+        var expected = new List<double> { 1.23, -4.0, 0.0, default, -5.0 };
 
         // Act
         var actual = input.Parses<double>();
@@ -539,12 +429,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Double_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var expected = new List<double>
-        {
-            -1.0,
-            0.0,
-            2.34
-        };
+        var expected = new List<double> { -1.0, 0.0, 2.34 };
 
         // Act
         var actual = YANUnmanaged.Parses<double>(-1, false, "2.34");
@@ -558,12 +443,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Double_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var expected = new List<double>
-        {
-            3.0,
-            default,
-            -2.71828
-        };
+        var expected = new List<double> { 3.0, default, -2.71828 };
 
         // Act
         var actual = YANUnmanaged.Parses<double>("3", "invalid", "-2.71828");
@@ -577,19 +457,8 @@ public partial class YANUnmanagedTest
     public void Parse_String_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var input = new object?[]
-        {
-            1,
-            "2",
-            -3
-        };
-
-        var expected = new List<string>
-        {
-            "1",
-            "2",
-            "-3"
-        };
+        var input = new object?[] { 1, "2", -3 };
+        var expected = new List<string> { "1", "2", "-3" };
 
         // Act
         var actual = input.Parses<string>();
@@ -603,11 +472,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_String_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var expected = new List<string>
-        {
-            "1",
-            "world"
-        };
+        var expected = new List<string> { "1", "world" };
 
         // Act
         var actual = YANUnmanaged.Parses<string>(1, "world");
@@ -621,17 +486,8 @@ public partial class YANUnmanagedTest
     public void Parses_DateTime_Enumerable_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "2023-01-01 13:45:59",
-            "2023-03-03 15:47:01"
-        };
-
-        var expected = new List<DateTime>
-        {
-            new(2023, 1, 1, 13, 45, 59),
-            new(2023, 3, 3, 15, 47, 1)
-        };
+        var input = new object?[] { "2023-01-01 13:45:59", "2023-03-03 15:47:01" };
+        var expected = new List<DateTime> { new(2023, 1, 1, 13, 45, 59), new(2023, 3, 3, 15, 47, 1) };
 
         // Act
         var actual = input.Parses<DateTime>();
@@ -645,17 +501,8 @@ public partial class YANUnmanagedTest
     public void Parses_DateTime_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var input = new object?[]
-        {
-            "2023-01-01 13:45:59",
-            "invalid"
-        };
-
-        var expected = new List<DateTime>
-        {
-            new(2023, 1, 1, 13, 45, 59),
-            default
-        };
+        var input = new object?[] { "2023-01-01 13:45:59", "invalid" };
+        var expected = new List<DateTime> { new(2023, 1, 1, 13, 45, 59), default };
 
         // Act
         var actual = input.Parses<DateTime>();
@@ -669,11 +516,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_DateTime_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var expected = new List<DateTime>
-        {
-            new(2023, 1, 1),
-            new(2023, 2, 2)
-        };
+        var expected = new List<DateTime> { new(2023, 1, 1), new(2023, 2, 2) };
 
         // Act
         var actual = YANUnmanaged.Parses<DateTime>("2023-01-01", "2023-02-02");
@@ -687,11 +530,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_DateTime_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var expected = new List<DateTime>
-        {
-            new(2023, 1, 1),
-            default
-        };
+        var expected = new List<DateTime> { new(2023, 1, 1), default };
 
         // Act
         var actual = YANUnmanaged.Parses<DateTime>("2023-01-01", "invalid");
@@ -707,17 +546,8 @@ public partial class YANUnmanagedTest
         // Arrange
         var guid1 = new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de");
         var guid2 = new Guid("83af426c-dab9-4a58-8784-8f4ac109e988");
-        var input = new object?[]
-        {
-            "da03fa84-8172-4ad1-8284-fa89ef52d0de",
-            "83af426c-dab9-4a58-8784-8f4ac109e988"
-        };
-
-        var expected = new List<Guid>
-        {
-            guid1,
-            guid2
-        };
+        var input = new object?[] { guid1.ToString(), guid2.ToString() };
+        var expected = new List<Guid> { guid1, guid2 };
 
         // Act
         var actual = input.Parses<Guid>();
@@ -733,17 +563,8 @@ public partial class YANUnmanagedTest
         // Arrange
         var guid1 = new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de");
         var guid2 = default(Guid);
-        var input = new object?[]
-        {
-            "da03fa84-8172-4ad1-8284-fa89ef52d0de",
-            "invalid"
-        };
-
-        var expected = new List<Guid>
-        {
-            guid1,
-            guid2
-        };
+        var input = new object?[] { guid1.ToString(), "invalid" };
+        var expected = new List<Guid> { guid1, guid2 };
 
         // Act
         var actual = input.Parses<Guid>();
@@ -757,11 +578,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Guid_ValidValues_ReturnsExpectedCollection()
     {
         // Arrange
-        var expected = new List<Guid>
-        {
-            new("da03fa84-8172-4ad1-8284-fa89ef52d0de"),
-            new("83af426c-dab9-4a58-8784-8f4ac109e988")
-        };
+        var expected = new List<Guid> { new("da03fa84-8172-4ad1-8284-fa89ef52d0de"), new("83af426c-dab9-4a58-8784-8f4ac109e988") };
 
         // Act
         var actual = YANUnmanaged.Parses<Guid>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "83af426c-dab9-4a58-8784-8f4ac109e988");
@@ -775,11 +592,7 @@ public partial class YANUnmanagedTest
     public void Parses_Params_Guid_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
-        var expected = new List<Guid>
-        {
-            new("da03fa84-8172-4ad1-8284-fa89ef52d0de"),
-            default
-        };
+        var expected = new List<Guid> { new("da03fa84-8172-4ad1-8284-fa89ef52d0de"), default };
 
         // Act
         var actual = YANUnmanaged.Parses<Guid>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "invalid");
