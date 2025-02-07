@@ -53,7 +53,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     }
 
 #if RELEASE
-[Authorize(Roles = "GlobalRole")]
+    [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả Developers từ Database lên Elasticsearch")]

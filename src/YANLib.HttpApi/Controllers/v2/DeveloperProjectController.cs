@@ -78,14 +78,14 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     }
 
 #if RELEASE
-[Authorize(Roles = "GlobalRole")]
+    [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ của lập trình viên từ Database sang Redis")]
     public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
 
 #if RELEASE
-[Authorize(Roles = "GlobalRole")]
+    [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ chứng chỉ của lập trình viên từ Database sang Redis theo mã định danh")]

@@ -78,7 +78,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
 #if RELEASE
-[Authorize(Roles = "GlobalRole, OtherRole")]
+    [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]

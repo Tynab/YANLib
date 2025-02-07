@@ -78,7 +78,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
 #if RELEASE
-[Authorize(Roles = "GlobalRole")]
+    [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ từ Database sang Elasticsearch")]
