@@ -10,13 +10,9 @@ public static partial class YANText
 {
     public static bool AllNull(this IEnumerable<string?> input) => !input.Any(x => x.IsNotNull());
 
-    public static bool AllNull(this ICollection<string?> input) => !input.Any(x => x.IsNotNull());
-
     public static bool AllNull(params string?[] input) => !input.Any(x => x.IsNotNull());
 
     public static bool AnyNull(this IEnumerable<string?> input) => input.Any(x => x.IsNull());
-
-    public static bool AnyNull(this ICollection<string?> input) => input.Any(x => x.IsNull());
 
     public static bool AnyNull(params string?[] input) => input.Any(x => x.IsNull());
 
@@ -24,13 +20,9 @@ public static partial class YANText
 
     public static bool AllNullEmpty(this IEnumerable<string?> input) => !input.Any(x => x.IsNotNullEmpty());
 
-    public static bool AllNullEmpty(this ICollection<string?> input) => !input.Any(x => x.IsNotNullEmpty());
-
     public static bool AllNullEmpty(params string?[] input) => !input.Any(x => x.IsNotNullEmpty());
 
     public static bool AnyNullEmpty(this IEnumerable<string?> input) => input.Any(x => x.IsNullEmpty());
-
-    public static bool AnyNullEmpty(this ICollection<string?> input) => input.Any(x => x.IsNullEmpty());
 
     public static bool AnyNullEmpty(params string?[] input) => input.Any(x => x.IsNullEmpty());
 
@@ -38,13 +30,9 @@ public static partial class YANText
 
     public static bool AllNullWhiteSpace(this IEnumerable<string?> input) => !input.Any(x => x.IsNotNullWhiteSpace());
 
-    public static bool AllNullWhiteSpace(this ICollection<string?> input) => !input.Any(x => x.IsNotNullWhiteSpace());
-
     public static bool AllNullWhiteSpace(params string?[] input) => !input.Any(x => x.IsNotNullWhiteSpace());
 
     public static bool AnyNullWhiteSpace(this IEnumerable<string?> input) => input.Any(x => x.IsNullWhiteSpace());
-
-    public static bool AnyNullWhiteSpace(this ICollection<string?> input) => input.Any(x => x.IsNullWhiteSpace());
 
     public static bool AnyNullWhiteSpace(params string?[] input) => input.Any(x => x.IsNullWhiteSpace());
 
@@ -52,25 +40,17 @@ public static partial class YANText
 
     public static bool AllEqualsIgnoreCase(this IEnumerable<string?> input) => !input.Any(x => x.NotEqualsIgnoreCase(input.First()));
 
-    public static bool AllEqualsIgnoreCase(this ICollection<string?> input) => !input.Any(x => x.NotEqualsIgnoreCase(input.First()));
-
     public static bool AllEqualsIgnoreCase(params string?[] input) => !input.Any(x => x.NotEqualsIgnoreCase(input[0]));
 
     public static bool AnyEqualsIgnoreCase(this IEnumerable<string?> input) => !input.AllNotEqualsIgnoreCase();
-
-    public static bool AnyEqualsIgnoreCase(this ICollection<string?> input) => !input.AllNotEqualsIgnoreCase();
 
     public static bool AnyEqualsIgnoreCase(params string?[] input) => !input.AllNotEqualsIgnoreCase();
 
     public static bool AllNotNull(this IEnumerable<string?> input) => !input.Any(x => x.IsNull());
 
-    public static bool AllNotNull(this ICollection<string?> input) => !input.Any(x => x.IsNull());
-
     public static bool AllNotNull(params string?[] input) => !input.Any(x => x.IsNull());
 
     public static bool AnyNotNull(this IEnumerable<string?> input) => input.Any(x => x.IsNotNull());
-
-    public static bool AnyNotNull(this ICollection<string?> input) => input.Any(x => x.IsNotNull());
 
     public static bool AnyNotNull(params string?[] input) => input.Any(x => x.IsNotNull());
 
@@ -78,13 +58,9 @@ public static partial class YANText
 
     public static bool AllNotNullEmpty(this IEnumerable<string?> input) => !input.Any(x => x.IsNullEmpty());
 
-    public static bool AllNotNullEmpty(this ICollection<string?> input) => !input.Any(x => x.IsNullEmpty());
-
     public static bool AllNotNullEmpty(params string?[] input) => !input.Any(x => x.IsNullEmpty());
 
     public static bool AnyNotNullEmpty(this IEnumerable<string?> input) => input.Any(x => x.IsNotNullEmpty());
-
-    public static bool AnyNotNullEmpty(this ICollection<string?> input) => input.Any(x => x.IsNotNullEmpty());
 
     public static bool AnyNotNullEmpty(params string?[] input) => input.Any(x => x.IsNotNullEmpty());
 
@@ -92,13 +68,9 @@ public static partial class YANText
 
     public static bool AllNotNullWhiteSpace(this IEnumerable<string?> input) => !input.Any(x => x.IsNullWhiteSpace());
 
-    public static bool AllNotNullWhiteSpace(this ICollection<string?> input) => !input.Any(x => x.IsNullWhiteSpace());
-
     public static bool AllNotNullWhiteSpace(params string?[] input) => !input.Any(x => x.IsNullWhiteSpace());
 
     public static bool AnyNotNullWhiteSpace(this IEnumerable<string?> input) => input.Any(x => x.IsNotNullWhiteSpace());
-
-    public static bool AnyNotNullWhiteSpace(this ICollection<string?> input) => input.Any(x => x.IsNotNullWhiteSpace());
 
     public static bool AnyNotNullWhiteSpace(params string?[] input) => input.Any(x => x.IsNotNullWhiteSpace());
 
@@ -107,21 +79,6 @@ public static partial class YANText
     public static bool AllNotEqualsIgnoreCase(this IEnumerable<string?> input)
     {
         var set = new HashSet<string?>(input.Count(), StringComparer.OrdinalIgnoreCase);
-
-        foreach (var str in input)
-        {
-            if (!set.Add(str))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static bool AllNotEqualsIgnoreCase(this ICollection<string?> input)
-    {
-        var set = new HashSet<string?>(input.Count, StringComparer.OrdinalIgnoreCase);
 
         foreach (var str in input)
         {
@@ -151,8 +108,6 @@ public static partial class YANText
 
     public static bool AnyNotEqualsIgnoreCase(this IEnumerable<string?> input) => !input.AllEqualsIgnoreCase();
 
-    public static bool AnyNotEqualsIgnoreCase(this ICollection<string?> input) => !input.AllEqualsIgnoreCase();
-
     public static bool AnyNotEqualsIgnoreCase(params string?[] input) => !input.AllEqualsIgnoreCase();
 
     public static string? Lower(this string? input) => input.IsNullWhiteSpace() ? input : input.ToLower();
@@ -168,8 +123,6 @@ public static partial class YANText
     }
 
     public static IEnumerable<string?>? Lowers(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.Lower());
-
-    public static IEnumerable<string?>? Lowers(this ICollection<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.Lower());
 
     public static IEnumerable<string?>? Lowers(params string?[]? input) => input.IsNullEmpty() ? input : input.Select(x => x.Lower());
 
@@ -187,8 +140,6 @@ public static partial class YANText
 
     public static IEnumerable<string?>? LowerInvariants(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.LowerInvariant());
 
-    public static IEnumerable<string?>? LowerInvariants(this ICollection<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.LowerInvariant());
-
     public static IEnumerable<string?>? LowerInvariants(params string?[]? input) => input.IsNullEmpty() ? input : input.Select(x => x.LowerInvariant());
 
     public static string? Upper(this string? input) => input.IsNullWhiteSpace() ? input : input.ToUpper();
@@ -205,8 +156,6 @@ public static partial class YANText
 
     public static IEnumerable<string?>? Uppers(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.Upper());
 
-    public static IEnumerable<string?>? Uppers(this ICollection<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.Upper());
-
     public static IEnumerable<string?>? Uppers(params string?[]? input) => input.IsNullEmpty() ? input : input.Select(x => x.Upper());
 
     public static string? UpperInvariant(this string? input) => input.IsNullWhiteSpace() ? input : input.ToUpper(CultureInfo.InvariantCulture);
@@ -222,8 +171,6 @@ public static partial class YANText
     }
 
     public static IEnumerable<string?>? UpperInvariants(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.UpperInvariant());
-
-    public static IEnumerable<string?>? UpperInvariants(this ICollection<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.UpperInvariant());
 
     public static IEnumerable<string?>? UpperInvariants(params string?[]? input) => input.IsNullEmpty() ? input : input.Select(x => x.UpperInvariant());
 }
