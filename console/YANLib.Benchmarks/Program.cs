@@ -3,7 +3,7 @@ using YANLib.Benchmarks.Process.Common;
 using YANLib.Benchmarks.Process.Library;
 using static BenchmarkDotNet.Running.BenchmarkRunner;
 
-var choosen = -1;
+var choosen = 4;
 
 switch (choosen)
 {
@@ -25,6 +25,11 @@ switch (choosen)
     case 3:
         {
             _ = Run<HttpBenchmark>();
+            break;
+        }
+    case 4:
+        {
+            _ = Run<ConcurrentBenchmark>();
             break;
         }
     default:
