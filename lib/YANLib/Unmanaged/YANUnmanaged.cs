@@ -16,7 +16,7 @@ public static partial class YANUnmanaged
         ? TryParse(input, out var dt)
             ? dt
             : defaultValue
-        : TryParseExact(input, format.ToArray(), InvariantCulture, None, out dt)
+        : TryParseExact(input, [.. format], InvariantCulture, None, out dt)
         ? dt
         : defaultValue;
     #endregion

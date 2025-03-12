@@ -8,14 +8,17 @@ public static partial class YANText
 {
     public static string? Title(this string? input) => input.IsNullWhiteSpace() ? input : CurrentCulture.TextInfo.ToTitleCase(input);
 
-    public static void Titles(this List<string?>? input)
+    public static void Title(this List<string?>? input)
     {
         if (input.IsNullEmpty())
         {
             return;
         }
 
-        input.ForEach(x => x = x.Title());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].Title();
+        }
     }
 
     public static IEnumerable<string?>? Titles(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.Title());
@@ -48,14 +51,17 @@ public static partial class YANText
         return sb.ToString();
     }
 
-    public static void Capitalizes(this List<string?>? input)
+    public static void Capitalize(this List<string?>? input)
     {
         if (input.IsNullEmpty())
         {
             return;
         }
 
-        input.ForEach(x => x = x.Capitalize());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].Capitalize();
+        }
     }
 
     public static IEnumerable<string?>? Capitalizes(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.Capitalize());
@@ -101,7 +107,10 @@ public static partial class YANText
             return;
         }
 
-        input.ForEach(x => x = x.CleanSpace());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].CleanSpace();
+        }
     }
 
     public static IEnumerable<string?>? CleanSpaces(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.CleanSpace());
@@ -141,7 +150,10 @@ public static partial class YANText
             return;
         }
 
-        input.ForEach(x => x = x.FormatName());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FormatName();
+        }
     }
 
     public static IEnumerable<string?>? FormatNames(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FormatName());
@@ -177,7 +189,10 @@ public static partial class YANText
             return;
         }
 
-        input.ForEach(x => x = x.FilterAlphabetic());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FilterAlphabetic();
+        }
     }
 
     public static IEnumerable<string?>? FilterAlphabetics(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterAlphabetic());
@@ -213,7 +228,10 @@ public static partial class YANText
             return;
         }
 
-        input.ForEach(x => x = x.FilterNumber());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FilterNumber();
+        }
     }
 
     public static IEnumerable<string?>? FilterNumbers(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterNumber());
@@ -249,7 +267,10 @@ public static partial class YANText
             return;
         }
 
-        input.ForEach(x => x = x.FilterAlphanumeric());
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FilterAlphanumeric();
+        }
     }
 
     public static IEnumerable<string?>? FilterAlphanumerics(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterAlphanumeric());

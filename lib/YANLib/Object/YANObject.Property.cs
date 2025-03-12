@@ -93,7 +93,7 @@ public static partial class YANObject
     /// <param name="input">The object to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if all specified properties are not set to their default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefault<T>(this T? input, params string?[]? names) where T : class
+    public static bool AllPropertiesNotDefault<T>(this T? input, params string[]? names) where T : class
     {
         if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
         {
@@ -120,7 +120,7 @@ public static partial class YANObject
     /// <param name="input">The collection to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if all elements have the specified properties not set to their default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class
+    public static bool AllPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class
         => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && !input.Any(x => x.AnyPropertiesDefault(names));
     #endregion
 
@@ -211,7 +211,7 @@ public static partial class YANObject
     /// <param name="input">The object to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if all specified properties are set to their default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefault<T>(this T? input, params string?[]? names) where T : class
+    public static bool AllPropertiesDefault<T>(this T? input, params string[]? names) where T : class
     {
         if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
         {
@@ -238,7 +238,7 @@ public static partial class YANObject
     /// <param name="input">The collection to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if all elements have the specified properties set to their default values; otherwise, <see langword="false"/>.</returns>
-    public static bool AllPropertiesDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class
+    public static bool AllPropertiesDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class
         => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && !input.Any(x => x.AnyPropertiesNotDefault(names));
     #endregion
 
@@ -329,7 +329,7 @@ public static partial class YANObject
     /// <param name="input">The object to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if at least one specified property is not set to its default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefault<T>(this T? input, params string?[]? names) where T : class
+    public static bool AnyPropertiesNotDefault<T>(this T? input, params string[]? names) where T : class
     {
         if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
         {
@@ -356,7 +356,7 @@ public static partial class YANObject
     /// <param name="input">The collection to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if at least one element has a specified property that is not set to its default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class
+    public static bool AnyPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class
         => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && input.Any(x => x.AnyPropertiesNotDefault(names));
     #endregion
 
@@ -447,7 +447,7 @@ public static partial class YANObject
     /// <param name="input">The object to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if at least one specified property is set to its default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefault<T>(this T? input, params string?[]? names) where T : class
+    public static bool AnyPropertiesDefault<T>(this T? input, params string[]? names) where T : class
     {
         if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
         {
@@ -474,7 +474,7 @@ public static partial class YANObject
     /// <param name="input">The collection to check.</param>
     /// <param name="names">The array of property names to check.</param>
     /// <returns><see langword="true"/> if at least one element has a specified property set to its default value; otherwise, <see langword="false"/>.</returns>
-    public static bool AnyPropertiesDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class
+    public static bool AnyPropertiesDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class
         => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && input.Any(x => x.AnyPropertiesDefault(names));
     #endregion
 }
