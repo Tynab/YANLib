@@ -19,6 +19,10 @@ public static partial class YANUnmanaged
         : TryParseExact(input, [.. format], InvariantCulture, None, out dt)
         ? dt
         : defaultValue;
+
+    private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
+
+    private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
     #endregion
 
     /// <summary>

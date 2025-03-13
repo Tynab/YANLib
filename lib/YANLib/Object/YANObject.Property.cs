@@ -260,7 +260,7 @@ public static partial class YANObject
         {
             var type = prop.PropertyType;
 
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : null))
+            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
             {
                 return true;
             }

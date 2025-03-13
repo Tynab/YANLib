@@ -216,6 +216,41 @@ public static partial class YANText
     public static bool AnyNumber(params char[] input) => input.Any(x => x.IsNumber());
 
     /// <summary>
+    /// Determines whether the specified character is a letter or a digit.
+    /// </summary>
+    /// <param name="input">The character to check.</param>
+    /// <returns><see langword="true"/> if the character is a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool IsAlphanumeric(this char input) => char.IsLetterOrDigit(input);
+
+    /// <summary>
+    /// Determines whether all characters in the specified collection are letters or digits.
+    /// </summary>
+    /// <param name="input">The collection of characters to check.</param>
+    /// <returns><see langword="true"/> if all characters are letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllAlphanumeric(this IEnumerable<char> input) => !input.Any(x => x.IsNotAlphanumeric());
+
+    /// <summary>
+    /// Determines whether all characters in the specified array are letters or digits.
+    /// </summary>
+    /// <param name="input">The array of characters to check.</param>
+    /// <returns><see langword="true"/> if all characters are letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllAlphanumeric(params char[] input) => !input.Any(x => x.IsNotAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any character in the specified collection is a letter or a digit.
+    /// </summary>
+    /// <param name="input">The collection of characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character is a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyAlphanumeric(this IEnumerable<char> input) => input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any character in the specified array is a letter or a digit.
+    /// </summary>
+    /// <param name="input">The array of characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character is a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyAlphanumeric(params char[] input) => input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
     /// Determines whether two characters are equal, ignoring case.
     /// </summary>
     /// <param name="input1">The first character to compare.</param>
@@ -460,6 +495,41 @@ public static partial class YANText
     /// <param name="input">The array of characters to check.</param>
     /// <returns><see langword="true"/> if at least one character is not a decimal digit; otherwise, <see langword="false"/>.</returns>
     public static bool AnyNotNumber(params char[] input) => input.Any(x => x.IsNotNumber());
+
+    /// <summary>
+    /// Determines whether the specified character is not a letter or a digit.
+    /// </summary>
+    /// <param name="input">The character to check.</param>
+    /// <returns><see langword="true"/> if the character is not a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool IsNotAlphanumeric(this char input) => !char.IsLetterOrDigit(input);
+
+    /// <summary>
+    /// Determines whether all characters in the specified collection are not letters or digits.
+    /// </summary>
+    /// <param name="input">The collection of characters to check.</param>
+    /// <returns><see langword="true"/> if all characters are not letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotAlphanumeric(this IEnumerable<char> input) => !input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
+    /// Determines whether all characters in the specified array are not letters or digits.
+    /// </summary>
+    /// <param name="input">The array of characters to check.</param>
+    /// <returns><see langword="true"/> if all characters are not letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotAlphanumeric(params char[] input) => !input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any character in the specified collection is not a letter or a digit.
+    /// </summary>
+    /// <param name="input">The collection of characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character is not a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyNotAlphanumeric(this IEnumerable<char> input) => input.Any(x => x.IsNotAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any character in the specified array is not a letter or a digit.
+    /// </summary>
+    /// <param name="input">The array of characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character is not a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyNotAlphanumeric(params char[] input) => input.Any(x => x.IsNotAlphanumeric());
 
     /// <summary>
     /// Determines whether two characters are not equal, ignoring case.

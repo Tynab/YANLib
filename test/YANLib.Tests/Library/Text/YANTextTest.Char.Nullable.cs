@@ -771,6 +771,179 @@ public partial class YANTextTest
     }
     #endregion
 
+    #region IsAlphanumeric
+    [Fact]
+    public void IsAlphanumeric_Nullable_WithLetterChar_ReturnsTrue()
+    {
+        // Arrange
+        char? input = 'a';
+
+        // Act
+        var result = input.IsAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsAlphanumeric_Nullable_WithDigitChar_ReturnsTrue()
+    {
+        // Arrange
+        char? input = '1';
+
+        // Act
+        var result = input.IsAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsAlphanumeric_Nullable_WithNonAlphanumericChar_ReturnsFalse()
+    {
+        // Arrange
+        char? input = '.';
+
+        // Act
+        var result = input.IsAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsAlphanumeric_Nullable_WithNull_ReturnsFalse()
+    {
+        // Arrange
+        char? input = null;
+
+        // Act
+        var result = input.IsAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AllAlphanumeric
+    [Fact]
+    public void AllAlphanumeric_Nullable_WithAllAlphanumericChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new char?[] { 'a', 'B', '1', '2' };
+
+        // Act
+        var result = input.AllAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllAlphanumeric_Nullable_WithSomeNonAlphanumericChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new char?[] { 'a', '1', '.' };
+
+        // Act
+        var result = input.AllAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllAlphanumeric_Nullable_WithSomeNullChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new char?[] { 'a', '1', null };
+
+        // Act
+        var result = input.AllAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllAlphanumeric_Nullable_Params_WithAllAlphanumericChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllAlphanumeric('a', 'B', '1', '2');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllAlphanumeric_Nullable_Params_WithSomeNonAlphanumericChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllAlphanumeric('a', '1', '.');
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllAlphanumeric_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllAlphanumeric('a', '1', null);
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AnyAlphanumeric
+    [Fact]
+    public void AnyAlphanumeric_Nullable_WithSomeAlphanumericChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new char?[] { 'a', '.', '!' };
+
+        // Act
+        var result = input.AnyAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyAlphanumeric_Nullable_WithNoAlphanumericChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new char?[] { '.', '!', '@', null };
+
+        // Act
+        var result = input.AnyAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyAlphanumeric_Nullable_Params_WithSomeAlphanumericChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyAlphanumeric('a', '.', '!');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyAlphanumeric_Nullable_Params_WithNoAlphanumericChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyAlphanumeric('.', '!', '@', null);
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
     #region EqualsIgnoreCase
     [Fact]
     public void EqualsIgnoreCase_Nullable_WithSameCharsDifferentCase_ReturnsTrue()
@@ -1632,6 +1805,156 @@ public partial class YANTextTest
     }
     #endregion
 
+    #region IsNotAlphanumeric
+    [Fact]
+    public void IsNotAlphanumeric_Nullable_WithNonAlphanumericChar_ReturnsTrue()
+    {
+        // Arrange
+        char? input = '.';
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotAlphanumeric_Nullable_WithLetterChar_ReturnsFalse()
+    {
+        // Arrange
+        char? input = 'a';
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotAlphanumeric_Nullable_WithDigitChar_ReturnsFalse()
+    {
+        // Arrange
+        char? input = '1';
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotAlphanumeric_Nullable_WithNull_ReturnsTrue()
+    {
+        // Arrange
+        char? input = null;
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+    #endregion
+
+    #region AllNotAlphanumeric
+    [Fact]
+    public void AllNotAlphanumeric_Nullable_WithAllNonAlphanumericChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new char?[] { '.', '!', '@', null };
+
+        // Act
+        var result = input.AllNotAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotAlphanumeric_Nullable_WithSomeAlphanumericChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new char?[] { '.', 'a', '!' };
+
+        // Act
+        var result = input.AllNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotAlphanumeric_Nullable_Params_WithAllNonAlphanumericChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotAlphanumeric('.', '!', '@', null);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotAlphanumeric_Nullable_Params_WithSomeAlphanumericChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotAlphanumeric('.', 'a', '!');
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region AnyNotAlphanumeric
+    [Fact]
+    public void AnyNotAlphanumeric_Nullable_WithSomeNonAlphanumericChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new char?[] { 'a', '.', '1' };
+
+        // Act
+        var result = input.AnyNotAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotAlphanumeric_Nullable_WithNoNonAlphanumericChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new char?[] { 'a', 'b', '1' };
+
+        // Act
+        var result = input.AnyNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotAlphanumeric_Nullable_Params_WithSomeNonAlphanumericChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotAlphanumeric('a', '.', '1');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotAlphanumeric_Nullable_Params_WithNoNonAlphanumericChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyNotAlphanumeric('a', 'b', '1');
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
     #region NotEqualsIgnoreCase
     [Fact]
     public void NotEqualsIgnoreCase_Nullable_WithDifferentChars_ReturnsTrue()
@@ -1832,8 +2155,10 @@ public partial class YANTextTest
         // Arrange
         List<char?>? input = null;
 
-        // Act & Assert
+        // Act
         var exception = Record.Exception(input.Lower);
+
+        // Assert
         Assert.Null(exception);
     }
 
@@ -1908,8 +2233,10 @@ public partial class YANTextTest
         // Arrange
         List<char?>? input = null;
 
-        // Act & Assert
+        // Act
         var exception = Record.Exception(input.LowerInvariant);
+
+        // Assert
         Assert.Null(exception);
     }
 
@@ -2012,8 +2339,10 @@ public partial class YANTextTest
         // Arrange
         List<char?>? input = null;
 
-        // Act & Assert
+        // Act
         var exception = Record.Exception(input.Upper);
+
+        // Assert
         Assert.Null(exception);
     }
 
@@ -2088,8 +2417,10 @@ public partial class YANTextTest
         // Arrange
         List<char?>? input = null;
 
-        // Act & Assert
+        // Act
         var exception = Record.Exception(input.UpperInvariant);
+
+        // Assert
         Assert.Null(exception);
     }
 

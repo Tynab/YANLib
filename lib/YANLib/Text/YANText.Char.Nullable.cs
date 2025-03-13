@@ -182,6 +182,41 @@ public static partial class YANText
     public static bool AnyNumber(params char?[] input) => input.Any(x => x.IsNumber());
 
     /// <summary>
+    /// Determines whether the specified nullable character has a value and is a letter or a digit.
+    /// </summary>
+    /// <param name="input">The nullable character to check.</param>
+    /// <returns><see langword="true"/> if the character has a value and is a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool IsAlphanumeric(this char? input) => input.HasValue && input.Value.IsAlphanumeric();
+
+    /// <summary>
+    /// Determines whether all nullable characters in the specified collection have values and are letters or digits.
+    /// </summary>
+    /// <param name="input">The collection of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if all characters have values and are letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllAlphanumeric(this IEnumerable<char?> input) => !input.Any(x => x.IsNotAlphanumeric());
+
+    /// <summary>
+    /// Determines whether all nullable characters in the specified array have values and are letters or digits.
+    /// </summary>
+    /// <param name="input">The array of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if all characters have values and are letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllAlphanumeric(params char?[] input) => !input.Any(x => x.IsNotAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any nullable character in the specified collection has a value and is a letter or a digit.
+    /// </summary>
+    /// <param name="input">The collection of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character has a value and is a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyAlphanumeric(this IEnumerable<char?> input) => input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any nullable character in the specified array has a value and is a letter or a digit.
+    /// </summary>
+    /// <param name="input">The array of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character has a value and is a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyAlphanumeric(params char?[] input) => input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
     /// Determines whether a character and a nullable character are equal, ignoring case.
     /// </summary>
     /// <param name="input1">The character to compare.</param>
@@ -391,6 +426,41 @@ public static partial class YANText
     /// <param name="input">The array of nullable characters to check.</param>
     /// <returns><see langword="true"/> if at least one character is <see langword="null"/> or not a decimal digit; otherwise, <see langword="false"/>.</returns>
     public static bool AnyNotNumber(params char?[] input) => input.Any(x => x.IsNotNumber());
+
+    /// <summary>
+    /// Determines whether the specified nullable character is <see langword="null"/> or not a letter or a digit.
+    /// </summary>
+    /// <param name="input">The nullable character to check.</param>
+    /// <returns><see langword="true"/> if the character is <see langword="null"/> or not a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool IsNotAlphanumeric(this char? input) => !input.HasValue || input.Value.IsNotAlphanumeric();
+
+    /// <summary>
+    /// Determines whether all nullable characters in the specified collection are <see langword="null"/> or not letters or digits.
+    /// </summary>
+    /// <param name="input">The collection of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if all characters are <see langword="null"/> or not letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotAlphanumeric(this IEnumerable<char?> input) => !input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
+    /// Determines whether all nullable characters in the specified array are <see langword="null"/> or not letters or digits.
+    /// </summary>
+    /// <param name="input">The array of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if all characters are <see langword="null"/> or not letters or digits; otherwise, <see langword="false"/>.</returns>
+    public static bool AllNotAlphanumeric(params char?[] input) => !input.Any(x => x.IsAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any nullable character in the specified collection is <see langword="null"/> or not a letter or a digit.
+    /// </summary>
+    /// <param name="input">The collection of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character is <see langword="null"/> or not a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyNotAlphanumeric(this IEnumerable<char?> input) => input.Any(x => x.IsNotAlphanumeric());
+
+    /// <summary>
+    /// Determines whether any nullable character in the specified array is <see langword="null"/> or not a letter or a digit.
+    /// </summary>
+    /// <param name="input">The array of nullable characters to check.</param>
+    /// <returns><see langword="true"/> if at least one character is <see langword="null"/> or not a letter or a digit; otherwise, <see langword="false"/>.</returns>
+    public static bool AnyNotAlphanumeric(params char?[] input) => input.Any(x => x.IsNotAlphanumeric());
 
     /// <summary>
     /// Determines whether two nullable characters are not equal, ignoring case.

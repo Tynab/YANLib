@@ -1,19 +1,12 @@
 ﻿using YANLib.Object;
 using YANLib.Text;
 using static System.Convert;
-using static System.DateTime;
 using static System.Nullable;
 
 namespace YANLib.Unmanaged;
 
 public static partial class YANUnmanaged
 {
-    #region Private
-    private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
-
-    private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
-    #endregion
-
     /// <summary>
     /// Parses an input object to a value of type <typeparamref name="T"/>.
     /// Supports parsing for common types such as <see cref="string"/>, <see cref="DateTime"/>, nullable <see cref="DateTime"/>, <see cref="Guid"/>, and nullable <see cref="Guid"/>.
