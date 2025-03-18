@@ -45,7 +45,9 @@ public class LoopBenchmark
     [Benchmark]
     public void Foreach_Span()
     {
-        foreach (var item in AsSpan(_list))
+        var span = AsSpan(_list);
+
+        foreach (var item in span)
         {
             _ = item;
         }

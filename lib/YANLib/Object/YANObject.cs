@@ -1,11 +1,19 @@
 ﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib.Object;
 
 public static partial class YANObject
 {
+    #region Private
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
+
+    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, t => t.GetProperties(Public | Instance | DeclaredOnly));
+    #endregion
+
     #region Is
     /// <summary>
     /// Checks if the specified object is <see langword="null"/>.

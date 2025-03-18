@@ -275,7 +275,7 @@ public static partial class YANText
     /// <returns><see langword="true"/> if all strings in the array are not equal to each other, ignoring case; otherwise, <see langword="false"/>.</returns>
     public static bool AllNotEqualsIgnoreCase(params string?[] input)
     {
-        var set = new HashSet<string?>(input.Length, StringComparer.OrdinalIgnoreCase);
+        var set = new HashSet<string?>(StringComparer.OrdinalIgnoreCase);
 
         for (var i = 0; i < input.Length; i++)
         {

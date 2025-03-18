@@ -1,7 +1,6 @@
 ﻿using YANLib.Object;
 using YANLib.Text;
 using static System.Convert;
-using static System.Nullable;
 
 namespace YANLib.Unmanaged;
 
@@ -17,50 +16,26 @@ public static partial class YANUnmanaged
     /// <returns>The parsed value of type <typeparamref name="T"/>, or <see langword="null"/> if parsing fails or the input is <see langword="null"/>.</returns>
     public static T? Parse<T>(this object? input)
     {
-        if (typeof(T) == typeof(string))
+        return input.IsNull() ? default : typeof(T) switch
         {
-            return (T?)(object?)(input?.ToString() ?? default);
-        }
+            Type stringType when stringType == typeof(string) => (T?)(object?)input.ToString(),
+            Type dateTimeType when dateTimeType == typeof(DateTime) => (T)(object)input.ToString().ParseDateTime(),
+            Type nullableDateTimeType when nullableDateTimeType == typeof(DateTime?) => (T?)(object?)input.ToString().ParseDateTimeNullable(),
+            Type guidType when guidType == typeof(Guid) && Guid.TryParse(input.ToString(), out var guidValue) => (T)(object)guidValue,
+            Type nullableGuidType when nullableGuidType == typeof(Guid?) && Guid.TryParse(input.ToString(), out var guidValue) => (T?)(object?)guidValue,
+            _ => GetUnderlyingTypeCached(typeof(T)) is Type underlyingType ? ChangeTypeOrDefault(input, underlyingType) : ChangeTypeOrDefault(input, typeof(T))
+        };
 
-        if (typeof(T) == typeof(DateTime))
-        {
-            return (T)(object)(input?.ToString() ?? default).ParseDateTime();
-        }
-
-        if (typeof(T) == typeof(DateTime?))
-        {
-            return (T?)(object?)(input?.ToString() ?? default).ParseDateTimeNullable();
-        }
-
-        if (typeof(T) == typeof(Guid))
-        {
-            return Guid.TryParse(input?.ToString(), out var guidValue) ? (T)(object)guidValue : default;
-        }
-
-        if (typeof(T) == typeof(Guid?))
-        {
-            return Guid.TryParse(input?.ToString(), out var guidValue) ? (T?)(object?)guidValue : default;
-        }
-
-        if (GetUnderlyingType(typeof(T)) is Type underlyingType)
+        static T? ChangeTypeOrDefault(object input, Type targetType)
         {
             try
             {
-                return input.IsNull() ? default : (T?)ChangeType(input, underlyingType);
+                return (T?)ChangeType(input, targetType);
             }
             catch
             {
                 return default;
             }
-        }
-
-        try
-        {
-            return input.IsNull() ? default : (T)ChangeType(input, typeof(T));
-        }
-        catch
-        {
-            return default;
         }
     }
 

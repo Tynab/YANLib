@@ -1,6 +1,5 @@
 ﻿using YANLib.Text;
 using static System.Activator;
-using static System.Reflection.BindingFlags;
 
 namespace YANLib.Object;
 
@@ -20,7 +19,9 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly))
+        var props = GetCachedProperties(input.GetType());
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -63,7 +64,9 @@ public static partial class YANObject
             return false;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -100,7 +103,9 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -138,7 +143,9 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly))
+        var props = GetCachedProperties(input.GetType());
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -181,7 +188,9 @@ public static partial class YANObject
             return false;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -218,7 +227,9 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -256,7 +267,9 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly))
+        var props = GetCachedProperties(input.GetType());
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -299,7 +312,9 @@ public static partial class YANObject
             return false;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -336,7 +351,9 @@ public static partial class YANObject
             return false;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -374,7 +391,9 @@ public static partial class YANObject
             return default;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly))
+        var props = GetCachedProperties(input.GetType());
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -417,7 +436,9 @@ public static partial class YANObject
             return false;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 
@@ -454,7 +475,9 @@ public static partial class YANObject
             return false;
         }
 
-        foreach (var prop in input.GetType().GetProperties(Public | Instance | DeclaredOnly).Where(x => names.Contains(x.Name)))
+        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        foreach (var prop in props)
         {
             var type = prop.PropertyType;
 

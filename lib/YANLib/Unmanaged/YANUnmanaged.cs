@@ -4,12 +4,15 @@ using static System.Convert;
 using static System.DateTime;
 using static System.Globalization.CultureInfo;
 using static System.Globalization.DateTimeStyles;
+using static System.Nullable;
 
 namespace YANLib.Unmanaged;
 
 public static partial class YANUnmanaged
 {
     #region Private
+    private static readonly Dictionary<Type, Type?> UnderlyingTypeCache = [];
+
     private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpace()
         ? defaultValue
         : format.IsNullEmpty()
@@ -23,6 +26,63 @@ public static partial class YANUnmanaged
     private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
 
     private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
+
+    private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
+    {
+        if (typeof(T) == typeof(DateTime))
+        {
+            return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
+        }
+
+        if (input.IsNull())
+        {
+            if (defaultValue.IsNull())
+            {
+                return default;
+            }
+
+            try
+            {
+                return (T)ChangeType(defaultValue, typeof(T));
+            }
+            catch
+            {
+                return default;
+            }
+        }
+
+        try
+        {
+            return (T)ChangeType(input, typeof(T));
+        }
+        catch
+        {
+            if (defaultValue.IsNull())
+            {
+                return default;
+            }
+
+            try
+            {
+                return (T)ChangeType(defaultValue, typeof(T));
+            }
+            catch
+            {
+                return default;
+            }
+        }
+    }
+
+    private static Type? GetUnderlyingTypeCached(Type type)
+    {
+        if (!UnderlyingTypeCache.TryGetValue(type, out var underlyingType))
+        {
+            underlyingType = GetUnderlyingType(type);
+            UnderlyingTypeCache[type] = underlyingType;
+        }
+
+        return underlyingType;
+    }
     #endregion
 
     /// <summary>
@@ -36,28 +96,7 @@ public static partial class YANUnmanaged
     /// <param name="format">An optional enumerable collection of date and time formats to use if the type is <see cref="DateTime"/>. If <see langword="null"/>, uses the default format.</param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the specified/default value if parsing fails.</returns>
     public static T Parse<T>(this object? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-    {
-        if (typeof(T) == typeof(DateTime))
-        {
-            return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
-        }
-
-        try
-        {
-            return input.IsNull() ? defaultValue.IsNull() ? default : (T)ChangeType(defaultValue, typeof(T)) : (T)ChangeType(input, typeof(T));
-        }
-        catch
-        {
-            try
-            {
-                return defaultValue.IsNull() ? default : (T)ChangeType(defaultValue, typeof(T));
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
+        => ParseHelper<T>(input, defaultValue, format);
 
     /// <summary>
     /// Parses an input object to a value of type <typeparamref name="T"/>.
@@ -70,28 +109,7 @@ public static partial class YANUnmanaged
     /// <param name="format">An optional array of date and time formats to use if the type is <see cref="DateTime"/>. If <see langword="null"/>, uses the default format.</param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the specified/default value if parsing fails.</returns>
     public static T Parse<T>(this object? input, object? defaultValue = null, params string?[]? format) where T : unmanaged
-    {
-        if (typeof(T) == typeof(DateTime))
-        {
-            return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
-        }
-
-        try
-        {
-            return input.IsNull() ? defaultValue.IsNull() ? default : (T)ChangeType(defaultValue, typeof(T)) : (T)ChangeType(input, typeof(T));
-        }
-        catch
-        {
-            try
-            {
-                return defaultValue.IsNull() ? default : (T)ChangeType(defaultValue, typeof(T));
-            }
-            catch
-            {
-                return default;
-            }
-        }
-    }
+        => ParseHelper<T>(input, defaultValue, format);
 
     /// <summary>
     /// Parses a collection of input objects to a collection of values of type <typeparamref name="T"/>.
