@@ -46,9 +46,9 @@ public class SampleClass
 
     public DateTime CreatedAt { get; set; }
 
-    public Guid? ModifiedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
 
-    public DateTime? ModifiedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public bool IsActive { get; set; }
 

@@ -46,9 +46,9 @@ public record SampleRecord
 
     public DateTime CreatedAt { get; init; }
 
-    public Guid? ModifiedBy { get; init; }
+    public Guid? UpdatedBy { get; init; }
 
-    public DateTime? ModifiedAt { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 
     public bool IsActive { get; init; }
 

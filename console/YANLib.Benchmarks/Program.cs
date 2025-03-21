@@ -17,20 +17,21 @@ do
         _ = ReadLine();
         Clear();
     }
-} while (choice != 0);
+} while (choice is not 0);
 
 WriteLine("Exiting program. Goodbye!");
 
 void DisplayMenu()
 {
     WriteLine("=== Benchmark Runner Menu ===");
-    WriteLine("1. Run Loop Benchmark");
-    WriteLine("2. Run Class Type Benchmark");
-    WriteLine("3. Run Model Type Benchmark");
-    WriteLine("4. Run Concurrent Benchmark");
-    WriteLine("5. Run JSON Serialize Benchmark");
-    WriteLine("6. Run JSON Deserialize Benchmark");
-    WriteLine("7. Run HTTP Benchmark");
+    WriteLine("1. Run Class Type Benchmark");
+    WriteLine("2. Run Model Type Benchmark");
+    WriteLine("3. Run Condition Benchmark");
+    WriteLine("4. Run Loop Benchmark");
+    WriteLine("5. Run Concurrent Benchmark");
+    WriteLine("6. Run JSON Serialize Benchmark");
+    WriteLine("7. Run JSON Deserialize Benchmark");
+    WriteLine("8. Run HTTP Benchmark");
     WriteLine("0. Exit");
     WriteLine("=============================");
 }
@@ -42,7 +43,7 @@ int GetValidChoice()
 
     do
     {
-        Write("Enter your choice (0-6): ");
+        Write("Enter your choice (0-8): ");
         var input = ReadLine();
 
         isValid = int.TryParse(input, out choice);
@@ -56,7 +57,7 @@ int GetValidChoice()
 
         if (choice is < 0 or > 6)
         {
-            WriteLine("Invalid choice. Please enter a number between 0 and 6.");
+            WriteLine("Invalid choice. Please enter a number between 0 and 8.");
             isValid = false;
         }
     } while (!isValid);
@@ -72,41 +73,47 @@ void RunBenchmark(int choice)
     {
         case 1:
             {
-                _ = Run<LoopBenchmark>();
+                _ = Run<ClassTypeBenchmark>();
 
                 break;
             }
         case 2:
             {
-                _ = Run<ClassTypeBenchmark>();
+                _ = Run<ModelTypeBenchmark>();
 
                 break;
             }
         case 3:
             {
-                _ = Run<ModelTypeBenchmark>();
+                _ = Run<ConditionBenchmark>();
 
                 break;
             }
         case 4:
             {
-                _ = Run<ConcurrentBenchmark>();
+                _ = Run<LoopBenchmark>();
 
                 break;
             }
         case 5:
             {
-                _ = Run<JsonSerializeBenchmark>();
+                _ = Run<ConcurrentBenchmark>();
 
                 break;
             }
         case 6:
             {
-                _ = Run<JsonDeserializeBenchmark>();
+                _ = Run<JsonSerializeBenchmark>();
 
                 break;
             }
         case 7:
+            {
+                _ = Run<JsonDeserializeBenchmark>();
+
+                break;
+            }
+        case 8:
             {
                 _ = Run<HttpBenchmark>();
 

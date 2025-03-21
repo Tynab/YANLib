@@ -8,14 +8,14 @@ namespace YANLib.Benchmarks.Process.Common;
 public class ConcurrentBenchmark
 {
     [Params(1_000, 10_000, 100_000, 1_000_000)]
-    public int Iterations { get; set; }
+    public int Size { get; set; }
 
     [Benchmark(Baseline = true), BenchmarkCategory("Synchronous")]
     public async Task Synchronous_Task()
     {
         var sum = 0;
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             sum += await GetSyncTask();
         }
@@ -26,7 +26,7 @@ public class ConcurrentBenchmark
     {
         var sum = 0;
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             sum += await GetSyncValueTask();
         }
@@ -51,7 +51,7 @@ public class ConcurrentBenchmark
     {
         var sum = 0;
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             sum += await GetAsyncTask();
         }
@@ -62,7 +62,7 @@ public class ConcurrentBenchmark
     {
         var sum = 0;
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             sum += await GetAsyncValueTask();
         }

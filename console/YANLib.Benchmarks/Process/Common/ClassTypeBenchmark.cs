@@ -1,8 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
-using System;
-using System.Collections.Generic;
-using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
 using YANLib.Benchmarks.Models;
+using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
+using static System.DateTime;
+using static System.Guid;
 
 namespace YANLib.Benchmarks.Process.Common;
 
@@ -10,7 +10,7 @@ namespace YANLib.Benchmarks.Process.Common;
 public class ClassTypeBenchmark
 {
     [Params(1_000, 10_000, 100_000, 1_000_000)]
-    public int Iterations { get; set; }
+    public int Size { get; set; }
 
     private Guid _id;
     private string? _firstName;
@@ -42,7 +42,7 @@ public class ClassTypeBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        _id = Guid.NewGuid();
+        _id = NewGuid();
         _firstName = "John";
         _lastName = "Doe";
         _dateOfBirth = new DateTime(1990, 5, 15);
@@ -62,8 +62,8 @@ public class ClassTypeBenchmark
         _insuranceNumber = "INS-987654321";
         _taxNumber = "TAX-123456789";
         _projects = ["Project A", "Project B", "Project C"];
-        _createdBy = Guid.NewGuid();
-        _createdAt = DateTime.UtcNow;
+        _createdBy = NewGuid();
+        _createdAt = UtcNow;
         _modifiedBy = null;
         _modifiedAt = null;
         _isActive = true;
@@ -73,7 +73,7 @@ public class ClassTypeBenchmark
     [Benchmark(Baseline = true), BenchmarkCategory("Creation")]
     public void CreateRegularClass()
     {
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             _ = new SampleClass
             {
@@ -99,8 +99,8 @@ public class ClassTypeBenchmark
                 Projects = _projects,
                 CreatedBy = _createdBy,
                 CreatedAt = _createdAt,
-                ModifiedBy = _modifiedBy,
-                ModifiedAt = _modifiedAt,
+                UpdatedBy = _modifiedBy,
+                UpdatedAt = _modifiedAt,
                 IsActive = _isActive,
                 IsDeleted = _isDeleted
             };
@@ -110,7 +110,7 @@ public class ClassTypeBenchmark
     [Benchmark, BenchmarkCategory("Creation")]
     public void CreateSealedClass()
     {
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             _ = new SampleSealed
             {
@@ -136,8 +136,8 @@ public class ClassTypeBenchmark
                 Projects = _projects,
                 CreatedBy = _createdBy,
                 CreatedAt = _createdAt,
-                ModifiedBy = _modifiedBy,
-                ModifiedAt = _modifiedAt,
+                UpdatedBy = _modifiedBy,
+                UpdatedAt = _modifiedAt,
                 IsActive = _isActive,
                 IsDeleted = _isDeleted
             };
@@ -171,13 +171,13 @@ public class ClassTypeBenchmark
             Projects = _projects,
             CreatedBy = _createdBy,
             CreatedAt = _createdAt,
-            ModifiedBy = _modifiedBy,
-            ModifiedAt = _modifiedAt,
+            UpdatedBy = _modifiedBy,
+            UpdatedAt = _modifiedAt,
             IsActive = _isActive,
             IsDeleted = _isDeleted
         };
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             var _ = sample.Id;
             var __ = sample.FirstName;
@@ -185,6 +185,26 @@ public class ClassTypeBenchmark
             var ____ = sample.DateOfBirth;
             var _____ = sample.Gender;
             var ______ = sample.Email;
+            var _______ = sample.PhoneNumber;
+            var ________ = sample.Address;
+            var _________ = sample.City;
+            var __________ = sample.Country;
+            var ___________ = sample.EmployeeCode;
+            var ____________ = sample.Position;
+            var _____________ = sample.Department;
+            var ______________ = sample.DateJoined;
+            var _______________ = sample.ContractType;
+            var ________________ = sample.Salary;
+            var _________________ = sample.Currency;
+            var __________________ = sample.InsuranceNumber;
+            var ___________________ = sample.TaxNumber;
+            var ____________________ = sample.Projects;
+            var _____________________ = sample.CreatedBy;
+            var ______________________ = sample.CreatedAt;
+            var _______________________ = sample.UpdatedBy;
+            var ________________________ = sample.UpdatedAt;
+            var _________________________ = sample.IsActive;
+            var __________________________ = sample.IsDeleted;
         }
     }
 
@@ -215,13 +235,13 @@ public class ClassTypeBenchmark
             Projects = _projects,
             CreatedBy = _createdBy,
             CreatedAt = _createdAt,
-            ModifiedBy = _modifiedBy,
-            ModifiedAt = _modifiedAt,
+            UpdatedBy = _modifiedBy,
+            UpdatedAt = _modifiedAt,
             IsActive = _isActive,
             IsDeleted = _isDeleted
         };
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             var _ = sample.Id;
             var __ = sample.FirstName;
@@ -229,6 +249,26 @@ public class ClassTypeBenchmark
             var ____ = sample.DateOfBirth;
             var _____ = sample.Gender;
             var ______ = sample.Email;
+            var _______ = sample.PhoneNumber;
+            var ________ = sample.Address;
+            var _________ = sample.City;
+            var __________ = sample.Country;
+            var ___________ = sample.EmployeeCode;
+            var ____________ = sample.Position;
+            var _____________ = sample.Department;
+            var ______________ = sample.DateJoined;
+            var _______________ = sample.ContractType;
+            var ________________ = sample.Salary;
+            var _________________ = sample.Currency;
+            var __________________ = sample.InsuranceNumber;
+            var ___________________ = sample.TaxNumber;
+            var ____________________ = sample.Projects;
+            var _____________________ = sample.CreatedBy;
+            var ______________________ = sample.CreatedAt;
+            var _______________________ = sample.UpdatedBy;
+            var ________________________ = sample.UpdatedAt;
+            var _________________________ = sample.IsActive;
+            var __________________________ = sample.IsDeleted;
         }
     }
 
@@ -237,7 +277,7 @@ public class ClassTypeBenchmark
     {
         var sample = new SampleClass();
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             sample.Id = _id;
             sample.FirstName = _firstName;
@@ -245,6 +285,26 @@ public class ClassTypeBenchmark
             sample.DateOfBirth = _dateOfBirth;
             sample.Gender = _gender;
             sample.Email = _email;
+            sample.PhoneNumber = _phoneNumber;
+            sample.Address = _address;
+            sample.City = _city;
+            sample.Country = _country;
+            sample.EmployeeCode = _employeeCode;
+            sample.Position = _position;
+            sample.Department = _department;
+            sample.DateJoined = _dateJoined;
+            sample.ContractType = _contractType;
+            sample.Salary = _salary;
+            sample.Currency = _currency;
+            sample.InsuranceNumber = _insuranceNumber;
+            sample.TaxNumber = _taxNumber;
+            sample.Projects = _projects;
+            sample.CreatedBy = _createdBy;
+            sample.CreatedAt = _createdAt;
+            sample.UpdatedBy = _modifiedBy;
+            sample.UpdatedAt = _modifiedAt;
+            sample.IsActive = _isActive;
+            sample.IsDeleted = _isDeleted;
         }
     }
 
@@ -253,7 +313,7 @@ public class ClassTypeBenchmark
     {
         var sample = new SampleSealed();
 
-        for (var i = 0; i < Iterations; i++)
+        for (var i = 0; i < Size; i++)
         {
             sample.Id = _id;
             sample.FirstName = _firstName;
@@ -261,6 +321,26 @@ public class ClassTypeBenchmark
             sample.DateOfBirth = _dateOfBirth;
             sample.Gender = _gender;
             sample.Email = _email;
+            sample.PhoneNumber = _phoneNumber;
+            sample.Address = _address;
+            sample.City = _city;
+            sample.Country = _country;
+            sample.EmployeeCode = _employeeCode;
+            sample.Position = _position;
+            sample.Department = _department;
+            sample.DateJoined = _dateJoined;
+            sample.ContractType = _contractType;
+            sample.Salary = _salary;
+            sample.Currency = _currency;
+            sample.InsuranceNumber = _insuranceNumber;
+            sample.TaxNumber = _taxNumber;
+            sample.Projects = _projects;
+            sample.CreatedBy = _createdBy;
+            sample.CreatedAt = _createdAt;
+            sample.UpdatedBy = _modifiedBy;
+            sample.UpdatedAt = _modifiedAt;
+            sample.IsActive = _isActive;
+            sample.IsDeleted = _isDeleted;
         }
     }
 }
