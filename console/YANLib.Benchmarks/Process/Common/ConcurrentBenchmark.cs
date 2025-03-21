@@ -32,9 +32,19 @@ public class ConcurrentBenchmark
         }
     }
 
-    private static Task<int> GetSyncTask() => FromResult(1);
+    private static Task<int> GetSyncTask()
+    {
+        var result = 1 + 1;
 
-    private static ValueTask<int> GetSyncValueTask() => new(1);
+        return FromResult(result);
+    }
+
+    private static ValueTask<int> GetSyncValueTask()
+    {
+        var result = 1 + 1;
+
+        return new(result);
+    }
 
     [Benchmark(Baseline = true), BenchmarkCategory("Asynchronous")]
     public async Task Asynchronous_Task()
@@ -62,17 +72,13 @@ public class ConcurrentBenchmark
     {
         var result = 1 + 1;
 
-        await Yield();
-
-        return result;
+        return await FromResult(result);
     }
 
     private static async ValueTask<int> GetAsyncValueTask()
     {
         var result = 1 + 1;
 
-        await Yield();
-
-        return result;
+        return await new ValueTask<int>(result);
     }
 }

@@ -14,14 +14,14 @@ public class JsonDeserializeBenchmark
     public int Size { get; set; }
 
     [GlobalSetup]
-    public void Setup() => _json = new SampleModel
+    public void Setup() => _json = new SampleClass
     {
         Id = NewGuid()
     }.Serialize();
 
     [Benchmark(Baseline = true)]
-    public void YANLib_Json() => For(0, Size, index => _json.Deserialize<SampleModel>());
+    public void YANLib_Json() => For(0, Size, index => _json.Deserialize<SampleClass>());
 
     [Benchmark]
-    public void Newtonsoft_Json() => For(0, Size, index => DeserializeObject<SampleModel>(_json!));
+    public void Newtonsoft_Json() => For(0, Size, index => DeserializeObject<SampleClass>(_json!));
 }

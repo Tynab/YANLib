@@ -8,13 +8,13 @@ namespace YANLib.Benchmarks.Process.Library;
 
 public class JsonSerializeBenchmark
 {
-    private SampleModel? _model;
+    private SampleClass? _model;
 
     [Params(1_000, 10_000, 100_000, 1_000_000)]
     public int Size { get; set; }
 
     [GlobalSetup]
-    public void Setup() => _model = new SampleModel
+    public void Setup() => _model = new SampleClass
     {
         Id = NewGuid()
     };
