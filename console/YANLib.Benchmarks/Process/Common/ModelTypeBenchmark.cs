@@ -71,7 +71,7 @@ public class ModelTypeBenchmark
     }
 
     [Benchmark(Baseline = true), BenchmarkCategory("Creation")]
-    public void CreateClass()
+    public void Create_Class()
     {
         for (var i = 0; i < Size; i++)
         {
@@ -108,7 +108,7 @@ public class ModelTypeBenchmark
     }
 
     [Benchmark, BenchmarkCategory("Creation")]
-    public void CreateRecord()
+    public void Create_Record()
     {
         for (var i = 0; i < Size; i++)
         {
@@ -144,8 +144,8 @@ public class ModelTypeBenchmark
         }
     }
 
-    [Benchmark(Baseline = true), BenchmarkCategory("PropertyAccess")]
-    public void AccessClassProperties()
+    [Benchmark(Baseline = true), BenchmarkCategory("Accessibility")]
+    public void Access_Class()
     {
         var sample = new SampleClass
         {
@@ -208,8 +208,8 @@ public class ModelTypeBenchmark
         }
     }
 
-    [Benchmark, BenchmarkCategory("PropertyAccess")]
-    public void AccessRecordProperties()
+    [Benchmark, BenchmarkCategory("Accessibility")]
+    public void Access_Record()
     {
         var sample = new SampleRecord
         {
@@ -273,7 +273,7 @@ public class ModelTypeBenchmark
     }
 
     [Benchmark(Baseline = true), BenchmarkCategory("Equality")]
-    public void ClassEquality()
+    public void Equality_Class()
     {
         var sample1 = new SampleClass
         {
@@ -342,7 +342,7 @@ public class ModelTypeBenchmark
     }
 
     [Benchmark, BenchmarkCategory("Equality")]
-    public void RecordEquality()
+    public void Equality_Record()
     {
         var sample1 = new SampleRecord
         {
@@ -410,8 +410,8 @@ public class ModelTypeBenchmark
         }
     }
 
-    [Benchmark(Baseline = true), BenchmarkCategory("Clone")]
-    public void ClassClone()
+    [Benchmark(Baseline = true), BenchmarkCategory("Cloning")]
+    public void Clone_Class()
     {
         var sample = new SampleClass
         {
@@ -477,8 +477,8 @@ public class ModelTypeBenchmark
         }
     }
 
-    [Benchmark, BenchmarkCategory("Clone")]
-    public void RecordClone()
+    [Benchmark, BenchmarkCategory("Cloning")]
+    public void Clone_Record()
     {
         var sample = new SampleRecord
         {

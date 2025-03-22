@@ -47,7 +47,7 @@ public class LoopBenchmark
     }
 
     [Benchmark]
-    public int Foreach_List()
+    public int ForeachList()
     {
         var sum = 0;
 
@@ -57,7 +57,7 @@ public class LoopBenchmark
     }
 
     [Benchmark]
-    public int Foreach_Span()
+    public int ForeachSpan()
     {
         var sum = 0;
         var span = AsSpan(_list);

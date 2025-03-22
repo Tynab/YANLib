@@ -55,7 +55,7 @@ int GetValidChoice()
             continue;
         }
 
-        if (choice is < 0 or > 6)
+        if (choice is < 0 or > 8)
         {
             WriteLine("Invalid choice. Please enter a number between 0 and 8.");
             isValid = false;

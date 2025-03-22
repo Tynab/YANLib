@@ -28,7 +28,7 @@ public class ConditionBenchmark
     private readonly TestEnum[] _enumValues = [TestEnum.Zero, TestEnum.One, TestEnum.Two, TestEnum.Three, TestEnum.Four, TestEnum.Five, TestEnum.Six, TestEnum.Seven, TestEnum.Eight, TestEnum.Nine];
 
     [Benchmark(Baseline = true), BenchmarkCategory("Integer")]
-    public int IntegerIfElse()
+    public int Integer_IfElse()
     {
         var sum = 0;
 
@@ -43,7 +43,7 @@ public class ConditionBenchmark
     }
 
     [Benchmark, BenchmarkCategory("Integer")]
-    public int IntegerSwitchCase()
+    public int Integer_SwitchCase()
     {
         var sum = 0;
 
@@ -70,7 +70,7 @@ public class ConditionBenchmark
     }
 
     [Benchmark(Baseline = true), BenchmarkCategory("String")]
-    public int StringIfElse()
+    public int String_IfElse()
     {
         var sum = 0;
 
@@ -85,7 +85,7 @@ public class ConditionBenchmark
     }
 
     [Benchmark, BenchmarkCategory("String")]
-    public int StringSwitchCase()
+    public int String_SwitchCase()
     {
         var sum = 0;
 
@@ -112,7 +112,7 @@ public class ConditionBenchmark
     }
 
     [Benchmark(Baseline = true), BenchmarkCategory("Enum")]
-    public int EnumIfElse()
+    public int Enum_IfElse()
     {
         var sum = 0;
 
@@ -136,7 +136,7 @@ public class ConditionBenchmark
     }
 
     [Benchmark, BenchmarkCategory("Enum")]
-    public int EnumSwitchCase()
+    public int Enum_SwitchCase()
     {
         var sum = 0;
 

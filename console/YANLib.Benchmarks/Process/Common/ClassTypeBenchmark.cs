@@ -71,7 +71,7 @@ public class ClassTypeBenchmark
     }
 
     [Benchmark(Baseline = true), BenchmarkCategory("Creation")]
-    public void CreateRegularClass()
+    public void Create_RegularClass()
     {
         for (var i = 0; i < Size; i++)
         {
@@ -108,7 +108,7 @@ public class ClassTypeBenchmark
     }
 
     [Benchmark, BenchmarkCategory("Creation")]
-    public void CreateSealedClass()
+    public void Create_SealedClass()
     {
         for (var i = 0; i < Size; i++)
         {
@@ -144,8 +144,8 @@ public class ClassTypeBenchmark
         }
     }
 
-    [Benchmark(Baseline = true), BenchmarkCategory("PropertyAccess")]
-    public void AccessRegularClassProperties()
+    [Benchmark(Baseline = true), BenchmarkCategory("Accessibility")]
+    public void Access_RegularClass()
     {
         var sample = new SampleClass
         {
@@ -208,8 +208,8 @@ public class ClassTypeBenchmark
         }
     }
 
-    [Benchmark, BenchmarkCategory("PropertyAccess")]
-    public void AccessSealedClassProperties()
+    [Benchmark, BenchmarkCategory("Accessibility")]
+    public void Access_SealedClass()
     {
         var sample = new SampleSealed
         {
@@ -272,8 +272,8 @@ public class ClassTypeBenchmark
         }
     }
 
-    [Benchmark(Baseline = true), BenchmarkCategory("PropertyModification")]
-    public void ModifyRegularClassProperties()
+    [Benchmark(Baseline = true), BenchmarkCategory("Modification")]
+    public void Modify_RegularClass()
     {
         var sample = new SampleClass();
 
@@ -308,8 +308,8 @@ public class ClassTypeBenchmark
         }
     }
 
-    [Benchmark, BenchmarkCategory("PropertyModification")]
-    public void ModifySealedClassProperties()
+    [Benchmark, BenchmarkCategory("Modification")]
+    public void Modify_SealedClass()
     {
         var sample = new SampleSealed();
 
