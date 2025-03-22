@@ -2,55 +2,55 @@
 
 public record SampleRecord
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
-    public string? FirstName { get; init; }
+    public string? FirstName { get; set; }
 
-    public string? LastName { get; init; }
+    public string? LastName { get; set; }
 
-    public DateTime DateOfBirth { get; init; }
+    public DateTime DateOfBirth { get; set; }
 
-    public string? Gender { get; init; }
+    public string? Gender { get; set; }
 
-    public string? Email { get; init; }
+    public string? Email { get; set; }
 
-    public string? PhoneNumber { get; init; }
+    public string? PhoneNumber { get; set; }
 
-    public string? Address { get; init; }
+    public string? Address { get; set; }
 
-    public string? City { get; init; }
+    public string? City { get; set; }
 
-    public string? Country { get; init; }
+    public string? Country { get; set; }
 
-    public string? EmployeeCode { get; init; }
+    public string? EmployeeCode { get; set; }
 
-    public string? Position { get; init; }
+    public string? Position { get; set; }
 
-    public string? Department { get; init; }
+    public string? Department { get; set; }
 
-    public DateTime DateJoined { get; init; }
+    public DateTime DateJoined { get; set; }
 
-    public string? ContractType { get; init; }
+    public string? ContractType { get; set; }
 
-    public decimal Salary { get; init; }
+    public decimal Salary { get; set; }
 
-    public string? Currency { get; init; }
+    public string? Currency { get; set; }
 
-    public string? InsuranceNumber { get; init; }
+    public string? InsuranceNumber { get; set; }
 
-    public string? TaxNumber { get; init; }
+    public string? TaxNumber { get; set; }
 
-    public List<string>? Projects { get; init; }
+    public List<string>? Projects { get; set; }
 
-    public Guid CreatedBy { get; init; }
+    public Guid CreatedBy { get; set; }
 
-    public DateTime CreatedAt { get; init; }
+    public DateTime CreatedAt { get; set; }
 
-    public Guid? UpdatedBy { get; init; }
+    public Guid? UpdatedBy { get; set; }
 
-    public DateTime? UpdatedAt { get; init; }
+    public DateTime? UpdatedAt { get; set; }
 
-    public bool IsActive { get; init; }
+    public bool IsActive { get; set; }
 
-    public bool IsDeleted { get; init; }
+    public bool IsDeleted { get; set; }
 }
