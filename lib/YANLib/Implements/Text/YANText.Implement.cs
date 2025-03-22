@@ -1,0 +1,337 @@
+﻿using System.Diagnostics;
+using System.Text;
+using YANLib.Object;
+using YANLib.Text;
+using static System.Globalization.CultureInfo;
+
+namespace YANLib.Implements.Text;
+
+internal static partial class YANText
+{
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? TitleImplement(this string? input) => input.IsNullWhiteSpace() ? input : CurrentCulture.TextInfo.ToTitleCase(input.Lower()!);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void TitleImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].TitleImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? TitlesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.TitleImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? CapitalizeImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpace())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input);
+        var isFirstChar = true;
+
+        for (var i = 0; i < sb.Length; i++)
+        {
+            if (isFirstChar && sb[i].IsAlphabeticImplement())
+            {
+                sb[i] = sb[i].UpperImplement();
+                isFirstChar = false;
+            }
+            else
+            {
+                sb[i] = sb[i].LowerImplement();
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void CapitalizeImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].CapitalizeImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? CapitalizesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.CapitalizeImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? CleanSpaceImplement(this string? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isWhiteSpace = false;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                if (!isWhiteSpace)
+                {
+                    _ = sb.Append(' ');
+                    isWhiteSpace = true;
+                }
+            }
+            else
+            {
+                _ = sb.Append(input[i]);
+                isWhiteSpace = false;
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void CleanSpaceImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].CleanSpaceImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? CleanSpacesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.CleanSpaceImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? FormatNameImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpace())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsPunctuationImplement())
+            {
+                _ = sb.Append(' ');
+                isPreviousCharWhiteSpace = true;
+
+                continue;
+            }
+
+            if (input[i].IsNumberImplement() || isPreviousCharWhiteSpace && input[i].IsWhiteSpaceImplement())
+            {
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append(input[i].LowerImplement());
+            isPreviousCharWhiteSpace = input[i].IsWhiteSpaceImplement();
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void FormatNameImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FormatNameImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? FormatNamesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FormatNameImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? FilterAlphabeticImplement(this string? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsAlphabeticImplement())
+            {
+                _ = sb.Append(input[i]);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void FilterAlphabeticImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FilterAlphabeticImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? FilterAlphabeticsImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterAlphabeticImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? FilterNumberImplement(this string? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsNumberImplement())
+            {
+                _ = sb.Append(input[i]);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void FilterNumberImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FilterNumberImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? FilterNumbersImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterNumberImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? FilterAlphanumericImplement(this string? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmpty())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsAlphanumericImplement())
+            {
+                _ = sb.Append(input[i]);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static void FilterAlphanumericImplement(this List<string?>? input)
+    {
+        if (input.IsNullEmpty())
+        {
+            return;
+        }
+
+        for (var i = 0; i < input.Count; i++)
+        {
+            input[i] = input[i].FilterAlphanumericImplement();
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<string?>? FilterAlphanumericsImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterAlphanumericImplement());
+}
