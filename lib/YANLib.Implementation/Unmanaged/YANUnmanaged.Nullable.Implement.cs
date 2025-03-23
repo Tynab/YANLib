@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
-using YANLib.Object;
+using YANLib.Implementation.Object;
 using static System.Convert;
 
-namespace YANLib.Implements.Unmanaged;
+namespace YANLib.Implementation.Unmanaged;
 
 internal static partial class YANUnmanaged
 {
@@ -10,7 +10,7 @@ internal static partial class YANUnmanaged
     [DebuggerStepThrough]
     internal static T? ParseImplement<T>(this object? input)
     {
-        return input.IsNull() ? default : typeof(T) switch
+        return input.IsNullImplement() ? default : typeof(T) switch
         {
             Type stringType when stringType == typeof(string) => (T?)(object?)input.ToString(),
             Type dateTimeType when dateTimeType == typeof(DateTime) => (T)(object)input.ToString().ParseDateTime(),
@@ -35,5 +35,5 @@ internal static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? ParsesImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.ParseImplement<T?>());
+    internal static IEnumerable<T?>? ParsesImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.ParseImplement<T?>());
 }

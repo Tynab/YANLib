@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using YANLib.Implements.Text;
+using YANLib.Implementation.Text;
 
 namespace YANLib.Text;
 

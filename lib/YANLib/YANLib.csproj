@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<ApplicationIcon>ic.ico</ApplicationIcon>
@@ -18,14 +18,19 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>Update
-- DateTime
-- Enumerable</PackageReleaseNotes>
+		<PackageReleaseNotes>
+			Update
+			- DateTime
+			- Enumerable
+		</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
 		<Version>4.0.1</Version>
 		<LangVersion>preview</LangVersion>
+		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+		<IsPackable>true</IsPackable>
+		<IncludeBuildOutput>true</IncludeBuildOutput>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,6 +46,14 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\YANLib.Implementation\YANLib.Implementation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\YANLib.Implementation\bin\$(Configuration)\$(TargetFramework)\YANLib.Implementation.dll" Pack="true" PackagePath="lib\$(TargetFramework)" Visible="false" />
 	</ItemGroup>
 
 </Project>

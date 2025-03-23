@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
-using YANLib.Object;
+using YANLib.Implementation.Object;
+using YANLib.Implementation.Text;
 using static System.Linq.Enumerable;
 
-namespace YANLib.Implements.Text;
+namespace YANLib.Implementation.Text;
 
 internal static partial class YANText
 {
@@ -219,7 +220,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void LowerImplement(this List<char>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -232,7 +233,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? LowersImplement(this IEnumerable<char>? input) => input.IsNullEmpty() ? default : input.Select(x => x.LowerImplement());
+    internal static IEnumerable<char>? LowersImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LowerImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -242,7 +243,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void LowerInvariantImplement(this List<char>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -255,7 +256,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? LowerInvariantsImplement(this IEnumerable<char>? input) => input.IsNullEmpty() ? default : input.Select(x => x.LowerInvariantImplement());
+    internal static IEnumerable<char>? LowerInvariantsImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LowerInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -265,7 +266,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void UpperImplement(this List<char>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -278,7 +279,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? UppersImplement(this IEnumerable<char>? input) => input.IsNullEmpty() ? default : input.Select(x => x.UpperImplement());
+    internal static IEnumerable<char>? UppersImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.UpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -288,7 +289,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void UpperInvariantImplement(this List<char>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -301,7 +302,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? UpperInvariantsImplement(this IEnumerable<char>? input) => input.IsNullEmpty() ? default : input.Select(x => x.UpperInvariantImplement());
+    internal static IEnumerable<char>? UpperInvariantsImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.UpperInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

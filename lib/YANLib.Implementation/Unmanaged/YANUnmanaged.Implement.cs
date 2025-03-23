@@ -1,22 +1,22 @@
 ﻿using System.Diagnostics;
-using YANLib.Object;
-using YANLib.Text;
+using YANLib.Implementation.Object;
+using YANLib.Implementation.Text;
 using static System.Convert;
 using static System.DateTime;
 using static System.Globalization.CultureInfo;
 using static System.Globalization.DateTimeStyles;
 using static System.Nullable;
 
-namespace YANLib.Implements.Unmanaged;
+namespace YANLib.Implementation.Unmanaged;
 
 internal static partial class YANUnmanaged
 {
     #region Private
     private static readonly Dictionary<Type, Type?> UnderlyingTypeCache = [];
 
-    private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpace()
+    private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpaceImplement()
         ? defaultValue
-        : format.IsNullEmpty()
+        : format.IsNullEmptyImplement()
         ? TryParse(input, out var dt)
             ? dt
             : defaultValue
@@ -24,9 +24,9 @@ internal static partial class YANUnmanaged
         ? dt
         : defaultValue;
 
-    private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default;
+    private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default;
 
-    private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpace() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
+    private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
 
     private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
     {
@@ -35,9 +35,9 @@ internal static partial class YANUnmanaged
             return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
         }
 
-        if (input.IsNull())
+        if (input.IsNullImplement())
         {
-            if (defaultValue.IsNull())
+            if (defaultValue.IsNullImplement())
             {
                 return default;
             }
@@ -58,7 +58,7 @@ internal static partial class YANUnmanaged
         }
         catch
         {
-            if (defaultValue.IsNull())
+            if (defaultValue.IsNullImplement())
             {
                 return default;
             }
@@ -94,5 +94,5 @@ internal static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T>? ParsesImplement<T>(this IEnumerable<object?>? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-        => input.IsNullEmpty() ? default : input.Select(x => x.ParseImplement<T>(defaultValue, format));
+        => input.IsNullEmptyImplement() ? default : input.Select(x => x.ParseImplement<T>(defaultValue, format));
 }

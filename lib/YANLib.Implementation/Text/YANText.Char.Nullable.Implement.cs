@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using YANLib.Object;
-using YANLib.Text;
+using YANLib.Implementation.Object;
+using YANLib.Implementation.Text;
 
-namespace YANLib.Implements.Text;
+namespace YANLib.Implementation.Text;
 
 internal static partial class YANText
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNullEmptyImplement([NotNullWhen(false)] this char? input) => !input.HasValue || input.Value.IsEmpty();
+    internal static bool IsNullEmptyImplement([NotNullWhen(false)] this char? input) => !input.HasValue || input.Value.IsEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -21,7 +21,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNullWhiteSpaceImplement([NotNullWhen(false)] this char? input) => !input.HasValue || input.Value.IsEmpty() || input.Value.IsWhiteSpace();
+    internal static bool IsNullWhiteSpaceImplement([NotNullWhen(false)] this char? input) => !input.HasValue || input.Value.IsEmptyImplement() || input.Value.IsWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -33,7 +33,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsAlphabeticImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsAlphabetic();
+    internal static bool IsAlphabeticImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsAlphabeticImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -45,7 +45,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsPunctuationImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsPunctuation();
+    internal static bool IsPunctuationImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsPunctuationImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -57,7 +57,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNumberImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsNumber();
+    internal static bool IsNumberImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsNumberImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -69,7 +69,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsAlphanumericImplement(this char? input) => input.HasValue && input.Value.IsAlphanumeric();
+    internal static bool IsAlphanumericImplement(this char? input) => input.HasValue && input.Value.IsAlphanumericImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -81,7 +81,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool EqualsIgnoreCaseImplement(this char input1, char? input2) => input1.LowerInvariant() == input2.LowerInvariantImplement();
+    internal static bool EqualsIgnoreCaseImplement(this char input1, char? input2) => input1.LowerInvariantImplement() == input2.LowerInvariantImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -93,7 +93,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullEmptyImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsNotEmpty();
+    internal static bool IsNotNullEmptyImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsNotEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -105,7 +105,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullWhiteSpaceImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsNotEmpty() && input.Value.IsNotWhiteSpace();
+    internal static bool IsNotNullWhiteSpaceImplement([NotNullWhen(true)] this char? input) => input.HasValue && input.Value.IsNotEmptyImplement() && input.Value.IsNotWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -117,7 +117,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotAlphabeticImplement(this char? input) => !input.HasValue || input.Value.IsNotAlphabetic();
+    internal static bool IsNotAlphabeticImplement(this char? input) => !input.HasValue || input.Value.IsNotAlphabeticImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -129,7 +129,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotPunctuationImplement(this char? input) => !input.HasValue || input.Value.IsNotPunctuation();
+    internal static bool IsNotPunctuationImplement(this char? input) => !input.HasValue || input.Value.IsNotPunctuationImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -141,7 +141,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNumberImplement(this char? input) => !input.HasValue || input.Value.IsNotNumber();
+    internal static bool IsNotNumberImplement(this char? input) => !input.HasValue || input.Value.IsNotNumberImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -153,7 +153,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotAlphanumericImplement(this char? input) => !input.HasValue || input.Value.IsNotAlphanumeric();
+    internal static bool IsNotAlphanumericImplement(this char? input) => !input.HasValue || input.Value.IsNotAlphanumericImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -196,7 +196,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void LowerImplement(this List<char?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -209,7 +209,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char?>? LowersImplement(this IEnumerable<char?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.LowerImplement());
+    internal static IEnumerable<char?>? LowersImplement(this IEnumerable<char?>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LowerImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -219,7 +219,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void LowerInvariantImplement(this List<char?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -232,7 +232,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char?>? LowerInvariantsImplement(this IEnumerable<char?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.LowerInvariantImplement());
+    internal static IEnumerable<char?>? LowerInvariantsImplement(this IEnumerable<char?>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LowerInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -242,7 +242,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void UpperImplement(this List<char?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -255,7 +255,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char?>? UppersImplement(this IEnumerable<char?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.UpperImplement());
+    internal static IEnumerable<char?>? UppersImplement(this IEnumerable<char?>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.UpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -265,7 +265,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void UpperInvariantImplement(this List<char?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -278,7 +278,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char?>? UpperInvariantsImplement(this IEnumerable<char?>? input) => input.IsNullEmpty() ? default : input.Select(x => x.UpperInvariantImplement());
+    internal static IEnumerable<char?>? UpperInvariantsImplement(this IEnumerable<char?>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.UpperInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using static System.Reflection.BindingFlags;
 
-namespace YANLib.Implements.Object;
+namespace YANLib.Implementation.Object;
 
 internal static partial class YANObject
 {
@@ -115,7 +115,7 @@ internal static partial class YANObject
 
             if (val is DateTime dt)
             {
-                prop.SetValue(input, dt.ChangeTimeZone(tzSrc, tzDst));
+                prop.SetValue(input, dt.ChangeTimeZoneImplement(tzSrc, tzDst));
             }
             else
             {
@@ -133,8 +133,11 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? ChangeTimeZoneAllPropertiesImplement<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class
-        => input.IsNullEmptyImplement() ? input : input.Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst));
+    internal static IEnumerable<T?>? ChangeTimeZoneAllPropertiesImplement<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class => input.IsNullEmptyImplement()
+            ? input
+            : input is ICollection<T?> collection && collection.Count >= 1_000 || input is T?[] array && array.Length >= 1_000
+            ? input.AsParallel().Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst))
+            : input.Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst));
     #endregion
 
     [DebuggerHidden]

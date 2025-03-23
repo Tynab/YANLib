@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using YANLib.Implements.Object;
+using YANLib.Implementation.Object;
 
 namespace YANLib.Object;
 

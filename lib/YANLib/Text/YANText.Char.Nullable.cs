@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using YANLib.Implements.Text;
+using YANLib.Implementation.Text;
 
 namespace YANLib.Text;
 

@@ -1,21 +1,25 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using YANLib.Object;
+using YANLib.Implementation.Object;
 using static System.Linq.Enumerable;
 using static System.StringComparison;
 
-namespace YANLib.Implements.Text;
+namespace YANLib.Implementation.Text;
 
 internal static partial class YANText
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNullImplement(this IEnumerable<string?> input) => !input.Any(x => x.IsNotNull());
+    internal static bool AllNullImplement(this IEnumerable<string?> input) => !input.Any(x => x.IsNotNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNullImplement(this IEnumerable<string?> input) => input.Any(x => x.IsNull());
+    internal static bool AllNullImplement(params string?[] input) => input.AllNullImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNullImplement(this IEnumerable<string?> input) => input.Any(x => x.IsNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -43,7 +47,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool EqualsIgnoreCaseImplement(this string? input1, string? input2) => YANLib.Text.YANText.AllNull(input1, input2) || input1.IsNotNull() && input1.IsNotNull() && string.Equals(input1, input2, OrdinalIgnoreCase);
+    internal static bool EqualsIgnoreCaseImplement(this string? input1, string? input2) => AllNullImplement(input1, input2) || input1.IsNotNullImplement() && input1.IsNotNullImplement() && string.Equals(input1, input2, OrdinalIgnoreCase);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -55,11 +59,15 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotNullImplement(this IEnumerable<string?> input) => !input.Any(x => x.IsNull());
+    internal static bool AllNotNullImplement(this IEnumerable<string?> input) => !input.Any(x => x.IsNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotNullImplement(this IEnumerable<string?> input) => input.Any(x => x.IsNotNull());
+    internal static bool AllNotNullImplement(params string?[] input) => input.AllNotNullImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotNullImplement(this IEnumerable<string?> input) => input.Any(x => x.IsNotNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -87,7 +95,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool NotEqualsIgnoreCaseImplement(this string? input1, string? input2) => YANLib.Text.YANText.AllNotNull(input1, input2) && !string.Equals(input1, input2, OrdinalIgnoreCase);
+    internal static bool NotEqualsIgnoreCaseImplement(this string? input1, string? input2) => AllNotNullImplement(input1, input2) && !string.Equals(input1, input2, OrdinalIgnoreCase);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -118,7 +126,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void LowerImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -131,7 +139,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? LowersImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.LowerImplement());
+    internal static IEnumerable<string?>? LowersImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.LowerImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -141,7 +149,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void LowerInvariantImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -154,7 +162,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? LowerInvariantsImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.LowerInvariantImplement());
+    internal static IEnumerable<string?>? LowerInvariantsImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.LowerInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -164,7 +172,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void UpperImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -177,7 +185,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? UppersImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.UpperImplement());
+    internal static IEnumerable<string?>? UppersImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.UpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -187,7 +195,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void UpperInvariantImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -200,5 +208,5 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? UpperInvariantsImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.UpperInvariantImplement());
+    internal static IEnumerable<string?>? UpperInvariantsImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.UpperInvariantImplement());
 }

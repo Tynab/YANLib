@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
-using YANLib.Object;
-using YANLib.Text;
+using YANLib.Implementation.Text;
 using static System.Activator;
 
-namespace YANLib.Implements.Object;
+namespace YANLib.Implementation.Object;
 
 internal static partial class YANObject
 {
@@ -12,7 +11,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AllPropertiesNotDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNull())
+        if (input.IsNullImplement())
         {
             return default;
         }
@@ -34,13 +33,13 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.AnyPropertiesDefaultImplement());
+    internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(x => x.AnyPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllPropertiesNotDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
+        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -63,7 +62,7 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class
-        => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && !input.Any(x => x.AnyPropertiesDefaultImplement(names));
+        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && !input.Any(x => x.AnyPropertiesDefaultImplement(names));
     #endregion
 
     #region AllPropertiesDefault
@@ -71,7 +70,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AllPropertiesDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNull())
+        if (input.IsNullImplement())
         {
             return default;
         }
@@ -93,13 +92,13 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && !input.Any(x => x.AnyPropertiesNotDefaultImplement());
+    internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(x => x.AnyPropertiesNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllPropertiesDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
+        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -122,7 +121,7 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class
-        => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && !input.Any(x => x.AnyPropertiesNotDefaultImplement(names));
+        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && !input.Any(x => x.AnyPropertiesNotDefaultImplement(names));
     #endregion
 
     #region AnyPropertiesNotDefault
@@ -130,7 +129,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AnyPropertiesNotDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNull())
+        if (input.IsNullImplement())
         {
             return default;
         }
@@ -152,13 +151,13 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && input.Any(x => x.AnyPropertiesNotDefaultImplement());
+    internal static bool AnyPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(x => x.AnyPropertiesNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyPropertiesNotDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
+        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -181,7 +180,7 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class
-        => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && input.Any(x => x.AnyPropertiesNotDefaultImplement(names));
+        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && input.Any(x => x.AnyPropertiesNotDefaultImplement(names));
     #endregion
 
     #region AnyPropertiesDefault
@@ -189,7 +188,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AnyPropertiesDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNull())
+        if (input.IsNullImplement())
         {
             return default;
         }
@@ -211,13 +210,13 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmpty() && input.Any(x => x.AnyPropertiesDefaultImplement());
+    internal static bool AnyPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(x => x.AnyPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyPropertiesDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNull() || names.IsNullEmpty() || names.AllNullWhiteSpace())
+        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -240,6 +239,6 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class
-        => input.IsNotNullEmpty() && names.IsNotNullEmpty() && names.AllNotNullWhiteSpace() && input.Any(x => x.AnyPropertiesDefaultImplement(names));
+        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && input.Any(x => x.AnyPropertiesDefaultImplement(names));
     #endregion
 }

@@ -1,22 +1,22 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using YANLib.Object;
-using YANLib.Text;
+using YANLib.Implementation.Object;
+using YANLib.Implementation.Text;
 using static System.Globalization.CultureInfo;
 
-namespace YANLib.Implements.Text;
+namespace YANLib.Implementation.Text;
 
 internal static partial class YANText
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string? TitleImplement(this string? input) => input.IsNullWhiteSpace() ? input : CurrentCulture.TextInfo.ToTitleCase(input.Lower()!);
+    internal static string? TitleImplement(this string? input) => input.IsNullWhiteSpaceImplement() ? input : CurrentCulture.TextInfo.ToTitleCase(input.LowerImplement()!);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static void TitleImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -29,13 +29,13 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? TitlesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.TitleImplement());
+    internal static IEnumerable<string?>? TitlesImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.TitleImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? CapitalizeImplement(this string? input)
     {
-        if (input.IsNullWhiteSpace())
+        if (input.IsNullWhiteSpaceImplement())
         {
             return input;
         }
@@ -63,7 +63,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void CapitalizeImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -76,20 +76,20 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? CapitalizesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.CapitalizeImplement());
+    internal static IEnumerable<string?>? CapitalizesImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.CapitalizeImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? CleanSpaceImplement(this string? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
 
         input = input.Trim();
 
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
@@ -121,7 +121,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void CleanSpaceImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -134,13 +134,13 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? CleanSpacesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.CleanSpaceImplement());
+    internal static IEnumerable<string?>? CleanSpacesImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.CleanSpaceImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FormatNameImplement(this string? input)
     {
-        if (input.IsNullWhiteSpace())
+        if (input.IsNullWhiteSpaceImplement())
         {
             return input;
         }
@@ -176,7 +176,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void FormatNameImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -189,20 +189,20 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? FormatNamesImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FormatNameImplement());
+    internal static IEnumerable<string?>? FormatNamesImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.FormatNameImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FilterAlphabeticImplement(this string? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
 
         input = input.Trim();
 
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
@@ -224,7 +224,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void FilterAlphabeticImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -237,20 +237,20 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? FilterAlphabeticsImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterAlphabeticImplement());
+    internal static IEnumerable<string?>? FilterAlphabeticsImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.FilterAlphabeticImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FilterNumberImplement(this string? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
 
         input = input.Trim();
 
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
@@ -272,7 +272,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void FilterNumberImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -285,20 +285,20 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? FilterNumbersImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterNumberImplement());
+    internal static IEnumerable<string?>? FilterNumbersImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.FilterNumberImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FilterAlphanumericImplement(this string? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
 
         input = input.Trim();
 
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return input;
         }
@@ -320,7 +320,7 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static void FilterAlphanumericImplement(this List<string?>? input)
     {
-        if (input.IsNullEmpty())
+        if (input.IsNullEmptyImplement())
         {
             return;
         }
@@ -333,5 +333,5 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? FilterAlphanumericsImplement(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Select(x => x.FilterAlphanumericImplement());
+    internal static IEnumerable<string?>? FilterAlphanumericsImplement(this IEnumerable<string?>? input) => input.IsNullEmptyImplement() ? input : input.Select(x => x.FilterAlphanumericImplement());
 }
