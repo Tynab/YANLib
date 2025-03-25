@@ -242,7 +242,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<char>? LowersImplement(this IEnumerable<char>? input)
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.LowerImplement()) : input.AsParallel().Select(x => x.LowerImplement());
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.LowerImplement()) : input.AsParallel().Select(x => x.LowerImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -273,7 +273,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<char>? LowerInvariantsImplement(this IEnumerable<char>? input)
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.LowerInvariantImplement()) : input.AsParallel().Select(x => x.LowerInvariantImplement());
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.LowerInvariantImplement()) : input.AsParallel().Select(x => x.LowerInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -304,7 +304,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<char>? UppersImplement(this IEnumerable<char>? input)
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.UpperImplement()) : input.AsParallel().Select(x => x.UpperImplement());
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.UpperImplement()) : input.AsParallel().Select(x => x.UpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -335,7 +335,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<char>? UpperInvariantsImplement(this IEnumerable<char>? input)
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.UpperInvariantImplement()) : input.AsParallel().Select(x => x.UpperInvariantImplement());
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.UpperInvariantImplement()) : input.AsParallel().Select(x => x.UpperInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

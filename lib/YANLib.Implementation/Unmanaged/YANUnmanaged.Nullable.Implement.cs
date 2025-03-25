@@ -36,5 +36,5 @@ internal static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T?>? ParsesImplement<T>(this IEnumerable<object?>? input)
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.ParseImplement<T?>()) : input.AsParallel().Select(x => x.ParseImplement<T?>());
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.ParseImplement<T?>()) : input.AsParallel().Select(x => x.ParseImplement<T?>());
 }

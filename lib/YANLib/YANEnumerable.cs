@@ -1,410 +1,120 @@
 ﻿using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using System.Linq;
-using YANLib.Object;
-using YANLib.Text;
-using YANLib.Unmanaged;
-using static System.Math;
-using static System.Nullable;
+using System.Diagnostics;
+using YANLib.Implementation;
 
 namespace YANLib;
 
 public static partial class YANEnumerable
 {
     /// <summary>
-    /// Divides a collection of elements into chunks of a specified size.
-    /// If the source collection is <see langword="null"/> or empty, or if the chunk size is zero, yields no results.
+    /// Gets the count of elements in the specified enumerable collection.
+    /// Optimized to use the most efficient counting method based on the collection type.
     /// </summary>
-    /// <param name="input">The source collection of elements to be chunked. Can be <see langword="null"/>.</param>
-    /// <param name="chunkSize">The size of each chunk. Can be <see langword="null"/>, resulting in a default size of 0.</param>
-    /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source collection.</returns>
-    public static IEnumerable<List<T>> ChunkBySize<T>(this IEnumerable<T>? input, object? chunkSize)
-    {
-        var size = chunkSize.Parse<uint>().Parse<int>();
-
-        if (input.IsNullEmpty() || size is 0)
-        {
-            yield break;
-        }
-
-        var source = input.ToList();
-        var count = source.Count;
-
-        for (var i = 0; i < count; i += size)
-        {
-            yield return source.GetRange(i, Min(size, count - i));
-        }
-    }
+    /// <param name="input">The enumerable collection to count. Can be <see langword="null"/>.</param>
+    /// <returns>The number of elements in the collection, or 0 if the collection is <see langword="null"/>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static int GetCount(this IEnumerable? input) => input.GetCountImplement();
 
     /// <summary>
-    /// Divides a collection (ICollection) of elements into chunks of a specified size.
-    /// If the source collection is <see langword="null"/> or empty, or if the chunk size is zero, yields no results.
+    /// Splits the elements of a list into chunks of the specified size.
     /// </summary>
-    /// <param name="input">The source ICollection of elements to be chunked. Can be <see langword="null"/>.</param>
-    /// <param name="chunkSize">The size of each chunk. Can be <see langword="null"/>, resulting in a default size of 0.</param>
-    /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source collection.</returns>
-    public static IEnumerable<List<T>> ChunkBySize<T>(this ICollection<T>? input, object? chunkSize)
-    {
-        var size = chunkSize.Parse<uint>().Parse<int>();
-
-        if (input.IsNullEmpty() || size is 0)
-        {
-            yield break;
-        }
-
-        var count = input.Count;
-
-        for (var i = 0; i < count; i += size)
-        {
-            yield return input.ToList().GetRange(i, Min(size, count - i));
-        }
-    }
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    /// <param name="input">The list to be chunked. Can be <see langword="null"/> or empty.</param>
+    /// <param name="chunkSize">The maximum size of each chunk. Will be parsed to an integer.</param>
+    /// <returns>An enumerable of list chunks, each containing at most the specified number of elements. Returns an empty enumerable if the input is <see langword="null"/>, empty, or the chunk size is 0.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<List<T>> ChunkBySize<T>(this List<T>? input, object? chunkSize) => input.ChunkBySizeImplement(chunkSize);
 
     /// <summary>
-    /// Divides an array of elements into chunks of a specified size.
-    /// If the source array is <see langword="null"/> or empty, or if the chunk size is zero, yields no results.
+    /// Removes all <see langword="null"/> elements from the specified list.
     /// </summary>
-    /// <param name="input">The source array of elements to be chunked. Can be <see langword="null"/>.</param>
-    /// <param name="chunkSize">The size of each chunk. Can be <see langword="null"/>, resulting in a default size of 0.</param>
-    /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source array.</returns>
-    public static IEnumerable<List<T>> ChunkBySize<T>(this T[]? input, object? chunkSize)
-    {
-        var size = chunkSize.Parse<uint>().Parse<int>();
-
-        if (input.IsNullEmpty() || size is 0)
-        {
-            yield break;
-        }
-
-        var count = input.Length;
-
-        for (var i = 0; i < count; i += size)
-        {
-            yield return input.ToList().GetRange(i, Min(size, count - i));
-        }
-    }
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    /// <param name="input">The list to clean. Can be <see langword="null"/> or empty.</param>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static void Clean<T>(this List<T>? input) => input.CleanImplement();
 
     /// <summary>
-    /// Divides a list of elements into chunks of a specified size.
-    /// If the source list is <see langword="null"/> or empty, or if the chunk size is zero, yields no results.
+    /// Creates a new enumerable that contains all non-<see langword="null"/> elements from the specified enumerable.
     /// </summary>
-    /// <param name="input">The source list of elements to be chunked. Can be <see langword="null"/>.</param>
-    /// <param name="chunkSize">The size of each chunk. Can be <see langword="null"/>, resulting in a default size of 0.</param>
-    /// <returns>An enumerable collection of lists, each containing a chunk of elements from the source list.</returns>
-    public static IEnumerable<List<T>> ChunkBySize<T>(this List<T>? input, object? chunkSize)
-    {
-        var size = chunkSize.Parse<uint>().Parse<int>();
-
-        if (input.IsNullEmpty() || size is 0)
-        {
-            yield break;
-        }
-
-        var count = input.Count;
-
-        for (var i = 0; i < count; i += size)
-        {
-            yield return input.GetRange(i, Min(size, count - i));
-        }
-    }
-
-    public static IEnumerable<T>? Clean<T>(this IEnumerable<T>? input)
-    {
-        if (input.IsNullEmpty())
-        {
-            return input;
-        }
-
-        var type = typeof(T);
-
-        return type.IsClass || GetUnderlyingType(type).IsNotNull() ? input.Where(x => x.IsNotNull()) : input;
-    }
-
-    public static IEnumerable<T>? Clean<T>(this ICollection<T>? input)
-    {
-        if (input.IsNullEmpty())
-        {
-            return input;
-        }
-
-        var type = typeof(T);
-
-        return type.IsClass || GetUnderlyingType(type).IsNotNull() ? input.Where(x => x.IsNotNull()) : input;
-    }
-
-    public static IEnumerable<T>? Clean<T>(params T[]? input)
-    {
-        if (input.IsNullEmpty())
-        {
-            return input;
-        }
-
-        var type = typeof(T);
-
-        return type.IsClass || GetUnderlyingType(type).IsNotNull() ? input.Where(x => x.IsNotNull()) : input;
-    }
-
-    public static void Clean<T>(this List<T>? input)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        var type = typeof(T);
-
-        if (type.IsClass || GetUnderlyingType(type).IsNotNull())
-        {
-            _ = input.RemoveAll(x => x.IsNull());
-        }
-    }
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<IEnumerable<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<ICollection<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<IEnumerable<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<ICollection<T>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<T>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this ICollection<T>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this T[]?[]? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static void Cleans<T>(this List<IEnumerable<T>?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x = x.Clean());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static void Cleans<T>(this List<ICollection<T>?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x = (ICollection<T>?)x.Clean());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static void Cleans<T>(this List<T[]?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x = x.Clean()?.ToArray());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static void Cleans<T>(this List<List<T>?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x.Clean());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
+    /// <typeparam name="T">The type of elements in the enumerable.</typeparam>
+    /// <param name="input">The enumerable to clean. Can be <see langword="null"/> or empty.</param>
+    /// <returns>A new enumerable containing all non-<see langword="null"/> elements, or the original enumerable if it is <see langword="null"/>, empty, or contains only value types.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T>? Clean<T>(this IEnumerable<T>? input) => input.CleanImplement();
 
     /// <summary>
-    /// Filters out <see langword="null"/>, empty, or white-space strings from a collection of strings.
-    /// If the collection is <see langword="null"/> or empty, it is returned as-is.
-    /// Applicable to collections of strings, removing elements that are <see langword="null"/>, empty, or consist only of white-space characters.
+    /// Creates a new enumerable that contains all non-<see langword="null"/> elements from the specified array.
     /// </summary>
-    /// <param name="input">The collection of strings to be filtered. Can be <see langword="null"/>.</param>
-    /// <returns>A filtered collection with <see langword="null"/>, empty, or white-space strings removed, or the original collection if it is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this IEnumerable<string?>? input) => input.IsNullEmpty() ? input : input.Where(x => x.IsNotNullWhiteSpace());
+    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <param name="input">The array to clean. Can be <see langword="null"/> or empty.</param>
+    /// <returns>A new enumerable containing all non-<see langword="null"/> elements, or the original array if it is <see langword="null"/>, empty, or contains only value types.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T>? Clean<T>(params T[]? input) => input.CleanImplement();
 
     /// <summary>
-    /// Filters out <see langword="null"/>, empty, or white-space strings from a collection (ICollection) of strings.
-    /// If the collection is <see langword="null"/> or empty, it is returned as-is.
-    /// Applicable to collections of strings, removing elements that are <see langword="null"/>, empty, or consist only of white-space characters.
+    /// Removes all <see langword="null"/> or empty enumerables from the specified list of enumerables.
+    /// Optionally cleans each inner enumerable by removing <see langword="null"/> elements.
     /// </summary>
-    /// <param name="input">The ICollection of strings to be filtered. Can be <see langword="null"/>.</param>
-    /// <returns>A filtered collection with <see langword="null"/>, empty, or white-space strings removed, or the original collection if it is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(this ICollection<string?>? input) => input.IsNullEmpty() ? input : input.Where(x => x.IsNotNullWhiteSpace());
+    /// <typeparam name="T">The type of elements in the inner enumerables.</typeparam>
+    /// <param name="input">The list of enumerables to clean. Can be <see langword="null"/> or empty.</param>
+    /// <param name="deepClean">If <see langword="true"/>, also removes <see langword="null"/> elements from each inner enumerable. Default is <see langword="null"/>.</param>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static void Cleans<T>(this List<IEnumerable<T>?>? input, bool? deepClean = null) => input.CleansImplement(deepClean);
 
     /// <summary>
-    /// Filters out <see langword="null"/>, empty, or white-space strings from an array of strings.
-    /// If the array is <see langword="null"/> or empty, it is returned as-is.
-    /// Applicable to arrays of strings, removing elements that are <see langword="null"/>, empty, or consist only of white-space characters.
+    /// Creates a new enumerable of enumerables that contains all non-<see langword="null"/> and non-empty inner enumerables.
+    /// Optionally cleans each inner enumerable by removing <see langword="null"/> elements.
     /// </summary>
-    /// <param name="input">The array of strings to be filtered. Can be <see langword="null"/>.</param>
-    /// <returns>A filtered array with <see langword="null"/>, empty, or white-space strings removed, or the original array if it is <see langword="null"/> or empty.</returns>
-    public static IEnumerable<string?>? Clean(params string?[]? input) => input.IsNullEmpty() ? input : input.Where(x => x.IsNotNullWhiteSpace());
+    /// <typeparam name="T">The type of elements in the inner enumerables.</typeparam>
+    /// <param name="input">The enumerable of enumerables to clean. Can be <see langword="null"/> or empty.</param>
+    /// <param name="deepClean">If <see langword="true"/>, also removes <see langword="null"/> elements from each inner enumerable. Default is <see langword="null"/>.</param>
+    /// <returns>A new enumerable containing all non-<see langword="null"/> and non-empty inner enumerables, or the original enumerable if it is <see langword="null"/> or empty.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<IEnumerable<T>?>? Cleans<T>(this IEnumerable<IEnumerable<T>?>? input, bool? deepClean = null) => input.CleansImplement(deepClean);
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<IEnumerable<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
+    /// <summary>
+    /// Creates a new enumerable that contains all non-<see langword="null"/>, non-empty, and non-whitespace strings from the specified enumerable.
+    /// </summary>
+    /// <param name="input">The enumerable of strings to clean. Can be <see langword="null"/> or empty.</param>
+    /// <returns>A new enumerable containing all non-<see langword="null"/>, non-empty, and non-whitespace strings, or the original enumerable if it is <see langword="null"/> or empty.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<string?>? Clean(this IEnumerable<string?>? input) => input.CleanImplement();
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<ICollection<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
+    /// <summary>
+    /// Creates a new enumerable that contains all non-<see langword="null"/>, non-empty, and non-whitespace strings from the specified array.
+    /// </summary>
+    /// <param name="input">The array of strings to clean. Can be <see langword="null"/> or empty.</param>
+    /// <returns>A new enumerable containing all non-<see langword="null"/>, non-empty, and non-whitespace strings, or the original array if it is <see langword="null"/> or empty.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<string?>? Clean(params string?[]? input) => input.CleanImplement();
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
+    /// <summary>
+    /// Removes all <see langword="null"/> or empty enumerables of strings from the specified list.
+    /// Optionally cleans each inner enumerable by removing <see langword="null"/>, empty, or whitespace strings.
+    /// </summary>
+    /// <param name="input">The list of string enumerables to clean. Can be <see langword="null"/> or empty.</param>
+    /// <param name="deepClean">If <see langword="true"/>, also removes <see langword="null"/>, empty, or whitespace strings from each inner enumerable. Default is <see langword="null"/>.</param>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static void Cleans(this List<IEnumerable<string?>?>? input, bool? deepClean = null) => input.CleansImplement(deepClean);
 
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<IEnumerable<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<ICollection<string?>?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?[]?>? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<string?>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this ICollection<string?>?[]? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static IEnumerable<IEnumerable<string?>?>? Cleans(this string?[]?[]? input, bool? deepClean = null) => input.IsNullEmpty()
-        ? input
-        : (deepClean.HasValue && deepClean.Value ? input.Select(x => x.Clean()) : input).Where(x => x.IsNotNullEmpty());
-
-    public static void Cleans(this List<IEnumerable<string?>?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x = x.Clean());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static void Cleans(this List<ICollection<string?>?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x = (ICollection<string?>?)x.Clean());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static void Cleans(this List<string?[]?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x = x.Clean()?.ToArray());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static void Cleans(this List<List<string?>?>? input, bool? deepClean = null)
-    {
-        if (input.IsNullEmpty())
-        {
-            return;
-        }
-
-        if (deepClean.HasValue && deepClean.Value)
-        {
-            input.ForEach(x => x.Clean());
-        }
-
-        _ = input.RemoveAll(x => x.IsNullEmpty());
-    }
-
-    public static int GetItemCount(IEnumerable<object?> collection)
-        => collection is ICollection<object?> genericCollection
-        ? genericCollection.Count
-        : collection is ICollection nonGenericCollection
-        ? nonGenericCollection.Count
-        : collection is Array array
-        ? array.Length
-        : collection is IImmutableList<object?> immutableList
-        ? immutableList.Count
-        : collection is IImmutableQueue<object?> immutableQueue
-        ? immutableQueue.Count()
-        : collection is IImmutableStack<object?> immutableStack
-        ? immutableStack.Count()
-        : collection is IImmutableSet<object?> immutableSet
-        ? immutableSet.Count
-        : collection is IImmutableDictionary<object?, object?> immutableDictionary
-        ? immutableDictionary.Count
-        : collection is ConcurrentBag<object?> concurrentBag
-        ? concurrentBag.Count
-        : collection is ConcurrentQueue<object?> concurrentQueue
-        ? concurrentQueue.Count
-        : collection is ConcurrentStack<object?> concurrentStack
-        ? concurrentStack.Count
-        : collection is ConcurrentDictionary<object, object?> concurrentDictionary
-        ? concurrentDictionary.Count
-        : collection is BlockingCollection<object?> blockingCollection
-        ? blockingCollection.Count
-        : collection.Count();
+    /// <summary>
+    /// Creates a new enumerable of string enumerables that contains all non-<see langword="null"/> and non-empty inner enumerables.
+    /// Optionally cleans each inner enumerable by removing <see langword="null"/>, empty, or whitespace strings.
+    /// </summary>
+    /// <param name="input">The enumerable of string enumerables to clean. Can be <see langword="null"/> or empty.</param>
+    /// <param name="deepClean">If <see langword="true"/>, also removes <see langword="null"/>, empty, or whitespace strings from each inner enumerable. Default is <see langword="null"/>.</param>
+    /// <returns>A new enumerable containing all non-<see langword="null"/> and non-empty inner enumerables, or the original enumerable if it is <see langword="null"/> or empty.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<IEnumerable<string?>?>? Cleans(this IEnumerable<IEnumerable<string?>?>? input, bool? deepClean = null) => input.CleansImplement(deepClean);
 }

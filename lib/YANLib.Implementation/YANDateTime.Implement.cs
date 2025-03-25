@@ -23,7 +23,7 @@ internal static partial class YANDateTime
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T?>? GetWeekOfYearsImplement<T>(this IEnumerable<object?>? input) where T : unmanaged
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.GetWeekOfYearImplement<T>()) : input.AsParallel().Select(x => x.GetWeekOfYearImplement<T>());
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.GetWeekOfYearImplement<T>()) : input.AsParallel().Select(x => x.GetWeekOfYearImplement<T>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -82,5 +82,5 @@ internal static partial class YANDateTime
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<DateTime>? ChangeTimeZonesImplement(this IEnumerable<object?>? input, object? tzSrc = null, object? tzDst = null)
-        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
+        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
 }
