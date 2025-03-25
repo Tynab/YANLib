@@ -22,11 +22,8 @@ internal static partial class YANDateTime
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? GetWeekOfYearsImplement<T>(this IEnumerable<object?>? input) where T : unmanaged => input.IsNullEmptyImplement()
-        ? default
-        : input is ICollection<object?> collection && collection.Count >= 1_000 || input is object?[] array && array.Length >= 1_000
-        ? input.AsParallel().Select(x => x.GetWeekOfYearImplement<T>())
-        : input.Select(x => x.GetWeekOfYearImplement<T>());
+    internal static IEnumerable<T?>? GetWeekOfYearsImplement<T>(this IEnumerable<object?>? input) where T : unmanaged
+        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.GetWeekOfYearImplement<T>()) : input.AsParallel().Select(x => x.GetWeekOfYearImplement<T>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -69,24 +66,21 @@ internal static partial class YANDateTime
             return;
         }
 
-        if (input.Count >= 1_000)
-        {
-            _ = For(0, input.Count, i => input[i] = input[i].ChangeTimeZoneImplement(tzSrc, tzDst));
-        }
-        else
+        if (input.Count < 1_000)
         {
             for (var i = 0; i < input.Count; i++)
             {
                 input[i] = input[i].ChangeTimeZoneImplement(tzSrc, tzDst);
             }
         }
+        else
+        {
+            _ = For(0, input.Count, i => input[i] = input[i].ChangeTimeZoneImplement(tzSrc, tzDst));
+        }
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<DateTime>? ChangeTimeZonesImplement(this IEnumerable<object?>? input, object? tzSrc = null, object? tzDst = null) => input.IsNullEmptyImplement()
-        ? default
-        : input is ICollection<object?> collection && collection.Count >= 1_000 || input is object?[] array && array.Length >= 1_000
-        ? input.AsParallel().Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst))
-        : input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
+    internal static IEnumerable<DateTime>? ChangeTimeZonesImplement(this IEnumerable<object?>? input, object? tzSrc = null, object? tzDst = null)
+        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
 }

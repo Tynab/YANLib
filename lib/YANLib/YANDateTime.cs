@@ -19,8 +19,6 @@ public static partial class YANDateTime
 
     public static IEnumerable<T?>? GetWeekOfYears<T>(this IEnumerable<object?>? input) where T : unmanaged => input.IsNullEmpty() ? default : input.Select(x => x.GetWeekOfYear<T>());
 
-    public static IEnumerable<T?>? GetWeekOfYears<T>(this ICollection<object?>? input) where T : unmanaged => input.IsNullEmpty() ? default : input.Select(x => x.GetWeekOfYear<T>());
-
     public static IEnumerable<T?>? GetWeekOfYears<T>(params object?[]? input) where T : unmanaged => input.IsNullEmpty() ? default : input.Select(x => x.GetWeekOfYear<T>());
 
     public static T? TotalMonth<T>(object? input1, object? input2) where T : unmanaged

@@ -133,11 +133,8 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? ChangeTimeZoneAllPropertiesImplement<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class => input.IsNullEmptyImplement()
-            ? input
-            : input is ICollection<T?> collection && collection.Count >= 1_000 || input is T?[] array && array.Length >= 1_000
-            ? input.AsParallel().Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst))
-            : input.Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst));
+    internal static IEnumerable<T?>? ChangeTimeZoneAllPropertiesImplement<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class
+        => input.IsNullEmptyImplement() ? input : input.Count() < 1_000 ? input.Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst));
     #endregion
 
     [DebuggerHidden]

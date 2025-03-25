@@ -2,6 +2,7 @@
 using YANLib.Implementation.Object;
 using YANLib.Implementation.Text;
 using static System.Linq.Enumerable;
+using static System.Threading.Tasks.Parallel;
 
 namespace YANLib.Implementation.Text;
 
@@ -225,15 +226,23 @@ internal static partial class YANText
             return;
         }
 
-        for (var i = 0; i < input.Count; i++)
+        if (input.Count < 1_000)
         {
-            input[i] = input[i].LowerImplement();
+            for (var i = 0; i < input.Count; i++)
+            {
+                input[i] = input[i].LowerImplement();
+            }
+        }
+        else
+        {
+            _ = For(0, input.Count, i => input[i] = input[i].LowerImplement());
         }
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? LowersImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LowerImplement());
+    internal static IEnumerable<char>? LowersImplement(this IEnumerable<char>? input)
+        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.LowerImplement()) : input.AsParallel().Select(x => x.LowerImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -248,15 +257,23 @@ internal static partial class YANText
             return;
         }
 
-        for (var i = 0; i < input.Count; i++)
+        if (input.Count < 1_000)
         {
-            input[i] = input[i].LowerInvariantImplement();
+            for (var i = 0; i < input.Count; i++)
+            {
+                input[i] = input[i].LowerInvariantImplement();
+            }
+        }
+        else
+        {
+            _ = For(0, input.Count, i => input[i] = input[i].LowerInvariantImplement());
         }
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? LowerInvariantsImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LowerInvariantImplement());
+    internal static IEnumerable<char>? LowerInvariantsImplement(this IEnumerable<char>? input)
+        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.LowerInvariantImplement()) : input.AsParallel().Select(x => x.LowerInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -271,15 +288,23 @@ internal static partial class YANText
             return;
         }
 
-        for (var i = 0; i < input.Count; i++)
+        if (input.Count < 1_000)
         {
-            input[i] = input[i].UpperImplement();
+            for (var i = 0; i < input.Count; i++)
+            {
+                input[i] = input[i].UpperImplement();
+            }
+        }
+        else
+        {
+            _ = For(0, input.Count, i => input[i] = input[i].UpperImplement());
         }
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? UppersImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.UpperImplement());
+    internal static IEnumerable<char>? UppersImplement(this IEnumerable<char>? input)
+        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.UpperImplement()) : input.AsParallel().Select(x => x.UpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -294,15 +319,23 @@ internal static partial class YANText
             return;
         }
 
-        for (var i = 0; i < input.Count; i++)
+        if (input.Count < 1_000)
         {
-            input[i] = input[i].UpperInvariantImplement();
+            for (var i = 0; i < input.Count; i++)
+            {
+                input[i] = input[i].UpperInvariantImplement();
+            }
+        }
+        else
+        {
+            _ = For(0, input.Count, i => input[i] = input[i].UpperInvariantImplement());
         }
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<char>? UpperInvariantsImplement(this IEnumerable<char>? input) => input.IsNullEmptyImplement() ? default : input.Select(x => x.UpperInvariantImplement());
+    internal static IEnumerable<char>? UpperInvariantsImplement(this IEnumerable<char>? input)
+        => input.IsNullEmptyImplement() ? default : input.Count() < 1_000 ? input.Select(x => x.UpperInvariantImplement()) : input.AsParallel().Select(x => x.UpperInvariantImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

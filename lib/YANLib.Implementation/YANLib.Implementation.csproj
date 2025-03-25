@@ -8,8 +8,8 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
-	<!--<ItemGroup>
+	<ItemGroup>
 		<InternalsVisibleTo Include="YANLib" />
-	</ItemGroup>-->
+	</ItemGroup>
 
 </Project>

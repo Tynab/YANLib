@@ -1,4 +1,8 @@
-﻿using YANLib.Object;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using System.Linq;
+using YANLib.Object;
 using YANLib.Text;
 using YANLib.Unmanaged;
 using static System.Math;
@@ -374,4 +378,33 @@ public static partial class YANEnumerable
 
         _ = input.RemoveAll(x => x.IsNullEmpty());
     }
+
+    public static int GetItemCount(IEnumerable<object?> collection)
+        => collection is ICollection<object?> genericCollection
+        ? genericCollection.Count
+        : collection is ICollection nonGenericCollection
+        ? nonGenericCollection.Count
+        : collection is Array array
+        ? array.Length
+        : collection is IImmutableList<object?> immutableList
+        ? immutableList.Count
+        : collection is IImmutableQueue<object?> immutableQueue
+        ? immutableQueue.Count()
+        : collection is IImmutableStack<object?> immutableStack
+        ? immutableStack.Count()
+        : collection is IImmutableSet<object?> immutableSet
+        ? immutableSet.Count
+        : collection is IImmutableDictionary<object?, object?> immutableDictionary
+        ? immutableDictionary.Count
+        : collection is ConcurrentBag<object?> concurrentBag
+        ? concurrentBag.Count
+        : collection is ConcurrentQueue<object?> concurrentQueue
+        ? concurrentQueue.Count
+        : collection is ConcurrentStack<object?> concurrentStack
+        ? concurrentStack.Count
+        : collection is ConcurrentDictionary<object, object?> concurrentDictionary
+        ? concurrentDictionary.Count
+        : collection is BlockingCollection<object?> blockingCollection
+        ? blockingCollection.Count
+        : collection.Count();
 }
