@@ -1,4 +1,4 @@
-﻿namespace YANLib.Benchmarks.Models;
+﻿namespace YANLib.Benchmarks.Datas;
 
 public class SampleClass
 {

@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\console\YANLib.Benchmarks\YANLib.Benchmarks.csproj" />
     <ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using YANLib.Benchmarks.Models;
+using YANLib.Benchmarks.Datas;
 using static Newtonsoft.Json.JsonConvert;
 using static System.DateTime;
 using static System.Guid;

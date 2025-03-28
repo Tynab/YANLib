@@ -1,6 +1,6 @@
-﻿namespace YANLib.Benchmarks.Models;
+﻿namespace YANLib.Benchmarks.Datas;
 
-public sealed class SampleSealed
+public record SampleRecord
 {
     public Guid Id { get; set; }
 

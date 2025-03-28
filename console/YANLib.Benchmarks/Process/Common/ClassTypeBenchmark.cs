@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using YANLib.Benchmarks.Models;
+using YANLib.Benchmarks.Datas;
 using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
 using static System.DateTime;
 using static System.Guid;
@@ -34,8 +34,8 @@ public class ClassTypeBenchmark
     private List<string>? _projects;
     private Guid _createdBy;
     private DateTime _createdAt;
-    private Guid? _modifiedBy;
-    private DateTime? _modifiedAt;
+    private Guid? _updatedBy;
+    private DateTime? _updatedAt;
     private bool _isActive;
     private bool _isDeleted;
 
@@ -64,8 +64,8 @@ public class ClassTypeBenchmark
         _projects = ["Project A", "Project B", "Project C"];
         _createdBy = NewGuid();
         _createdAt = UtcNow;
-        _modifiedBy = null;
-        _modifiedAt = null;
+        _updatedBy = null;
+        _updatedAt = null;
         _isActive = true;
         _isDeleted = false;
     }
@@ -99,8 +99,8 @@ public class ClassTypeBenchmark
                 Projects = _projects,
                 CreatedBy = _createdBy,
                 CreatedAt = _createdAt,
-                UpdatedBy = _modifiedBy,
-                UpdatedAt = _modifiedAt,
+                UpdatedBy = _updatedBy,
+                UpdatedAt = _updatedAt,
                 IsActive = _isActive,
                 IsDeleted = _isDeleted
             };
@@ -136,8 +136,8 @@ public class ClassTypeBenchmark
                 Projects = _projects,
                 CreatedBy = _createdBy,
                 CreatedAt = _createdAt,
-                UpdatedBy = _modifiedBy,
-                UpdatedAt = _modifiedAt,
+                UpdatedBy = _updatedBy,
+                UpdatedAt = _updatedAt,
                 IsActive = _isActive,
                 IsDeleted = _isDeleted
             };
@@ -171,8 +171,8 @@ public class ClassTypeBenchmark
             Projects = _projects,
             CreatedBy = _createdBy,
             CreatedAt = _createdAt,
-            UpdatedBy = _modifiedBy,
-            UpdatedAt = _modifiedAt,
+            UpdatedBy = _updatedBy,
+            UpdatedAt = _updatedAt,
             IsActive = _isActive,
             IsDeleted = _isDeleted
         };
@@ -235,8 +235,8 @@ public class ClassTypeBenchmark
             Projects = _projects,
             CreatedBy = _createdBy,
             CreatedAt = _createdAt,
-            UpdatedBy = _modifiedBy,
-            UpdatedAt = _modifiedAt,
+            UpdatedBy = _updatedBy,
+            UpdatedAt = _updatedAt,
             IsActive = _isActive,
             IsDeleted = _isDeleted
         };
@@ -301,8 +301,8 @@ public class ClassTypeBenchmark
             sample.Projects = _projects;
             sample.CreatedBy = _createdBy;
             sample.CreatedAt = _createdAt;
-            sample.UpdatedBy = _modifiedBy;
-            sample.UpdatedAt = _modifiedAt;
+            sample.UpdatedBy = _updatedBy;
+            sample.UpdatedAt = _updatedAt;
             sample.IsActive = _isActive;
             sample.IsDeleted = _isDeleted;
         }
@@ -337,8 +337,8 @@ public class ClassTypeBenchmark
             sample.Projects = _projects;
             sample.CreatedBy = _createdBy;
             sample.CreatedAt = _createdAt;
-            sample.UpdatedBy = _modifiedBy;
-            sample.UpdatedAt = _modifiedAt;
+            sample.UpdatedBy = _updatedBy;
+            sample.UpdatedAt = _updatedAt;
             sample.IsActive = _isActive;
             sample.IsDeleted = _isDeleted;
         }
