@@ -5,12 +5,11 @@ using YANLib.Object;
 using static System.Collections.Immutable.ImmutableList;
 using static System.Linq.Enumerable;
 
-namespace YANLib.Benchmarks.Process.Common;
+namespace YANLib.Benchmarks.Process.Library;
 
 public class CountBenchmark
 {
-    [Params(1_000, 10_000, 100_000, 1_000_000)]
-    public int Size { get; set; }
+    public int Size { get; set; } = 1_000;
 
     private IEnumerable<int>? _list = default;
     private IReadOnlyCollection<int>? _readOnly = default;

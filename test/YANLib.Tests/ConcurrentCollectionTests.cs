@@ -23,12 +23,15 @@ public class ConcurrentCollectionTests
     {
         var resultWithLock = await ExecuteParallelWithLock();
         var resultNoLock = await ExecuteParallelWithDirectCopy();
+        var resultWithSemaphore = await ExecuteWhenAllWithSemaphoreSlim();
 
         Assert.Equal(resultWithLock.Count, resultNoLock.Count);
+        Assert.Equal(resultWithLock.Count, resultWithSemaphore.Count);
 
         for (var i = 0; i < resultWithLock.Count; i++)
         {
             Assert.Equal(resultWithLock[i].Id, resultNoLock[i].Id);
+            Assert.Equal(resultWithLock[i].Id, resultWithSemaphore[i].Id);
         }
     }
 
@@ -76,5 +79,34 @@ public class ConcurrentCollectionTests
         await Task.WhenAll(tasks);
 
         return [.. finalResult];
+    }
+
+    private async Task<List<SampleClass>> ExecuteWhenAllWithSemaphoreSlim()
+    {
+        var result = new List<SampleClass>();
+        var batches = _benchmark._batches;
+        var allData = _benchmark._allData;
+        var ss = new SemaphoreSlim(1);
+
+        var tasks = batches!.Select(async batchNumber =>
+        {
+            var skip = batchNumber * _benchmark.BATCH_SIZE;
+            var take = YANMath.Min(_benchmark.BATCH_SIZE, _benchmark.Size - skip);
+            var batchData = allData!.Skip(skip).Take(take).ToList();
+
+            await ss.WaitAsync();
+            try
+            {
+                result.AddRange(batchData);
+            }
+            finally
+            {
+                _ = ss.Release();
+            }
+        });
+
+        await Task.WhenAll(tasks);
+
+        return result;
     }
 }

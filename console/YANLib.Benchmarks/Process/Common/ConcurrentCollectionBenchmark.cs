@@ -72,4 +72,29 @@ public class ConcurrentCollectionBenchmark
             await CompletedTask;
         });
     }
+
+    [Benchmark]
+    public async Task WhenAllWithSemaphoreSlim()
+    {
+        var result = new List<SampleClass>();
+        var ss = new SemaphoreSlim(1);
+
+        await WhenAll(_batches!.Select(async batchNumber =>
+        {
+            var skip = batchNumber * BATCH_SIZE;
+            var take = Min(BATCH_SIZE, Size - skip);
+            var batchData = _allData!.Skip(skip).Take(take).ToList();
+
+            await ss.WaitAsync();
+
+            try
+            {
+                result.AddRange(batchData);
+            }
+            finally
+            {
+                _ = ss.Release();
+            }
+        }));
+    }
 }
