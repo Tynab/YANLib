@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using YANLib.Implementation.Object;
 
@@ -245,4 +246,14 @@ public static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T Copy<T>(this T input) where T : new() => input.CopyImplement();
+
+    /// <summary>
+    /// Gets the count of elements in the specified enumerable collection.
+    /// Optimized to use the most efficient counting method based on the collection type.
+    /// </summary>
+    /// <param name="input">The enumerable collection to count. Can be <see langword="null"/>.</param>
+    /// <returns>The number of elements in the collection, or 0 if the collection is <see langword="null"/>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static int GetCount(this IEnumerable? input) => input.GetCountImplement();
 }

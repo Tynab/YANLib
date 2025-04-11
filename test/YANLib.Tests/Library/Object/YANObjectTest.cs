@@ -1,10 +1,239 @@
-﻿using YANLib.Object;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using YANLib.Object;
 using YANLib.Unmanaged;
 
 namespace YANLib.Tests.Library.Object;
 
 public partial class YANObjectTest
 {
+    #region GetItemCount
+    [Fact]
+    public void GetItemCount_WithNullCollection_ReturnsZero()
+    {
+        // Arrange
+        IEnumerable<object?>? input = null;
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithEmptyCollection_ReturnsZero()
+    {
+        // Arrange
+        IEnumerable<object?> input = [];
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithGenericCollection_ReturnsCorrectCount()
+    {
+        // Arrange
+        ICollection<object?> input = ["item1", "item2", "item3"];
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithNonGenericCollection_ReturnsCorrectCount()
+    {
+        // Arrange
+        ArrayList input = ["item1", "item2", "item3"];
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithReadOnlyCollection_ReturnsCorrectCount()
+    {
+        // Arrange
+        IReadOnlyCollection<object?> input = new List<object?> { "item1", "item2", "item3" }.AsReadOnly();
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithArray_ReturnsCorrectCount()
+    {
+        // Arrange
+        object?[] input = ["item1", "item2", "item3"];
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithImmutableList_ReturnsCorrectCount()
+    {
+        // Arrange
+        IImmutableList<object?> input = ImmutableList.Create<object?>("item1", "item2", "item3");
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithImmutableQueue_ReturnsCorrectCount()
+    {
+        // Arrange
+        IImmutableQueue<object?> input = ImmutableQueue.Create<object?>("item1", "item2", "item3");
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithImmutableStack_ReturnsCorrectCount()
+    {
+        // Arrange
+        IImmutableStack<object?> input = ImmutableStack.Create<object?>("item1", "item2", "item3");
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithImmutableSet_ReturnsCorrectCount()
+    {
+        // Arrange
+        IImmutableSet<object?> input = ImmutableHashSet.Create<object?>("item1", "item2", "item3");
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithImmutableDictionary_ReturnsCorrectCount()
+    {
+        // Arrange
+        IImmutableDictionary<object, object?> input = ImmutableDictionary.Create<object, object?>().Add("key1", "value1").Add("key2", "value2").Add("key3", "value3");
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithConcurrentBag_ReturnsCorrectCount()
+    {
+        // Arrange
+        ConcurrentBag<object?> input = new(["item1", "item2", "item3"]);
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithConcurrentQueue_ReturnsCorrectCount()
+    {
+        // Arrange
+        ConcurrentQueue<object?> input = new(["item1", "item2", "item3"]);
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithConcurrentStack_ReturnsCorrectCount()
+    {
+        // Arrange
+        ConcurrentStack<object?> input = new(["item1", "item2", "item3"]);
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithConcurrentDictionary_ReturnsCorrectCount()
+    {
+        // Arrange
+        ConcurrentDictionary<object, object?> input = new();
+        _ = input.TryAdd("key1", "value1");
+        _ = input.TryAdd("key2", "value2");
+        _ = input.TryAdd("key3", "value3");
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithBlockingCollection_ReturnsCorrectCount()
+    {
+        // Arrange
+        BlockingCollection<object?> input = [.. new ConcurrentQueue<object?>(["item1", "item2", "item3"])];
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void GetItemCount_WithEnumerable_ReturnsCorrectCount()
+    {
+        // Arrange
+        var input = Enumerable.Range(1, 5).Select(i => (object?)i);
+
+        // Act
+        var result = input.GetCount();
+
+        // Assert
+        Assert.Equal(5, result);
+    }
+    #endregion
+
     #region IsNull
     [Fact]
     public void IsNull_WithNullObject_ReturnsTrue()

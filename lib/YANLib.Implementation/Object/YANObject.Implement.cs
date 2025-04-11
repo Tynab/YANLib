@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -161,4 +162,37 @@ internal static partial class YANObject
 
         return result;
     }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static int GetCountImplement(this IEnumerable? input) => input.IsNullImplement() ? 0
+        : input is ICollection nonGenericCollection
+        ? nonGenericCollection.Count
+        : input is ICollection<object?> genericCollection
+        ? genericCollection.Count
+        : input is IReadOnlyCollection<object?> readOnlyCollection
+        ? readOnlyCollection.Count
+        : input is IImmutableSet<object?> immutableSet
+        ? immutableSet.Count
+        : input is IImmutableList<object?> immutableList
+        ? immutableList.Count
+        : input is IImmutableQueue<object?> immutableQueue
+        ? immutableQueue.Count()
+        : input is IImmutableStack<object?> immutableStack
+        ? immutableStack.Count()
+        : input is IImmutableDictionary<object, object?> immutableDictionary
+        ? immutableDictionary.Count
+        : input is Array array
+        ? array.Length
+        : input is BlockingCollection<object?> blockingCollection
+        ? blockingCollection.Count
+        : input is ConcurrentBag<object?> concurrentBag
+        ? concurrentBag.Count
+        : input is ConcurrentQueue<object?> concurrentQueue
+        ? concurrentQueue.Count
+        : input is ConcurrentStack<object?> concurrentStack
+        ? concurrentStack.Count
+        : input is ConcurrentDictionary<object, object?> concurrentDictionary
+        ? concurrentDictionary.Count
+        : input.Cast<object?>().Count();
 }
