@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
-using Volo.Abp.DependencyInjection;
-using Volo.Abp.Ui.Branding;
-using YANLib.Localization;
-
-namespace YANLib.Blazor.Client;
+﻿namespace YANLib.Blazor.Client;
 
 [Dependency(ReplaceServices = true)]
 public class YANLibBrandingProvider : DefaultBrandingProvider

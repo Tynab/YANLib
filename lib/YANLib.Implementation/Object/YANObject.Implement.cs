@@ -19,6 +19,14 @@ internal static partial class YANObject
     #region Is
     [DebuggerHidden]
     [DebuggerStepThrough]
+    internal static bool IsDefaultImplement([NotNullWhen(false)] this object input) => input is default(object);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotDefaultImplement([NotNullWhen(true)] this object input) => input is not default(object);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     internal static bool IsNullImplement([NotNullWhen(false)] this object? input) => input is null;
 
     [DebuggerHidden]

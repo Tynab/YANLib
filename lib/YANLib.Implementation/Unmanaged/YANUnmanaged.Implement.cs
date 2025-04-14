@@ -24,6 +24,12 @@ internal static partial class YANUnmanaged
         ? dt
         : defaultValue;
 
+    private static T ParseEnum<T>(this string? input, T defaultValue) where T : unmanaged => input.IsNullWhiteSpaceImplement()
+        ? defaultValue
+        : Enum.TryParse(typeof(T), input, true, out var enumResult)
+        ? (T)enumResult
+        : defaultValue;
+
     private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default;
 
     private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
@@ -33,6 +39,11 @@ internal static partial class YANUnmanaged
         if (typeof(T) == typeof(DateTime))
         {
             return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
+        }
+
+        if (typeof(T).IsEnum)
+        {
+            return (input?.ToString() ?? default).ParseEnum((defaultValue?.ToString() ?? default).ParseEnum<T>(default));
         }
 
         if (input.IsNullImplement())
