@@ -234,6 +234,62 @@ public partial class YANObjectTest
     }
     #endregion
 
+    #region IsDefault
+    [Fact]
+    public void IsDefault_WithNullObject_ReturnsTrue()
+    {
+        // Arrange
+        object? input = default;
+
+        // Act
+        var result = input is null || input.IsDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsDefault_WithNonNullObject_ReturnsFalse()
+    {
+        // Arrange
+        var input = new object();
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+    #endregion
+
+    #region IsNotDefault
+    [Fact]
+    public void IsNotDefault_WithNullObject_ReturnsFalse()
+    {
+        // Arrange
+        object? input = default;
+
+        // Act
+        var result = input is not null && !input.IsNotDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotDefault_WithNonNullObject_ReturnsTrue()
+    {
+        // Arrange
+        var input = new object();
+
+        // Act
+        var result = input.IsNotDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+    #endregion
+
     #region IsNull
     [Fact]
     public void IsNull_WithNullObject_ReturnsTrue()

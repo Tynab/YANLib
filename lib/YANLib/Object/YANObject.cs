@@ -5,9 +5,34 @@ using YANLib.Implementation.Object;
 
 namespace YANLib.Object;
 
+/// <summary>
+/// Provides a set of extension methods for performing general object operations,
+/// such as checking for default values, null checks, copying objects, counting elements in collections,
+/// and adjusting DateTime properties to different time zones.
+/// </summary>
 public static partial class YANObject
 {
     #region Is
+    /// <summary>
+    /// Determines whether the specified object is equal to its default value.
+    /// This method internally checks whether the object is equal to <c>default(object)</c> (typically <c>null</c>).
+    /// </summary>
+    /// <param name="input">The object to test.</param>
+    /// <returns><see langword="true"/> if the object is the default; otherwise, <see langword="false"/>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsDefault(this object input) => input.IsDefaultImplement();
+
+    /// <summary>
+    /// Determines whether the specified object is not equal to its default value.
+    /// This method returns <see langword="true"/> if the object is not equal to <c>default(object)</c> (i.e. it is not null).
+    /// </summary>
+    /// <param name="input">The object to test.</param>
+    /// <returns><see langword="true"/> if the object is not the default; otherwise, <see langword="false"/>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNotDefault(this object input) => input.IsNotDefaultImplement();
+
     /// <summary>
     /// Checks if the specified object is <see langword="null"/>.
     /// </summary>

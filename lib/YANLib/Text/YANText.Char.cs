@@ -3,6 +3,11 @@ using YANLib.Implementation.Text;
 
 namespace YANLib.Text;
 
+/// <summary>
+/// Provides extension methods for working with non-nullable character values.
+/// This includes methods for checking if a character is empty or white-space, 
+/// validations for alphabetic, numeric, and punctuation characters, and performing case-insensitive comparisons.
+/// </summary>
 public static partial class YANText
 {
     /// <summary>

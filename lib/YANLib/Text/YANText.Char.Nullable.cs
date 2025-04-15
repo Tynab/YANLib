@@ -4,6 +4,11 @@ using YANLib.Implementation.Text;
 
 namespace YANLib.Text;
 
+/// <summary>
+/// Provides extension methods for working with nullable character values.
+/// These methods include checks for null or empty characters, white-space characters,
+/// alphabetic, numeric, and punctuation validations, as well as case-insensitive comparisons.
+/// </summary>
 public static partial class YANText
 {
     /// <summary>

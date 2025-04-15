@@ -3,6 +3,11 @@ using YANLib.Implementation.Object;
 
 namespace YANLib.Object;
 
+/// <summary>
+/// Provides extension methods for evaluating the states of object properties,
+/// including determining whether properties are set to default values, non-default values,
+/// or a combination of both across single objects or collections.
+/// </summary>
 public static partial class YANObject
 {
     #region AllPropertiesNotDefault

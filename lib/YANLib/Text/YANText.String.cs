@@ -5,6 +5,11 @@ using YANLib.Implementation.Text;
 
 namespace YANLib.Text;
 
+/// <summary>
+/// Provides extension methods specifically for string processing.
+/// These methods include checks for null or empty strings, white-space validations, 
+/// equality comparisons ignoring case, and operations to process collections of strings.
+/// </summary>
 public static partial class YANText
 {
     /// <summary>

@@ -3,6 +3,11 @@ using YANLib.Implementation.Text;
 
 namespace YANLib.Text;
 
+/// <summary>
+/// Provides general text extension methods for manipulating and formatting strings.
+/// This includes converting to title case, capitalizing letters, cleaning and normalizing whitespace,
+/// formatting names, filtering out non-alphabetic or non-numeric characters, and other utility operations.
+/// </summary>
 public static partial class YANText
 {
     /// <summary>

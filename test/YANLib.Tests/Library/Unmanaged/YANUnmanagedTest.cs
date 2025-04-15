@@ -429,7 +429,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_eInt_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_Int_WithInvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<int> { -1, default, 1 };
@@ -643,6 +643,64 @@ public partial class YANUnmanagedTest
 
         // Act
         var actual = YANUnmanaged.Parses<Guid>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "invalid");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Enum_Enumerable_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var input = new object?[] { "ValueA", "valueB", "VALUEC" };
+        var expected = new List<TestEnum> { TestEnum.ValueA, TestEnum.ValueB, TestEnum.ValueC };
+
+        // Act
+        var actual = input.Parses<TestEnum>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Enum_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var input = new object?[] { "ValueA", "invalid", "VALUEC" };
+        var expected = new List<TestEnum> { TestEnum.ValueA, default, TestEnum.ValueC };
+
+        // Act
+        var actual = input.Parses<TestEnum>();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_Enum_ValidValues_ReturnsExpectedCollection()
+    {
+        // Arrange
+        var expected = new List<TestEnum> { TestEnum.ValueA, TestEnum.ValueB };
+
+        // Act
+        var actual = YANUnmanaged.Parses<TestEnum>("ValueA", "valueB");
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parses_Params_Enum_WithInvalidValue_ReturnsDefaultForThatValue()
+    {
+        // Arrange
+        var expected = new List<TestEnum> { TestEnum.ValueA, default };
+
+        // Act
+        var actual = YANUnmanaged.Parses<TestEnum>("ValueA", "invalid");
 
         // Assert
         Assert.NotNull(actual);
