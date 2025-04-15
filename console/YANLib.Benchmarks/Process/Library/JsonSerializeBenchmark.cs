@@ -51,7 +51,7 @@ public class JsonSerializeBenchmark
 
         for (var i = 0; i < Size; i++)
         {
-            list.Add(_model.StandardSerialize());
+            list.Add(_model.Serialize());
         }
 
         return list;

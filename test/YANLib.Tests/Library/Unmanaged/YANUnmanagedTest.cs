@@ -278,6 +278,53 @@ public partial class YANUnmanagedTest
     }
     #endregion
 
+    #region Enum
+    [Theory]
+    [InlineData("ValueA", TestEnum.ValueA)]
+    [InlineData("valueb", TestEnum.ValueB)]
+    [InlineData("VALUEC", TestEnum.ValueC)]
+    public void Parse_Enum_ValidString_ReturnsExpectedValue(string input, TestEnum expected)
+    {
+        // Arrange
+        object val = input;
+
+        // Act
+        var actual = val.Parse<TestEnum>();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parse_Enum_InvalidString_ReturnsDefault()
+    {
+        // Arrange
+        object? input = "invalid";
+        var expected = default(TestEnum);
+
+        // Act
+        var actual = input.Parse<TestEnum>();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Parse_Enum_InvalidString_WithDefaultValue_ReturnsDefaultValue()
+    {
+        // Arrange
+        object? input = "invalid";
+        object? defaultValue = TestEnum.ValueB;
+        var expected = TestEnum.ValueB;
+
+        // Act
+        var actual = input.Parse<TestEnum>(defaultValue);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+    #endregion
+
     #region Collections
     [Fact]
     public void Parses_Bool_Enumerable_ValidValues_ReturnsExpectedCollection()
@@ -602,4 +649,11 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, actual);
     }
     #endregion
+}
+
+public enum TestEnum
+{
+    ValueA,
+    ValueB,
+    ValueC
 }
