@@ -72,7 +72,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if all specified properties are not set to their default values; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllPropertiesNotDefault<T>(this T? input, params string[]? names) where T : class => input.AllPropertiesNotDefaultImplement(names);
+    public static bool AllPropertiesNotDefault<T>(this T? input, params string?[]? names) where T : class => input.AllPropertiesNotDefaultImplement(names);
 
     /// <summary>
     /// Determines whether all elements in the specified collection have the specified properties not set to their default values.
@@ -83,7 +83,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if all elements have the specified properties not set to their default values; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class => input.AllPropertiesNotDefaultsImplement(names);
+    public static bool AllPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class => input.AllPropertiesNotDefaultsImplement(names);
     #endregion
 
     #region AllPropertiesDefault
@@ -148,7 +148,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if all specified properties are set to their default values; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllPropertiesDefault<T>(this T? input, params string[]? names) where T : class => input.AllPropertiesDefaultImplement(names);
+    public static bool AllPropertiesDefault<T>(this T? input, params string?[]? names) where T : class => input.AllPropertiesDefaultImplement(names);
 
     /// <summary>
     /// Determines whether all elements in the specified collection have the specified properties set to their default values.
@@ -159,7 +159,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if all elements have the specified properties set to their default values; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllPropertiesDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class => input.AllPropertiesDefaultsImplement(names);
+    public static bool AllPropertiesDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class => input.AllPropertiesDefaultsImplement(names);
     #endregion
 
     #region AnyPropertiesNotDefault
@@ -224,7 +224,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if at least one specified property is not set to its default value; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyPropertiesNotDefault<T>(this T? input, params string[]? names) where T : class => input.AnyPropertiesNotDefaultImplement(names);
+    public static bool AnyPropertiesNotDefault<T>(this T? input, params string?[]? names) where T : class => input.AnyPropertiesNotDefaultImplement(names);
 
     /// <summary>
     /// Determines whether any elements in the specified collection have at least one of the specified properties that is not set to its default value.
@@ -235,7 +235,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if at least one element has a specified property that is not set to its default value; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class => input.AnyPropertiesNotDefaultsImplement(names);
+    public static bool AnyPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class => input.AnyPropertiesNotDefaultsImplement(names);
     #endregion
 
     #region AnyPropertiesDefault
@@ -300,7 +300,7 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if at least one specified property is set to its default value; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyPropertiesDefault<T>(this T? input, params string[]? names) where T : class => input.AnyPropertiesDefaultImplement(names);
+    public static bool AnyPropertiesDefault<T>(this T? input, params string?[]? names) where T : class => input.AnyPropertiesDefaultImplement(names);
 
     /// <summary>
     /// Determines whether any elements in the specified collection have at least one of the specified properties set to its default value.
@@ -311,6 +311,6 @@ public static partial class YANObject
     /// <returns><see langword="true"/> if at least one element has a specified property set to its default value; otherwise, <see langword="false"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyPropertiesDefaults<T>(this IEnumerable<T?>? input, params string[]? names) where T : class => input.AnyPropertiesDefaultsImplement(names);
+    public static bool AnyPropertiesDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class => input.AnyPropertiesDefaultsImplement(names);
     #endregion
 }

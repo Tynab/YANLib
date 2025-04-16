@@ -4,6 +4,13 @@ namespace YANLib.Tests.Library.Object;
 
 public partial class YANObjectTest
 {
+    private class TestPropertiesClass
+    {
+        public int Number { get; set; }
+
+        public string? Text { get; set; }
+    }
+
     #region AllPropertiesNotDefault
     [Fact]
     public void AllPropertiesNotDefault_NullInput_ReturnsFalse()
@@ -2682,11 +2689,4 @@ public partial class YANObjectTest
         Assert.False(result);
     }
     #endregion
-}
-
-public class TestPropertiesClass
-{
-    public int Number { get; set; }
-
-    public string? Text { get; set; }
 }
