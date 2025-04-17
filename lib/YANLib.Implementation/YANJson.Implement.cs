@@ -2,6 +2,7 @@
 using YANLib.Implementation.Object;
 using YANLib.Implementation.Text;
 using static System.Text.Json.JsonNamingPolicy;
+using static System.Text.Json.JsonSerializer;
 
 namespace YANLib.Implementation;
 
@@ -20,8 +21,8 @@ internal static partial class YANJson
     internal static string? SerializeImplement(this object? input, JsonSerializerOptions? options = null) => input.IsNullImplement()
         ? default
         : options.IsNullImplement()
-        ? JsonSerializer.Serialize(input, CamelCasePropertyNamingPolicy)
-        : JsonSerializer.Serialize(input, options);
+        ? Serialize(input, CamelCasePropertyNamingPolicy)
+        : Serialize(input, options);
 
     internal static IEnumerable<string?>? SerializesImplement(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
         ? default
@@ -29,11 +30,23 @@ internal static partial class YANJson
         ? input.Select(x => x.SerializeImplement())
         : input.Select(x => x.SerializeImplement(options));
 
+    internal static byte[]? SerializeToBytesImplement(this object? input, JsonSerializerOptions? options = null) => input.IsNullImplement()
+        ? default
+        : options.IsNullImplement()
+        ? SerializeToUtf8Bytes(input, CamelCasePropertyNamingPolicy)
+        : SerializeToUtf8Bytes(input, options);
+
+    internal static IEnumerable<byte[]?>? SerializesToBytesImplement(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
+        ? default
+        : options.IsNullImplement()
+        ? input.Select(x => x.SerializeToBytesImplement())
+        : input.Select(x => x.SerializeToBytesImplement(options));
+
     internal static T? DeserializeImplement<T>(this string? input, JsonSerializerOptions? options = null)
     {
         try
         {
-            return input.IsNullWhiteSpaceImplement() ? default : options.IsNullImplement() ? JsonSerializer.Deserialize<T>(input, IsPropertyNameCaseInsensitive) : JsonSerializer.Deserialize<T>(input, options);
+            return input.IsNullWhiteSpaceImplement() ? default : options.IsNullImplement() ? Deserialize<T>(input, IsPropertyNameCaseInsensitive) : Deserialize<T>(input, options);
         }
         catch
         {
@@ -51,7 +64,7 @@ internal static partial class YANJson
     {
         try
         {
-            return input.IsNullImplement() ? default : options.IsNullImplement() ? JsonSerializer.Deserialize<T>(input, IsPropertyNameCaseInsensitive) : JsonSerializer.Deserialize<T>(input, options);
+            return input.IsNullImplement() ? default : options.IsNullImplement() ? Deserialize<T>(input, IsPropertyNameCaseInsensitive) : Deserialize<T>(input, options);
         }
         catch
         {

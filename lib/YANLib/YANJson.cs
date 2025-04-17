@@ -52,6 +52,29 @@ public static partial class YANJson
     public static IEnumerable<string?>? Serializes(params object?[]? input) => input.SerializesImplement();
 
     /// <summary>
+    /// Serializes an object to a UTF-8 JSON byte array.
+    /// </summary>
+    /// <param name="input">The object to serialize. If null, returns null.</param>
+    /// <param name="options">Optional JsonSerializerOptions; if null, uses camel‑case policy.</param>
+    /// <returns>A byte[] containing the UTF‑8 JSON, or null if input is null.</returns>
+    public static byte[]? SerializeToBytes(this object? input, JsonSerializerOptions? options = null) => input.SerializeToBytesImplement(options);
+
+    /// <summary>
+    /// Serializes a sequence of objects to a sequence of UTF-8 JSON byte arrays.
+    /// </summary>
+    /// <param name="input">The sequence of objects to serialize. If null or empty, returns null.</param>
+    /// <param name="options">Optional JsonSerializerOptions; if null, uses camel‑case policy.</param>
+    /// <returns>An IEnumerable<byte[]> of JSON byte arrays, or null if input is null/empty.</returns>
+    public static IEnumerable<byte[]?>? SerializesToBytes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.SerializesToBytesImplement(options);
+
+    /// <summary>
+    /// Serializes a params-array of objects to a sequence of UTF-8 JSON byte arrays.
+    /// </summary>
+    /// <param name="input">The objects to serialize.</param>
+    /// <returns>An IEnumerable<byte[]> of JSON byte arrays, or null if input is null/empty.</returns>
+    public static IEnumerable<byte[]?>? SerializesToBytes(params object?[]? input) => input.SerializesToBytesImplement();
+
+    /// <summary>
     /// Deserializes the specified JSON string to an object of type <typeparamref name="T"/>.
     /// If the input is null, empty, or consists only of whitespace, the method returns default for <typeparamref name="T"/>.
     /// </summary>
