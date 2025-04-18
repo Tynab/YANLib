@@ -7,7 +7,7 @@ public partial class YANTextTest
 {
     #region AllNull
     [Fact]
-    public void AllNull_WithAllNullStrings_ReturnsTrue()
+    public void AllNull_AllNullStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { null, null };
@@ -20,7 +20,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNull_WithSomeNonNullStrings_ReturnsFalse()
+    public void AllNull_SomeNonNullStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { null, "test" };
@@ -33,7 +33,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNull_Params_WithAllNullStrings_ReturnsTrue()
+    public void AllNull_Params_AllNullStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNull(null, null);
@@ -43,7 +43,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNull_Params_WithSomeNonNullStrings_ReturnsFalse()
+    public void AllNull_Params_SomeNonNullStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNull(null, "test");
@@ -55,7 +55,7 @@ public partial class YANTextTest
 
     #region AnyNull
     [Fact]
-    public void AnyNull_WithSomeNullStrings_ReturnsTrue()
+    public void AnyNull_SomeNullStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { null, "test" };
@@ -68,7 +68,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNull_WithNoNullStrings_ReturnsFalse()
+    public void AnyNull_NoNullStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test1", "test2" };
@@ -81,7 +81,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNull_Params_WithSomeNullStrings_ReturnsTrue()
+    public void AnyNull_Params_SomeNullStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNull(null, "test");
@@ -91,7 +91,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNull_Params_WithNoNullStrings_ReturnsFalse()
+    public void AnyNull_Params_NoNullStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNull("test1", "test2");
@@ -103,7 +103,7 @@ public partial class YANTextTest
 
     #region IsNullEmpty
     [Fact]
-    public void IsNullEmpty_WithNull_ReturnsTrue()
+    public void IsNullEmpty_Null_ReturnsTrue()
     {
         // Arrange
         string? input = null;
@@ -116,7 +116,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_WithEmptyString_ReturnsTrue()
+    public void IsNullEmpty_EmptyString_ReturnsTrue()
     {
         // Arrange
         var input = string.Empty;
@@ -129,7 +129,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_WithNonEmptyString_ReturnsFalse()
+    public void IsNullEmpty_NonEmptyString_ReturnsFalse()
     {
         // Arrange
         var input = "test";
@@ -142,7 +142,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_WithWhiteSpaceString_ReturnsFalse()
+    public void IsNullEmpty_WhiteSpaceString_ReturnsFalse()
     {
         // Arrange
         var input = "   ";
@@ -157,7 +157,7 @@ public partial class YANTextTest
 
     #region AllNullEmpty
     [Fact]
-    public void AllNullEmpty_WithAllNullOrEmptyStrings_ReturnsTrue()
+    public void AllNullEmpty_AllNullOrEmptyStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { null, string.Empty };
@@ -170,7 +170,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithSomeNonEmptyStrings_ReturnsFalse()
+    public void AllNullEmpty_SomeNonEmptyStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { null, "test" };
@@ -183,7 +183,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_Params_WithAllNullOrEmptyStrings_ReturnsTrue()
+    public void AllNullEmpty_Params_AllNullOrEmptyStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNullEmpty(null, string.Empty);
@@ -193,7 +193,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_Params_WithSomeNonEmptyStrings_ReturnsFalse()
+    public void AllNullEmpty_Params_SomeNonEmptyStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNullEmpty(null, "test");
@@ -205,7 +205,7 @@ public partial class YANTextTest
 
     #region AnyNullEmpty
     [Fact]
-    public void AnyNullEmpty_WithSomeNullOrEmptyStrings_ReturnsTrue()
+    public void AnyNullEmpty_SomeNullOrEmptyStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { null, "test" };
@@ -218,7 +218,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithNoNullOrEmptyStrings_ReturnsFalse()
+    public void AnyNullEmpty_NoNullOrEmptyStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test1", "test2" };
@@ -231,7 +231,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_Params_WithSomeNullOrEmptyStrings_ReturnsTrue()
+    public void AnyNullEmpty_Params_SomeNullOrEmptyStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNullEmpty(null, "test");
@@ -241,7 +241,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_Params_WithNoNullOrEmptyStrings_ReturnsFalse()
+    public void AnyNullEmpty_Params_NoNullOrEmptyStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNullEmpty("test1", "test2");
@@ -253,7 +253,7 @@ public partial class YANTextTest
 
     #region IsNullWhiteSpace
     [Fact]
-    public void IsNullWhiteSpace_WithNull_ReturnsTrue()
+    public void IsNullWhiteSpace_Null_ReturnsTrue()
     {
         // Arrange
         string? input = null;
@@ -266,7 +266,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_WithEmptyString_ReturnsTrue()
+    public void IsNullWhiteSpace_EmptyString_ReturnsTrue()
     {
         // Arrange
         var input = string.Empty;
@@ -279,7 +279,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_WithWhiteSpaceString_ReturnsTrue()
+    public void IsNullWhiteSpace_WhiteSpaceString_ReturnsTrue()
     {
         // Arrange
         var input = "   ";
@@ -292,7 +292,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_WithNonWhiteSpaceString_ReturnsFalse()
+    public void IsNullWhiteSpace_NonWhiteSpaceString_ReturnsFalse()
     {
         // Arrange
         var input = "test";
@@ -307,7 +307,7 @@ public partial class YANTextTest
 
     #region AllNullWhiteSpace
     [Fact]
-    public void AllNullWhiteSpace_WithAllNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AllNullWhiteSpace_AllNullOrWhiteSpaceStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { null, string.Empty, "   " };
@@ -320,7 +320,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_WithSomeNonWhiteSpaceStrings_ReturnsFalse()
+    public void AllNullWhiteSpace_SomeNonWhiteSpaceStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { null, "test" };
@@ -333,7 +333,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Params_WithAllNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AllNullWhiteSpace_Params_AllNullOrWhiteSpaceStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNullWhiteSpace(null, string.Empty, "   ");
@@ -343,7 +343,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Params_WithSomeNonWhiteSpaceStrings_ReturnsFalse()
+    public void AllNullWhiteSpace_Params_SomeNonWhiteSpaceStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNullWhiteSpace(null, "test");
@@ -355,7 +355,7 @@ public partial class YANTextTest
 
     #region AnyNullWhiteSpace
     [Fact]
-    public void AnyNullWhiteSpace_WithSomeNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AnyNullWhiteSpace_SomeNullOrWhiteSpaceStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { null, "test" };
@@ -368,7 +368,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_WithNoNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AnyNullWhiteSpace_NoNullOrWhiteSpaceStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test1", "test2" };
@@ -381,7 +381,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Params_WithSomeNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AnyNullWhiteSpace_Params_SomeNullOrWhiteSpaceStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNullWhiteSpace(null, "test");
@@ -391,7 +391,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Params_WithNoNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AnyNullWhiteSpace_Params_NoNullOrWhiteSpaceStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNullWhiteSpace("test1", "test2");
@@ -403,7 +403,7 @@ public partial class YANTextTest
 
     #region EqualsIgnoreCase
     [Fact]
-    public void EqualsIgnoreCase_WithSameStringsDifferentCase_ReturnsTrue()
+    public void EqualsIgnoreCase_SameStringsDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input1 = "test";
@@ -417,7 +417,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void EqualsIgnoreCase_WithDifferentStrings_ReturnsFalse()
+    public void EqualsIgnoreCase_DifferentStrings_ReturnsFalse()
     {
         // Arrange
         var input1 = "test1";
@@ -431,7 +431,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void EqualsIgnoreCase_WithBothNull_ReturnsTrue()
+    public void EqualsIgnoreCase_BothNull_ReturnsTrue()
     {
         // Arrange
         string? input1 = null;
@@ -445,7 +445,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void EqualsIgnoreCase_WithOneNull_ReturnsFalse()
+    public void EqualsIgnoreCase_OneNull_ReturnsFalse()
     {
         // Arrange
         var input1 = "test";
@@ -461,7 +461,7 @@ public partial class YANTextTest
 
     #region AllEqualsIgnoreCase
     [Fact]
-    public void AllEqualsIgnoreCase_WithAllSameStringsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_AllSameStringsDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test", "TEST", "Test" };
@@ -474,7 +474,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_WithSomeDifferentStrings_ReturnsFalse()
+    public void AllEqualsIgnoreCase_SomeDifferentStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test", "different" };
@@ -487,7 +487,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Params_WithAllSameStringsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_Params_AllSameStringsDifferentCase_ReturnsTrue()
     {
         // Act
         var result = YANText.AllEqualsIgnoreCase("test", "TEST", "Test");
@@ -497,7 +497,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Params_WithSomeDifferentStrings_ReturnsFalse()
+    public void AllEqualsIgnoreCase_Params_SomeDifferentStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllEqualsIgnoreCase("test", "different");
@@ -509,7 +509,7 @@ public partial class YANTextTest
 
     #region AnyEqualsIgnoreCase
     [Fact]
-    public void AnyEqualsIgnoreCase_WithSomeSameStringsDifferentCase_ReturnsTrue()
+    public void AnyEqualsIgnoreCase_SomeSameStringsDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test", "TEST", "different" };
@@ -522,7 +522,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_WithAllDifferentStrings_ReturnsFalse()
+    public void AnyEqualsIgnoreCase_AllDifferentStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test1", "test2", "test3" };
@@ -535,7 +535,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Params_WithSomeSameStringsDifferentCase_ReturnsTrue()
+    public void AnyEqualsIgnoreCase_Params_SomeSameStringsDifferentCase_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyEqualsIgnoreCase("test", "TEST", "different");
@@ -545,7 +545,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Params_WithAllDifferentStrings_ReturnsFalse()
+    public void AnyEqualsIgnoreCase_Params_AllDifferentStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyEqualsIgnoreCase("test1", "test2", "test3");
@@ -557,7 +557,7 @@ public partial class YANTextTest
 
     #region AllNotNull
     [Fact]
-    public void AllNotNull_WithAllNonNullStrings_ReturnsTrue()
+    public void AllNotNull_AllNonNullStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test1", "test2" };
@@ -570,7 +570,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNull_WithSomeNullStrings_ReturnsFalse()
+    public void AllNotNull_SomeNullStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test", null };
@@ -583,7 +583,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNull_Params_WithAllNonNullStrings_ReturnsTrue()
+    public void AllNotNull_Params_AllNonNullStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotNull("test1", "test2");
@@ -593,7 +593,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNull_Params_WithSomeNullStrings_ReturnsFalse()
+    public void AllNotNull_Params_SomeNullStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotNull("test", null);
@@ -605,7 +605,7 @@ public partial class YANTextTest
 
     #region AnyNotNull
     [Fact]
-    public void AnyNotNull_WithSomeNonNullStrings_ReturnsTrue()
+    public void AnyNotNull_SomeNonNullStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test", null };
@@ -618,7 +618,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNull_WithAllNullStrings_ReturnsFalse()
+    public void AnyNotNull_AllNullStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { null, null };
@@ -631,7 +631,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNull_Params_WithSomeNonNullStrings_ReturnsTrue()
+    public void AnyNotNull_Params_SomeNonNullStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotNull("test", null);
@@ -641,7 +641,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNull_Params_WithAllNullStrings_ReturnsFalse()
+    public void AnyNotNull_Params_AllNullStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotNull(null, null);
@@ -653,7 +653,7 @@ public partial class YANTextTest
 
     #region IsNotNullEmpty
     [Fact]
-    public void IsNotNullEmpty_WithNonEmptyString_ReturnsTrue()
+    public void IsNotNullEmpty_NonEmptyString_ReturnsTrue()
     {
         // Arrange
         var input = "test";
@@ -666,7 +666,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_WithNull_ReturnsFalse()
+    public void IsNotNullEmpty_Null_ReturnsFalse()
     {
         // Arrange
         string? input = null;
@@ -679,7 +679,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_WithEmptyString_ReturnsFalse()
+    public void IsNotNullEmpty_EmptyString_ReturnsFalse()
     {
         // Arrange
         var input = string.Empty;
@@ -692,7 +692,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_WithWhiteSpaceString_ReturnsTrue()
+    public void IsNotNullEmpty_WhiteSpaceString_ReturnsTrue()
     {
         // Arrange
         var input = "   ";
@@ -707,7 +707,7 @@ public partial class YANTextTest
 
     #region AllNotNullEmpty
     [Fact]
-    public void AllNotNullEmpty_WithAllNonNullNonEmptyStrings_ReturnsTrue()
+    public void AllNotNullEmpty_AllNonNullNonEmptyStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test1", "test2" };
@@ -720,7 +720,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithSomeNullOrEmptyStrings_ReturnsFalse()
+    public void AllNotNullEmpty_SomeNullOrEmptyStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test", null };
@@ -733,7 +733,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_Params_WithAllNonNullNonEmptyStrings_ReturnsTrue()
+    public void AllNotNullEmpty_Params_AllNonNullNonEmptyStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotNullEmpty("test1", "test2");
@@ -743,7 +743,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_Params_WithSomeNullOrEmptyStrings_ReturnsFalse()
+    public void AllNotNullEmpty_Params_SomeNullOrEmptyStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotNullEmpty("test", string.Empty);
@@ -755,7 +755,7 @@ public partial class YANTextTest
 
     #region AnyNotNullEmpty
     [Fact]
-    public void AnyNotNullEmpty_WithSomeNonNullNonEmptyStrings_ReturnsTrue()
+    public void AnyNotNullEmpty_SomeNonNullNonEmptyStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test", null };
@@ -768,7 +768,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAllNullOrEmptyStrings_ReturnsFalse()
+    public void AnyNotNullEmpty_AllNullOrEmptyStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { null, string.Empty };
@@ -781,7 +781,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_Params_WithSomeNonNullNonEmptyStrings_ReturnsTrue()
+    public void AnyNotNullEmpty_Params_SomeNonNullNonEmptyStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotNullEmpty("test", null);
@@ -791,7 +791,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_Params_WithAllNullOrEmptyStrings_ReturnsFalse()
+    public void AnyNotNullEmpty_Params_AllNullOrEmptyStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotNullEmpty(null, string.Empty);
@@ -803,7 +803,7 @@ public partial class YANTextTest
 
     #region IsNotNullWhiteSpace
     [Fact]
-    public void IsNotNullWhiteSpace_WithNonWhiteSpaceString_ReturnsTrue()
+    public void IsNotNullWhiteSpace_NonWhiteSpaceString_ReturnsTrue()
     {
         // Arrange
         var input = "test";
@@ -816,7 +816,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullWhiteSpace_WithNull_ReturnsFalse()
+    public void IsNotNullWhiteSpace_Null_ReturnsFalse()
     {
         // Arrange
         string? input = null;
@@ -829,7 +829,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullWhiteSpace_WithEmptyString_ReturnsFalse()
+    public void IsNotNullWhiteSpace_EmptyString_ReturnsFalse()
     {
         // Arrange
         var input = string.Empty;
@@ -842,7 +842,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullWhiteSpace_WithWhiteSpaceString_ReturnsFalse()
+    public void IsNotNullWhiteSpace_WhiteSpaceString_ReturnsFalse()
     {
         // Arrange
         var input = "   ";
@@ -857,7 +857,7 @@ public partial class YANTextTest
 
     #region AllNotNullWhiteSpace
     [Fact]
-    public void AllNotNullWhiteSpace_WithAllNonNullNonWhiteSpaceStrings_ReturnsTrue()
+    public void AllNotNullWhiteSpace_AllNonNullNonWhiteSpaceStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test1", "test2" };
@@ -870,7 +870,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullWhiteSpace_WithSomeNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AllNotNullWhiteSpace_SomeNullOrWhiteSpaceStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test", null };
@@ -883,7 +883,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullWhiteSpace_Params_WithAllNonNullNonWhiteSpaceStrings_ReturnsTrue()
+    public void AllNotNullWhiteSpace_Params_AllNonNullNonWhiteSpaceStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotNullWhiteSpace("test1", "test2");
@@ -893,7 +893,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullWhiteSpace_Params_WithSomeNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AllNotNullWhiteSpace_Params_SomeNullOrWhiteSpaceStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotNullWhiteSpace("test", "   ");
@@ -905,7 +905,7 @@ public partial class YANTextTest
 
     #region AnyNotNullWhiteSpace
     [Fact]
-    public void AnyNotNullWhiteSpace_WithSomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
+    public void AnyNotNullWhiteSpace_SomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test", null, "   " };
@@ -918,7 +918,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullWhiteSpace_WithAllNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AnyNotNullWhiteSpace_AllNullOrWhiteSpaceStrings_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { null, string.Empty, "   " };
@@ -931,7 +931,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullWhiteSpace_Params_WithSomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
+    public void AnyNotNullWhiteSpace_Params_SomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotNullWhiteSpace("test", null, "   ");
@@ -941,7 +941,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullWhiteSpace_Params_WithAllNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AnyNotNullWhiteSpace_Params_AllNullOrWhiteSpaceStrings_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotNullWhiteSpace(null, string.Empty, "   ");
@@ -953,7 +953,7 @@ public partial class YANTextTest
 
     #region NotEqualsIgnoreCase
     [Fact]
-    public void NotEqualsIgnoreCase_WithDifferentStrings_ReturnsTrue()
+    public void NotEqualsIgnoreCase_DifferentStrings_ReturnsTrue()
     {
         // Arrange
         var input1 = "test1";
@@ -967,7 +967,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void NotEqualsIgnoreCase_WithSameStringsDifferentCase_ReturnsFalse()
+    public void NotEqualsIgnoreCase_SameStringsDifferentCase_ReturnsFalse()
     {
         // Arrange
         var input1 = "test";
@@ -981,7 +981,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void NotEqualsIgnoreCase_WithBothNull_ReturnsFalse()
+    public void NotEqualsIgnoreCase_BothNull_ReturnsFalse()
     {
         // Arrange
         string? input1 = null;
@@ -995,7 +995,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void NotEqualsIgnoreCase_WithOneNull_ReturnsFalse()
+    public void NotEqualsIgnoreCase_OneNull_ReturnsFalse()
     {
         // Arrange
         var input1 = "test";
@@ -1011,7 +1011,7 @@ public partial class YANTextTest
 
     #region AllNotEqualsIgnoreCase
     [Fact]
-    public void AllNotEqualsIgnoreCase_WithAllDifferentStrings_ReturnsTrue()
+    public void AllNotEqualsIgnoreCase_AllDifferentStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test1", "test2", "test3" };
@@ -1024,7 +1024,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_WithSomeSameStringsDifferentCase_ReturnsFalse()
+    public void AllNotEqualsIgnoreCase_SomeSameStringsDifferentCase_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test", "TEST", "test3" };
@@ -1037,7 +1037,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Params_WithAllDifferentStrings_ReturnsTrue()
+    public void AllNotEqualsIgnoreCase_Params_AllDifferentStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotEqualsIgnoreCase("test1", "test2", "test3");
@@ -1047,7 +1047,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Params_WithSomeSameStringsDifferentCase_ReturnsFalse()
+    public void AllNotEqualsIgnoreCase_Params_SomeSameStringsDifferentCase_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotEqualsIgnoreCase("test", "TEST", "test3");
@@ -1059,7 +1059,7 @@ public partial class YANTextTest
 
     #region AnyNotEqualsIgnoreCase
     [Fact]
-    public void AnyNotEqualsIgnoreCase_WithSomeDifferentStrings_ReturnsTrue()
+    public void AnyNotEqualsIgnoreCase_SomeDifferentStrings_ReturnsTrue()
     {
         // Arrange
         var input = new string?[] { "test1", "test2", "test3" };
@@ -1072,7 +1072,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_WithAllSameStringsDifferentCase_ReturnsFalse()
+    public void AnyNotEqualsIgnoreCase_AllSameStringsDifferentCase_ReturnsFalse()
     {
         // Arrange
         var input = new string?[] { "test", "TEST", "Test" };
@@ -1085,7 +1085,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Params_WithSomeDifferentStrings_ReturnsTrue()
+    public void AnyNotEqualsIgnoreCase_Params_SomeDifferentStrings_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotEqualsIgnoreCase("test1", "test2", "test3");
@@ -1095,7 +1095,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Params_WithAllSameStringsDifferentCase_ReturnsFalse()
+    public void AnyNotEqualsIgnoreCase_Params_AllSameStringsDifferentCase_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotEqualsIgnoreCase("test", "TEST", "Test");
@@ -1107,7 +1107,7 @@ public partial class YANTextTest
 
     #region Lower
     [Fact]
-    public void Lower_WithUpperCaseString_ReturnsLowerCaseString()
+    public void Lower_UpperCaseString_ReturnsLowerCaseString()
     {
         // Arrange
         var input = "TEST";
@@ -1120,7 +1120,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_WithMixedCaseString_ReturnsLowerCaseString()
+    public void Lower_MixedCaseString_ReturnsLowerCaseString()
     {
         // Arrange
         var input = "TeSt";
@@ -1133,7 +1133,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_WithNull_ReturnsNull()
+    public void Lower_Null_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1146,7 +1146,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_WithEmptyString_ReturnsEmptyString()
+    public void Lower_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -1159,7 +1159,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_WithWhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Lower_WhiteSpaceString_ReturnsWhiteSpaceString()
     {
         // Arrange
         var input = "   ";
@@ -1172,7 +1172,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_List_WithMixedCaseStrings_ModifiesListToLowerCase()
+    public void Lower_List_MixedCaseStrings_ModifiesListToLowerCase()
     {
         // Arrange
         var input = new List<string?> { "TEST", "TeSt", null, "HELLO" };
@@ -1186,7 +1186,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_List_WithNullInput_DoesNotThrowException()
+    public void Lower_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -1199,7 +1199,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_WithMixedCaseStrings_ReturnsAllLowerCase()
+    public void Lowers_MixedCaseStrings_ReturnsAllLowerCase()
     {
         // Arrange
         var input = new[] { "TEST", "TeSt", null, "HELLO" };
@@ -1213,7 +1213,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_WithNullInput_ReturnsNull()
+    public void Lowers_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1226,7 +1226,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_Params_WithMixedCaseStrings_ReturnsAllLowerCase()
+    public void Lowers_Params_MixedCaseStrings_ReturnsAllLowerCase()
     {
         // Act
         var result = YANText.Lowers("TEST", "TeSt", null, "HELLO");
@@ -1239,7 +1239,7 @@ public partial class YANTextTest
 
     #region LowerInvariant
     [Fact]
-    public void LowerInvariant_WithUpperCaseString_ReturnsLowerCaseString()
+    public void LowerInvariant_UpperCaseString_ReturnsLowerCaseString()
     {
         // Arrange
         var input = "TEST";
@@ -1252,7 +1252,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_WithNull_ReturnsNull()
+    public void LowerInvariant_Null_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1265,7 +1265,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_List_WithMixedCaseStrings_ModifiesListToLowerCase()
+    public void LowerInvariant_List_MixedCaseStrings_ModifiesListToLowerCase()
     {
         // Arrange
         var input = new List<string?> { "TEST", "TeSt", null, "HELLO" };
@@ -1279,7 +1279,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_List_WithNullInput_DoesNotThrowException()
+    public void LowerInvariant_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -1292,7 +1292,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_WithMixedCaseStrings_ReturnsAllLowerCase()
+    public void LowerInvariants_MixedCaseStrings_ReturnsAllLowerCase()
     {
         // Arrange
         var input = new[] { "TEST", "TeSt", null, "HELLO" };
@@ -1306,7 +1306,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_WithNullInput_ReturnsNull()
+    public void LowerInvariants_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1319,7 +1319,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_Params_WithMixedCaseStrings_ReturnsAllLowerCase()
+    public void LowerInvariants_Params_MixedCaseStrings_ReturnsAllLowerCase()
     {
         // Act
         var result = YANText.LowerInvariants("TEST", "TeSt", null, "HELLO");
@@ -1332,7 +1332,7 @@ public partial class YANTextTest
 
     #region Upper
     [Fact]
-    public void Upper_WithLowerCaseString_ReturnsUpperCaseString()
+    public void Upper_LowerCaseString_ReturnsUpperCaseString()
     {
         // Arrange
         var input = "test";
@@ -1345,7 +1345,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_WithMixedCaseString_ReturnsUpperCaseString()
+    public void Upper_MixedCaseString_ReturnsUpperCaseString()
     {
         // Arrange
         var input = "TeSt";
@@ -1358,7 +1358,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_WithNull_ReturnsNull()
+    public void Upper_Null_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1371,7 +1371,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_WithEmptyString_ReturnsEmptyString()
+    public void Upper_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -1384,7 +1384,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_WithWhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Upper_WhiteSpaceString_ReturnsWhiteSpaceString()
     {
         // Arrange
         var input = "   ";
@@ -1397,7 +1397,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_List_WithMixedCaseStrings_ModifiesListToUpperCase()
+    public void Upper_List_MixedCaseStrings_ModifiesListToUpperCase()
     {
         // Arrange
         var input = new List<string?> { "test", "TeSt", null, "hello" };
@@ -1411,7 +1411,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_List_WithNullInput_DoesNotThrowException()
+    public void Upper_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -1424,7 +1424,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_WithMixedCaseStrings_ReturnsAllUpperCase()
+    public void Uppers_MixedCaseStrings_ReturnsAllUpperCase()
     {
         // Arrange
         var input = new[] { "test", "TeSt", null, "hello" };
@@ -1438,7 +1438,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_WithNullInput_ReturnsNull()
+    public void Uppers_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1451,7 +1451,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_Params_WithMixedCaseStrings_ReturnsAllUpperCase()
+    public void Uppers_Params_MixedCaseStrings_ReturnsAllUpperCase()
     {
         // Act
         var result = YANText.Uppers("test", "TeSt", null, "hello");
@@ -1464,7 +1464,7 @@ public partial class YANTextTest
 
     #region UpperInvariant
     [Fact]
-    public void UpperInvariant_WithLowerCaseString_ReturnsUpperCaseString()
+    public void UpperInvariant_LowerCaseString_ReturnsUpperCaseString()
     {
         // Arrange
         var input = "test";
@@ -1477,7 +1477,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_WithNull_ReturnsNull()
+    public void UpperInvariant_Null_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1490,7 +1490,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_List_WithMixedCaseStrings_ModifiesListToUpperCase()
+    public void UpperInvariant_List_MixedCaseStrings_ModifiesListToUpperCase()
     {
         // Arrange
         var input = new List<string?> { "test", "TeSt", null, "hello" };
@@ -1504,7 +1504,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_List_WithNullInput_DoesNotThrowException()
+    public void UpperInvariant_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -1517,7 +1517,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_WithMixedCaseStrings_ReturnsAllUpperCase()
+    public void UpperInvariants_MixedCaseStrings_ReturnsAllUpperCase()
     {
         // Arrange
         var input = new[] { "test", "TeSt", null, "hello" };
@@ -1531,7 +1531,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_WithNullInput_ReturnsNull()
+    public void UpperInvariants_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1544,7 +1544,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_Params_WithMixedCaseStrings_ReturnsAllUpperCase()
+    public void UpperInvariants_Params_MixedCaseStrings_ReturnsAllUpperCase()
     {
         // Act
         var result = YANText.UpperInvariants("test", "TeSt", null, "hello");

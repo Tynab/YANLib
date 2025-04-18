@@ -13,6 +13,7 @@ public partial class YANJsonTest
     private class TestJson
     {
         public int Id { get; set; }
+
         public string? Name { get; set; }
     }
 
@@ -499,7 +500,7 @@ public partial class YANJsonTest
 
     #region Optional
     [Fact]
-    public void Serialize_WithCustomOptions_ReturnsExpectedJson()
+    public void Serialize_CustomOptions_ReturnsExpectedJson()
     {
         // Arrange
         var obj = new TestJson
@@ -523,7 +524,7 @@ public partial class YANJsonTest
     }
 
     [Fact]
-    public void Deserialize_WithCustomOptions_ReturnsExpectedObject()
+    public void Deserialize_CustomOptions_ReturnsExpectedObject()
     {
         // Arrange
         var json = "{\"Id\":200,\"Name\":\"CustomDeserialized\"}";

@@ -8,9 +8,27 @@ namespace YANLib.Tests.Library.Object;
 
 public partial class YANObjectTest
 {
+    private class TestCopyClass
+    {
+        public int Number { get; set; }
+
+        public string? Text { get; set; }
+    }
+
+    private class TestTimeZoneClass
+    {
+        public DateTime Date { get; set; }
+
+        public string? Name { get; set; }
+
+        public TestTimeZoneClass? Nested { get; set; }
+
+        public List<TestTimeZoneClass>? List { get; set; }
+    }
+
     #region GetItemCount
     [Fact]
-    public void GetItemCount_WithNullCollection_ReturnsZero()
+    public void GetItemCount_NullCollection_ReturnsZero()
     {
         // Arrange
         IEnumerable<object?>? input = null;
@@ -23,7 +41,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithEmptyCollection_ReturnsZero()
+    public void GetItemCount_EmptyCollection_ReturnsZero()
     {
         // Arrange
         IEnumerable<object?> input = [];
@@ -36,7 +54,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithGenericCollection_ReturnsCorrectCount()
+    public void GetItemCount_GenericCollection_ReturnsCorrectCount()
     {
         // Arrange
         ICollection<object?> input = ["item1", "item2", "item3"];
@@ -49,7 +67,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithNonGenericCollection_ReturnsCorrectCount()
+    public void GetItemCount_NonGenericCollection_ReturnsCorrectCount()
     {
         // Arrange
         ArrayList input = ["item1", "item2", "item3"];
@@ -62,7 +80,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithReadOnlyCollection_ReturnsCorrectCount()
+    public void GetItemCount_ReadOnlyCollection_ReturnsCorrectCount()
     {
         // Arrange
         IReadOnlyCollection<object?> input = new List<object?> { "item1", "item2", "item3" }.AsReadOnly();
@@ -75,7 +93,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithArray_ReturnsCorrectCount()
+    public void GetItemCount_Array_ReturnsCorrectCount()
     {
         // Arrange
         object?[] input = ["item1", "item2", "item3"];
@@ -88,7 +106,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithImmutableList_ReturnsCorrectCount()
+    public void GetItemCount_ImmutableList_ReturnsCorrectCount()
     {
         // Arrange
         IImmutableList<object?> input = ImmutableList.Create<object?>("item1", "item2", "item3");
@@ -101,7 +119,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithImmutableQueue_ReturnsCorrectCount()
+    public void GetItemCount_ImmutableQueue_ReturnsCorrectCount()
     {
         // Arrange
         IImmutableQueue<object?> input = ImmutableQueue.Create<object?>("item1", "item2", "item3");
@@ -114,7 +132,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithImmutableStack_ReturnsCorrectCount()
+    public void GetItemCount_ImmutableStack_ReturnsCorrectCount()
     {
         // Arrange
         IImmutableStack<object?> input = ImmutableStack.Create<object?>("item1", "item2", "item3");
@@ -127,7 +145,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithImmutableSet_ReturnsCorrectCount()
+    public void GetItemCount_ImmutableSet_ReturnsCorrectCount()
     {
         // Arrange
         IImmutableSet<object?> input = ImmutableHashSet.Create<object?>("item1", "item2", "item3");
@@ -140,7 +158,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithImmutableDictionary_ReturnsCorrectCount()
+    public void GetItemCount_ImmutableDictionary_ReturnsCorrectCount()
     {
         // Arrange
         IImmutableDictionary<object, object?> input = ImmutableDictionary.Create<object, object?>().Add("key1", "value1").Add("key2", "value2").Add("key3", "value3");
@@ -153,7 +171,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithConcurrentBag_ReturnsCorrectCount()
+    public void GetItemCount_ConcurrentBag_ReturnsCorrectCount()
     {
         // Arrange
         ConcurrentBag<object?> input = new(["item1", "item2", "item3"]);
@@ -166,7 +184,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithConcurrentQueue_ReturnsCorrectCount()
+    public void GetItemCount_ConcurrentQueue_ReturnsCorrectCount()
     {
         // Arrange
         ConcurrentQueue<object?> input = new(["item1", "item2", "item3"]);
@@ -179,7 +197,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithConcurrentStack_ReturnsCorrectCount()
+    public void GetItemCount_ConcurrentStack_ReturnsCorrectCount()
     {
         // Arrange
         ConcurrentStack<object?> input = new(["item1", "item2", "item3"]);
@@ -192,7 +210,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithConcurrentDictionary_ReturnsCorrectCount()
+    public void GetItemCount_ConcurrentDictionary_ReturnsCorrectCount()
     {
         // Arrange
         ConcurrentDictionary<object, object?> input = new();
@@ -208,7 +226,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithBlockingCollection_ReturnsCorrectCount()
+    public void GetItemCount_BlockingCollection_ReturnsCorrectCount()
     {
         // Arrange
         BlockingCollection<object?> input = [.. new ConcurrentQueue<object?>(["item1", "item2", "item3"])];
@@ -221,7 +239,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void GetItemCount_WithEnumerable_ReturnsCorrectCount()
+    public void GetItemCount_Enumerable_ReturnsCorrectCount()
     {
         // Arrange
         var input = Enumerable.Range(1, 5).Select(i => (object?)i);
@@ -236,7 +254,7 @@ public partial class YANObjectTest
 
     #region IsDefault
     [Fact]
-    public void IsDefault_WithNullObject_ReturnsTrue()
+    public void IsDefault_NullObject_ReturnsTrue()
     {
         // Arrange
         object? input = default;
@@ -249,7 +267,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsDefault_WithNonNullObject_ReturnsFalse()
+    public void IsDefault_NonNullObject_ReturnsFalse()
     {
         // Arrange
         var input = new object();
@@ -264,7 +282,7 @@ public partial class YANObjectTest
 
     #region IsNotDefault
     [Fact]
-    public void IsNotDefault_WithNullObject_ReturnsFalse()
+    public void IsNotDefault_NullObject_ReturnsFalse()
     {
         // Arrange
         object? input = default;
@@ -277,7 +295,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNotDefault_WithNonNullObject_ReturnsTrue()
+    public void IsNotDefault_NonNullObject_ReturnsTrue()
     {
         // Arrange
         var input = new object();
@@ -292,7 +310,7 @@ public partial class YANObjectTest
 
     #region IsNull
     [Fact]
-    public void IsNull_WithNullObject_ReturnsTrue()
+    public void IsNull_NullObject_ReturnsTrue()
     {
         // Arrange
         object? input = null;
@@ -305,7 +323,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNull_WithNonNullObject_ReturnsFalse()
+    public void IsNull_NonNullObject_ReturnsFalse()
     {
         // Arrange
         var input = new object();
@@ -320,7 +338,7 @@ public partial class YANObjectTest
 
     #region IsNotNull
     [Fact]
-    public void IsNotNull_WithNullObject_ReturnsFalse()
+    public void IsNotNull_NullObject_ReturnsFalse()
     {
         // Arrange
         object? input = null;
@@ -333,7 +351,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNotNull_WithNonNullObject_ReturnsTrue()
+    public void IsNotNull_NonNullObject_ReturnsTrue()
     {
         // Arrange
         var input = new object();
@@ -348,7 +366,7 @@ public partial class YANObjectTest
 
     #region IsNullEmpty
     [Fact]
-    public void IsNullEmpty_WithNullIEnumerable_ReturnsTrue()
+    public void IsNullEmpty_NullIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<int>? input = null;
@@ -361,7 +379,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNullEmpty_WithEmptyIEnumerable_ReturnsTrue()
+    public void IsNullEmpty_EmptyIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<int> input = [];
@@ -374,7 +392,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNullEmpty_WithNonEmptyIEnumerable_ReturnsFalse()
+    public void IsNullEmpty_NonEmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<int> input = [1, 2];
@@ -389,7 +407,7 @@ public partial class YANObjectTest
 
     #region IsNotNullEmpty
     [Fact]
-    public void IsNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    public void IsNotNullEmpty_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<int>? input = null;
@@ -402,7 +420,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    public void IsNotNullEmpty_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<int> input = [];
@@ -415,7 +433,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_WithNonEmptyIEnumerable_ReturnsTrue()
+    public void IsNotNullEmpty_NonEmptyIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<int> input = [1, 2];
@@ -430,7 +448,7 @@ public partial class YANObjectTest
 
     #region AllNull
     [Fact]
-    public void AllNull_WithNullIEnumerable_ReturnsFalse()
+    public void AllNull_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -443,7 +461,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithEmptyIEnumerable_ReturnsFalse()
+    public void AllNull_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -456,7 +474,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithAllNullIEnumerable_ReturnsTrue()
+    public void AllNull_AllNullIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<object?> input = [null, null];
@@ -469,7 +487,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithNonNullIEnumerable_ReturnsFalse()
+    public void AllNull_NonNullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object?> input = [new object(), null];
@@ -482,7 +500,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithNullParams_ReturnsFalse()
+    public void AllNull_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -495,7 +513,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithEmptyParams_ReturnsFalse()
+    public void AllNull_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -508,7 +526,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithAllNullParams_ReturnsTrue()
+    public void AllNull_AllNullParams_ReturnsTrue()
     {
         // Act
         var result = YANObject.AllNull<object>(null, null);
@@ -518,7 +536,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNull_WithNonNullParams_ReturnsFalse()
+    public void AllNull_NonNullParams_ReturnsFalse()
     {
         // Act
         var result = YANObject.AllNull(null, new object());
@@ -530,7 +548,7 @@ public partial class YANObjectTest
 
     #region AllNullEmpty
     [Fact]
-    public void AllNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    public void AllNullEmpty_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -543,7 +561,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    public void AllNullEmpty_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -556,7 +574,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithAllNullAndDefaultProperties_ReturnsTrue()
+    public void AllNullEmpty_AllNullAndDefaultProperties_ReturnsTrue()
     {
         // Arrange
         var obj = new
@@ -574,7 +592,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithNonNullAndEmptyProperties_ReturnsFalse()
+    public void AllNullEmpty_NonNullAndEmptyProperties_ReturnsFalse()
     {
         // Arrange
         var obj = new
@@ -592,7 +610,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithNullParams_ReturnsFalse()
+    public void AllNullEmpty_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -605,7 +623,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithEmptyParams_ReturnsFalse()
+    public void AllNullEmpty_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -618,7 +636,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithAllNullAndDefaultParams_ReturnsTrue()
+    public void AllNullEmpty_AllNullAndDefaultParams_ReturnsTrue()
     {
         // Act
         var obj = new
@@ -633,7 +651,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_WithNonNullAndNonDefaultParams_ReturnsFalse()
+    public void AllNullEmpty_NonNullAndNonDefaultParams_ReturnsFalse()
     {
         // Act
         var obj = new
@@ -650,7 +668,7 @@ public partial class YANObjectTest
 
     #region AnyNull
     [Fact]
-    public void AnyNull_WithNullIEnumerable_ReturnsFalse()
+    public void AnyNull_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -663,7 +681,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithEmptyIEnumerable_ReturnsFalse()
+    public void AnyNull_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -676,7 +694,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithAtLeastOneNullElementInIEnumerable_ReturnsTrue()
+    public void AnyNull_AtLeastOneNullElementInIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<object?> input = [null, new object()];
@@ -689,7 +707,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithAllNonNullElementsInIEnumerable_ReturnsFalse()
+    public void AnyNull_AllNonNullElementsInIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [new object(), new object()];
@@ -702,7 +720,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithNullParams_ReturnsFalse()
+    public void AnyNull_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -715,7 +733,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithEmptyParams_ReturnsFalse()
+    public void AnyNull_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -728,7 +746,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithAtLeastOneNullParams_ReturnsTrue()
+    public void AnyNull_AtLeastOneNullParams_ReturnsTrue()
     {
         // Act
         var result = YANObject.AnyNull(null, new object());
@@ -738,7 +756,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNull_WithAllNonNullParams_ReturnsFalse()
+    public void AnyNull_AllNonNullParams_ReturnsFalse()
     {
         // Act
         var result = YANObject.AnyNull(new object(), new object());
@@ -750,7 +768,7 @@ public partial class YANObjectTest
 
     #region AnyNullEmpty
     [Fact]
-    public void AnyNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    public void AnyNullEmpty_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -763,7 +781,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    public void AnyNullEmpty_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -776,7 +794,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithAtLeastOneNullElementInIEnumerable_ReturnsTrue()
+    public void AnyNullEmpty_AtLeastOneNullElementInIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<object?> input = [null, new object()];
@@ -789,7 +807,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsTrue()
+    public void AnyNullEmpty_AtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsTrue()
     {
         // Arrange
         var obj = new
@@ -807,7 +825,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithAllElementsNonNullAndNonDefaultInIEnumerable_ReturnsFalse()
+    public void AnyNullEmpty_AllElementsNonNullAndNonDefaultInIEnumerable_ReturnsFalse()
     {
         // Arrange
         var obj1 = new
@@ -830,7 +848,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithNullParams_ReturnsFalse()
+    public void AnyNullEmpty_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -843,7 +861,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithEmptyParams_ReturnsFalse()
+    public void AnyNullEmpty_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -856,7 +874,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithAtLeastOneNullParams_ReturnsTrue()
+    public void AnyNullEmpty_AtLeastOneNullParams_ReturnsTrue()
     {
         // Act
         var result = YANObject.AnyNullEmpty(null, new object());
@@ -866,7 +884,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInParams_ReturnsTrue()
+    public void AnyNullEmpty_AtLeastOneElementWithDefaultPropertiesInParams_ReturnsTrue()
     {
         // Arrange
         var obj = new
@@ -882,7 +900,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNullEmpty_WithAllElementsNonNullAndNonDefaultParams_ReturnsFalse()
+    public void AnyNullEmpty_AllElementsNonNullAndNonDefaultParams_ReturnsFalse()
     {
         // Arrange
         var obj1 = new
@@ -905,7 +923,7 @@ public partial class YANObjectTest
 
     #region AllNotNull
     [Fact]
-    public void AllNotNull_WithNullIEnumerable_ReturnsFalse()
+    public void AllNotNull_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -918,7 +936,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithEmptyIEnumerable_ReturnsFalse()
+    public void AllNotNull_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -931,7 +949,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithAllNonNullElementsInIEnumerable_ReturnsTrue()
+    public void AllNotNull_AllNonNullElementsInIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<object> input = [new object(), new object()];
@@ -944,7 +962,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithAtLeastOneNullElementInIEnumerable_ReturnsFalse()
+    public void AllNotNull_AtLeastOneNullElementInIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object?> input = [null, new object()];
@@ -957,7 +975,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithNullParams_ReturnsFalse()
+    public void AllNotNull_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -970,7 +988,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithEmptyParams_ReturnsFalse()
+    public void AllNotNull_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -983,7 +1001,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithAllNonNullParams_ReturnsTrue()
+    public void AllNotNull_AllNonNullParams_ReturnsTrue()
     {
         // Act
         var result = YANObject.AllNotNull(new object(), new object());
@@ -993,7 +1011,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNull_WithAtLeastOneNullParams_ReturnsFalse()
+    public void AllNotNull_AtLeastOneNullParams_ReturnsFalse()
     {
         // Act
         var result = YANObject.AllNotNull(null, new object());
@@ -1005,7 +1023,7 @@ public partial class YANObjectTest
 
     #region AllNotNullEmpty
     [Fact]
-    public void AllNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    public void AllNotNullEmpty_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -1018,7 +1036,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    public void AllNotNullEmpty_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -1031,7 +1049,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithAllNonNullAndNonDefaultElementsInIEnumerable_ReturnsTrue()
+    public void AllNotNullEmpty_AllNonNullAndNonDefaultElementsInIEnumerable_ReturnsTrue()
     {
         // Arrange
         var obj1 = new
@@ -1054,7 +1072,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithAtLeastOneNullElementInIEnumerable_ReturnsFalse()
+    public void AllNotNullEmpty_AtLeastOneNullElementInIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object?> input = [null, new object()];
@@ -1067,7 +1085,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsFalse()
+    public void AllNotNullEmpty_AtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsFalse()
     {
         // Arrange
         var obj = new
@@ -1085,7 +1103,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithNullParams_ReturnsFalse()
+    public void AllNotNullEmpty_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -1098,7 +1116,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithEmptyParams_ReturnsFalse()
+    public void AllNotNullEmpty_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -1111,7 +1129,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithAllNonNullAndNonDefaultParams_ReturnsTrue()
+    public void AllNotNullEmpty_AllNonNullAndNonDefaultParams_ReturnsTrue()
     {
         // Arrange
         var obj1 = new
@@ -1132,7 +1150,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithAtLeastOneNullParams_ReturnsFalse()
+    public void AllNotNullEmpty_AtLeastOneNullParams_ReturnsFalse()
     {
         // Act
         var result = YANObject.AllNotNullEmpty(null, new object());
@@ -1142,7 +1160,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInParams_ReturnsFalse()
+    public void AllNotNullEmpty_AtLeastOneElementWithDefaultPropertiesInParams_ReturnsFalse()
     {
         // Arrange
         var obj = new
@@ -1160,7 +1178,7 @@ public partial class YANObjectTest
 
     #region AnyNotNull
     [Fact]
-    public void AnyNotNull_WithNullIEnumerable_ReturnsFalse()
+    public void AnyNotNull_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -1173,7 +1191,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_WithEmptyIEnumerable_ReturnsFalse()
+    public void AnyNotNull_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -1186,7 +1204,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_WithAllNullElementsInIEnumerable_ReturnsFalse()
+    public void AnyNotNull_AllNullElementsInIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object?> input = [null, null];
@@ -1199,7 +1217,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_WithAtLeastOneNonNullElementInIEnumerable_ReturnsTrue()
+    public void AnyNotNull_AtLeastOneNonNullElementInIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<object?> input = [null, new object()];
@@ -1212,7 +1230,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_Params_WithNullInput_ReturnsFalse()
+    public void AnyNotNull_Params_NullInput_ReturnsFalse()
     {
         // Arrange
         object?[]? input = null;
@@ -1225,7 +1243,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_Params_WithEmptyInput_ReturnsFalse()
+    public void AnyNotNull_Params_EmptyInput_ReturnsFalse()
     {
         // Arrange
         object?[] input = [];
@@ -1238,7 +1256,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_Params_WithAllNullElements_ReturnsFalse()
+    public void AnyNotNull_Params_AllNullElements_ReturnsFalse()
     {
         // Arrange
         object?[] input = [null, null];
@@ -1251,7 +1269,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNull_Params_WithAtLeastOneNonNullElement_ReturnsTrue()
+    public void AnyNotNull_Params_AtLeastOneNonNullElement_ReturnsTrue()
     {
         // Arrange
         object?[] input = [null, new object()];
@@ -1266,7 +1284,7 @@ public partial class YANObjectTest
 
     #region AnyNotNullEmpty
     [Fact]
-    public void AnyNotNullEmpty_WithNullIEnumerable_ReturnsFalse()
+    public void AnyNotNullEmpty_NullIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object>? input = null;
@@ -1279,7 +1297,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithEmptyIEnumerable_ReturnsFalse()
+    public void AnyNotNullEmpty_EmptyIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object> input = [];
@@ -1292,7 +1310,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAllNullElementsInIEnumerable_ReturnsFalse()
+    public void AnyNotNullEmpty_AllNullElementsInIEnumerable_ReturnsFalse()
     {
         // Arrange
         IEnumerable<object?> input = [null, null];
@@ -1305,7 +1323,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAtLeastOneNonNullElementInIEnumerable_ReturnsTrue()
+    public void AnyNotNullEmpty_AtLeastOneNonNullElementInIEnumerable_ReturnsTrue()
     {
         // Arrange
         IEnumerable<object?> input = [null, new object()];
@@ -1318,7 +1336,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsTrue()
+    public void AnyNotNullEmpty_AtLeastOneElementWithDefaultPropertiesInIEnumerable_ReturnsTrue()
     {
         // Arrange
         var obj = new
@@ -1336,7 +1354,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithNullParams_ReturnsFalse()
+    public void AnyNotNullEmpty_NullParams_ReturnsFalse()
     {
         // Arrange
         object[]? input = null;
@@ -1349,7 +1367,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithEmptyParams_ReturnsFalse()
+    public void AnyNotNullEmpty_EmptyParams_ReturnsFalse()
     {
         // Arrange
         object[] input = [];
@@ -1362,7 +1380,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAllNullParams_ReturnsFalse()
+    public void AnyNotNullEmpty_AllNullParams_ReturnsFalse()
     {
         // Act
         var result = YANObject.AnyNotNullEmpty<object>(null, null);
@@ -1372,7 +1390,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAtLeastOneNonNullParams_ReturnsTrue()
+    public void AnyNotNullEmpty_AtLeastOneNonNullParams_ReturnsTrue()
     {
         // Act
         var result = YANObject.AnyNotNullEmpty(null, new object());
@@ -1382,7 +1400,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_WithAtLeastOneElementWithDefaultPropertiesInParams_ReturnsTrue()
+    public void AnyNotNullEmpty_AtLeastOneElementWithDefaultPropertiesInParams_ReturnsTrue()
     {
         // Arrange
         var obj = new
@@ -1400,7 +1418,7 @@ public partial class YANObjectTest
 
     #region ChangeTimeZoneAllProperty
     [Fact]
-    public void ChangeTimeZoneAllProperty_WithNullInput_ReturnsNull()
+    public void ChangeTimeZoneAllProperty_NullInput_ReturnsNull()
     {
         // Arrange
         TestTimeZoneClass? input = null;
@@ -1413,7 +1431,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void ChangeTimeZoneAllProperty_WithDateTimeProperty_UpdatesDateTime()
+    public void ChangeTimeZoneAllProperty_DateTimeProperty_UpdatesDateTime()
     {
         // Arrange
         var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
@@ -1435,7 +1453,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void ChangeTimeZoneAllProperty_WithNestedObject_UpdatesNestedDateTime()
+    public void ChangeTimeZoneAllProperty_NestedObject_UpdatesNestedDateTime()
     {
         // Arrange
         var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
@@ -1465,7 +1483,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void ChangeTimeZoneAllProperty_WithListProperty_UpdatesDateTimeInListItems()
+    public void ChangeTimeZoneAllProperty_ListProperty_UpdatesDateTimeInListItems()
     {
         // Arrange
         var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
@@ -1505,7 +1523,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void ChangeTimeZoneAllProperty_WithNullTimeZoneParameters_DoesNotChangeDateTime()
+    public void ChangeTimeZoneAllProperty_NullTimeZoneParameters_DoesNotChangeDateTime()
     {
         // Arrange
         var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
@@ -1526,7 +1544,7 @@ public partial class YANObjectTest
 
     #region ChangeTimeZoneAllProperties
     [Fact]
-    public void ChangeTimeZoneAllProperties_WithNullIEnumerable_ReturnsNull()
+    public void ChangeTimeZoneAllProperties_NullIEnumerable_ReturnsNull()
     {
         // Arrange
         IEnumerable<TestTimeZoneClass>? input = null;
@@ -1539,7 +1557,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void ChangeTimeZoneAllProperties_WithEmptyIEnumerable_ReturnsEmpty()
+    public void ChangeTimeZoneAllProperties_EmptyIEnumerable_ReturnsEmpty()
     {
         // Arrange
         IEnumerable<TestTimeZoneClass> input = [];
@@ -1552,7 +1570,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void ChangeTimeZoneAllProperties_WithValidIEnumerable_UpdatesDateTime()
+    public void ChangeTimeZoneAllProperties_ValidIEnumerable_UpdatesDateTime()
     {
         // Arrange
         var originalDate = new DateTime(2020, 1, 1, 12, 0, 0);
@@ -1587,7 +1605,7 @@ public partial class YANObjectTest
 
     #region Copy
     [Fact]
-    public void Copy_WithNullInput_ReturnsNull()
+    public void Copy_NullInput_ReturnsNull()
     {
         // Arrange
         TestCopyClass? input = null;
@@ -1600,7 +1618,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void Copy_WithNonNullInput_ReturnsCopyWithSameProperties()
+    public void Copy_NonNullInput_ReturnsCopyWithSameProperties()
     {
         // Arrange
         var input = new TestCopyClass
@@ -1619,22 +1637,4 @@ public partial class YANObjectTest
         Assert.Equal(input.Text, result.Text);
     }
     #endregion
-}
-
-public class TestCopyClass
-{
-    public int Number { get; set; }
-
-    public string? Text { get; set; }
-}
-
-public class TestTimeZoneClass
-{
-    public DateTime Date { get; set; }
-
-    public string? Name { get; set; }
-
-    public TestTimeZoneClass? Nested { get; set; }
-
-    public List<TestTimeZoneClass>? List { get; set; }
 }

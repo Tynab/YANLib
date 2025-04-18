@@ -43,7 +43,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithDefaultProperty_ReturnsFalse()
+    public void AllPropertiesNotDefault_DefaultProperty_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -208,7 +208,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesNotDefault_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -222,7 +222,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesNotDefault_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -241,7 +241,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_AllNamesNullWhiteSpace_ReturnsFalse()
+    public void AllPropertiesNotDefault_Names_AllNamesNullWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -260,7 +260,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_SpecifiedPropertyNonDefault_ReturnsTrue()
+    public void AllPropertiesNotDefault_Names_SpecifiedPropertyNonDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -279,7 +279,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_SpecifiedPropertyDefault_ReturnsFalse()
+    public void AllPropertiesNotDefault_Names_SpecifiedPropertyDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -298,7 +298,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_NonMatchingPropertyNames_ReturnsTrue()
+    public void AllPropertiesNotDefault_Names_NonMatchingPropertyNames_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -317,7 +317,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_IEnumerable_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesNotDefaults_IEnumerable_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass>? input = null;
@@ -331,7 +331,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_IEnumerable_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesNotDefaults_IEnumerable_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -351,7 +351,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_IEnumerable_WithNames_EmptyNames_ReturnsFalse()
+    public void AllPropertiesNotDefaults_IEnumerable_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -371,7 +371,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_IEnumerable_WithNames_NamesWithWhiteSpace_ReturnsFalse()
+    public void AllPropertiesNotDefaults_IEnumerable_Names_NamesWithWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -391,7 +391,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_IEnumerable_WithNames_AllObjectsSpecifiedPropertiesNonDefault_ReturnsTrue()
+    public void AllPropertiesNotDefaults_IEnumerable_Names_AllObjectsSpecifiedPropertiesNonDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -417,7 +417,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_IEnumerable_WithNames_OneObjectSpecifiedPropertyDefault_ReturnsFalse()
+    public void AllPropertiesNotDefaults_IEnumerable_Names_OneObjectSpecifiedPropertyDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -443,7 +443,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesNotDefault_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -456,7 +456,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesNotDefault_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -475,7 +475,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AllPropertiesNotDefault_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -492,7 +492,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AllPropertiesNotDefault_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -509,7 +509,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_SpecifiedPropertyNonDefault_ReturnsTrue()
+    public void AllPropertiesNotDefault_Params_Names_SpecifiedPropertyNonDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -526,7 +526,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_SpecifiedPropertyDefault_ReturnsFalse()
+    public void AllPropertiesNotDefault_Params_Names_SpecifiedPropertyDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -543,7 +543,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_Params_WithNames_NonMatchingNames_ReturnsTrue()
+    public void AllPropertiesNotDefault_Params_Names_NonMatchingNames_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -560,7 +560,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_Params_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesNotDefaults_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass>? input = null;
@@ -573,7 +573,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_Params_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesNotDefaults_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -593,7 +593,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AllPropertiesNotDefaults_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -612,7 +612,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AllPropertiesNotDefaults_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -631,7 +631,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_Params_WithNames_AllObjectsSpecifiedPropertiesNonDefault_ReturnsTrue()
+    public void AllPropertiesNotDefaults_Params_Names_AllObjectsSpecifiedPropertiesNonDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -656,7 +656,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_Params_WithNames_OneObjectSpecifiedPropertyDefault_ReturnsFalse()
+    public void AllPropertiesNotDefaults_Params_Names_OneObjectSpecifiedPropertyDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -713,7 +713,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNonDefaultProperty_ReturnsFalse()
+    public void AllPropertiesDefault_NonDefaultProperty_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -878,7 +878,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesDefault_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -892,7 +892,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesDefault_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -911,7 +911,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_AllNamesNullWhiteSpace_ReturnsFalse()
+    public void AllPropertiesDefault_Names_AllNamesNullWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -930,7 +930,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_SpecifiedPropertyDefault_ReturnsTrue()
+    public void AllPropertiesDefault_Names_SpecifiedPropertyDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -949,7 +949,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_SpecifiedPropertyNonDefault_ReturnsFalse()
+    public void AllPropertiesDefault_Names_SpecifiedPropertyNonDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -968,7 +968,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_NonMatchingPropertyNames_ReturnsTrue()
+    public void AllPropertiesDefault_Names_NonMatchingPropertyNames_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -987,7 +987,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_IEnumerable_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesDefaults_IEnumerable_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass>? input = null;
@@ -1001,7 +1001,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_IEnumerable_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesDefaults_IEnumerable_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1021,7 +1021,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_IEnumerable_WithNames_EmptyNames_ReturnsFalse()
+    public void AllPropertiesDefaults_IEnumerable_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1041,7 +1041,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_IEnumerable_WithNames_NamesWithWhiteSpace_ReturnsFalse()
+    public void AllPropertiesDefaults_IEnumerable_Names_NamesWithWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1061,7 +1061,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_IEnumerable_WithNames_AllObjectsSpecifiedPropertiesDefault_ReturnsTrue()
+    public void AllPropertiesDefaults_IEnumerable_Names_AllObjectsSpecifiedPropertiesDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -1087,7 +1087,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_IEnumerable_WithNames_OneObjectSpecifiedPropertyNonDefault_ReturnsFalse()
+    public void AllPropertiesDefaults_IEnumerable_Names_OneObjectSpecifiedPropertyNonDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -1113,7 +1113,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesDefault_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -1126,7 +1126,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesDefault_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1145,7 +1145,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AllPropertiesDefault_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1162,7 +1162,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AllPropertiesDefault_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1179,7 +1179,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_SpecifiedPropertyDefault_ReturnsTrue()
+    public void AllPropertiesDefault_Params_Names_SpecifiedPropertyDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1196,7 +1196,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_SpecifiedPropertyNonDefault_ReturnsFalse()
+    public void AllPropertiesDefault_Params_Names_SpecifiedPropertyNonDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1213,7 +1213,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefault_Params_WithNames_NonMatchingNames_ReturnsTrue()
+    public void AllPropertiesDefault_Params_Names_NonMatchingNames_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1230,7 +1230,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesDefaults_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass>? input = null;
@@ -1243,7 +1243,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesDefaults_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1263,7 +1263,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AllPropertiesDefaults_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1282,7 +1282,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AllPropertiesDefaults_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1301,7 +1301,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_WithNames_AllObjectsSpecifiedPropertiesDefault_ReturnsTrue()
+    public void AllPropertiesDefaults_Params_Names_AllObjectsSpecifiedPropertiesDefault_ReturnsTrue()
     {
         // Arrange:
         var obj1 = new TestPropertiesClass
@@ -1326,7 +1326,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_WithNames_OneObjectSpecifiedPropertyNonDefault_ReturnsFalse()
+    public void AllPropertiesDefaults_Params_Names_OneObjectSpecifiedPropertyNonDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -1383,7 +1383,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNonDefaultProperty_ReturnsTrue()
+    public void AnyPropertiesNotDefault_NonDefaultProperty_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1548,7 +1548,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -1562,7 +1562,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1581,7 +1581,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNames_AllNamesNullWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Names_AllNamesNullWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1600,7 +1600,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNames_SpecifiedPropertyNonDefault_ReturnsTrue()
+    public void AnyPropertiesNotDefault_Names_SpecifiedPropertyNonDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1619,7 +1619,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNames_SpecifiedPropertyDefault_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Names_SpecifiedPropertyDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1638,7 +1638,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_WithNames_NonMatchingPropertyNames_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Names_NonMatchingPropertyNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1657,7 +1657,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_IEnumerable_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_IEnumerable_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass?>? input = null;
@@ -1671,7 +1671,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_IEnumerable_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_IEnumerable_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1691,7 +1691,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_IEnumerable_WithNames_EmptyNames_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_IEnumerable_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1711,7 +1711,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_IEnumerable_WithNames_NamesWithWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_IEnumerable_Names_NamesWithWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1731,7 +1731,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_IEnumerable_WithNames_OneObjectSpecifiedPropertyNonDefault_ReturnsTrue()
+    public void AnyPropertiesNotDefaults_IEnumerable_Names_OneObjectSpecifiedPropertyNonDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -1757,7 +1757,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_IEnumerable_WithNames_AllObjectsSpecifiedPropertiesDefault_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_IEnumerable_Names_AllObjectsSpecifiedPropertiesDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -1783,7 +1783,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -1796,7 +1796,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1815,7 +1815,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1832,7 +1832,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1849,7 +1849,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_SpecifiedPropertyNonDefault_ReturnsTrue()
+    public void AnyPropertiesNotDefault_Params_Names_SpecifiedPropertyNonDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1866,7 +1866,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_SpecifiedPropertyDefault_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Params_Names_SpecifiedPropertyDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1883,7 +1883,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_Params_WithNames_NonMatchingNames_ReturnsFalse()
+    public void AnyPropertiesNotDefault_Params_Names_NonMatchingNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -1900,7 +1900,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_Params_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass?>? input = null;
@@ -1913,7 +1913,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_Params_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1933,7 +1933,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1952,7 +1952,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -1971,7 +1971,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_Params_WithNames_OneObjectSpecifiedPropertyNonDefault_ReturnsTrue()
+    public void AnyPropertiesNotDefaults_Params_Names_OneObjectSpecifiedPropertyNonDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -1996,7 +1996,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_Params_WithNames_AllObjectsSpecifiedPropertiesDefault_ReturnsFalse()
+    public void AnyPropertiesNotDefaults_Params_Names_AllObjectsSpecifiedPropertiesDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -2053,7 +2053,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithDefaultProperty_ReturnsTrue()
+    public void AnyPropertiesDefault_DefaultProperty_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2218,7 +2218,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesDefault_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -2232,7 +2232,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesDefault_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2251,7 +2251,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithNames_AllNamesNullWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesDefault_Names_AllNamesNullWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2270,7 +2270,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithNames_SpecifiedPropertyDefault_ReturnsTrue()
+    public void AnyPropertiesDefault_Names_SpecifiedPropertyDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2289,7 +2289,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithNames_SpecifiedPropertyNonDefault_ReturnsFalse()
+    public void AnyPropertiesDefault_Names_SpecifiedPropertyNonDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2308,7 +2308,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_WithNames_NonMatchingPropertyNames_ReturnsFalse()
+    public void AnyPropertiesDefault_Names_NonMatchingPropertyNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2326,7 +2326,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_IEnumerable_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesDefaults_IEnumerable_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass?>? input = null;
@@ -2340,7 +2340,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_IEnumerable_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesDefaults_IEnumerable_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -2360,7 +2360,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_IEnumerable_WithNames_EmptyNames_ReturnsFalse()
+    public void AnyPropertiesDefaults_IEnumerable_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -2380,7 +2380,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_IEnumerable_WithNames_NamesWithWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesDefaults_IEnumerable_Names_NamesWithWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -2400,7 +2400,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_IEnumerable_WithNames_OneObjectSpecifiedPropertyDefault_ReturnsTrue()
+    public void AnyPropertiesDefaults_IEnumerable_Names_OneObjectSpecifiedPropertyDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -2426,7 +2426,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_IEnumerable_WithNames_AllObjectsSpecifiedPropertiesNonDefault_ReturnsFalse()
+    public void AnyPropertiesDefaults_IEnumerable_Names_AllObjectsSpecifiedPropertiesNonDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -2452,7 +2452,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesDefault_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         TestPropertiesClass? input = null;
@@ -2465,7 +2465,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesDefault_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2484,7 +2484,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AnyPropertiesDefault_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2501,7 +2501,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesDefault_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2518,7 +2518,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_SpecifiedPropertyDefault_ReturnsTrue()
+    public void AnyPropertiesDefault_Params_Names_SpecifiedPropertyDefault_ReturnsTrue()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2535,7 +2535,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_SpecifiedPropertyNonDefault_ReturnsFalse()
+    public void AnyPropertiesDefault_Params_Names_SpecifiedPropertyNonDefault_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2552,7 +2552,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefault_Params_WithNames_NonMatchingNames_ReturnsFalse()
+    public void AnyPropertiesDefault_Params_Names_NonMatchingNames_ReturnsFalse()
     {
         // Arrange
         var input = new TestPropertiesClass
@@ -2569,7 +2569,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_Params_WithNames_NullInput_ReturnsFalse()
+    public void AnyPropertiesDefaults_Params_Names_NullInput_ReturnsFalse()
     {
         // Arrange
         IEnumerable<TestPropertiesClass?>? input = null;
@@ -2582,7 +2582,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_Params_WithNames_NullNames_ReturnsFalse()
+    public void AnyPropertiesDefaults_Params_Names_NullNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -2602,7 +2602,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_Params_WithNames_EmptyNames_ReturnsFalse()
+    public void AnyPropertiesDefaults_Params_Names_EmptyNames_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -2621,7 +2621,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_Params_WithNames_AllNamesWhiteSpace_ReturnsFalse()
+    public void AnyPropertiesDefaults_Params_Names_AllNamesWhiteSpace_ReturnsFalse()
     {
         // Arrange
         var obj = new TestPropertiesClass
@@ -2640,7 +2640,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_Params_WithNames_OneObjectSpecifiedPropertyDefault_ReturnsTrue()
+    public void AnyPropertiesDefaults_Params_Names_OneObjectSpecifiedPropertyDefault_ReturnsTrue()
     {
         // Arrange
         var obj1 = new TestPropertiesClass
@@ -2665,7 +2665,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_Params_WithNames_AllObjectsSpecifiedPropertiesNonDefault_ReturnsFalse()
+    public void AnyPropertiesDefaults_Params_Names_AllObjectsSpecifiedPropertiesNonDefault_ReturnsFalse()
     {
         // Arrange
         var obj1 = new TestPropertiesClass

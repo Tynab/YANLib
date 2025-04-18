@@ -206,7 +206,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parse_NullableBool_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_NullableBool_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var input = new object?[] { "TRUE", "FALSE", "invalid", 0, 1 };
@@ -235,7 +235,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_NullableBool_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_NullableBool_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<bool?> { true, false, default, true, false };
@@ -264,7 +264,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parse_NullableInt_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_NullableInt_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var input = new object?[] { "1", "-2", "0.0", "invalid", -4.5, -6.6 };
@@ -293,7 +293,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_NullableInt_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_NullableInt_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<int?> { -1, default, 1 };
@@ -322,7 +322,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parse_NullableDouble_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_NullableDouble_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var input = new object?[] { "1.23", "-4", "0", "invalid", -5 };
@@ -351,7 +351,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_NullableDouble_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_NullableDouble_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<double?> { 3.0, default, -2.71828 };
@@ -380,7 +380,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parse_NullableString_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_NullableString_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var input = new object?[] { 1, null, "3" };
@@ -409,7 +409,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_NullableString_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_NullableString_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<string?> { "-1.23", default, "world" };
@@ -438,7 +438,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parse_NullableDateTime_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_NullableDateTime_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var input = new object?[] { "2023-01-01 13:45:59", "invalid" };
@@ -467,7 +467,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_NullableDateTime_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_NullableDateTime_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<DateTime?> { new DateTime(2023, 1, 1), default };
@@ -498,7 +498,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parse_NullableGuid_Enumerable_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_NullableGuid_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var guid1 = new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de");
@@ -529,7 +529,7 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_Params_NullableGuid_WithInvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Params_NullableGuid_InvalidValue_ReturnsDefaultForThatValue()
     {
         // Arrange
         var expected = new List<Guid?> { new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de"), default };

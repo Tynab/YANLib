@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using YANLib.Implementation;
 
 namespace YANLib;
@@ -24,6 +25,8 @@ public static partial class YANJson
     /// <returns>
     /// A JSON string representing the input object, or null if the input is null.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static string? Serialize(this object? input, JsonSerializerOptions? options = null) => input.SerializeImplement(options);
 
     /// <summary>
@@ -39,6 +42,8 @@ public static partial class YANJson
     /// An enumerable collection of JSON strings corresponding to each object in the input,
     /// or null if the input collection is null or empty.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<string?>? Serializes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.SerializesImplement(options);
 
     /// <summary>
@@ -49,6 +54,8 @@ public static partial class YANJson
     /// <returns>
     /// An enumerable collection of JSON strings for each provided object, or null if the input is null or empty.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<string?>? Serializes(params object?[]? input) => input.SerializesImplement();
 
     /// <summary>
@@ -57,6 +64,8 @@ public static partial class YANJson
     /// <param name="input">The object to serialize. If null, returns null.</param>
     /// <param name="options">Optional JsonSerializerOptions; if null, uses camel‑case policy.</param>
     /// <returns>A byte[] containing the UTF‑8 JSON, or null if input is null.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static byte[]? SerializeToBytes(this object? input, JsonSerializerOptions? options = null) => input.SerializeToBytesImplement(options);
 
     /// <summary>
@@ -65,6 +74,8 @@ public static partial class YANJson
     /// <param name="input">The sequence of objects to serialize. If null or empty, returns null.</param>
     /// <param name="options">Optional JsonSerializerOptions; if null, uses camel‑case policy.</param>
     /// <returns>An IEnumerable<byte[]> of JSON byte arrays, or null if input is null/empty.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<byte[]?>? SerializesToBytes(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.SerializesToBytesImplement(options);
 
     /// <summary>
@@ -72,6 +83,8 @@ public static partial class YANJson
     /// </summary>
     /// <param name="input">The objects to serialize.</param>
     /// <returns>An IEnumerable<byte[]> of JSON byte arrays, or null if input is null/empty.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<byte[]?>? SerializesToBytes(params object?[]? input) => input.SerializesToBytesImplement();
 
     /// <summary>
@@ -87,6 +100,8 @@ public static partial class YANJson
     /// <returns>
     /// An instance of type <typeparamref name="T"/> representing the deserialized JSON, or default(T) if deserialization fails.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static T? Deserialize<T>(this string? input, JsonSerializerOptions? options = null) => input.DeserializeImplement<T>(options);
 
     /// <summary>
@@ -103,6 +118,8 @@ public static partial class YANJson
     /// An enumerable collection of objects of type <typeparamref name="T"/> resulting from deserialization,
     /// or null if the input collection is null or empty.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<string?>? input, JsonSerializerOptions? options = null) => input.DeserializesImplement<T>(options);
 
     /// <summary>
@@ -115,6 +132,8 @@ public static partial class YANJson
     /// An enumerable collection of objects of type <typeparamref name="T"/> obtained from deserializing the input JSON strings,
     /// or null if the input is null or empty.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<T?>? Deserializes<T>(params string?[]? input) => input.DeserializesImplement<T>();
 
     /// <summary>
@@ -131,6 +150,8 @@ public static partial class YANJson
     /// An instance of type <typeparamref name="T"/> resulting from deserialization of the byte array,
     /// or default(T) if deserialization fails.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static T? Deserialize<T>(this byte[]? input, JsonSerializerOptions? options = null) => input.DeserializeImplement<T>(options);
 
     /// <summary>
@@ -147,6 +168,8 @@ public static partial class YANJson
     /// An enumerable collection of objects of type <typeparamref name="T"/> obtained from the deserialization of the input byte arrays,
     /// or null if the input collection is null or empty.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<T?>? Deserializes<T>(this IEnumerable<byte[]?>? input, JsonSerializerOptions? options = null) => input.DeserializesImplement<T>(options);
 
     /// <summary>
@@ -159,5 +182,7 @@ public static partial class YANJson
     /// An enumerable collection of deserialized objects of type <typeparamref name="T"/>,
     /// or null if the input is null or empty.
     /// </returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     public static IEnumerable<T?>? Deserializes<T>(params byte[]?[]? input) => input.DeserializesImplement<T>();
 }

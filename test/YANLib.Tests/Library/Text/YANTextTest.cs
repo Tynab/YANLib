@@ -6,7 +6,7 @@ public partial class YANTextTest
 {
     #region Title
     [Fact]
-    public void Title_WithNullString_ReturnsNull()
+    public void Title_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -19,7 +19,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_WithEmptyString_ReturnsEmptyString()
+    public void Title_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -32,7 +32,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_WithWhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Title_WhiteSpaceString_ReturnsWhiteSpaceString()
     {
         // Arrange
         var input = "   ";
@@ -45,7 +45,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_WithLowerCaseString_ReturnsTitleCaseString()
+    public void Title_LowerCaseString_ReturnsTitleCaseString()
     {
         // Arrange
         var input = "hello world";
@@ -58,7 +58,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_WithUpperCaseString_ReturnsTitleCaseString()
+    public void Title_UpperCaseString_ReturnsTitleCaseString()
     {
         // Arrange
         var input = "HELLO WORLD";
@@ -71,7 +71,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_WithMixedCaseString_ReturnsTitleCaseString()
+    public void Title_MixedCaseString_ReturnsTitleCaseString()
     {
         // Arrange
         var input = "hElLo WoRlD";
@@ -84,7 +84,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_List_WithMixedCaseStrings_ModifiesListToTitleCase()
+    public void Title_List_MixedCaseStrings_ModifiesListToTitleCase()
     {
         // Arrange
         var input = new List<string?> { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
@@ -98,7 +98,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_List_WithNullInput_DoesNotThrowException()
+    public void Title_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -111,7 +111,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Titles_WithMixedCaseStrings_ReturnsAllTitleCase()
+    public void Titles_MixedCaseStrings_ReturnsAllTitleCase()
     {
         // Arrange
         var input = new[] { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
@@ -125,7 +125,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Titles_WithNullInput_ReturnsNull()
+    public void Titles_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -138,7 +138,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Titles_Params_WithMixedCaseStrings_ReturnsAllTitleCase()
+    public void Titles_Params_MixedCaseStrings_ReturnsAllTitleCase()
     {
         // Act
         var result = YANText.Titles("hello world", "GOOD MORNING", null, "hAvE a NiCe DaY");
@@ -151,7 +151,7 @@ public partial class YANTextTest
 
     #region Capitalize
     [Fact]
-    public void Capitalize_WithNullString_ReturnsNull()
+    public void Capitalize_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -164,7 +164,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_WithEmptyString_ReturnsEmptyString()
+    public void Capitalize_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -177,7 +177,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_WithWhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Capitalize_WhiteSpaceString_ReturnsWhiteSpaceString()
     {
         // Arrange
         var input = "   ";
@@ -190,7 +190,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_WithLowerCaseString_ReturnsCapitalizedString()
+    public void Capitalize_LowerCaseString_ReturnsCapitalizedString()
     {
         // Arrange
         var input = "hello world";
@@ -203,7 +203,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_WithUpperCaseString_ReturnsCapitalizedString()
+    public void Capitalize_UpperCaseString_ReturnsCapitalizedString()
     {
         // Arrange
         var input = "HELLO WORLD";
@@ -216,7 +216,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_WithMixedCaseString_ReturnsCapitalizedString()
+    public void Capitalize_MixedCaseString_ReturnsCapitalizedString()
     {
         // Arrange
         var input = "hElLo WoRlD";
@@ -229,7 +229,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_List_WithMixedCaseStrings_ModifiesListToCapitalized()
+    public void Capitalize_List_MixedCaseStrings_ModifiesListToCapitalized()
     {
         // Arrange
         var input = new List<string?> { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
@@ -243,7 +243,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_List_WithNullInput_DoesNotThrowException()
+    public void Capitalize_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -256,7 +256,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalizes_WithMixedCaseStrings_ReturnsAllCapitalized()
+    public void Capitalizes_MixedCaseStrings_ReturnsAllCapitalized()
     {
         // Arrange
         var input = new[] { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
@@ -270,7 +270,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalizes_WithNullInput_ReturnsNull()
+    public void Capitalizes_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -283,7 +283,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalizes_Params_WithMixedCaseStrings_ReturnsAllCapitalized()
+    public void Capitalizes_Params_MixedCaseStrings_ReturnsAllCapitalized()
     {
         // Act
         var result = YANText.Capitalizes("hello world", "GOOD MORNING", null, "hAvE a NiCe DaY");
@@ -296,7 +296,7 @@ public partial class YANTextTest
 
     #region CleanSpace
     [Fact]
-    public void CleanSpace_WithNullString_ReturnsNull()
+    public void CleanSpace_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -309,7 +309,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_WithEmptyString_ReturnsEmptyString()
+    public void CleanSpace_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -322,7 +322,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_WithWhiteSpaceString_ReturnsEmptyString()
+    public void CleanSpace_WhiteSpaceString_ReturnsEmptyString()
     {
         // Arrange
         var input = "   ";
@@ -335,7 +335,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_WithMultipleSpaces_ReturnsSingleSpaces()
+    public void CleanSpace_MultipleSpaces_ReturnsSingleSpaces()
     {
         // Arrange
         var input = "hello   world";
@@ -348,7 +348,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_WithLeadingAndTrailingSpaces_ReturnsCleanedString()
+    public void CleanSpace_LeadingAndTrailingSpaces_ReturnsCleanedString()
     {
         // Arrange
         var input = "  hello world  ";
@@ -361,7 +361,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_WithMultipleWhitespaceTypes_ReturnsCleanedString()
+    public void CleanSpace_MultipleWhitespaceTypes_ReturnsCleanedString()
     {
         // Arrange
         var input = " hello\t\tworld\n\r ";
@@ -374,7 +374,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_List_WithMultipleSpacesStrings_ModifiesListToCleanedStrings()
+    public void CleanSpace_List_MultipleSpacesStrings_ModifiesListToCleanedStrings()
     {
         // Arrange
         var input = new List<string?> { "hello   world", "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY" };
@@ -388,7 +388,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_List_WithNullInput_DoesNotThrowException()
+    public void CleanSpace_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -401,7 +401,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpaces_WithMultipleSpacesStrings_ReturnsAllCleanedStrings()
+    public void CleanSpaces_MultipleSpacesStrings_ReturnsAllCleanedStrings()
     {
         // Arrange
         var input = new[] { "hello   world", "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY" };
@@ -415,7 +415,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpaces_WithNullInput_ReturnsNull()
+    public void CleanSpaces_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -428,7 +428,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpaces_Params_WithMultipleSpacesStrings_ReturnsAllCleanedStrings()
+    public void CleanSpaces_Params_MultipleSpacesStrings_ReturnsAllCleanedStrings()
     {
         // Act
         var result = YANText.CleanSpaces("hello   world", "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY");
@@ -441,7 +441,7 @@ public partial class YANTextTest
 
     #region FormatName
     [Fact]
-    public void FormatName_WithNullString_ReturnsNull()
+    public void FormatName_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -454,7 +454,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WithEmptyString_ReturnsEmptyString()
+    public void FormatName_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -467,7 +467,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WithWhiteSpaceString_ReturnsEmptyString()
+    public void FormatName_WhiteSpaceString_ReturnsEmptyString()
     {
         // Arrange
         var input = "   ";
@@ -480,7 +480,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WithSimpleName_ReturnsFormattedName()
+    public void FormatName_SimpleName_ReturnsFormattedName()
     {
         // Arrange
         var input = "john doe";
@@ -493,7 +493,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WithPunctuation_RemovesPunctuation()
+    public void FormatName_Punctuation_RemovesPunctuation()
     {
         // Arrange
         var input = "john.doe@example.com";
@@ -506,7 +506,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WithNumbers_RemovesNumbers()
+    public void FormatName_Numbers_RemovesNumbers()
     {
         // Arrange
         var input = "john123 doe456";
@@ -519,7 +519,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WithMultipleSpaces_RemovesExtraSpaces()
+    public void FormatName_MultipleSpaces_RemovesExtraSpaces()
     {
         // Arrange
         var input = "john   doe";
@@ -532,7 +532,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_List_WithVariousStrings_ModifiesListToFormattedNames()
+    public void FormatName_List_VariousStrings_ModifiesListToFormattedNames()
     {
         // Arrange
         var input = new List<string?> { "john doe", "JANE.DOE", null, "bob123 smith" };
@@ -546,7 +546,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_List_WithNullInput_DoesNotThrowException()
+    public void FormatName_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -559,7 +559,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatNames_WithVariousStrings_ReturnsAllFormattedNames()
+    public void FormatNames_VariousStrings_ReturnsAllFormattedNames()
     {
         // Arrange
         var input = new[] { "john doe", "JANE.DOE", null, "bob123 smith" };
@@ -573,7 +573,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatNames_WithNullInput_ReturnsNull()
+    public void FormatNames_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -586,7 +586,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatNames_Params_WithVariousStrings_ReturnsAllFormattedNames()
+    public void FormatNames_Params_VariousStrings_ReturnsAllFormattedNames()
     {
         // Act
         var result = YANText.FormatNames("john doe", "JANE.DOE", null, "bob123 smith");
@@ -599,7 +599,7 @@ public partial class YANTextTest
 
     #region FilterAlphabetic
     [Fact]
-    public void FilterAlphabetic_WithNullString_ReturnsNull()
+    public void FilterAlphabetic_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -612,7 +612,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_WithEmptyString_ReturnsEmptyString()
+    public void FilterAlphabetic_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -625,7 +625,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_WithWhiteSpaceString_ReturnsEmptyString()
+    public void FilterAlphabetic_WhiteSpaceString_ReturnsEmptyString()
     {
         // Arrange
         var input = "   ";
@@ -638,7 +638,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_WithMixedString_ReturnsOnlyLetters()
+    public void FilterAlphabetic_MixedString_ReturnsOnlyLetters()
     {
         // Arrange
         var input = "abc123!@#";
@@ -651,7 +651,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_WithOnlyLetters_ReturnsSameString()
+    public void FilterAlphabetic_OnlyLetters_ReturnsSameString()
     {
         // Arrange
         var input = "abcDEF";
@@ -664,7 +664,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_WithNoLetters_ReturnsEmptyString()
+    public void FilterAlphabetic_NoLetters_ReturnsEmptyString()
     {
         // Arrange
         var input = "123!@#";
@@ -677,7 +677,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_List_WithMixedStrings_ModifiesListToOnlyLetters()
+    public void FilterAlphabetic_List_MixedStrings_ModifiesListToOnlyLetters()
     {
         // Arrange
         var input = new List<string?> { "abc123", "DEF456", null, "!@#GHI" };
@@ -691,7 +691,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_List_WithNullInput_DoesNotThrowException()
+    public void FilterAlphabetic_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -704,7 +704,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetics_WithMixedStrings_ReturnsAllOnlyLetters()
+    public void FilterAlphabetics_MixedStrings_ReturnsAllOnlyLetters()
     {
         // Arrange
         var input = new[] { "abc123", "DEF456", null, "!@#GHI" };
@@ -718,7 +718,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetics_WithNullInput_ReturnsNull()
+    public void FilterAlphabetics_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -731,7 +731,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetics_Params_WithMixedStrings_ReturnsAllOnlyLetters()
+    public void FilterAlphabetics_Params_MixedStrings_ReturnsAllOnlyLetters()
     {
         // Act
         var result = YANText.FilterAlphabetics("abc123", "DEF456", null, "!@#GHI");
@@ -744,7 +744,7 @@ public partial class YANTextTest
 
     #region FilterNumber
     [Fact]
-    public void FilterNumber_WithNullString_ReturnsNull()
+    public void FilterNumber_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -757,7 +757,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_WithEmptyString_ReturnsEmptyString()
+    public void FilterNumber_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -770,7 +770,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_WithWhiteSpaceString_ReturnsEmptyString()
+    public void FilterNumber_WhiteSpaceString_ReturnsEmptyString()
     {
         // Arrange
         var input = "   ";
@@ -783,7 +783,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_WithMixedString_ReturnsOnlyNumbers()
+    public void FilterNumber_MixedString_ReturnsOnlyNumbers()
     {
         // Arrange
         var input = "abc123!@#";
@@ -796,7 +796,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_WithOnlyNumbers_ReturnsSameString()
+    public void FilterNumber_OnlyNumbers_ReturnsSameString()
     {
         // Arrange
         var input = "12345";
@@ -809,7 +809,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_WithNoNumbers_ReturnsEmptyString()
+    public void FilterNumber_NoNumbers_ReturnsEmptyString()
     {
         // Arrange
         var input = "abc!@#";
@@ -822,7 +822,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_List_WithMixedStrings_ModifiesListToOnlyNumbers()
+    public void FilterNumber_List_MixedStrings_ModifiesListToOnlyNumbers()
     {
         // Arrange
         var input = new List<string?> { "abc123", "DEF456", null, "!@#789" };
@@ -836,7 +836,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_List_WithNullInput_DoesNotThrowException()
+    public void FilterNumber_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -849,7 +849,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumbers_WithMixedStrings_ReturnsAllOnlyNumbers()
+    public void FilterNumbers_MixedStrings_ReturnsAllOnlyNumbers()
     {
         // Arrange
         var input = new[] { "abc123", "DEF456", null, "!@#789" };
@@ -863,7 +863,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumbers_WithNullInput_ReturnsNull()
+    public void FilterNumbers_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -876,7 +876,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumbers_Params_WithMixedStrings_ReturnsAllOnlyNumbers()
+    public void FilterNumbers_Params_MixedStrings_ReturnsAllOnlyNumbers()
     {
         // Act
         var result = YANText.FilterNumbers("abc123", "DEF456", null, "!@#789");
@@ -889,7 +889,7 @@ public partial class YANTextTest
 
     #region FilterAlphanumeric
     [Fact]
-    public void FilterAlphanumeric_WithNullString_ReturnsNull()
+    public void FilterAlphanumeric_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -902,7 +902,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_WithEmptyString_ReturnsEmptyString()
+    public void FilterAlphanumeric_EmptyString_ReturnsEmptyString()
     {
         // Arrange
         var input = string.Empty;
@@ -915,7 +915,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_WithWhiteSpaceString_ReturnsEmptyString()
+    public void FilterAlphanumeric_WhiteSpaceString_ReturnsEmptyString()
     {
         // Arrange
         var input = "   ";
@@ -928,7 +928,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_WithMixedString_ReturnsOnlyLettersAndNumbers()
+    public void FilterAlphanumeric_MixedString_ReturnsOnlyLettersAndNumbers()
     {
         // Arrange
         var input = "abc123!@#";
@@ -941,7 +941,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_WithOnlyLettersAndNumbers_ReturnsSameString()
+    public void FilterAlphanumeric_OnlyLettersAndNumbers_ReturnsSameString()
     {
         // Arrange
         var input = "abc123";
@@ -954,7 +954,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_WithNoLettersOrNumbers_ReturnsEmptyString()
+    public void FilterAlphanumeric_NoLettersOrNumbers_ReturnsEmptyString()
     {
         // Arrange
         var input = "!@#$%^";
@@ -967,7 +967,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_List_WithMixedStrings_ModifiesListToOnlyLettersAndNumbers()
+    public void FilterAlphanumeric_List_MixedStrings_ModifiesListToOnlyLettersAndNumbers()
     {
         // Arrange
         var input = new List<string?> { "abc123!@#", "DEF456*&^", null, "!@#GHI789" };
@@ -981,7 +981,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_List_WithNullInput_DoesNotThrowException()
+    public void FilterAlphanumeric_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<string?>? input = null;
@@ -994,7 +994,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumerics_WithMixedStrings_ReturnsAllOnlyLettersAndNumbers()
+    public void FilterAlphanumerics_MixedStrings_ReturnsAllOnlyLettersAndNumbers()
     {
         // Arrange
         var input = new[] { "abc123!@#", "DEF456*&^", null, "!@#GHI789" };
@@ -1008,7 +1008,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumerics_WithNullInput_ReturnsNull()
+    public void FilterAlphanumerics_NullInput_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1021,7 +1021,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumerics_Params_WithMixedStrings_ReturnsAllOnlyLettersAndNumbers()
+    public void FilterAlphanumerics_Params_MixedStrings_ReturnsAllOnlyLettersAndNumbers()
     {
         // Act
         var result = YANText.FilterAlphanumerics("abc123!@#", "DEF456*&^", null, "!@#GHI789");

@@ -11,9 +11,11 @@ namespace YANLib.Implementation.Unmanaged;
 
 internal static partial class YANUnmanaged
 {
-    #region Private
     private static readonly Dictionary<Type, Type?> UnderlyingTypeCache = [];
 
+    #region Private
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpaceImplement()
         ? defaultValue
         : format.IsNullEmptyImplement()
@@ -24,16 +26,24 @@ internal static partial class YANUnmanaged
         ? dt
         : defaultValue;
 
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static T ParseEnum<T>(this string? input, T defaultValue) where T : unmanaged => input.IsNullWhiteSpaceImplement()
         ? defaultValue
         : Enum.TryParse(typeof(T), input, true, out var enumResult)
         ? (T)enumResult
         : defaultValue;
 
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default;
 
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
 
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
     {
         if (typeof(T) == typeof(DateTime))
@@ -85,6 +95,8 @@ internal static partial class YANUnmanaged
         }
     }
 
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static Type? GetUnderlyingTypeCached(Type type)
     {
         if (!UnderlyingTypeCache.TryGetValue(type, out var underlyingType))

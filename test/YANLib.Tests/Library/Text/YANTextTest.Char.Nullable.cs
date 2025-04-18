@@ -6,7 +6,7 @@ public partial class YANTextTest
 {
     #region IsNullEmpty
     [Fact]
-    public void IsNullEmpty_Nullable_WithNull_ReturnsTrue()
+    public void IsNullEmpty_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -19,7 +19,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_Nullable_WithDefaultChar_ReturnsTrue()
+    public void IsNullEmpty_Nullable_DefaultChar_ReturnsTrue()
     {
         // Arrange
         char? input = default(char);
@@ -32,7 +32,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_Nullable_WithNonDefaultChar_ReturnsFalse()
+    public void IsNullEmpty_Nullable_NonDefaultChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -47,7 +47,7 @@ public partial class YANTextTest
 
     #region AllNullEmpty
     [Fact]
-    public void AllNullEmpty_Nullable_WithAllNullOrDefaultChars_ReturnsTrue()
+    public void AllNullEmpty_Nullable_AllNullOrDefaultChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { null, default };
@@ -60,7 +60,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_Nullable_WithSomeNonNullOrDefaultChars_ReturnsFalse()
+    public void AllNullEmpty_Nullable_SomeNonNullOrDefaultChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { null, 'a' };
@@ -73,7 +73,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_Nullable_Params_WithAllNullOrDefaultChars_ReturnsTrue()
+    public void AllNullEmpty_Nullable_Params_AllNullOrDefaultChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNullEmpty(null, default(char?));
@@ -83,7 +83,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_Nullable_Params_WithSomeNonNullOrDefaultChars_ReturnsFalse()
+    public void AllNullEmpty_Nullable_Params_SomeNonNullOrDefaultChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNullEmpty(null, 'a');
@@ -95,7 +95,7 @@ public partial class YANTextTest
 
     #region AnyNullEmpty
     [Fact]
-    public void AnyNullEmpty_Nullable_WithSomeNullOrDefaultChars_ReturnsTrue()
+    public void AnyNullEmpty_Nullable_SomeNullOrDefaultChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { null, 'a' };
@@ -108,7 +108,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_Nullable_WithNoNullOrDefaultChars_ReturnsFalse()
+    public void AnyNullEmpty_Nullable_NoNullOrDefaultChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b' };
@@ -121,7 +121,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_Nullable_Params_WithSomeNullOrDefaultChars_ReturnsTrue()
+    public void AnyNullEmpty_Nullable_Params_SomeNullOrDefaultChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNullEmpty(null, 'a');
@@ -131,7 +131,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_Nullable_Params_WithNoNullOrDefaultChars_ReturnsFalse()
+    public void AnyNullEmpty_Nullable_Params_NoNullOrDefaultChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNullEmpty('a', 'b');
@@ -143,7 +143,7 @@ public partial class YANTextTest
 
     #region IsNullWhiteSpace
     [Fact]
-    public void IsNullWhiteSpace_Nullable_WithNull_ReturnsTrue()
+    public void IsNullWhiteSpace_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -156,7 +156,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_Nullable_WithDefaultChar_ReturnsTrue()
+    public void IsNullWhiteSpace_Nullable_DefaultChar_ReturnsTrue()
     {
         // Arrange
         char? input = default(char);
@@ -169,7 +169,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_Nullable_WithWhiteSpaceChar_ReturnsTrue()
+    public void IsNullWhiteSpace_Nullable_WhiteSpaceChar_ReturnsTrue()
     {
         // Arrange
         char? input = ' ';
@@ -182,7 +182,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_Nullable_WithNonWhiteSpaceChar_ReturnsFalse()
+    public void IsNullWhiteSpace_Nullable_NonWhiteSpaceChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -197,7 +197,7 @@ public partial class YANTextTest
 
     #region AllNullWhiteSpace
     [Fact]
-    public void AllNullWhiteSpace_Nullable_WithAllNullOrWhiteSpaceChars_ReturnsTrue()
+    public void AllNullWhiteSpace_Nullable_AllNullOrWhiteSpaceChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { null, ' ', default, '\t' };
@@ -210,7 +210,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Nullable_WithSomeNonWhiteSpaceChars_ReturnsFalse()
+    public void AllNullWhiteSpace_Nullable_SomeNonWhiteSpaceChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { null, 'a', ' ' };
@@ -223,7 +223,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Nullable_Params_WithAllNullOrWhiteSpaceChars_ReturnsTrue()
+    public void AllNullWhiteSpace_Nullable_Params_AllNullOrWhiteSpaceChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNullWhiteSpace(null, ' ', default, '\t');
@@ -233,7 +233,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Nullable_Params_WithSomeNonWhiteSpaceChars_ReturnsFalse()
+    public void AllNullWhiteSpace_Nullable_Params_SomeNonWhiteSpaceChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNullWhiteSpace(null, 'a', ' ');
@@ -245,7 +245,7 @@ public partial class YANTextTest
 
     #region AnyNullWhiteSpace
     [Fact]
-    public void AnyNullWhiteSpace_Nullable_WithSomeNullOrWhiteSpaceChars_ReturnsTrue()
+    public void AnyNullWhiteSpace_Nullable_SomeNullOrWhiteSpaceChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', null, 'b' };
@@ -258,7 +258,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Nullable_WithNoNullOrWhiteSpaceChars_ReturnsFalse()
+    public void AnyNullWhiteSpace_Nullable_NoNullOrWhiteSpaceChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -271,7 +271,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Nullable_Params_WithSomeNullOrWhiteSpaceChars_ReturnsTrue()
+    public void AnyNullWhiteSpace_Nullable_Params_SomeNullOrWhiteSpaceChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNullWhiteSpace('a', null, 'b');
@@ -281,7 +281,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Nullable_Params_WithNoNullOrWhiteSpaceChars_ReturnsFalse()
+    public void AnyNullWhiteSpace_Nullable_Params_NoNullOrWhiteSpaceChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNullWhiteSpace('a', 'b', 'c');
@@ -293,7 +293,7 @@ public partial class YANTextTest
 
     #region IsAlphabetic
     [Fact]
-    public void IsAlphabetic_Nullable_WithLetterChar_ReturnsTrue()
+    public void IsAlphabetic_Nullable_LetterChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -306,7 +306,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsAlphabetic_Nullable_WithNonLetterChar_ReturnsFalse()
+    public void IsAlphabetic_Nullable_NonLetterChar_ReturnsFalse()
     {
         // Arrange
         char? input = '1';
@@ -319,7 +319,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsAlphabetic_Nullable_WithNull_ReturnsFalse()
+    public void IsAlphabetic_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -334,7 +334,7 @@ public partial class YANTextTest
 
     #region AllAlphabetic
     [Fact]
-    public void AllAlphabetic_Nullable_WithAllLetterChars_ReturnsTrue()
+    public void AllAlphabetic_Nullable_AllLetterChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'B' };
@@ -347,7 +347,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphabetic_Nullable_WithSomeNonLetterChars_ReturnsFalse()
+    public void AllAlphabetic_Nullable_SomeNonLetterChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', '1' };
@@ -360,7 +360,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphabetic_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllAlphabetic_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', null };
@@ -373,7 +373,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphabetic_Nullable_Params_WithAllLetterChars_ReturnsTrue()
+    public void AllAlphabetic_Nullable_Params_AllLetterChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllAlphabetic('a', 'B');
@@ -383,7 +383,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphabetic_Nullable_Params_WithSomeNonLetterChars_ReturnsFalse()
+    public void AllAlphabetic_Nullable_Params_SomeNonLetterChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllAlphabetic('a', '1');
@@ -393,7 +393,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphabetic_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllAlphabetic_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllAlphabetic('a', null);
@@ -405,7 +405,7 @@ public partial class YANTextTest
 
     #region AnyAlphabetic
     [Fact]
-    public void AnyAlphabetic_Nullable_WithSomeLetterChars_ReturnsTrue()
+    public void AnyAlphabetic_Nullable_SomeLetterChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', '1' };
@@ -418,7 +418,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphabetic_Nullable_WithNoLetterChars_ReturnsFalse()
+    public void AnyAlphabetic_Nullable_NoLetterChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '1', '2', null };
@@ -431,7 +431,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphabetic_Nullable_Params_WithSomeLetterChars_ReturnsTrue()
+    public void AnyAlphabetic_Nullable_Params_SomeLetterChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyAlphabetic('a', '1');
@@ -441,7 +441,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphabetic_Nullable_Params_WithNoLetterChars_ReturnsFalse()
+    public void AnyAlphabetic_Nullable_Params_NoLetterChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyAlphabetic('1', '2', null);
@@ -453,7 +453,7 @@ public partial class YANTextTest
 
     #region IsPunctuation
     [Fact]
-    public void IsPunctuation_Nullable_WithPunctuationChar_ReturnsTrue()
+    public void IsPunctuation_Nullable_PunctuationChar_ReturnsTrue()
     {
         // Arrange
         char? input = '.';
@@ -466,7 +466,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsPunctuation_Nullable_WithNonPunctuationChar_ReturnsFalse()
+    public void IsPunctuation_Nullable_NonPunctuationChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -479,7 +479,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsPunctuation_Nullable_WithNull_ReturnsFalse()
+    public void IsPunctuation_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -494,7 +494,7 @@ public partial class YANTextTest
 
     #region AllPunctuation
     [Fact]
-    public void AllPunctuation_Nullable_WithAllPunctuationChars_ReturnsTrue()
+    public void AllPunctuation_Nullable_AllPunctuationChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '.', ',' };
@@ -507,7 +507,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_Nullable_WithSomeNonPunctuationChars_ReturnsFalse()
+    public void AllPunctuation_Nullable_SomeNonPunctuationChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '.', 'a' };
@@ -520,7 +520,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllPunctuation_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '.', null };
@@ -533,7 +533,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_Nullable_Params_WithAllPunctuationChars_ReturnsTrue()
+    public void AllPunctuation_Nullable_Params_AllPunctuationChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllPunctuation('.', ',');
@@ -543,7 +543,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_Nullable_Params_WithSomeNonPunctuationChars_ReturnsFalse()
+    public void AllPunctuation_Nullable_Params_SomeNonPunctuationChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllPunctuation('.', 'a');
@@ -553,7 +553,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllPunctuation_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllPunctuation('.', null);
@@ -565,7 +565,7 @@ public partial class YANTextTest
 
     #region AnyPunctuation
     [Fact]
-    public void AnyPunctuation_Nullable_WithSomePunctuationChars_ReturnsTrue()
+    public void AnyPunctuation_Nullable_SomePunctuationChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '.', 'a' };
@@ -578,7 +578,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyPunctuation_Nullable_WithNoPunctuationChars_ReturnsFalse()
+    public void AnyPunctuation_Nullable_NoPunctuationChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', null };
@@ -591,7 +591,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyPunctuation_Nullable_Params_WithSomePunctuationChars_ReturnsTrue()
+    public void AnyPunctuation_Nullable_Params_SomePunctuationChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyPunctuation('.', 'a');
@@ -601,7 +601,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyPunctuation_Nullable_Params_WithNoPunctuationChars_ReturnsFalse()
+    public void AnyPunctuation_Nullable_Params_NoPunctuationChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyPunctuation('a', 'b', null);
@@ -613,7 +613,7 @@ public partial class YANTextTest
 
     #region IsNumber
     [Fact]
-    public void IsNumber_Nullable_WithDigitChar_ReturnsTrue()
+    public void IsNumber_Nullable_DigitChar_ReturnsTrue()
     {
         // Arrange
         char? input = '1';
@@ -626,7 +626,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNumber_Nullable_WithNonDigitChar_ReturnsFalse()
+    public void IsNumber_Nullable_NonDigitChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -639,7 +639,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNumber_Nullable_WithNull_ReturnsFalse()
+    public void IsNumber_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -654,7 +654,7 @@ public partial class YANTextTest
 
     #region AllNumber
     [Fact]
-    public void AllNumber_Nullable_WithAllDigitChars_ReturnsTrue()
+    public void AllNumber_Nullable_AllDigitChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '1', '2' };
@@ -667,7 +667,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_Nullable_WithSomeNonDigitChars_ReturnsFalse()
+    public void AllNumber_Nullable_SomeNonDigitChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '1', 'a' };
@@ -680,7 +680,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllNumber_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '1', null };
@@ -693,7 +693,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_Nullable_Params_WithAllDigitChars_ReturnsTrue()
+    public void AllNumber_Nullable_Params_AllDigitChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNumber('1', '2');
@@ -703,7 +703,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_Nullable_Params_WithSomeNonDigitChars_ReturnsFalse()
+    public void AllNumber_Nullable_Params_SomeNonDigitChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNumber('1', 'a');
@@ -713,7 +713,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllNumber_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNumber('1', null);
@@ -725,7 +725,7 @@ public partial class YANTextTest
 
     #region AnyNumber
     [Fact]
-    public void AnyNumber_Nullable_WithSomeDigitChars_ReturnsTrue()
+    public void AnyNumber_Nullable_SomeDigitChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '1', 'a' };
@@ -738,7 +738,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNumber_Nullable_WithNoDigitChars_ReturnsFalse()
+    public void AnyNumber_Nullable_NoDigitChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', null };
@@ -751,7 +751,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNumber_Nullable_Params_WithSomeDigitChars_ReturnsTrue()
+    public void AnyNumber_Nullable_Params_SomeDigitChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNumber('1', 'a');
@@ -761,7 +761,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNumber_Nullable_Params_WithNoDigitChars_ReturnsFalse()
+    public void AnyNumber_Nullable_Params_NoDigitChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNumber('a', 'b', null);
@@ -773,7 +773,7 @@ public partial class YANTextTest
 
     #region IsAlphanumeric
     [Fact]
-    public void IsAlphanumeric_Nullable_WithLetterChar_ReturnsTrue()
+    public void IsAlphanumeric_Nullable_LetterChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -786,7 +786,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsAlphanumeric_Nullable_WithDigitChar_ReturnsTrue()
+    public void IsAlphanumeric_Nullable_DigitChar_ReturnsTrue()
     {
         // Arrange
         char? input = '1';
@@ -799,7 +799,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsAlphanumeric_Nullable_WithNonAlphanumericChar_ReturnsFalse()
+    public void IsAlphanumeric_Nullable_NonAlphanumericChar_ReturnsFalse()
     {
         // Arrange
         char? input = '.';
@@ -812,7 +812,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsAlphanumeric_Nullable_WithNull_ReturnsFalse()
+    public void IsAlphanumeric_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -827,7 +827,7 @@ public partial class YANTextTest
 
     #region AllAlphanumeric
     [Fact]
-    public void AllAlphanumeric_Nullable_WithAllAlphanumericChars_ReturnsTrue()
+    public void AllAlphanumeric_Nullable_AllAlphanumericChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'B', '1', '2' };
@@ -840,7 +840,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_Nullable_WithSomeNonAlphanumericChars_ReturnsFalse()
+    public void AllAlphanumeric_Nullable_SomeNonAlphanumericChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', '1', '.' };
@@ -853,7 +853,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllAlphanumeric_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', '1', null };
@@ -866,7 +866,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_Nullable_Params_WithAllAlphanumericChars_ReturnsTrue()
+    public void AllAlphanumeric_Nullable_Params_AllAlphanumericChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllAlphanumeric('a', 'B', '1', '2');
@@ -876,7 +876,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_Nullable_Params_WithSomeNonAlphanumericChars_ReturnsFalse()
+    public void AllAlphanumeric_Nullable_Params_SomeNonAlphanumericChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllAlphanumeric('a', '1', '.');
@@ -886,7 +886,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllAlphanumeric_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllAlphanumeric('a', '1', null);
@@ -898,7 +898,7 @@ public partial class YANTextTest
 
     #region AnyAlphanumeric
     [Fact]
-    public void AnyAlphanumeric_Nullable_WithSomeAlphanumericChars_ReturnsTrue()
+    public void AnyAlphanumeric_Nullable_SomeAlphanumericChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', '.', '!' };
@@ -911,7 +911,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphanumeric_Nullable_WithNoAlphanumericChars_ReturnsFalse()
+    public void AnyAlphanumeric_Nullable_NoAlphanumericChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '.', '!', '@', null };
@@ -924,7 +924,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphanumeric_Nullable_Params_WithSomeAlphanumericChars_ReturnsTrue()
+    public void AnyAlphanumeric_Nullable_Params_SomeAlphanumericChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyAlphanumeric('a', '.', '!');
@@ -934,7 +934,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphanumeric_Nullable_Params_WithNoAlphanumericChars_ReturnsFalse()
+    public void AnyAlphanumeric_Nullable_Params_NoAlphanumericChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyAlphanumeric('.', '!', '@', null);
@@ -946,7 +946,7 @@ public partial class YANTextTest
 
     #region EqualsIgnoreCase
     [Fact]
-    public void EqualsIgnoreCase_Nullable_WithSameCharsDifferentCase_ReturnsTrue()
+    public void EqualsIgnoreCase_Nullable_SameCharsDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input1 = 'a';
@@ -960,7 +960,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void EqualsIgnoreCase_Nullable_WithDifferentChars_ReturnsFalse()
+    public void EqualsIgnoreCase_Nullable_DifferentChars_ReturnsFalse()
     {
         // Arrange
         var input1 = 'a';
@@ -974,7 +974,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void EqualsIgnoreCase_Nullable_WithNullChar_ReturnsFalse()
+    public void EqualsIgnoreCase_Nullable_NullChar_ReturnsFalse()
     {
         // Arrange
         var input1 = 'a';
@@ -990,7 +990,7 @@ public partial class YANTextTest
 
     #region AllEqualsIgnoreCase
     [Fact]
-    public void AllEqualsIgnoreCase_Nullable_WithAllSameCharsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_Nullable_AllSameCharsDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'A', 'a' };
@@ -1003,7 +1003,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Nullable_WithSomeDifferentChars_ReturnsFalse()
+    public void AllEqualsIgnoreCase_Nullable_SomeDifferentChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b' };
@@ -1016,7 +1016,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllEqualsIgnoreCase_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', null };
@@ -1029,7 +1029,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Nullable_Params_WithAllSameCharsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_Nullable_Params_AllSameCharsDifferentCase_ReturnsTrue()
     {
         // Act
         var result = YANText.AllEqualsIgnoreCase('a', 'A', 'a');
@@ -1039,7 +1039,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Nullable_Params_WithSomeDifferentChars_ReturnsFalse()
+    public void AllEqualsIgnoreCase_Nullable_Params_SomeDifferentChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllEqualsIgnoreCase('a', 'b');
@@ -1049,7 +1049,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllEqualsIgnoreCase_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllEqualsIgnoreCase('a', null);
@@ -1061,7 +1061,7 @@ public partial class YANTextTest
 
     #region AnyEqualsIgnoreCase
     [Fact]
-    public void AnyEqualsIgnoreCase_Nullable_WithSomeSameCharsDifferentCase_ReturnsTrue()
+    public void AnyEqualsIgnoreCase_Nullable_SomeSameCharsDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'A', 'b' };
@@ -1074,7 +1074,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Nullable_WithAllDifferentChars_ReturnsFalse()
+    public void AnyEqualsIgnoreCase_Nullable_AllDifferentChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -1087,7 +1087,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Nullable_Params_WithSomeSameCharsDifferentCase_ReturnsTrue()
+    public void AnyEqualsIgnoreCase_Nullable_Params_SomeSameCharsDifferentCase_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyEqualsIgnoreCase('a', 'A', 'b');
@@ -1097,7 +1097,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Nullable_Params_WithAllDifferentChars_ReturnsFalse()
+    public void AnyEqualsIgnoreCase_Nullable_Params_AllDifferentChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyEqualsIgnoreCase('a', 'b', 'c');
@@ -1109,7 +1109,7 @@ public partial class YANTextTest
 
     #region IsNotNullEmpty
     [Fact]
-    public void IsNotNullEmpty_Nullable_WithNonNullNonDefaultChar_ReturnsTrue()
+    public void IsNotNullEmpty_Nullable_NonNullNonDefaultChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -1122,7 +1122,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_Nullable_WithNull_ReturnsFalse()
+    public void IsNotNullEmpty_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -1135,7 +1135,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullEmpty_Nullable_WithDefaultChar_ReturnsFalse()
+    public void IsNotNullEmpty_Nullable_DefaultChar_ReturnsFalse()
     {
         // Arrange
         char? input = default(char);
@@ -1150,7 +1150,7 @@ public partial class YANTextTest
 
     #region AllNotNullEmpty
     [Fact]
-    public void AllNotNullEmpty_Nullable_WithAllNonNullNonDefaultChars_ReturnsTrue()
+    public void AllNotNullEmpty_Nullable_AllNonNullNonDefaultChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b' };
@@ -1163,7 +1163,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_Nullable_WithSomeNullOrDefaultChars_ReturnsFalse()
+    public void AllNotNullEmpty_Nullable_SomeNullOrDefaultChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', null };
@@ -1176,7 +1176,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_Nullable_Params_WithAllNonNullNonDefaultChars_ReturnsTrue()
+    public void AllNotNullEmpty_Nullable_Params_AllNonNullNonDefaultChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotNullEmpty('a', 'b');
@@ -1186,7 +1186,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullEmpty_Nullable_Params_WithSomeNullOrDefaultChars_ReturnsFalse()
+    public void AllNotNullEmpty_Nullable_Params_SomeNullOrDefaultChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotNullEmpty('a', null);
@@ -1198,7 +1198,7 @@ public partial class YANTextTest
 
     #region AnyNotNullEmpty
     [Fact]
-    public void AnyNotNullEmpty_Nullable_WithSomeNonNullNonDefaultChars_ReturnsTrue()
+    public void AnyNotNullEmpty_Nullable_SomeNonNullNonDefaultChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', null };
@@ -1211,7 +1211,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_Nullable_WithAllNullOrDefaultChars_ReturnsFalse()
+    public void AnyNotNullEmpty_Nullable_AllNullOrDefaultChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { null, default };
@@ -1224,7 +1224,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_Nullable_Params_WithSomeNonNullNonDefaultChars_ReturnsTrue()
+    public void AnyNotNullEmpty_Nullable_Params_SomeNonNullNonDefaultChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotNullEmpty('a', null);
@@ -1234,7 +1234,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullEmpty_Nullable_Params_WithAllNullOrDefaultChars_ReturnsFalse()
+    public void AnyNotNullEmpty_Nullable_Params_AllNullOrDefaultChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotNullEmpty(null, default(char?));
@@ -1246,7 +1246,7 @@ public partial class YANTextTest
 
     #region IsNotNullWhiteSpace
     [Fact]
-    public void IsNotNullWhiteSpace_Nullable_WithNonWhiteSpaceChar_ReturnsTrue()
+    public void IsNotNullWhiteSpace_Nullable_NonWhiteSpaceChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -1259,7 +1259,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullWhiteSpace_Nullable_WithNull_ReturnsFalse()
+    public void IsNotNullWhiteSpace_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -1272,7 +1272,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullWhiteSpace_Nullable_WithDefaultChar_ReturnsFalse()
+    public void IsNotNullWhiteSpace_Nullable_DefaultChar_ReturnsFalse()
     {
         // Arrange
         char? input = default(char);
@@ -1285,7 +1285,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNullWhiteSpace_Nullable_WithWhiteSpaceChar_ReturnsFalse()
+    public void IsNotNullWhiteSpace_Nullable_WhiteSpaceChar_ReturnsFalse()
     {
         // Arrange
         char? input = ' ';
@@ -1300,7 +1300,7 @@ public partial class YANTextTest
 
     #region AllNotNullWhiteSpace
     [Fact]
-    public void AllNotNullWhiteSpace_Nullable_WithAllNonNullNonWhiteSpaceChars_ReturnsTrue()
+    public void AllNotNullWhiteSpace_Nullable_AllNonNullNonWhiteSpaceChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -1313,7 +1313,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullWhiteSpace_Nullable_WithSomeNullOrWhiteSpaceChars_ReturnsFalse()
+    public void AllNotNullWhiteSpace_Nullable_SomeNullOrWhiteSpaceChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', ' ', 'c' };
@@ -1326,7 +1326,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullWhiteSpace_Nullable_Params_WithAllNonNullNonWhiteSpaceChars_ReturnsTrue()
+    public void AllNotNullWhiteSpace_Nullable_Params_AllNonNullNonWhiteSpaceChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotNullWhiteSpace('a', 'b', 'c');
@@ -1336,7 +1336,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNullWhiteSpace_Nullable_Params_WithSomeNullOrWhiteSpaceChars_ReturnsFalse()
+    public void AllNotNullWhiteSpace_Nullable_Params_SomeNullOrWhiteSpaceChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotNullWhiteSpace('a', null, 'c');
@@ -1348,7 +1348,7 @@ public partial class YANTextTest
 
     #region AnyNotNullWhiteSpace
     [Fact]
-    public void AnyNotNullWhiteSpace_Nullable_WithSomeNonNullNonWhiteSpaceChars_ReturnsTrue()
+    public void AnyNotNullWhiteSpace_Nullable_SomeNonNullNonWhiteSpaceChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { ' ', 'a', null };
@@ -1361,7 +1361,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullWhiteSpace_Nullable_WithNoNonNullNonWhiteSpaceChars_ReturnsFalse()
+    public void AnyNotNullWhiteSpace_Nullable_NoNonNullNonWhiteSpaceChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { ' ', '\t', null };
@@ -1374,7 +1374,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullWhiteSpace_Nullable_Params_WithSomeNonNullNonWhiteSpaceChars_ReturnsTrue()
+    public void AnyNotNullWhiteSpace_Nullable_Params_SomeNonNullNonWhiteSpaceChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotNullWhiteSpace(' ', 'a', null);
@@ -1384,7 +1384,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNullWhiteSpace_Nullable_Params_WithNoNonNullNonWhiteSpaceChars_ReturnsFalse()
+    public void AnyNotNullWhiteSpace_Nullable_Params_NoNonNullNonWhiteSpaceChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotNullWhiteSpace(' ', '\t', null);
@@ -1396,7 +1396,7 @@ public partial class YANTextTest
 
     #region IsNotAlphabetic
     [Fact]
-    public void IsNotAlphabetic_Nullable_WithNonLetterChar_ReturnsTrue()
+    public void IsNotAlphabetic_Nullable_NonLetterChar_ReturnsTrue()
     {
         // Arrange
         char? input = '1';
@@ -1409,7 +1409,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotAlphabetic_Nullable_WithLetterChar_ReturnsFalse()
+    public void IsNotAlphabetic_Nullable_LetterChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -1422,7 +1422,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotAlphabetic_Nullable_WithNull_ReturnsTrue()
+    public void IsNotAlphabetic_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -1437,7 +1437,7 @@ public partial class YANTextTest
 
     #region AllNotAlphabetic
     [Fact]
-    public void AllNotAlphabetic_Nullable_WithAllNonLetterChars_ReturnsTrue()
+    public void AllNotAlphabetic_Nullable_AllNonLetterChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '1', '2', '3' };
@@ -1450,7 +1450,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotAlphabetic_Nullable_WithSomeLetterChars_ReturnsFalse()
+    public void AllNotAlphabetic_Nullable_SomeLetterChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '1', 'a', '3' };
@@ -1463,7 +1463,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotAlphabetic_Nullable_Params_WithAllNonLetterChars_ReturnsTrue()
+    public void AllNotAlphabetic_Nullable_Params_AllNonLetterChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotAlphabetic('1', '2', '3');
@@ -1473,7 +1473,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotAlphabetic_Nullable_Params_WithSomeLetterChars_ReturnsFalse()
+    public void AllNotAlphabetic_Nullable_Params_SomeLetterChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotAlphabetic('1', 'a', '3');
@@ -1485,7 +1485,7 @@ public partial class YANTextTest
 
     #region AnyNotAlphabetic
     [Fact]
-    public void AnyNotAlphabetic_Nullable_WithSomeNonLetterChars_ReturnsTrue()
+    public void AnyNotAlphabetic_Nullable_SomeNonLetterChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', '1', 'b' };
@@ -1498,7 +1498,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotAlphabetic_Nullable_WithNoNonLetterChars_ReturnsFalse()
+    public void AnyNotAlphabetic_Nullable_NoNonLetterChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -1511,7 +1511,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotAlphabetic_Nullable_Params_WithSomeNonLetterChars_ReturnsTrue()
+    public void AnyNotAlphabetic_Nullable_Params_SomeNonLetterChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotAlphabetic('a', '1', 'b');
@@ -1521,7 +1521,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotAlphabetic_Nullable_Params_WithNoNonLetterChars_ReturnsFalse()
+    public void AnyNotAlphabetic_Nullable_Params_NoNonLetterChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotAlphabetic('a', 'b', 'c');
@@ -1533,7 +1533,7 @@ public partial class YANTextTest
 
     #region IsNotPunctuation
     [Fact]
-    public void IsNotPunctuation_Nullable_WithNonPunctuationChar_ReturnsTrue()
+    public void IsNotPunctuation_Nullable_NonPunctuationChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -1546,7 +1546,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotPunctuation_Nullable_WithPunctuationChar_ReturnsFalse()
+    public void IsNotPunctuation_Nullable_PunctuationChar_ReturnsFalse()
     {
         // Arrange
         char? input = '.';
@@ -1559,7 +1559,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotPunctuation_Nullable_WithNull_ReturnsTrue()
+    public void IsNotPunctuation_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -1574,7 +1574,7 @@ public partial class YANTextTest
 
     #region AllNotPunctuation
     [Fact]
-    public void AllNotPunctuation_Nullable_WithAllNonPunctuationChars_ReturnsTrue()
+    public void AllNotPunctuation_Nullable_AllNonPunctuationChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -1587,7 +1587,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotPunctuation_Nullable_WithSomePunctuationChars_ReturnsFalse()
+    public void AllNotPunctuation_Nullable_SomePunctuationChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', '.', 'c' };
@@ -1600,7 +1600,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotPunctuation_Nullable_Params_WithAllNonPunctuationChars_ReturnsTrue()
+    public void AllNotPunctuation_Nullable_Params_AllNonPunctuationChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotPunctuation('a', 'b', 'c');
@@ -1610,7 +1610,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotPunctuation_Nullable_Params_WithSomePunctuationChars_ReturnsFalse()
+    public void AllNotPunctuation_Nullable_Params_SomePunctuationChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotPunctuation('a', '.', 'c');
@@ -1622,7 +1622,7 @@ public partial class YANTextTest
 
     #region AnyNotPunctuation
     [Fact]
-    public void AnyNotPunctuation_Nullable_WithSomeNonPunctuationChars_ReturnsTrue()
+    public void AnyNotPunctuation_Nullable_SomeNonPunctuationChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '.', 'a', ',' };
@@ -1635,7 +1635,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotPunctuation_Nullable_WithNoNonPunctuationChars_ReturnsFalse()
+    public void AnyNotPunctuation_Nullable_NoNonPunctuationChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '.', ',', '!' };
@@ -1648,7 +1648,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotPunctuation_Nullable_Params_WithSomeNonPunctuationChars_ReturnsTrue()
+    public void AnyNotPunctuation_Nullable_Params_SomeNonPunctuationChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotPunctuation('.', 'a', ',');
@@ -1658,7 +1658,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotPunctuation_Nullable_Params_WithNoNonPunctuationChars_ReturnsFalse()
+    public void AnyNotPunctuation_Nullable_Params_NoNonPunctuationChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotPunctuation('.', ',', '!');
@@ -1670,7 +1670,7 @@ public partial class YANTextTest
 
     #region IsNotNumber
     [Fact]
-    public void IsNotNumber_Nullable_WithNonDigitChar_ReturnsTrue()
+    public void IsNotNumber_Nullable_NonDigitChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -1683,7 +1683,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNumber_Nullable_WithDigitChar_ReturnsFalse()
+    public void IsNotNumber_Nullable_DigitChar_ReturnsFalse()
     {
         // Arrange
         char? input = '1';
@@ -1696,7 +1696,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotNumber_Nullable_WithNull_ReturnsTrue()
+    public void IsNotNumber_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -1711,7 +1711,7 @@ public partial class YANTextTest
 
     #region AllNotNumber
     [Fact]
-    public void AllNotNumber_Nullable_WithAllNonDigitChars_ReturnsTrue()
+    public void AllNotNumber_Nullable_AllNonDigitChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -1724,7 +1724,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNumber_Nullable_WithSomeDigitChars_ReturnsFalse()
+    public void AllNotNumber_Nullable_SomeDigitChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', '1', 'c' };
@@ -1737,7 +1737,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNumber_Nullable_Params_WithAllNonDigitChars_ReturnsTrue()
+    public void AllNotNumber_Nullable_Params_AllNonDigitChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotNumber('a', 'b', 'c');
@@ -1747,7 +1747,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotNumber_Nullable_Params_WithSomeDigitChars_ReturnsFalse()
+    public void AllNotNumber_Nullable_Params_SomeDigitChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotNumber('a', '1', 'c');
@@ -1759,7 +1759,7 @@ public partial class YANTextTest
 
     #region AnyNotNumber
     [Fact]
-    public void AnyNotNumber_Nullable_WithSomeNonDigitChars_ReturnsTrue()
+    public void AnyNotNumber_Nullable_SomeNonDigitChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '1', 'a', '2' };
@@ -1772,7 +1772,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNumber_Nullable_WithNoNonDigitChars_ReturnsFalse()
+    public void AnyNotNumber_Nullable_NoNonDigitChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '1', '2', '3' };
@@ -1785,7 +1785,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNumber_Nullable_Params_WithSomeNonDigitChars_ReturnsTrue()
+    public void AnyNotNumber_Nullable_Params_SomeNonDigitChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotNumber('1', 'a', '2');
@@ -1795,7 +1795,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotNumber_Nullable_Params_WithNoNonDigitChars_ReturnsFalse()
+    public void AnyNotNumber_Nullable_Params_NoNonDigitChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotNumber('1', '2', '3');
@@ -1807,7 +1807,7 @@ public partial class YANTextTest
 
     #region IsNotAlphanumeric
     [Fact]
-    public void IsNotAlphanumeric_Nullable_WithNonAlphanumericChar_ReturnsTrue()
+    public void IsNotAlphanumeric_Nullable_NonAlphanumericChar_ReturnsTrue()
     {
         // Arrange
         char? input = '.';
@@ -1820,7 +1820,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotAlphanumeric_Nullable_WithLetterChar_ReturnsFalse()
+    public void IsNotAlphanumeric_Nullable_LetterChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -1833,7 +1833,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotAlphanumeric_Nullable_WithDigitChar_ReturnsFalse()
+    public void IsNotAlphanumeric_Nullable_DigitChar_ReturnsFalse()
     {
         // Arrange
         char? input = '1';
@@ -1846,7 +1846,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotAlphanumeric_Nullable_WithNull_ReturnsTrue()
+    public void IsNotAlphanumeric_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -1861,7 +1861,7 @@ public partial class YANTextTest
 
     #region AllNotAlphanumeric
     [Fact]
-    public void AllNotAlphanumeric_Nullable_WithAllNonAlphanumericChars_ReturnsTrue()
+    public void AllNotAlphanumeric_Nullable_AllNonAlphanumericChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { '.', '!', '@', null };
@@ -1874,7 +1874,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotAlphanumeric_Nullable_WithSomeAlphanumericChars_ReturnsFalse()
+    public void AllNotAlphanumeric_Nullable_SomeAlphanumericChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { '.', 'a', '!' };
@@ -1887,7 +1887,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotAlphanumeric_Nullable_Params_WithAllNonAlphanumericChars_ReturnsTrue()
+    public void AllNotAlphanumeric_Nullable_Params_AllNonAlphanumericChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotAlphanumeric('.', '!', '@', null);
@@ -1897,7 +1897,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotAlphanumeric_Nullable_Params_WithSomeAlphanumericChars_ReturnsFalse()
+    public void AllNotAlphanumeric_Nullable_Params_SomeAlphanumericChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotAlphanumeric('.', 'a', '!');
@@ -1909,7 +1909,7 @@ public partial class YANTextTest
 
     #region AnyNotAlphanumeric
     [Fact]
-    public void AnyNotAlphanumeric_Nullable_WithSomeNonAlphanumericChars_ReturnsTrue()
+    public void AnyNotAlphanumeric_Nullable_SomeNonAlphanumericChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', '.', '1' };
@@ -1922,7 +1922,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotAlphanumeric_Nullable_WithNoNonAlphanumericChars_ReturnsFalse()
+    public void AnyNotAlphanumeric_Nullable_NoNonAlphanumericChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', '1' };
@@ -1935,7 +1935,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotAlphanumeric_Nullable_Params_WithSomeNonAlphanumericChars_ReturnsTrue()
+    public void AnyNotAlphanumeric_Nullable_Params_SomeNonAlphanumericChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotAlphanumeric('a', '.', '1');
@@ -1945,7 +1945,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotAlphanumeric_Nullable_Params_WithNoNonAlphanumericChars_ReturnsFalse()
+    public void AnyNotAlphanumeric_Nullable_Params_NoNonAlphanumericChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotAlphanumeric('a', 'b', '1');
@@ -1957,7 +1957,7 @@ public partial class YANTextTest
 
     #region NotEqualsIgnoreCase
     [Fact]
-    public void NotEqualsIgnoreCase_Nullable_WithDifferentChars_ReturnsTrue()
+    public void NotEqualsIgnoreCase_Nullable_DifferentChars_ReturnsTrue()
     {
         // Arrange
         char? input1 = 'a';
@@ -1971,7 +1971,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void NotEqualsIgnoreCase_Nullable_WithSameCharsDifferentCase_ReturnsFalse()
+    public void NotEqualsIgnoreCase_Nullable_SameCharsDifferentCase_ReturnsFalse()
     {
         // Arrange
         char? input1 = 'a';
@@ -1985,7 +1985,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void NotEqualsIgnoreCase_Nullable_WithNullChar_ReturnsTrue()
+    public void NotEqualsIgnoreCase_Nullable_NullChar_ReturnsTrue()
     {
         // Arrange
         char? input1 = 'a';
@@ -2001,7 +2001,7 @@ public partial class YANTextTest
 
     #region AllNotEqualsIgnoreCase
     [Fact]
-    public void AllNotEqualsIgnoreCase_Nullable_WithAllDifferentChars_ReturnsTrue()
+    public void AllNotEqualsIgnoreCase_Nullable_AllDifferentChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'C' };
@@ -2014,7 +2014,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Nullable_WithSomeSameCharsDifferentCase_ReturnsFalse()
+    public void AllNotEqualsIgnoreCase_Nullable_SomeSameCharsDifferentCase_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'A', 'b' };
@@ -2027,7 +2027,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Nullable_Params_WithAllDifferentChars_ReturnsTrue()
+    public void AllNotEqualsIgnoreCase_Nullable_Params_AllDifferentChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotEqualsIgnoreCase('a', 'b', 'C');
@@ -2037,7 +2037,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Nullable_Params_WithSomeSameCharsDifferentCase_ReturnsFalse()
+    public void AllNotEqualsIgnoreCase_Nullable_Params_SomeSameCharsDifferentCase_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotEqualsIgnoreCase('a', 'A', 'b');
@@ -2049,7 +2049,7 @@ public partial class YANTextTest
 
     #region AnyNotEqualsIgnoreCase
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Nullable_WithSomeDifferentChars_ReturnsTrue()
+    public void AnyNotEqualsIgnoreCase_Nullable_SomeDifferentChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -2062,7 +2062,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Nullable_WithAllSameCharsDifferentCase_ReturnsFalse()
+    public void AnyNotEqualsIgnoreCase_Nullable_AllSameCharsDifferentCase_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'A', 'a' };
@@ -2075,7 +2075,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Nullable_Params_WithSomeDifferentChars_ReturnsTrue()
+    public void AnyNotEqualsIgnoreCase_Nullable_Params_SomeDifferentChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotEqualsIgnoreCase('a', 'b', 'c');
@@ -2085,7 +2085,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Nullable_Params_WithAllSameCharsDifferentCase_ReturnsFalse()
+    public void AnyNotEqualsIgnoreCase_Nullable_Params_AllSameCharsDifferentCase_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotEqualsIgnoreCase('a', 'A', 'a');
@@ -2097,7 +2097,7 @@ public partial class YANTextTest
 
     #region Lower and LowerInvariant
     [Fact]
-    public void Lower_Nullable_WithUpperCaseChar_ReturnsLowerCaseChar()
+    public void Lower_Nullable_UpperCaseChar_ReturnsLowerCaseChar()
     {
         // Arrange
         char? input = 'A';
@@ -2110,7 +2110,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_Nullable_WithWhiteSpaceChar_ReturnsSameChar()
+    public void Lower_Nullable_WhiteSpaceChar_ReturnsSameChar()
     {
         // Arrange
         char? input = ' ';
@@ -2123,7 +2123,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_Nullable_WithNull_ReturnsNull()
+    public void Lower_Nullable_Null_ReturnsNull()
     {
         // Arrange
         char? input = null;
@@ -2136,7 +2136,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_Nullable_List_WithMixedCaseChars_ModifiesListToLowerCase()
+    public void Lower_Nullable_List_MixedCaseChars_ModifiesListToLowerCase()
     {
         // Arrange
         var input = new List<char?> { 'A', 'b', 'C' };
@@ -2150,7 +2150,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_Nullable_List_WithNullInput_DoesNotThrowException()
+    public void Lower_Nullable_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<char?>? input = null;
@@ -2163,7 +2163,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_Nullable_WithMixedCaseChars_ReturnsAllLowerCase()
+    public void Lowers_Nullable_MixedCaseChars_ReturnsAllLowerCase()
     {
         // Arrange
         var input = new char?[] { 'A', 'b', 'C', null };
@@ -2177,7 +2177,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_Nullable_WithNullInput_ReturnsDefault()
+    public void Lowers_Nullable_NullInput_ReturnsDefault()
     {
         // Arrange
         IEnumerable<char?>? input = null;
@@ -2190,7 +2190,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_Nullable_Params_WithMixedCaseChars_ReturnsAllLowerCase()
+    public void Lowers_Nullable_Params_MixedCaseChars_ReturnsAllLowerCase()
     {
         // Act
         var result = YANText.Lowers('A', 'b', 'C', null);
@@ -2201,7 +2201,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_Nullable_WithUpperCaseChar_ReturnsLowerCaseChar()
+    public void LowerInvariant_Nullable_UpperCaseChar_ReturnsLowerCaseChar()
     {
         // Arrange
         char? input = 'A';
@@ -2214,7 +2214,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_Nullable_List_WithMixedCaseChars_ModifiesListToLowerCase()
+    public void LowerInvariant_Nullable_List_MixedCaseChars_ModifiesListToLowerCase()
     {
         // Arrange
         var input = new List<char?> { 'A', 'b', 'C', null };
@@ -2228,7 +2228,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_Nullable_List_WithNullInput_DoesNotThrowException()
+    public void LowerInvariant_Nullable_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<char?>? input = null;
@@ -2241,7 +2241,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_Nullable_WithMixedCaseChars_ReturnsAllLowerCase()
+    public void LowerInvariants_Nullable_MixedCaseChars_ReturnsAllLowerCase()
     {
         // Arrange
         var input = new char?[] { 'A', 'b', 'C', null };
@@ -2255,7 +2255,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_Nullable_WithNullInput_ReturnsDefault()
+    public void LowerInvariants_Nullable_NullInput_ReturnsDefault()
     {
         // Arrange
         IEnumerable<char?>? input = null;
@@ -2268,7 +2268,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_Nullable_Params_WithMixedCaseChars_ReturnsAllLowerCase()
+    public void LowerInvariants_Nullable_Params_MixedCaseChars_ReturnsAllLowerCase()
     {
         // Act
         var result = YANText.LowerInvariants('A', 'b', 'C', null);
@@ -2281,7 +2281,7 @@ public partial class YANTextTest
 
     #region Upper and UpperInvariant
     [Fact]
-    public void Upper_Nullable_WithLowerCaseChar_ReturnsUpperCaseChar()
+    public void Upper_Nullable_LowerCaseChar_ReturnsUpperCaseChar()
     {
         // Arrange
         char? input = 'a';
@@ -2294,7 +2294,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_Nullable_WithWhiteSpaceChar_ReturnsSameChar()
+    public void Upper_Nullable_WhiteSpaceChar_ReturnsSameChar()
     {
         // Arrange
         char? input = ' ';
@@ -2307,7 +2307,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_Nullable_WithNull_ReturnsNull()
+    public void Upper_Nullable_Null_ReturnsNull()
     {
         // Arrange
         char? input = null;
@@ -2320,7 +2320,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_Nullable_List_WithMixedCaseChars_ModifiesListToUpperCase()
+    public void Upper_Nullable_List_MixedCaseChars_ModifiesListToUpperCase()
     {
         // Arrange
         var input = new List<char?> { 'A', 'b', 'C', null };
@@ -2334,7 +2334,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_Nullable_List_WithNullInput_DoesNotThrowException()
+    public void Upper_Nullable_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<char?>? input = null;
@@ -2347,7 +2347,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_Nullable_WithMixedCaseChars_ReturnsAllUpperCase()
+    public void Uppers_Nullable_MixedCaseChars_ReturnsAllUpperCase()
     {
         // Arrange
         var input = new char?[] { 'A', 'b', 'C', null };
@@ -2361,7 +2361,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_Nullable_WithNullInput_ReturnsDefault()
+    public void Uppers_Nullable_NullInput_ReturnsDefault()
     {
         // Arrange
         IEnumerable<char?>? input = null;
@@ -2374,7 +2374,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_Nullable_Params_WithMixedCaseChars_ReturnsAllUpperCase()
+    public void Uppers_Nullable_Params_MixedCaseChars_ReturnsAllUpperCase()
     {
         // Act
         var result = YANText.Uppers('A', 'b', 'C', null);
@@ -2385,7 +2385,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_Nullable_WithLowerCaseChar_ReturnsUpperCaseChar()
+    public void UpperInvariant_Nullable_LowerCaseChar_ReturnsUpperCaseChar()
     {
         // Arrange
         char? input = 'a';
@@ -2398,7 +2398,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_Nullable_List_WithMixedCaseChars_ModifiesListToUpperCase()
+    public void UpperInvariant_Nullable_List_MixedCaseChars_ModifiesListToUpperCase()
     {
         // Arrange
         var input = new List<char?> { 'A', 'b', 'C', null };
@@ -2412,7 +2412,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_Nullable_List_WithNullInput_DoesNotThrowException()
+    public void UpperInvariant_Nullable_List_NullInput_DoesNotThrowException()
     {
         // Arrange
         List<char?>? input = null;
@@ -2425,7 +2425,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_Nullable_WithMixedCaseChars_ReturnsAllUpperCase()
+    public void UpperInvariants_Nullable_MixedCaseChars_ReturnsAllUpperCase()
     {
         // Arrange
         var input = new char?[] { 'A', 'b', 'C', null };
@@ -2439,7 +2439,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_Nullable_WithNullInput_ReturnsDefault()
+    public void UpperInvariants_Nullable_NullInput_ReturnsDefault()
     {
         // Arrange
         IEnumerable<char?>? input = null;
@@ -2452,7 +2452,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_Nullable_Params_WithMixedCaseChars_ReturnsAllUpperCase()
+    public void UpperInvariants_Nullable_Params_MixedCaseChars_ReturnsAllUpperCase()
     {
         // Act
         var result = YANText.UpperInvariants('A', 'b', 'C', null);
@@ -2465,7 +2465,7 @@ public partial class YANTextTest
 
     #region IsLower
     [Fact]
-    public void IsLower_Nullable_WithLowerCaseChar_ReturnsTrue()
+    public void IsLower_Nullable_LowerCaseChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -2478,7 +2478,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsLower_Nullable_WithUpperCaseChar_ReturnsFalse()
+    public void IsLower_Nullable_UpperCaseChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'A';
@@ -2491,7 +2491,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsLower_Nullable_WithWhiteSpaceChar_ReturnsFalse()
+    public void IsLower_Nullable_WhiteSpaceChar_ReturnsFalse()
     {
         // Arrange
         char? input = ' ';
@@ -2504,7 +2504,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsLower_Nullable_WithNull_ReturnsFalse()
+    public void IsLower_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -2519,7 +2519,7 @@ public partial class YANTextTest
 
     #region AllLowers
     [Fact]
-    public void AllLowers_Nullable_WithAllLowerCaseChars_ReturnsTrue()
+    public void AllLowers_Nullable_AllLowerCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b' };
@@ -2532,7 +2532,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllLowers_Nullable_WithSomeUpperCaseChars_ReturnsFalse()
+    public void AllLowers_Nullable_SomeUpperCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'B' };
@@ -2545,7 +2545,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllLowers_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllLowers_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', null };
@@ -2558,7 +2558,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllLowers_Nullable_Params_WithAllLowerCaseChars_ReturnsTrue()
+    public void AllLowers_Nullable_Params_AllLowerCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllLowers('a', 'b');
@@ -2568,7 +2568,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllLowers_Nullable_Params_WithSomeUpperCaseChars_ReturnsFalse()
+    public void AllLowers_Nullable_Params_SomeUpperCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllLowers('a', 'B');
@@ -2578,7 +2578,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllLowers_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllLowers_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllLowers('a', null);
@@ -2590,7 +2590,7 @@ public partial class YANTextTest
 
     #region AnyLowers
     [Fact]
-    public void AnyLowers_Nullable_WithSomeLowerCaseChars_ReturnsTrue()
+    public void AnyLowers_Nullable_SomeLowerCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'B' };
@@ -2603,7 +2603,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyLowers_Nullable_WithNoLowerCaseChars_ReturnsFalse()
+    public void AnyLowers_Nullable_NoLowerCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'A', 'B', null };
@@ -2616,7 +2616,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyLowers_Nullable_Params_WithSomeLowerCaseChars_ReturnsTrue()
+    public void AnyLowers_Nullable_Params_SomeLowerCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyLowers('a', 'B');
@@ -2626,7 +2626,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyLowers_Nullable_Params_WithNoLowerCaseChars_ReturnsFalse()
+    public void AnyLowers_Nullable_Params_NoLowerCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyLowers('A', 'B', null);
@@ -2638,7 +2638,7 @@ public partial class YANTextTest
 
     #region IsNotLower
     [Fact]
-    public void IsNotLower_Nullable_WithUpperCaseChar_ReturnsTrue()
+    public void IsNotLower_Nullable_UpperCaseChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'A';
@@ -2651,7 +2651,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotLower_Nullable_WithLowerCaseChar_ReturnsFalse()
+    public void IsNotLower_Nullable_LowerCaseChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -2664,7 +2664,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotLower_Nullable_WithNull_ReturnsTrue()
+    public void IsNotLower_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -2679,7 +2679,7 @@ public partial class YANTextTest
 
     #region AllNotLowers
     [Fact]
-    public void AllNotLowers_Nullable_WithAllNonLowerCaseChars_ReturnsTrue()
+    public void AllNotLowers_Nullable_AllNonLowerCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'A', 'B', 'C' };
@@ -2692,7 +2692,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotLowers_Nullable_WithSomeLowerCaseChars_ReturnsFalse()
+    public void AllNotLowers_Nullable_SomeLowerCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'A', 'b', 'C' };
@@ -2705,7 +2705,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotLowers_Nullable_Params_WithAllNonLowerCaseChars_ReturnsTrue()
+    public void AllNotLowers_Nullable_Params_AllNonLowerCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotLowers('A', 'B', 'C');
@@ -2715,7 +2715,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotLowers_Nullable_Params_WithSomeLowerCaseChars_ReturnsFalse()
+    public void AllNotLowers_Nullable_Params_SomeLowerCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotLowers('A', 'b', 'C');
@@ -2727,7 +2727,7 @@ public partial class YANTextTest
 
     #region AnyNotLowers
     [Fact]
-    public void AnyNotLowers_Nullable_WithSomeNonLowerCaseChars_ReturnsTrue()
+    public void AnyNotLowers_Nullable_SomeNonLowerCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'B', 'c' };
@@ -2740,7 +2740,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotLowers_Nullable_WithNoNonLowerCaseChars_ReturnsFalse()
+    public void AnyNotLowers_Nullable_NoNonLowerCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -2753,7 +2753,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotLowers_Nullable_Params_WithSomeNonLowerCaseChars_ReturnsTrue()
+    public void AnyNotLowers_Nullable_Params_SomeNonLowerCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotLowers('a', 'B', 'c');
@@ -2763,7 +2763,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotLowers_Nullable_Params_WithNoNonLowerCaseChars_ReturnsFalse()
+    public void AnyNotLowers_Nullable_Params_NoNonLowerCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotLowers('a', 'b', 'c');
@@ -2775,7 +2775,7 @@ public partial class YANTextTest
 
     #region IsUpper
     [Fact]
-    public void IsUpper_Nullable_WithUpperCaseChar_ReturnsTrue()
+    public void IsUpper_Nullable_UpperCaseChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'A';
@@ -2788,7 +2788,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsUpper_Nullable_WithLowerCaseChar_ReturnsFalse()
+    public void IsUpper_Nullable_LowerCaseChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'a';
@@ -2801,7 +2801,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsUpper_Nullable_WithWhiteSpaceChar_ReturnsFalse()
+    public void IsUpper_Nullable_WhiteSpaceChar_ReturnsFalse()
     {
         // Arrange
         char? input = ' ';
@@ -2814,7 +2814,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsUpper_Nullable_WithNull_ReturnsFalse()
+    public void IsUpper_Nullable_Null_ReturnsFalse()
     {
         // Arrange
         char? input = null;
@@ -2829,7 +2829,7 @@ public partial class YANTextTest
 
     #region AllUppers
     [Fact]
-    public void AllUppers_Nullable_WithAllUpperCaseChars_ReturnsTrue()
+    public void AllUppers_Nullable_AllUpperCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'A', 'B' };
@@ -2842,7 +2842,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllUppers_Nullable_WithSomeLowerCaseChars_ReturnsFalse()
+    public void AllUppers_Nullable_SomeLowerCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'A', 'b' };
@@ -2855,7 +2855,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllUppers_Nullable_WithSomeNullChars_ReturnsFalse()
+    public void AllUppers_Nullable_SomeNullChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'A', null };
@@ -2868,7 +2868,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllUppers_Nullable_Params_WithAllUpperCaseChars_ReturnsTrue()
+    public void AllUppers_Nullable_Params_AllUpperCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllUppers('A', 'B');
@@ -2878,7 +2878,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllUppers_Nullable_Params_WithSomeLowerCaseChars_ReturnsFalse()
+    public void AllUppers_Nullable_Params_SomeLowerCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllUppers('A', 'b');
@@ -2888,7 +2888,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllUppers_Nullable_Params_WithSomeNullChars_ReturnsFalse()
+    public void AllUppers_Nullable_Params_SomeNullChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllUppers('A', null);
@@ -2900,7 +2900,7 @@ public partial class YANTextTest
 
     #region AnyUppers
     [Fact]
-    public void AnyUppers_Nullable_WithSomeUpperCaseChars_ReturnsTrue()
+    public void AnyUppers_Nullable_SomeUpperCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'A', 'b' };
@@ -2913,7 +2913,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyUppers_Nullable_WithNoUpperCaseChars_ReturnsFalse()
+    public void AnyUppers_Nullable_NoUpperCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', null };
@@ -2926,7 +2926,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyUppers_Nullable_Params_WithSomeUpperCaseChars_ReturnsTrue()
+    public void AnyUppers_Nullable_Params_SomeUpperCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyUppers('A', 'b');
@@ -2936,7 +2936,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyUppers_Nullable_Params_WithNoUpperCaseChars_ReturnsFalse()
+    public void AnyUppers_Nullable_Params_NoUpperCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyUppers('a', 'b', null);
@@ -2948,7 +2948,7 @@ public partial class YANTextTest
 
     #region IsNotUpper
     [Fact]
-    public void IsNotUpper_Nullable_WithLowerCaseChar_ReturnsTrue()
+    public void IsNotUpper_Nullable_LowerCaseChar_ReturnsTrue()
     {
         // Arrange
         char? input = 'a';
@@ -2961,7 +2961,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotUpper_Nullable_WithUpperCaseChar_ReturnsFalse()
+    public void IsNotUpper_Nullable_UpperCaseChar_ReturnsFalse()
     {
         // Arrange
         char? input = 'A';
@@ -2974,7 +2974,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNotUpper_Nullable_WithNull_ReturnsTrue()
+    public void IsNotUpper_Nullable_Null_ReturnsTrue()
     {
         // Arrange
         char? input = null;
@@ -2989,7 +2989,7 @@ public partial class YANTextTest
 
     #region AllNotUppers
     [Fact]
-    public void AllNotUppers_Nullable_WithAllNonUpperCaseChars_ReturnsTrue()
+    public void AllNotUppers_Nullable_AllNonUpperCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'a', 'b', 'c' };
@@ -3002,7 +3002,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotUppers_Nullable_WithSomeUpperCaseChars_ReturnsFalse()
+    public void AllNotUppers_Nullable_SomeUpperCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'a', 'B', 'c' };
@@ -3015,7 +3015,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotUppers_Nullable_Params_WithAllNonUpperCaseChars_ReturnsTrue()
+    public void AllNotUppers_Nullable_Params_AllNonUpperCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AllNotUppers('a', 'b', 'c');
@@ -3025,7 +3025,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotUppers_Nullable_Params_WithSomeUpperCaseChars_ReturnsFalse()
+    public void AllNotUppers_Nullable_Params_SomeUpperCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AllNotUppers('a', 'B', 'c');
@@ -3037,7 +3037,7 @@ public partial class YANTextTest
 
     #region AnyNotUppers
     [Fact]
-    public void AnyNotUppers_Nullable_WithSomeNonUpperCaseChars_ReturnsTrue()
+    public void AnyNotUppers_Nullable_SomeNonUpperCaseChars_ReturnsTrue()
     {
         // Arrange
         var input = new char?[] { 'A', 'b', 'C' };
@@ -3050,7 +3050,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotUppers_Nullable_WithNoNonUpperCaseChars_ReturnsFalse()
+    public void AnyNotUppers_Nullable_NoNonUpperCaseChars_ReturnsFalse()
     {
         // Arrange
         var input = new char?[] { 'A', 'B', 'C' };
@@ -3063,7 +3063,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotUppers_Nullable_Params_WithSomeNonUpperCaseChars_ReturnsTrue()
+    public void AnyNotUppers_Nullable_Params_SomeNonUpperCaseChars_ReturnsTrue()
     {
         // Act
         var result = YANText.AnyNotUppers('A', 'b', 'C');
@@ -3073,7 +3073,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotUppers_Nullable_Params_WithNoNonUpperCaseChars_ReturnsFalse()
+    public void AnyNotUppers_Nullable_Params_NoNonUpperCaseChars_ReturnsFalse()
     {
         // Act
         var result = YANText.AnyNotUppers('A', 'B', 'C');

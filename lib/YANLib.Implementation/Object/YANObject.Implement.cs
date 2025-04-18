@@ -10,9 +10,11 @@ namespace YANLib.Implementation.Object;
 
 internal static partial class YANObject
 {
-    #region Private
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
 
+    #region Private
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, t => t.GetProperties(Public | Instance | DeclaredOnly));
     #endregion
 
