@@ -9,7 +9,7 @@ internal static partial class YANTask
     #region Private
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, T goodResult, bool firstOnly, CancellationToken cancellationToken) where T : IComparable<T>
+    private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, bool firstOnly, CancellationToken cancellationToken)
     {
         if (tasks.IsNullEmptyImplement())
         {
@@ -18,25 +18,27 @@ internal static partial class YANTask
 
         var pending = tasks.ToHashSet();
 
-        if (pending.Count is 0)
+        if (firstOnly)
         {
-            return default;
+            var completed = await WhenAny(pending).ConfigureAwait(false);
+
+            try
+            {
+                var result = await completed.ConfigureAwait(false);
+
+                return predicate(result) ? result : default;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         while (pending.Count > 0)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            Task<T> completed;
-
-            try
-            {
-                completed = await WhenAny(pending).ConfigureAwait(false);
-            }
-            catch
-            {
-                return default;
-            }
+            var completed = await WhenAny(pending).ConfigureAwait(false);
 
             _ = pending.Remove(completed);
 
@@ -46,30 +48,14 @@ internal static partial class YANTask
             {
                 result = await completed.ConfigureAwait(false);
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                throw;
-            }
             catch
             {
-                if (firstOnly)
-                {
-                    return default;
-                }
-                else
-                {
-                    continue;
-                }
+                continue;
             }
 
-            if (result.Equals(goodResult))
+            if (predicate(result))
             {
                 return result;
-            }
-
-            if (firstOnly)
-            {
-                return default;
             }
         }
 
@@ -79,11 +65,11 @@ internal static partial class YANTask
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static Task<T?> WaitAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, T goodResult, CancellationToken cancellationToken = default) where T : IComparable<T>
-        => AnyWithCondition(tasks, goodResult, firstOnly: true, cancellationToken);
+    internal static Task<T?> WaitAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
+        => AnyWithCondition(tasks, predicate, firstOnly: true, cancellationToken);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static Task<T?> WhenAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, T goodResult, CancellationToken cancellationToken = default) where T : IComparable<T>
-        => AnyWithCondition(tasks, goodResult, firstOnly: false, cancellationToken);
+    internal static Task<T?> WhenAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
+        => AnyWithCondition(tasks, predicate, firstOnly: false, cancellationToken);
 }

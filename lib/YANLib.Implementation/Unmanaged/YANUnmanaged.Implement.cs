@@ -16,23 +16,13 @@ internal static partial class YANUnmanaged
     #region Private
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null) => input.IsNullWhiteSpaceImplement()
-        ? defaultValue
-        : format.IsNullEmptyImplement()
-        ? TryParse(input, out var dt)
-            ? dt
-            : defaultValue
-        : TryParseExact(input, [.. format], InvariantCulture, None, out dt)
-        ? dt
-        : defaultValue;
+    private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null)
+        => input.IsNullWhiteSpaceImplement() ? defaultValue : format.IsNullEmptyImplement() ? TryParse(input, out var dt) ? dt : defaultValue : TryParseExact(input, [.. format], InvariantCulture, None, out dt) ? dt : defaultValue;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static T ParseEnum<T>(this string? input, T defaultValue) where T : unmanaged => input.IsNullWhiteSpaceImplement()
-        ? defaultValue
-        : Enum.TryParse(typeof(T), input, true, out var enumResult)
-        ? (T)enumResult
-        : defaultValue;
+    private static T ParseEnum<T>(this string? input, T defaultValue = default) where T : unmanaged
+        => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var enumResult) ? enumResult.ParseImplement<T>() : defaultValue;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -48,7 +38,7 @@ internal static partial class YANUnmanaged
     {
         if (typeof(T) == typeof(DateTime))
         {
-            return (T)(object)(input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format);
+            return (input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format).ParseImplement<T>();
         }
 
         if (typeof(T).IsEnum)
@@ -65,7 +55,7 @@ internal static partial class YANUnmanaged
 
             try
             {
-                return (T)ChangeType(defaultValue, typeof(T));
+                return ChangeType(defaultValue, typeof(T)).ParseImplement<T>();
             }
             catch
             {
@@ -75,7 +65,7 @@ internal static partial class YANUnmanaged
 
         try
         {
-            return (T)ChangeType(input, typeof(T));
+            return ChangeType(input, typeof(T)).ParseImplement<T>();
         }
         catch
         {
@@ -86,7 +76,7 @@ internal static partial class YANUnmanaged
 
             try
             {
-                return (T)ChangeType(defaultValue, typeof(T));
+                return ChangeType(defaultValue, typeof(T)).ParseImplement<T>();
             }
             catch
             {

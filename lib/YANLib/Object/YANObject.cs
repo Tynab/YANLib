@@ -15,23 +15,21 @@ public static partial class YANObject
     #region Is
     /// <summary>
     /// Determines whether the specified object is equal to its default value.
-    /// This method internally checks whether the object is equal to <c>default(object)</c> (typically <c>null</c>).
     /// </summary>
     /// <param name="input">The object to test.</param>
-    /// <returns><see langword="true"/> if the object is the default; otherwise, <see langword="false"/>.</returns>
+    /// <returns><c>true</c> if the object is the default; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool IsDefault(this object input) => input.IsDefaultImplement();
+    public static bool IsDefault<T>(this T input) => input.IsDefaultImplement<T>();
 
     /// <summary>
     /// Determines whether the specified object is not equal to its default value.
-    /// This method returns <see langword="true"/> if the object is not equal to <c>default(object)</c> (i.e. it is not null).
     /// </summary>
     /// <param name="input">The object to test.</param>
-    /// <returns><see langword="true"/> if the object is not the default; otherwise, <see langword="false"/>.</returns>
+    /// <returns><c>true</c> if the object is not the default; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool IsNotDefault(this object input) => input.IsNotDefaultImplement();
+    public static bool IsNotDefault<T>(this T input) => input.IsNotDefaultImplement<T>();
 
     /// <summary>
     /// Checks if the specified object is <see langword="null"/>.
@@ -70,6 +68,20 @@ public static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsNotNullEmpty<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNullEmptyImplement();
+
+    /// <summary>
+    /// Determines whether the collection contains any elements.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsExistItem<T>(this IEnumerable<T>? input) => input.IsExistItemImplement();
+
+    /// <summary>
+    /// Determines whether the collection contains no elements.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNotExistItem<T>(this IEnumerable<T>? input) => input.IsNotExistItemImplement();
     #endregion
 
     #region All

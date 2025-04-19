@@ -14,18 +14,19 @@ public partial class YANExpressionTest
     [Fact]
     public void PropertyExpression_ValidPropertyNumber_BuildsCorrectExpression()
     {
-        // Arrange & Act
-        var expr = YANExpression.PropertyExpression<TestClass>("t", nameof(TestClass.Number));
+        // Arrange
+        var parameterName = "t";
+
+        // Act
+        var expr = YANExpression.PropertyExpression<TestClass>(parameterName, nameof(TestClass.Number));
 
         // Assert
         Assert.Equal("t", expr.Parameters[0].Name);
 
         var unary = Assert.IsType<UnaryExpression>(expr.Body);
-
         Assert.Equal(typeof(object), unary.Type);
 
         var member = Assert.IsAssignableFrom<MemberExpression>(unary.Operand);
-
         Assert.Equal(nameof(TestClass.Number), member.Member.Name);
     }
 

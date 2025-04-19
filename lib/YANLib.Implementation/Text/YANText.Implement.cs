@@ -38,7 +38,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? TitlesImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.TitleImplement()) : input.AsParallel().Select(x => x.TitleImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.TitleImplement()) : input.AsParallel().Select(x => x.TitleImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -93,7 +93,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? CapitalizesImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.CapitalizeImplement()) : input.AsParallel().Select(x => x.CapitalizeImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.CapitalizeImplement()) : input.AsParallel().Select(x => x.CapitalizeImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -159,7 +159,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? CleanSpacesImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.CleanSpaceImplement()) : input.AsParallel().Select(x => x.CleanSpaceImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.CleanSpaceImplement()) : input.AsParallel().Select(x => x.CleanSpaceImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -222,7 +222,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? FormatNamesImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.FormatNameImplement()) : input.AsParallel().Select(x => x.FormatNameImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.FormatNameImplement()) : input.AsParallel().Select(x => x.FormatNameImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -278,7 +278,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterAlphabeticsImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.FilterAlphabeticImplement()) : input.AsParallel().Select(x => x.FilterAlphabeticImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.FilterAlphabeticImplement()) : input.AsParallel().Select(x => x.FilterAlphabeticImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -334,7 +334,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterNumbersImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.FilterNumberImplement()) : input.AsParallel().Select(x => x.FilterNumberImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.FilterNumberImplement()) : input.AsParallel().Select(x => x.FilterNumberImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -390,5 +390,5 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterAlphanumericsImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.FilterAlphanumericImplement()) : input.AsParallel().Select(x => x.FilterAlphanumericImplement());
+        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.FilterAlphanumericImplement()) : input.AsParallel().Select(x => x.FilterAlphanumericImplement());
 }

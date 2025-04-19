@@ -97,14 +97,14 @@ public partial class YANJsonTest
         Assert.NotNull(jsons);
 
         var jsonArray = jsons.ToArray();
-
         Assert.Equal(2, jsonArray.Length);
 
         var first = jsonArray[0].Deserialize<TestJson>();
-        var second = jsonArray[1].Deserialize<TestJson>();
-
         Assert.NotNull(first);
+
+        var second = jsonArray[1].Deserialize<TestJson>();
         Assert.NotNull(second);
+
         Assert.Equal(1, first.Id);
         Assert.Equal("Alice", first.Name);
         Assert.Equal(2, second.Id);

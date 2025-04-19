@@ -140,8 +140,11 @@ public partial class YANTextTest
     [Fact]
     public void Titles_Params_MixedCaseStrings_ReturnsAllTitleCase()
     {
+        // Arrange
+        var obj = "hello world";
+
         // Act
-        var result = YANText.Titles("hello world", "GOOD MORNING", null, "hAvE a NiCe DaY");
+        var result = YANText.Titles(obj, "GOOD MORNING", null, "hAvE a NiCe DaY");
 
         // Assert
         Assert.NotNull(result);
@@ -285,8 +288,11 @@ public partial class YANTextTest
     [Fact]
     public void Capitalizes_Params_MixedCaseStrings_ReturnsAllCapitalized()
     {
+        // Arrange
+        var obj = "hello world";
+
         // Act
-        var result = YANText.Capitalizes("hello world", "GOOD MORNING", null, "hAvE a NiCe DaY");
+        var result = YANText.Capitalizes(obj, "GOOD MORNING", null, "hAvE a NiCe DaY");
 
         // Assert
         Assert.NotNull(result);
@@ -430,8 +436,11 @@ public partial class YANTextTest
     [Fact]
     public void CleanSpaces_Params_MultipleSpacesStrings_ReturnsAllCleanedStrings()
     {
+        // Arrange
+        var obj = "hello   world";
+
         // Act
-        var result = YANText.CleanSpaces("hello   world", "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY");
+        var result = YANText.CleanSpaces(obj, "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY");
 
         // Assert
         Assert.NotNull(result);
@@ -588,8 +597,11 @@ public partial class YANTextTest
     [Fact]
     public void FormatNames_Params_VariousStrings_ReturnsAllFormattedNames()
     {
+        // Arrange
+        var obj = "john doe";
+
         // Act
-        var result = YANText.FormatNames("john doe", "JANE.DOE", null, "bob123 smith");
+        var result = YANText.FormatNames(obj, "JANE.DOE", null, "bob123 smith");
 
         // Assert
         Assert.NotNull(result);
@@ -733,8 +745,11 @@ public partial class YANTextTest
     [Fact]
     public void FilterAlphabetics_Params_MixedStrings_ReturnsAllOnlyLetters()
     {
+        // Arrange
+        var obj = "abc123";
+
         // Act
-        var result = YANText.FilterAlphabetics("abc123", "DEF456", null, "!@#GHI");
+        var result = YANText.FilterAlphabetics(obj, "DEF456", null, "!@#GHI");
 
         // Assert
         Assert.NotNull(result);
@@ -878,8 +893,11 @@ public partial class YANTextTest
     [Fact]
     public void FilterNumbers_Params_MixedStrings_ReturnsAllOnlyNumbers()
     {
+        // Arrange
+        var obj = "abc123";
+
         // Act
-        var result = YANText.FilterNumbers("abc123", "DEF456", null, "!@#789");
+        var result = YANText.FilterNumbers(obj, "DEF456", null, "!@#789");
 
         // Assert
         Assert.NotNull(result);
@@ -1023,8 +1041,11 @@ public partial class YANTextTest
     [Fact]
     public void FilterAlphanumerics_Params_MixedStrings_ReturnsAllOnlyLettersAndNumbers()
     {
+        // Arrange
+        var obj = "abc123!@#";
+
         // Act
-        var result = YANText.FilterAlphanumerics("abc123!@#", "DEF456*&^", null, "!@#GHI789");
+        var result = YANText.FilterAlphanumerics(obj, "DEF456*&^", null, "!@#GHI789");
 
         // Assert
         Assert.NotNull(result);

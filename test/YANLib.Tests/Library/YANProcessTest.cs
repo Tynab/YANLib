@@ -80,8 +80,11 @@ public partial class YANProcessTest
     [Fact]
     public async Task KillAllProcessesByNames_Params_VariousNames_NonExistent_DoesNotThrow()
     {
+        // Arrange
+        var pc = "FakeA";
+
         // Act
-        var ex = await Record.ExceptionAsync(() => YANProcess.KillAllProcessesByNames("FakeA", null, " ", "FakeB"));
+        var ex = await Record.ExceptionAsync(() => YANProcess.KillAllProcessesByNames(pc, null, " ", "FakeB"));
 
         // Assert
         Assert.Null(ex);

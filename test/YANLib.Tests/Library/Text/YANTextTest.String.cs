@@ -35,8 +35,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNull_Params_AllNullStrings_ReturnsTrue()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AllNull(null, null);
+        var result = YANText.AllNull(obj, null);
 
         // Assert
         Assert.True(result);
@@ -45,8 +48,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNull_Params_SomeNonNullStrings_ReturnsFalse()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AllNull(null, "test");
+        var result = YANText.AllNull(obj, "test");
 
         // Assert
         Assert.False(result);
@@ -83,8 +89,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNull_Params_SomeNullStrings_ReturnsTrue()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AnyNull(null, "test");
+        var result = YANText.AnyNull(obj, "test");
 
         // Assert
         Assert.True(result);
@@ -93,8 +102,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNull_Params_NoNullStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AnyNull("test1", "test2");
+        var result = YANText.AnyNull(obj, "test2");
 
         // Assert
         Assert.False(result);
@@ -185,8 +197,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNullEmpty_Params_AllNullOrEmptyStrings_ReturnsTrue()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AllNullEmpty(null, string.Empty);
+        var result = YANText.AllNullEmpty(obj, string.Empty);
 
         // Assert
         Assert.True(result);
@@ -195,8 +210,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNullEmpty_Params_SomeNonEmptyStrings_ReturnsFalse()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AllNullEmpty(null, "test");
+        var result = YANText.AllNullEmpty(obj, "test");
 
         // Assert
         Assert.False(result);
@@ -233,8 +251,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNullEmpty_Params_SomeNullOrEmptyStrings_ReturnsTrue()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AnyNullEmpty(null, "test");
+        var result = YANText.AnyNullEmpty(obj, "test");
 
         // Assert
         Assert.True(result);
@@ -243,8 +264,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNullEmpty_Params_NoNullOrEmptyStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AnyNullEmpty("test1", "test2");
+        var result = YANText.AnyNullEmpty(obj, "test2");
 
         // Assert
         Assert.False(result);
@@ -335,8 +359,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNullWhiteSpace_Params_AllNullOrWhiteSpaceStrings_ReturnsTrue()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AllNullWhiteSpace(null, string.Empty, "   ");
+        var result = YANText.AllNullWhiteSpace(obj, string.Empty, "   ");
 
         // Assert
         Assert.True(result);
@@ -345,8 +372,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNullWhiteSpace_Params_SomeNonWhiteSpaceStrings_ReturnsFalse()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AllNullWhiteSpace(null, "test");
+        var result = YANText.AllNullWhiteSpace(obj, "test");
 
         // Assert
         Assert.False(result);
@@ -383,8 +413,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNullWhiteSpace_Params_SomeNullOrWhiteSpaceStrings_ReturnsTrue()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AnyNullWhiteSpace(null, "test");
+        var result = YANText.AnyNullWhiteSpace(obj, "test");
 
         // Assert
         Assert.True(result);
@@ -393,8 +426,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNullWhiteSpace_Params_NoNullOrWhiteSpaceStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AnyNullWhiteSpace("test1", "test2");
+        var result = YANText.AnyNullWhiteSpace(obj, "test2");
 
         // Assert
         Assert.False(result);
@@ -489,8 +525,11 @@ public partial class YANTextTest
     [Fact]
     public void AllEqualsIgnoreCase_Params_AllSameStringsDifferentCase_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AllEqualsIgnoreCase("test", "TEST", "Test");
+        var result = YANText.AllEqualsIgnoreCase(obj, "TEST", "Test");
 
         // Assert
         Assert.True(result);
@@ -499,8 +538,11 @@ public partial class YANTextTest
     [Fact]
     public void AllEqualsIgnoreCase_Params_SomeDifferentStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AllEqualsIgnoreCase("test", "different");
+        var result = YANText.AllEqualsIgnoreCase(obj, "different");
 
         // Assert
         Assert.False(result);
@@ -537,8 +579,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyEqualsIgnoreCase_Params_SomeSameStringsDifferentCase_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AnyEqualsIgnoreCase("test", "TEST", "different");
+        var result = YANText.AnyEqualsIgnoreCase(obj, "TEST", "different");
 
         // Assert
         Assert.True(result);
@@ -547,8 +592,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyEqualsIgnoreCase_Params_AllDifferentStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AnyEqualsIgnoreCase("test1", "test2", "test3");
+        var result = YANText.AnyEqualsIgnoreCase(obj, "test2", "test3");
 
         // Assert
         Assert.False(result);
@@ -585,8 +633,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNull_Params_AllNonNullStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AllNotNull("test1", "test2");
+        var result = YANText.AllNotNull(obj, "test2");
 
         // Assert
         Assert.True(result);
@@ -595,8 +646,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNull_Params_SomeNullStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AllNotNull("test", null);
+        var result = YANText.AllNotNull(obj, null);
 
         // Assert
         Assert.False(result);
@@ -633,8 +687,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNull_Params_SomeNonNullStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AnyNotNull("test", null);
+        var result = YANText.AnyNotNull(obj, null);
 
         // Assert
         Assert.True(result);
@@ -643,8 +700,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNull_Params_AllNullStrings_ReturnsFalse()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AnyNotNull(null, null);
+        var result = YANText.AnyNotNull(obj, null);
 
         // Assert
         Assert.False(result);
@@ -735,8 +795,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNullEmpty_Params_AllNonNullNonEmptyStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AllNotNullEmpty("test1", "test2");
+        var result = YANText.AllNotNullEmpty(obj, "test2");
 
         // Assert
         Assert.True(result);
@@ -745,8 +808,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNullEmpty_Params_SomeNullOrEmptyStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AllNotNullEmpty("test", string.Empty);
+        var result = YANText.AllNotNullEmpty(obj, string.Empty);
 
         // Assert
         Assert.False(result);
@@ -783,8 +849,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNullEmpty_Params_SomeNonNullNonEmptyStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AnyNotNullEmpty("test", null);
+        var result = YANText.AnyNotNullEmpty(obj, null);
 
         // Assert
         Assert.True(result);
@@ -793,8 +862,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNullEmpty_Params_AllNullOrEmptyStrings_ReturnsFalse()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AnyNotNullEmpty(null, string.Empty);
+        var result = YANText.AnyNotNullEmpty(obj, string.Empty);
 
         // Assert
         Assert.False(result);
@@ -885,8 +957,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNullWhiteSpace_Params_AllNonNullNonWhiteSpaceStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AllNotNullWhiteSpace("test1", "test2");
+        var result = YANText.AllNotNullWhiteSpace(obj, "test2");
 
         // Assert
         Assert.True(result);
@@ -895,8 +970,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNullWhiteSpace_Params_SomeNullOrWhiteSpaceStrings_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AllNotNullWhiteSpace("test", "   ");
+        var result = YANText.AllNotNullWhiteSpace(obj, "   ");
 
         // Assert
         Assert.False(result);
@@ -933,8 +1011,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNullWhiteSpace_Params_SomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AnyNotNullWhiteSpace("test", null, "   ");
+        var result = YANText.AnyNotNullWhiteSpace(obj, null, "   ");
 
         // Assert
         Assert.True(result);
@@ -943,8 +1024,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNullWhiteSpace_Params_AllNullOrWhiteSpaceStrings_ReturnsFalse()
     {
+        // Arrange
+        string? obj = null;
+
         // Act
-        var result = YANText.AnyNotNullWhiteSpace(null, string.Empty, "   ");
+        var result = YANText.AnyNotNullWhiteSpace(obj, string.Empty, "   ");
 
         // Assert
         Assert.False(result);
@@ -1039,8 +1123,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotEqualsIgnoreCase_Params_AllDifferentStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AllNotEqualsIgnoreCase("test1", "test2", "test3");
+        var result = YANText.AllNotEqualsIgnoreCase(obj, "test2", "test3");
 
         // Assert
         Assert.True(result);
@@ -1049,8 +1136,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotEqualsIgnoreCase_Params_SomeSameStringsDifferentCase_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AllNotEqualsIgnoreCase("test", "TEST", "test3");
+        var result = YANText.AllNotEqualsIgnoreCase(obj, "TEST", "test3");
 
         // Assert
         Assert.False(result);
@@ -1087,8 +1177,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotEqualsIgnoreCase_Params_SomeDifferentStrings_ReturnsTrue()
     {
+        // Arrange
+        var obj = "test1";
+
         // Act
-        var result = YANText.AnyNotEqualsIgnoreCase("test1", "test2", "test3");
+        var result = YANText.AnyNotEqualsIgnoreCase(obj, "test2", "test3");
 
         // Assert
         Assert.True(result);
@@ -1097,8 +1190,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotEqualsIgnoreCase_Params_AllSameStringsDifferentCase_ReturnsFalse()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.AnyNotEqualsIgnoreCase("test", "TEST", "Test");
+        var result = YANText.AnyNotEqualsIgnoreCase(obj, "TEST", "Test");
 
         // Assert
         Assert.False(result);
@@ -1228,8 +1324,11 @@ public partial class YANTextTest
     [Fact]
     public void Lowers_Params_MixedCaseStrings_ReturnsAllLowerCase()
     {
+        // Arrange
+        var obj = "TEST";
+
         // Act
-        var result = YANText.Lowers("TEST", "TeSt", null, "HELLO");
+        var result = YANText.Lowers(obj, "TeSt", null, "HELLO");
 
         // Assert
         Assert.NotNull(result);
@@ -1321,8 +1420,11 @@ public partial class YANTextTest
     [Fact]
     public void LowerInvariants_Params_MixedCaseStrings_ReturnsAllLowerCase()
     {
+        // Arrange
+        var obj = "TEST";
+
         // Act
-        var result = YANText.LowerInvariants("TEST", "TeSt", null, "HELLO");
+        var result = YANText.LowerInvariants(obj, "TeSt", null, "HELLO");
 
         // Assert
         Assert.NotNull(result);
@@ -1453,8 +1555,11 @@ public partial class YANTextTest
     [Fact]
     public void Uppers_Params_MixedCaseStrings_ReturnsAllUpperCase()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.Uppers("test", "TeSt", null, "hello");
+        var result = YANText.Uppers(obj, "TeSt", null, "hello");
 
         // Assert
         Assert.NotNull(result);
@@ -1546,8 +1651,11 @@ public partial class YANTextTest
     [Fact]
     public void UpperInvariants_Params_MixedCaseStrings_ReturnsAllUpperCase()
     {
+        // Arrange
+        var obj = "test";
+
         // Act
-        var result = YANText.UpperInvariants("test", "TeSt", null, "hello");
+        var result = YANText.UpperInvariants(obj, "TeSt", null, "hello");
 
         // Assert
         Assert.NotNull(result);

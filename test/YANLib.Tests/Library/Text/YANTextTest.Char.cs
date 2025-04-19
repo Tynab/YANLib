@@ -62,8 +62,11 @@ public partial class YANTextTest
     [Fact]
     public void AllEmpty_Params_AllDefaultChars_ReturnsTrue()
     {
+        // Arrange
+        char obj = default;
+
         // Act
-        var result = YANText.AllEmpty(default, default);
+        var result = YANText.AllEmpty(obj, default);
 
         // Assert
         Assert.True(result);
@@ -72,8 +75,11 @@ public partial class YANTextTest
     [Fact]
     public void AllEmpty_Params_SomeNonDefaultChars_ReturnsFalse()
     {
+        // Arrange
+        char obj = default;
+
         // Act
-        var result = YANText.AllEmpty(default, 'a');
+        var result = YANText.AllEmpty(obj, 'a');
 
         // Assert
         Assert.False(result);
@@ -110,8 +116,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyEmpty_Params_SomeDefaultChars_ReturnsTrue()
     {
+        // Arrange
+        char obj = default;
+
         // Act
-        var result = YANText.AnyEmpty(default, 'a');
+        var result = YANText.AnyEmpty(obj, 'a');
 
         // Assert
         Assert.True(result);
@@ -120,8 +129,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyEmpty_Params_NoDefaultChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyEmpty('a', 'b');
+        var result = YANText.AnyEmpty(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -186,8 +198,11 @@ public partial class YANTextTest
     [Fact]
     public void AllWhiteSpace_Params_AllWhiteSpaceChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AllWhiteSpace(' ', '\t');
+        var result = YANText.AllWhiteSpace(obj, '\t');
 
         // Assert
         Assert.True(result);
@@ -196,8 +211,11 @@ public partial class YANTextTest
     [Fact]
     public void AllWhiteSpace_Params_SomeNonWhiteSpaceChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AllWhiteSpace(' ', 'a');
+        var result = YANText.AllWhiteSpace(obj, 'a');
 
         // Assert
         Assert.False(result);
@@ -234,8 +252,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyWhiteSpace_Params_SomeWhiteSpaceChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AnyWhiteSpace(' ', 'a');
+        var result = YANText.AnyWhiteSpace(obj, 'a');
 
         // Assert
         Assert.True(result);
@@ -244,8 +265,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyWhiteSpace_Params_NoWhiteSpaceChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyWhiteSpace('a', 'b');
+        var result = YANText.AnyWhiteSpace(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -323,8 +347,11 @@ public partial class YANTextTest
     [Fact]
     public void AllWhiteSpaceEmpty_Params_AllWhiteSpaceOrEmptyChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AllWhiteSpaceEmpty(' ', default, '\t');
+        var result = YANText.AllWhiteSpaceEmpty(obj, default, '\t');
 
         // Assert
         Assert.True(result);
@@ -333,8 +360,11 @@ public partial class YANTextTest
     [Fact]
     public void AllWhiteSpaceEmpty_Params_SomeNonWhiteSpaceNonEmptyChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AllWhiteSpaceEmpty(' ', 'a', default);
+        var result = YANText.AllWhiteSpaceEmpty(obj, 'a', default);
 
         // Assert
         Assert.False(result);
@@ -371,8 +401,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyWhiteSpaceEmpty_Params_SomeWhiteSpaceOrEmptyChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyWhiteSpaceEmpty('a', ' ');
+        var result = YANText.AnyWhiteSpaceEmpty(obj, ' ');
 
         // Assert
         Assert.True(result);
@@ -381,8 +414,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyWhiteSpaceEmpty_Params_NoWhiteSpaceOrEmptyChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyWhiteSpaceEmpty('a', 'b');
+        var result = YANText.AnyWhiteSpaceEmpty(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -447,8 +483,11 @@ public partial class YANTextTest
     [Fact]
     public void AllAlphabetic_Params_AllLetterChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllAlphabetic('a', 'B');
+        var result = YANText.AllAlphabetic(obj, 'B');
 
         // Assert
         Assert.True(result);
@@ -457,8 +496,11 @@ public partial class YANTextTest
     [Fact]
     public void AllAlphabetic_Params_SomeNonLetterChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllAlphabetic('a', '1');
+        var result = YANText.AllAlphabetic(obj, '1');
 
         // Assert
         Assert.False(result);
@@ -495,8 +537,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyAlphabetic_Params_SomeLetterChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyAlphabetic('a', '1');
+        var result = YANText.AnyAlphabetic(obj, '1');
 
         // Assert
         Assert.True(result);
@@ -505,8 +550,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyAlphabetic_Params_NoLetterChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AnyAlphabetic('1', '2');
+        var result = YANText.AnyAlphabetic(obj, '2');
 
         // Assert
         Assert.False(result);
@@ -571,8 +619,11 @@ public partial class YANTextTest
     [Fact]
     public void AllPunctuation_Params_AllPunctuationChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AllPunctuation('.', ',');
+        var result = YANText.AllPunctuation(obj, ',');
 
         // Assert
         Assert.True(result);
@@ -581,8 +632,11 @@ public partial class YANTextTest
     [Fact]
     public void AllPunctuation_Params_SomeNonPunctuationChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AllPunctuation('.', 'a');
+        var result = YANText.AllPunctuation(obj, 'a');
 
         // Assert
         Assert.False(result);
@@ -619,8 +673,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyPunctuation_Params_SomePunctuationChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AnyPunctuation('.', 'a');
+        var result = YANText.AnyPunctuation(obj, 'a');
 
         // Assert
         Assert.True(result);
@@ -629,8 +686,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyPunctuation_Params_NoPunctuationChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyPunctuation('a', 'b');
+        var result = YANText.AnyPunctuation(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -695,8 +755,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNumber_Params_AllDigitChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AllNumber('1', '2');
+        var result = YANText.AllNumber(obj, '2');
 
         // Assert
         Assert.True(result);
@@ -705,8 +768,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNumber_Params_SomeNonDigitChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AllNumber('1', 'a');
+        var result = YANText.AllNumber(obj, 'a');
 
         // Assert
         Assert.False(result);
@@ -743,8 +809,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNumber_Params_SomeDigitChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AnyNumber('1', 'a');
+        var result = YANText.AnyNumber(obj, 'a');
 
         // Assert
         Assert.True(result);
@@ -753,8 +822,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNumber_Params_NoDigitChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNumber('a', 'b');
+        var result = YANText.AnyNumber(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -832,8 +904,11 @@ public partial class YANTextTest
     [Fact]
     public void AllAlphanumeric_Params_AllAlphanumericChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllAlphanumeric('a', 'B', '1', '2');
+        var result = YANText.AllAlphanumeric(obj, 'B', '1', '2');
 
         // Assert
         Assert.True(result);
@@ -842,8 +917,11 @@ public partial class YANTextTest
     [Fact]
     public void AllAlphanumeric_Params_SomeNonAlphanumericChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllAlphanumeric('a', '1', '.');
+        var result = YANText.AllAlphanumeric(obj, '1', '.');
 
         // Assert
         Assert.False(result);
@@ -880,8 +958,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyAlphanumeric_Params_SomeAlphanumericChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyAlphanumeric('a', '.', '!');
+        var result = YANText.AnyAlphanumeric(obj, '.', '!');
 
         // Assert
         Assert.True(result);
@@ -890,8 +971,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyAlphanumeric_Params_NoAlphanumericChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AnyAlphanumeric('.', '!', '@');
+        var result = YANText.AnyAlphanumeric(obj, '!', '@');
 
         // Assert
         Assert.False(result);
@@ -958,8 +1042,11 @@ public partial class YANTextTest
     [Fact]
     public void AllEqualsIgnoreCase_Params_AllSameCharsDifferentCase_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllEqualsIgnoreCase('a', 'A', 'a');
+        var result = YANText.AllEqualsIgnoreCase(obj, 'A', 'a');
 
         // Assert
         Assert.True(result);
@@ -968,8 +1055,11 @@ public partial class YANTextTest
     [Fact]
     public void AllEqualsIgnoreCase_Params_SomeDifferentChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllEqualsIgnoreCase('a', 'b');
+        var result = YANText.AllEqualsIgnoreCase(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -1006,8 +1096,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyEqualsIgnoreCase_Params_SomeSameCharsDifferentCase_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyEqualsIgnoreCase('a', 'A', 'b');
+        var result = YANText.AnyEqualsIgnoreCase(obj, 'A', 'b');
 
         // Assert
         Assert.True(result);
@@ -1016,8 +1109,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyEqualsIgnoreCase_Params_AllDifferentChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyEqualsIgnoreCase('a', 'b', 'c');
+        var result = YANText.AnyEqualsIgnoreCase(obj, 'b', 'c');
 
         // Assert
         Assert.False(result);
@@ -1082,8 +1178,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotEmpty_Params_AllNonDefaultChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotEmpty('a', 'b');
+        var result = YANText.AllNotEmpty(obj, 'b');
 
         // Assert
         Assert.True(result);
@@ -1092,8 +1191,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotEmpty_Params_SomeDefaultChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotEmpty('a', default);
+        var result = YANText.AllNotEmpty(obj, default);
 
         // Assert
         Assert.False(result);
@@ -1130,8 +1232,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotEmpty_Params_SomeNonDefaultChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotEmpty('a', default);
+        var result = YANText.AnyNotEmpty(obj, default);
 
         // Assert
         Assert.True(result);
@@ -1140,8 +1245,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotEmpty_Params_AllDefaultChars_ReturnsFalse()
     {
+        // Arrange
+        char obj = default;
+
         // Act
-        var result = YANText.AnyNotEmpty(default, default);
+        var result = YANText.AnyNotEmpty(obj, default);
 
         // Assert
         Assert.False(result);
@@ -1206,8 +1314,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotWhiteSpace_Params_AllNonWhiteSpaceChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotWhiteSpace('a', 'b', 'c');
+        var result = YANText.AllNotWhiteSpace(obj, 'b', 'c');
 
         // Assert
         Assert.True(result);
@@ -1216,8 +1327,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotWhiteSpace_Params_SomeWhiteSpaceChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotWhiteSpace('a', ' ', 'c');
+        var result = YANText.AllNotWhiteSpace(obj, ' ', 'c');
 
         // Assert
         Assert.False(result);
@@ -1254,8 +1368,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotWhiteSpace_Params_SomeNonWhiteSpaceChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AnyNotWhiteSpace(' ', 'a', '\t');
+        var result = YANText.AnyNotWhiteSpace(obj, 'a', '\t');
 
         // Assert
         Assert.True(result);
@@ -1264,8 +1381,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotWhiteSpace_Params_NoNonWhiteSpaceChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AnyNotWhiteSpace(' ', '\t', '\n');
+        var result = YANText.AnyNotWhiteSpace(obj, '\t', '\n');
 
         // Assert
         Assert.False(result);
@@ -1343,8 +1463,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotWhiteSpaceEmpty_Params_AllNonWhiteSpaceNonEmptyChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotWhiteSpaceEmpty('a', 'b', 'c');
+        var result = YANText.AllNotWhiteSpaceEmpty(obj, 'b', 'c');
 
         // Assert
         Assert.True(result);
@@ -1353,8 +1476,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotWhiteSpaceEmpty_Params_SomeWhiteSpaceOrEmptyChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotWhiteSpaceEmpty('a', ' ', 'c');
+        var result = YANText.AllNotWhiteSpaceEmpty(obj, ' ', 'c');
 
         // Assert
         Assert.False(result);
@@ -1391,8 +1517,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotWhiteSpaceEmpty_Params_SomeNonWhiteSpaceNonEmptyChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AnyNotWhiteSpaceEmpty(' ', 'a', default);
+        var result = YANText.AnyNotWhiteSpaceEmpty(obj, 'a', default);
 
         // Assert
         Assert.True(result);
@@ -1401,8 +1530,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotWhiteSpaceEmpty_Params_NoNonWhiteSpaceNonEmptyChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = ' ';
+
         // Act
-        var result = YANText.AnyNotWhiteSpaceEmpty(' ', '\t', default);
+        var result = YANText.AnyNotWhiteSpaceEmpty(obj, '\t', default);
 
         // Assert
         Assert.False(result);
@@ -1467,8 +1599,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotAlphabetic_Params_AllNonLetterChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AllNotAlphabetic('1', '2', '3');
+        var result = YANText.AllNotAlphabetic(obj, '2', '3');
 
         // Assert
         Assert.True(result);
@@ -1477,8 +1612,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotAlphabetic_Params_SomeLetterChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AllNotAlphabetic('1', 'a', '3');
+        var result = YANText.AllNotAlphabetic(obj, 'a', '3');
 
         // Assert
         Assert.False(result);
@@ -1515,8 +1653,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotAlphabetic_Params_SomeNonLetterChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotAlphabetic('a', '1', 'b');
+        var result = YANText.AnyNotAlphabetic(obj, '1', 'b');
 
         // Assert
         Assert.True(result);
@@ -1525,8 +1666,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotAlphabetic_Params_NoNonLetterChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotAlphabetic('a', 'b', 'c');
+        var result = YANText.AnyNotAlphabetic(obj, 'b', 'c');
 
         // Assert
         Assert.False(result);
@@ -1591,8 +1735,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotPunctuation_Params_AllNonPunctuationChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotPunctuation('a', 'b', 'c');
+        var result = YANText.AllNotPunctuation(obj, 'b', 'c');
 
         // Assert
         Assert.True(result);
@@ -1601,8 +1748,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotPunctuation_Params_SomePunctuationChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotPunctuation('a', '.', 'c');
+        var result = YANText.AllNotPunctuation(obj, '.', 'c');
 
         // Assert
         Assert.False(result);
@@ -1639,8 +1789,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotPunctuation_Params_SomeNonPunctuationChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AnyNotPunctuation('.', 'a', ',');
+        var result = YANText.AnyNotPunctuation(obj, 'a', ',');
 
         // Assert
         Assert.True(result);
@@ -1649,8 +1802,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotPunctuation_Params_NoNonPunctuationChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AnyNotPunctuation('.', ',', '!');
+        var result = YANText.AnyNotPunctuation(obj, ',', '!');
 
         // Assert
         Assert.False(result);
@@ -1715,8 +1871,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNumber_Params_AllNonDigitChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotNumber('a', 'b', 'c');
+        var result = YANText.AllNotNumber(obj, 'b', 'c');
 
         // Assert
         Assert.True(result);
@@ -1725,8 +1884,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotNumber_Params_SomeDigitChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotNumber('a', '1', 'c');
+        var result = YANText.AllNotNumber(obj, '1', 'c');
 
         // Assert
         Assert.False(result);
@@ -1763,8 +1925,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNumber_Params_SomeNonDigitChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AnyNotNumber('1', 'a', '2');
+        var result = YANText.AnyNotNumber(obj, 'a', '2');
 
         // Assert
         Assert.True(result);
@@ -1773,8 +1938,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotNumber_Params_NoNonDigitChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '1';
+
         // Act
-        var result = YANText.AnyNotNumber('1', '2', '3');
+        var result = YANText.AnyNotNumber(obj, '2', '3');
 
         // Assert
         Assert.False(result);
@@ -1852,8 +2020,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotAlphanumeric_Params_AllNonAlphanumericChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AllNotAlphanumeric('.', '!', '@');
+        var result = YANText.AllNotAlphanumeric(obj, '!', '@');
 
         // Assert
         Assert.True(result);
@@ -1862,8 +2033,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotAlphanumeric_Params_SomeAlphanumericChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = '.';
+
         // Act
-        var result = YANText.AllNotAlphanumeric('.', 'a', '!');
+        var result = YANText.AllNotAlphanumeric(obj, 'a', '!');
 
         // Assert
         Assert.False(result);
@@ -1900,8 +2074,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotAlphanumeric_Params_SomeNonAlphanumericChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotAlphanumeric('a', '.', '1');
+        var result = YANText.AnyNotAlphanumeric(obj, '.', '1');
 
         // Assert
         Assert.True(result);
@@ -1910,8 +2087,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotAlphanumeric_Params_NoNonAlphanumericChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotAlphanumeric('a', 'b', '1');
+        var result = YANText.AnyNotAlphanumeric(obj, 'b', '1');
 
         // Assert
         Assert.False(result);
@@ -1978,8 +2158,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotEqualsIgnoreCase_Params_AllDifferentChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotEqualsIgnoreCase('a', 'b', 'C');
+        var result = YANText.AllNotEqualsIgnoreCase(obj, 'b', 'C');
 
         // Assert
         Assert.True(result);
@@ -1988,8 +2171,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotEqualsIgnoreCase_Params_SomeSameCharsDifferentCase_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotEqualsIgnoreCase('a', 'A', 'b');
+        var result = YANText.AllNotEqualsIgnoreCase(obj, 'A', 'b');
 
         // Assert
         Assert.False(result);
@@ -2026,8 +2212,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotEqualsIgnoreCase_Params_SomeDifferentChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotEqualsIgnoreCase('a', 'b', 'c');
+        var result = YANText.AnyNotEqualsIgnoreCase(obj, 'b', 'c');
 
         // Assert
         Assert.True(result);
@@ -2036,8 +2225,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotEqualsIgnoreCase_Params_AllSameCharsDifferentCase_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotEqualsIgnoreCase('a', 'A', 'a');
+        var result = YANText.AnyNotEqualsIgnoreCase(obj, 'A', 'a');
 
         // Assert
         Assert.False(result);
@@ -2128,8 +2320,11 @@ public partial class YANTextTest
     [Fact]
     public void Lowers_Params_MixedCaseChars_ReturnsAllLowerCase()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.Lowers('A', 'b', 'C');
+        var result = YANText.Lowers(obj, 'b', 'C');
 
         // Assert
         Assert.NotNull(result);
@@ -2208,8 +2403,11 @@ public partial class YANTextTest
     [Fact]
     public void LowerInvariants_Params_MixedCaseChars_ReturnsAllLowerCase()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.LowerInvariants('A', 'b', 'C');
+        var result = YANText.LowerInvariants(obj, 'b', 'C');
 
         // Assert
         Assert.NotNull(result);
@@ -2301,8 +2499,11 @@ public partial class YANTextTest
     [Fact]
     public void Uppers_Params_MixedCaseChars_ReturnsAllUpperCase()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.Uppers('A', 'b', 'C');
+        var result = YANText.Uppers(obj, 'b', 'C');
 
         // Assert
         Assert.NotNull(result);
@@ -2381,8 +2582,11 @@ public partial class YANTextTest
     [Fact]
     public void UpperInvariants_Params_MixedCaseChars_ReturnsAllUpperCase()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.UpperInvariants('A', 'b', 'C');
+        var result = YANText.UpperInvariants(obj, 'b', 'C');
 
         // Assert
         Assert.NotNull(result);
@@ -2461,8 +2665,11 @@ public partial class YANTextTest
     [Fact]
     public void AllLowers_Params_AllLowerCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllLowers('a', 'b');
+        var result = YANText.AllLowers(obj, 'b');
 
         // Assert
         Assert.True(result);
@@ -2471,8 +2678,11 @@ public partial class YANTextTest
     [Fact]
     public void AllLowers_Params_SomeUpperCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllLowers('a', 'B');
+        var result = YANText.AllLowers(obj, 'B');
 
         // Assert
         Assert.False(result);
@@ -2509,8 +2719,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyLowers_Params_SomeLowerCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyLowers('a', 'B');
+        var result = YANText.AnyLowers(obj, 'B');
 
         // Assert
         Assert.True(result);
@@ -2519,8 +2732,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyLowers_Params_NoLowerCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AnyLowers('A', 'B');
+        var result = YANText.AnyLowers(obj, 'B');
 
         // Assert
         Assert.False(result);
@@ -2585,8 +2801,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotLowers_Params_AllNonLowerCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AllNotLowers('A', 'B', 'C');
+        var result = YANText.AllNotLowers(obj, 'B', 'C');
 
         // Assert
         Assert.True(result);
@@ -2595,8 +2814,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotLowers_Params_SomeLowerCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AllNotLowers('A', 'b', 'C');
+        var result = YANText.AllNotLowers(obj, 'b', 'C');
 
         // Assert
         Assert.False(result);
@@ -2633,8 +2855,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotLowers_Params_SomeNonLowerCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotLowers('a', 'B', 'c');
+        var result = YANText.AnyNotLowers(obj, 'B', 'c');
 
         // Assert
         Assert.True(result);
@@ -2643,8 +2868,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotLowers_Params_NoNonLowerCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyNotLowers('a', 'b', 'c');
+        var result = YANText.AnyNotLowers(obj, 'b', 'c');
 
         // Assert
         Assert.False(result);
@@ -2722,8 +2950,11 @@ public partial class YANTextTest
     [Fact]
     public void AllUppers_Params_AllUpperCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AllUppers('A', 'B');
+        var result = YANText.AllUppers(obj, 'B');
 
         // Assert
         Assert.True(result);
@@ -2732,8 +2963,11 @@ public partial class YANTextTest
     [Fact]
     public void AllUppers_Params_SomeLowerCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AllUppers('A', 'b');
+        var result = YANText.AllUppers(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -2770,8 +3004,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyUppers_Params_SomeUpperCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AnyUppers('A', 'b');
+        var result = YANText.AnyUppers(obj, 'b');
 
         // Assert
         Assert.True(result);
@@ -2780,8 +3017,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyUppers_Params_NoUpperCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AnyUppers('a', 'b');
+        var result = YANText.AnyUppers(obj, 'b');
 
         // Assert
         Assert.False(result);
@@ -2846,8 +3086,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotUppers_Params_AllNonUpperCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotUppers('a', 'b', 'c');
+        var result = YANText.AllNotUppers(obj, 'b', 'c');
 
         // Assert
         Assert.True(result);
@@ -2856,8 +3099,11 @@ public partial class YANTextTest
     [Fact]
     public void AllNotUppers_Params_SomeUpperCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'a';
+
         // Act
-        var result = YANText.AllNotUppers('a', 'B', 'c');
+        var result = YANText.AllNotUppers(obj, 'B', 'c');
 
         // Assert
         Assert.False(result);
@@ -2894,8 +3140,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotUppers_Params_SomeNonUpperCaseChars_ReturnsTrue()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AnyNotUppers('A', 'b', 'C');
+        var result = YANText.AnyNotUppers(obj, 'b', 'C');
 
         // Assert
         Assert.True(result);
@@ -2904,8 +3153,11 @@ public partial class YANTextTest
     [Fact]
     public void AnyNotUppers_Params_NoNonUpperCaseChars_ReturnsFalse()
     {
+        // Arrange
+        var obj = 'A';
+
         // Act
-        var result = YANText.AnyNotUppers('A', 'B', 'C');
+        var result = YANText.AnyNotUppers(obj, 'B', 'C');
 
         // Assert
         Assert.False(result);

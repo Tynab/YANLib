@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using YANLib.Implementation.Unmanaged;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib.Implementation.Object;
@@ -21,11 +22,11 @@ internal static partial class YANObject
     #region Is
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsDefaultImplement(this object input) => input is default(object);
+    internal static bool IsDefaultImplement<T>(this T input) => EqualityComparer<T>.Default.Equals(input.ParseImplement<T>(), default);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotDefaultImplement(this object input) => input is not default(object);
+    internal static bool IsNotDefaultImplement<T>(this T input) => !input.IsDefaultImplement<T>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -41,7 +42,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNullImplement() && input.Any();
+    internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNullImplement() && input.IsExistItemImplement();
     #endregion
 
     #region All
@@ -175,34 +176,48 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static int GetCountImplement(this IEnumerable? input) => input.IsNullImplement() ? 0
-        : input is ICollection nonGenericCollection
-        ? nonGenericCollection.Count
-        : input is ICollection<object?> genericCollection
-        ? genericCollection.Count
-        : input is IReadOnlyCollection<object?> readOnlyCollection
-        ? readOnlyCollection.Count
-        : input is IImmutableSet<object?> immutableSet
-        ? immutableSet.Count
-        : input is IImmutableList<object?> immutableList
-        ? immutableList.Count
-        : input is IImmutableQueue<object?> immutableQueue
-        ? immutableQueue.Count()
-        : input is IImmutableStack<object?> immutableStack
-        ? immutableStack.Count()
-        : input is IImmutableDictionary<object, object?> immutableDictionary
-        ? immutableDictionary.Count
-        : input is Array array
-        ? array.Length
-        : input is BlockingCollection<object?> blockingCollection
-        ? blockingCollection.Count
-        : input is ConcurrentBag<object?> concurrentBag
-        ? concurrentBag.Count
-        : input is ConcurrentQueue<object?> concurrentQueue
-        ? concurrentQueue.Count
-        : input is ConcurrentStack<object?> concurrentStack
-        ? concurrentStack.Count
-        : input is ConcurrentDictionary<object, object?> concurrentDictionary
-        ? concurrentDictionary.Count
-        : input.Cast<object?>().Count();
+    internal static int GetCountImplement(this IEnumerable? input) => input switch
+    {
+        null => 0,
+        Array array => array.Length,
+        BlockingCollection<object?> blockingCollection => blockingCollection.Count,
+        ConcurrentBag<object?> concurrentBag => concurrentBag.Count,
+        ConcurrentQueue<object?> concurrentQueue => concurrentQueue.Count,
+        ConcurrentStack<object?> concurrentStack => concurrentStack.Count,
+        ConcurrentDictionary<object, object?> concurrentDictionary => concurrentDictionary.Count,
+        ICollection nonGenericCollection => nonGenericCollection.Count,
+        ICollection<object?> genericCollection => genericCollection.Count,
+        IImmutableSet<object?> immutableSet => immutableSet.Count,
+        IImmutableList<object?> immutableList => immutableList.Count,
+        IImmutableQueue<object?> immutableQueue => immutableQueue.Count(),
+        IImmutableStack<object?> immutableStack => immutableStack.Count(),
+        IImmutableDictionary<object, object?> immutableDictionary => immutableDictionary.Count,
+        IReadOnlyCollection<object?> readOnlyCollection => readOnlyCollection.Count,
+        _ => input.Cast<object?>().Count()
+    };
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsExistItemImplement(this IEnumerable? input) => input.IsNotNullImplement() && input switch
+    {
+        Array array => array.Length.IsNotDefaultImplement(),
+        BlockingCollection<object?> blockingCollection => blockingCollection.Count.IsNotDefaultImplement(),
+        ConcurrentBag<object?> concurrentBag => !concurrentBag.IsEmpty,
+        ConcurrentQueue<object?> concurrentQueue => !concurrentQueue.IsEmpty,
+        ConcurrentStack<object?> concurrentStack => !concurrentStack.IsEmpty,
+        ConcurrentDictionary<object, object?> concurrentDictionary => !concurrentDictionary.IsEmpty,
+        ICollection nonGenericCollection => nonGenericCollection.Count.IsNotDefaultImplement(),
+        ICollection<object?> genericCollection => genericCollection.Count.IsNotDefaultImplement(),
+        IImmutableSet<object?> immutableSet => immutableSet.Count.IsNotDefaultImplement(),
+        IImmutableList<object?> immutableList => immutableList.Count.IsNotDefaultImplement(),
+        IImmutableQueue<object?> immutableQueue => !immutableQueue.IsEmpty,
+        IImmutableStack<object?> immutableStack => !immutableStack.IsEmpty,
+        IImmutableDictionary<object, object?> immutableDictionary => immutableDictionary.Count.IsNotDefaultImplement(),
+        IReadOnlyCollection<object?> readOnlyCollection => readOnlyCollection.Count.IsNotDefaultImplement(),
+        _ => input.Cast<object?>().Any()
+    };
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotExistItemImplement(this IEnumerable? input) => !input.IsExistItemImplement();
 }

@@ -21,43 +21,29 @@ internal static partial class YANJson
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string? SerializeImplement(this object? input, JsonSerializerOptions? options = null) => input.IsNullImplement()
-        ? default
-        : options.IsNullImplement()
-        ? Serialize(input, CamelCasePropertyNamingPolicy)
-        : Serialize(input, options);
+    internal static string? SerializeImplement(this object? input, JsonSerializerOptions? options = null)
+        => input.IsNullImplement() ? default : options.IsNullImplement() ? Serialize(input, CamelCasePropertyNamingPolicy) : Serialize(input, options);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? SerializesImplement(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
         ? default
         : input.GetCountImplement() < 1_000
-            ? options.IsNullImplement()
-                ? input.Select(x => x.SerializeImplement())
-                : input.Select(x => x.SerializeImplement(options))
-            : options.IsNullImplement()
-                ? input.AsParallel().Select(x => x.SerializeImplement())
-                : input.AsParallel().Select(x => x.SerializeImplement(options));
+        ? options.IsNullImplement() ? input.Select(x => x.SerializeImplement()) : input.Select(x => x.SerializeImplement(options))
+        : options.IsNullImplement() ? input.AsParallel().Select(x => x.SerializeImplement()) : input.AsParallel().Select(x => x.SerializeImplement(options));
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static byte[]? SerializeToBytesImplement(this object? input, JsonSerializerOptions? options = null) => input.IsNullImplement()
-        ? default
-        : options.IsNullImplement()
-        ? SerializeToUtf8Bytes(input, CamelCasePropertyNamingPolicy)
-        : SerializeToUtf8Bytes(input, options);
+    internal static byte[]? SerializeToBytesImplement(this object? input, JsonSerializerOptions? options = null)
+        => input.IsNullImplement() ? default : options.IsNullImplement() ? SerializeToUtf8Bytes(input, CamelCasePropertyNamingPolicy) : SerializeToUtf8Bytes(input, options);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<byte[]?>? SerializesToBytesImplement(this IEnumerable<object?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
         ? default
         : input.GetCountImplement() < 1_000
-            ? options.IsNullImplement()
-                ? input.Select(x => x.SerializeToBytesImplement())
-                : input.Select(x => x.SerializeToBytesImplement(options))
-            : options.IsNullImplement()
-                ? input.AsParallel().Select(x => x.SerializeToBytesImplement())
-                : input.AsParallel().Select(x => x.SerializeToBytesImplement(options));
+        ? options.IsNullImplement() ? input.Select(x => x.SerializeToBytesImplement()) : input.Select(x => x.SerializeToBytesImplement(options))
+        : options.IsNullImplement() ? input.AsParallel().Select(x => x.SerializeToBytesImplement()) : input.AsParallel().Select(x => x.SerializeToBytesImplement(options));
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -78,12 +64,8 @@ internal static partial class YANJson
     internal static IEnumerable<T?>? DeserializesImplement<T>(this IEnumerable<string?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
         ? default
         : input.GetCountImplement() < 1_000
-        ? options.IsNullImplement()
-            ? input.Select(x => x.DeserializeImplement<T>())
-            : input.Select(x => x.DeserializeImplement<T>(options))
-        : options.IsNullImplement()
-            ? input.AsParallel().Select(x => x.DeserializeImplement<T>())
-            : input.AsParallel().Select(x => x.DeserializeImplement<T>(options));
+        ? options.IsNullImplement() ? input.Select(x => x.DeserializeImplement<T>()) : input.Select(x => x.DeserializeImplement<T>(options))
+        : options.IsNullImplement() ? input.AsParallel().Select(x => x.DeserializeImplement<T>()) : input.AsParallel().Select(x => x.DeserializeImplement<T>(options));
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -104,10 +86,6 @@ internal static partial class YANJson
     internal static IEnumerable<T?>? DeserializesImplement<T>(this IEnumerable<byte[]?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
         ? default
         : input.GetCountImplement() < 1_000
-            ? options.IsNullImplement()
-                ? input.Select(x => x.DeserializeImplement<T>())
-                : input.Select(x => x.DeserializeImplement<T>(options))
-            : options.IsNullImplement()
-                ? input.AsParallel().Select(x => x.DeserializeImplement<T>())
-                : input.AsParallel().Select(x => x.DeserializeImplement<T>(options));
+        ? options.IsNullImplement() ? input.Select(x => x.DeserializeImplement<T>()) : input.Select(x => x.DeserializeImplement<T>(options))
+        : options.IsNullImplement() ? input.AsParallel().Select(x => x.DeserializeImplement<T>()) : input.AsParallel().Select(x => x.DeserializeImplement<T>(options));
 }
