@@ -8,17 +8,35 @@ namespace YANLib.Implementation.Text;
 
 internal static partial class YANText
 {
+    #region Empty
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool IsEmptyImplement(this char input) => input is char.MinValue;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllEmptyImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotEmptyImplement());
+    internal static bool AllEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotEmptyImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyEmptyImplement(this IEnumerable<char> input) => input.Any(x => x.IsEmptyImplement());
+    internal static bool AnyEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsEmptyImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotEmptyImplement(this char input) => !input.IsEmptyImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsEmptyImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotEmptyImplement());
+
+    #endregion
+
+    #region WhiteSpace
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -26,11 +44,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllWhiteSpaceImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotWhiteSpaceImplement());
+    internal static bool AllWhiteSpaceImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotWhiteSpaceImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyWhiteSpaceImplement(this IEnumerable<char> input) => input.Any(x => x.IsWhiteSpaceImplement());
+    internal static bool AnyWhiteSpaceImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsWhiteSpaceImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotWhiteSpaceImplement(this char input) => !input.IsWhiteSpaceImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotWhiteSpaceImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsWhiteSpaceImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotWhiteSpaceImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotWhiteSpaceImplement());
+
+    #endregion
+
+    #region WhiteSpaceEmpty
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -38,11 +72,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllWhiteSpaceEmptyImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotWhiteSpaceEmptyImplement());
+    internal static bool AllWhiteSpaceEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotWhiteSpaceEmptyImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyWhiteSpaceEmptyImplement(this IEnumerable<char> input) => input.Any(x => x.IsWhiteSpaceEmptyImplement());
+    internal static bool AnyWhiteSpaceEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsWhiteSpaceEmptyImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotWhiteSpaceEmptyImplement(this char input) => !input.IsWhiteSpaceEmptyImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotWhiteSpaceEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsWhiteSpaceEmptyImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotWhiteSpaceEmptyImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotWhiteSpaceEmptyImplement());
+
+    #endregion
+
+    #region Alphabetic
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -50,11 +100,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllAlphabeticImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotAlphabeticImplement());
+    internal static bool AllAlphabeticImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotAlphabeticImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyAlphabeticImplement(this IEnumerable<char> input) => input.Any(x => x.IsAlphabeticImplement());
+    internal static bool AnyAlphabeticImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsAlphabeticImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotAlphabeticImplement(this char input) => !input.IsAlphabeticImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotAlphabeticImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsAlphabeticImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotAlphabeticImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotAlphabeticImplement());
+
+    #endregion
+
+    #region Punctuation
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -62,11 +128,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPunctuationImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotPunctuationImplement());
+    internal static bool AllPunctuationImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotPunctuationImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyPunctuationImplement(this IEnumerable<char> input) => input.Any(x => x.IsPunctuationImplement());
+    internal static bool AnyPunctuationImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsPunctuationImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotPunctuationImplement(this char input) => !input.IsPunctuationImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotPunctuationImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsPunctuationImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotPunctuationImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotPunctuationImplement());
+
+    #endregion
+
+    #region Number
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -74,11 +156,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNumberImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotNumberImplement());
+    internal static bool AllNumberImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNumberImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNumberImplement(this IEnumerable<char> input) => input.Any(x => x.IsNumberImplement());
+    internal static bool AnyNumberImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNumberImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotNumberImplement(this char input) => !input.IsNumberImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotNumberImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNumberImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotNumberImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNumberImplement());
+
+    #endregion
+
+    #region Alphanumeric
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -86,11 +184,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllAlphanumericImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotAlphanumericImplement());
+    internal static bool AllAlphanumericImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotAlphanumericImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyAlphanumericImplement(this IEnumerable<char> input) => input.Any(x => x.IsAlphanumericImplement());
+    internal static bool AnyAlphanumericImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsAlphanumericImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotAlphanumericImplement(this char input) => !input.IsAlphanumericImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotAlphanumericImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsAlphanumericImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotAlphanumericImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotAlphanumericImplement());
+
+    #endregion
+
+    #region EqualsIgnoreCase
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -98,120 +212,27 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllEqualsIgnoreCaseImplement(this IEnumerable<char> input) => !input.Any(x => x.NotEqualsIgnoreCaseImplement(input.First()));
+    internal static bool AllEqualsIgnoreCaseImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Select(x => x.LowerInvariantImplement()).Distinct().Count() is 1;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyEqualsIgnoreCaseImplement(this IEnumerable<char> input) => !input.AllNotEqualsIgnoreCaseImplement();
+    internal static bool AnyEqualsIgnoreCaseImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.GetCountImplement() != input.Select(x => x.LowerInvariantImplement()).Distinct().Count();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotEmptyImplement(this char input) => input is not char.MinValue;
+    internal static bool NotEqualsIgnoreCaseImplement(this char input1, char input2) => !input1.NotEqualsIgnoreCaseImplement(input2);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotEmptyImplement(this IEnumerable<char> input) => !input.Any(x => x.IsEmptyImplement());
+    internal static bool AllNotEqualsIgnoreCaseImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.GetCountImplement() == input.Select(x => x.LowerInvariantImplement()).Distinct().Count();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotEmptyImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotEmptyImplement());
+    internal static bool AnyNotEqualsIgnoreCaseImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Select(x => x.LowerInvariantImplement()).Distinct().Count() is not 1;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotWhiteSpaceImplement(this char input) => !char.IsWhiteSpace(input);
+    #endregion
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotWhiteSpaceImplement(this IEnumerable<char> input) => !input.Any(x => x.IsWhiteSpaceImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotWhiteSpaceImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotWhiteSpaceImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotWhiteSpaceEmptyImplement(this char input) => input.IsNotEmptyImplement() && input.IsNotWhiteSpaceImplement();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotWhiteSpaceEmptyImplement(this IEnumerable<char> input) => !input.Any(x => x.IsWhiteSpaceEmptyImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotWhiteSpaceEmptyImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotWhiteSpaceEmptyImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotAlphabeticImplement(this char input) => !char.IsLetter(input);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotAlphabeticImplement(this IEnumerable<char> input) => !input.Any(x => x.IsAlphabeticImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotAlphabeticImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotAlphabeticImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotPunctuationImplement(this char input) => !char.IsPunctuation(input);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotPunctuationImplement(this IEnumerable<char> input) => !input.Any(x => x.IsPunctuationImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotPunctuationImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotPunctuationImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotNumberImplement(this char input) => !char.IsDigit(input);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotNumberImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNumberImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotNumberImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotNumberImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotAlphanumericImplement(this char input) => !char.IsLetterOrDigit(input);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotAlphanumericImplement(this IEnumerable<char> input) => !input.Any(x => x.IsAlphanumericImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotAlphanumericImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotAlphanumericImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool NotEqualsIgnoreCaseImplement(this char input1, char input2) => input1.LowerInvariantImplement() != input2.LowerInvariantImplement();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotEqualsIgnoreCaseImplement(this IEnumerable<char> input)
-    {
-        var set = new HashSet<char>(input.Count());
-
-        foreach (var c in input)
-        {
-            if (!set.Add(c.LowerInvariantImplement()))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotEqualsIgnoreCaseImplement(this IEnumerable<char> input) => !input.AllEqualsIgnoreCaseImplement();
+    #region Lower
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -277,6 +298,34 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
+    internal static bool IsLowerImplement(this char input) => input.IsNotWhiteSpaceEmptyImplement() && char.IsLower(input);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllLowersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotLowerImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyLowersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsLowerImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotLowerImplement(this char input) => !input.IsLowerImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AllNotLowersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsLowerImplement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool AnyNotLowersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotLowerImplement());
+
+    #endregion
+
+    #region Upper
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     internal static char UpperImplement(this char input) => input.IsWhiteSpaceEmptyImplement() ? input : char.ToUpper(input);
 
     [DebuggerHidden]
@@ -339,39 +388,15 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsLowerImplement(this char input) => input.IsNotWhiteSpaceEmptyImplement() && char.IsLower(input);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllLowersImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotLowerImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyLowersImplement(this IEnumerable<char> input) => input.Any(x => x.IsLowerImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotLowerImplement(this char input) => input.IsNotWhiteSpaceEmptyImplement() && !char.IsLower(input);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AllNotLowersImplement(this IEnumerable<char> input) => !input.Any(x => x.IsLowerImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool AnyNotLowersImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotLowerImplement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsUpperImplement(this char input) => input.IsNotWhiteSpaceEmptyImplement() && char.IsUpper(input);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllUppersImplement(this IEnumerable<char> input) => !input.Any(x => x.IsNotUpperImplement());
+    internal static bool AllUppersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotUpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyUppersImplement(this IEnumerable<char> input) => input.Any(x => x.IsUpperImplement());
+    internal static bool AnyUppersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsUpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -379,9 +404,11 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotUppersImplement(this IEnumerable<char> input) => !input.Any(x => x.IsUpperImplement());
+    internal static bool AllNotUppersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsUpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotUppersImplement(this IEnumerable<char> input) => input.Any(x => x.IsNotUpperImplement());
+    internal static bool AnyNotUppersImplement(this IEnumerable<char> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotUpperImplement());
+
+    #endregion
 }

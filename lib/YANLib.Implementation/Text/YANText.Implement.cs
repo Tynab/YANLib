@@ -9,6 +9,8 @@ namespace YANLib.Implementation.Text;
 
 internal static partial class YANText
 {
+    #region Title
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? TitleImplement(this string? input) => input.IsNullWhiteSpaceImplement() ? input : CurrentCulture.TextInfo.ToTitleCase(input.LowerImplement()!);
@@ -39,6 +41,10 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? TitlesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.TitleImplement()) : input.AsParallel().Select(x => x.TitleImplement());
+
+    #endregion
+
+    #region Capitalize
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -94,6 +100,10 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? CapitalizesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.CapitalizeImplement()) : input.AsParallel().Select(x => x.CapitalizeImplement());
+
+    #endregion
+
+    #region CleanSpace
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -161,6 +171,10 @@ internal static partial class YANText
     internal static IEnumerable<string?>? CleanSpacesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.CleanSpaceImplement()) : input.AsParallel().Select(x => x.CleanSpaceImplement());
 
+    #endregion
+
+    #region FormatName
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FormatNameImplement(this string? input)
@@ -223,6 +237,10 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? FormatNamesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.FormatNameImplement()) : input.AsParallel().Select(x => x.FormatNameImplement());
+
+    #endregion
+
+    #region Filter
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -391,4 +409,6 @@ internal static partial class YANText
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterAlphanumericsImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.FilterAlphanumericImplement()) : input.AsParallel().Select(x => x.FilterAlphanumericImplement());
+
+    #endregion
 }

@@ -41,7 +41,6 @@ public class ConcurrentCollectionTests
         var batches = _benchmark._batches;
         var allData = _benchmark._allData;
         var lockObj = _benchmark._lockObj;
-
         var tasks = batches!.Select(async batchNumber =>
         {
             var skip = batchNumber * _benchmark.BATCH_SIZE;
@@ -66,7 +65,6 @@ public class ConcurrentCollectionTests
         var finalResult = new SampleClass[_benchmark.Size];
         var batches = _benchmark._batches;
         var allDataArray = _benchmark._allData!.ToArray();
-
         var tasks = batches!.Select(async batchNumber =>
         {
             var skip = batchNumber * _benchmark.BATCH_SIZE;
@@ -95,6 +93,7 @@ public class ConcurrentCollectionTests
             var batchData = allData!.Skip(skip).Take(take).ToList();
 
             await ss.WaitAsync();
+
             try
             {
                 result.AddRange(batchData);

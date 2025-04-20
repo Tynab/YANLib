@@ -13,12 +13,12 @@ internal static partial class YANUnmanaged
     {
         return input.IsNullImplement() ? default : typeof(T) switch
         {
-            Type stringType when stringType == typeof(string) => input.ToString().ParseImplement<T?>(),
-            Type dateTimeType when dateTimeType == typeof(DateTime) => input.ToString().ParseDateTime().ParseImplement<T>(),
-            Type nullableDateTimeType when nullableDateTimeType == typeof(DateTime?) => input.ToString().ParseDateTimeNullable().ParseImplement<T?>(),
-            Type guidType when guidType == typeof(Guid) && TryParse(input.ToString(), out var guidValue) => guidValue.ParseImplement<T>(),
-            Type nullableGuidType when nullableGuidType == typeof(Guid?) && TryParse(input.ToString(), out var guidValue) => guidValue.ParseImplement<T?>(),
-            Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var enumValue) => enumValue.ParseImplement<T>(),
+            Type stringType when stringType == typeof(string) => (T?)(object?)input.ToString(),
+            Type dateTimeType when dateTimeType == typeof(DateTime) => (T)(object)input.ToString().ParseDateTime(),
+            Type nullableDateTimeType when nullableDateTimeType == typeof(DateTime?) => (T?)(object?)input.ToString().ParseDateTimeNullable(),
+            Type guidType when guidType == typeof(Guid) && TryParse(input.ToString(), out var guidValue) => (T)(object)guidValue,
+            Type nullableGuidType when nullableGuidType == typeof(Guid?) && TryParse(input.ToString(), out var guidValue) => (T?)(object?)guidValue,
+            Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var enumValue) => (T)enumValue,
             _ => GetUnderlyingTypeCached(typeof(T)) is Type underlyingType ? ChangeTypeOrDefault(input, underlyingType) : ChangeTypeOrDefault(input, typeof(T))
         };
 

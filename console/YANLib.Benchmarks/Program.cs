@@ -117,17 +117,11 @@ void RunBenchmark(int choice)
         }
         case 8:
         {
-            _ = Run<CountBenchmark>();
-
-            break;
-        }
-        case 9:
-        {
             _ = Run<JsonSerializeBenchmark>();
 
             break;
         }
-        case 10:
+        case 9:
         {
             _ = Run<JsonDeserializeBenchmark>();
 

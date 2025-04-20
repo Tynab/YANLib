@@ -1,53 +1,44 @@
 ﻿using System.Diagnostics;
 using YANLib.Implementation.Object;
-using YANLib.Implementation.Unmanaged;
 using static System.DateTime;
 using static System.Linq.Enumerable;
-using static System.Math;
 using static System.Threading.Tasks.Parallel;
 
-namespace YANLib.Implementation;
+namespace YANLib.Implementation.Unmanaged;
 
 internal static partial class YANDateTime
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static int GetWeekOfYearImplement<T>(this T? input) where T : unmanaged => input.GetWeekOfYearImplement<int>().ParseImplement<int>();
+    internal static int GetWeekOfYearImplement<T>(this T? input) => input.GetWeekOfYearImplement<int>().ParseImplement<int>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<int>? GetWeekOfYearsImplement<T>(this IEnumerable<T?>? input) where T : unmanaged
+    internal static IEnumerable<int>? GetWeekOfYearsImplement<T>(this IEnumerable<T?>? input)
         => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(static x => x.GetWeekOfYearImplement()) : input.AsParallel().Select(x => x.GetWeekOfYearImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static int TotalMonthImplement<T>(T? input1, T? input2) where T : unmanaged => TotalMonthImplement<int>(input1, input2).ParseImplement<int>();
+    internal static int TotalMonthImplement<T>(T? input1, T? input2) => TotalMonthImplement<int>(input1, input2).ParseImplement<int>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static DateTime ChangeTimeZoneImplement(this object? input, object? tzSrc = null, object? tzDst = null)
+    internal static DateTime ChangeTimeZoneImplement(this DateTime input, object? tzSrc = null, object? tzDst = null)
     {
-        var dt = input.ParseImplement<DateTime?>();
+        var diff = tzDst.ParseImplement<int>() - tzSrc.ParseImplement<int>();
 
-        if (dt.HasValue)
+        return diff switch
         {
-            var diff = tzDst.ParseImplement<int>() - tzSrc.ParseImplement<int>();
-
-            return diff switch
-            {
-                0 => dt.Value,
-                < 0 when (dt.Value - MinValue).TotalHours < Abs(diff) => dt.Value,
-                > 0 when (MaxValue - dt.Value).TotalHours < diff => dt.Value,
-                _ => dt.Value.AddHours(diff)
-            };
-        }
-
-        return default;
+            0 => input,
+            < 0 when (input - MinValue).TotalHours < diff.AbsImplement() => input,
+            > 0 when (MaxValue - input).TotalHours < diff => input,
+            _ => input.AddHours(diff)
+        };
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static void ChangeTimeZoneImplement(this List<object?>? input, object? tzSrc = null, object? tzDst = null)
+    internal static void ChangeTimeZoneImplement(this List<DateTime>? input, object? tzSrc = null, object? tzDst = null)
     {
         if (input.IsNullEmptyImplement())
         {
@@ -69,6 +60,6 @@ internal static partial class YANDateTime
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<DateTime>? ChangeTimeZonesImplement(this IEnumerable<object?>? input, object? tzSrc = null, object? tzDst = null)
+    internal static IEnumerable<DateTime>? ChangeTimeZonesImplement(this IEnumerable<DateTime>? input, object? tzSrc = null, object? tzDst = null)
         => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
 }

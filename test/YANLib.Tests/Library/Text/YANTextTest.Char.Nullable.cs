@@ -1033,7 +1033,7 @@ public partial class YANTextTest
     public void EqualsIgnoreCase_Nullable_SameCharsDifferentCase_ReturnsTrue()
     {
         // Arrange
-        var input1 = 'a';
+        char? input1 = 'a';
         char? input2 = 'A';
 
         // Act
@@ -1047,7 +1047,7 @@ public partial class YANTextTest
     public void EqualsIgnoreCase_Nullable_DifferentChars_ReturnsFalse()
     {
         // Arrange
-        var input1 = 'a';
+        char? input1 = 'a';
         char? input2 = 'b';
 
         // Act
@@ -1061,7 +1061,7 @@ public partial class YANTextTest
     public void EqualsIgnoreCase_Nullable_NullChar_ReturnsFalse()
     {
         // Arrange
-        var input1 = 'a';
+        char? input1 = 'a';
         char? input2 = null;
 
         // Act

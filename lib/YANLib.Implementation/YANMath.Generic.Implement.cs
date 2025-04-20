@@ -8,15 +8,15 @@ internal static partial class YANMath
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MinImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Min(x => x.ParseImplement<T?>());
+    internal static T? MinImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(x => x.IsNotNullImplement()).Min(x => x.ParseImplement<T?>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MaxImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Max(x => x.ParseImplement<T?>());
+    internal static T? MaxImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(x => x.IsNotNullImplement()).Max(x => x.ParseImplement<T?>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AverageImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AverageImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(x => x.IsNotNullImplement()).Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -49,7 +49,7 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static T? RoundImplement<T>(this object? input, object? digits = null)
-        => digits.IsNullImplement() ? Math.Round(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Round(input.ParseImplement<double>(), digits.ParseImplement<int>()).ParseImplement<T?>();
+        => input.IsNullImplement() ? default : digits.IsNullImplement() ? Math.Round(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Round(input.ParseImplement<double>(), digits.ParseImplement<int>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -65,7 +65,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? PowImplement<T>(this object? input, object? power) => Math.Pow(input.ParseImplement<double>(), power.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? PowImplement<T>(this object? input, object? power) => input.IsNullImplement() || power.IsNullImplement() ? default : Math.Pow(input.ParseImplement<double>(), power.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -73,7 +73,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AbsImplement<T>(this object? input) => Math.Abs(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AbsImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Abs(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -82,7 +82,7 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static T? LogImplement<T>(this object? input, object? baseValue = null)
-        => baseValue.IsNullImplement() ? Math.Log(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Log(input.ParseImplement<double>(), baseValue.ParseImplement<double>()).ParseImplement<T?>();
+        => input.IsNullImplement() ? default : baseValue.IsNullImplement() ? Math.Log(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Log(input.ParseImplement<double>(), baseValue.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -90,7 +90,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? Log10Implement<T>(this object? input) => Math.Log10(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? Log10Implement<T>(this object? input) => input.IsNullImplement() ? default : Math.Log10(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -98,7 +98,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? Log2Implement<T>(this object? input) => Math.Log(input.ParseImplement<double>(), 2).ParseImplement<T?>();
+    internal static T? Log2Implement<T>(this object? input) => input.IsNullImplement() ? default : Math.Log(input.ParseImplement<double>(), 2).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -106,7 +106,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? SinImplement<T>(this object? input) => Math.Sin(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? SinImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Sin(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -114,7 +114,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? CosImplement<T>(this object? input) => Math.Cos(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? CosImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Cos(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -122,7 +122,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? TanImplement<T>(this object? input) => Math.Tan(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? TanImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Tan(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -130,7 +130,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AsinImplement<T>(this object? input) => Math.Asin(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AsinImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Asin(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -138,7 +138,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AcosImplement<T>(this object? input) => Math.Acos(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AcosImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Acos(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -146,7 +146,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AtanImplement<T>(this object? input) => Math.Atan(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AtanImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Atan(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -154,7 +154,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? CbrtImplement<T>(this object? input) => Math.Cbrt(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? CbrtImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Cbrt(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -162,7 +162,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? ExpImplement<T>(this object? input) => Math.Exp(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? ExpImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.Exp(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -170,7 +170,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? Exp2Implement<T>(this object? input) => Math.Pow(2, input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? Exp2Implement<T>(this object? input) => input.IsNullImplement() ? default : Math.Pow(2, input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -178,7 +178,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? ILogBImplement<T>(this object? input) => Math.ILogB(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? ILogBImplement<T>(this object? input) => input.IsNullImplement() ? default : Math.ILogB(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
