@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using YANLib.Implementation.Text;
 using YANLib.Implementation.Unmanaged;
 using static System.Reflection.BindingFlags;
 
@@ -136,11 +137,13 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullImplement() && x.AnyPropertiesNotDefaultImplement());
+    internal static bool AllNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
+        => typeof(T) == typeof(string) ? YANText.AllNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullImplement() && x.AnyPropertiesNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullImplement() || x.AllPropertiesDefaultImplement());
+    internal static bool AnyNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
+        => typeof(T) == typeof(string) ? YANText.AnyNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullImplement() || x.AllPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -148,11 +151,13 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullImplement() || x.AllPropertiesDefaultImplement());
+    internal static bool AllNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
+        => typeof(T) == typeof(string) ? YANText.AllNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullImplement() || x.AllPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullImplement() || x.AnyPropertiesNotDefaultImplement());
+    internal static bool AnyNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
+        => typeof(T) == typeof(string) ? YANText.AnyNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullImplement() || x.AnyPropertiesNotDefaultImplement());
 
     #endregion
 
@@ -167,17 +172,27 @@ internal static partial class YANObject
             return input;
         }
 
+        if (input is IList<DateTime> dateList)
+        {
+            for (var i = 0; i < dateList.Count; i++)
+            {
+                dateList[i] = dateList[i].ChangeTimeZoneImplement(tzSrc, tzDst);
+            }
+
+            return input;
+        }
+
         if (input is IList list)
         {
             for (var i = 0; i < list.Count; i++)
             {
                 if (list[i].IsNotNullImplement())
                 {
-                    var updatedItem = list[i].ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
+                    var updated = list[i].ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
 
-                    if (updatedItem.IsNotNullImplement())
+                    if (updated.IsNotNullImplement())
                     {
-                        list[i] = updatedItem;
+                        list[i] = updated;
                     }
                 }
             }

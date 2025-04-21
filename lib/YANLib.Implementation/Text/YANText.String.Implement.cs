@@ -38,11 +38,11 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNullEmptyImplement(this IEnumerable<string?> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullEmptyImplement());
+    internal static bool AllNullEmptyImplement(this IEnumerable<string?>? input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullEmptyImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNullEmptyImplement(this IEnumerable<string?> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullEmptyImplement());
+    internal static bool AnyNullEmptyImplement(this IEnumerable<string?>? input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullEmptyImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -50,11 +50,11 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotNullEmptyImplement(this IEnumerable<string?> input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullEmptyImplement());
+    internal static bool AllNotNullEmptyImplement(this IEnumerable<string?>? input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullEmptyImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotNullEmptyImplement(this IEnumerable<string?> input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullEmptyImplement());
+    internal static bool AnyNotNullEmptyImplement(this IEnumerable<string?>? input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullEmptyImplement());
 
     #endregion
 

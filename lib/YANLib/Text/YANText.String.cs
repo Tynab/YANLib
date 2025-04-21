@@ -51,19 +51,19 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty(this IEnumerable<string?> input) => input.AllNullEmptyImplement();
+    public static bool AllNullEmpty(this IEnumerable<string?>? input) => input.AllNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty(params string?[] input) => input.AllNullEmptyImplement();
+    public static bool AllNullEmpty(params string?[]? input) => input.AllNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullEmpty(this IEnumerable<string?> input) => input.AnyNullEmptyImplement();
+    public static bool AnyNullEmpty(this IEnumerable<string?>? input) => input.AnyNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullEmpty(params string?[] input) => input.AnyNullEmptyImplement();
+    public static bool AnyNullEmpty(params string?[]? input) => input.AnyNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -71,19 +71,19 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullEmpty(this IEnumerable<string?> input) => input.AllNotNullEmptyImplement();
+    public static bool AllNotNullEmpty(this IEnumerable<string?>? input) => input.AllNotNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullEmpty(params string?[] input) => input.AllNotNullEmptyImplement();
+    public static bool AllNotNullEmpty(params string?[]? input) => input.AllNotNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullEmpty(this IEnumerable<string?> input) => input.AnyNotNullEmptyImplement();
+    public static bool AnyNotNullEmpty(this IEnumerable<string?>? input) => input.AnyNotNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullEmpty(params string?[] input) => input.AnyNotNullEmptyImplement();
+    public static bool AnyNotNullEmpty(params string?[]? input) => input.AnyNotNullEmptyImplement();
 
     #endregion
 

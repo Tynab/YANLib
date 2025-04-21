@@ -108,6 +108,11 @@ internal static partial class YANObject
 
         var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
 
+        if (props.IsNullEmptyImplement())
+        {
+            return false;
+        }
+
         foreach (var prop in props)
         {
             var type = prop.PropertyType;
@@ -228,6 +233,11 @@ internal static partial class YANObject
         }
 
         var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+
+        if (props.IsNullEmptyImplement())
+        {
+            return false;
+        }
 
         foreach (var prop in props)
         {
