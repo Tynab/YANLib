@@ -11,7 +11,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNull(this IEnumerable<string?> input) => input.AllNullImplement();
+    public static bool AllNull(this IEnumerable<string?>? input) => input.AllNullImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -19,7 +19,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNull(this IEnumerable<string?> input) => input.AnyNullImplement();
+    public static bool AnyNull(this IEnumerable<string?>? input) => input.AnyNullImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -27,7 +27,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNull(this IEnumerable<string?> input) => input.AllNotNullImplement();
+    public static bool AllNotNull(this IEnumerable<string?>? input) => input.AllNotNullImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -35,7 +35,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNull(this IEnumerable<string?> input) => input.AnyNotNullImplement();
+    public static bool AnyNotNull(this IEnumerable<string?>? input) => input.AnyNotNullImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -95,7 +95,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullWhiteSpace(this IEnumerable<string?> input) => input.AllNullWhiteSpaceImplement();
+    public static bool AllNullWhiteSpace(this IEnumerable<string?>? input) => input.AllNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -103,7 +103,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullWhiteSpace(this IEnumerable<string?> input) => input.AnyNullWhiteSpaceImplement();
+    public static bool AnyNullWhiteSpace(this IEnumerable<string?>? input) => input.AnyNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -115,7 +115,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullWhiteSpace(this IEnumerable<string?> input) => input.AllNotNullWhiteSpaceImplement();
+    public static bool AllNotNullWhiteSpace(this IEnumerable<string?>? input) => input.AllNotNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -123,7 +123,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullWhiteSpace(this IEnumerable<string?> input) => input.AnyNotNullWhiteSpaceImplement();
+    public static bool AnyNotNullWhiteSpace(this IEnumerable<string?>? input) => input.AnyNotNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -139,7 +139,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllEqualsIgnoreCase(this IEnumerable<string?> input) => input.AllEqualsIgnoreCaseImplement();
+    public static bool AllEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AllEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -147,7 +147,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyEqualsIgnoreCase(this IEnumerable<string?> input) => input.AnyEqualsIgnoreCaseImplement();
+    public static bool AnyEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AnyEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -159,7 +159,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotEqualsIgnoreCase(this IEnumerable<string?> input) => input.AllNotEqualsIgnoreCaseImplement();
+    public static bool AllNotEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AllNotEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -167,7 +167,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotEqualsIgnoreCase(this IEnumerable<string?> input) => input.AnyNotEqualsIgnoreCaseImplement();
+    public static bool AnyNotEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AnyNotEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

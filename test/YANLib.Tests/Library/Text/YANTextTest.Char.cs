@@ -4,7 +4,8 @@ namespace YANLib.Tests.Library.Text;
 
 public partial class YANTextTest
 {
-    #region IsEmpty
+    #region Empty
+
     [Fact]
     public void IsEmpty_DefaultChar_ReturnsTrue()
     {
@@ -19,7 +20,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsEmpty_NonDefaultChar_ReturnsFalse()
+    public void IsEmpty_NonEmptyChar_ReturnsFalse()
     {
         // Arrange
         var input = 'a';
@@ -30,27 +31,12 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
-
-    #region AllEmpty
-    [Fact]
-    public void AllEmpty_AllDefaultChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { default(char), default };
-
-        // Act
-        var result = input.AllEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
 
     [Fact]
-    public void AllEmpty_SomeNonDefaultChars_ReturnsFalse()
+    public void AllEmpty_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { default, 'a' };
+        IEnumerable<char>? input = null;
 
         // Act
         var result = input.AllEmpty();
@@ -60,38 +46,108 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEmpty_Params_AllDefaultChars_ReturnsTrue()
+    public void AllEmpty_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        char obj = default;
+        var input = Array.Empty<char>();
 
         // Act
-        var result = YANText.AllEmpty(obj, default);
+        var result = input.AllEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEmpty_AllEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { default(char), default, default };
+
+        // Act
+        var result = input.AllEmpty();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllEmpty_Params_SomeNonDefaultChars_ReturnsFalse()
+    public void AllEmpty_MixedChars_ReturnsFalse()
     {
         // Arrange
-        char obj = default;
+        var input = new[] { default, 'a', default };
 
         // Act
-        var result = YANText.AllEmpty(obj, 'a');
+        var result = input.AllEmpty();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyEmpty
     [Fact]
-    public void AnyEmpty_SomeDefaultChars_ReturnsTrue()
+    public void AllEmpty_NoEmptyChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { default, 'a' };
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AllEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEmpty_Params_AllEmptyChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllEmpty(default, default, default);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllEmpty_Params_MixedChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllEmpty(default, 'a', default);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEmpty_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEmpty_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEmpty_AllEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { default(char), default, default };
 
         // Act
         var result = input.AnyEmpty();
@@ -101,10 +157,23 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEmpty_NoDefaultChars_ReturnsFalse()
+    public void AnyEmpty_MixedChars_ReturnsTrue()
     {
         // Arrange
-        var input = new[] { 'a', 'b' };
+        var input = new[] { default, 'a', default };
+
+        // Act
+        var result = input.AnyEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyEmpty_NoEmptyChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
         var result = input.AnyEmpty();
@@ -114,35 +183,237 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEmpty_Params_SomeDefaultChars_ReturnsTrue()
+    public void AnyEmpty_Params_AllEmptyChars_ReturnsTrue()
     {
-        // Arrange
-        char obj = default;
-
         // Act
-        var result = YANText.AnyEmpty(obj, 'a');
+        var result = YANText.AnyEmpty(default, default, default);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyEmpty_Params_NoDefaultChars_ReturnsFalse()
+    public void AnyEmpty_Params_MixedChars_ReturnsTrue()
     {
-        // Arrange
-        var obj = 'a';
-
         // Act
-        var result = YANText.AnyEmpty(obj, 'b');
+        var result = YANText.AnyEmpty(default, 'a', default);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyEmpty_Params_NoEmptyChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyEmpty('a', 'b', 'c');
 
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public void IsNotEmpty_DefaultChar_ReturnsFalse()
+    {
+        // Arrange
+        char input = default;
+
+        // Act
+        var result = input.IsNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotEmpty_NonEmptyChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = 'a';
+
+        // Act
+        var result = input.IsNotEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_AllEmptyChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { default(char), default, default };
+
+        // Act
+        var result = input.AllNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_MixedChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { default, 'a', default };
+
+        // Act
+        var result = input.AllNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_NoEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AllNotEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_Params_NoEmptyChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotEmpty('a', 'b', 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotEmpty_Params_MixedChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotEmpty(default, 'a', default);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_AllEmptyChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { default(char), default, default };
+
+        // Act
+        var result = input.AnyNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_MixedChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { default, 'a', default };
+
+        // Act
+        var result = input.AnyNotEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_NoEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AnyNotEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_Params_MixedChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotEmpty(default, 'a', default);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEmpty_Params_NoEmptyChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotEmpty('a', 'b', 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
     #endregion
 
-    #region IsWhiteSpace
+    #region WhiteSpace
+
     [Fact]
-    public void IsWhiteSpace_WhiteSpaceChar_ReturnsTrue()
+    public void IsWhiteSpace_WhitespaceChar_ReturnsTrue()
     {
         // Arrange
         var input = ' ';
@@ -155,7 +426,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsWhiteSpace_NonWhiteSpaceChar_ReturnsFalse()
+    public void IsWhiteSpace_TabChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = '\t';
+
+        // Act
+        var result = input.IsWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsWhiteSpace_NewlineChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = '\n';
+
+        // Act
+        var result = input.IsWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsWhiteSpace_NonWhitespaceChar_ReturnsFalse()
     {
         // Arrange
         var input = 'a';
@@ -166,27 +463,12 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
-
-    #region AllWhiteSpace
-    [Fact]
-    public void AllWhiteSpace_AllWhiteSpaceChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { ' ', '\t' };
-
-        // Act
-        var result = input.AllWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
 
     [Fact]
-    public void AllWhiteSpace_SomeNonWhiteSpaceChars_ReturnsFalse()
+    public void AllWhiteSpace_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { ' ', 'a' };
+        IEnumerable<char>? input = null;
 
         // Act
         var result = input.AllWhiteSpace();
@@ -196,38 +478,108 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllWhiteSpace_Params_AllWhiteSpaceChars_ReturnsTrue()
+    public void AllWhiteSpace_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        var obj = ' ';
+        var input = Array.Empty<char>();
 
         // Act
-        var result = YANText.AllWhiteSpace(obj, '\t');
+        var result = input.AllWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllWhiteSpace_AllWhitespaceChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { ' ', '\t', '\n' };
+
+        // Act
+        var result = input.AllWhiteSpace();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllWhiteSpace_Params_SomeNonWhiteSpaceChars_ReturnsFalse()
+    public void AllWhiteSpace_MixedChars_ReturnsFalse()
     {
         // Arrange
-        var obj = ' ';
+        var input = new[] { ' ', 'a', '\t' };
 
         // Act
-        var result = YANText.AllWhiteSpace(obj, 'a');
+        var result = input.AllWhiteSpace();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyWhiteSpace
     [Fact]
-    public void AnyWhiteSpace_SomeWhiteSpaceChars_ReturnsTrue()
+    public void AllWhiteSpace_NoWhitespaceChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { ' ', 'a' };
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AllWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllWhiteSpace_Params_AllWhitespaceChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllWhiteSpace(' ', '\t', '\n');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllWhiteSpace_Params_MixedChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllWhiteSpace(' ', 'a', '\t');
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpace_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpace_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpace_AllWhitespaceChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { ' ', '\t', '\n' };
 
         // Act
         var result = input.AnyWhiteSpace();
@@ -237,10 +589,23 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyWhiteSpace_NoWhiteSpaceChars_ReturnsFalse()
+    public void AnyWhiteSpace_MixedChars_ReturnsTrue()
     {
         // Arrange
-        var input = new[] { 'a', 'b' };
+        var input = new[] { ' ', 'a', '\t' };
+
+        // Act
+        var result = input.AnyWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpace_NoWhitespaceChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
         var result = input.AnyWhiteSpace();
@@ -250,45 +615,224 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyWhiteSpace_Params_SomeWhiteSpaceChars_ReturnsTrue()
+    public void AnyWhiteSpace_Params_MixedChars_ReturnsTrue()
     {
-        // Arrange
-        var obj = ' ';
-
         // Act
-        var result = YANText.AnyWhiteSpace(obj, 'a');
+        var result = YANText.AnyWhiteSpace(' ', 'a', '\t');
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyWhiteSpace_Params_NoWhiteSpaceChars_ReturnsFalse()
+    public void AnyWhiteSpace_Params_NoWhitespaceChars_ReturnsFalse()
     {
-        // Arrange
-        var obj = 'a';
-
         // Act
-        var result = YANText.AnyWhiteSpace(obj, 'b');
+        var result = YANText.AnyWhiteSpace('a', 'b', 'c');
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region IsWhiteSpaceEmpty
     [Fact]
-    public void IsWhiteSpaceEmpty_WhiteSpaceChar_ReturnsTrue()
+    public void IsNotWhiteSpace_WhitespaceChar_ReturnsFalse()
     {
         // Arrange
         var input = ' ';
 
         // Act
-        var result = input.IsWhiteSpaceEmpty();
+        var result = input.IsNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotWhiteSpace_NonWhitespaceChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = 'a';
+
+        // Act
+        var result = input.IsNotWhiteSpace();
 
         // Assert
         Assert.True(result);
     }
+
+    [Fact]
+    public void AllNotWhiteSpace_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpace_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpace_AllWhitespaceChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { ' ', '\t', '\n' };
+
+        // Act
+        var result = input.AllNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpace_MixedChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { ' ', 'a', '\t' };
+
+        // Act
+        var result = input.AllNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpace_NoWhitespaceChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AllNotWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpace_Params_NoWhitespaceChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotWhiteSpace('a', 'b', 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpace_Params_MixedChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotWhiteSpace(' ', 'a', '\t');
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_AllWhitespaceChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { ' ', '\t', '\n' };
+
+        // Act
+        var result = input.AnyNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_MixedChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { ' ', 'a', '\t' };
+
+        // Act
+        var result = input.AnyNotWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_NoWhitespaceChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AnyNotWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_Params_MixedChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotWhiteSpace(' ', 'a', '\t');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpace_Params_NoWhitespaceChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotWhiteSpace('a', 'b', 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    #endregion
+
+    #region WhiteSpaceEmpty
 
     [Fact]
     public void IsWhiteSpaceEmpty_EmptyChar_ReturnsTrue()
@@ -304,7 +848,20 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsWhiteSpaceEmpty_NonWhiteSpaceNonEmptyChar_ReturnsFalse()
+    public void IsWhiteSpaceEmpty_WhitespaceChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = ' ';
+
+        // Act
+        var result = input.IsWhiteSpaceEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsWhiteSpaceEmpty_NonWhitespaceEmptyChar_ReturnsFalse()
     {
         // Arrange
         var input = 'a';
@@ -315,11 +872,35 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllWhiteSpaceEmpty
     [Fact]
-    public void AllWhiteSpaceEmpty_AllWhiteSpaceOrEmptyChars_ReturnsTrue()
+    public void AllWhiteSpaceEmpty_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllWhiteSpaceEmpty_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllWhiteSpaceEmpty_AllWhitespaceEmptyChars_ReturnsTrue()
     {
         // Arrange
         var input = new[] { ' ', default, '\t' };
@@ -332,7 +913,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllWhiteSpaceEmpty_SomeNonWhiteSpaceNonEmptyChars_ReturnsFalse()
+    public void AllWhiteSpaceEmpty_MixedChars_ReturnsFalse()
     {
         // Arrange
         var input = new[] { ' ', 'a', default };
@@ -345,51 +926,43 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllWhiteSpaceEmpty_Params_AllWhiteSpaceOrEmptyChars_ReturnsTrue()
+    public void AllWhiteSpaceEmpty_NoWhitespaceEmptyChars_ReturnsFalse()
     {
         // Arrange
-        var obj = ' ';
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
-        var result = YANText.AllWhiteSpaceEmpty(obj, default, '\t');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllWhiteSpaceEmpty_Params_SomeNonWhiteSpaceNonEmptyChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = ' ';
-
-        // Act
-        var result = YANText.AllWhiteSpaceEmpty(obj, 'a', default);
+        var result = input.AllWhiteSpaceEmpty();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyWhiteSpaceEmpty
     [Fact]
-    public void AnyWhiteSpaceEmpty_SomeWhiteSpaceOrEmptyChars_ReturnsTrue()
+    public void AllWhiteSpaceEmpty_Params_AllWhitespaceEmptyChars_ReturnsTrue()
     {
-        // Arrange
-        var input = new[] { 'a', ' ' };
-
         // Act
-        var result = input.AnyWhiteSpaceEmpty();
+        var result = YANText.AllWhiteSpaceEmpty(' ', default, '\t');
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyWhiteSpaceEmpty_NoWhiteSpaceOrEmptyChars_ReturnsFalse()
+    public void AllWhiteSpaceEmpty_Params_MixedChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllWhiteSpaceEmpty(' ', 'a', default);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpaceEmpty_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', 'b' };
+        IEnumerable<char>? input = null;
 
         // Act
         var result = input.AnyWhiteSpaceEmpty();
@@ -399,33 +972,290 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyWhiteSpaceEmpty_Params_SomeWhiteSpaceOrEmptyChars_ReturnsTrue()
+    public void AnyWhiteSpaceEmpty_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        var obj = 'a';
+        var input = Array.Empty<char>();
 
         // Act
-        var result = YANText.AnyWhiteSpaceEmpty(obj, ' ');
+        var result = input.AnyWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpaceEmpty_AllWhitespaceEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { ' ', default, '\t' };
+
+        // Act
+        var result = input.AnyWhiteSpaceEmpty();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyWhiteSpaceEmpty_Params_NoWhiteSpaceOrEmptyChars_ReturnsFalse()
+    public void AnyWhiteSpaceEmpty_MixedChars_ReturnsTrue()
     {
         // Arrange
-        var obj = 'a';
+        var input = new[] { ' ', 'a', 'b' };
 
         // Act
-        var result = YANText.AnyWhiteSpaceEmpty(obj, 'b');
+        var result = input.AnyWhiteSpaceEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpaceEmpty_NoWhitespaceEmptyChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AnyWhiteSpaceEmpty();
 
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public void AnyWhiteSpaceEmpty_Params_MixedChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyWhiteSpaceEmpty(' ', 'a', 'b');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyWhiteSpaceEmpty_Params_NoWhitespaceEmptyChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyWhiteSpaceEmpty('a', 'b', 'c');
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotWhiteSpaceEmpty_EmptyChar_ReturnsFalse()
+    {
+        // Arrange
+        char input = default;
+
+        // Act
+        var result = input.IsNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotWhiteSpaceEmpty_WhitespaceChar_ReturnsFalse()
+    {
+        // Arrange
+        var input = ' ';
+
+        // Act
+        var result = input.IsNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotWhiteSpaceEmpty_NonWhitespaceEmptyChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = 'a';
+
+        // Act
+        var result = input.IsNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_AllWhitespaceEmptyChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { ' ', default, '\t' };
+
+        // Act
+        var result = input.AllNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_MixedChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { ' ', 'a', 'b' };
+
+        // Act
+        var result = input.AllNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_NoWhitespaceEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AllNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_Params_NoWhitespaceEmptyChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotWhiteSpaceEmpty('a', 'b', 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotWhiteSpaceEmpty_Params_MixedChars_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotWhiteSpaceEmpty(' ', 'a', 'b');
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_AllWhitespaceEmptyChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { ' ', default, '\t' };
+
+        // Act
+        var result = input.AnyNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_MixedChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { ' ', 'a', 'b' };
+
+        // Act
+        var result = input.AnyNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_NoWhitespaceEmptyChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AnyNotWhiteSpaceEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_Params_MixedChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotWhiteSpaceEmpty(' ', 'a', 'b');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotWhiteSpaceEmpty_Params_NoWhitespaceEmptyChars_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotWhiteSpaceEmpty('a', 'b', 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
     #endregion
 
-    #region IsAlphabetic
+    #region Alphabetic
+
     [Fact]
     public void IsAlphabetic_LetterChar_ReturnsTrue()
     {
@@ -451,14 +1281,38 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllAlphabetic
+    [Fact]
+    public void AllAlphabetic_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllAlphabetic_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
     [Fact]
     public void AllAlphabetic_AllLetterChars_ReturnsTrue()
     {
         // Arrange
-        var input = new[] { 'a', 'B' };
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
         var result = input.AllAlphabetic();
@@ -468,10 +1322,23 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphabetic_SomeNonLetterChars_ReturnsFalse()
+    public void AllAlphabetic_MixedChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', '1' };
+        var input = new[] { 'a', '1', 'b' };
+
+        // Act
+        var result = input.AllAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllAlphabetic_NoLetterChars_ReturnsFalse()
+    {
+        // Arrange
+        var input = new[] { '1', '2', '3' };
 
         // Act
         var result = input.AllAlphabetic();
@@ -483,36 +1350,67 @@ public partial class YANTextTest
     [Fact]
     public void AllAlphabetic_Params_AllLetterChars_ReturnsTrue()
     {
-        // Arrange
-        var obj = 'a';
-
         // Act
-        var result = YANText.AllAlphabetic(obj, 'B');
+        var result = YANText.AllAlphabetic('a', 'b', 'c');
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllAlphabetic_Params_SomeNonLetterChars_ReturnsFalse()
+    public void AllAlphabetic_Params_MixedChars_ReturnsFalse()
     {
-        // Arrange
-        var obj = 'a';
-
         // Act
-        var result = YANText.AllAlphabetic(obj, '1');
+        var result = YANText.AllAlphabetic('a', '1', 'b');
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyAlphabetic
     [Fact]
-    public void AnyAlphabetic_SomeLetterChars_ReturnsTrue()
+    public void AnyAlphabetic_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', '1' };
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyAlphabetic_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyAlphabetic_AllLetterChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = input.AnyAlphabetic();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyAlphabetic_MixedChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', '1', '2' };
 
         // Act
         var result = input.AnyAlphabetic();
@@ -525,7 +1423,7 @@ public partial class YANTextTest
     public void AnyAlphabetic_NoLetterChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { '1', '2' };
+        var input = new[] { '1', '2', '3' };
 
         // Act
         var result = input.AnyAlphabetic();
@@ -535,13 +1433,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphabetic_Params_SomeLetterChars_ReturnsTrue()
+    public void AnyAlphabetic_Params_MixedChars_ReturnsTrue()
     {
-        // Arrange
-        var obj = 'a';
-
         // Act
-        var result = YANText.AnyAlphabetic(obj, '1');
+        var result = YANText.AnyAlphabetic('a', '1', '2');
 
         // Assert
         Assert.True(result);
@@ -550,18 +1445,43 @@ public partial class YANTextTest
     [Fact]
     public void AnyAlphabetic_Params_NoLetterChars_ReturnsFalse()
     {
-        // Arrange
-        var obj = '1';
-
         // Act
-        var result = YANText.AnyAlphabetic(obj, '2');
+        var result = YANText.AnyAlphabetic('1', '2', '3');
 
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public void IsNotAlphabetic_LetterChar_ReturnsFalse()
+    {
+        // Arrange
+        var input = 'a';
+
+        // Act
+        var result = input.IsNotAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotAlphabetic_NonLetterChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = '1';
+
+        // Act
+        var result = input.IsNotAlphabetic();
+
+        // Assert
+        Assert.True(result);
+    }
+
     #endregion
 
-    #region IsPunctuation
+    #region Punctuation
+
     [Fact]
     public void IsPunctuation_PunctuationChar_ReturnsTrue()
     {
@@ -587,14 +1507,38 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllPunctuation
+    [Fact]
+    public void AllPunctuation_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllPunctuation();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllPunctuation_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllPunctuation();
+
+        // Assert
+        Assert.False(result);
+    }
+
     [Fact]
     public void AllPunctuation_AllPunctuationChars_ReturnsTrue()
     {
         // Arrange
-        var input = new[] { '.', ',' };
+        var input = new[] { '.', ',', '!' };
 
         // Act
         var result = input.AllPunctuation();
@@ -604,10 +1548,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_SomeNonPunctuationChars_ReturnsFalse()
+    public void AllPunctuation_MixedChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { '.', 'a' };
+        var input = new[] { '.', 'a', ',' };
 
         // Act
         var result = input.AllPunctuation();
@@ -617,38 +1561,62 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllPunctuation_Params_AllPunctuationChars_ReturnsTrue()
+    public void AllPunctuation_NoPunctuationChars_ReturnsFalse()
     {
         // Arrange
-        var obj = '.';
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
-        var result = YANText.AllPunctuation(obj, ',');
+        var result = input.AllPunctuation();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPunctuation_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyPunctuation();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPunctuation_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyPunctuation();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPunctuation_AllPunctuationChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { '.', ',', '!' };
+
+        // Act
+        var result = input.AnyPunctuation();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllPunctuation_Params_SomeNonPunctuationChars_ReturnsFalse()
+    public void AnyPunctuation_MixedChars_ReturnsTrue()
     {
         // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AllPunctuation(obj, 'a');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyPunctuation
-    [Fact]
-    public void AnyPunctuation_SomePunctuationChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { '.', 'a' };
+        var input = new[] { '.', 'a', 'b' };
 
         // Act
         var result = input.AnyPunctuation();
@@ -661,7 +1629,7 @@ public partial class YANTextTest
     public void AnyPunctuation_NoPunctuationChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', 'b' };
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
         var result = input.AnyPunctuation();
@@ -670,39 +1638,15 @@ public partial class YANTextTest
         Assert.False(result);
     }
 
-    [Fact]
-    public void AnyPunctuation_Params_SomePunctuationChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AnyPunctuation(obj, 'a');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPunctuation_Params_NoPunctuationChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyPunctuation(obj, 'b');
-
-        // Assert
-        Assert.False(result);
-    }
     #endregion
 
-    #region IsNumber
+    #region Number
+
     [Fact]
     public void IsNumber_DigitChar_ReturnsTrue()
     {
         // Arrange
-        var input = '1';
+        var input = '5';
 
         // Act
         var result = input.IsNumber();
@@ -723,14 +1667,38 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllNumber
+    [Fact]
+    public void AllNumber_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNumber_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
     [Fact]
     public void AllNumber_AllDigitChars_ReturnsTrue()
     {
         // Arrange
-        var input = new[] { '1', '2' };
+        var input = new[] { '1', '2', '3' };
 
         // Act
         var result = input.AllNumber();
@@ -740,10 +1708,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_SomeNonDigitChars_ReturnsFalse()
+    public void AllNumber_MixedChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { '1', 'a' };
+        var input = new[] { '1', 'a', '2' };
 
         // Act
         var result = input.AllNumber();
@@ -753,38 +1721,62 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNumber_Params_AllDigitChars_ReturnsTrue()
+    public void AllNumber_NoDigitChars_ReturnsFalse()
     {
         // Arrange
-        var obj = '1';
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
-        var result = YANText.AllNumber(obj, '2');
+        var result = input.AllNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNumber_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNumber_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNumber_AllDigitChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { '1', '2', '3' };
+
+        // Act
+        var result = input.AnyNumber();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllNumber_Params_SomeNonDigitChars_ReturnsFalse()
+    public void AnyNumber_MixedChars_ReturnsTrue()
     {
         // Arrange
-        var obj = '1';
-
-        // Act
-        var result = YANText.AllNumber(obj, 'a');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNumber
-    [Fact]
-    public void AnyNumber_SomeDigitChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { '1', 'a' };
+        var input = new[] { '1', 'a', 'b' };
 
         // Act
         var result = input.AnyNumber();
@@ -797,7 +1789,7 @@ public partial class YANTextTest
     public void AnyNumber_NoDigitChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', 'b' };
+        var input = new[] { 'a', 'b', 'c' };
 
         // Act
         var result = input.AnyNumber();
@@ -806,34 +1798,10 @@ public partial class YANTextTest
         Assert.False(result);
     }
 
-    [Fact]
-    public void AnyNumber_Params_SomeDigitChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = '1';
-
-        // Act
-        var result = YANText.AnyNumber(obj, 'a');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNumber_Params_NoDigitChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNumber(obj, 'b');
-
-        // Assert
-        Assert.False(result);
-    }
     #endregion
 
-    #region IsAlphanumeric
+    #region Alphanumeric
+
     [Fact]
     public void IsAlphanumeric_LetterChar_ReturnsTrue()
     {
@@ -851,7 +1819,7 @@ public partial class YANTextTest
     public void IsAlphanumeric_DigitChar_ReturnsTrue()
     {
         // Arrange
-        var input = '1';
+        var input = '5';
 
         // Act
         var result = input.IsAlphanumeric();
@@ -872,14 +1840,38 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllAlphanumeric
+    [Fact]
+    public void AllAlphanumeric_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllAlphanumeric_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
     [Fact]
     public void AllAlphanumeric_AllAlphanumericChars_ReturnsTrue()
     {
         // Arrange
-        var input = new[] { 'a', 'B', '1', '2' };
+        var input = new[] { 'a', '1', 'b' };
 
         // Act
         var result = input.AllAlphanumeric();
@@ -889,10 +1881,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_SomeNonAlphanumericChars_ReturnsFalse()
+    public void AllAlphanumeric_MixedChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', '1', '.' };
+        var input = new[] { 'a', '.', '1' };
 
         // Act
         var result = input.AllAlphanumeric();
@@ -902,35 +1894,59 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllAlphanumeric_Params_AllAlphanumericChars_ReturnsTrue()
+    public void AllAlphanumeric_NoAlphanumericChars_ReturnsFalse()
     {
         // Arrange
-        var obj = 'a';
+        var input = new[] { '.', ',', '!' };
 
         // Act
-        var result = YANText.AllAlphanumeric(obj, 'B', '1', '2');
+        var result = input.AllAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyAlphanumeric_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AnyAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyAlphanumeric_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AnyAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyAlphanumeric_AllAlphanumericChars_ReturnsTrue()
+    {
+        // Arrange
+        var input = new[] { 'a', '1', 'b' };
+
+        // Act
+        var result = input.AnyAlphanumeric();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllAlphanumeric_Params_SomeNonAlphanumericChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllAlphanumeric(obj, '1', '.');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyAlphanumeric
-    [Fact]
-    public void AnyAlphanumeric_SomeAlphanumericChars_ReturnsTrue()
+    public void AnyAlphanumeric_MixedChars_ReturnsTrue()
     {
         // Arrange
         var input = new[] { 'a', '.', '!' };
@@ -946,7 +1962,7 @@ public partial class YANTextTest
     public void AnyAlphanumeric_NoAlphanumericChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { '.', '!', '@' };
+        var input = new[] { '.', ',', '!' };
 
         // Act
         var result = input.AnyAlphanumeric();
@@ -955,36 +1971,26 @@ public partial class YANTextTest
         Assert.False(result);
     }
 
+    #endregion
+
+    #region EqualsIgnoreCase
+
     [Fact]
-    public void AnyAlphanumeric_Params_SomeAlphanumericChars_ReturnsTrue()
+    public void EqualsIgnoreCase_SameCase_ReturnsTrue()
     {
         // Arrange
-        var obj = 'a';
+        var input1 = 'a';
+        var input2 = 'a';
 
         // Act
-        var result = YANText.AnyAlphanumeric(obj, '.', '!');
+        var result = input1.EqualsIgnoreCase(input2);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyAlphanumeric_Params_NoAlphanumericChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AnyAlphanumeric(obj, '!', '@');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region EqualsIgnoreCase
-    [Fact]
-    public void EqualsIgnoreCase_SameCharsDifferentCase_ReturnsTrue()
+    public void EqualsIgnoreCase_DifferentCase_ReturnsTrue()
     {
         // Arrange
         var input1 = 'a';
@@ -1010,11 +2016,35 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllEqualsIgnoreCase
     [Fact]
-    public void AllEqualsIgnoreCase_AllSameCharsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<char>? input = null;
+
+        // Act
+        var result = input.AllEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<char>();
+
+        // Act
+        var result = input.AllEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_AllSameCharDifferentCase_ReturnsTrue()
     {
         // Arrange
         var input = new[] { 'a', 'A', 'a' };
@@ -1027,10 +2057,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_SomeDifferentChars_ReturnsFalse()
+    public void AllEqualsIgnoreCase_DifferentChars_ReturnsFalse()
     {
         // Arrange
-        var input = new[] { 'a', 'b' };
+        var input = new[] { 'a', 'b', 'a' };
 
         // Act
         var result = input.AllEqualsIgnoreCase();
@@ -1039,1206 +2069,12 @@ public partial class YANTextTest
         Assert.False(result);
     }
 
-    [Fact]
-    public void AllEqualsIgnoreCase_Params_AllSameCharsDifferentCase_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllEqualsIgnoreCase(obj, 'A', 'a');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllEqualsIgnoreCase_Params_SomeDifferentChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllEqualsIgnoreCase(obj, 'b');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyEqualsIgnoreCase
-    [Fact]
-    public void AnyEqualsIgnoreCase_SomeSameCharsDifferentCase_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'A', 'b' };
-
-        // Act
-        var result = input.AnyEqualsIgnoreCase();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyEqualsIgnoreCase_AllDifferentChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AnyEqualsIgnoreCase();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyEqualsIgnoreCase_Params_SomeSameCharsDifferentCase_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyEqualsIgnoreCase(obj, 'A', 'b');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyEqualsIgnoreCase_Params_AllDifferentChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyEqualsIgnoreCase(obj, 'b', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotEmpty
-    [Fact]
-    public void IsNotEmpty_NonDefaultChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotEmpty_DefaultChar_ReturnsFalse()
-    {
-        // Arrange
-        char input = default;
-
-        // Act
-        var result = input.IsNotEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotEmpty
-    [Fact]
-    public void AllNotEmpty_AllNonDefaultChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b' };
-
-        // Act
-        var result = input.AllNotEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotEmpty_SomeDefaultChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', default };
-
-        // Act
-        var result = input.AllNotEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotEmpty_Params_AllNonDefaultChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotEmpty(obj, 'b');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotEmpty_Params_SomeDefaultChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotEmpty(obj, default);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotEmpty
-    [Fact]
-    public void AnyNotEmpty_SomeNonDefaultChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', default };
-
-        // Act
-        var result = input.AnyNotEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotEmpty_AllDefaultChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { default(char), default };
-
-        // Act
-        var result = input.AnyNotEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotEmpty_Params_SomeNonDefaultChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotEmpty(obj, default);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotEmpty_Params_AllDefaultChars_ReturnsFalse()
-    {
-        // Arrange
-        char obj = default;
-
-        // Act
-        var result = YANText.AnyNotEmpty(obj, default);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotWhiteSpace
-    [Fact]
-    public void IsNotWhiteSpace_NonWhiteSpaceChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotWhiteSpace_WhiteSpaceChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = ' ';
-
-        // Act
-        var result = input.IsNotWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotWhiteSpace
-    [Fact]
-    public void AllNotWhiteSpace_AllNonWhiteSpaceChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AllNotWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotWhiteSpace_SomeWhiteSpaceChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', ' ', 'c' };
-
-        // Act
-        var result = input.AllNotWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotWhiteSpace_Params_AllNonWhiteSpaceChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotWhiteSpace(obj, 'b', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotWhiteSpace_Params_SomeWhiteSpaceChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotWhiteSpace(obj, ' ', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotWhiteSpace
-    [Fact]
-    public void AnyNotWhiteSpace_SomeNonWhiteSpaceChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { ' ', 'a', '\t' };
-
-        // Act
-        var result = input.AnyNotWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotWhiteSpace_NoNonWhiteSpaceChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { ' ', '\t', '\n' };
-
-        // Act
-        var result = input.AnyNotWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotWhiteSpace_Params_SomeNonWhiteSpaceChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = ' ';
-
-        // Act
-        var result = YANText.AnyNotWhiteSpace(obj, 'a', '\t');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotWhiteSpace_Params_NoNonWhiteSpaceChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = ' ';
-
-        // Act
-        var result = YANText.AnyNotWhiteSpace(obj, '\t', '\n');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotWhiteSpaceEmpty
-    [Fact]
-    public void IsNotWhiteSpaceEmpty_NonWhiteSpaceNonEmptyChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotWhiteSpaceEmpty_WhiteSpaceChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = ' ';
-
-        // Act
-        var result = input.IsNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotWhiteSpaceEmpty_EmptyChar_ReturnsFalse()
-    {
-        // Arrange
-        char input = default;
-
-        // Act
-        var result = input.IsNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotWhiteSpaceEmpty
-    [Fact]
-    public void AllNotWhiteSpaceEmpty_AllNonWhiteSpaceNonEmptyChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AllNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotWhiteSpaceEmpty_SomeWhiteSpaceOrEmptyChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', ' ', 'c' };
-
-        // Act
-        var result = input.AllNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotWhiteSpaceEmpty_Params_AllNonWhiteSpaceNonEmptyChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotWhiteSpaceEmpty(obj, 'b', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotWhiteSpaceEmpty_Params_SomeWhiteSpaceOrEmptyChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotWhiteSpaceEmpty(obj, ' ', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotWhiteSpaceEmpty
-    [Fact]
-    public void AnyNotWhiteSpaceEmpty_SomeNonWhiteSpaceNonEmptyChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { ' ', 'a', default };
-
-        // Act
-        var result = input.AnyNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotWhiteSpaceEmpty_NoNonWhiteSpaceNonEmptyChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { ' ', '\t', default };
-
-        // Act
-        var result = input.AnyNotWhiteSpaceEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotWhiteSpaceEmpty_Params_SomeNonWhiteSpaceNonEmptyChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = ' ';
-
-        // Act
-        var result = YANText.AnyNotWhiteSpaceEmpty(obj, 'a', default);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotWhiteSpaceEmpty_Params_NoNonWhiteSpaceNonEmptyChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = ' ';
-
-        // Act
-        var result = YANText.AnyNotWhiteSpaceEmpty(obj, '\t', default);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotAlphabetic
-    [Fact]
-    public void IsNotAlphabetic_NonLetterChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = '1';
-
-        // Act
-        var result = input.IsNotAlphabetic();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotAlphabetic_LetterChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotAlphabetic();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotAlphabetic
-    [Fact]
-    public void AllNotAlphabetic_AllNonLetterChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { '1', '2', '3' };
-
-        // Act
-        var result = input.AllNotAlphabetic();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotAlphabetic_SomeLetterChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { '1', 'a', '3' };
-
-        // Act
-        var result = input.AllNotAlphabetic();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotAlphabetic_Params_AllNonLetterChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = '1';
-
-        // Act
-        var result = YANText.AllNotAlphabetic(obj, '2', '3');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotAlphabetic_Params_SomeLetterChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = '1';
-
-        // Act
-        var result = YANText.AllNotAlphabetic(obj, 'a', '3');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotAlphabetic
-    [Fact]
-    public void AnyNotAlphabetic_SomeNonLetterChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', '1', 'b' };
-
-        // Act
-        var result = input.AnyNotAlphabetic();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotAlphabetic_NoNonLetterChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AnyNotAlphabetic();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotAlphabetic_Params_SomeNonLetterChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotAlphabetic(obj, '1', 'b');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotAlphabetic_Params_NoNonLetterChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotAlphabetic(obj, 'b', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotPunctuation
-    [Fact]
-    public void IsNotPunctuation_NonPunctuationChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotPunctuation();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotPunctuation_PunctuationChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = '.';
-
-        // Act
-        var result = input.IsNotPunctuation();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotPunctuation
-    [Fact]
-    public void AllNotPunctuation_AllNonPunctuationChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AllNotPunctuation();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotPunctuation_SomePunctuationChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', '.', 'c' };
-
-        // Act
-        var result = input.AllNotPunctuation();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotPunctuation_Params_AllNonPunctuationChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotPunctuation(obj, 'b', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotPunctuation_Params_SomePunctuationChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotPunctuation(obj, '.', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotPunctuation
-    [Fact]
-    public void AnyNotPunctuation_SomeNonPunctuationChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { '.', 'a', ',' };
-
-        // Act
-        var result = input.AnyNotPunctuation();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotPunctuation_NoNonPunctuationChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { '.', ',', '!' };
-
-        // Act
-        var result = input.AnyNotPunctuation();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotPunctuation_Params_SomeNonPunctuationChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AnyNotPunctuation(obj, 'a', ',');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotPunctuation_Params_NoNonPunctuationChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AnyNotPunctuation(obj, ',', '!');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotNumber
-    [Fact]
-    public void IsNotNumber_NonDigitChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotNumber();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotNumber_DigitChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = '1';
-
-        // Act
-        var result = input.IsNotNumber();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotNumber
-    [Fact]
-    public void AllNotNumber_AllNonDigitChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AllNotNumber();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNumber_SomeDigitChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', '1', 'c' };
-
-        // Act
-        var result = input.AllNotNumber();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotNumber_Params_AllNonDigitChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotNumber(obj, 'b', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNumber_Params_SomeDigitChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotNumber(obj, '1', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotNumber
-    [Fact]
-    public void AnyNotNumber_SomeNonDigitChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { '1', 'a', '2' };
-
-        // Act
-        var result = input.AnyNotNumber();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNumber_NoNonDigitChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { '1', '2', '3' };
-
-        // Act
-        var result = input.AnyNotNumber();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotNumber_Params_SomeNonDigitChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = '1';
-
-        // Act
-        var result = YANText.AnyNotNumber(obj, 'a', '2');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNumber_Params_NoNonDigitChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = '1';
-
-        // Act
-        var result = YANText.AnyNotNumber(obj, '2', '3');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotAlphanumeric
-    [Fact]
-    public void IsNotAlphanumeric_NonAlphanumericChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = '.';
-
-        // Act
-        var result = input.IsNotAlphanumeric();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotAlphanumeric_LetterChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotAlphanumeric();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotAlphanumeric_DigitChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = '1';
-
-        // Act
-        var result = input.IsNotAlphanumeric();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotAlphanumeric
-    [Fact]
-    public void AllNotAlphanumeric_AllNonAlphanumericChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { '.', '!', '@' };
-
-        // Act
-        var result = input.AllNotAlphanumeric();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotAlphanumeric_SomeAlphanumericChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { '.', 'a', '!' };
-
-        // Act
-        var result = input.AllNotAlphanumeric();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotAlphanumeric_Params_AllNonAlphanumericChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AllNotAlphanumeric(obj, '!', '@');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotAlphanumeric_Params_SomeAlphanumericChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = '.';
-
-        // Act
-        var result = YANText.AllNotAlphanumeric(obj, 'a', '!');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotAlphanumeric
-    [Fact]
-    public void AnyNotAlphanumeric_SomeNonAlphanumericChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', '.', '1' };
-
-        // Act
-        var result = input.AnyNotAlphanumeric();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotAlphanumeric_NoNonAlphanumericChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', '1' };
-
-        // Act
-        var result = input.AnyNotAlphanumeric();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotAlphanumeric_Params_SomeNonAlphanumericChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotAlphanumeric(obj, '.', '1');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotAlphanumeric_Params_NoNonAlphanumericChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotAlphanumeric(obj, 'b', '1');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region NotEqualsIgnoreCase
-    [Fact]
-    public void NotEqualsIgnoreCase_DifferentChars_ReturnsTrue()
-    {
-        // Arrange
-        var input1 = 'a';
-        var input2 = 'b';
-
-        // Act
-        var result = input1.NotEqualsIgnoreCase(input2);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void NotEqualsIgnoreCase_SameCharsDifferentCase_ReturnsFalse()
-    {
-        // Arrange
-        var input1 = 'a';
-        var input2 = 'A';
-
-        // Act
-        var result = input1.NotEqualsIgnoreCase(input2);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotEqualsIgnoreCase
-    [Fact]
-    public void AllNotEqualsIgnoreCase_AllDifferentChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'C' };
-
-        // Act
-        var result = input.AllNotEqualsIgnoreCase();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotEqualsIgnoreCase_SomeSameCharsDifferentCase_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'A', 'b' };
-
-        // Act
-        var result = input.AllNotEqualsIgnoreCase();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotEqualsIgnoreCase_Params_AllDifferentChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotEqualsIgnoreCase(obj, 'b', 'C');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotEqualsIgnoreCase_Params_SomeSameCharsDifferentCase_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotEqualsIgnoreCase(obj, 'A', 'b');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotEqualsIgnoreCase
-    [Fact]
-    public void AnyNotEqualsIgnoreCase_SomeDifferentChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AnyNotEqualsIgnoreCase();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotEqualsIgnoreCase_AllSameCharsDifferentCase_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'A', 'a' };
-
-        // Act
-        var result = input.AnyNotEqualsIgnoreCase();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotEqualsIgnoreCase_Params_SomeDifferentChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotEqualsIgnoreCase(obj, 'b', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotEqualsIgnoreCase_Params_AllSameCharsDifferentCase_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotEqualsIgnoreCase(obj, 'A', 'a');
-
-        // Assert
-        Assert.False(result);
-    }
     #endregion
 
     #region Lower
+
     [Fact]
-    public void Lower_UpperCaseChar_ReturnsLowerCaseChar()
+    public void Lower_UppercaseChar_ReturnsLowercase()
     {
         // Arrange
         var input = 'A';
@@ -2251,61 +2087,46 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_WhiteSpaceChar_ReturnsSameChar()
+    public void Lower_LowercaseChar_ReturnsSameChar()
     {
         // Arrange
-        var input = ' ';
+        var input = 'a';
 
         // Act
         var result = input.Lower();
 
         // Assert
-        Assert.Equal(' ', result);
+        Assert.Equal('a', result);
     }
 
     [Fact]
-    public void Lower_List_MixedCaseChars_ModifiesListToLowerCase()
+    public void Lower_NonAlphabeticChar_ReturnsSameChar()
     {
         // Arrange
-        var input = new List<char> { 'A', 'b', 'C' };
-        var expected = new List<char> { 'a', 'b', 'c' };
+        var input = '1';
+
+        // Act
+        var result = input.Lower();
+
+        // Assert
+        Assert.Equal('1', result);
+    }
+
+    [Fact]
+    public void Lower_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<char> { 'A', 'B', 'C' };
 
         // Act
         input.Lower();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(['a', 'b', 'c'], input);
     }
 
     [Fact]
-    public void Lower_List_NullInput_NotThrowException()
-    {
-        // Arrange
-        List<char>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.Lower);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void Lowers_MixedCaseChars_ReturnsAllLowerCase()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b', 'C' };
-
-        // Act
-        var result = input.Lowers();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(['a', 'b', 'c'], result);
-    }
-
-    [Fact]
-    public void Lowers_NullInput_ReturnsDefault()
+    public void Lowers_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<char>? input = null;
@@ -2318,106 +2139,76 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_Params_MixedCaseChars_ReturnsAllLowerCase()
+    public void Lowers_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = 'A';
+        var input = Array.Empty<char>();
 
         // Act
-        var result = YANText.Lowers(obj, 'b', 'C');
+        var result = input.Lowers();
 
         // Assert
-        Assert.NotNull(result);
+        Assert.Empty(result!);
+    }
+
+    [Fact]
+    public void Lowers_MixedCaseCollection_ReturnsAllLowercase()
+    {
+        // Arrange
+        var input = new[] { 'A', 'b', 'C' };
+
+        // Act
+        var result = input.Lowers();
+
+        // Assert
         Assert.Equal(['a', 'b', 'c'], result);
     }
-    #endregion
 
-    #region LowerInvariant
     [Fact]
-    public void LowerInvariant_UpperCaseChar_ReturnsLowerCaseChar()
+    public void IsLower_LowercaseChar_ReturnsTrue()
+    {
+        // Arrange
+        var input = 'a';
+
+        // Act
+        var result = input.IsLower();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsLower_UppercaseChar_ReturnsFalse()
     {
         // Arrange
         var input = 'A';
 
         // Act
-        var result = input.LowerInvariant();
+        var result = input.IsLower();
 
         // Assert
-        Assert.Equal('a', result);
+        Assert.False(result);
     }
 
     [Fact]
-    public void LowerInvariant_List_MixedCaseChars_ModifiesListToLowerCase()
+    public void IsLower_NonAlphabeticChar_ReturnsFalse()
     {
         // Arrange
-        var input = new List<char> { 'A', 'b', 'C' };
-        var expected = new List<char> { 'a', 'b', 'c' };
+        var input = '1';
 
         // Act
-        input.LowerInvariant();
+        var result = input.IsLower();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.False(result);
     }
 
-    [Fact]
-    public void LowerInvariant_List_NullInput_NotThrowException()
-    {
-        // Arrange
-        List<char>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.LowerInvariant);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void LowerInvariants_MixedCaseChars_ReturnsAllLowerCase()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b', 'C' };
-
-        // Act
-        var result = input.LowerInvariants();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(['a', 'b', 'c'], result);
-    }
-
-    [Fact]
-    public void LowerInvariants_NullInput_ReturnsDefault()
-    {
-        // Arrange
-        IEnumerable<char>? input = null;
-
-        // Act
-        var result = input.LowerInvariants();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void LowerInvariants_Params_MixedCaseChars_ReturnsAllLowerCase()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.LowerInvariants(obj, 'b', 'C');
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(['a', 'b', 'c'], result);
-    }
     #endregion
 
     #region Upper
+
     [Fact]
-    public void Upper_LowerCaseChar_ReturnsUpperCaseChar()
+    public void Upper_LowercaseChar_ReturnsUppercase()
     {
         // Arrange
         var input = 'a';
@@ -2430,61 +2221,46 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_WhiteSpaceChar_ReturnsSameChar()
+    public void Upper_UppercaseChar_ReturnsSameChar()
     {
         // Arrange
-        var input = ' ';
+        var input = 'A';
 
         // Act
         var result = input.Upper();
 
         // Assert
-        Assert.Equal(' ', result);
+        Assert.Equal('A', result);
     }
 
     [Fact]
-    public void Upper_List_MixedCaseChars_ModifiesListToUpperCase()
+    public void Upper_NonAlphabeticChar_ReturnsSameChar()
     {
         // Arrange
-        var input = new List<char> { 'A', 'b', 'C' };
-        var expected = new List<char> { 'A', 'B', 'C' };
+        var input = '1';
+
+        // Act
+        var result = input.Upper();
+
+        // Assert
+        Assert.Equal('1', result);
+    }
+
+    [Fact]
+    public void Upper_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<char> { 'a', 'b', 'c' };
 
         // Act
         input.Upper();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(['A', 'B', 'C'], input);
     }
 
     [Fact]
-    public void Upper_List_NullInput_NotThrowException()
-    {
-        // Arrange
-        List<char>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.Upper);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void Uppers_MixedCaseChars_ReturnsAllUpperCase()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b', 'C' };
-
-        // Act
-        var result = input.Uppers();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(['A', 'B', 'C'], result);
-    }
-
-    [Fact]
-    public void Uppers_NullInput_ReturnsDefault()
+    public void Uppers_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<char>? input = null;
@@ -2497,391 +2273,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_Params_MixedCaseChars_ReturnsAllUpperCase()
+    public void Uppers_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = 'A';
+        var input = Array.Empty<char>();
 
         // Act
-        var result = YANText.Uppers(obj, 'b', 'C');
+        var result = input.Uppers();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(['A', 'B', 'C'], result);
-    }
-    #endregion
-
-    #region UpperInvariant
-    [Fact]
-    public void UpperInvariant_LowerCaseChar_ReturnsUpperCaseChar()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.UpperInvariant();
-
-        // Assert
-        Assert.Equal('A', result);
+        Assert.Empty(result!);
     }
 
     [Fact]
-    public void UpperInvariant_List_MixedCaseChars_ModifiesListToUpperCase()
-    {
-        // Arrange
-        var input = new List<char> { 'A', 'b', 'C' };
-        var expected = new List<char> { 'A', 'B', 'C' };
-
-        // Act
-        input.UpperInvariant();
-
-        // Assert
-        Assert.Equal(expected, input);
-    }
-
-    [Fact]
-    public void UpperInvariant_List_NullInput_NotThrowException()
-    {
-        // Arrange
-        List<char>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.UpperInvariant);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void UpperInvariants_MixedCaseChars_ReturnsAllUpperCase()
+    public void Uppers_MixedCaseCollection_ReturnsAllUppercase()
     {
         // Arrange
         var input = new[] { 'A', 'b', 'C' };
 
         // Act
-        var result = input.UpperInvariants();
+        var result = input.Uppers();
 
         // Assert
-        Assert.NotNull(result);
         Assert.Equal(['A', 'B', 'C'], result);
     }
 
     [Fact]
-    public void UpperInvariants_NullInput_ReturnsDefault()
-    {
-        // Arrange
-        IEnumerable<char>? input = null;
-
-        // Act
-        var result = input.UpperInvariants();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void UpperInvariants_Params_MixedCaseChars_ReturnsAllUpperCase()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.UpperInvariants(obj, 'b', 'C');
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(['A', 'B', 'C'], result);
-    }
-    #endregion
-
-    #region IsLower
-    [Fact]
-    public void IsLower_LowerCaseChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsLower();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsLower_UpperCaseChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = 'A';
-
-        // Act
-        var result = input.IsLower();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsLower_WhiteSpaceChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = ' ';
-
-        // Act
-        var result = input.IsLower();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllLowers
-    [Fact]
-    public void AllLowers_AllLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b' };
-
-        // Act
-        var result = input.AllLowers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllLowers_SomeUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'B' };
-
-        // Act
-        var result = input.AllLowers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllLowers_Params_AllLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllLowers(obj, 'b');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllLowers_Params_SomeUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllLowers(obj, 'B');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyLowers
-    [Fact]
-    public void AnyLowers_SomeLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'B' };
-
-        // Act
-        var result = input.AnyLowers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyLowers_NoLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'A', 'B' };
-
-        // Act
-        var result = input.AnyLowers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyLowers_Params_SomeLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyLowers(obj, 'B');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyLowers_Params_NoLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AnyLowers(obj, 'B');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotLower
-    [Fact]
-    public void IsNotLower_UpperCaseChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'A';
-
-        // Act
-        var result = input.IsNotLower();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotLower_LowerCaseChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotLower();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotLowers
-    [Fact]
-    public void AllNotLowers_AllNonLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'A', 'B', 'C' };
-
-        // Act
-        var result = input.AllNotLowers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotLowers_SomeLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b', 'C' };
-
-        // Act
-        var result = input.AllNotLowers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotLowers_Params_AllNonLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AllNotLowers(obj, 'B', 'C');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotLowers_Params_SomeLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AllNotLowers(obj, 'b', 'C');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotLowers
-    [Fact]
-    public void AnyNotLowers_SomeNonLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'B', 'c' };
-
-        // Act
-        var result = input.AnyNotLowers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotLowers_NoNonLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AnyNotLowers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotLowers_Params_SomeNonLowerCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotLowers(obj, 'B', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotLowers_Params_NoNonLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyNotLowers(obj, 'b', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsUpper
-    [Fact]
-    public void IsUpper_UpperCaseChar_ReturnsTrue()
+    public void IsUpper_UppercaseChar_ReturnsTrue()
     {
         // Arrange
         var input = 'A';
@@ -2894,7 +2312,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsUpper_LowerCaseChar_ReturnsFalse()
+    public void IsUpper_LowercaseChar_ReturnsFalse()
     {
         // Arrange
         var input = 'a';
@@ -2907,10 +2325,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsUpper_WhiteSpaceChar_ReturnsFalse()
+    public void IsUpper_NonAlphabeticChar_ReturnsFalse()
     {
         // Arrange
-        var input = ' ';
+        var input = '1';
 
         // Act
         var result = input.IsUpper();
@@ -2918,249 +2336,6 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllUppers
-    [Fact]
-    public void AllUppers_AllUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'A', 'B' };
-
-        // Act
-        var result = input.AllUppers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllUppers_SomeLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b' };
-
-        // Act
-        var result = input.AllUppers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllUppers_Params_AllUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AllUppers(obj, 'B');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllUppers_Params_SomeLowerCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AllUppers(obj, 'b');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyUppers
-    [Fact]
-    public void AnyUppers_SomeUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b' };
-
-        // Act
-        var result = input.AnyUppers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyUppers_NoUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b' };
-
-        // Act
-        var result = input.AnyUppers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyUppers_Params_SomeUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AnyUppers(obj, 'b');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyUppers_Params_NoUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AnyUppers(obj, 'b');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotUpper
-    [Fact]
-    public void IsNotUpper_LowerCaseChar_ReturnsTrue()
-    {
-        // Arrange
-        var input = 'a';
-
-        // Act
-        var result = input.IsNotUpper();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotUpper_UpperCaseChar_ReturnsFalse()
-    {
-        // Arrange
-        var input = 'A';
-
-        // Act
-        var result = input.IsNotUpper();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotUppers
-    [Fact]
-    public void AllNotUppers_AllNonUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'a', 'b', 'c' };
-
-        // Act
-        var result = input.AllNotUppers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotUppers_SomeUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'a', 'B', 'c' };
-
-        // Act
-        var result = input.AllNotUppers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotUppers_Params_AllNonUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotUppers(obj, 'b', 'c');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotUppers_Params_SomeUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'a';
-
-        // Act
-        var result = YANText.AllNotUppers(obj, 'B', 'c');
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotUppers
-    [Fact]
-    public void AnyNotUppers_SomeNonUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { 'A', 'b', 'C' };
-
-        // Act
-        var result = input.AnyNotUppers();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotUppers_NoNonUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { 'A', 'B', 'C' };
-
-        // Act
-        var result = input.AnyNotUppers();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotUppers_Params_SomeNonUpperCaseChars_ReturnsTrue()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AnyNotUppers(obj, 'b', 'C');
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotUppers_Params_NoNonUpperCaseChars_ReturnsFalse()
-    {
-        // Arrange
-        var obj = 'A';
-
-        // Act
-        var result = YANText.AnyNotUppers(obj, 'B', 'C');
-
-        // Assert
-        Assert.False(result);
-    }
     #endregion
 }

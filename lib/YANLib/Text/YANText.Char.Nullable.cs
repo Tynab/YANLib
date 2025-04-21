@@ -14,7 +14,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty(this IEnumerable<char?> input) => input.AllNullEmptyImplement();
+    public static bool AllNullEmpty(this IEnumerable<char?>? input) => input.AllNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -22,7 +22,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullEmpty(this IEnumerable<char?> input) => input.AnyNullEmptyImplement();
+    public static bool AnyNullEmpty(this IEnumerable<char?>? input) => input.AnyNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -34,7 +34,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullEmpty(this IEnumerable<char?> input) => input.AllNotNullEmptyImplement();
+    public static bool AllNotNullEmpty(this IEnumerable<char?>? input) => input.AllNotNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -42,7 +42,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullEmpty(this IEnumerable<char?> input) => input.AnyNotNullEmptyImplement();
+    public static bool AnyNotNullEmpty(this IEnumerable<char?>? input) => input.AnyNotNullEmptyImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -58,7 +58,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullWhiteSpace(this IEnumerable<char?> input) => input.AllNullWhiteSpaceImplement();
+    public static bool AllNullWhiteSpace(this IEnumerable<char?>? input) => input.AllNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -66,7 +66,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullWhiteSpace(this IEnumerable<char?> input) => input.AnyNullWhiteSpaceImplement();
+    public static bool AnyNullWhiteSpace(this IEnumerable<char?>? input) => input.AnyNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -78,7 +78,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullWhiteSpace(this IEnumerable<char?> input) => input.AllNotNullWhiteSpaceImplement();
+    public static bool AllNotNullWhiteSpace(this IEnumerable<char?>? input) => input.AllNotNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -86,7 +86,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullWhiteSpace(this IEnumerable<char?> input) => input.AnyNotNullWhiteSpaceImplement();
+    public static bool AnyNotNullWhiteSpace(this IEnumerable<char?>? input) => input.AnyNotNullWhiteSpaceImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -102,7 +102,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllAlphabetic(this IEnumerable<char?> input) => input.AllAlphabeticImplement();
+    public static bool AllAlphabetic(this IEnumerable<char?>? input) => input.AllAlphabeticImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -110,7 +110,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyAlphabetic(this IEnumerable<char?> input) => input.AnyAlphabeticImplement();
+    public static bool AnyAlphabetic(this IEnumerable<char?>? input) => input.AnyAlphabeticImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -122,7 +122,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotAlphabetic(this IEnumerable<char?> input) => input.AllNotAlphabeticImplement();
+    public static bool AllNotAlphabetic(this IEnumerable<char?>? input) => input.AllNotAlphabeticImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -130,7 +130,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotAlphabetic(this IEnumerable<char?> input) => input.AnyNotAlphabeticImplement();
+    public static bool AnyNotAlphabetic(this IEnumerable<char?>? input) => input.AnyNotAlphabeticImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -146,7 +146,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllPunctuation(this IEnumerable<char?> input) => input.AllPunctuationImplement();
+    public static bool AllPunctuation(this IEnumerable<char?>? input) => input.AllPunctuationImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -154,7 +154,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyPunctuation(this IEnumerable<char?> input) => input.AnyPunctuationImplement();
+    public static bool AnyPunctuation(this IEnumerable<char?>? input) => input.AnyPunctuationImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -166,7 +166,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotPunctuation(this IEnumerable<char?> input) => input.AllNotPunctuationImplement();
+    public static bool AllNotPunctuation(this IEnumerable<char?>? input) => input.AllNotPunctuationImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -174,7 +174,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotPunctuation(this IEnumerable<char?> input) => input.AnyNotPunctuationImplement();
+    public static bool AnyNotPunctuation(this IEnumerable<char?>? input) => input.AnyNotPunctuationImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -190,7 +190,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNumber(this IEnumerable<char?> input) => input.AllNumberImplement();
+    public static bool AllNumber(this IEnumerable<char?>? input) => input.AllNumberImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -198,7 +198,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNumber(this IEnumerable<char?> input) => input.AnyNumberImplement();
+    public static bool AnyNumber(this IEnumerable<char?>? input) => input.AnyNumberImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -210,7 +210,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNumber(this IEnumerable<char?> input) => input.AllNotNumberImplement();
+    public static bool AllNotNumber(this IEnumerable<char?>? input) => input.AllNotNumberImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -218,7 +218,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNumber(this IEnumerable<char?> input) => input.AnyNotNumberImplement();
+    public static bool AnyNotNumber(this IEnumerable<char?>? input) => input.AnyNotNumberImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -234,7 +234,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllAlphanumeric(this IEnumerable<char?> input) => input.AllAlphanumericImplement();
+    public static bool AllAlphanumeric(this IEnumerable<char?>? input) => input.AllAlphanumericImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -242,7 +242,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyAlphanumeric(this IEnumerable<char?> input) => input.AnyAlphanumericImplement();
+    public static bool AnyAlphanumeric(this IEnumerable<char?>? input) => input.AnyAlphanumericImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -254,7 +254,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotAlphanumeric(this IEnumerable<char?> input) => input.AllNotAlphanumericImplement();
+    public static bool AllNotAlphanumeric(this IEnumerable<char?>? input) => input.AllNotAlphanumericImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -262,7 +262,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotAlphanumeric(this IEnumerable<char?> input) => input.AnyNotAlphanumericImplement();
+    public static bool AnyNotAlphanumeric(this IEnumerable<char?>? input) => input.AnyNotAlphanumericImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -278,7 +278,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllEqualsIgnoreCase(this IEnumerable<char?> input) => input.AllEqualsIgnoreCaseImplement();
+    public static bool AllEqualsIgnoreCase(this IEnumerable<char?>? input) => input.AllEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -286,7 +286,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyEqualsIgnoreCase(this IEnumerable<char?> input) => input.AnyEqualsIgnoreCaseImplement();
+    public static bool AnyEqualsIgnoreCase(this IEnumerable<char?>? input) => input.AnyEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -298,7 +298,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotEqualsIgnoreCase(this IEnumerable<char?> input) => input.AllNotEqualsIgnoreCaseImplement();
+    public static bool AllNotEqualsIgnoreCase(this IEnumerable<char?>? input) => input.AllNotEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -306,7 +306,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotEqualsIgnoreCase(this IEnumerable<char?> input) => input.AnyNotEqualsIgnoreCaseImplement();
+    public static bool AnyNotEqualsIgnoreCase(this IEnumerable<char?>? input) => input.AnyNotEqualsIgnoreCaseImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -390,7 +390,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllUppers(this IEnumerable<char?> input) => input.AllUppersImplement();
+    public static bool AllUppers(this IEnumerable<char?>? input) => input.AllUppersImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -398,7 +398,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyUppers(this IEnumerable<char?> input) => input.AnyUppersImplement();
+    public static bool AnyUppers(this IEnumerable<char?>? input) => input.AnyUppersImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -410,7 +410,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotUppers(this IEnumerable<char?> input) => input.AllNotUppersImplement();
+    public static bool AllNotUppers(this IEnumerable<char?>? input) => input.AllNotUppersImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -418,7 +418,7 @@ public static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotUppers(this IEnumerable<char?> input) => input.AnyNotUppersImplement();
+    public static bool AnyNotUppers(this IEnumerable<char?>? input) => input.AnyNotUppersImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

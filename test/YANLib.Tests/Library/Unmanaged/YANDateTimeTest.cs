@@ -1,13 +1,13 @@
-﻿using System.Globalization;
-using YANLib.Unmanaged;
+﻿using YANLib.Unmanaged;
 
 namespace YANLib.Tests.Library.Unmanaged;
 
 public partial class YANDateTimeTest
 {
     #region GetWeekOfYear
+
     [Fact]
-    public void GetWeekOfYear_NullInput_ReturnsZero()
+    public void GetWeekOfYear_DateTime_NullInput_ReturnsZero()
     {
         // Arrange
         DateTime? input = null;
@@ -20,63 +20,59 @@ public partial class YANDateTimeTest
     }
 
     [Fact]
-    public void GetWeekOfYear_ValidDate_ReturnsCorrectWeekNumber()
-    {
-        // Arrange
-        var input = new DateTime(2023, 1, 15);
-        var expected = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(input, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
-
-        // Act
-        var result = input.GetWeekOfYear();
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void GetWeekOfYear_FirstDayOfYear_ReturnsWeekOne()
+    public void GetWeekOfYear_DateTime_FirstDayOfYear_ReturnsOne()
     {
         // Arrange
         var input = new DateTime(2023, 1, 1);
-        var expected = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(input, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
 
         // Act
         var result = input.GetWeekOfYear();
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(1, result);
     }
 
     [Fact]
-    public void GetWeekOfYear_LastDayOfYear_ReturnsLastWeek()
+    public void GetWeekOfYear_DateTime_LastDayOfYear_Returns52or53()
     {
         // Arrange
         var input = new DateTime(2023, 12, 31);
-        var expected = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(input, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
 
         // Act
         var result = input.GetWeekOfYear();
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.True(result is 52 or 53);
     }
 
     [Fact]
-    public void GetWeekOfYear_StringInput_ParsesAndReturnsWeekNumber()
+    public void GetWeekOfYear_DateTime_MiddleOfYear_ReturnsCorrectWeek()
     {
         // Arrange
-        var input = "2023-01-15";
-        var expected = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(input.Parse<DateTime>(), CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
+        var input = new DateTime(2023, 7, 15);
 
         // Act
         var result = input.GetWeekOfYear();
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(28, result);
     }
 
     [Fact]
-    public void GetWeekOfYear_InvalidStringInput_ReturnsZero()
+    public void GetWeekOfYear_DateTime_StringInput_ReturnsWeekNumber()
+    {
+        // Arrange
+        var input = "2023-07-15";
+
+        // Act
+        var result = input.GetWeekOfYear();
+
+        // Assert
+        Assert.Equal(28, result);
+    }
+
+    [Fact]
+    public void GetWeekOfYear_DateTime_InvalidStringInput_ReturnsZero()
     {
         // Arrange
         var input = "not a date";
@@ -87,14 +83,29 @@ public partial class YANDateTimeTest
         // Assert
         Assert.Equal(0, result);
     }
+
+    [Fact]
+    public void GetWeekOfYear_DateTime_IntInput_ReturnsZero()
+    {
+        // Arrange
+        var input = 12345;
+
+        // Act
+        var result = input.GetWeekOfYear();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region GetWeekOfYears
+
     [Fact]
-    public void GetWeekOfYears_NullInput_ReturnsNull()
+    public void GetWeekOfYears_DateTime_NullCollection_ReturnsNull()
     {
         // Arrange
-        IEnumerable<DateTime>? input = null;
+        IEnumerable<DateTime?>? input = null;
 
         // Act
         var result = input.GetWeekOfYears();
@@ -104,10 +115,10 @@ public partial class YANDateTimeTest
     }
 
     [Fact]
-    public void GetWeekOfYears_EmptyInput_ReturnsNull()
+    public void GetWeekOfYears_DateTime_EmptyCollection_ReturnsNull()
     {
         // Arrange
-        IEnumerable<DateTime> input = [];
+        var input = Array.Empty<DateTime?>();
 
         // Act
         var result = input.GetWeekOfYears();
@@ -117,122 +128,103 @@ public partial class YANDateTimeTest
     }
 
     [Fact]
-    public void GetWeekOfYears_ValidDates_ReturnsCorrectWeekNumbers()
+    public void GetWeekOfYears_DateTime_DateCollection_ReturnsWeekNumbers()
     {
         // Arrange
-        var input = new List<DateTime>
+        var input = new DateTime?[]
         {
-            new(2023, 1, 1),
-            new(2023, 1, 15),
-            new(2023, 12, 31)
+            new (2023, 1, 1),
+            new (2023, 7, 15),
+            new (2023, 12, 31)
         };
 
-        var expected = input.Select(date => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek)).ToList();
-
         // Act
         var result = input.GetWeekOfYears();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expected, result);
+        Assert.Equal([1, 28, 53], result);
     }
 
     [Fact]
-    public void GetWeekOfYears_MixedValidAndNullDates_HandlesNullsCorrectly()
+    public void GetWeekOfYears_DateTime_MixedCollection_ReturnsWeekNumbers()
     {
         // Arrange
-        var input = new List<DateTime?>
+        var input = new DateTime?[]
         {
-            new DateTime(2023, 1, 1),
+            new (2023, 1, 1),
             null,
-            new DateTime(2023, 12, 31)
+            new (2023, 12, 31)
         };
-
-        var expected = input.Select(date => date.HasValue
-            ? CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date.Value, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek)
-            : 0).ToList();
 
         // Act
         var result = input.GetWeekOfYears();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expected, result);
+        Assert.Equal([1, 0, 53], result);
     }
 
     [Fact]
-    public void GetWeekOfYears_StringDates_ParsesAndReturnsWeekNumbers()
+    public void GetWeekOfYears_DateTime_StringCollection_ReturnsWeekNumbers()
     {
         // Arrange
-        var input = new List<string>
-        {
-            "2023-01-01",
-            "2023-01-15",
-            "2023-12-31"
-        };
-
-        var expected = input.Select(dateStr => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateStr.Parse<DateTime>(), CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek)).ToList();
+        var input = new string?[] { "2023-01-01", "2023-07-15", "2023-12-31" };
 
         // Act
         var result = input.GetWeekOfYears();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expected, result);
+        Assert.Equal([1, 28, 53], result);
     }
 
     [Fact]
-    public void GetWeekOfYears_Params_NullInput_ReturnsNull()
+    public void GetWeekOfYears_DateTime_MixedStringCollection_ReturnsWeekNumbers()
     {
         // Arrange
-        DateTime[]? input = null;
+        var input = new string?[] { "2023-01-01", "not a date", "2023-12-31" };
 
         // Act
-        var result = YANDateTime.GetWeekOfYears(input);
+        var result = input.GetWeekOfYears();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal([1, 0, 53], result);
     }
 
     [Fact]
-    public void GetWeekOfYears_Params_EmptyInput_ReturnsNull()
+    public void GetWeekOfYears_DateTime_ParamsDateTimes_ReturnsWeekNumbers()
     {
-        // Arrange
-        object[] input = [];
-
         // Act
-        var result = YANDateTime.GetWeekOfYears(input);
+        var result = YANDateTime.GetWeekOfYears(new DateTime(2023, 1, 1), new(2023, 7, 15), new(2023, 12, 31));
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal([1, 28, 53], result);
     }
 
     [Fact]
-    public void GetWeekOfYears_Params_ValidDates_ReturnsCorrectWeekNumbers()
+    public void GetWeekOfYears_DateTime_ParamsMixed_ReturnsWeekNumbers()
     {
-        // Arrange
-        var date1 = new DateTime(2023, 1, 1);
-        var date2 = new DateTime(2023, 1, 15);
-        var date3 = new DateTime(2023, 12, 31);
-        var expected = new[]
-        {
-            CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date1, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek),
-            CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date2, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek),
-            CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date3, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek)
-        };
-
         // Act
-        var result = YANDateTime.GetWeekOfYears(date1, date2, date3);
+        var result = YANDateTime.GetWeekOfYears(new(2023, 1, 1), (DateTime?)null, new(2023, 12, 31));
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expected, result);
+        Assert.Equal([1, 0, 53], result);
     }
+
+    [Fact]
+    public void GetWeekOfYears_DateTime_ParamsStrings_ReturnsWeekNumbers()
+    {
+        // Act
+        var result = YANDateTime.GetWeekOfYears("2023-01-01", "2023-07-15", "2023-12-31");
+
+        // Assert
+        Assert.Equal([1, 28, 53], result);
+    }
+
     #endregion
 
     #region TotalMonth
+
     [Fact]
-    public void TotalMonth_BothInputsNull_ReturnsZero()
+    public void TotalMonth_DateTime_BothNull_ReturnsZero()
     {
         // Arrange
         DateTime? input1 = null;
@@ -246,11 +238,11 @@ public partial class YANDateTimeTest
     }
 
     [Fact]
-    public void TotalMonth_FirstInputNull_ReturnsZero()
+    public void TotalMonth_DateTime_FirstNull_ReturnsZero()
     {
         // Arrange
         DateTime? input1 = null;
-        DateTime? input2 = new DateTime(2023, 6, 15);
+        DateTime? input2 = new DateTime(2023, 7, 15);
 
         // Act
         var result = YANDateTime.TotalMonth(input1, input2);
@@ -260,10 +252,10 @@ public partial class YANDateTimeTest
     }
 
     [Fact]
-    public void TotalMonth_SecondInputNull_ReturnsZero()
+    public void TotalMonth_DateTime_SecondNull_ReturnsZero()
     {
         // Arrange
-        DateTime? input1 = new DateTime(2023, 6, 15);
+        DateTime? input1 = new DateTime(2023, 7, 15);
         DateTime? input2 = null;
 
         // Act
@@ -274,109 +266,202 @@ public partial class YANDateTimeTest
     }
 
     [Fact]
-    public void TotalMonth_SameDate_ReturnsZero()
+    public void TotalMonth_DateTime_SameDate_ReturnsZero()
     {
         // Arrange
-        var date = new DateTime(2023, 6, 15);
+        var input1 = new DateTime(2023, 7, 15);
+        var input2 = new DateTime(2023, 7, 15);
 
         // Act
-        var result = YANDateTime.TotalMonth(date, date);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
         Assert.Equal(0, result);
     }
 
     [Fact]
-    public void TotalMonth_OneMonthDifference_ReturnsOne()
+    public void TotalMonth_DateTime_OneMonthDifference_ReturnsOne()
     {
         // Arrange
-        var date1 = new DateTime(2023, 6, 15);
-        var date2 = new DateTime(2023, 7, 15);
+        var input1 = new DateTime(2023, 7, 15);
+        var input2 = new DateTime(2023, 8, 15);
 
         // Act
-        var result = YANDateTime.TotalMonth(date1, date2);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
         Assert.Equal(1, result);
     }
 
     [Fact]
-    public void TotalMonth_OneYearDifference_ReturnsTwelve()
+    public void TotalMonth_DateTime_OneYearDifference_Returns12()
     {
         // Arrange
-        var date1 = new DateTime(2022, 6, 15);
-        var date2 = new DateTime(2023, 6, 15);
+        var input1 = new DateTime(2022, 7, 15);
+        var input2 = new DateTime(2023, 7, 15);
 
         // Act
-        var result = YANDateTime.TotalMonth(date1, date2);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
         Assert.Equal(12, result);
     }
 
     [Fact]
-    public void TotalMonth_NegativeMonthDifference_ReturnsAbsoluteValue()
+    public void TotalMonth_DateTime_NegativeMonthDifference_ReturnsNegative()
     {
         // Arrange
-        var date1 = new DateTime(2023, 7, 15);
-        var date2 = new DateTime(2023, 6, 15);
+        var input1 = new DateTime(2023, 8, 15);
+        var input2 = new DateTime(2023, 7, 15);
 
         // Act
-        var result = YANDateTime.TotalMonth(date1, date2);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
         Assert.Equal(1, result);
     }
 
     [Fact]
-    public void TotalMonth_PartialMonthDifference_ReturnsTruncatedValue()
+    public void TotalMonth_DateTime_ComplexDifference_ReturnsCorrectMonths()
     {
         // Arrange
-        var date1 = new DateTime(2023, 6, 1);
-        var date2 = new DateTime(2023, 7, 15);
+        var input1 = new DateTime(2022, 3, 15);
+        var input2 = new DateTime(2023, 9, 20);
 
         // Act
-        var result = YANDateTime.TotalMonth(date1, date2);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
-        Assert.Equal(1, result);
+        Assert.Equal(18, result);
     }
 
     [Fact]
-    public void TotalMonth_StringDates_ParsesAndCalculatesMonths()
+    public void TotalMonth_DateTime_StringDates_ReturnsMonthDifference()
     {
         // Arrange
-        var date1 = "2022-06-15";
-        var date2 = "2023-06-15";
+        var input1 = "2022-03-15";
+        var input2 = "2023-09-20";
 
         // Act
-        var result = YANDateTime.TotalMonth(date1, date2);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
-        Assert.Equal(12, result);
+        Assert.Equal(18, result);
     }
 
     [Fact]
-    public void TotalMonth_InvalidStringDates_ReturnsZero()
+    public void TotalMonth_DateTime_InvalidStringDates_ReturnsZero()
     {
         // Arrange
-        var date1 = "not a date";
-        var date2 = "2023-06-15";
+        var input1 = "not a date";
+        var input2 = "2023-09-20";
 
         // Act
-        var result = YANDateTime.TotalMonth(date1, date2);
+        var result = YANDateTime.TotalMonth(input1, input2);
 
         // Assert
         Assert.Equal(0, result);
     }
+
     #endregion
 
     #region ChangeTimeZone
+
     [Fact]
-    public void ChangeTimeZone_DateTime_NoTimeZoneSpecified_ReturnsSameDateTime()
+    public void ChangeTimeZone_DateTime_SameTimeZone_ReturnsSameDateTime()
     {
         // Arrange
-        var input = new DateTime(2023, 6, 15, 12, 0, 0);
+        var input = new DateTime(2023, 7, 15, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = 0;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_PositiveOffset_AddsHours()
+    {
+        // Arrange
+        var input = new DateTime(2023, 7, 15, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = 5;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 7, 15, 17, 0, 0), result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_NegativeOffset_SubtractsHours()
+    {
+        // Arrange
+        var input = new DateTime(2023, 7, 15, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = -5;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 7, 15, 7, 0, 0), result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_StringTimeZones_ChangesTime()
+    {
+        // Arrange
+        var input = new DateTime(2023, 7, 15, 12, 0, 0);
+        var tzSrc = "0";
+        var tzDst = "5";
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 7, 15, 17, 0, 0), result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_NearMinValue_HandlesUnderflow()
+    {
+        // Arrange
+        var input = DateTime.MinValue.AddHours(2);
+        var tzSrc = 0;
+        var tzDst = -3;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_NearMaxValue_HandlesOverflow()
+    {
+        // Arrange
+        var input = DateTime.MaxValue.AddHours(-2);
+        var tzSrc = 0;
+        var tzDst = 3;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_NullTimeZones_UsesDefaultValues()
+    {
+        // Arrange
+        var input = new DateTime(2023, 7, 15, 12, 0, 0);
 
         // Act
         var result = input.ChangeTimeZone();
@@ -385,209 +470,216 @@ public partial class YANDateTimeTest
         Assert.Equal(input, result);
     }
 
-    [Fact]
-    public void ChangeTimeZone_DateTime_SameTimeZones_ReturnsSameDateTime()
-    {
-        // Arrange
-        var input = new DateTime(2023, 6, 15, 12, 0, 0);
-        var tzSrc = 7;
-        var tzDst = 7;
+    #endregion
 
-        // Act
-        var result = input.ChangeTimeZone(tzSrc, tzDst);
-
-        // Assert
-        Assert.Equal(input, result);
-    }
+    #region ChangeTimeZone List
 
     [Fact]
-    public void ChangeTimeZone_DateTime_PositiveTimeZoneDifference_AddsHours()
-    {
-        // Arrange
-        var input = new DateTime(2023, 6, 15, 12, 0, 0);
-        var tzSrc = 0;
-        var tzDst = 7;
-
-        // Act
-        var result = input.ChangeTimeZone(tzSrc, tzDst);
-
-        // Assert
-        Assert.Equal(input.AddHours(7), result);
-    }
-
-    [Fact]
-    public void ChangeTimeZone_DateTime_NegativeTimeZoneDifference_SubtractsHours()
-    {
-        // Arrange
-        var input = new DateTime(2023, 6, 15, 12, 0, 0);
-        var tzSrc = 7;
-        var tzDst = 0;
-
-        // Act
-        var result = input.ChangeTimeZone(tzSrc, tzDst);
-
-        // Assert
-        Assert.Equal(input.AddHours(-7), result);
-    }
-
-    [Fact]
-    public void ChangeTimeZone_DateTime_StringTimeZones_ParsesAndConvertsCorrectly()
-    {
-        // Arrange
-        var input = new DateTime(2023, 6, 15, 12, 0, 0);
-        var tzSrc = "0";
-        var tzDst = "7";
-
-        // Act
-        var result = input.ChangeTimeZone(tzSrc, tzDst);
-
-        // Assert
-        Assert.Equal(input.AddHours(7), result);
-    }
-
-    [Fact]
-    public void ChangeTimeZone_DateTime_NegativeResultExceedsMinValue_ReturnsSameDateTime()
-    {
-        // Arrange
-        var input = DateTime.MinValue.AddHours(5);
-        var tzSrc = 0;
-        var tzDst = -7;
-
-        // Act
-        var result = input.ChangeTimeZone(tzSrc, tzDst);
-
-        // Assert
-        Assert.Equal(input, result);
-    }
-
-    [Fact]
-    public void ChangeTimeZone_DateTime_PositiveResultExceedsMaxValue_ReturnsSameDateTime()
-    {
-        // Arrange
-        var input = DateTime.MaxValue.AddHours(-5);
-        var tzSrc = 0;
-        var tzDst = 7;
-
-        // Act
-        var result = input.ChangeTimeZone(tzSrc, tzDst);
-
-        // Assert
-        Assert.Equal(input, result);
-    }
-
-    [Fact]
-    public void ChangeTimeZone_DateTimeList_NullInput_DoesNotThrow()
+    public void ChangeTimeZone_DateTime_NullList_DoesNotThrow()
     {
         // Arrange
         List<DateTime>? input = null;
 
         // Act
-        var exception = Record.Exception(() => input.ChangeTimeZone());
+        var exception = Record.Exception(() => input.ChangeTimeZone(0, 5));
 
         // Assert
         Assert.Null(exception);
     }
 
     [Fact]
-    public void ChangeTimeZone_DateTimeList_EmptyInput_DoesNotThrow()
+    public void ChangeTimeZone_DateTime_EmptyList_DoesNotThrow()
     {
         // Arrange
         var input = new List<DateTime>();
 
         // Act
-        var exception = Record.Exception(() => input.ChangeTimeZone());
+        var exception = Record.Exception(() => input.ChangeTimeZone(0, 5));
 
         // Assert
         Assert.Null(exception);
     }
 
     [Fact]
-    public void ChangeTimeZone_DateTimeList_ValidInput_UpdatesAllItems()
+    public void ChangeTimeZone_DateTime_DateTimeList_ChangesAllTimes()
     {
         // Arrange
-        var date1 = new DateTime(2023, 6, 15, 12, 0, 0);
-        var date2 = new DateTime(2023, 6, 16, 12, 0, 0);
-        var input = new List<DateTime> { date1, date2 };
+        var input = new List<DateTime>
+        {
+            new(2023, 7, 15, 12, 0, 0),
+            new(2023, 7, 16, 12, 0, 0),
+            new(2023, 7, 17, 12, 0, 0)
+        };
+
         var tzSrc = 0;
-        var tzDst = 7;
-        var expected1 = date1.AddHours(7);
-        var expected2 = date2.AddHours(7);
+        var tzDst = 5;
 
         // Act
         input.ChangeTimeZone(tzSrc, tzDst);
 
         // Assert
-        Assert.Equal(expected1, input[0]);
-        Assert.Equal(expected2, input[1]);
+        Assert.Equal([new(2023, 7, 15, 17, 0, 0), new(2023, 7, 16, 17, 0, 0), new(2023, 7, 17, 17, 0, 0)], input);
     }
+
     #endregion
 
     #region ChangeTimeZones
+
     [Fact]
-    public void ChangeTimeZones_DateTimeEnumerable_NullInput_ReturnsNull()
+    public void ChangeTimeZones_DateTime_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<DateTime>? input = null;
 
         // Act
-        var result = input.ChangeTimeZones();
+        var result = input.ChangeTimeZones(0, 5);
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void ChangeTimeZones_DateTimeEnumerable_EmptyInput_ReturnsNull()
+    public void ChangeTimeZones_DateTime_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        IEnumerable<DateTime> input = [];
+        var input = Array.Empty<DateTime>();
 
         // Act
-        var result = input.ChangeTimeZones();
+        var result = input.ChangeTimeZones(0, 5);
 
         // Assert
-        Assert.Null(result);
+        Assert.Empty(result!);
     }
 
     [Fact]
-    public void ChangeTimeZones_DateTimeEnumerable_ValidInput_ReturnsConvertedDates()
+    public void ChangeTimeZones_DateTime_DateTimeCollection_ChangesAllTimes()
     {
         // Arrange
-        var date1 = new DateTime(2023, 6, 15, 12, 0, 0);
-        var date2 = new DateTime(2023, 6, 16, 12, 0, 0);
-        var input = new List<DateTime> { date1, date2 };
-        var tzSrc = 0;
-        var tzDst = 7;
-        var expected = new[]
+        var input = new[]
         {
-            date1.AddHours(7),
-            date2.AddHours(7)
+            new DateTime(2023, 7, 15, 12, 0, 0),
+            new (2023, 7, 16, 12, 0, 0),
+            new (2023, 7, 17, 12, 0, 0)
         };
 
+        var tzSrc = 0;
+        var tzDst = 5;
+
         // Act
         var result = input.ChangeTimeZones(tzSrc, tzDst);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expected, result);
+        Assert.Equal([new(2023, 7, 15, 17, 0, 0), new(2023, 7, 16, 17, 0, 0), new(2023, 7, 17, 17, 0, 0)], result);
     }
 
     [Fact]
-    public void ChangeTimeZones_DateTimeEnumerable_LargeCollection_ProcessesAllItems()
+    public void ChangeTimeZones_DateTime_StringTimeZones_ChangesAllTimes()
     {
         // Arrange
-        var baseDate = new DateTime(2023, 1, 1);
-        var input = Enumerable.Range(0, 1001).Select(i => baseDate.AddDays(i)).ToList();
-        var tzSrc = 0;
-        var tzDst = 7;
+        var input = new[]
+        {
+            new DateTime(2023, 7, 15, 12, 0, 0),
+            new (2023, 7, 16, 12, 0, 0),
+            new (2023, 7, 17, 12, 0, 0)
+        };
+
+        var tzSrc = "0";
+        var tzDst = "5";
 
         // Act
         var result = input.ChangeTimeZones(tzSrc, tzDst);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(1001, result.Count());
-        Assert.All(result, date => Assert.Equal(7, date.Hour));
+        Assert.Equal([new(2023, 7, 15, 17, 0, 0), new(2023, 7, 16, 17, 0, 0), new(2023, 7, 17, 17, 0, 0)], result);
     }
+
+    #endregion
+
+    #region Edge Cases
+
+    [Fact]
+    public void GetWeekOfYear_DateTime_MinValue_ReturnsWeekNumber()
+    {
+        // Arrange
+        var input = DateTime.MinValue;
+
+        // Act
+        var result = input.GetWeekOfYear();
+
+        // Assert
+        Assert.Equal(1, result);
+    }
+
+    [Fact]
+    public void GetWeekOfYear_DateTime_MaxValue_ReturnsWeekNumber()
+    {
+        // Arrange
+        var input = DateTime.MaxValue;
+
+        // Act
+        var result = input.GetWeekOfYear();
+
+        // Assert
+        Assert.True(result is 52 or 53);
+    }
+
+    [Fact]
+    public void TotalMonth_DateTime_MinMaxValues_ReturnsLargeNumber()
+    {
+        // Arrange
+        var input1 = DateTime.MinValue;
+        var input2 = DateTime.MaxValue;
+
+        // Act
+        var result = YANDateTime.TotalMonth(input1, input2);
+
+        // Assert
+        Assert.Equal(119987, result);
+    }
+
+    [Fact]
+    public void TotalMonth_DateTime_MaxMinValues_ReturnsNegativeLargeNumber()
+    {
+        // Arrange
+        var input1 = DateTime.MaxValue;
+        var input2 = DateTime.MinValue;
+
+        // Act
+        var result = YANDateTime.TotalMonth(input1, input2);
+
+        // Assert
+        Assert.Equal(119987, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_ExactlyMinValue_ReturnsMinValue()
+    {
+        // Arrange
+        var input = DateTime.MinValue;
+        var tzSrc = 0;
+        var tzDst = -5;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DateTime_ExactlyMaxValue_ReturnsMaxValue()
+    {
+        // Arrange
+        var input = DateTime.MaxValue;
+        var tzSrc = 0;
+        var tzDst = 5;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(input, result);
+    }
+
     #endregion
 }

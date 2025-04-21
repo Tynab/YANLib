@@ -4,542 +4,731 @@ namespace YANLib.Tests.Library.Unmanaged;
 
 public partial class YANUnmanagedTest
 {
-    #region bool
-    [Theory]
-    [InlineData("true", true)]
-    [InlineData("false", false)]
-    public void Parse_NullableBool_ValidString_ReturnsExpectedValue(string input, bool? expected)
-    {
-        // Arrange
-        object? val = input;
-
-        // Act
-        var actual = val.Parse<bool?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
+    #region Basic Nullable Types
 
     [Fact]
-    public void Parse_NullableBool_InvalidString_ReturnsDefault()
-    {
-        // Arrange
-        object? input = "invalid";
-        var expected = default(bool?);
-
-        // Act
-        var actual = input.Parse<bool?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-    #endregion
-
-    #region Numeric types
-    [Theory]
-    [InlineData("0", 0)]
-    [InlineData("1.2", default)]
-    [InlineData("3", 3)]
-    [InlineData("-4", -4)]
-    public void Parse_NullableInt_ValidString_ReturnsExpectedValue(string input, int? expected)
-    {
-        // Arrange
-        object? val = input;
-
-        // Act
-        var actual = val.Parse<int?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void Parse_NullableInt_InvalidString_ReturnsDefault()
-    {
-        // Arrange
-        object? input = "invalid";
-        int? expected = default;
-
-        // Act
-        var actual = input.Parse<int?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("0", 0.0)]
-    [InlineData("1", 1.0)]
-    [InlineData("2.34", 2.34)]
-    [InlineData("-5.67", -5.67)]
-    public void Parse_NullableDouble_ValidString_ReturnsExpectedValue(string input, double? expected)
-    {
-        // Arrange
-        object? val = input;
-
-        // Act
-        var actual = val.Parse<double?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void Parse_NullableDouble_InvalidString_ReturnsDefault()
-    {
-        // Arrange
-        object? input = "invalid";
-        double? expected = default;
-
-        // Act
-        var actual = input.Parse<double?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-    #endregion
-
-    #region string
-    [Fact]
-    public void Parse_NullableString_ValidString_ReturnsExpectedValue()
-    {
-        // Arrange
-        object? input = 1;
-        var expected = "1";
-
-        // Act
-        var actual = input.Parse<string?>();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void Parse_NullableString_InvalidString_ReturnsDefault()
+    public void Parse_Nullable_NullToNullableInt_ReturnsNull()
     {
         // Arrange
         object? input = null;
-        string? expected = default;
 
         // Act
-        var actual = input.Parse<string?>();
+        var result = input.Parse<int?>();
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
     }
+
+    [Fact]
+    public void Parse_Nullable_StringToNullableInt_ReturnsInt()
+    {
+        // Arrange
+        object input = "123";
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Equal(123, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_InvalidStringToNullableInt_ReturnsNull()
+    {
+        // Arrange
+        object input = "abc";
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_DoubleToNullableInt_ReturnsInt()
+    {
+        // Arrange
+        object input = 123.45;
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Equal(123, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_StringToNullableDouble_ReturnsDouble()
+    {
+        // Arrange
+        object input = "123.45";
+
+        // Act
+        var result = input.Parse<double?>();
+
+        // Assert
+        Assert.Equal(123.45, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_InvalidStringToNullableDouble_ReturnsNull()
+    {
+        // Arrange
+        object input = "abc";
+
+        // Act
+        var result = input.Parse<double?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_StringToNullableFloat_ReturnsFloat()
+    {
+        // Arrange
+        object input = "123.45";
+
+        // Act
+        var result = input.Parse<float?>();
+
+        // Assert
+        Assert.Equal(123.45f, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_StringToNullableBool_ReturnsBool()
+    {
+        // Arrange
+        object input = "true";
+
+        // Act
+        var result = input.Parse<bool?>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_InvalidStringToNullableBool_ReturnsNull()
+    {
+        // Arrange
+        object input = "abc";
+
+        // Act
+        var result = input.Parse<bool?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_StringToNullableChar_ReturnsChar()
+    {
+        // Arrange
+        object input = "A";
+
+        // Act
+        var result = input.Parse<char?>();
+
+        // Assert
+        Assert.Equal('A', result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_EmptyStringToNullableChar_ReturnsNull()
+    {
+        // Arrange
+        object input = "";
+
+        // Act
+        var result = input.Parse<char?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_StringToString_ReturnsString()
+    {
+        // Arrange
+        object input = "test string";
+
+        // Act
+        var result = input.Parse<string>();
+
+        // Assert
+        Assert.Equal("test string", result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_NullToString_ReturnsNull()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Parse<string>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 
-    #region DateTime
+    #region Nullable DateTime
+
     [Fact]
-    public void Parse_NullableDateTime_ValidString_ReturnsExpectedValue()
+    public void Parse_Nullable_StringToNullableDateTime_ReturnsDateTime()
     {
         // Arrange
-        object? input = "2023-01-01 13:45:59";
-        DateTime? expected = new DateTime(2023, 1, 1, 13, 45, 59);
+        object input = "2023-01-15";
 
         // Act
-        var actual = input.Parse<DateTime?>();
+        var result = input.Parse<DateTime?>();
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(new DateTime(2023, 1, 15), result);
     }
 
     [Fact]
-    public void Parse_NullableDateTime_InvalidString_ReturnsDefault()
+    public void Parse_Nullable_InvalidStringToNullableDateTime_ReturnsNull()
     {
         // Arrange
-        object? input = "invalid";
-        DateTime? expected = default;
+        object input = "not a date";
 
         // Act
-        var actual = input.Parse<DateTime?>();
+        var result = input.Parse<DateTime?>();
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
     }
+
+    [Fact]
+    public void Parse_Nullable_NullToNullableDateTime_ReturnsNull()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Parse<DateTime?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 
-    #region Guid
+    #region Nullable Guid
+
     [Fact]
-    public void Parse_NullableGuid_ValidString_ReturnsExpectedValue()
+    public void Parse_Nullable_StringToNullableGuid_ReturnsGuid()
     {
         // Arrange
-        object? input = "a1b2c3d4-e5f6-1234-5678-9abcdef01234";
-        Guid? expected = new Guid("a1b2c3d4-e5f6-1234-5678-9abcdef01234");
+        var guid = Guid.NewGuid();
+        object input = guid.ToString();
 
         // Act
-        var actual = input.Parse<Guid?>();
+        var result = input.Parse<Guid?>();
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(guid, result);
     }
 
     [Fact]
-    public void Parse_NullableGuid_InvalidString_ReturnsDefault()
+    public void Parse_Nullable_InvalidStringToNullableGuid_ReturnsNull()
     {
         // Arrange
-        object? input = "invalid";
-        Guid? expected = default;
+        object input = "not a guid";
 
         // Act
-        var actual = input.Parse<Guid?>();
+        var result = input.Parse<Guid?>();
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
     }
+
+    [Fact]
+    public void Parse_Nullable_NullToNullableGuid_ReturnsNull()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Parse<Guid?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_StringToGuid_ReturnsGuid()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+        object input = guid.ToString();
+
+        // Act
+        var result = input.Parse<Guid>();
+
+        // Assert
+        Assert.Equal(guid, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_InvalidStringToGuid_ReturnsEmptyGuid()
+    {
+        // Arrange
+        object input = "not a guid";
+
+        // Act
+        var result = input.Parse<Guid>();
+
+        // Assert
+        Assert.Equal(Guid.Empty, result);
+    }
+
     #endregion
 
-    #region Collections
+    #region Nullable Enum
+
     [Fact]
-    public void Parse_NullableBool_Enumerable_ValidValues_ReturnsExpectedCollection()
+    public void Parse_Nullable_StringToNullableEnum_ReturnsEnum()
     {
         // Arrange
-        var input = new object?[] { "TRUE", "FALSE", 0, 1 };
-        var expected = new List<bool?> { true, false, false, true };
+        object input = "First";
 
         // Act
-        var actual = input.Parses<bool?>();
+        var result = input.Parse<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal(TestEnum.First, result);
     }
 
     [Fact]
-    public void Parse_NullableBool_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_Nullable_StringToNullableEnumIgnoreCase_ReturnsEnum()
     {
         // Arrange
-        var input = new object?[] { "TRUE", "FALSE", "invalid", 0, 1 };
-        var expected = new List<bool?> { true, false, default, false, true };
+        object input = "first";
 
         // Act
-        var actual = input.Parses<bool?>();
+        var result = input.Parse<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal(TestEnum.First, result);
     }
 
     [Fact]
-    public void Parses_Params_NullableBool_ValidValues_ReturnsExpectedCollection()
+    public void Parse_Nullable_NumberToNullableEnum_ReturnsEnum()
     {
         // Arrange
-        var expected = new List<bool?> { true, false, true, false };
+        object input = 2;
 
         // Act
-        var actual = YANUnmanaged.Parses<bool?>(1, 0, "TRUE", "FALSE");
+        var result = input.Parse<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal(TestEnum.Second, result);
     }
 
     [Fact]
-    public void Parses_Params_NullableBool_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parse_Nullable_InvalidStringToNullableEnum_ReturnsNull()
     {
         // Arrange
-        var expected = new List<bool?> { true, false, default, true, false };
+        object input = "NotAnEnum";
 
         // Act
-        var actual = YANUnmanaged.Parses<bool?>(1, 0, "invalid", "TRUE", "FALSE");
+        var result = input.Parse<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Parse_NullableInt_Enumerable_ValidValues_ReturnsExpectedCollection()
+    public void Parse_Nullable_NullToNullableEnum_ReturnsNull()
     {
         // Arrange
-        var input = new object?[] { "1", "-2", 0, 4.5, 6.6 };
-        var expected = new List<int?> { 1, -2, 0, 4, 7 };
+        object? input = null;
 
         // Act
-        var actual = input.Parses<int?>();
+        var result = input.Parse<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
+    }
+
+    #endregion
+
+    #region Nullable Collection
+
+    [Fact]
+    public void Parses_Nullable_NullCollection_ReturnsNull()
+    {
+        // Arrange
+        IEnumerable<object?>? input = null;
+
+        // Act
+        var result = input.Parses<int?>();
+
+        // Assert
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Parse_NullableInt_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_EmptyCollection_ReturnsNull()
     {
         // Arrange
-        var input = new object?[] { "1", "-2", "0.0", "invalid", -4.5, -6.6 };
-        var expected = new List<int?> { 1, -2, default, default, -4, -7 };
+        var input = Array.Empty<object?>();
 
         // Act
-        var actual = input.Parses<int?>();
+        var result = input.Parses<int?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Parses_Params_NullableInt_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_StringsToNullableInts_ReturnsInts()
     {
         // Arrange
-        var expected = new List<int?> { 1, 0, -2 };
+        var input = new object?[] { "123", "456", "789" };
 
         // Act
-        var actual = YANUnmanaged.Parses<int?>(1, 0, "-2");
+        var result = input.Parses<int?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, 456, 789], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableInt_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_MixedToNullableInts_ReturnsInts()
     {
         // Arrange
-        var expected = new List<int?> { -1, default, 1 };
+        var input = new object?[] { "123", 456, "789" };
 
         // Act
-        var actual = YANUnmanaged.Parses<int?>(-1.2, "invalid", true);
+        var result = input.Parses<int?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, 456, 789], result);
     }
 
     [Fact]
-    public void Parse_NullableDouble_Enumerable_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_MixedWithInvalidToNullableInts_ReturnsIntsWithNulls()
     {
         // Arrange
-        var input = new object?[] { "1.23", "-4", 0, 5 };
-        var expected = new List<double?> { 1.23, -4.0, 0.0, 5.0 };
+        var input = new object?[] { "123", "abc", "789" };
 
         // Act
-        var actual = input.Parses<double?>();
+        var result = input.Parses<int?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, null, 789], result);
     }
 
     [Fact]
-    public void Parse_NullableDouble_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_MixedWithNullToNullableInts_ReturnsIntsWithNulls()
     {
         // Arrange
-        var input = new object?[] { "1.23", "-4", "0", "invalid", -5 };
-        var expected = new List<double?> { 1.23, -4.0, 0.0, default, -5.0 };
+        var input = new object?[] { "123", null, "789" };
 
         // Act
-        var actual = input.Parses<double?>();
+        var result = input.Parses<int?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, null, 789], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableDouble_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_StringsToNullableDoubles_ReturnsDoubles()
     {
         // Arrange
-        var expected = new List<double?> { -1.0, 0.0, 2.34 };
+        var input = new object?[] { "123.45", "456.78", "789.01" };
 
         // Act
-        var actual = YANUnmanaged.Parses<double?>(-1, false, "2.34");
+        var result = input.Parses<double?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123.45, 456.78, 789.01], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableDouble_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_StringsToNullableDateTimes_ReturnsDateTimes()
     {
         // Arrange
-        var expected = new List<double?> { 3.0, default, -2.71828 };
+        var input = new object?[] { "2023-01-15", "2023-02-20", "2023-03-25" };
 
         // Act
-        var actual = YANUnmanaged.Parses<double?>("3", "invalid", "-2.71828");
+        var result = input.Parses<DateTime?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([new DateTime(2023, 1, 15), new DateTime(2023, 2, 20), new DateTime(2023, 3, 25)], result);
     }
 
     [Fact]
-    public void Parse_NullableString_Enumerable_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_StringsWithInvalidToNullableDateTimes_ReturnsDateTimesWithNulls()
     {
         // Arrange
-        var input = new object?[] { 1, "2", 3 };
-        var expected = new List<string?> { "1", "2", "3" };
+        var input = new object?[] { "2023-01-15", "not a date", "2023-03-25" };
 
         // Act
-        var actual = input.Parses<string?>();
+        var result = input.Parses<DateTime?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([new DateTime(2023, 1, 15), null, new DateTime(2023, 3, 25)], result);
     }
 
     [Fact]
-    public void Parse_NullableString_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_StringsToNullableGuids_ReturnsGuids()
     {
         // Arrange
-        var input = new object?[] { 1, null, "3" };
-        var expected = new List<string?> { "1", default, "3" };
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var guid3 = Guid.NewGuid();
+        var input = new object?[] { guid1.ToString(), guid2.ToString(), guid3.ToString() };
 
         // Act
-        var actual = input.Parses<string?>();
+        var result = input.Parses<Guid?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([guid1, guid2, guid3], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableString_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_StringsWithInvalidToNullableGuids_ReturnsGuidsWithNulls()
     {
         // Arrange
-        var expected = new List<string?> { "1", "world" };
+        var guid1 = Guid.NewGuid();
+        var guid3 = Guid.NewGuid();
+        var input = new object?[] { guid1.ToString(), "not a guid", guid3.ToString() };
 
         // Act
-        var actual = YANUnmanaged.Parses<string?>(1, "world");
+        var result = input.Parses<Guid?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([guid1, null, guid3], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableString_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_StringsToNullableEnums_ReturnsEnums()
     {
         // Arrange
-        var expected = new List<string?> { "-1.23", default, "world" };
+        var input = new object?[] { "None", "First", "Second" };
 
         // Act
-        var actual = YANUnmanaged.Parses<string?>(-1.23, default, "world");
+        var result = input.Parses<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([TestEnum.None, TestEnum.First, TestEnum.Second], result);
     }
 
     [Fact]
-    public void Parse_NullableDateTime_Enumerable_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_MixedToNullableEnums_ReturnsEnums()
     {
         // Arrange
-        var input = new object?[] { "2023-01-01 13:45:59", "2023-03-03 15:47:01" };
-        var expected = new List<DateTime?> { new DateTime(2023, 1, 1, 13, 45, 59), new DateTime(2023, 3, 3, 15, 47, 1) };
+        var input = new object?[] { "None", 1, "Second" };
 
         // Act
-        var actual = input.Parses<DateTime?>();
+        var result = input.Parses<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([TestEnum.None, TestEnum.First, TestEnum.Second], result);
     }
 
     [Fact]
-    public void Parse_NullableDateTime_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_MixedWithInvalidToNullableEnums_ReturnsEnumsWithNulls()
     {
         // Arrange
-        var input = new object?[] { "2023-01-01 13:45:59", "invalid" };
-        var expected = new List<DateTime?> { new DateTime(2023, 1, 1, 13, 45, 59), default };
+        var input = new object?[] { "None", "NotAnEnum", "Second" };
 
         // Act
-        var actual = input.Parses<DateTime?>();
+        var result = input.Parses<TestEnum?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([TestEnum.None, null, TestEnum.Second], result);
+    }
+
+    #endregion
+
+    #region Params
+
+    [Fact]
+    public void Parses_Nullable_ParamsNullInput_ReturnsNull()
+    {
+        // Act
+        var result = YANUnmanaged.Parses<int?>(null);
+
+        // Assert
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Parses_Params_NullableDateTime_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_ParamsEmptyInput_ReturnsNull()
     {
-        // Arrange
-        var expected = new List<DateTime?> { new DateTime(2023, 1, 1), new DateTime(2023, 2, 2) };
-
         // Act
-        var actual = YANUnmanaged.Parses<DateTime?>("2023-01-01", "2023-02-02");
+        var result = YANUnmanaged.Parses<int?>();
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Parses_Params_NullableDateTime_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_ParamsStringsToNullableInts_ReturnsInts()
     {
-        // Arrange
-        var expected = new List<DateTime?> { new DateTime(2023, 1, 1), default };
-
         // Act
-        var actual = YANUnmanaged.Parses<DateTime?>("2023-01-01", "invalid");
+        var result = YANUnmanaged.Parses<int?>("123", "456", "789");
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, 456, 789], result);
     }
 
     [Fact]
-    public void Parse_NullableGuid_Enumerable_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_ParamsMixedToNullableInts_ReturnsInts()
     {
-        // Arrange
-        var guid1 = new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de");
-        var guid2 = new Guid("83af426c-dab9-4a58-8784-8f4ac109e988");
-        var input = new object?[] { guid1.ToString(), guid2.ToString() };
-        var expected = new List<Guid?> { guid1, guid2 };
-
         // Act
-        var actual = input.Parses<Guid?>();
+        var result = YANUnmanaged.Parses<int?>("123", 456, "789");
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, 456, 789], result);
     }
 
     [Fact]
-    public void Parse_NullableGuid_Enumerable_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_ParamsMixedWithInvalidToNullableInts_ReturnsIntsWithNulls()
     {
-        // Arrange
-        var guid1 = new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de");
-        var guid2 = default(Guid?);
-        var input = new object?[] { guid1.ToString(), "invalid" };
-        var expected = new List<Guid?> { guid1, guid2 };
-
         // Act
-        var actual = input.Parses<Guid?>();
+        var result = YANUnmanaged.Parses<int?>("123", "abc", "789");
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, null, 789], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableGuid_ValidValues_ReturnsExpectedCollection()
+    public void Parses_Nullable_ParamsMixedWithNullToNullableInts_ReturnsIntsWithNulls()
     {
-        // Arrange
-        var expected = new List<Guid?> { new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de"), new Guid("83af426c-dab9-4a58-8784-8f4ac109e988") };
-
         // Act
-        var actual = YANUnmanaged.Parses<Guid?>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "83af426c-dab9-4a58-8784-8f4ac109e988");
+        var result = YANUnmanaged.Parses<int?>("123", null, "789");
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([123, null, 789], result);
     }
 
     [Fact]
-    public void Parses_Params_NullableGuid_InvalidValue_ReturnsDefaultForThatValue()
+    public void Parses_Nullable_ParamsStringsToNullableDateTimes_ReturnsDateTimes()
     {
-        // Arrange
-        var expected = new List<Guid?> { new Guid("da03fa84-8172-4ad1-8284-fa89ef52d0de"), default };
-
         // Act
-        var actual = YANUnmanaged.Parses<Guid?>("da03fa84-8172-4ad1-8284-fa89ef52d0de", "invalid");
+        var result = YANUnmanaged.Parses<DateTime?>("2023-01-15", "2023-02-20", "2023-03-25");
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.Equal(expected, actual);
+        Assert.Equal([new DateTime(2023, 1, 15), new DateTime(2023, 2, 20), new DateTime(2023, 3, 25)], result);
     }
+
+    [Fact]
+    public void Parses_Nullable_ParamsStringsToNullableGuids_ReturnsGuids()
+    {
+        // Arrange
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var guid3 = Guid.NewGuid();
+
+        // Act
+        var result = YANUnmanaged.Parses<Guid?>(guid1.ToString(), guid2.ToString(), guid3.ToString());
+
+        // Assert
+        Assert.Equal([guid1, guid2, guid3], result);
+    }
+
+    [Fact]
+    public void Parses_Nullable_ParamsStringsToNullableEnums_ReturnsEnums()
+    {
+        // Act
+        var result = YANUnmanaged.Parses<TestEnum?>("None", "First", "Second");
+
+        // Assert
+        Assert.Equal([TestEnum.None, TestEnum.First, TestEnum.Second], result);
+    }
+
+    #endregion
+
+    #region Edge Cases
+
+    [Fact]
+    public void Parse_Nullable_MaxValueToNullableInt_ReturnsMaxValue()
+    {
+        // Arrange
+        object input = int.MaxValue;
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Equal(int.MaxValue, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_MinValueToNullableInt_ReturnsMinValue()
+    {
+        // Arrange
+        object input = int.MinValue;
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Equal(int.MinValue, result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_OverflowToNullableInt_ReturnsNull()
+    {
+        // Arrange
+        object input = long.MaxValue;
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_EmptyStringToNullableInt_ReturnsNull()
+    {
+        // Arrange
+        object input = "";
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_WhitespaceToNullableInt_ReturnsNull()
+    {
+        // Arrange
+        object input = "   ";
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Parse_Nullable_DBNullToNullableInt_ReturnsNull()
+    {
+        // Arrange
+        object input = DBNull.Value;
+
+        // Act
+        var result = input.Parse<int?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 }

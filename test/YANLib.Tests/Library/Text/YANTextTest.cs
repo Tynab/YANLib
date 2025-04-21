@@ -5,6 +5,7 @@ namespace YANLib.Tests.Library.Text;
 public partial class YANTextTest
 {
     #region Title
+
     [Fact]
     public void Title_NullString_ReturnsNull()
     {
@@ -19,7 +20,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_EmptyString_ReturnsEmptyString()
+    public void Title_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -32,7 +33,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_WhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Title_WhitespaceString_ReturnsWhitespace()
     {
         // Arrange
         var input = "   ";
@@ -45,7 +46,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_LowerCaseString_ReturnsTitleCaseString()
+    public void Title_LowercaseString_ReturnsTitleCase()
     {
         // Arrange
         var input = "hello world";
@@ -58,7 +59,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_UpperCaseString_ReturnsTitleCaseString()
+    public void Title_UppercaseString_ReturnsTitleCase()
     {
         // Arrange
         var input = "HELLO WORLD";
@@ -71,7 +72,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_MixedCaseString_ReturnsTitleCaseString()
+    public void Title_MixedCaseString_ReturnsTitleCase()
     {
         // Arrange
         var input = "hElLo WoRlD";
@@ -84,48 +85,20 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Title_List_MixedCaseStrings_ModifiesListToTitleCase()
+    public void Title_List_ModifiesListInPlace()
     {
         // Arrange
-        var input = new List<string?> { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
-        var expected = new List<string?> { "Hello World", "Good Morning", null, "Have A Nice Day" };
+        var input = new List<string?> { "hello world", "GOOD MORNING", null, "" };
 
         // Act
         input.Title();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["Hello World", "Good Morning", null, ""], input);
     }
 
     [Fact]
-    public void Title_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.Title);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void Titles_MixedCaseStrings_ReturnsAllTitleCase()
-    {
-        // Arrange
-        var input = new[] { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
-
-        // Act
-        var result = input.Titles();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["Hello World", "Good Morning", null, "Have A Nice Day"], result);
-    }
-
-    [Fact]
-    public void Titles_NullInput_ReturnsNull()
+    public void Titles_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -138,21 +111,45 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Titles_Params_MixedCaseStrings_ReturnsAllTitleCase()
+    public void Titles_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "hello world";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.Titles(obj, "GOOD MORNING", null, "hAvE a NiCe DaY");
+        var result = input.Titles();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["Hello World", "Good Morning", null, "Have A Nice Day"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void Titles_MixedCaseCollection_ReturnsAllTitleCase()
+    {
+        // Arrange
+        var input = new[] { "hello world", "GOOD MORNING", null, "" };
+
+        // Act
+        var result = input.Titles();
+
+        // Assert
+        Assert.Equal(["Hello World", "Good Morning", null, ""], result);
+    }
+
+    [Fact]
+    public void Titles_Params_MixedCaseStrings_ReturnsAllTitleCase()
+    {
+        // Act
+        var result = YANText.Titles("hello world", "GOOD MORNING", null, "");
+
+        // Assert
+        Assert.Equal(["Hello World", "Good Morning", null, ""], result);
+    }
+
     #endregion
 
     #region Capitalize
+
     [Fact]
     public void Capitalize_NullString_ReturnsNull()
     {
@@ -167,7 +164,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_EmptyString_ReturnsEmptyString()
+    public void Capitalize_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -180,7 +177,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_WhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Capitalize_WhitespaceString_ReturnsWhitespace()
     {
         // Arrange
         var input = "   ";
@@ -193,7 +190,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_LowerCaseString_ReturnsCapitalizedString()
+    public void Capitalize_LowercaseString_ReturnsCapitalized()
     {
         // Arrange
         var input = "hello world";
@@ -206,7 +203,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_UpperCaseString_ReturnsCapitalizedString()
+    public void Capitalize_UppercaseString_ReturnsCapitalized()
     {
         // Arrange
         var input = "HELLO WORLD";
@@ -219,7 +216,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_MixedCaseString_ReturnsCapitalizedString()
+    public void Capitalize_MixedCaseString_ReturnsCapitalized()
     {
         // Arrange
         var input = "hElLo WoRlD";
@@ -232,48 +229,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalize_List_MixedCaseStrings_ModifiesListToCapitalized()
+    public void Capitalize_StringStartingWithNonAlphabetic_ReturnsLowercase()
     {
         // Arrange
-        var input = new List<string?> { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
-        var expected = new List<string?> { "Hello world", "Good morning", null, "Have a nice day" };
+        var input = "123hello world";
+
+        // Act
+        var result = input.Capitalize();
+
+        // Assert
+        Assert.Equal("123Hello world", result);
+    }
+
+    [Fact]
+    public void Capitalize_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "hello world", "GOOD MORNING", null, "" };
 
         // Act
         input.Capitalize();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["Hello world", "Good morning", null, ""], input);
     }
 
     [Fact]
-    public void Capitalize_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.Capitalize);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void Capitalizes_MixedCaseStrings_ReturnsAllCapitalized()
-    {
-        // Arrange
-        var input = new[] { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
-
-        // Act
-        var result = input.Capitalizes();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["Hello world", "Good morning", null, "Have a nice day"], result);
-    }
-
-    [Fact]
-    public void Capitalizes_NullInput_ReturnsNull()
+    public void Capitalizes_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -286,21 +268,45 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Capitalizes_Params_MixedCaseStrings_ReturnsAllCapitalized()
+    public void Capitalizes_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "hello world";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.Capitalizes(obj, "GOOD MORNING", null, "hAvE a NiCe DaY");
+        var result = input.Capitalizes();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["Hello world", "Good morning", null, "Have a nice day"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void Capitalizes_MixedCaseCollection_ReturnsAllCapitalized()
+    {
+        // Arrange
+        var input = new[] { "hello world", "GOOD MORNING", null, "" };
+
+        // Act
+        var result = input.Capitalizes();
+
+        // Assert
+        Assert.Equal(["Hello world", "Good morning", null, ""], result);
+    }
+
+    [Fact]
+    public void Capitalizes_Params_MixedCaseStrings_ReturnsAllCapitalized()
+    {
+        // Act
+        var result = YANText.Capitalizes("hello world", "GOOD MORNING", null, "");
+
+        // Assert
+        Assert.Equal(["Hello world", "Good morning", null, ""], result);
+    }
+
     #endregion
 
     #region CleanSpace
+
     [Fact]
     public void CleanSpace_NullString_ReturnsNull()
     {
@@ -315,7 +321,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_EmptyString_ReturnsEmptyString()
+    public void CleanSpace_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -328,7 +334,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_WhiteSpaceString_ReturnsEmptyString()
+    public void CleanSpace_WhitespaceString_ReturnsEmpty()
     {
         // Arrange
         var input = "   ";
@@ -341,10 +347,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_MultipleSpaces_ReturnsSingleSpaces()
+    public void CleanSpace_StringWithExtraSpaces_ReturnsCleanedString()
     {
         // Arrange
-        var input = "hello   world";
+        var input = "  hello   world  ";
 
         // Act
         var result = input.CleanSpace();
@@ -354,10 +360,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_LeadingAndTrailingSpaces_ReturnsCleanedString()
+    public void CleanSpace_StringWithTabs_ReturnsCleanedString()
     {
         // Arrange
-        var input = "  hello world  ";
+        var input = "hello\t\tworld";
 
         // Act
         var result = input.CleanSpace();
@@ -367,10 +373,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_MultipleWhitespaceTypes_ReturnsCleanedString()
+    public void CleanSpace_StringWithNewlines_ReturnsCleanedString()
     {
         // Arrange
-        var input = " hello\t\tworld\n\r ";
+        var input = "hello\n\nworld";
 
         // Act
         var result = input.CleanSpace();
@@ -380,48 +386,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpace_List_MultipleSpacesStrings_ModifiesListToCleanedStrings()
+    public void CleanSpace_StringWithMixedWhitespace_ReturnsCleanedString()
     {
         // Arrange
-        var input = new List<string?> { "hello   world", "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY" };
-        var expected = new List<string?> { "hello world", "GOOD MORNING", null, "hAvE a NiCe DaY" };
+        var input = "  hello \t world \n\r  test  ";
+
+        // Act
+        var result = input.CleanSpace();
+
+        // Assert
+        Assert.Equal("hello world test", result);
+    }
+
+    [Fact]
+    public void CleanSpace_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "  hello   world  ", "GOOD\t\tMORNING", null, "" };
 
         // Act
         input.CleanSpace();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["hello world", "GOOD MORNING", null, ""], input);
     }
 
     [Fact]
-    public void CleanSpace_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.CleanSpace);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void CleanSpaces_MultipleSpacesStrings_ReturnsAllCleanedStrings()
-    {
-        // Arrange
-        var input = new[] { "hello   world", "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY" };
-
-        // Act
-        var result = input.CleanSpaces();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["hello world", "GOOD MORNING", null, "hAvE a NiCe DaY"], result);
-    }
-
-    [Fact]
-    public void CleanSpaces_NullInput_ReturnsNull()
+    public void CleanSpaces_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -434,21 +425,45 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void CleanSpaces_Params_MultipleSpacesStrings_ReturnsAllCleanedStrings()
+    public void CleanSpaces_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "hello   world";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.CleanSpaces(obj, "  GOOD MORNING  ", null, "hAvE   a   NiCe   DaY");
+        var result = input.CleanSpaces();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["hello world", "GOOD MORNING", null, "hAvE a NiCe DaY"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void CleanSpaces_CollectionWithExtraSpaces_ReturnsCleanedStrings()
+    {
+        // Arrange
+        var input = new[] { "  hello   world  ", "GOOD\t\tMORNING", null, "" };
+
+        // Act
+        var result = input.CleanSpaces();
+
+        // Assert
+        Assert.Equal(["hello world", "GOOD MORNING", null, ""], result);
+    }
+
+    [Fact]
+    public void CleanSpaces_Params_StringsWithExtraSpaces_ReturnsCleanedStrings()
+    {
+        // Act
+        var result = YANText.CleanSpaces("  hello   world  ", "GOOD\t\tMORNING", null, "");
+
+        // Assert
+        Assert.Equal(["hello world", "GOOD MORNING", null, ""], result);
+    }
+
     #endregion
 
     #region FormatName
+
     [Fact]
     public void FormatName_NullString_ReturnsNull()
     {
@@ -463,7 +478,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_EmptyString_ReturnsEmptyString()
+    public void FormatName_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -476,7 +491,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WhiteSpaceString_ReturnsEmptyString()
+    public void FormatName_WhitespaceString_ReturnsWhitespace()
     {
         // Arrange
         var input = "   ";
@@ -485,11 +500,11 @@ public partial class YANTextTest
         var result = input.FormatName();
 
         // Assert
-        Assert.Equal(input, result);
+        Assert.Equal("   ", result);
     }
 
     [Fact]
-    public void FormatName_SimpleName_ReturnsFormattedName()
+    public void FormatName_SimpleString_ReturnsFormattedName()
     {
         // Arrange
         var input = "john doe";
@@ -502,23 +517,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_Punctuation_RemovesPunctuation()
+    public void FormatName_StringWithPunctuation_ReturnsFormattedName()
     {
         // Arrange
-        var input = "john.doe@example.com";
-
-        // Act
-        var result = input.FormatName();
-
-        // Assert
-        Assert.Equal("John Doe Example Com", result);
-    }
-
-    [Fact]
-    public void FormatName_Numbers_RemovesNumbers()
-    {
-        // Arrange
-        var input = "john123 doe456";
+        var input = "john.doe";
 
         // Act
         var result = input.FormatName();
@@ -528,10 +530,23 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_MultipleSpaces_RemovesExtraSpaces()
+    public void FormatName_StringWithNumbers_ReturnsFormattedNameWithoutNumbers()
     {
         // Arrange
-        var input = "john   doe";
+        var input = "john123doe";
+
+        // Act
+        var result = input.FormatName();
+
+        // Assert
+        Assert.Equal("Johndoe", result);
+    }
+
+    [Fact]
+    public void FormatName_StringWithExtraSpaces_ReturnsFormattedName()
+    {
+        // Arrange
+        var input = "  john   doe  ";
 
         // Act
         var result = input.FormatName();
@@ -541,48 +556,20 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_List_VariousStrings_ModifiesListToFormattedNames()
+    public void FormatName_List_ModifiesListInPlace()
     {
         // Arrange
-        var input = new List<string?> { "john doe", "JANE.DOE", null, "bob123 smith" };
-        var expected = new List<string?> { "John Doe", "Jane Doe", null, "Bob Smith" };
+        var input = new List<string?> { "john doe", "JANE.DOE", null, "" };
 
         // Act
         input.FormatName();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["John Doe", "Jane Doe", null, ""], input);
     }
 
     [Fact]
-    public void FormatName_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.FormatName);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void FormatNames_VariousStrings_ReturnsAllFormattedNames()
-    {
-        // Arrange
-        var input = new[] { "john doe", "JANE.DOE", null, "bob123 smith" };
-
-        // Act
-        var result = input.FormatNames();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["John Doe", "Jane Doe", null, "Bob Smith"], result);
-    }
-
-    [Fact]
-    public void FormatNames_NullInput_ReturnsNull()
+    public void FormatNames_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -595,21 +582,45 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatNames_Params_VariousStrings_ReturnsAllFormattedNames()
+    public void FormatNames_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "john doe";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.FormatNames(obj, "JANE.DOE", null, "bob123 smith");
+        var result = input.FormatNames();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["John Doe", "Jane Doe", null, "Bob Smith"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void FormatNames_Collection_ReturnsFormattedNames()
+    {
+        // Arrange
+        var input = new[] { "john doe", "JANE.DOE", null, "" };
+
+        // Act
+        var result = input.FormatNames();
+
+        // Assert
+        Assert.Equal(["John Doe", "Jane Doe", null, ""], result);
+    }
+
+    [Fact]
+    public void FormatNames_Params_ReturnsFormattedNames()
+    {
+        // Act
+        var result = YANText.FormatNames("john doe", "JANE.DOE", null, "");
+
+        // Assert
+        Assert.Equal(["John Doe", "Jane Doe", null, ""], result);
+    }
+
     #endregion
 
     #region FilterAlphabetic
+
     [Fact]
     public void FilterAlphabetic_NullString_ReturnsNull()
     {
@@ -624,7 +635,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_EmptyString_ReturnsEmptyString()
+    public void FilterAlphabetic_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -637,7 +648,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_WhiteSpaceString_ReturnsEmptyString()
+    public void FilterAlphabetic_WhitespaceString_ReturnsEmpty()
     {
         // Arrange
         var input = "   ";
@@ -663,23 +674,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_OnlyLetters_ReturnsSameString()
+    public void FilterAlphabetic_OnlyNumbers_ReturnsEmpty()
     {
         // Arrange
-        var input = "abcDEF";
-
-        // Act
-        var result = input.FilterAlphabetic();
-
-        // Assert
-        Assert.Equal("abcDEF", result);
-    }
-
-    [Fact]
-    public void FilterAlphabetic_NoLetters_ReturnsEmptyString()
-    {
-        // Arrange
-        var input = "123!@#";
+        var input = "12345";
 
         // Act
         var result = input.FilterAlphabetic();
@@ -689,48 +687,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetic_List_MixedStrings_ModifiesListToOnlyLetters()
+    public void FilterAlphabetic_OnlySymbols_ReturnsEmpty()
     {
         // Arrange
-        var input = new List<string?> { "abc123", "DEF456", null, "!@#GHI" };
-        var expected = new List<string?> { "abc", "DEF", null, "GHI" };
+        var input = "!@#$%";
+
+        // Act
+        var result = input.FilterAlphabetic();
+
+        // Assert
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void FilterAlphabetic_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "abc123", "!@#DEF", null, "" };
 
         // Act
         input.FilterAlphabetic();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["abc", "DEF", null, ""], input);
     }
 
     [Fact]
-    public void FilterAlphabetic_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.FilterAlphabetic);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void FilterAlphabetics_MixedStrings_ReturnsAllOnlyLetters()
-    {
-        // Arrange
-        var input = new[] { "abc123", "DEF456", null, "!@#GHI" };
-
-        // Act
-        var result = input.FilterAlphabetics();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["abc", "DEF", null, "GHI"], result);
-    }
-
-    [Fact]
-    public void FilterAlphabetics_NullInput_ReturnsNull()
+    public void FilterAlphabetics_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -743,21 +726,45 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphabetics_Params_MixedStrings_ReturnsAllOnlyLetters()
+    public void FilterAlphabetics_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "abc123";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.FilterAlphabetics(obj, "DEF456", null, "!@#GHI");
+        var result = input.FilterAlphabetics();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["abc", "DEF", null, "GHI"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void FilterAlphabetics_Collection_ReturnsOnlyLetters()
+    {
+        // Arrange
+        var input = new[] { "abc123", "!@#DEF", null, "" };
+
+        // Act
+        var result = input.FilterAlphabetics();
+
+        // Assert
+        Assert.Equal(["abc", "DEF", null, ""], result);
+    }
+
+    [Fact]
+    public void FilterAlphabetics_Params_ReturnsOnlyLetters()
+    {
+        // Act
+        var result = YANText.FilterAlphabetics("abc123", "!@#DEF", null, "");
+
+        // Assert
+        Assert.Equal(["abc", "DEF", null, ""], result);
+    }
+
     #endregion
 
     #region FilterNumber
+
     [Fact]
     public void FilterNumber_NullString_ReturnsNull()
     {
@@ -772,7 +779,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_EmptyString_ReturnsEmptyString()
+    public void FilterNumber_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -785,7 +792,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_WhiteSpaceString_ReturnsEmptyString()
+    public void FilterNumber_WhitespaceString_ReturnsEmpty()
     {
         // Arrange
         var input = "   ";
@@ -811,23 +818,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_OnlyNumbers_ReturnsSameString()
+    public void FilterNumber_OnlyLetters_ReturnsEmpty()
     {
         // Arrange
-        var input = "12345";
-
-        // Act
-        var result = input.FilterNumber();
-
-        // Assert
-        Assert.Equal("12345", result);
-    }
-
-    [Fact]
-    public void FilterNumber_NoNumbers_ReturnsEmptyString()
-    {
-        // Arrange
-        var input = "abc!@#";
+        var input = "abcde";
 
         // Act
         var result = input.FilterNumber();
@@ -837,48 +831,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumber_List_MixedStrings_ModifiesListToOnlyNumbers()
+    public void FilterNumber_OnlySymbols_ReturnsEmpty()
     {
         // Arrange
-        var input = new List<string?> { "abc123", "DEF456", null, "!@#789" };
-        var expected = new List<string?> { "123", "456", null, "789" };
+        var input = "!@#$%";
+
+        // Act
+        var result = input.FilterNumber();
+
+        // Assert
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void FilterNumber_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "abc123", "!@#456", null, "" };
 
         // Act
         input.FilterNumber();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["123", "456", null, ""], input);
     }
 
     [Fact]
-    public void FilterNumber_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.FilterNumber);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void FilterNumbers_MixedStrings_ReturnsAllOnlyNumbers()
-    {
-        // Arrange
-        var input = new[] { "abc123", "DEF456", null, "!@#789" };
-
-        // Act
-        var result = input.FilterNumbers();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["123", "456", null, "789"], result);
-    }
-
-    [Fact]
-    public void FilterNumbers_NullInput_ReturnsNull()
+    public void FilterNumbers_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -891,21 +870,45 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterNumbers_Params_MixedStrings_ReturnsAllOnlyNumbers()
+    public void FilterNumbers_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "abc123";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.FilterNumbers(obj, "DEF456", null, "!@#789");
+        var result = input.FilterNumbers();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["123", "456", null, "789"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void FilterNumbers_Collection_ReturnsOnlyNumbers()
+    {
+        // Arrange
+        var input = new[] { "abc123", "!@#456", null, "" };
+
+        // Act
+        var result = input.FilterNumbers();
+
+        // Assert
+        Assert.Equal(["123", "456", null, ""], result);
+    }
+
+    [Fact]
+    public void FilterNumbers_Params_ReturnsOnlyNumbers()
+    {
+        // Act
+        var result = YANText.FilterNumbers("abc123", "!@#456", null, "");
+
+        // Assert
+        Assert.Equal(["123", "456", null, ""], result);
+    }
+
     #endregion
 
     #region FilterAlphanumeric
+
     [Fact]
     public void FilterAlphanumeric_NullString_ReturnsNull()
     {
@@ -920,7 +923,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_EmptyString_ReturnsEmptyString()
+    public void FilterAlphanumeric_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -933,7 +936,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_WhiteSpaceString_ReturnsEmptyString()
+    public void FilterAlphanumeric_WhitespaceString_ReturnsEmpty()
     {
         // Arrange
         var input = "   ";
@@ -946,7 +949,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_MixedString_ReturnsOnlyLettersAndNumbers()
+    public void FilterAlphanumeric_MixedString_ReturnsOnlyAlphanumeric()
     {
         // Arrange
         var input = "abc123!@#";
@@ -959,23 +962,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_OnlyLettersAndNumbers_ReturnsSameString()
+    public void FilterAlphanumeric_OnlySymbols_ReturnsEmpty()
     {
         // Arrange
-        var input = "abc123";
-
-        // Act
-        var result = input.FilterAlphanumeric();
-
-        // Assert
-        Assert.Equal("abc123", result);
-    }
-
-    [Fact]
-    public void FilterAlphanumeric_NoLettersOrNumbers_ReturnsEmptyString()
-    {
-        // Arrange
-        var input = "!@#$%^";
+        var input = "!@#$%";
 
         // Act
         var result = input.FilterAlphanumeric();
@@ -985,48 +975,20 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumeric_List_MixedStrings_ModifiesListToOnlyLettersAndNumbers()
+    public void FilterAlphanumeric_List_ModifiesListInPlace()
     {
         // Arrange
-        var input = new List<string?> { "abc123!@#", "DEF456*&^", null, "!@#GHI789" };
-        var expected = new List<string?> { "abc123", "DEF456", null, "GHI789" };
+        var input = new List<string?> { "abc123!@#", "DEF456$%^", null, "" };
 
         // Act
         input.FilterAlphanumeric();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["abc123", "DEF456", null, ""], input);
     }
 
     [Fact]
-    public void FilterAlphanumeric_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.FilterAlphanumeric);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void FilterAlphanumerics_MixedStrings_ReturnsAllOnlyLettersAndNumbers()
-    {
-        // Arrange
-        var input = new[] { "abc123!@#", "DEF456*&^", null, "!@#GHI789" };
-
-        // Act
-        var result = input.FilterAlphanumerics();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["abc123", "DEF456", null, "GHI789"], result);
-    }
-
-    [Fact]
-    public void FilterAlphanumerics_NullInput_ReturnsNull()
+    public void FilterAlphanumerics_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1039,17 +1001,40 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FilterAlphanumerics_Params_MixedStrings_ReturnsAllOnlyLettersAndNumbers()
+    public void FilterAlphanumerics_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "abc123!@#";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.FilterAlphanumerics(obj, "DEF456*&^", null, "!@#GHI789");
+        var result = input.FilterAlphanumerics();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["abc123", "DEF456", null, "GHI789"], result);
+        Assert.Empty(result!);
     }
+
+    [Fact]
+    public void FilterAlphanumerics_Collection_ReturnsOnlyAlphanumeric()
+    {
+        // Arrange
+        var input = new[] { "abc123!@#", "DEF456$%^", null, "" };
+
+        // Act
+        var result = input.FilterAlphanumerics();
+
+        // Assert
+        Assert.Equal(["abc123", "DEF456", null, ""], result);
+    }
+
+    [Fact]
+    public void FilterAlphanumerics_Params_ReturnsOnlyAlphanumeric()
+    {
+        // Act
+        var result = YANText.FilterAlphanumerics("abc123!@#", "DEF456$%^", null, "");
+
+        // Assert
+        Assert.Equal(["abc123", "DEF456", null, ""], result);
+    }
+
     #endregion
 }

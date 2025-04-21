@@ -5,25 +5,13 @@ namespace YANLib.Tests.Library.Text;
 
 public partial class YANTextTest
 {
-    #region AllNull
-    [Fact]
-    public void AllNull_AllNullStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { null, null };
-
-        // Act
-        var result = input.AllNull();
-
-        // Assert
-        Assert.True(result);
-    }
+    #region Null
 
     [Fact]
-    public void AllNull_SomeNonNullStrings_ReturnsFalse()
+    public void AllNull_String_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { null, "test" };
+        IEnumerable<string?>? input = null;
 
         // Act
         var result = input.AllNull();
@@ -33,38 +21,108 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNull_Params_AllNullStrings_ReturnsTrue()
+    public void AllNull_String_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        string? obj = null;
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.AllNull(obj, null);
+        var result = input.AllNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNull_String_AllNullStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, null, null };
+
+        // Act
+        var result = input.AllNull();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllNull_Params_SomeNonNullStrings_ReturnsFalse()
+    public void AllNull_String_MixedStrings_ReturnsFalse()
     {
         // Arrange
-        string? obj = null;
+        var input = new string?[] { null, "hello", null };
 
         // Act
-        var result = YANText.AllNull(obj, "test");
+        var result = input.AllNull();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyNull
     [Fact]
-    public void AnyNull_SomeNullStrings_ReturnsTrue()
+    public void AllNull_String_NoNullStrings_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { null, "test" };
+        var input = new string?[] { "hello", "world", "" };
+
+        // Act
+        var result = input.AllNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNull_String_Params_AllNullStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNull(null, null, null);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNull_String_Params_MixedStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNull(null, "hello", null);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNull_String_AllNullStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, null, null };
 
         // Act
         var result = input.AnyNull();
@@ -74,10 +132,23 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNull_NoNullStrings_ReturnsFalse()
+    public void AnyNull_String_MixedStrings_ReturnsTrue()
     {
         // Arrange
-        var input = new string?[] { "test1", "test2" };
+        var input = new string?[] { null, "hello", "world" };
+
+        // Act
+        var result = input.AnyNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNull_String_NoNullStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "" };
 
         // Act
         var result = input.AnyNull();
@@ -87,35 +158,201 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNull_Params_SomeNullStrings_ReturnsTrue()
+    public void AnyNull_String_Params_MixedStrings_ReturnsTrue()
     {
-        // Arrange
-        string? obj = null;
-
         // Act
-        var result = YANText.AnyNull(obj, "test");
+        var result = YANText.AnyNull(null, "hello", "world");
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyNull_Params_NoNullStrings_ReturnsFalse()
+    public void AnyNull_String_Params_NoNullStrings_ReturnsFalse()
     {
-        // Arrange
-        var obj = "test1";
-
         // Act
-        var result = YANText.AnyNull(obj, "test2");
+        var result = YANText.AnyNull("hello", "world", "");
 
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public void AllNotNull_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_String_AllNullStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, null, null };
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_String_MixedStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "hello", "world" };
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNull_String_NoNullStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "" };
+
+        // Act
+        var result = input.AllNotNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNull_String_Params_NoNullStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotNull("hello", "world", "");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNull_String_Params_MixedStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotNull(null, "hello", "world");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_AllNullStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, null, null };
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_MixedStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "hello", "world" };
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_NoNullStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "" };
+
+        // Act
+        var result = input.AnyNotNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_Params_MixedStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotNull(null, "hello", "world");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNull_String_Params_AllNullStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyNotNull(null, null, null);
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
-    #region IsNullEmpty
+    #region NullEmpty
+
     [Fact]
-    public void IsNullEmpty_Null_ReturnsTrue()
+    public void IsNullEmpty_String_NullString_ReturnsTrue()
     {
         // Arrange
         string? input = null;
@@ -128,7 +365,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_EmptyString_ReturnsTrue()
+    public void IsNullEmpty_String_EmptyString_ReturnsTrue()
     {
         // Arrange
         var input = string.Empty;
@@ -141,20 +378,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullEmpty_NonEmptyString_ReturnsFalse()
-    {
-        // Arrange
-        var input = "test";
-
-        // Act
-        var result = input.IsNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNullEmpty_WhiteSpaceString_ReturnsFalse()
+    public void IsNullEmpty_String_WhitespaceString_ReturnsFalse()
     {
         // Arrange
         var input = "   ";
@@ -165,14 +389,51 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllNullEmpty
     [Fact]
-    public void AllNullEmpty_AllNullOrEmptyStrings_ReturnsTrue()
+    public void IsNullEmpty_String_NonEmptyString_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { null, string.Empty };
+        var input = "hello";
+
+        // Act
+        var result = input.IsNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNullEmpty_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNullEmpty_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AllNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNullEmpty_String_AllNullOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "", null };
 
         // Act
         var result = input.AllNullEmpty();
@@ -182,10 +443,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_SomeNonEmptyStrings_ReturnsFalse()
+    public void AllNullEmpty_String_MixedStrings_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { null, "test" };
+        var input = new string?[] { null, "hello", "" };
 
         // Act
         var result = input.AllNullEmpty();
@@ -195,51 +456,43 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullEmpty_Params_AllNullOrEmptyStrings_ReturnsTrue()
+    public void AllNullEmpty_String_NoNullOrEmptyStrings_ReturnsFalse()
     {
         // Arrange
-        string? obj = null;
+        var input = new string?[] { "hello", "world", "test" };
 
         // Act
-        var result = YANText.AllNullEmpty(obj, string.Empty);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNullEmpty_Params_SomeNonEmptyStrings_ReturnsFalse()
-    {
-        // Arrange
-        string? obj = null;
-
-        // Act
-        var result = YANText.AllNullEmpty(obj, "test");
+        var result = input.AllNullEmpty();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyNullEmpty
     [Fact]
-    public void AnyNullEmpty_SomeNullOrEmptyStrings_ReturnsTrue()
+    public void AllNullEmpty_String_Params_AllNullOrEmptyStrings_ReturnsTrue()
     {
-        // Arrange
-        var input = new string?[] { null, "test" };
-
         // Act
-        var result = input.AnyNullEmpty();
+        var result = YANText.AllNullEmpty(null, "", null);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyNullEmpty_NoNullOrEmptyStrings_ReturnsFalse()
+    public void AllNullEmpty_String_Params_MixedStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNullEmpty(null, "hello", "");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_String_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { "test1", "test2" };
+        IEnumerable<string?>? input = null;
 
         // Act
         var result = input.AnyNullEmpty();
@@ -249,35 +502,305 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullEmpty_Params_SomeNullOrEmptyStrings_ReturnsTrue()
+    public void AnyNullEmpty_String_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        string? obj = null;
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.AnyNullEmpty(obj, "test");
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_String_AllNullOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "", null };
+
+        // Act
+        var result = input.AnyNullEmpty();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyNullEmpty_Params_NoNullOrEmptyStrings_ReturnsFalse()
+    public void AnyNullEmpty_String_MixedStrings_ReturnsTrue()
     {
         // Arrange
-        var obj = "test1";
+        var input = new string?[] { null, "hello", "world" };
 
         // Act
-        var result = YANText.AnyNullEmpty(obj, "test2");
+        var result = input.AnyNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_String_NoNullOrEmptyStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AnyNullEmpty();
 
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public void AnyNullEmpty_String_Params_MixedStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNullEmpty(null, "hello", "world");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_String_Params_NoNullOrEmptyStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyNullEmpty("hello", "world", "test");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullEmpty_String_NullString_ReturnsFalse()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.IsNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullEmpty_String_EmptyString_ReturnsFalse()
+    {
+        // Arrange
+        var input = string.Empty;
+
+        // Act
+        var result = input.IsNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullEmpty_String_WhitespaceString_ReturnsTrue()
+    {
+        // Arrange
+        var input = "   ";
+
+        // Act
+        var result = input.IsNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotNullEmpty_String_NonEmptyString_ReturnsTrue()
+    {
+        // Arrange
+        var input = "hello";
+
+        // Act
+        var result = input.IsNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_AllNullOrEmptyStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "", null };
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_MixedStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "hello", "world" };
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_NoNullOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AllNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_Params_NoNullOrEmptyStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotNullEmpty("hello", "world", "test");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullEmpty_String_Params_MixedStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotNullEmpty(null, "hello", "world");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_AllNullOrEmptyStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "", null };
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_MixedStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "hello", "" };
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_NoNullOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AnyNotNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_Params_MixedStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotNullEmpty(null, "hello", "");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullEmpty_String_Params_AllNullOrEmptyStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyNotNullEmpty(null, "", null);
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
-    #region IsNullWhiteSpace
+    #region NullWhiteSpace
+
     [Fact]
-    public void IsNullWhiteSpace_Null_ReturnsTrue()
+    public void IsNullWhiteSpace_String_NullString_ReturnsTrue()
     {
         // Arrange
         string? input = null;
@@ -290,7 +813,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_EmptyString_ReturnsTrue()
+    public void IsNullWhiteSpace_String_EmptyString_ReturnsTrue()
     {
         // Arrange
         var input = string.Empty;
@@ -303,7 +826,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_WhiteSpaceString_ReturnsTrue()
+    public void IsNullWhiteSpace_String_WhitespaceString_ReturnsTrue()
     {
         // Arrange
         var input = "   ";
@@ -316,10 +839,36 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void IsNullWhiteSpace_NonWhiteSpaceString_ReturnsFalse()
+    public void IsNullWhiteSpace_String_TabString_ReturnsTrue()
     {
         // Arrange
-        var input = "test";
+        var input = "\t\t";
+
+        // Act
+        var result = input.IsNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNullWhiteSpace_String_NewlineString_ReturnsTrue()
+    {
+        // Arrange
+        var input = "\n\r";
+
+        // Act
+        var result = input.IsNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNullWhiteSpace_String_NonWhitespaceString_ReturnsFalse()
+    {
+        // Arrange
+        var input = "hello";
 
         // Act
         var result = input.IsNullWhiteSpace();
@@ -327,27 +876,12 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
-
-    #region AllNullWhiteSpace
-    [Fact]
-    public void AllNullWhiteSpace_AllNullOrWhiteSpaceStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { null, string.Empty, "   " };
-
-        // Act
-        var result = input.AllNullWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
 
     [Fact]
-    public void AllNullWhiteSpace_SomeNonWhiteSpaceStrings_ReturnsFalse()
+    public void AllNullWhiteSpace_String_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { null, "test" };
+        IEnumerable<string?>? input = null;
 
         // Act
         var result = input.AllNullWhiteSpace();
@@ -357,38 +891,108 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Params_AllNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AllNullWhiteSpace_String_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        string? obj = null;
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.AllNullWhiteSpace(obj, string.Empty, "   ");
+        var result = input.AllNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNullWhiteSpace_String_AllNullWhitespaceOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "   ", "" };
+
+        // Act
+        var result = input.AllNullWhiteSpace();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllNullWhiteSpace_Params_SomeNonWhiteSpaceStrings_ReturnsFalse()
+    public void AllNullWhiteSpace_String_MixedStrings_ReturnsFalse()
     {
         // Arrange
-        string? obj = null;
+        var input = new string?[] { null, "hello", "   " };
 
         // Act
-        var result = YANText.AllNullWhiteSpace(obj, "test");
+        var result = input.AllNullWhiteSpace();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyNullWhiteSpace
     [Fact]
-    public void AnyNullWhiteSpace_SomeNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AllNullWhiteSpace_String_NoNullWhitespaceOrEmptyStrings_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { null, "test" };
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AllNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNullWhiteSpace_String_Params_AllNullWhitespaceOrEmptyStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNullWhiteSpace(null, "   ", "");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNullWhiteSpace_String_Params_MixedStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNullWhiteSpace(null, "hello", "   ");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullWhiteSpace_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AnyNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullWhiteSpace_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AnyNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullWhiteSpace_String_AllNullWhitespaceOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "   ", "" };
 
         // Act
         var result = input.AnyNullWhiteSpace();
@@ -398,10 +1002,23 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_NoNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AnyNullWhiteSpace_String_MixedStrings_ReturnsTrue()
     {
         // Arrange
-        var input = new string?[] { "test1", "test2" };
+        var input = new string?[] { null, "hello", "world" };
+
+        // Act
+        var result = input.AnyNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullWhiteSpace_String_NoNullWhitespaceOrEmptyStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
 
         // Act
         var result = input.AnyNullWhiteSpace();
@@ -411,63 +1028,253 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Params_SomeNullOrWhiteSpaceStrings_ReturnsTrue()
+    public void AnyNullWhiteSpace_String_Params_MixedStrings_ReturnsTrue()
     {
-        // Arrange
-        string? obj = null;
-
         // Act
-        var result = YANText.AnyNullWhiteSpace(obj, "test");
+        var result = YANText.AnyNullWhiteSpace(null, "hello", "world");
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyNullWhiteSpace_Params_NoNullOrWhiteSpaceStrings_ReturnsFalse()
+    public void AnyNullWhiteSpace_String_Params_NoNullWhitespaceOrEmptyStrings_ReturnsFalse()
     {
-        // Arrange
-        var obj = "test1";
-
         // Act
-        var result = YANText.AnyNullWhiteSpace(obj, "test2");
+        var result = YANText.AnyNullWhiteSpace("hello", "world", "test");
 
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public void IsNotNullWhiteSpace_String_NullString_ReturnsFalse()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.IsNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullWhiteSpace_String_EmptyString_ReturnsFalse()
+    {
+        // Arrange
+        var input = string.Empty;
+
+        // Act
+        var result = input.IsNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullWhiteSpace_String_WhitespaceString_ReturnsFalse()
+    {
+        // Arrange
+        var input = "   ";
+
+        // Act
+        var result = input.IsNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullWhiteSpace_String_NonWhitespaceString_ReturnsTrue()
+    {
+        // Arrange
+        var input = "hello";
+
+        // Act
+        var result = input.IsNotNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AllNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_AllNullWhitespaceOrEmptyStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "   ", "" };
+
+        // Act
+        var result = input.AllNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_MixedStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "hello", "world" };
+
+        // Act
+        var result = input.AllNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_NoNullWhitespaceOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AllNotNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_Params_NoNullWhitespaceOrEmptyStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AllNotNullWhiteSpace("hello", "world", "test");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullWhiteSpace_String_Params_MixedStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllNotNullWhiteSpace(null, "hello", "world");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AnyNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AnyNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_AllNullWhitespaceOrEmptyStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { null, "   ", "" };
+
+        // Act
+        var result = input.AnyNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_MixedStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { null, "hello", "   " };
+
+        // Act
+        var result = input.AnyNotNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_NoNullWhitespaceOrEmptyStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AnyNotNullWhiteSpace();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_Params_MixedStrings_ReturnsTrue()
+    {
+        // Act
+        var result = YANText.AnyNotNullWhiteSpace(null, "hello", "   ");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullWhiteSpace_String_Params_AllNullWhitespaceOrEmptyStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyNotNullWhiteSpace(null, "   ", "");
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region EqualsIgnoreCase
-    [Fact]
-    public void EqualsIgnoreCase_SameStringsDifferentCase_ReturnsTrue()
-    {
-        // Arrange
-        var input1 = "test";
-        var input2 = "TEST";
-
-        // Act
-        var result = input1.EqualsIgnoreCase(input2);
-
-        // Assert
-        Assert.True(result);
-    }
 
     [Fact]
-    public void EqualsIgnoreCase_DifferentStrings_ReturnsFalse()
-    {
-        // Arrange
-        var input1 = "test1";
-        var input2 = "test2";
-
-        // Act
-        var result = input1.EqualsIgnoreCase(input2);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void EqualsIgnoreCase_BothNull_ReturnsTrue()
+    public void EqualsIgnoreCase_String_BothNull_ReturnsTrue()
     {
         // Arrange
         string? input1 = null;
@@ -481,10 +1288,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void EqualsIgnoreCase_OneNull_ReturnsFalse()
+    public void EqualsIgnoreCase_String_OneNull_ReturnsFalse()
     {
         // Arrange
-        var input1 = "test";
+        var input1 = "hello";
         string? input2 = null;
 
         // Act
@@ -493,14 +1300,80 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllEqualsIgnoreCase
     [Fact]
-    public void AllEqualsIgnoreCase_AllSameStringsDifferentCase_ReturnsTrue()
+    public void EqualsIgnoreCase_String_SameCase_ReturnsTrue()
     {
         // Arrange
-        var input = new string?[] { "test", "TEST", "Test" };
+        var input1 = "hello";
+        var input2 = "hello";
+
+        // Act
+        var result = input1.EqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void EqualsIgnoreCase_String_DifferentCase_ReturnsTrue()
+    {
+        // Arrange
+        var input1 = "hello";
+        var input2 = "HELLO";
+
+        // Act
+        var result = input1.EqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void EqualsIgnoreCase_String_DifferentStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input1 = "hello";
+        var input2 = "world";
+
+        // Act
+        var result = input1.EqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AllEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_String_AllSameStringDifferentCase_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "HELLO", "Hello" };
 
         // Act
         var result = input.AllEqualsIgnoreCase();
@@ -510,10 +1383,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_SomeDifferentStrings_ReturnsFalse()
+    public void AllEqualsIgnoreCase_String_DifferentStrings_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { "test", "different" };
+        var input = new string?[] { "hello", "world", "hello" };
 
         // Act
         var result = input.AllEqualsIgnoreCase();
@@ -523,51 +1396,43 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllEqualsIgnoreCase_Params_AllSameStringsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_String_WithNullString_ReturnsFalse()
     {
         // Arrange
-        var obj = "test";
+        var input = new string?[] { "hello", null, "HELLO" };
 
         // Act
-        var result = YANText.AllEqualsIgnoreCase(obj, "TEST", "Test");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllEqualsIgnoreCase_Params_SomeDifferentStrings_ReturnsFalse()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AllEqualsIgnoreCase(obj, "different");
+        var result = input.AllEqualsIgnoreCase();
 
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AnyEqualsIgnoreCase
     [Fact]
-    public void AnyEqualsIgnoreCase_SomeSameStringsDifferentCase_ReturnsTrue()
+    public void AllEqualsIgnoreCase_String_Params_AllSameStringDifferentCase_ReturnsTrue()
     {
-        // Arrange
-        var input = new string?[] { "test", "TEST", "different" };
-
         // Act
-        var result = input.AnyEqualsIgnoreCase();
+        var result = YANText.AllEqualsIgnoreCase("hello", "HELLO", "Hello");
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_AllDifferentStrings_ReturnsFalse()
+    public void AllEqualsIgnoreCase_String_Params_DifferentStrings_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AllEqualsIgnoreCase("hello", "world", "hello");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_String_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { "test1", "test2", "test3" };
+        IEnumerable<string?>? input = null;
 
         // Act
         var result = input.AnyEqualsIgnoreCase();
@@ -577,495 +1442,66 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Params_SomeSameStringsDifferentCase_ReturnsTrue()
+    public void AnyEqualsIgnoreCase_String_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        var obj = "test";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.AnyEqualsIgnoreCase(obj, "TEST", "different");
+        var result = input.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_String_AllDifferentStrings_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = input.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_String_SomeSameStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "HELLO" };
+
+        // Act
+        var result = input.AnyEqualsIgnoreCase();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyEqualsIgnoreCase_Params_AllDifferentStrings_ReturnsFalse()
+    public void AnyEqualsIgnoreCase_String_Params_SomeSameStrings_ReturnsTrue()
     {
-        // Arrange
-        var obj = "test1";
-
         // Act
-        var result = YANText.AnyEqualsIgnoreCase(obj, "test2", "test3");
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotNull
-    [Fact]
-    public void AllNotNull_AllNonNullStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test1", "test2" };
-
-        // Act
-        var result = input.AllNotNull();
+        var result = YANText.AnyEqualsIgnoreCase("hello", "world", "HELLO");
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllNotNull_SomeNullStrings_ReturnsFalse()
+    public void AnyEqualsIgnoreCase_String_Params_AllDifferentStrings_ReturnsFalse()
     {
-        // Arrange
-        var input = new string?[] { "test", null };
-
         // Act
-        var result = input.AllNotNull();
+        var result = YANText.AnyEqualsIgnoreCase("hello", "world", "test");
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllNotNull_Params_AllNonNullStrings_ReturnsTrue()
-    {
-        // Arrange
-        var obj = "test1";
-
-        // Act
-        var result = YANText.AllNotNull(obj, "test2");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNull_Params_SomeNullStrings_ReturnsFalse()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AllNotNull(obj, null);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotNull
-    [Fact]
-    public void AnyNotNull_SomeNonNullStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test", null };
-
-        // Act
-        var result = input.AnyNotNull();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNull_AllNullStrings_ReturnsFalse()
-    {
-        // Arrange
-        var input = new string?[] { null, null };
-
-        // Act
-        var result = input.AnyNotNull();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotNull_Params_SomeNonNullStrings_ReturnsTrue()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AnyNotNull(obj, null);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNull_Params_AllNullStrings_ReturnsFalse()
-    {
-        // Arrange
-        string? obj = null;
-
-        // Act
-        var result = YANText.AnyNotNull(obj, null);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotNullEmpty
-    [Fact]
-    public void IsNotNullEmpty_NonEmptyString_ReturnsTrue()
-    {
-        // Arrange
-        var input = "test";
-
-        // Act
-        var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotNullEmpty_Null_ReturnsFalse()
-    {
-        // Arrange
-        string? input = null;
-
-        // Act
-        var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullEmpty_EmptyString_ReturnsFalse()
-    {
-        // Arrange
-        var input = string.Empty;
-
-        // Act
-        var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullEmpty_WhiteSpaceString_ReturnsTrue()
-    {
-        // Arrange
-        var input = "   ";
-
-        // Act
-        var result = input.IsNotNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-    #endregion
-
-    #region AllNotNullEmpty
-    [Fact]
-    public void AllNotNullEmpty_AllNonNullNonEmptyStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test1", "test2" };
-
-        // Act
-        var result = input.AllNotNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNullEmpty_SomeNullOrEmptyStrings_ReturnsFalse()
-    {
-        // Arrange
-        var input = new string?[] { "test", null };
-
-        // Act
-        var result = input.AllNotNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotNullEmpty_Params_AllNonNullNonEmptyStrings_ReturnsTrue()
-    {
-        // Arrange
-        var obj = "test1";
-
-        // Act
-        var result = YANText.AllNotNullEmpty(obj, "test2");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNullEmpty_Params_SomeNullOrEmptyStrings_ReturnsFalse()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AllNotNullEmpty(obj, string.Empty);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotNullEmpty
-    [Fact]
-    public void AnyNotNullEmpty_SomeNonNullNonEmptyStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test", null };
-
-        // Act
-        var result = input.AnyNotNullEmpty();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNullEmpty_AllNullOrEmptyStrings_ReturnsFalse()
-    {
-        // Arrange
-        var input = new string?[] { null, string.Empty };
-
-        // Act
-        var result = input.AnyNotNullEmpty();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotNullEmpty_Params_SomeNonNullNonEmptyStrings_ReturnsTrue()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AnyNotNullEmpty(obj, null);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNullEmpty_Params_AllNullOrEmptyStrings_ReturnsFalse()
-    {
-        // Arrange
-        string? obj = null;
-
-        // Act
-        var result = YANText.AnyNotNullEmpty(obj, string.Empty);
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region IsNotNullWhiteSpace
-    [Fact]
-    public void IsNotNullWhiteSpace_NonWhiteSpaceString_ReturnsTrue()
-    {
-        // Arrange
-        var input = "test";
-
-        // Act
-        var result = input.IsNotNullWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNotNullWhiteSpace_Null_ReturnsFalse()
-    {
-        // Arrange
-        string? input = null;
-
-        // Act
-        var result = input.IsNotNullWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullWhiteSpace_EmptyString_ReturnsFalse()
-    {
-        // Arrange
-        var input = string.Empty;
-
-        // Act
-        var result = input.IsNotNullWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNullWhiteSpace_WhiteSpaceString_ReturnsFalse()
-    {
-        // Arrange
-        var input = "   ";
-
-        // Act
-        var result = input.IsNotNullWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AllNotNullWhiteSpace
-    [Fact]
-    public void AllNotNullWhiteSpace_AllNonNullNonWhiteSpaceStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test1", "test2" };
-
-        // Act
-        var result = input.AllNotNullWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNullWhiteSpace_SomeNullOrWhiteSpaceStrings_ReturnsFalse()
-    {
-        // Arrange
-        var input = new string?[] { "test", null };
-
-        // Act
-        var result = input.AllNotNullWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllNotNullWhiteSpace_Params_AllNonNullNonWhiteSpaceStrings_ReturnsTrue()
-    {
-        // Arrange
-        var obj = "test1";
-
-        // Act
-        var result = YANText.AllNotNullWhiteSpace(obj, "test2");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllNotNullWhiteSpace_Params_SomeNullOrWhiteSpaceStrings_ReturnsFalse()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AllNotNullWhiteSpace(obj, "   ");
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region AnyNotNullWhiteSpace
-    [Fact]
-    public void AnyNotNullWhiteSpace_SomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test", null, "   " };
-
-        // Act
-        var result = input.AnyNotNullWhiteSpace();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNullWhiteSpace_AllNullOrWhiteSpaceStrings_ReturnsFalse()
-    {
-        // Arrange
-        var input = new string?[] { null, string.Empty, "   " };
-
-        // Act
-        var result = input.AnyNotNullWhiteSpace();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyNotNullWhiteSpace_Params_SomeNonNullNonWhiteSpaceStrings_ReturnsTrue()
-    {
-        // Arrange
-        var obj = "test";
-
-        // Act
-        var result = YANText.AnyNotNullWhiteSpace(obj, null, "   ");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyNotNullWhiteSpace_Params_AllNullOrWhiteSpaceStrings_ReturnsFalse()
-    {
-        // Arrange
-        string? obj = null;
-
-        // Act
-        var result = YANText.AnyNotNullWhiteSpace(obj, string.Empty, "   ");
-
-        // Assert
-        Assert.False(result);
-    }
-    #endregion
-
-    #region NotEqualsIgnoreCase
-    [Fact]
-    public void NotEqualsIgnoreCase_DifferentStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input1 = "test1";
-        var input2 = "test2";
-
-        // Act
-        var result = input1.NotEqualsIgnoreCase(input2);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void NotEqualsIgnoreCase_SameStringsDifferentCase_ReturnsFalse()
-    {
-        // Arrange
-        var input1 = "test";
-        var input2 = "TEST";
-
-        // Act
-        var result = input1.NotEqualsIgnoreCase(input2);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void NotEqualsIgnoreCase_BothNull_ReturnsFalse()
+    public void NotEqualsIgnoreCase_String_BothNull_ReturnsFalse()
     {
         // Arrange
         string? input1 = null;
@@ -1079,11 +1515,25 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void NotEqualsIgnoreCase_OneNull_ReturnsFalse()
+    public void NotEqualsIgnoreCase_String_OneNull_ReturnsTrue()
     {
         // Arrange
-        var input1 = "test";
+        var input1 = "hello";
         string? input2 = null;
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void NotEqualsIgnoreCase_String_SameCase_ReturnsFalse()
+    {
+        // Arrange
+        var input1 = "hello";
+        var input2 = "hello";
 
         // Act
         var result = input1.NotEqualsIgnoreCase(input2);
@@ -1091,14 +1541,66 @@ public partial class YANTextTest
         // Assert
         Assert.False(result);
     }
-    #endregion
 
-    #region AllNotEqualsIgnoreCase
     [Fact]
-    public void AllNotEqualsIgnoreCase_AllDifferentStrings_ReturnsTrue()
+    public void NotEqualsIgnoreCase_String_DifferentCase_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { "test1", "test2", "test3" };
+        var input1 = "hello";
+        var input2 = "HELLO";
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void NotEqualsIgnoreCase_String_DifferentStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input1 = "hello";
+        var input2 = "world";
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_String_NullCollection_ReturnsFalse()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_String_EmptyCollection_ReturnsFalse()
+    {
+        // Arrange
+        var input = Array.Empty<string?>();
+
+        // Act
+        var result = input.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_String_AllDifferentStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "test" };
 
         // Act
         var result = input.AllNotEqualsIgnoreCase();
@@ -1108,10 +1610,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_SomeSameStringsDifferentCase_ReturnsFalse()
+    public void AllNotEqualsIgnoreCase_String_SomeSameStrings_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { "test", "TEST", "test3" };
+        var input = new string?[] { "hello", "world", "HELLO" };
 
         // Act
         var result = input.AllNotEqualsIgnoreCase();
@@ -1121,51 +1623,30 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Params_AllDifferentStrings_ReturnsTrue()
+    public void AllNotEqualsIgnoreCase_String_Params_AllDifferentStrings_ReturnsTrue()
     {
-        // Arrange
-        var obj = "test1";
-
         // Act
-        var result = YANText.AllNotEqualsIgnoreCase(obj, "test2", "test3");
+        var result = YANText.AllNotEqualsIgnoreCase("hello", "world", "test");
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllNotEqualsIgnoreCase_Params_SomeSameStringsDifferentCase_ReturnsFalse()
+    public void AllNotEqualsIgnoreCase_String_Params_SomeSameStrings_ReturnsFalse()
     {
-        // Arrange
-        var obj = "test";
-
         // Act
-        var result = YANText.AllNotEqualsIgnoreCase(obj, "TEST", "test3");
+        var result = YANText.AllNotEqualsIgnoreCase("hello", "world", "HELLO");
 
         // Assert
         Assert.False(result);
     }
-    #endregion
-
-    #region AnyNotEqualsIgnoreCase
-    [Fact]
-    public void AnyNotEqualsIgnoreCase_SomeDifferentStrings_ReturnsTrue()
-    {
-        // Arrange
-        var input = new string?[] { "test1", "test2", "test3" };
-
-        // Act
-        var result = input.AnyNotEqualsIgnoreCase();
-
-        // Assert
-        Assert.True(result);
-    }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_AllSameStringsDifferentCase_ReturnsFalse()
+    public void AnyNotEqualsIgnoreCase_String_NullCollection_ReturnsFalse()
     {
         // Arrange
-        var input = new string?[] { "test", "TEST", "Test" };
+        IEnumerable<string?>? input = null;
 
         // Act
         var result = input.AnyNotEqualsIgnoreCase();
@@ -1175,61 +1656,70 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Params_SomeDifferentStrings_ReturnsTrue()
+    public void AnyNotEqualsIgnoreCase_String_EmptyCollection_ReturnsFalse()
     {
         // Arrange
-        var obj = "test1";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.AnyNotEqualsIgnoreCase(obj, "test2", "test3");
+        var result = input.AnyNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_String_AllSameStringDifferentCase_ReturnsFalse()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "HELLO", "Hello" };
+
+        // Act
+        var result = input.AnyNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_String_SomeDifferentStrings_ReturnsTrue()
+    {
+        // Arrange
+        var input = new string?[] { "hello", "world", "HELLO" };
+
+        // Act
+        var result = input.AnyNotEqualsIgnoreCase();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyNotEqualsIgnoreCase_Params_AllSameStringsDifferentCase_ReturnsFalse()
+    public void AnyNotEqualsIgnoreCase_String_Params_SomeDifferentStrings_ReturnsTrue()
     {
-        // Arrange
-        var obj = "test";
-
         // Act
-        var result = YANText.AnyNotEqualsIgnoreCase(obj, "TEST", "Test");
+        var result = YANText.AnyNotEqualsIgnoreCase("hello", "world", "HELLO");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_String_Params_AllSameStringDifferentCase_ReturnsFalse()
+    {
+        // Act
+        var result = YANText.AnyNotEqualsIgnoreCase("hello", "HELLO", "Hello");
 
         // Assert
         Assert.False(result);
     }
+
     #endregion
 
     #region Lower
-    [Fact]
-    public void Lower_UpperCaseString_ReturnsLowerCaseString()
-    {
-        // Arrange
-        var input = "TEST";
-
-        // Act
-        var result = input.Lower();
-
-        // Assert
-        Assert.Equal("test", result);
-    }
 
     [Fact]
-    public void Lower_MixedCaseString_ReturnsLowerCaseString()
-    {
-        // Arrange
-        var input = "TeSt";
-
-        // Act
-        var result = input.Lower();
-
-        // Assert
-        Assert.Equal("test", result);
-    }
-
-    [Fact]
-    public void Lower_Null_ReturnsNull()
+    public void Lower_String_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1242,7 +1732,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_EmptyString_ReturnsEmptyString()
+    public void Lower_String_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -1255,7 +1745,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_WhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Lower_String_WhitespaceString_ReturnsWhitespace()
     {
         // Arrange
         var input = "   ";
@@ -1268,48 +1758,46 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lower_List_MixedCaseStrings_ModifiesListToLowerCase()
+    public void Lower_String_UppercaseString_ReturnsLowercase()
     {
         // Arrange
-        var input = new List<string?> { "TEST", "TeSt", null, "HELLO" };
-        var expected = new List<string?> { "test", "test", null, "hello" };
+        var input = "HELLO WORLD";
+
+        // Act
+        var result = input.Lower();
+
+        // Assert
+        Assert.Equal("hello world", result);
+    }
+
+    [Fact]
+    public void Lower_String_MixedCaseString_ReturnsLowercase()
+    {
+        // Arrange
+        var input = "Hello World";
+
+        // Act
+        var result = input.Lower();
+
+        // Assert
+        Assert.Equal("hello world", result);
+    }
+
+    [Fact]
+    public void Lower_String_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "HELLO", "World", null, "" };
 
         // Act
         input.Lower();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["hello", "world", null, ""], input);
     }
 
     [Fact]
-    public void Lower_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.Lower);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void Lowers_MixedCaseStrings_ReturnsAllLowerCase()
-    {
-        // Arrange
-        var input = new[] { "TEST", "TeSt", null, "HELLO" };
-
-        // Act
-        var result = input.Lowers();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["test", "test", null, "hello"], result);
-    }
-
-    [Fact]
-    public void Lowers_NullInput_ReturnsNull()
+    public void Lowers_String_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1322,36 +1810,43 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Lowers_Params_MixedCaseStrings_ReturnsAllLowerCase()
+    public void Lowers_String_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "TEST";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.Lowers(obj, "TeSt", null, "HELLO");
+        var result = input.Lowers();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["test", "test", null, "hello"], result);
-    }
-    #endregion
-
-    #region LowerInvariant
-    [Fact]
-    public void LowerInvariant_UpperCaseString_ReturnsLowerCaseString()
-    {
-        // Arrange
-        var input = "TEST";
-
-        // Act
-        var result = input.LowerInvariant();
-
-        // Assert
-        Assert.Equal("test", result);
+        Assert.Empty(result!);
     }
 
     [Fact]
-    public void LowerInvariant_Null_ReturnsNull()
+    public void Lowers_String_MixedCaseCollection_ReturnsAllLowercase()
+    {
+        // Arrange
+        var input = new[] { "HELLO", "World", null, "" };
+
+        // Act
+        var result = input.Lowers();
+
+        // Assert
+        Assert.Equal(["hello", "world", null, ""], result);
+    }
+
+    [Fact]
+    public void Lowers_String_Params_MixedCaseStrings_ReturnsAllLowercase()
+    {
+        // Act
+        var result = YANText.Lowers("HELLO", "World", null, "");
+
+        // Assert
+        Assert.Equal(["hello", "world", null, ""], result);
+    }
+
+    [Fact]
+    public void LowerInvariant_String_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1364,48 +1859,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariant_List_MixedCaseStrings_ModifiesListToLowerCase()
+    public void LowerInvariant_String_UppercaseString_ReturnsLowercase()
     {
         // Arrange
-        var input = new List<string?> { "TEST", "TeSt", null, "HELLO" };
-        var expected = new List<string?> { "test", "test", null, "hello" };
+        var input = "HELLO WORLD";
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal("hello world", result);
+    }
+
+    [Fact]
+    public void LowerInvariant_String_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "HELLO", "World", null, "" };
 
         // Act
         input.LowerInvariant();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["hello", "world", null, ""], input);
     }
 
     [Fact]
-    public void LowerInvariant_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.LowerInvariant);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void LowerInvariants_MixedCaseStrings_ReturnsAllLowerCase()
-    {
-        // Arrange
-        var input = new[] { "TEST", "TeSt", null, "HELLO" };
-
-        // Act
-        var result = input.LowerInvariants();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["test", "test", null, "hello"], result);
-    }
-
-    [Fact]
-    public void LowerInvariants_NullInput_ReturnsNull()
+    public void LowerInvariants_String_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1418,49 +1898,34 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void LowerInvariants_Params_MixedCaseStrings_ReturnsAllLowerCase()
+    public void LowerInvariants_String_MixedCaseCollection_ReturnsAllLowercase()
     {
         // Arrange
-        var obj = "TEST";
+        var input = new[] { "HELLO", "World", null, "" };
 
         // Act
-        var result = YANText.LowerInvariants(obj, "TeSt", null, "HELLO");
+        var result = input.LowerInvariants();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["test", "test", null, "hello"], result);
+        Assert.Equal(["hello", "world", null, ""], result);
     }
+
+    [Fact]
+    public void LowerInvariants_String_Params_MixedCaseStrings_ReturnsAllLowercase()
+    {
+        // Act
+        var result = YANText.LowerInvariants("HELLO", "World", null, "");
+
+        // Assert
+        Assert.Equal(["hello", "world", null, ""], result);
+    }
+
     #endregion
 
     #region Upper
-    [Fact]
-    public void Upper_LowerCaseString_ReturnsUpperCaseString()
-    {
-        // Arrange
-        var input = "test";
-
-        // Act
-        var result = input.Upper();
-
-        // Assert
-        Assert.Equal("TEST", result);
-    }
 
     [Fact]
-    public void Upper_MixedCaseString_ReturnsUpperCaseString()
-    {
-        // Arrange
-        var input = "TeSt";
-
-        // Act
-        var result = input.Upper();
-
-        // Assert
-        Assert.Equal("TEST", result);
-    }
-
-    [Fact]
-    public void Upper_Null_ReturnsNull()
+    public void Upper_String_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1473,7 +1938,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_EmptyString_ReturnsEmptyString()
+    public void Upper_String_EmptyString_ReturnsEmpty()
     {
         // Arrange
         var input = string.Empty;
@@ -1486,7 +1951,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_WhiteSpaceString_ReturnsWhiteSpaceString()
+    public void Upper_String_WhitespaceString_ReturnsWhitespace()
     {
         // Arrange
         var input = "   ";
@@ -1499,48 +1964,46 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Upper_List_MixedCaseStrings_ModifiesListToUpperCase()
+    public void Upper_String_LowercaseString_ReturnsUppercase()
     {
         // Arrange
-        var input = new List<string?> { "test", "TeSt", null, "hello" };
-        var expected = new List<string?> { "TEST", "TEST", null, "HELLO" };
+        var input = "hello world";
+
+        // Act
+        var result = input.Upper();
+
+        // Assert
+        Assert.Equal("HELLO WORLD", result);
+    }
+
+    [Fact]
+    public void Upper_String_MixedCaseString_ReturnsUppercase()
+    {
+        // Arrange
+        var input = "Hello World";
+
+        // Act
+        var result = input.Upper();
+
+        // Assert
+        Assert.Equal("HELLO WORLD", result);
+    }
+
+    [Fact]
+    public void Upper_String_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "hello", "World", null, "" };
 
         // Act
         input.Upper();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["HELLO", "WORLD", null, ""], input);
     }
 
     [Fact]
-    public void Upper_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.Upper);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void Uppers_MixedCaseStrings_ReturnsAllUpperCase()
-    {
-        // Arrange
-        var input = new[] { "test", "TeSt", null, "hello" };
-
-        // Act
-        var result = input.Uppers();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["TEST", "TEST", null, "HELLO"], result);
-    }
-
-    [Fact]
-    public void Uppers_NullInput_ReturnsNull()
+    public void Uppers_String_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1553,36 +2016,43 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void Uppers_Params_MixedCaseStrings_ReturnsAllUpperCase()
+    public void Uppers_String_EmptyCollection_ReturnsEmpty()
     {
         // Arrange
-        var obj = "test";
+        var input = Array.Empty<string?>();
 
         // Act
-        var result = YANText.Uppers(obj, "TeSt", null, "hello");
+        var result = input.Uppers();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["TEST", "TEST", null, "HELLO"], result);
-    }
-    #endregion
-
-    #region UpperInvariant
-    [Fact]
-    public void UpperInvariant_LowerCaseString_ReturnsUpperCaseString()
-    {
-        // Arrange
-        var input = "test";
-
-        // Act
-        var result = input.UpperInvariant();
-
-        // Assert
-        Assert.Equal("TEST", result);
+        Assert.Empty(result!);
     }
 
     [Fact]
-    public void UpperInvariant_Null_ReturnsNull()
+    public void Uppers_String_MixedCaseCollection_ReturnsAllUppercase()
+    {
+        // Arrange
+        var input = new[] { "hello", "World", null, "" };
+
+        // Act
+        var result = input.Uppers();
+
+        // Assert
+        Assert.Equal(["HELLO", "WORLD", null, ""], result);
+    }
+
+    [Fact]
+    public void Uppers_String_Params_MixedCaseStrings_ReturnsAllUppercase()
+    {
+        // Act
+        var result = YANText.Uppers("hello", "World", null, "");
+
+        // Assert
+        Assert.Equal(["HELLO", "WORLD", null, ""], result);
+    }
+
+    [Fact]
+    public void UpperInvariant_String_NullString_ReturnsNull()
     {
         // Arrange
         string? input = null;
@@ -1595,48 +2065,33 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariant_List_MixedCaseStrings_ModifiesListToUpperCase()
+    public void UpperInvariant_String_LowercaseString_ReturnsUppercase()
     {
         // Arrange
-        var input = new List<string?> { "test", "TeSt", null, "hello" };
-        var expected = new List<string?> { "TEST", "TEST", null, "HELLO" };
+        var input = "hello world";
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal("HELLO WORLD", result);
+    }
+
+    [Fact]
+    public void UpperInvariant_String_List_ModifiesListInPlace()
+    {
+        // Arrange
+        var input = new List<string?> { "hello", "World", null, "" };
 
         // Act
         input.UpperInvariant();
 
         // Assert
-        Assert.Equal(expected, input);
+        Assert.Equal(["HELLO", "WORLD", null, ""], input);
     }
 
     [Fact]
-    public void UpperInvariant_List_NullInput_DoesNotThrowException()
-    {
-        // Arrange
-        List<string?>? input = null;
-
-        // Act
-        var exception = Record.Exception(input.UpperInvariant);
-
-        // Assert
-        Assert.Null(exception);
-    }
-
-    [Fact]
-    public void UpperInvariants_MixedCaseStrings_ReturnsAllUpperCase()
-    {
-        // Arrange
-        var input = new[] { "test", "TeSt", null, "hello" };
-
-        // Act
-        var result = input.UpperInvariants();
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["TEST", "TEST", null, "HELLO"], result);
-    }
-
-    [Fact]
-    public void UpperInvariants_NullInput_ReturnsNull()
+    public void UpperInvariants_String_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
@@ -1649,17 +2104,27 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void UpperInvariants_Params_MixedCaseStrings_ReturnsAllUpperCase()
+    public void UpperInvariants_String_MixedCaseCollection_ReturnsAllUppercase()
     {
         // Arrange
-        var obj = "test";
+        var input = new[] { "hello", "World", null, "" };
 
         // Act
-        var result = YANText.UpperInvariants(obj, "TeSt", null, "hello");
+        var result = input.UpperInvariants();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(["TEST", "TEST", null, "HELLO"], result);
+        Assert.Equal(["HELLO", "WORLD", null, ""], result);
     }
+
+    [Fact]
+    public void UpperInvariants_String_Params_MixedCaseStrings_ReturnsAllUppercase()
+    {
+        // Act
+        var result = YANText.UpperInvariants("hello", "World", null, "");
+
+        // Assert
+        Assert.Equal(["HELLO", "WORLD", null, ""], result);
+    }
+
     #endregion
 }

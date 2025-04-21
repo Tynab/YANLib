@@ -626,7 +626,7 @@ public partial class YANObjectTest
     public void IsDefault_DefaultString_ReturnsTrue()
     {
         // Arrange
-        string input = default!;
+        string? input = default;
 
         // Act
         var result = input.IsDefault();
@@ -952,7 +952,7 @@ public partial class YANObjectTest
     public void IsNotDefault_DefaultString_ReturnsFalse()
     {
         // Arrange
-        string input = default!;
+        string? input = default;
 
         // Act
         var result = input.IsNotDefault();
@@ -2000,7 +2000,11 @@ public partial class YANObjectTest
     public void Copy_ValidObject_ReturnsNewObjectWithSameValues()
     {
         // Arrange
-        var input = new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test" };
+        var input = new TestClass
+        {
+            Date = new DateTime(2023, 6, 15),
+            Name = "Test"
+        };
 
         // Act
         var result = input.Copy();
@@ -2016,7 +2020,12 @@ public partial class YANObjectTest
     public void Copy_ComplexObject_CopiesAllProperties()
     {
         // Arrange
-        var nested = new TestClass { Date = new DateTime(2023, 6, 16), Name = "Nested" };
+        var nested = new TestClass
+        {
+            Date = new DateTime(2023, 6, 16),
+            Name = "Nested"
+        };
+
         var input = new TestClassWithNested
         {
             Date = new DateTime(2023, 6, 15),
