@@ -11,7 +11,7 @@ namespace YANLib.Implementation;
 
 internal static partial class YANExpression
 {
-    private static readonly ConcurrentDictionary<(Type Type, string PropertyName, string ParameterName), LambdaExpression> Cache = new();
+    private static readonly ConcurrentDictionary<(Type Type, string PropertyName), LambdaExpression> Cache = new();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -27,7 +27,7 @@ internal static partial class YANExpression
             throw new ArgumentException("Property name cannot be null or whitespace.", nameof(propertyName));
         }
 
-        var key = (typeof(T), propertyName, parameterName);
+        var key = (typeof(T), propertyName);
 
         if (Cache.TryGetValue(key, out var existing))
         {
@@ -60,6 +60,4 @@ internal static partial class YANExpression
 
         return lambda;
     }
-
-    internal static void ClearExpressionCacheImplement() => Cache.Clear();
 }

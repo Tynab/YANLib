@@ -120,7 +120,7 @@ public partial class YANExpressionTest
     public void PropertyExpression_DifferentParameterName_ReturnsCorrectExpression()
     {
         // Arrange
-        var parameterName = "testParam";
+        var parameterName = "x";
         var propertyName = "StringProperty";
 
         // Act

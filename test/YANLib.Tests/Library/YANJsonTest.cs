@@ -1,23 +1,13 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace YANLib.Tests.Library;
 
 public partial class YANJsonTest
 {
-    private static readonly JsonSerializerOptions CamelCasePropertyNamingPolicy = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
+    #region Serialize
 
-    private class TestJson
-    {
-        public int Id { get; set; }
-
-        public string? Name { get; set; }
-    }
-
-    #region Serialize (string)
     [Fact]
     public void Serialize_NullInput_ReturnsNull()
     {
@@ -25,123 +15,223 @@ public partial class YANJsonTest
         object? input = null;
 
         // Act
-        var json = input.Serialize();
+        var result = input.Serialize();
 
         // Assert
-        Assert.Null(json);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Serialize_Object_ReturnsExpectedJson()
+    public void Serialize_PrimitiveTypes_ReturnsCorrectJson()
     {
         // Arrange
-        var obj = new TestJson
+        var intValue = 42;
+        var stringValue = "test";
+        var boolValue = true;
+        var doubleValue = 3.14;
+
+        // Act
+        var intResult = intValue.Serialize();
+        var stringResult = stringValue.Serialize();
+        var boolResult = boolValue.Serialize();
+        var doubleResult = doubleValue.Serialize();
+
+        // Assert
+        Assert.Equal("42", intResult);
+        Assert.Equal("\"test\"", stringResult);
+        Assert.Equal("true", boolResult);
+        Assert.Equal("3.14", doubleResult);
+    }
+
+    [Fact]
+    public void Serialize_ComplexObject_ReturnsCorrectJson()
+    {
+        // Arrange
+        var person = new TestPerson
         {
             Id = 1,
-            Name = "Test"
+            Name = "John Doe",
+            BirthDate = new DateTime(1990, 1, 1),
+            Hobbies = ["Reading", "Coding"],
+            Address = new TestAddress
+            {
+                Street = "123 Main St",
+                City = "Anytown",
+                Country = "USA",
+                PostalCode = "12345"
+            },
+            IsActive = true
         };
 
         // Act
-        var json = obj.Serialize();
+        var result = person.Serialize();
 
         // Assert
-        Assert.NotNull(json);
-
-        var deserialized = json.Deserialize<TestJson>();
-
-        Assert.NotNull(deserialized);
-        Assert.Equal(obj.Id, deserialized.Id);
-        Assert.Equal(obj.Name, deserialized.Name);
+        Assert.NotNull(result);
+        Assert.Contains("\"id\":1", result);
+        Assert.Contains("\"name\":\"John Doe\"", result);
+        Assert.Contains("\"birthDate\":\"1990-01-01T00:00:00\"", result);
+        Assert.Contains("\"hobbies\":[\"Reading\",\"Coding\"]", result);
+        Assert.Contains("\"address\":{", result);
+        Assert.Contains("\"street\":\"123 Main St\"", result);
+        Assert.Contains("\"isActive\":true", result);
     }
 
     [Fact]
-    public void Serializes_NullEnumerable_ReturnsNull()
+    public void Serialize_Collection_ReturnsCorrectJson()
+    {
+        // Arrange
+        var list = new List<int> { 1, 2, 3, 4, 5 };
+
+        // Act
+        var result = list.Serialize();
+
+        // Assert
+        Assert.Equal("[1,2,3,4,5]", result);
+    }
+
+    [Fact]
+    public void Serialize_EmptyCollection_ReturnsEmptyArrayJson()
+    {
+        // Arrange
+        var list = new List<int>();
+
+        // Act
+        var result = list.Serialize();
+
+        // Assert
+        Assert.Equal("[]", result);
+    }
+
+    [Fact]
+    public void Serialize_WithCustomOptions_UsesProvidedOptions()
+    {
+        // Arrange
+        var person = new TestPerson
+        {
+            Id = 1,
+            Name = "John Doe"
+        };
+
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        // Act
+        var result = person.Serialize(options);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("\n", result);
+        Assert.Contains("  ", result);
+    }
+
+    #endregion
+
+    #region Serializes
+
+    [Fact]
+    public void Serializes_NullCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<object?>? input = null;
 
         // Act
-        var jsons = input.Serializes();
+        var result = input.Serializes();
 
         // Assert
-        Assert.Null(jsons);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Serializes_EmptyEnumerable_ReturnsNull()
+    public void Serializes_EmptyCollection_ReturnsNullCollection()
     {
         // Arrange
-        IEnumerable<object?> input = [];
+        var input = Array.Empty<object?>();
 
         // Act
-        var jsons = input.Serializes();
+        var result = input.Serializes();
 
         // Assert
-        Assert.Null(jsons);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Serializes_Collection_ReturnsExpectedJsonStrings()
+    public void Serializes_MixedCollection_ReturnsSerializedItems()
     {
         // Arrange
-        var list = new List<TestJson>
+        var input = new object?[]
         {
-            new() { Id = 1, Name = "Alice" },
-            new() { Id = 2, Name = "Bob" }
+            42,
+            "test",
+            true,
+            new TestPerson { Id = 1, Name = "John" },
+            null
         };
 
         // Act
-        var jsons = list.Serializes();
-
-        // Assert
-        Assert.NotNull(jsons);
-
-        var jsonArray = jsons.ToArray();
-        Assert.Equal(2, jsonArray.Length);
-
-        var first = jsonArray[0].Deserialize<TestJson>();
-        Assert.NotNull(first);
-
-        var second = jsonArray[1].Deserialize<TestJson>();
-        Assert.NotNull(second);
-
-        Assert.Equal(1, first.Id);
-        Assert.Equal("Alice", first.Name);
-        Assert.Equal(2, second.Id);
-        Assert.Equal("Bob", second.Name);
-    }
-
-    [Fact]
-    public void Serializes_Params_ReturnsExpectedJsonStrings()
-    {
-        // Arrange
-        var a = new TestJson
-        {
-            Id = 10,
-            Name = "X"
-        };
-
-        var b = new TestJson
-        {
-            Id = 20,
-            Name = "Y"
-        };
-
-        // Act
-        var result = YANJson.Serializes(a, b);
+        var result = input.Serializes()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-
-        var arr = result.ToArray();
-
-        Assert.Equal(2, arr.Length);
-        Assert.Equal(a.Id, arr[0]!.Deserialize<TestJson>()!.Id);
-        Assert.Equal(b.Id, arr[1]!.Deserialize<TestJson>()!.Id);
+        Assert.Equal(5, result.Length);
+        Assert.Equal("42", result[0]);
+        Assert.Equal("\"test\"", result[1]);
+        Assert.Equal("true", result[2]);
+        Assert.Contains("\"id\":1", result[3]);
+        Assert.Contains("\"name\":\"John\"", result[3]);
+        Assert.Null(result[4]);
     }
+
+    [Fact]
+    public void Serializes_ParamsOverload_ReturnsSerializedItems()
+    {
+        // Act
+        var result = YANJson.Serializes(42, "test", true, new TestPerson { Id = 1, Name = "John" }, null)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Length);
+        Assert.Equal("42", result[0]);
+        Assert.Equal("\"test\"", result[1]);
+        Assert.Equal("true", result[2]);
+        Assert.Contains("\"id\":1", result[3]);
+        Assert.Contains("\"name\":\"John\"", result[3]);
+        Assert.Null(result[4]);
+    }
+
+    [Fact]
+    public void Serializes_WithCustomOptions_UsesProvidedOptions()
+    {
+        // Arrange
+        var input = new object[]
+        {
+            new TestPerson { Id = 1, Name = "John" },
+            new TestPerson { Id = 2, Name = "Jane" }
+        };
+
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        // Act
+        var result = input.Serializes(options)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Length);
+        Assert.Contains("\n", result[0]);
+        Assert.Contains("  ", result[0]);
+        Assert.Contains("\n", result[1]);
+        Assert.Contains("  ", result[1]);
+    }
+
     #endregion
 
-    #region Serialize (byte[])
+    #region SerializeToBytes
+
     [Fact]
     public void SerializeToBytes_NullInput_ReturnsNull()
     {
@@ -156,390 +246,816 @@ public partial class YANJsonTest
     }
 
     [Fact]
-    public void SerializeToBytes_Object_ReturnsUtf8JsonBytes()
+    public void SerializeToBytes_PrimitiveTypes_ReturnsCorrectBytes()
     {
         // Arrange
-        var obj = new TestJson
-        {
-            Id = 42,
-            Name = "Test"
-        };
-
-        var expectedJson = JsonSerializer.Serialize(obj, CamelCasePropertyNamingPolicy);
+        var intValue = 42;
+        var stringValue = "test";
+        var boolValue = true;
 
         // Act
-        var bytes = obj.SerializeToBytes();
-        var json = bytes == null ? null : Encoding.UTF8.GetString(bytes);
+        var intBytes = intValue.SerializeToBytes();
+        var stringBytes = stringValue.SerializeToBytes();
+        var boolBytes = boolValue.SerializeToBytes();
 
         // Assert
-        Assert.Equal(expectedJson, json);
+        Assert.NotNull(intBytes);
+        Assert.NotNull(stringBytes);
+        Assert.NotNull(boolBytes);
+
+        var intJson = Encoding.UTF8.GetString(intBytes);
+        Assert.Equal("42", intJson);
+
+        var stringJson = Encoding.UTF8.GetString(stringBytes);
+        Assert.Equal("\"test\"", stringJson);
+
+        var boolJson = Encoding.UTF8.GetString(boolBytes);
+        Assert.Equal("true", boolJson);
     }
 
     [Fact]
-    public void SerializesToBytes_NullInput_ReturnsNull()
+    public void SerializeToBytes_ComplexObject_ReturnsCorrectBytes()
     {
         // Arrange
-        List<object>? input = null;
-
-        // Act
-        var result = input.SerializesToBytes();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void SerializesToBytes_EmptyInput_ReturnsNull()
-    {
-        // Arrange
-        var input = Array.Empty<object>();
-
-        // Act
-        var result = input.SerializesToBytes();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void SerializesToBytes_MultipleObjects_ReturnsSequenceOfUtf8JsonBytes()
-    {
-        // Arrange
-        var a = new TestJson
+        var person = new TestPerson
         {
             Id = 1,
-            Name = "A"
+            Name = "John Doe",
+            BirthDate = new DateTime(1990, 1, 1),
+            IsActive = true
         };
-
-        var b = new TestJson
-        {
-            Id = 2,
-            Name = "B"
-        };
-
-        var list = new[] { a, b };
-        var expectedA = JsonSerializer.Serialize(a, CamelCasePropertyNamingPolicy);
-        var expectedB = JsonSerializer.Serialize(b, CamelCasePropertyNamingPolicy);
 
         // Act
-        var results = list.SerializesToBytes();
+        var bytes = person.SerializeToBytes();
 
         // Assert
-        Assert.NotNull(results);
+        Assert.NotNull(bytes);
 
-        var arr = new List<byte[]?>(results);
-
-        Assert.Equal(2, arr.Count);
-        Assert.Equal(expectedA, Encoding.UTF8.GetString(arr[0]!));
-        Assert.Equal(expectedB, Encoding.UTF8.GetString(arr[1]!));
+        var json = Encoding.UTF8.GetString(bytes);
+        Assert.Contains("\"id\":1", json);
+        Assert.Contains("\"name\":\"John Doe\"", json);
+        Assert.Contains("\"birthDate\":\"1990-01-01T00:00:00\"", json);
+        Assert.Contains("\"isActive\":true", json);
     }
 
     [Fact]
-    public void SerializesToBytes_Params_ReturnsExpectedByteArrays()
+    public void SerializeToBytes_WithCustomOptions_UsesProvidedOptions()
     {
         // Arrange
-        var a = new TestJson
+        var person = new TestPerson
         {
-            Id = 10,
-            Name = "X"
+            Id = 1,
+            Name = "John Doe"
         };
 
-        var b = new TestJson
+        var options = new JsonSerializerOptions
         {
-            Id = 20,
-            Name = "Y"
+            WriteIndented = true
         };
 
         // Act
-        var results = YANJson.SerializesToBytes(a, b);
+        var bytes = person.SerializeToBytes(options);
 
         // Assert
-        Assert.NotNull(results);
+        Assert.NotNull(bytes);
 
-        var arr = results.ToArray();
-
-        Assert.Equal(2, arr.Length);
-        Assert.Equal(JsonSerializer.Serialize(a, CamelCasePropertyNamingPolicy), Encoding.UTF8.GetString(arr[0]!));
-        Assert.Equal(JsonSerializer.Serialize(b, CamelCasePropertyNamingPolicy), Encoding.UTF8.GetString(arr[1]!));
+        var json = Encoding.UTF8.GetString(bytes);
+        Assert.Contains("\n", json);
+        Assert.Contains("  ", json);
     }
+
     #endregion
 
-    #region Deserialize (string)
+    #region SerializesToBytes
+
     [Fact]
-    public void Deserialize_NullOrWhitespaceString_ReturnsDefault()
+    public void SerializesToBytes_NullCollection_ReturnsNull()
     {
         // Arrange
-        var input = "  ";
+        IEnumerable<object?>? input = null;
 
         // Act
-        var result = input.Deserialize<TestJson>();
+        var result = input.SerializesToBytes();
 
         // Assert
         Assert.Null(result);
     }
 
-    [Theory]
-    [InlineData("{\"id\":10,\"name\":\"Alice\"}", 10, "Alice")]
-    [InlineData("{\"id\":20,\"name\":\"Bob\"}", 20, "Bob")]
-    public void Deserialize_ValidJson_ReturnsExpectedObject(string json, int expectedId, string expectedName)
+    [Fact]
+    public void SerializesToBytes_EmptyCollection_ReturnsNullCollection()
     {
+        // Arrange
+        var input = Array.Empty<object?>();
+
         // Act
-        var result = json.Deserialize<TestJson>();
+        var result = input.SerializesToBytes();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void SerializesToBytes_MixedCollection_ReturnsSerializedItems()
+    {
+        // Arrange
+        var input = new object?[]
+        {
+            42,
+            "test",
+            true,
+            new TestPerson { Id = 1, Name = "John" },
+            null
+        };
+
+        // Act
+        var result = input.SerializesToBytes()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(expectedId, result.Id);
-        Assert.Equal(expectedName, result.Name);
+        Assert.Equal(5, result.Length);
+        Assert.Null(result[4]);
+
+        var json0 = Encoding.UTF8.GetString(result[0]!);
+        Assert.Equal("42", json0);
+
+        var json1 = Encoding.UTF8.GetString(result[1]!);
+        Assert.Equal("\"test\"", json1);
+
+        var json2 = Encoding.UTF8.GetString(result[2]!);
+        Assert.Equal("true", json2);
+
+        var json3 = Encoding.UTF8.GetString(result[3]!);
+        Assert.Contains("\"id\":1", json3);
+        Assert.Contains("\"name\":\"John\"", json3);
+    }
+
+    [Fact]
+    public void SerializesToBytes_ParamsOverload_ReturnsSerializedItems()
+    {
+        // Act
+        var result = YANJson.SerializesToBytes(42, "test", true, new TestPerson { Id = 1, Name = "John" }, null)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Length);
+        Assert.Null(result[4]);
+
+        var json0 = Encoding.UTF8.GetString(result[0]!);
+        Assert.Equal("42", json0);
+
+        var json1 = Encoding.UTF8.GetString(result[1]!);
+        Assert.Equal("\"test\"", json1);
+
+        var json2 = Encoding.UTF8.GetString(result[2]!);
+        Assert.Equal("true", json2);
+
+        var json3 = Encoding.UTF8.GetString(result[3]!);
+        Assert.Contains("\"id\":1", json3);
+        Assert.Contains("\"name\":\"John\"", json3);
+    }
+
+    #endregion
+
+    #region Deserialize String
+
+    [Fact]
+    public void Deserialize_NullString_ReturnsDefault()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Deserialize_EmptyString_ReturnsDefault()
+    {
+        // Arrange
+        var input = "";
+
+        // Act
+        var result = input.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Deserialize_WhitespaceString_ReturnsDefault()
+    {
+        // Arrange
+        var input = "   ";
+
+        // Act
+        var result = input.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.Null(result);
     }
 
     [Fact]
     public void Deserialize_InvalidJson_ReturnsDefault()
     {
         // Arrange
-        var invalidJson = "{invalid json";
+        var input = "{invalid json}";
 
         // Act
-        var result = invalidJson.Deserialize<TestJson>();
+        var result = input.Deserialize<TestPerson>();
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void Deserializes_NullEnumerable_ReturnsNull()
+    public void Deserialize_PrimitiveTypes_ReturnsCorrectValues()
+    {
+        // Arrange
+        var intJson = "42";
+        var stringJson = "\"test\"";
+        var boolJson = "true";
+        var doubleJson = "3.14";
+
+        // Act
+        var intResult = intJson.Deserialize<int>();
+        var stringResult = stringJson.Deserialize<string>();
+        var boolResult = boolJson.Deserialize<bool>();
+        var doubleResult = doubleJson.Deserialize<double>();
+
+        // Assert
+        Assert.Equal(42, intResult);
+        Assert.Equal("test", stringResult);
+        Assert.True(boolResult);
+        Assert.Equal(3.14, doubleResult);
+    }
+
+    [Fact]
+    public void Deserialize_ComplexObject_ReturnsCorrectObject()
+    {
+        // Arrange
+        var json = @"{
+            ""id"": 1,
+            ""name"": ""John Doe"",
+            ""birthDate"": ""1990-01-01T00:00:00"",
+            ""hobbies"": [""Reading"", ""Coding""],
+            ""address"": {
+                ""street"": ""123 Main St"",
+                ""city"": ""Anytown"",
+                ""country"": ""USA"",
+                ""postalCode"": ""12345""
+            },
+            ""isActive"": true
+        }";
+
+        // Act
+        var result = json.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
+        Assert.Equal("John Doe", result.Name);
+        Assert.Equal(new DateTime(1990, 1, 1), result.BirthDate);
+        Assert.Equal(["Reading", "Coding"], result.Hobbies);
+        Assert.NotNull(result.Address);
+        Assert.Equal("123 Main St", result.Address.Street);
+        Assert.Equal("Anytown", result.Address.City);
+        Assert.Equal("USA", result.Address.Country);
+        Assert.Equal("12345", result.Address.PostalCode);
+        Assert.True(result.IsActive);
+    }
+
+    [Fact]
+    public void Deserialize_Collection_ReturnsCorrectCollection()
+    {
+        // Arrange
+        var json = "[1, 2, 3, 4, 5]";
+
+        // Act
+        var result = json.Deserialize<List<int>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([1, 2, 3, 4, 5], result);
+    }
+
+    [Fact]
+    public void Deserialize_CaseInsensitive_DeserializesCorrectly()
+    {
+        // Arrange
+        var json = @"{
+            ""ID"": 1,
+            ""NAME"": ""John Doe"",
+            ""BIRTHDATE"": ""1990-01-01T00:00:00"",
+            ""ISACTIVE"": true
+        }";
+
+        // Act
+        var result = json.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
+        Assert.Equal("John Doe", result.Name);
+        Assert.Equal(new DateTime(1990, 1, 1), result.BirthDate);
+        Assert.True(result.IsActive);
+    }
+
+    [Fact]
+    public void Deserialize_WithCustomOptions_UsesProvidedOptions()
+    {
+        // Arrange
+        var json = @"{
+            ""id"": 1,
+            ""name"": ""John Doe""
+        }";
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = false
+        };
+
+        // Act
+        var result = json.Deserialize<TestPersonWithDifferentCasing>(options);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
+        Assert.Equal("John Doe", result.Name);
+    }
+
+    #endregion
+
+    #region Deserializes String
+
+    [Fact]
+    public void Deserializes_NullStringCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<string?>? input = null;
 
         // Act
-        var result = input.Deserializes<TestJson>();
+        var result = input.Deserializes<TestPerson>();
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void Deserializes_CollectionOfJsonStrings_ReturnsExpectedObjects()
+    public void Deserializes_EmptyStringCollection_ReturnsNullCollection()
     {
         // Arrange
-        var jsonList = new List<string?>
-        {
-            "{\"id\":1,\"name\":\"A\"}",
-            "{\"id\":2,\"name\":\"B\"}"
-        };
+        var input = Array.Empty<string?>();
 
         // Act
-        var results = jsonList.Deserializes<TestJson>();
+        var result = input.Deserializes<TestPerson>();
 
         // Assert
-        Assert.NotNull(results);
-
-        var arr = results.ToArray();
-
-        Assert.Equal(2, arr.Length);
-        Assert.Equal(1, arr[0]!.Id);
-        Assert.Equal("A", arr[0]!.Name);
-        Assert.Equal(2, arr[1]!.Id);
-        Assert.Equal("B", arr[1]!.Name);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Deserializes_ParamsJsonStrings_ReturnsExpectedObjects()
+    public void Deserializes_MixedStringCollection_ReturnsDeserializedItems()
     {
         // Arrange
-        var a = new TestJson
+        var input = new string?[]
         {
-            Id = 99,
-            Name = "Test99"
+            @"{""id"": 1, ""name"": ""John""}",
+            @"{""id"": 2, ""name"": ""Jane""}",
+            null,
+            "invalid json",
+            @"{""id"": 3, ""name"": ""Bob""}"
         };
-
-        var b = new TestJson
-        {
-            Id = 88,
-            Name = "Test88"
-        };
-
-        var jsons = new[] { a.Serialize(), b.Serialize() };
 
         // Act
-        var result = YANJson.Deserializes<TestJson>(jsons);
+        var result = input.Deserializes<TestPerson>()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
+        Assert.Equal(5, result.Length);
 
-        var list = result.ToList();
+        Assert.NotNull(result[0]);
+        Assert.Equal(1, result[0]!.Id);
+        Assert.Equal("John", result[0]!.Name);
 
-        Assert.Equal(a.Id, list[0]!.Id);
-        Assert.Equal(b.Id, list[1]!.Id);
+        Assert.NotNull(result[1]);
+        Assert.Equal(2, result[1]!.Id);
+        Assert.Equal("Jane", result[1]!.Name);
+
+        Assert.Null(result[2]);
+        Assert.Null(result[3]);
+
+        Assert.NotNull(result[4]);
+        Assert.Equal(3, result[4]!.Id);
+        Assert.Equal("Bob", result[4]!.Name);
     }
+
+    [Fact]
+    public void Deserializes_ParamsStringOverload_ReturnsDeserializedItems()
+    {
+        // Act
+        var result = YANJson.Deserializes<TestPerson>(
+            @"{""id"": 1, ""name"": ""John""}",
+            @"{""id"": 2, ""name"": ""Jane""}",
+            null,
+            "invalid json",
+            @"{""id"": 3, ""name"": ""Bob""}")?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Length);
+
+        Assert.NotNull(result[0]);
+        Assert.Equal(1, result[0]!.Id);
+        Assert.Equal("John", result[0]!.Name);
+
+        Assert.NotNull(result[1]);
+        Assert.Equal(2, result[1]!.Id);
+        Assert.Equal("Jane", result[1]!.Name);
+
+        Assert.Null(result[2]);
+        Assert.Null(result[3]);
+
+        Assert.NotNull(result[4]);
+        Assert.Equal(3, result[4]!.Id);
+        Assert.Equal("Bob", result[4]!.Name);
+    }
+
     #endregion
 
-    #region Deserialize (byte[])
+    #region Deserialize Bytes
+
     [Fact]
-    public void Deserialize_ByteArrayNullInput_ReturnsNull()
+    public void Deserialize_NullBytes_ReturnsDefault()
     {
         // Arrange
         byte[]? input = null;
 
         // Act
-        var result = input.Deserialize<TestJson>();
+        var result = input.Deserialize<TestPerson>();
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void Deserialize_ByteArray_ReturnsExpectedObject()
+    public void Deserialize_EmptyBytes_ReturnsDefault()
     {
         // Arrange
-        var obj = new TestJson
-        {
-            Id = 5,
-            Name = "Test5"
-        };
+        byte[] input = [];
 
-        var json = obj.Serialize();
+        // Act
+        var result = input.Deserialize<TestPerson>();
 
-        Assert.NotNull(json);
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Deserialize_InvalidBytes_ReturnsDefault()
+    {
+        // Arrange
+        byte[] input = [0xFF, 0xFF, 0xFF];
+
+        // Act
+        var result = input.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Deserialize_PrimitiveTypesFromBytes_ReturnsCorrectValues()
+    {
+        // Arrange
+        var intBytes = Encoding.UTF8.GetBytes("42");
+        var stringBytes = Encoding.UTF8.GetBytes("\"test\"");
+        var boolBytes = Encoding.UTF8.GetBytes("true");
+        var doubleBytes = Encoding.UTF8.GetBytes("3.14");
+
+        // Act
+        var intResult = intBytes.Deserialize<int>();
+        var stringResult = stringBytes.Deserialize<string>();
+        var boolResult = boolBytes.Deserialize<bool>();
+        var doubleResult = doubleBytes.Deserialize<double>();
+
+        // Assert
+        Assert.Equal(42, intResult);
+        Assert.Equal("test", stringResult);
+        Assert.True(boolResult);
+        Assert.Equal(3.14, doubleResult);
+    }
+
+    [Fact]
+    public void Deserialize_ComplexObjectFromBytes_ReturnsCorrectObject()
+    {
+        // Arrange
+        var json = @"{
+            ""id"": 1,
+            ""name"": ""John Doe"",
+            ""birthDate"": ""1990-01-01T00:00:00"",
+            ""isActive"": true
+        }";
 
         var bytes = Encoding.UTF8.GetBytes(json);
 
         // Act
-        var result = bytes.Deserialize<TestJson>();
+        var result = bytes.Deserialize<TestPerson>();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(5, result.Id);
-        Assert.Equal("Test5", result.Name);
+        Assert.Equal(1, result!.Id);
+        Assert.Equal("John Doe", result.Name);
+        Assert.Equal(new DateTime(1990, 1, 1), result.BirthDate);
+        Assert.True(result.IsActive);
     }
 
-    [Fact]
-    public void Deserialize_InvalidByteArray_ReturnsDefault()
-    {
-        // Arrange
-        var bytes = Encoding.UTF8.GetBytes("invalid json");
+    #endregion
 
-        // Act
-        var result = bytes.Deserialize<TestJson>();
-
-        // Assert
-        Assert.Null(result);
-    }
+    #region Deserializes Bytes
 
     [Fact]
-    public void Deserializes_ByteArrayNullEnumerable_ReturnsNull()
+    public void Deserializes_NullBytesCollection_ReturnsNull()
     {
         // Arrange
         IEnumerable<byte[]?>? input = null;
 
         // Act
-        var result = input.Deserializes<TestJson>();
+        var result = input.Deserializes<TestPerson>();
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void Deserializes_ByteArrayEnumerable_ReturnsExpectedObjects()
+    public void Deserializes_EmptyBytesCollection_ReturnsNullCollection()
     {
         // Arrange
-        var list = new List<TestJson>
-        {
-            new() { Id = 7, Name = "Seven" },
-            new() { Id = 8, Name = "Eight" }
-        };
-
-        var byteArrays = list.Select(x => Encoding.UTF8.GetBytes(x.Serialize()!)).ToList();
+        var input = Array.Empty<byte[]?>();
 
         // Act
-        var results = byteArrays.Deserializes<TestJson>();
+        var result = input.Deserializes<TestPerson>();
 
         // Assert
-        Assert.NotNull(results);
-
-        var arr = results.ToArray();
-
-        Assert.Equal(2, arr.Length);
-        Assert.Equal(7, arr[0]!.Id);
-        Assert.Equal("Seven", arr[0]!.Name);
-        Assert.Equal(8, arr[1]!.Id);
-        Assert.Equal("Eight", arr[1]!.Name);
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Deserializes_ParamsByteArrays_ReturnsExpectedObjects()
+    public void Deserializes_MixedBytesCollection_ReturnsDeserializedItems()
     {
         // Arrange
-        var a = new TestJson
+        var input = new byte[]?[]
         {
-            Id = 111,
-            Name = "AA"
+            Encoding.UTF8.GetBytes(@"{""id"": 1, ""name"": ""John""}"),
+            Encoding.UTF8.GetBytes(@"{""id"": 2, ""name"": ""Jane""}"),
+            null,
+            Encoding.UTF8.GetBytes("invalid json"),
+            Encoding.UTF8.GetBytes(@"{""id"": 3, ""name"": ""Bob""}")
         };
-
-        var b = new TestJson
-        {
-            Id = 222,
-            Name = "BB"
-        };
-
-        var arr = YANJson.SerializesToBytes(a, b);
 
         // Act
-        var result = YANJson.Deserializes<TestJson>(arr!.ToArray());
+        var result = input.Deserializes<TestPerson>()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
+        Assert.Equal(5, result.Length);
 
-        var list = result.ToList();
+        Assert.NotNull(result[0]);
+        Assert.Equal(1, result[0]!.Id);
+        Assert.Equal("John", result[0]!.Name);
 
-        Assert.Equal(2, list.Count);
-        Assert.Equal(a.Id, list[0]!.Id);
-        Assert.Equal(b.Id, list[1]!.Id);
+        Assert.NotNull(result[1]);
+        Assert.Equal(2, result[1]!.Id);
+        Assert.Equal("Jane", result[1]!.Name);
+
+        Assert.Null(result[2]);
+        Assert.Null(result[3]);
+
+        Assert.NotNull(result[4]);
+        Assert.Equal(3, result[4]!.Id);
+        Assert.Equal("Bob", result[4]!.Name);
     }
+
+    [Fact]
+    public void Deserializes_ParamsBytesOverload_ReturnsDeserializedItems()
+    {
+        // Act
+        var result = YANJson.Deserializes<TestPerson>(
+            Encoding.UTF8.GetBytes(@"{""id"": 1, ""name"": ""John""}"),
+            Encoding.UTF8.GetBytes(@"{""id"": 2, ""name"": ""Jane""}"),
+            null,
+            Encoding.UTF8.GetBytes("invalid json"),
+            Encoding.UTF8.GetBytes(@"{""id"": 3, ""name"": ""Bob""}"))?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Length);
+
+        Assert.NotNull(result[0]);
+        Assert.Equal(1, result[0]!.Id);
+        Assert.Equal("John", result[0]!.Name);
+
+        Assert.NotNull(result[1]);
+        Assert.Equal(2, result[1]!.Id);
+        Assert.Equal("Jane", result[1]!.Name);
+
+        Assert.Null(result[2]);
+        Assert.Null(result[3]);
+
+        Assert.NotNull(result[4]);
+        Assert.Equal(3, result[4]!.Id);
+        Assert.Equal("Bob", result[4]!.Name);
+    }
+
     #endregion
 
-    #region Optional
+    #region Round Trip Tests
+
     [Fact]
-    public void Serialize_CustomOptions_ReturnsExpectedJson()
+    public void RoundTrip_SerializeAndDeserialize_PreservesData()
     {
         // Arrange
-        var obj = new TestJson
+        var original = new TestPerson
         {
-            Id = 100,
-            Name = "Custom"
-        };
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
+            Id = 1,
+            Name = "John Doe",
+            BirthDate = new DateTime(1990, 1, 1),
+            Hobbies = ["Reading", "Coding"],
+            Address = new TestAddress
+            {
+                Street = "123 Main St",
+                City = "Anytown",
+                Country = "USA",
+                PostalCode = "12345"
+            },
+            IsActive = true
         };
 
         // Act
-        var json = obj.Serialize(options);
+        var json = original.Serialize();
+        var deserialized = json.Deserialize<TestPerson>();
 
         // Assert
-        Assert.NotNull(json);
-        Assert.Contains(Environment.NewLine, json);
+        Assert.NotNull(deserialized);
+        Assert.Equal(original.Id, deserialized.Id);
+        Assert.Equal(original.Name, deserialized.Name);
+        Assert.Equal(original.BirthDate, deserialized.BirthDate);
+        Assert.Equal(original.Hobbies, deserialized.Hobbies);
+        Assert.NotNull(deserialized.Address);
+        Assert.Equal(original.Address.Street, deserialized.Address.Street);
+        Assert.Equal(original.Address.City, deserialized.Address.City);
+        Assert.Equal(original.Address.Country, deserialized.Address.Country);
+        Assert.Equal(original.Address.PostalCode, deserialized.Address.PostalCode);
+        Assert.Equal(original.IsActive, deserialized.IsActive);
     }
 
     [Fact]
-    public void Deserialize_CustomOptions_ReturnsExpectedObject()
+    public void RoundTrip_SerializeToBytesAndDeserialize_PreservesData()
     {
         // Arrange
-        var json = "{\"Id\":200,\"Name\":\"CustomDeserialized\"}";
-        var options = new JsonSerializerOptions
+        var original = new TestPerson
         {
-            PropertyNameCaseInsensitive = true
+            Id = 1,
+            Name = "John Doe",
+            BirthDate = new DateTime(1990, 1, 1),
+            IsActive = true
         };
 
         // Act
-        var result = json.Deserialize<TestJson>(options);
+        var bytes = original.SerializeToBytes();
+        var deserialized = bytes.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.NotNull(deserialized);
+        Assert.Equal(original.Id, deserialized.Id);
+        Assert.Equal(original.Name, deserialized.Name);
+        Assert.Equal(original.BirthDate, deserialized.BirthDate);
+        Assert.Equal(original.IsActive, deserialized.IsActive);
+    }
+
+    [Fact]
+    public void RoundTrip_CollectionSerializeAndDeserialize_PreservesData()
+    {
+        // Arrange
+        var original = new List<TestPerson>
+        {
+            new() { Id = 1, Name = "John" },
+            new() { Id = 2, Name = "Jane" },
+            new() { Id = 3, Name = "Bob" }
+        };
+
+        // Act
+        var json = original.Serialize();
+        var deserialized = json.Deserialize<List<TestPerson>>();
+
+        // Assert
+        Assert.NotNull(deserialized);
+        Assert.Equal(3, deserialized.Count);
+        Assert.Equal(original[0].Id, deserialized[0].Id);
+        Assert.Equal(original[0].Name, deserialized[0].Name);
+        Assert.Equal(original[1].Id, deserialized[1].Id);
+        Assert.Equal(original[1].Name, deserialized[1].Name);
+        Assert.Equal(original[2].Id, deserialized[2].Id);
+        Assert.Equal(original[2].Name, deserialized[2].Name);
+    }
+
+    #endregion
+
+    #region Default Options Tests
+
+    [Fact]
+    public void DefaultOptions_Serialize_UsesCamelCase()
+    {
+        // Arrange
+        var person = new TestPerson
+        {
+            Id = 1,
+            Name = "John Doe"
+        };
+
+        // Act
+        var result = person.Serialize();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(200, result.Id);
-        Assert.Equal("CustomDeserialized", result.Name);
+        Assert.Contains("\"id\":1", result);
+        Assert.Contains("\"name\":\"John Doe\"", result);
     }
+
+    [Fact]
+    public void DefaultOptions_Deserialize_IsCaseInsensitive()
+    {
+        // Arrange
+        var json = @"{
+            ""ID"": 1,
+            ""NAME"": ""John Doe"",
+            ""BIRTHDATE"": ""1990-01-01T00:00:00"",
+            ""ISACTIVE"": true
+        }";
+
+        // Act
+        var result = json.Deserialize<TestPerson>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
+        Assert.Equal("John Doe", result.Name);
+        Assert.Equal(new DateTime(1990, 1, 1), result.BirthDate);
+        Assert.True(result.IsActive);
+    }
+
+    #endregion
+
+    #region Test Classes
+
+    private class TestPerson
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public DateTime BirthDate { get; set; }
+
+        public List<string> Hobbies { get; set; } = [];
+
+        public TestAddress? Address { get; set; }
+
+        public bool IsActive { get; set; }
+    }
+
+    private class TestAddress
+    {
+        public string Street { get; set; } = string.Empty;
+
+        public string City { get; set; } = string.Empty;
+
+        public string Country { get; set; } = string.Empty;
+
+        public string PostalCode { get; set; } = string.Empty;
+    }
+
+    private class TestPersonWithDifferentCasing
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("birthDate")]
+        public DateTime BirthDate { get; set; }
+
+        [JsonPropertyName("hobbies")]
+        public List<string> Hobbies { get; set; } = [];
+
+        [JsonPropertyName("address")]
+        public TestAddress? Address { get; set; }
+
+        [JsonPropertyName("isActive")]
+        public bool IsActive { get; set; }
+    }
+
     #endregion
 }
