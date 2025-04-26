@@ -694,7 +694,7 @@ public partial class YANJsonTest
         byte[]? input = null;
 
         // Act
-        var result = input.Deserialize<TestPerson>();
+        var result = input.DeserializeFromBytes<TestPerson>();
 
         // Assert
         Assert.Null(result);
@@ -707,7 +707,7 @@ public partial class YANJsonTest
         byte[] input = [];
 
         // Act
-        var result = input.Deserialize<TestPerson>();
+        var result = input.DeserializeFromBytes<TestPerson>();
 
         // Assert
         Assert.Null(result);
@@ -720,7 +720,7 @@ public partial class YANJsonTest
         byte[] input = [0xFF, 0xFF, 0xFF];
 
         // Act
-        var result = input.Deserialize<TestPerson>();
+        var result = input.DeserializeFromBytes<TestPerson>();
 
         // Assert
         Assert.Null(result);
@@ -736,10 +736,10 @@ public partial class YANJsonTest
         var doubleBytes = Encoding.UTF8.GetBytes("3.14");
 
         // Act
-        var intResult = intBytes.Deserialize<int>();
-        var stringResult = stringBytes.Deserialize<string>();
-        var boolResult = boolBytes.Deserialize<bool>();
-        var doubleResult = doubleBytes.Deserialize<double>();
+        var intResult = intBytes.DeserializeFromBytes<int>();
+        var stringResult = stringBytes.DeserializeFromBytes<string>();
+        var boolResult = boolBytes.DeserializeFromBytes<bool>();
+        var doubleResult = doubleBytes.DeserializeFromBytes<double>();
 
         // Assert
         Assert.Equal(42, intResult);
@@ -762,7 +762,7 @@ public partial class YANJsonTest
         var bytes = Encoding.UTF8.GetBytes(json);
 
         // Act
-        var result = bytes.Deserialize<TestPerson>();
+        var result = bytes.DeserializeFromBytes<TestPerson>();
 
         // Assert
         Assert.NotNull(result);
@@ -783,7 +783,7 @@ public partial class YANJsonTest
         IEnumerable<byte[]?>? input = null;
 
         // Act
-        var result = input.Deserializes<TestPerson>();
+        var result = input.DeserializesFromBytes<TestPerson>();
 
         // Assert
         Assert.Null(result);
@@ -796,7 +796,7 @@ public partial class YANJsonTest
         var input = Array.Empty<byte[]?>();
 
         // Act
-        var result = input.Deserializes<TestPerson>();
+        var result = input.DeserializesFromBytes<TestPerson>();
 
         // Assert
         Assert.Null(result);
@@ -816,7 +816,7 @@ public partial class YANJsonTest
         };
 
         // Act
-        var result = input.Deserializes<TestPerson>()?.ToArray();
+        var result = input.DeserializesFromBytes<TestPerson>()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
@@ -842,7 +842,7 @@ public partial class YANJsonTest
     public void Deserializes_ParamsBytesOverload_ReturnsDeserializedItems()
     {
         // Act
-        var result = YANJson.Deserializes<TestPerson>(
+        var result = YANJson.DeserializesFromBytes<TestPerson>(
             Encoding.UTF8.GetBytes(@"{""id"": 1, ""name"": ""John""}"),
             Encoding.UTF8.GetBytes(@"{""id"": 2, ""name"": ""Jane""}"),
             null,
@@ -925,7 +925,7 @@ public partial class YANJsonTest
 
         // Act
         var bytes = original.SerializeToBytes();
-        var deserialized = bytes.Deserialize<TestPerson>();
+        var deserialized = bytes.DeserializeFromBytes<TestPerson>();
 
         // Assert
         Assert.NotNull(deserialized);

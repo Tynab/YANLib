@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System;
-
-namespace YANLib.Tests.Library;
+﻿namespace YANLib.Tests.Library;
 
 public partial class YANMathTest
 {
@@ -388,7 +385,7 @@ public partial class YANMathTest
         var result = input.Sum<double>();
 
         // Assert
-        Assert.Equal(15.6, result);
+        Assert.Equal(15.6, result, 14);
     }
 
     [Fact]
@@ -530,7 +527,7 @@ public partial class YANMathTest
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -681,7 +678,7 @@ public partial class YANMathTest
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -832,7 +829,7 @@ public partial class YANMathTest
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -878,7 +875,7 @@ public partial class YANMathTest
     }
 
     #endregion
-    //TODO
+
     #region Round
 
     [Fact]
@@ -888,7 +885,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Round<double?>();
+        var result = input.Round();
 
         // Assert
         Assert.Null(result);
@@ -898,10 +895,10 @@ public partial class YANMathTest
     public void Round_PositiveDoubleNoDigits_RoundsToNearestInteger()
     {
         // Arrange
-        double input = 3.4;
+        var input = 3.4;
 
         // Act
-        var result = input.Round<double>();
+        var result = input.Round();
 
         // Assert
         Assert.Equal(3.0, result);
@@ -911,11 +908,11 @@ public partial class YANMathTest
     public void Round_PositiveDoubleWithDigits_RoundsToSpecifiedDigits()
     {
         // Arrange
-        double input = 3.45678;
-        int digits = 2;
+        var input = 3.45678;
+        var digits = 2;
 
         // Act
-        var result = input.Round<double>(digits);
+        var result = input.Round(digits);
 
         // Assert
         Assert.Equal(3.46, result);
@@ -925,10 +922,10 @@ public partial class YANMathTest
     public void Round_NegativeDoubleNoDigits_RoundsToNearestInteger()
     {
         // Arrange
-        double input = -3.6;
+        var input = -3.6;
 
         // Act
-        var result = input.Round<double>();
+        var result = input.Round();
 
         // Assert
         Assert.Equal(-4.0, result);
@@ -938,11 +935,11 @@ public partial class YANMathTest
     public void Round_NegativeDoubleWithDigits_RoundsToSpecifiedDigits()
     {
         // Arrange
-        double input = -3.45678;
-        int digits = 2;
+        var input = -3.45678;
+        var digits = 2;
 
         // Act
-        var result = input.Round<double>(digits);
+        var result = input.Round(digits);
 
         // Assert
         Assert.Equal(-3.46, result);
@@ -952,8 +949,8 @@ public partial class YANMathTest
     public void Round_StringInput_ConvertsAndRounds()
     {
         // Arrange
-        string input = "3.45678";
-        int digits = 2;
+        var input = "3.45678";
+        var digits = 2;
 
         // Act
         var result = input.Round<double>(digits);
@@ -966,7 +963,7 @@ public partial class YANMathTest
     public void Round_DoubleToInt_RoundsAndConverts()
     {
         // Arrange
-        double input = 3.6;
+        var input = 3.6;
 
         // Act
         var result = input.Round<int>();
@@ -979,14 +976,119 @@ public partial class YANMathTest
     public void Round_NullDigits_UsesDefaultRounding()
     {
         // Arrange
-        double input = 3.6;
+        var input = 3.6;
         object? digits = null;
 
         // Act
-        var result = input.Round<double>(digits);
+        var result = input.Round(digits);
 
         // Assert
         Assert.Equal(4.0, result);
+    }
+
+    [Fact]
+    public void Round_WithMidpointRoundingToEven_RoundsCorrectly()
+    {
+        // Arrange
+        var input = 2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.ToEven);
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
+    [Fact]
+    public void Round_WithMidpointRoundingAwayFromZero_RoundsCorrectly()
+    {
+        // Arrange
+        var input = 2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.AwayFromZero);
+
+        // Assert
+        Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Round_WithMidpointRoundingToZero_RoundsCorrectly()
+    {
+        // Arrange
+        var input = 2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
+    [Fact]
+    public void Round_WithMidpointRoundingToNegativeInfinity_RoundsCorrectly()
+    {
+        // Arrange
+        var input = 2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.ToNegativeInfinity);
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
+    [Fact]
+    public void Round_WithMidpointRoundingToPositiveInfinity_RoundsCorrectly()
+    {
+        // Arrange
+        var input = 2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.ToPositiveInfinity);
+
+        // Assert
+        Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Round_NegativeValueWithMidpointRoundingToEven_RoundsCorrectly()
+    {
+        // Arrange
+        var input = -2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.ToEven);
+
+        // Assert
+        Assert.Equal(-2.0, result);
+    }
+
+    [Fact]
+    public void Round_NegativeValueWithMidpointRoundingAwayFromZero_RoundsCorrectly()
+    {
+        // Arrange
+        var input = -2.5;
+
+        // Act
+        var result = input.Round(null, MidpointRounding.AwayFromZero);
+
+        // Assert
+        Assert.Equal(-3.0, result);
+    }
+
+    [Fact]
+    public void Round_WithDigitsAndMidpointRounding_RoundsCorrectly()
+    {
+        // Arrange
+        var input = 3.125;
+        var digits = 2;
+
+        // Act
+        var result = input.Round(digits, MidpointRounding.ToEven);
+
+        // Assert
+        Assert.Equal(3.12, result);
     }
 
     [Fact]
@@ -996,7 +1098,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Rounds<double?>();
+        var result = input.Rounds();
 
         // Assert
         Assert.Null(result);
@@ -1009,7 +1111,7 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Rounds<double?>();
+        var result = input.Rounds();
 
         // Assert
         Assert.NotNull(result);
@@ -1023,11 +1125,11 @@ public partial class YANMathTest
         var input = new double?[] { 1.4, 2.6, 3.5, 4.5, 5.0 };
 
         // Act
-        var result = input.Rounds<double>()?.ToArray();
+        var result = input.Rounds()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 1.0, 3.0, 4.0, 4.0, 5.0 }, result);
+        Assert.Equal([1.0, 3.0, 4.0, 5.0, 5.0], result);
     }
 
     [Fact]
@@ -1035,14 +1137,14 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new double?[] { 1.44, 2.66, 3.55, 4.45, 5.00 };
-        int digits = 1;
+        var digits = 1;
 
         // Act
-        var result = input.Rounds<double>(digits)?.ToArray();
+        var result = input.Rounds(digits)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 1.4, 2.7, 3.6, 4.5, 5.0 }, result);
+        Assert.Equal([1.4, 2.7, 3.6, 4.5, 5.0], result);
     }
 
     [Fact]
@@ -1052,22 +1154,82 @@ public partial class YANMathTest
         var input = new double?[] { 1.4, null, 3.5, null, 5.0 };
 
         // Act
-        var result = input.Rounds<double?>()?.ToArray();
+        var result = input.Rounds()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 1.0, null, 4.0, null, 5.0 }, result);
+        Assert.Equal([1.0, null, 4.0, null, 5.0], result);
     }
 
     [Fact]
     public void Rounds_ParamsOverload_RoundsAllValues()
     {
+        // Arrange
+        var expected = new double[] { 1.0, 3.0, 4.0, 5.0, 5.0 };
+
         // Act
-        var result = YANMath.Rounds<double>(1.4, 2.6, 3.5, 4.5, 5.0)?.ToArray();
+        var result = YANMath.Rounds(1.4, 2.6, 3.5, 4.5, 5.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 1.0, 3.0, 4.0, 4.0, 5.0 }, result);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void Rounds_WithMidpointRoundingToEven_RoundsAllValuesCorrectly()
+    {
+        // Arrange
+        var input = new double?[] { 1.5, 2.5, 3.5, 4.5, 5.5 };
+
+        // Act
+        var result = input.Rounds(null, MidpointRounding.ToEven)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([2.0, 2.0, 4.0, 4.0, 6.0], result);
+    }
+
+    [Fact]
+    public void Rounds_WithMidpointRoundingAwayFromZero_RoundsAllValuesCorrectly()
+    {
+        // Arrange
+        var input = new double?[] { 1.5, 2.5, 3.5, 4.5, 5.5 };
+
+        // Act
+        var result = input.Rounds(null, MidpointRounding.AwayFromZero)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([2.0, 3.0, 4.0, 5.0, 6.0], result);
+    }
+
+    [Fact]
+    public void Rounds_WithDigitsAndMidpointRounding_RoundsAllValuesCorrectly()
+    {
+        // Arrange
+        var input = new double?[] { 1.125, 2.125, 3.125, 4.125, 5.125 };
+        var digits = 2;
+
+        // Act
+        var result = input.Rounds(digits, MidpointRounding.ToEven)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([1.12, 2.12, 3.12, 4.12, 5.12], result);
+    }
+
+    [Fact]
+    public void Rounds_NegativeValuesWithMidpointRounding_RoundsAllValuesCorrectly()
+    {
+        // Arrange
+        var input = new double?[] { -1.5, -2.5, -3.5, -4.5, -5.5 };
+
+        // Act
+        var result = input.Rounds(null, MidpointRounding.ToEven)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([-2.0, -2.0, -4.0, -4.0, -6.0], result);
     }
 
     #endregion
@@ -1081,7 +1243,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Sqrt<double?>();
+        var result = input.Sqrt();
 
         // Assert
         Assert.Null(result);
@@ -1091,10 +1253,10 @@ public partial class YANMathTest
     public void Sqrt_PositiveNumber_ReturnsSquareRoot()
     {
         // Arrange
-        double input = 16.0;
+        var input = 16.0;
 
         // Act
-        var result = input.Sqrt<double>();
+        var result = input.Sqrt();
 
         // Assert
         Assert.Equal(4.0, result);
@@ -1104,10 +1266,10 @@ public partial class YANMathTest
     public void Sqrt_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Sqrt<double>();
+        var result = input.Sqrt();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -1117,7 +1279,7 @@ public partial class YANMathTest
     public void Sqrt_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "16";
+        var input = "16";
 
         // Act
         var result = input.Sqrt<double>();
@@ -1130,7 +1292,7 @@ public partial class YANMathTest
     public void Sqrt_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 16.0;
+        var input = 16.0;
 
         // Act
         var result = input.Sqrt<int>();
@@ -1146,7 +1308,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Sqrts<double?>();
+        var result = input.Sqrts();
 
         // Assert
         Assert.Null(result);
@@ -1159,11 +1321,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Sqrts<double?>();
+        var result = input.Sqrts();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -1173,11 +1335,11 @@ public partial class YANMathTest
         var input = new double?[] { 4.0, 9.0, 16.0, 25.0, 36.0 };
 
         // Act
-        var result = input.Sqrts<double>()?.ToArray();
+        var result = input.Sqrts()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 2.0, 3.0, 4.0, 5.0, 6.0 }, result);
+        Assert.Equal([2.0, 3.0, 4.0, 5.0, 6.0], result);
     }
 
     [Fact]
@@ -1187,22 +1349,25 @@ public partial class YANMathTest
         var input = new double?[] { 4.0, null, 16.0, null, 36.0 };
 
         // Act
-        var result = input.Sqrts<double?>()?.ToArray();
+        var result = input.Sqrts()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 2.0, null, 4.0, null, 6.0 }, result);
+        Assert.Equal([2.0, null, 4.0, null, 6.0], result);
     }
 
     [Fact]
     public void Sqrts_ParamsOverload_CalculatesAllValues()
     {
+        // Arrange
+        var expected = new double[] { 2.0, 3.0, 4.0, 5.0, 6.0 };
+
         // Act
-        var result = YANMath.Sqrts<double>(4.0, 9.0, 16.0, 25.0, 36.0)?.ToArray();
+        var result = YANMath.Sqrts(4.0, 9.0, 16.0, 25.0, 36.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 2.0, 3.0, 4.0, 5.0, 6.0 }, result);
+        Assert.Equal(expected, result);
     }
 
     #endregion
@@ -1214,10 +1379,10 @@ public partial class YANMathTest
     {
         // Arrange
         double? input = null;
-        double power = 2.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pow<double?>(power);
+        var result = input.Pow(power);
 
         // Assert
         Assert.Null(result);
@@ -1227,7 +1392,7 @@ public partial class YANMathTest
     public void Pow_NullPower_ReturnsNull()
     {
         // Arrange
-        double input = 2.0;
+        var input = 2.0;
         double? power = null;
 
         // Act
@@ -1241,11 +1406,11 @@ public partial class YANMathTest
     public void Pow_PositiveNumberSquared_ReturnsCorrectValue()
     {
         // Arrange
-        double input = 3.0;
-        double power = 2.0;
+        var input = 3.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pow<double>(power);
+        var result = input.Pow(power);
 
         // Assert
         Assert.Equal(9.0, result);
@@ -1255,11 +1420,11 @@ public partial class YANMathTest
     public void Pow_PositiveNumberCubed_ReturnsCorrectValue()
     {
         // Arrange
-        double input = 3.0;
-        double power = 3.0;
+        var input = 3.0;
+        var power = 3.0;
 
         // Act
-        var result = input.Pow<double>(power);
+        var result = input.Pow(power);
 
         // Assert
         Assert.Equal(27.0, result);
@@ -1269,11 +1434,11 @@ public partial class YANMathTest
     public void Pow_NegativeNumberEvenPower_ReturnsPositiveValue()
     {
         // Arrange
-        double input = -3.0;
-        double power = 2.0;
+        var input = -3.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pow<double>(power);
+        var result = input.Pow(power);
 
         // Assert
         Assert.Equal(9.0, result);
@@ -1283,11 +1448,11 @@ public partial class YANMathTest
     public void Pow_NegativeNumberOddPower_ReturnsNegativeValue()
     {
         // Arrange
-        double input = -3.0;
-        double power = 3.0;
+        var input = -3.0;
+        var power = 3.0;
 
         // Act
-        var result = input.Pow<double>(power);
+        var result = input.Pow(power);
 
         // Assert
         Assert.Equal(-27.0, result);
@@ -1297,8 +1462,8 @@ public partial class YANMathTest
     public void Pow_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "3";
-        double power = 2.0;
+        var input = "3";
+        var power = 2.0;
 
         // Act
         var result = input.Pow<double>(power);
@@ -1311,11 +1476,11 @@ public partial class YANMathTest
     public void Pow_StringPower_ConvertsAndCalculates()
     {
         // Arrange
-        double input = 3.0;
-        string power = "2";
+        var input = 3.0;
+        var power = "2";
 
         // Act
-        var result = input.Pow<double>(power);
+        var result = input.Pow(power);
 
         // Assert
         Assert.Equal(9.0, result);
@@ -1325,8 +1490,8 @@ public partial class YANMathTest
     public void Pow_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 3.0;
-        double power = 2.0;
+        var input = 3.0;
+        var power = 2.0;
 
         // Act
         var result = input.Pow<int>(power);
@@ -1340,10 +1505,10 @@ public partial class YANMathTest
     {
         // Arrange
         IEnumerable<double?>? input = null;
-        double power = 2.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pows<double?>(power);
+        var result = input.Pows(power);
 
         // Assert
         Assert.Null(result);
@@ -1354,14 +1519,14 @@ public partial class YANMathTest
     {
         // Arrange
         var input = Array.Empty<double?>();
-        double power = 2.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pows<double?>(power);
+        var result = input.Pows(power);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -1369,14 +1534,14 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new double?[] { 1.0, 2.0, 3.0, 4.0, 5.0 };
-        double power = 2.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pows<double>(power)?.ToArray();
+        var result = input.Pows(power)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 1.0, 4.0, 9.0, 16.0, 25.0 }, result);
+        Assert.Equal([1.0, 4.0, 9.0, 16.0, 25.0], result);
     }
 
     [Fact]
@@ -1384,14 +1549,14 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new double?[] { 1.0, null, 3.0, null, 5.0 };
-        double power = 2.0;
+        var power = 2.0;
 
         // Act
-        var result = input.Pows<double?>(power)?.ToArray();
+        var result = input.Pows(power)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 1.0, null, 9.0, null, 25.0 }, result);
+        Assert.Equal([1.0, null, 9.0, null, 25.0], result);
     }
 
     #endregion
@@ -1405,7 +1570,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Abs<double?>();
+        var result = input.Abs();
 
         // Assert
         Assert.Null(result);
@@ -1415,10 +1580,10 @@ public partial class YANMathTest
     public void Abs_PositiveNumber_ReturnsSameValue()
     {
         // Arrange
-        double input = 5.0;
+        var input = 5.0;
 
         // Act
-        var result = input.Abs<double>();
+        var result = input.Abs();
 
         // Assert
         Assert.Equal(5.0, result);
@@ -1428,10 +1593,10 @@ public partial class YANMathTest
     public void Abs_NegativeNumber_ReturnsPositiveValue()
     {
         // Arrange
-        double input = -5.0;
+        var input = -5.0;
 
         // Act
-        var result = input.Abs<double>();
+        var result = input.Abs();
 
         // Assert
         Assert.Equal(5.0, result);
@@ -1441,10 +1606,10 @@ public partial class YANMathTest
     public void Abs_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Abs<double>();
+        var result = input.Abs();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -1454,7 +1619,7 @@ public partial class YANMathTest
     public void Abs_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "-5";
+        var input = "-5";
 
         // Act
         var result = input.Abs<double>();
@@ -1467,7 +1632,7 @@ public partial class YANMathTest
     public void Abs_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = -5.0;
+        var input = -5.0;
 
         // Act
         var result = input.Abs<int>();
@@ -1483,7 +1648,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Abss<double?>();
+        var result = input.Abss();
 
         // Assert
         Assert.Null(result);
@@ -1496,11 +1661,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Abss<double?>();
+        var result = input.Abss();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -1510,11 +1675,11 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, -2.0, 3.0, -4.0, 5.0 };
 
         // Act
-        var result = input.Abss<double>()?.ToArray();
+        var result = input.Abss()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 1.0, 2.0, 3.0, 4.0, 5.0 }, result);
+        Assert.Equal([1.0, 2.0, 3.0, 4.0, 5.0], result);
     }
 
     [Fact]
@@ -1524,22 +1689,25 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, null, -3.0, null, 5.0 };
 
         // Act
-        var result = input.Abss<double?>()?.ToArray();
+        var result = input.Abss()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 1.0, null, 3.0, null, 5.0 }, result);
+        Assert.Equal([1.0, null, 3.0, null, 5.0], result);
     }
 
     [Fact]
     public void Abss_ParamsOverload_CalculatesAllValues()
     {
+        // Arrange
+        var expected = new double[] { 1.0, 2.0, 3.0, 4.0, 5.0 };
+
         // Act
-        var result = YANMath.Abss<double>(1.0, -2.0, 3.0, -4.0, 5.0)?.ToArray();
+        var result = YANMath.Abss(1.0, -2.0, 3.0, -4.0, 5.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 1.0, 2.0, 3.0, 4.0, 5.0 }, result);
+        Assert.Equal(expected, result);
     }
 
     #endregion
@@ -1553,7 +1721,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Log<double?>();
+        var result = input.Log();
 
         // Assert
         Assert.Null(result);
@@ -1563,10 +1731,10 @@ public partial class YANMathTest
     public void Log_PositiveNumberNoBase_ReturnsNaturalLog()
     {
         // Arrange
-        double input = Math.E; // e
+        var input = Math.E;
 
         // Act
-        var result = input.Log<double>();
+        var result = input.Log();
 
         // Assert
         Assert.Equal(1.0, result, 15);
@@ -1576,11 +1744,11 @@ public partial class YANMathTest
     public void Log_PositiveNumberWithBase_ReturnsLogWithSpecifiedBase()
     {
         // Arrange
-        double input = 100.0;
-        double baseValue = 10.0;
+        var input = 100.0;
+        var baseValue = 10.0;
 
         // Act
-        var result = input.Log<double>(baseValue);
+        var result = input.Log(baseValue);
 
         // Assert
         Assert.Equal(2.0, result);
@@ -1590,8 +1758,8 @@ public partial class YANMathTest
     public void Log_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "100";
-        double baseValue = 10.0;
+        var input = "100";
+        var baseValue = 10.0;
 
         // Act
         var result = input.Log<double>(baseValue);
@@ -1604,11 +1772,11 @@ public partial class YANMathTest
     public void Log_StringBase_ConvertsAndCalculates()
     {
         // Arrange
-        double input = 100.0;
-        string baseValue = "10";
+        var input = 100.0;
+        var baseValue = "10";
 
         // Act
-        var result = input.Log<double>(baseValue);
+        var result = input.Log(baseValue);
 
         // Assert
         Assert.Equal(2.0, result);
@@ -1618,8 +1786,8 @@ public partial class YANMathTest
     public void Log_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 100.0;
-        double baseValue = 10.0;
+        var input = 100.0;
+        var baseValue = 10.0;
 
         // Act
         var result = input.Log<int>(baseValue);
@@ -1633,10 +1801,10 @@ public partial class YANMathTest
     {
         // Arrange
         IEnumerable<double?>? input = null;
-        double baseValue = 10.0;
+        var baseValue = 10.0;
 
         // Act
-        var result = input.Logs<double?>(baseValue);
+        var result = input.Logs(baseValue);
 
         // Assert
         Assert.Null(result);
@@ -1647,14 +1815,14 @@ public partial class YANMathTest
     {
         // Arrange
         var input = Array.Empty<double?>();
-        double baseValue = 10.0;
+        var baseValue = 10.0;
 
         // Act
-        var result = input.Logs<double?>(baseValue);
+        var result = input.Logs(baseValue);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -1662,14 +1830,14 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new double?[] { 1.0, 10.0, 100.0, 1000.0 };
-        double baseValue = 10.0;
+        var baseValue = 10.0;
 
         // Act
-        var result = input.Logs<double>(baseValue)?.ToArray();
+        var result = input.Logs(baseValue)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 0.0, 1.0, 2.0, 3.0 }, result);
+        Assert.Equal([0.0, 1.0, 2.0, 3.0], result.Rounds());
     }
 
     [Fact]
@@ -1677,26 +1845,25 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new double?[] { 1.0, null, 100.0, null };
-        double baseValue = 10.0;
+        var baseValue = 10.0;
 
         // Act
-        var result = input.Logs<double?>(baseValue)?.ToArray();
+        var result = input.Logs(baseValue)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 0.0, null, 2.0, null }, result);
+        Assert.Equal([0.0, null, 2.0, null], result);
     }
 
     [Fact]
     public void Logs_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Logs<double>(1.0, 10.0, 100.0, 1000.0)?.ToArray();
+        var result = YANMath.Logs(1.0, 10.0, 100.0, 1000.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        // Default base is e (natural log)
-        Assert.Equal(4, result!.Length);
+        Assert.Equal(4, result.Length);
         Assert.Equal(0.0, result[0], 1);
         Assert.Equal(2.302585092994046, result[1], 15);
         Assert.Equal(4.605170185988092, result[2], 15);
@@ -1714,7 +1881,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Log10<double?>();
+        var result = input.Log10();
 
         // Assert
         Assert.Null(result);
@@ -1724,10 +1891,10 @@ public partial class YANMathTest
     public void Log10_PositiveNumber_ReturnsBase10Log()
     {
         // Arrange
-        double input = 100.0;
+        var input = 100.0;
 
         // Act
-        var result = input.Log10<double>();
+        var result = input.Log10();
 
         // Assert
         Assert.Equal(2.0, result);
@@ -1737,7 +1904,7 @@ public partial class YANMathTest
     public void Log10_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "100";
+        var input = "100";
 
         // Act
         var result = input.Log10<double>();
@@ -1750,7 +1917,7 @@ public partial class YANMathTest
     public void Log10_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 100.0;
+        var input = 100.0;
 
         // Act
         var result = input.Log10<int>();
@@ -1766,7 +1933,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Log10s<double?>();
+        var result = input.Log10s();
 
         // Assert
         Assert.Null(result);
@@ -1779,11 +1946,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Log10s<double?>();
+        var result = input.Log10s();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -1793,11 +1960,11 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, 10.0, 100.0, 1000.0 };
 
         // Act
-        var result = input.Log10s<double>()?.ToArray();
+        var result = input.Log10s()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 0.0, 1.0, 2.0, 3.0 }, result);
+        Assert.Equal([0.0, 1.0, 2.0, 3.0], result);
     }
 
     [Fact]
@@ -1807,22 +1974,25 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, null, 100.0, null };
 
         // Act
-        var result = input.Log10s<double?>()?.ToArray();
+        var result = input.Log10s()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 0.0, null, 2.0, null }, result);
+        Assert.Equal([0.0, null, 2.0, null], result);
     }
 
     [Fact]
     public void Log10s_ParamsOverload_CalculatesAllValues()
     {
+        // Arrange
+        var expected = new double[] { 0.0, 1.0, 2.0, 3.0 };
+
         // Act
-        var result = YANMath.Log10s<double>(1.0, 10.0, 100.0, 1000.0)?.ToArray();
+        var result = YANMath.Log10s(1.0, 10.0, 100.0, 1000.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 0.0, 1.0, 2.0, 3.0 }, result);
+        Assert.Equal(expected, result);
     }
 
     #endregion
@@ -1836,7 +2006,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Log2<double?>();
+        var result = input.Log2();
 
         // Assert
         Assert.Null(result);
@@ -1846,10 +2016,10 @@ public partial class YANMathTest
     public void Log2_PositiveNumber_ReturnsBase2Log()
     {
         // Arrange
-        double input = 8.0;
+        var input = 8.0;
 
         // Act
-        var result = input.Log2<double>();
+        var result = input.Log2();
 
         // Assert
         Assert.Equal(3.0, result);
@@ -1859,7 +2029,7 @@ public partial class YANMathTest
     public void Log2_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "8";
+        var input = "8";
 
         // Act
         var result = input.Log2<double>();
@@ -1872,7 +2042,7 @@ public partial class YANMathTest
     public void Log2_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 8.0;
+        var input = 8.0;
 
         // Act
         var result = input.Log2<int>();
@@ -1888,7 +2058,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Log2s<double?>();
+        var result = input.Log2s();
 
         // Assert
         Assert.Null(result);
@@ -1901,11 +2071,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Log2s<double?>();
+        var result = input.Log2s();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -1915,11 +2085,11 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, 2.0, 4.0, 8.0 };
 
         // Act
-        var result = input.Log2s<double>()?.ToArray();
+        var result = input.Log2s()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 0.0, 1.0, 2.0, 3.0 }, result);
+        Assert.Equal([0.0, 1.0, 2.0, 3.0], result);
     }
 
     [Fact]
@@ -1929,22 +2099,25 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, null, 4.0, null };
 
         // Act
-        var result = input.Log2s<double?>()?.ToArray();
+        var result = input.Log2s()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double?[] { 0.0, null, 2.0, null }, result);
+        Assert.Equal([0.0, null, 2.0, null], result);
     }
 
     [Fact]
     public void Log2s_ParamsOverload_CalculatesAllValues()
     {
+        // Arrange
+        var expected = new double[] { 0.0, 1.0, 2.0, 3.0 };
+
         // Act
-        var result = YANMath.Log2s<double>(1.0, 2.0, 4.0, 8.0)?.ToArray();
+        var result = YANMath.Log2s(1.0, 2.0, 4.0, 8.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new double[] { 0.0, 1.0, 2.0, 3.0 }, result);
+        Assert.Equal(expected, result);
     }
 
     #endregion
@@ -1958,7 +2131,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Sin<double?>();
+        var result = input.Sin();
 
         // Assert
         Assert.Null(result);
@@ -1968,10 +2141,10 @@ public partial class YANMathTest
     public void Sin_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Sin<double>();
+        var result = input.Sin();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -1981,10 +2154,10 @@ public partial class YANMathTest
     public void Sin_PiDividedBy2_ReturnsOne()
     {
         // Arrange
-        double input = Math.PI / 2;
+        var input = Math.PI / 2;
 
         // Act
-        var result = input.Sin<double>();
+        var result = input.Sin();
 
         // Assert
         Assert.Equal(1.0, result, 15);
@@ -1994,10 +2167,10 @@ public partial class YANMathTest
     public void Sin_Pi_ReturnsZero()
     {
         // Arrange
-        double input = Math.PI;
+        var input = Math.PI;
 
         // Act
-        var result = input.Sin<double>();
+        var result = input.Sin();
 
         // Assert
         Assert.Equal(0.0, result, 15);
@@ -2007,7 +2180,7 @@ public partial class YANMathTest
     public void Sin_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = (Math.PI / 2).ToString();
+        var input = (Math.PI / 2).ToString();
 
         // Act
         var result = input.Sin<double>();
@@ -2020,7 +2193,7 @@ public partial class YANMathTest
     public void Sin_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = Math.PI / 2;
+        var input = Math.PI / 2;
 
         // Act
         var result = input.Sin<int>();
@@ -2036,7 +2209,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Sins<double?>();
+        var result = input.Sins();
 
         // Assert
         Assert.Null(result);
@@ -2049,11 +2222,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Sins<double?>();
+        var result = input.Sins();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2063,15 +2236,15 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, Math.PI / 6, Math.PI / 4, Math.PI / 3, Math.PI / 2 };
 
         // Act
-        var result = input.Sins<double>()?.ToArray();
+        var result = input.Sins()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(0.5, result[1], 15);
-        Assert.Equal(0.7071067811865475, result[2], 15);
-        Assert.Equal(0.8660254037844386, result[3], 15);
-        Assert.Equal(1.0, result[4], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
+        Assert.Equal(0.5, result[1]!.Value, 14);
+        Assert.Equal(0.7071067811865475, result[2]!.Value, 14);
+        Assert.Equal(0.8660254037844386, result[3]!.Value, 14);
+        Assert.Equal(1.0, result[4]!.Value, 14);
     }
 
     [Fact]
@@ -2081,30 +2254,30 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, Math.PI / 4, null, Math.PI / 2 };
 
         // Act
-        var result = input.Sins<double?>()?.ToArray();
+        var result = input.Sins()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
         Assert.Null(result[1]);
-        Assert.Equal(0.7071067811865475, result[2], 15);
+        Assert.Equal(0.7071067811865475, result[2]!.Value, 14);
         Assert.Null(result[3]);
-        Assert.Equal(1.0, result[4], 15);
+        Assert.Equal(1.0, result[4]!.Value, 14);
     }
 
     [Fact]
     public void Sins_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Sins<double>(0.0, Math.PI / 6, Math.PI / 4, Math.PI / 3, Math.PI / 2)?.ToArray();
+        var result = YANMath.Sins(0.0, Math.PI / 6, Math.PI / 4, Math.PI / 3, Math.PI / 2)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(0.5, result[1], 15);
-        Assert.Equal(0.7071067811865475, result[2], 15);
-        Assert.Equal(0.8660254037844386, result[3], 15);
-        Assert.Equal(1.0, result[4], 15);
+        Assert.Equal(0.0, result[0], 14);
+        Assert.Equal(0.5, result[1], 14);
+        Assert.Equal(0.7071067811865475, result[2], 14);
+        Assert.Equal(0.8660254037844386, result[3], 14);
+        Assert.Equal(1.0, result[4], 14);
     }
 
     #endregion
@@ -2118,7 +2291,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Cos<double?>();
+        var result = input.Cos();
 
         // Assert
         Assert.Null(result);
@@ -2128,10 +2301,10 @@ public partial class YANMathTest
     public void Cos_Zero_ReturnsOne()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Cos<double>();
+        var result = input.Cos();
 
         // Assert
         Assert.Equal(1.0, result);
@@ -2141,10 +2314,10 @@ public partial class YANMathTest
     public void Cos_PiDividedBy2_ReturnsZero()
     {
         // Arrange
-        double input = Math.PI / 2;
+        var input = Math.PI / 2;
 
         // Act
-        var result = input.Cos<double>();
+        var result = input.Cos();
 
         // Assert
         Assert.Equal(0.0, result, 15);
@@ -2154,10 +2327,10 @@ public partial class YANMathTest
     public void Cos_Pi_ReturnsMinusOne()
     {
         // Arrange
-        double input = Math.PI;
+        var input = Math.PI;
 
         // Act
-        var result = input.Cos<double>();
+        var result = input.Cos();
 
         // Assert
         Assert.Equal(-1.0, result, 15);
@@ -2167,7 +2340,7 @@ public partial class YANMathTest
     public void Cos_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "0";
+        var input = "0";
 
         // Act
         var result = input.Cos<double>();
@@ -2180,7 +2353,7 @@ public partial class YANMathTest
     public void Cos_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
         var result = input.Cos<int>();
@@ -2196,7 +2369,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Coss<double?>();
+        var result = input.Coss();
 
         // Assert
         Assert.Null(result);
@@ -2209,11 +2382,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Coss<double?>();
+        var result = input.Coss();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2223,15 +2396,15 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, Math.PI / 3, Math.PI / 2, Math.PI, Math.PI * 2 };
 
         // Act
-        var result = input.Coss<double>()?.ToArray();
+        var result = input.Coss()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
-        Assert.Equal(0.5, result[1], 15);
-        Assert.Equal(0.0, result[2], 15);
-        Assert.Equal(-1.0, result[3], 15);
-        Assert.Equal(1.0, result[4], 15);
+        Assert.Equal(1.0, result[0]!.Value, 14);
+        Assert.Equal(0.5, result[1]!.Value, 14);
+        Assert.Equal(0.0, result[2]!.Value, 14);
+        Assert.Equal(-1.0, result[3]!.Value, 14);
+        Assert.Equal(1.0, result[4]!.Value, 14);
     }
 
     [Fact]
@@ -2241,30 +2414,30 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, Math.PI / 2, null, Math.PI };
 
         // Act
-        var result = input.Coss<double?>()?.ToArray();
+        var result = input.Coss()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
+        Assert.Equal(1.0, result[0]!.Value, 14);
         Assert.Null(result[1]);
-        Assert.Equal(0.0, result[2], 15);
+        Assert.Equal(0.0, result[2]!.Value, 14);
         Assert.Null(result[3]);
-        Assert.Equal(-1.0, result[4], 15);
+        Assert.Equal(-1.0, result[4]!.Value, 14);
     }
 
     [Fact]
     public void Coss_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Coss<double>(0.0, Math.PI / 3, Math.PI / 2, Math.PI, Math.PI * 2)?.ToArray();
+        var result = YANMath.Coss(0.0, Math.PI / 3, Math.PI / 2, Math.PI, Math.PI * 2)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
-        Assert.Equal(0.5, result[1], 15);
-        Assert.Equal(0.0, result[2], 15);
-        Assert.Equal(-1.0, result[3], 15);
-        Assert.Equal(1.0, result[4], 15);
+        Assert.Equal(1.0, result[0], 14);
+        Assert.Equal(0.5, result[1], 14);
+        Assert.Equal(0.0, result[2], 14);
+        Assert.Equal(-1.0, result[3], 14);
+        Assert.Equal(1.0, result[4], 14);
     }
 
     #endregion
@@ -2278,7 +2451,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Tan<double?>();
+        var result = input.Tan();
 
         // Assert
         Assert.Null(result);
@@ -2288,10 +2461,10 @@ public partial class YANMathTest
     public void Tan_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Tan<double>();
+        var result = input.Tan();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -2301,10 +2474,10 @@ public partial class YANMathTest
     public void Tan_PiDividedBy4_ReturnsOne()
     {
         // Arrange
-        double input = Math.PI / 4;
+        var input = Math.PI / 4;
 
         // Act
-        var result = input.Tan<double>();
+        var result = input.Tan();
 
         // Assert
         Assert.Equal(1.0, result, 15);
@@ -2314,7 +2487,7 @@ public partial class YANMathTest
     public void Tan_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = (Math.PI / 4).ToString();
+        var input = (Math.PI / 4).ToString();
 
         // Act
         var result = input.Tan<double>();
@@ -2327,7 +2500,7 @@ public partial class YANMathTest
     public void Tan_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = Math.PI / 4;
+        var input = Math.PI / 4;
 
         // Act
         var result = input.Tan<int>();
@@ -2343,7 +2516,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Tans<double?>();
+        var result = input.Tans();
 
         // Assert
         Assert.Null(result);
@@ -2356,11 +2529,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Tans<double?>();
+        var result = input.Tans();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2370,14 +2543,14 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, Math.PI / 6, Math.PI / 4, Math.PI / 3 };
 
         // Act
-        var result = input.Tans<double>()?.ToArray();
+        var result = input.Tans()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(0.5773502691896257, result[1], 15);
-        Assert.Equal(1.0, result[2], 15);
-        Assert.Equal(1.7320508075688767, result[3], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
+        Assert.Equal(0.5773502691896257, result[1]!.Value, 14);
+        Assert.Equal(1.0, result[2]!.Value, 14);
+        Assert.Equal(1.7320508075688767, result[3]!.Value, 14);
     }
 
     [Fact]
@@ -2387,13 +2560,13 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, Math.PI / 4, null };
 
         // Act
-        var result = input.Tans<double?>()?.ToArray();
+        var result = input.Tans()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
         Assert.Null(result[1]);
-        Assert.Equal(1.0, result[2], 15);
+        Assert.Equal(1.0, result[2]!.Value, 14);
         Assert.Null(result[3]);
     }
 
@@ -2401,14 +2574,14 @@ public partial class YANMathTest
     public void Tans_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Tans<double>(0.0, Math.PI / 6, Math.PI / 4, Math.PI / 3)?.ToArray();
+        var result = YANMath.Tans(0.0, Math.PI / 6, Math.PI / 4, Math.PI / 3)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(0.5773502691896257, result[1], 15);
-        Assert.Equal(1.0, result[2], 15);
-        Assert.Equal(1.7320508075688767, result[3], 15);
+        Assert.Equal(0.0, result[0], 14);
+        Assert.Equal(0.5773502691896257, result[1], 14);
+        Assert.Equal(1.0, result[2], 14);
+        Assert.Equal(1.7320508075688767, result[3], 14);
     }
 
     #endregion
@@ -2422,7 +2595,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Asin<double?>();
+        var result = input.Asin();
 
         // Assert
         Assert.Null(result);
@@ -2432,10 +2605,10 @@ public partial class YANMathTest
     public void Asin_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Asin<double>();
+        var result = input.Asin();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -2445,10 +2618,10 @@ public partial class YANMathTest
     public void Asin_One_ReturnsPiDividedBy2()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
-        var result = input.Asin<double>();
+        var result = input.Asin();
 
         // Assert
         Assert.Equal(Math.PI / 2, result);
@@ -2458,7 +2631,7 @@ public partial class YANMathTest
     public void Asin_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "0";
+        var input = "0";
 
         // Act
         var result = input.Asin<double>();
@@ -2471,13 +2644,13 @@ public partial class YANMathTest
     public void Asin_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
         var result = input.Asin<int>();
 
         // Assert
-        Assert.Equal((int)(Math.PI / 2), result);
+        Assert.Equal((Math.PI / 2).Parse<int>(), result);
     }
 
     [Fact]
@@ -2487,7 +2660,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Asins<double?>();
+        var result = input.Asins();
 
         // Assert
         Assert.Null(result);
@@ -2500,11 +2673,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Asins<double?>();
+        var result = input.Asins();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2514,15 +2687,15 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, 0.5, 0.7071067811865475, 0.8660254037844386, 1.0 };
 
         // Act
-        var result = input.Asins<double>()?.ToArray();
+        var result = input.Asins()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(Math.PI / 6, result[1], 15);
-        Assert.Equal(Math.PI / 4, result[2], 15);
-        Assert.Equal(Math.PI / 3, result[3], 15);
-        Assert.Equal(Math.PI / 2, result[4], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
+        Assert.Equal(Math.PI / 6, result[1]!.Value, 14);
+        Assert.Equal(Math.PI / 4, result[2]!.Value, 14);
+        Assert.Equal(Math.PI / 3, result[3]!.Value, 14);
+        Assert.Equal(Math.PI / 2, result[4]!.Value, 14);
     }
 
     [Fact]
@@ -2532,30 +2705,30 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, 0.7071067811865475, null, 1.0 };
 
         // Act
-        var result = input.Asins<double?>()?.ToArray();
+        var result = input.Asins()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
         Assert.Null(result[1]);
-        Assert.Equal(Math.PI / 4, result[2], 15);
+        Assert.Equal(Math.PI / 4, result[2]!.Value, 14);
         Assert.Null(result[3]);
-        Assert.Equal(Math.PI / 2, result[4], 15);
+        Assert.Equal(Math.PI / 2, result[4]!.Value, 14);
     }
 
     [Fact]
     public void Asins_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Asins<double>(0.0, 0.5, 0.7071067811865475, 0.8660254037844386, 1.0)?.ToArray();
+        var result = YANMath.Asins(0.0, 0.5, 0.7071067811865475, 0.8660254037844386, 1.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(Math.PI / 6, result[1], 15);
-        Assert.Equal(Math.PI / 4, result[2], 15);
-        Assert.Equal(Math.PI / 3, result[3], 15);
-        Assert.Equal(Math.PI / 2, result[4], 15);
+        Assert.Equal(0.0, result[0], 14);
+        Assert.Equal(Math.PI / 6, result[1], 14);
+        Assert.Equal(Math.PI / 4, result[2], 14);
+        Assert.Equal(Math.PI / 3, result[3], 14);
+        Assert.Equal(Math.PI / 2, result[4], 14);
     }
 
     #endregion
@@ -2569,7 +2742,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Acos<double?>();
+        var result = input.Acos();
 
         // Assert
         Assert.Null(result);
@@ -2579,10 +2752,10 @@ public partial class YANMathTest
     public void Acos_One_ReturnsZero()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
-        var result = input.Acos<double>();
+        var result = input.Acos();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -2592,10 +2765,10 @@ public partial class YANMathTest
     public void Acos_Zero_ReturnsPiDividedBy2()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Acos<double>();
+        var result = input.Acos();
 
         // Assert
         Assert.Equal(Math.PI / 2, result);
@@ -2605,10 +2778,10 @@ public partial class YANMathTest
     public void Acos_MinusOne_ReturnsPi()
     {
         // Arrange
-        double input = -1.0;
+        var input = -1.0;
 
         // Act
-        var result = input.Acos<double>();
+        var result = input.Acos();
 
         // Assert
         Assert.Equal(Math.PI, result);
@@ -2618,7 +2791,7 @@ public partial class YANMathTest
     public void Acos_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "1";
+        var input = "1";
 
         // Act
         var result = input.Acos<double>();
@@ -2631,7 +2804,7 @@ public partial class YANMathTest
     public void Acos_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = -1.0;
+        var input = -1.0;
 
         // Act
         var result = input.Acos<int>();
@@ -2647,7 +2820,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Acoss<double?>();
+        var result = input.Acoss();
 
         // Assert
         Assert.Null(result);
@@ -2660,11 +2833,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Acoss<double?>();
+        var result = input.Acoss();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2674,15 +2847,15 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, 0.5, 0.0, -0.5, -1.0 };
 
         // Act
-        var result = input.Acoss<double>()?.ToArray();
+        var result = input.Acoss()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(Math.PI / 3, result[1], 15);
-        Assert.Equal(Math.PI / 2, result[2], 15);
-        Assert.Equal(2 * Math.PI / 3, result[3], 15);
-        Assert.Equal(Math.PI, result[4], 15);
+        Assert.Equal(0.0, result[0]!.Value, 14);
+        Assert.Equal(Math.PI / 3, result[1]!.Value, 14);
+        Assert.Equal(Math.PI / 2, result[2]!.Value, 14);
+        Assert.Equal(2 * Math.PI / 3, result[3]!.Value, 14);
+        Assert.Equal(Math.PI, result[4]!.Value, 14);
     }
 
     [Fact]
@@ -2692,30 +2865,30 @@ public partial class YANMathTest
         var input = new double?[] { 1.0, null, 0.0, null, -1.0 };
 
         // Act
-        var result = input.Acoss<double?>()?.ToArray();
+        var result = input.Acoss()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
+        Assert.Equal(0.0, result[0]);
         Assert.Null(result[1]);
-        Assert.Equal(Math.PI / 2, result[2], 15);
+        Assert.Equal(Math.PI / 2, result[2]);
         Assert.Null(result[3]);
-        Assert.Equal(Math.PI, result[4], 15);
+        Assert.Equal(Math.PI, result[4]);
     }
 
     [Fact]
     public void Acoss_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Acoss<double>(1.0, 0.5, 0.0, -0.5, -1.0)?.ToArray();
+        var result = YANMath.Acoss(1.0, 0.5, 0.0, -0.5, -1.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(Math.PI / 3, result[1], 15);
-        Assert.Equal(Math.PI / 2, result[2], 15);
-        Assert.Equal(2 * Math.PI / 3, result[3], 15);
-        Assert.Equal(Math.PI, result[4], 15);
+        Assert.Equal(0.0, result[0], 14);
+        Assert.Equal(Math.PI / 3, result[1], 14);
+        Assert.Equal(Math.PI / 2, result[2], 14);
+        Assert.Equal(2 * Math.PI / 3, result[3], 14);
+        Assert.Equal(Math.PI, result[4], 14);
     }
 
     #endregion
@@ -2729,7 +2902,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Atan<double?>();
+        var result = input.Atan();
 
         // Assert
         Assert.Null(result);
@@ -2739,10 +2912,10 @@ public partial class YANMathTest
     public void Atan_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Atan<double>();
+        var result = input.Atan();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -2752,10 +2925,10 @@ public partial class YANMathTest
     public void Atan_One_ReturnsPiDividedBy4()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
-        var result = input.Atan<double>();
+        var result = input.Atan();
 
         // Assert
         Assert.Equal(Math.PI / 4, result);
@@ -2765,7 +2938,7 @@ public partial class YANMathTest
     public void Atan_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "1";
+        var input = "1";
 
         // Act
         var result = input.Atan<double>();
@@ -2778,13 +2951,13 @@ public partial class YANMathTest
     public void Atan_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
         var result = input.Atan<int>();
 
         // Assert
-        Assert.Equal((int)(Math.PI / 4), result);
+        Assert.Equal((Math.PI / 4).Parse<int>(), result);
     }
 
     [Fact]
@@ -2794,7 +2967,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Atans<double?>();
+        var result = input.Atans();
 
         // Assert
         Assert.Null(result);
@@ -2807,11 +2980,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Atans<double?>();
+        var result = input.Atans();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2821,14 +2994,14 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, 0.5773502691896257, 1.0, 1.7320508075688767 };
 
         // Act
-        var result = input.Atans<double>()?.ToArray();
+        var result = input.Atans()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(Math.PI / 6, result[1], 15);
-        Assert.Equal(Math.PI / 4, result[2], 15);
-        Assert.Equal(Math.PI / 3, result[3], 15);
+        Assert.Equal(0.0, result[0]);
+        Assert.Equal(Math.PI / 6, result[1]);
+        Assert.Equal(Math.PI / 4, result[2]);
+        Assert.Equal(Math.PI / 3, result[3]);
     }
 
     [Fact]
@@ -2838,13 +3011,13 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, 1.0, null };
 
         // Act
-        var result = input.Atans<double?>()?.ToArray();
+        var result = input.Atans()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
+        Assert.Equal(0.0, result[0]);
         Assert.Null(result[1]);
-        Assert.Equal(Math.PI / 4, result[2], 15);
+        Assert.Equal(Math.PI / 4, result[2]);
         Assert.Null(result[3]);
     }
 
@@ -2852,14 +3025,14 @@ public partial class YANMathTest
     public void Atans_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Atans<double>(0.0, 0.5773502691896257, 1.0, 1.7320508075688767)?.ToArray();
+        var result = YANMath.Atans(0.0, 0.5773502691896257, 1.0, 1.7320508075688767)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(0.0, result![0], 15);
-        Assert.Equal(Math.PI / 6, result[1], 15);
-        Assert.Equal(Math.PI / 4, result[2], 15);
-        Assert.Equal(Math.PI / 3, result[3], 15);
+        Assert.Equal(0.0, result[0]);
+        Assert.Equal(Math.PI / 6, result[1]);
+        Assert.Equal(Math.PI / 4, result[2]);
+        Assert.Equal(Math.PI / 3, result[3]);
     }
 
     #endregion
@@ -2873,7 +3046,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Cbrt<double?>();
+        var result = input.Cbrt();
 
         // Assert
         Assert.Null(result);
@@ -2883,10 +3056,10 @@ public partial class YANMathTest
     public void Cbrt_PositiveNumber_ReturnsCubeRoot()
     {
         // Arrange
-        double input = 27.0;
+        var input = 27.0;
 
         // Act
-        var result = input.Cbrt<double>();
+        var result = input.Cbrt();
 
         // Assert
         Assert.Equal(3.0, result);
@@ -2896,10 +3069,10 @@ public partial class YANMathTest
     public void Cbrt_NegativeNumber_ReturnsNegativeCubeRoot()
     {
         // Arrange
-        double input = -27.0;
+        var input = -27.0;
 
         // Act
-        var result = input.Cbrt<double>();
+        var result = input.Cbrt();
 
         // Assert
         Assert.Equal(-3.0, result);
@@ -2909,10 +3082,10 @@ public partial class YANMathTest
     public void Cbrt_Zero_ReturnsZero()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Cbrt<double>();
+        var result = input.Cbrt();
 
         // Assert
         Assert.Equal(0.0, result);
@@ -2922,7 +3095,7 @@ public partial class YANMathTest
     public void Cbrt_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "27";
+        var input = "27";
 
         // Act
         var result = input.Cbrt<double>();
@@ -2935,7 +3108,7 @@ public partial class YANMathTest
     public void Cbrt_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 27.0;
+        var input = 27.0;
 
         // Act
         var result = input.Cbrt<int>();
@@ -2951,7 +3124,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Cbrts<double?>();
+        var result = input.Cbrts();
 
         // Assert
         Assert.Null(result);
@@ -2964,11 +3137,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Cbrts<double?>();
+        var result = input.Cbrts();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -2978,14 +3151,14 @@ public partial class YANMathTest
         var input = new double?[] { 8.0, 27.0, 64.0, 125.0 };
 
         // Act
-        var result = input.Cbrts<double>()?.ToArray();
+        var result = input.Cbrts()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2.0, result![0], 15);
-        Assert.Equal(3.0, result[1], 15);
-        Assert.Equal(4.0, result[2], 15);
-        Assert.Equal(5.0, result[3], 15);
+        Assert.Equal(2.0, result[0]);
+        Assert.Equal(3.0, result[1]);
+        Assert.Equal(4.0, result[2]);
+        Assert.Equal(5.0, result[3]);
     }
 
     [Fact]
@@ -2995,13 +3168,13 @@ public partial class YANMathTest
         var input = new double?[] { 8.0, null, 64.0, null };
 
         // Act
-        var result = input.Cbrts<double?>()?.ToArray();
+        var result = input.Cbrts()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2.0, result![0], 15);
+        Assert.Equal(2.0, result[0]);
         Assert.Null(result[1]);
-        Assert.Equal(4.0, result[2], 15);
+        Assert.Equal(4.0, result[2]);
         Assert.Null(result[3]);
     }
 
@@ -3009,14 +3182,14 @@ public partial class YANMathTest
     public void Cbrts_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Cbrts<double>(8.0, 27.0, 64.0, 125.0)?.ToArray();
+        var result = YANMath.Cbrts(8.0, 27.0, 64.0, 125.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2.0, result![0], 15);
-        Assert.Equal(3.0, result[1], 15);
-        Assert.Equal(4.0, result[2], 15);
-        Assert.Equal(5.0, result[3], 15);
+        Assert.Equal(2.0, result[0]);
+        Assert.Equal(3.0, result[1]);
+        Assert.Equal(4.0, result[2]);
+        Assert.Equal(5.0, result[3]);
     }
 
     #endregion
@@ -3030,7 +3203,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Exp<double?>();
+        var result = input.Exp();
 
         // Assert
         Assert.Null(result);
@@ -3040,10 +3213,10 @@ public partial class YANMathTest
     public void Exp_Zero_ReturnsOne()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Exp<double>();
+        var result = input.Exp();
 
         // Assert
         Assert.Equal(1.0, result);
@@ -3053,10 +3226,10 @@ public partial class YANMathTest
     public void Exp_One_ReturnsE()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
-        var result = input.Exp<double>();
+        var result = input.Exp();
 
         // Assert
         Assert.Equal(Math.E, result);
@@ -3066,7 +3239,7 @@ public partial class YANMathTest
     public void Exp_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "1";
+        var input = "1";
 
         // Act
         var result = input.Exp<double>();
@@ -3079,13 +3252,13 @@ public partial class YANMathTest
     public void Exp_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
         var result = input.Exp<int>();
 
         // Assert
-        Assert.Equal((int)Math.E, result);
+        Assert.Equal(Math.E.Parse<int>(), result);
     }
 
     [Fact]
@@ -3095,7 +3268,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Exps<double?>();
+        var result = input.Exps();
 
         // Assert
         Assert.Null(result);
@@ -3108,11 +3281,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Exps<double?>();
+        var result = input.Exps();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -3122,13 +3295,13 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, 1.0, 2.0 };
 
         // Act
-        var result = input.Exps<double>()?.ToArray();
+        var result = input.Exps()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
-        Assert.Equal(Math.E, result[1], 15);
-        Assert.Equal(Math.E * Math.E, result[2], 15);
+        Assert.Equal(1.0, result[0]!.Value, 14);
+        Assert.Equal(Math.E, result[1]!.Value, 14);
+        Assert.Equal(Math.E * Math.E, result[2]!.Value, 14);
     }
 
     [Fact]
@@ -3138,13 +3311,13 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, 2.0, null };
 
         // Act
-        var result = input.Exps<double?>()?.ToArray();
+        var result = input.Exps()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
+        Assert.Equal(1.0, result[0]!.Value, 14);
         Assert.Null(result[1]);
-        Assert.Equal(Math.E * Math.E, result[2], 15);
+        Assert.Equal(Math.E * Math.E, result[2]!.Value, 14);
         Assert.Null(result[3]);
     }
 
@@ -3152,13 +3325,13 @@ public partial class YANMathTest
     public void Exps_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Exps<double>(0.0, 1.0, 2.0)?.ToArray();
+        var result = YANMath.Exps(0.0, 1.0, 2.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
-        Assert.Equal(Math.E, result[1], 15);
-        Assert.Equal(Math.E * Math.E, result[2], 15);
+        Assert.Equal(1.0, result[0], 14);
+        Assert.Equal(Math.E, result[1], 14);
+        Assert.Equal(Math.E * Math.E, result[2], 14);
     }
 
     #endregion
@@ -3172,7 +3345,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        var result = input.Exp2<double?>();
+        var result = input.Exp2();
 
         // Assert
         Assert.Null(result);
@@ -3182,10 +3355,10 @@ public partial class YANMathTest
     public void Exp2_Zero_ReturnsOne()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Exp2<double>();
+        var result = input.Exp2();
 
         // Assert
         Assert.Equal(1.0, result);
@@ -3195,10 +3368,10 @@ public partial class YANMathTest
     public void Exp2_One_ReturnsTwo()
     {
         // Arrange
-        double input = 1.0;
+        var input = 1.0;
 
         // Act
-        var result = input.Exp2<double>();
+        var result = input.Exp2();
 
         // Assert
         Assert.Equal(2.0, result);
@@ -3208,10 +3381,10 @@ public partial class YANMathTest
     public void Exp2_Three_ReturnsEight()
     {
         // Arrange
-        double input = 3.0;
+        var input = 3.0;
 
         // Act
-        var result = input.Exp2<double>();
+        var result = input.Exp2();
 
         // Assert
         Assert.Equal(8.0, result);
@@ -3221,7 +3394,7 @@ public partial class YANMathTest
     public void Exp2_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "3";
+        var input = "3";
 
         // Act
         var result = input.Exp2<double>();
@@ -3234,7 +3407,7 @@ public partial class YANMathTest
     public void Exp2_DoubleToInt_CalculatesAndConverts()
     {
         // Arrange
-        double input = 3.0;
+        var input = 3.0;
 
         // Act
         var result = input.Exp2<int>();
@@ -3250,7 +3423,7 @@ public partial class YANMathTest
         IEnumerable<double?>? input = null;
 
         // Act
-        var result = input.Exp2s<double?>();
+        var result = input.Exp2s();
 
         // Assert
         Assert.Null(result);
@@ -3263,11 +3436,11 @@ public partial class YANMathTest
         var input = Array.Empty<double?>();
 
         // Act
-        var result = input.Exp2s<double?>();
+        var result = input.Exp2s();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -3277,15 +3450,15 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, 1.0, 2.0, 3.0, 4.0 };
 
         // Act
-        var result = input.Exp2s<double>()?.ToArray();
+        var result = input.Exp2s()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
-        Assert.Equal(2.0, result[1], 15);
-        Assert.Equal(4.0, result[2], 15);
-        Assert.Equal(8.0, result[3], 15);
-        Assert.Equal(16.0, result[4], 15);
+        Assert.Equal(1.0, result[0]);
+        Assert.Equal(2.0, result[1]);
+        Assert.Equal(4.0, result[2]);
+        Assert.Equal(8.0, result[3]);
+        Assert.Equal(16.0, result[4]);
     }
 
     [Fact]
@@ -3295,30 +3468,30 @@ public partial class YANMathTest
         var input = new double?[] { 0.0, null, 2.0, null, 4.0 };
 
         // Act
-        var result = input.Exp2s<double?>()?.ToArray();
+        var result = input.Exp2s()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
+        Assert.Equal(1.0, result[0]);
         Assert.Null(result[1]);
-        Assert.Equal(4.0, result[2], 15);
+        Assert.Equal(4.0, result[2]);
         Assert.Null(result[3]);
-        Assert.Equal(16.0, result[4], 15);
+        Assert.Equal(16.0, result[4]);
     }
 
     [Fact]
     public void Exp2s_ParamsOverload_CalculatesAllValues()
     {
         // Act
-        var result = YANMath.Exp2s<double>(0.0, 1.0, 2.0, 3.0, 4.0)?.ToArray();
+        var result = YANMath.Exp2s(0.0, 1.0, 2.0, 3.0, 4.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1.0, result![0], 15);
-        Assert.Equal(2.0, result[1], 15);
-        Assert.Equal(4.0, result[2], 15);
-        Assert.Equal(8.0, result[3], 15);
-        Assert.Equal(16.0, result[4], 15);
+        Assert.Equal(1.0, result[0]);
+        Assert.Equal(2.0, result[1]);
+        Assert.Equal(4.0, result[2]);
+        Assert.Equal(8.0, result[3]);
+        Assert.Equal(16.0, result[4]);
     }
 
     #endregion
@@ -3342,7 +3515,7 @@ public partial class YANMathTest
     public void ILogB_PositiveNumber_ReturnsExponent()
     {
         // Arrange
-        double input = 8.0;
+        var input = 8.0;
 
         // Act
         var result = input.ILogB<int>();
@@ -3355,7 +3528,7 @@ public partial class YANMathTest
     public void ILogB_NegativeNumber_ReturnsExponent()
     {
         // Arrange
-        double input = -8.0;
+        var input = -8.0;
 
         // Act
         var result = input.ILogB<int>();
@@ -3368,7 +3541,7 @@ public partial class YANMathTest
     public void ILogB_Zero_ReturnsMinValue()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
         var result = input.ILogB<int>();
@@ -3381,7 +3554,7 @@ public partial class YANMathTest
     public void ILogB_StringInput_ConvertsAndCalculates()
     {
         // Arrange
-        string input = "8";
+        var input = "8";
 
         // Act
         var result = input.ILogB<int>();
@@ -3394,7 +3567,7 @@ public partial class YANMathTest
     public void ILogB_DoubleToLong_CalculatesAndConverts()
     {
         // Arrange
-        double input = 8.0;
+        var input = 8.0;
 
         // Act
         var result = input.ILogB<long>();
@@ -3407,7 +3580,7 @@ public partial class YANMathTest
     public void ILogBs_NullCollection_ReturnsNull()
     {
         // Arrange
-        IEnumerable<double?>? input = null;
+        IEnumerable<object?>? input = null;
 
         // Act
         var result = input.ILogBs<int?>();
@@ -3417,56 +3590,59 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void ILogBs_EmptyCollection_ReturnsEmptyCollection()
+    public void ILogBs_EmptyCollection_ReturnsNullCollection()
     {
         // Arrange
-        var input = Array.Empty<double?>();
+        var input = Array.Empty<object?>();
 
         // Act
         var result = input.ILogBs<int?>();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
     public void ILogBs_DoubleCollection_CalculatesAllValues()
     {
         // Arrange
-        var input = new double?[] { 2.0, 4.0, 8.0, 16.0, 32.0 };
+        var input = new object?[] { 2.0, 4.0, 8.0, 16.0, 32.0 };
+        var expected = new int[] { 1, 2, 3, 4, 5 };
 
         // Act
         var result = input.ILogBs<int>()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new int[] { 1, 2, 3, 4, 5 }, result);
+        Assert.Equal(expected, result);
     }
 
     [Fact]
     public void ILogBs_CollectionWithNulls_PreservesNulls()
     {
         // Arrange
-        var input = new double?[] { 2.0, null, 8.0, null, 32.0 };
+        var input = new object?[] { 2.0, null, 8.0, null, 32.0 };
 
         // Act
         var result = input.ILogBs<int?>()?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new int?[] { 1, null, 3, null, 5 }, result);
+        Assert.Equal([1, null, 3, null, 5], result);
     }
 
     [Fact]
     public void ILogBs_ParamsOverload_CalculatesAllValues()
     {
+        // Arrange
+        var expected = new int[] { 1, 2, 3, 4, 5 };
+
         // Act
         var result = YANMath.ILogBs<int>(2.0, 4.0, 8.0, 16.0, 32.0)?.ToArray();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(new int[] { 1, 2, 3, 4, 5 }, result);
+        Assert.Equal(expected, result);
     }
 
     #endregion
@@ -3477,10 +3653,10 @@ public partial class YANMathTest
     public void Sqrt_NegativeNumber_ReturnsNaN()
     {
         // Arrange
-        double input = -4.0;
+        var input = -4.0;
 
         // Act
-        var result = input.Sqrt<double>();
+        var result = input.Sqrt();
 
         // Assert
         Assert.True(double.IsNaN(result));
@@ -3490,10 +3666,10 @@ public partial class YANMathTest
     public void Log_NegativeNumber_ReturnsNaN()
     {
         // Arrange
-        double input = -1.0;
+        var input = -1.0;
 
         // Act
-        var result = input.Log<double>();
+        var result = input.Log();
 
         // Assert
         Assert.True(double.IsNaN(result));
@@ -3503,10 +3679,10 @@ public partial class YANMathTest
     public void Log_Zero_ReturnsNegativeInfinity()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
-        var result = input.Log<double>();
+        var result = input.Log();
 
         // Assert
         Assert.True(double.IsNegativeInfinity(result));
@@ -3516,10 +3692,10 @@ public partial class YANMathTest
     public void Asin_GreaterThanOne_ReturnsNaN()
     {
         // Arrange
-        double input = 1.1;
+        var input = 1.1;
 
         // Act
-        var result = input.Asin<double>();
+        var result = input.Asin();
 
         // Assert
         Assert.True(double.IsNaN(result));
@@ -3529,10 +3705,10 @@ public partial class YANMathTest
     public void Acos_GreaterThanOne_ReturnsNaN()
     {
         // Arrange
-        double input = 1.1;
+        var input = 1.1;
 
         // Act
-        var result = input.Acos<double>();
+        var result = input.Acos();
 
         // Assert
         Assert.True(double.IsNaN(result));
@@ -3542,13 +3718,12 @@ public partial class YANMathTest
     public void Tan_PiDividedBy2_ReturnsVeryLargeNumber()
     {
         // Arrange
-        double input = Math.PI / 2;
+        var input = Math.PI / 2;
 
         // Act
-        var result = input.Tan<double>();
+        var result = input.Tan();
 
         // Assert
-        // Due to floating-point precision, this will be a very large number but not infinity
         Assert.True(Math.Abs(result) > 1e14);
     }
 
@@ -3560,84 +3735,84 @@ public partial class YANMathTest
     public void Min_IntToDecimal_ReturnsDecimal()
     {
         // Arrange
-        var input = new int?[] { 5, 2, 8, 1, 9 };
+        var input = new object?[] { 5, 2, 8, 1, 9 };
 
         // Act
         var result = input.Min<decimal>();
 
         // Assert
         Assert.Equal(1m, result);
-        Assert.IsType<decimal>(result);
+        _ = Assert.IsType<decimal>(result);
     }
 
     [Fact]
     public void Max_IntToFloat_ReturnsFloat()
     {
         // Arrange
-        var input = new int?[] { 5, 2, 8, 1, 9 };
+        var input = new object?[] { 5, 2, 8, 1, 9 };
 
         // Act
         var result = input.Max<float>();
 
         // Assert
         Assert.Equal(9f, result);
-        Assert.IsType<float>(result);
+        _ = Assert.IsType<float>(result);
     }
 
     [Fact]
     public void Average_IntToDouble_ReturnsDouble()
     {
         // Arrange
-        var input = new int?[] { 1, 2, 3, 4, 5 };
+        var input = new object?[] { 1, 2, 3, 4, 5 };
 
         // Act
         var result = input.Average<double>();
 
         // Assert
         Assert.Equal(3.0, result);
-        Assert.IsType<double>(result);
+        _ = Assert.IsType<double>(result);
     }
 
     [Fact]
     public void Sum_DoubleToLong_ReturnsLong()
     {
         // Arrange
-        var input = new double?[] { 1.1, 2.2, 3.3, 4.4, 5.5 };
+        var input = new object?[] { 1.1, 2.2, 3.3, 4.4, 5.5 };
 
         // Act
         var result = input.Sum<long>();
 
         // Assert
         Assert.Equal(16L, result);
-        Assert.IsType<long>(result);
+        _ = Assert.IsType<long>(result);
     }
 
     [Fact]
     public void Sqrt_IntToDecimal_ReturnsDecimal()
     {
         // Arrange
-        int input = 16;
+        var input = 16;
 
         // Act
         var result = input.Sqrt<decimal>();
 
         // Assert
         Assert.Equal(4m, result);
-        Assert.IsType<decimal>(result);
+        _ = Assert.IsType<decimal>(result);
     }
 
     [Fact]
     public void Sin_DoubleToString_ReturnsString()
     {
         // Arrange
-        double input = 0.0;
+        var input = 0.0;
 
         // Act
         var result = input.Sin<string>();
 
         // Assert
         Assert.Equal("0", result);
-        Assert.IsType<string>(result);
+        _ = Assert.IsType<string>(result);
     }
 
     #endregion

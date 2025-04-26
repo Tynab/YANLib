@@ -2,7 +2,6 @@
 using Volo.Abp.AspNetCore.Mvc.Validation;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Validation;
-using YANLib.Object;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Validations;

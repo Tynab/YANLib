@@ -1,6 +1,4 @@
-﻿using YANLib.Object;
-
-namespace YANLib.Tests.Library.Object;
+﻿namespace YANLib.Tests.Library.Object;
 
 public partial class YANObjectTest
 {

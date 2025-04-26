@@ -1,6 +1,4 @@
-﻿using YANLib.Unmanaged;
-
-namespace YANLib.Tests.Library.Unmanaged;
+﻿namespace YANLib.Tests.Library.Unmanaged;
 
 public partial class YANDateTimeTest
 {

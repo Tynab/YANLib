@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using YANLib.Text;
+using YANLib;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult;
 
 namespace Microsoft.Extensions.Hosting;

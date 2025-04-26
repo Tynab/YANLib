@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using YANLib.Benchmarks.Datas;
-using YANLib.Unmanaged;
 using static System.Array;
 using static System.Guid;
 using static System.Linq.Enumerable;

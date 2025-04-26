@@ -1,6 +1,4 @@
-﻿using YANLib.Text;
-
-namespace YANLib.Tests.Library.Text;
+﻿namespace YANLib.Tests.Library.Text;
 
 public partial class YANTextTest
 {

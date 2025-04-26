@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Validation;
-using YANLib.Object;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibDomainErrorCodes;
 

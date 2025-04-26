@@ -5,8 +5,6 @@ using Nest;
 using System;
 using System.Linq;
 using YANLib.EsIndices;
-using YANLib.Object;
-using YANLib.Text;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
 using static YANLib.YANLibConsts.ElasticsearchIndex;

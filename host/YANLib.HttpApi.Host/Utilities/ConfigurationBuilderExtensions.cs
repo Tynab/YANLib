@@ -4,7 +4,6 @@ using Amazon.SecretsManager.Model;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Threading.Tasks;
-using YANLib.Text;
 using static Amazon.RegionEndpoint;
 using static Amazon.Runtime.CredentialManagement.AWSCredentialsFactory;
 using static Newtonsoft.Json.Linq.JObject;
