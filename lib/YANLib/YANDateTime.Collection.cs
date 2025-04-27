@@ -15,7 +15,7 @@ public static partial class YANDateTime
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<T?>? GetWeekOfYears<T>(this System.Collections.IEnumerable input) => input.GetWeekOfYearsImplement<T>();
+    public static IEnumerable<T?>? GetWeekOfYears<T>(this System.Collections.IEnumerable? input) => input.GetWeekOfYearsImplement<T>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

@@ -183,7 +183,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if all elements are <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.AllNullEmptyImplement();
+    public static bool AllNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.AllNullDefaultImplement();
 
     /// <summary>
     /// Determines whether all elements in the specified array are <c>null</c> or empty.
@@ -193,7 +193,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if all elements are <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty<T>(params T?[]? input) where T : class => input.AllNullEmptyImplement();
+    public static bool AllNullEmpty<T>(params T?[]? input) where T : class => input.AllNullDefaultImplement();
 
     /// <summary>
     /// Determines whether any element in the specified collection is <c>null</c> or empty.

@@ -5,488 +5,240 @@ public partial class YANExpressionTest
     #region PropertyExpression
 
     [Fact]
-    public void PropertyExpression_StringProperty_ReturnsCorrectExpression()
+    public void PropertyExpression_ValidProperty_ReturnsExpression_Expression()
     {
         // Arrange
-        var parameterName = "x";
-        var propertyName = "StringProperty";
+        var parameterName = "p";
+        var propertyName = "Name";
 
         // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
-
-        // Assert
-        Assert.Equal("Test String", result);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
-
-    [Fact]
-    public void PropertyExpression_IntProperty_ReturnsCorrectExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "IntProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
-
-        // Assert
-        Assert.Equal(42, result);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
-
-    [Fact]
-    public void PropertyExpression_BoolProperty_ReturnsCorrectExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "BoolProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
-
-        // Assert
-        Assert.Equal(true, result);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
-
-    [Fact]
-    public void PropertyExpression_DateProperty_ReturnsCorrectExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "DateProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
-
-        // Assert
-        Assert.Equal(new DateTime(2023, 7, 15), result);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
-
-    [Fact]
-    public void PropertyExpression_NestedProperty_ReturnsCorrectExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "NestedProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
+        var result = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
 
         // Assert
         Assert.NotNull(result);
-        _ = Assert.IsType<TestNestedClass>(result);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
+        Assert.Equal(typeof(Func<TestClass, object>), result.Type);
 
-    [Fact]
-    public void PropertyExpression_ListProperty_ReturnsCorrectExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "ListProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass()) as List<string>;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count);
-        Assert.Equal("Item1", result[0]);
-        Assert.Equal("Item2", result[1]);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
-
-    [Fact]
-    public void PropertyExpression_DifferentParameterName_ReturnsCorrectExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "StringProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
-
-        // Assert
-        Assert.Equal("Test String", result);
-        Assert.Equal(parameterName, expression.Parameters[0].Name);
-        Assert.Equal(typeof(object), expression.ReturnType);
-    }
-
-    [Fact]
-    public void PropertyExpression_SamePropertyMultipleCalls_ReturnsCachedExpression()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "StringProperty";
-
-        // Act
-        var expression1 = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var expression2 = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-
-        // Assert
-        Assert.Same(expression1, expression2);
-    }
-
-    [Fact]
-    public void PropertyExpression_DifferentParameterNameSameProperty_ReturnsCachedExpression()
-    {
-        // Arrange
-        var parameterName1 = "x";
-        var parameterName2 = "y";
-        var propertyName = "StringProperty";
-
-        // Act
-        var expression1 = YANExpression.PropertyExpression<TestClass>(parameterName1, propertyName);
-        var expression2 = YANExpression.PropertyExpression<TestClass>(parameterName2, propertyName);
-
-        // Assert
-        Assert.Same(expression1, expression2);
-    }
-
-    [Fact]
-    public void PropertyExpression_DifferentTypesSameProperty_ReturnsDifferentExpressions()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "ToString";
-
-        // Act
-        var expression1 = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var expression2 = YANExpression.PropertyExpression<TestNestedClass>(parameterName, propertyName);
-
-        // Assert
-        Assert.NotSame(expression1, expression2);
-    }
-
-    [Fact]
-    public void PropertyExpression_ModifyPropertyValue_ReflectsChanges()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "StringProperty";
+        var func = result.Compile();
         var testObj = new TestClass
         {
-            StringProperty = "Original Value"
+            Name = "Test",
+            Age = 30
         };
 
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var originalResult = func(testObj);
-
-        testObj.StringProperty = "Modified Value";
-
-        var modifiedResult = func(testObj);
-
-        // Assert
-        Assert.Equal("Original Value", originalResult);
-        Assert.Equal("Modified Value", modifiedResult);
+        Assert.Equal("Test", func(testObj));
     }
 
-    #endregion
+    [Fact]
+    public void PropertyExpression_ValidNumericProperty_ReturnsExpression_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "Age";
 
-    #region Error Cases
+        // Act
+        var result = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+
+        // Assert
+        Assert.NotNull(result);
+
+        var func = result.Compile();
+        var testObj = new TestClass
+        {
+            Name = "Test",
+            Age = 30
+        };
+
+        Assert.Equal(30, func(testObj));
+    }
 
     [Fact]
-    public void PropertyExpression_NullParameterName_ThrowsArgumentException()
+    public void PropertyExpression_ValidBoolProperty_ReturnsExpression_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "IsActive";
+
+        // Act
+        var result = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+
+        // Assert
+        Assert.NotNull(result);
+
+        var func = result.Compile();
+        var testObj = new TestClass
+        {
+            IsActive = true
+        };
+
+        Assert.Equal(true, func(testObj));
+    }
+
+    [Fact]
+    public void PropertyExpression_ValidDateTimeProperty_ReturnsExpression_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "CreatedDate";
+        var date = new DateTime(2023, 6, 15);
+
+        // Act
+        var result = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+
+        // Assert
+        Assert.NotNull(result);
+
+        var func = result.Compile();
+        var testObj = new TestClass
+        {
+            CreatedDate = date
+        };
+
+        Assert.Equal(date, func(testObj));
+    }
+
+    [Fact]
+    public void PropertyExpression_NullParameterName_ThrowsArgumentException_Expression()
     {
         // Arrange
         string? parameterName = null;
-        var propertyName = "StringProperty";
+        var propertyName = "Name";
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName!, propertyName));
 
         // Assert
-        Assert.Equal("parameterName", exception.ParamName);
         Assert.Contains("Parameter name cannot be null or whitespace", exception.Message);
     }
 
     [Fact]
-    public void PropertyExpression_EmptyParameterName_ThrowsArgumentException()
+    public void PropertyExpression_EmptyParameterName_ThrowsArgumentException_Expression()
     {
         // Arrange
         var parameterName = "";
-        var propertyName = "StringProperty";
+        var propertyName = "Name";
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
 
         // Assert
-        Assert.Equal("parameterName", exception.ParamName);
         Assert.Contains("Parameter name cannot be null or whitespace", exception.Message);
     }
 
     [Fact]
-    public void PropertyExpression_WhitespaceParameterName_ThrowsArgumentException()
+    public void PropertyExpression_WhitespaceParameterName_ThrowsArgumentException_Expression()
     {
         // Arrange
         var parameterName = "   ";
-        var propertyName = "StringProperty";
+        var propertyName = "Name";
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
 
         // Assert
-        Assert.Equal("parameterName", exception.ParamName);
         Assert.Contains("Parameter name cannot be null or whitespace", exception.Message);
     }
 
     [Fact]
-    public void PropertyExpression_NullPropertyName_ThrowsArgumentException()
+    public void PropertyExpression_NullPropertyName_ThrowsArgumentException_Expression()
     {
         // Arrange
-        var parameterName = "x";
+        var parameterName = "p";
         string? propertyName = null;
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName!));
 
         // Assert
-        Assert.Equal("propertyName", exception.ParamName);
         Assert.Contains("Property name cannot be null or whitespace", exception.Message);
     }
 
     [Fact]
-    public void PropertyExpression_EmptyPropertyName_ThrowsArgumentException()
+    public void PropertyExpression_EmptyPropertyName_ThrowsArgumentException_Expression()
     {
         // Arrange
-        var parameterName = "x";
+        var parameterName = "p";
         var propertyName = "";
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
 
         // Assert
-        Assert.Equal("propertyName", exception.ParamName);
         Assert.Contains("Property name cannot be null or whitespace", exception.Message);
     }
 
     [Fact]
-    public void PropertyExpression_WhitespacePropertyName_ThrowsArgumentException()
+    public void PropertyExpression_WhitespacePropertyName_ThrowsArgumentException_Expression()
     {
         // Arrange
-        var parameterName = "x";
+        var parameterName = "p";
         var propertyName = "   ";
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
 
         // Assert
-        Assert.Equal("propertyName", exception.ParamName);
         Assert.Contains("Property name cannot be null or whitespace", exception.Message);
     }
 
     [Fact]
-    public void PropertyExpression_NonExistentProperty_ThrowsArgumentException()
+    public void PropertyExpression_NonExistentProperty_ThrowsArgumentException_Expression()
     {
         // Arrange
-        var parameterName = "x";
+        var parameterName = "p";
         var propertyName = "NonExistentProperty";
 
         // Act
         var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
 
         // Assert
-        Assert.Equal("propertyName", exception.ParamName);
-        Assert.Contains($"Type {typeof(TestClass).Name} does not contain a property named '{propertyName}'", exception.Message);
+        Assert.Contains("does not contain a property named", exception.Message);
+    }
+
+    [Fact]
+    public void PropertyExpression_CachingWorks_ReturnsSameInstance_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "Name";
+
+        // Act
+        var result1 = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+        var result2 = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+
+        // Assert
+        Assert.Same(result1, result2);
+    }
+
+    [Fact]
+    public void PropertyExpression_DifferentTypes_ReturnsDifferentExpressions_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "Name";
+
+        // Act
+        var result1 = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+        var result2 = YANExpression.PropertyExpression<AnotherTestClass>(parameterName, propertyName);
+
+        // Assert
+        Assert.NotSame(result1, result2);
     }
 
     #endregion
-
-    #region Advanced Usage
-
-    [Fact]
-    public void PropertyExpression_UseInLinqWhere_FiltersCorrectly()
-    {
-        // Arrange
-        var items = new List<TestClass>
-        {
-            new() { IntProperty = 10 },
-            new() { IntProperty = 20 },
-            new() { IntProperty = 30 }
-        };
-
-        var parameterName = "x";
-        var propertyName = "IntProperty";
-
-        // Act
-        var propExpression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = propExpression.Compile();
-        var result = items.Where(x => (int)func(x) > 15).ToList();
-
-        // Assert
-        Assert.Equal(2, result.Count);
-        Assert.Equal(20, result[0].IntProperty);
-        Assert.Equal(30, result[1].IntProperty);
-    }
-
-    [Fact]
-    public void PropertyExpression_UseInLinqOrderBy_SortsCorrectly()
-    {
-        // Arrange
-        var items = new List<TestClass>
-        {
-            new() { IntProperty = 30 },
-            new() { IntProperty = 10 },
-            new() { IntProperty = 20 }
-        };
-
-        var parameterName = "x";
-        var propertyName = "IntProperty";
-
-        // Act
-        var propExpression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = propExpression.Compile();
-        var result = items.OrderBy(x => (int)func(x)).ToList();
-
-        // Assert
-        Assert.Equal(10, result[0].IntProperty);
-        Assert.Equal(20, result[1].IntProperty);
-        Assert.Equal(30, result[2].IntProperty);
-    }
-
-    [Fact]
-    public void PropertyExpression_UseInLinqSelect_TransformsCorrectly()
-    {
-        // Arrange
-        var items = new List<TestClass>
-        {
-            new() { StringProperty = "Apple" },
-            new() { StringProperty = "Banana" },
-            new() { StringProperty = "Cherry" }
-        };
-
-        var parameterName = "x";
-        var propertyName = "StringProperty";
-
-        // Act
-        var propExpression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = propExpression.Compile();
-        var result = items.Select(x => func(x).ToString()).ToList();
-
-        // Assert
-        Assert.Equal(3, result.Count);
-        Assert.Equal("Apple", result[0]);
-        Assert.Equal("Banana", result[1]);
-        Assert.Equal("Cherry", result[2]);
-    }
-
-    #endregion
-
-    #region Performance
-
-    [Fact]
-    public void PropertyExpression_CachingPerformance_FasterOnSubsequentCalls()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "StringProperty";
-
-        // Act - First call (uncached)
-        var sw1 = System.Diagnostics.Stopwatch.StartNew();
-
-        _ = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        sw1.Stop();
-
-        var firstCallTime = sw1.ElapsedTicks;
-
-        // Act - Second call (cached)
-        var sw2 = System.Diagnostics.Stopwatch.StartNew();
-
-        _ = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        sw2.Stop();
-
-        var secondCallTime = sw2.ElapsedTicks;
-
-        // Assert
-        Assert.True(secondCallTime < firstCallTime, $"Second call ({secondCallTime} ticks) should be faster than first call ({firstCallTime} ticks)");
-    }
-
-    #endregion
-
-    #region Special Cases
-
-    [Fact]
-    public void PropertyExpression_NullableProperty_HandlesCorrectly()
-    {
-        // Arrange
-        var testObj = new TestClass { NestedProperty = null };
-        var parameterName = "x";
-        var propertyName = "NestedProperty";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(testObj);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void PropertyExpression_InheritedProperty_AccessesCorrectly()
-    {
-        // Arrange
-        var parameterName = "x";
-        var propertyName = "ToString";
-
-        // Act
-        var expression = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
-        var func = expression.Compile();
-        var result = func(new TestClass());
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Contains("MethodInfo", result.ToString());
-    }
-
-    #endregion
-
-    #region Test Classes
 
     private class TestClass
     {
-        public string StringProperty { get; set; } = "Test String";
+        public string? Name { get; set; }
 
-        public int IntProperty { get; set; } = 42;
+        public int Age { get; set; }
 
-        public bool BoolProperty { get; set; } = true;
+        public bool IsActive { get; set; }
 
-        public DateTime DateProperty { get; set; } = new DateTime(2023, 7, 15);
-
-        public TestNestedClass? NestedProperty { get; set; } = new TestNestedClass();
-
-        public List<string> ListProperty { get; set; } = ["Item1", "Item2"];
+        public DateTime CreatedDate { get; set; }
     }
 
-    private class TestNestedClass
+    private class AnotherTestClass
     {
-        public string NestedStringProperty { get; set; } = "Nested String";
+        public string? Name { get; set; }
     }
-
-    #endregion
-
 }

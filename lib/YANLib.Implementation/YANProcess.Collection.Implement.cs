@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.Diagnostics.Process;
 using static System.Threading.Tasks.Task;
 
 namespace YANLib.Implementation;
@@ -15,7 +14,7 @@ internal static partial class YANProcess
             return;
         }
 
-        await WhenAll(names.SelectMany(GetProcessesByName).Select(p => KillAndDisposeAsync(p, cancellation)));
+        await WhenAll(names.Select(KillAndDisposeAsync));
     }
 
     [DebuggerHidden]

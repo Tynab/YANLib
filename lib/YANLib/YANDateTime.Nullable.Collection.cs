@@ -15,5 +15,5 @@ public static partial class YANDateTime
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<DateTime?>? ChangeTimeZones(this System.Collections.IEnumerable input, object? tzSrc = null, object? tzDst = null) => input.ChangeTimeZonesImplement(tzSrc, tzDst);
+    public static IEnumerable<DateTime?>? ChangeTimeZones(this System.Collections.IEnumerable? input, object? tzSrc = null, object? tzDst = null) => input.ChangeTimeZonesImplement(tzSrc, tzDst);
 }

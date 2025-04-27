@@ -18,31 +18,6 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, t => t.GetProperties(Public | Instance | DeclaredOnly));
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static bool IsExistItemImplement(this IEnumerable? input) => input.IsNotNullImplement() && input switch
-    {
-        Array array => array.Length.IsNotDefaultImplement(),
-        BlockingCollection<object?> blockingCollection => blockingCollection.Count.IsNotDefaultImplement(),
-        ConcurrentBag<object?> concurrentBag => !concurrentBag.IsEmpty,
-        ConcurrentQueue<object?> concurrentQueue => !concurrentQueue.IsEmpty,
-        ConcurrentStack<object?> concurrentStack => !concurrentStack.IsEmpty,
-        ConcurrentDictionary<object, object?> concurrentDictionary => !concurrentDictionary.IsEmpty,
-        ICollection nonGenericCollection => nonGenericCollection.Count.IsNotDefaultImplement(),
-        ICollection<object?> genericCollection => genericCollection.Count.IsNotDefaultImplement(),
-        IImmutableSet<object?> immutableSet => immutableSet.Count.IsNotDefaultImplement(),
-        IImmutableList<object?> immutableList => immutableList.Count.IsNotDefaultImplement(),
-        IImmutableQueue<object?> immutableQueue => !immutableQueue.IsEmpty,
-        IImmutableStack<object?> immutableStack => !immutableStack.IsEmpty,
-        IImmutableDictionary<object, object?> immutableDictionary => immutableDictionary.Count.IsNotDefaultImplement(),
-        IReadOnlyCollection<object?> readOnlyCollection => readOnlyCollection.Count.IsNotDefaultImplement(),
-        _ => input.Cast<object?>().Any()
-    };
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static bool IsNotExistItemImplement(this IEnumerable? input) => !input.IsExistItemImplement();
-
     #endregion
 
     #region Internal
@@ -95,15 +70,27 @@ internal static partial class YANObject
 
     #endregion
 
+    #region NullDefault
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNullDefaultImplement<T>(this T? input) where T : class => input.IsNullImplement() || input.AllPropertiesDefaultImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static bool IsNotNullDefaultImplement<T>(this T? input) where T : class => input.IsNotNullImplement() && input.AnyPropertiesNotDefaultImplement();
+
+    #endregion
+
     #region NullEmpty
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNullEmptyImplement<T>([NotNullWhen(false)] this IEnumerable<T>? input) => input.IsNullImplement() || input.IsNotExistItemImplement();
+    internal static bool IsNullEmptyImplement<T>([NotNullWhen(false)] this IEnumerable<T>? input) => input.IsNullImplement() || !input.Any();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => !input.IsNullEmptyImplement();
+    internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNullImplement() && input.Any();
 
     #endregion
 

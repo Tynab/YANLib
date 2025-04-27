@@ -15,9 +15,9 @@ public static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
+    public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable input, object? defaultValue = null, params string?[]? format) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
+    public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable? input, object? defaultValue = null, params string?[]? format) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
 }

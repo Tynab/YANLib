@@ -11,7 +11,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MinImplement<T>(this System.Collections.IEnumerable input) => input.IsNullImplement() ? default : input.Cast<object?>().MinImplement<T?>();
+    internal static T? MinImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().MinImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -19,7 +19,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MaxImplement<T>(this System.Collections.IEnumerable input) => input.IsNullImplement() ? default : input.Cast<object?>().MaxImplement<T?>();
+    internal static T? MaxImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().MaxImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -27,7 +27,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AverageImplement<T>(this System.Collections.IEnumerable input) => input.IsNullImplement() ? default : input.Cast<object?>().AverageImplement<T?>();
+    internal static T? AverageImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().AverageImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -35,7 +35,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? SumImplement<T>(this System.Collections.IEnumerable input) => input.IsNullImplement() ? default : input.Cast<object?>().SumImplement<T?>();
+    internal static T? SumImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().SumImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

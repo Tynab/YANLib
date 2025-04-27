@@ -5,160 +5,111 @@ public partial class YANObjectTest
     #region AllPropertiesDefault
 
     [Fact]
-    public void AllPropertiesDefault_NullInput_ReturnsFalse()
+    public void AllPropertiesDefault_NullObject_ReturnsFalse_Property()
     {
         // Arrange
-        TestClass? input = null;
+        TestClass? obj = null;
 
         // Act
-        var result = input.AllPropertiesDefault();
+        var result = obj.AllPropertiesDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesDefault_AllDefaultProperties_ReturnsTrue()
+    public void AllPropertiesDefault_ObjectWithAllDefaultProperties_ReturnsTrue_Property()
     {
         // Arrange
-        var input = new TestClass();
+        var obj = new TestClass();
 
         // Act
-        var result = input.AllPropertiesDefault();
+        var result = obj.AllPropertiesDefault();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllPropertiesDefault_MixedProperties_ReturnsFalse()
+    public void AllPropertiesDefault_ObjectWithSomeNonDefaultProperties_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
-            Name = "Test"
+            Id = 1
         };
 
         // Act
-        var result = input.AllPropertiesDefault();
+        var result = obj.AllPropertiesDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesDefault_NoDefaultProperties_ReturnsFalse()
+    public void AllPropertiesDefaults_NullCollection_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass
-        {
-            Date = new DateTime(2023, 6, 15),
-            Name = "Test"
-        };
+        IEnumerable<TestClass?>? collection = null;
 
         // Act
-        var result = input.AllPropertiesDefault();
+        var result = collection.AllPropertiesDefaults();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesDefaults_NullCollection_ReturnsFalse()
+    public void AllPropertiesDefaults_EmptyCollection_ReturnsFalse_Property()
     {
         // Arrange
-        IEnumerable<TestClass>? input = null;
+        var collection = Array.Empty<TestClass?>();
 
         // Act
-        var result = input.AllPropertiesDefaults();
+        var result = collection.AllPropertiesDefaults();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesDefaults_EmptyCollection_ReturnsFalse()
+    public void AllPropertiesDefaults_CollectionWithAllDefaultObjects_ReturnsTrue_Property()
     {
         // Arrange
-        var input = Array.Empty<TestClass>();
-
-        // Act
-        var result = input.AllPropertiesDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_AllObjectsWithDefaultProperties_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass[] { new(), new(), new() };
-
-        // Act
-        var result = input.AllPropertiesDefaults();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_MixedObjects_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass[]
+        var collection = new TestClass?[]
         {
             new(),
-            new() { Name = "Test" },
+            new(),
             new()
         };
 
         // Act
-        var result = input.AllPropertiesDefaults();
+        var result = collection.AllPropertiesDefaults();
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
     [Fact]
-    public void AllPropertiesDefaults_NoObjectsWithDefaultProperties_ReturnsFalse()
+    public void AllPropertiesDefaults_CollectionWithSomeNonDefaultObjects_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass[]
+        var collection = new TestClass?[]
         {
-            new() { Name = "Test1" },
-            new() { Name = "Test2" }
+            new(),
+            new() { Id = 1 },
+            new()
         };
 
         // Act
-        var result = input.AllPropertiesDefaults();
+        var result = collection.AllPropertiesDefaults();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_NullArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AllPropertiesDefaults((TestClass[]?)null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_Params_EmptyArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AllPropertiesDefaults<TestClass>();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_Params_AllObjectsWithDefaultProperties_ReturnsTrue()
+    public void AllPropertiesDefaults_ParamsOverload_AllDefaultObjects_ReturnsTrue_Property()
     {
         // Act
         var result = YANObject.AllPropertiesDefaults(new TestClass(), new TestClass(), new TestClass());
@@ -168,243 +119,57 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllPropertiesDefaults_Params_MixedObjects_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AllPropertiesDefaults(new TestClass(), new TestClass { Name = "Test" }, new TestClass());
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithNames_NullInput_ReturnsFalse()
+    public void AllPropertiesDefault_WithSpecificPropertyNames_AllDefaultValues_ReturnsTrue_Property()
     {
         // Arrange
-        TestClass? input = null;
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithNames_NullNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        IEnumerable<string?>? names = null;
-
-        // Act
-        var result = input.AllPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithNames_EmptyNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        var names = Array.Empty<string>();
-
-        // Act
-        var result = input.AllPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithNames_AllWhitespaceNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        var names = new[] { " ", "\t" };
-
-        // Act
-        var result = input.AllPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithNames_SpecifiedPropertiesAllDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
-            Date = new DateTime(2023, 6, 15)
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesDefault(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithNames_SpecifiedPropertiesMixed_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass
-        {
+            Id = 1,
             Name = "Test"
         };
 
-        var names = new[] { "Name", "Date" };
+        var propertyNames = new[] { "Active", "Date" };
 
         // Act
-        var result = input.AllPropertiesDefault(names);
+        var result = obj.AllPropertiesDefault(propertyNames);
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
     [Fact]
-    public void AllPropertiesDefault_WithNames_NonExistentProperty_ReturnsTrue()
+    public void AllPropertiesDefault_WithSpecificPropertyNames_SomeNonDefaultValues_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
+            Id = 1,
             Name = "Test"
         };
 
-        var names = new[] { "NonExistentProperty" };
+        var propertyNames = new[] { "Id", "Date" };
 
         // Act
-        var result = input.AllPropertiesDefault(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_WithNames_NullCollection_ReturnsFalse()
-    {
-        // Arrange
-        IEnumerable<TestClass>? input = null;
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesDefaults(names);
+        var result = obj.AllPropertiesDefault(propertyNames);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesDefaults_WithNames_NullNames_ReturnsFalse()
+    public void AllPropertiesDefaults_WithSpecificPropertyNames_AllDefaultValues_ReturnsTrue_Property()
     {
         // Arrange
-        var input = new[] { new TestClass() };
-        IEnumerable<string?>? names = null;
-
-        // Act
-        var result = input.AllPropertiesDefaults(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_WithNames_AllObjectsWithSpecifiedPropertiesDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
+        var collection = new TestClass?[]
         {
-            new TestClass { Date = new DateTime(2023, 6, 15) },
-            new TestClass { Date = new DateTime(2023, 6, 16) }
-        };
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesDefaults(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_WithNames_MixedObjects_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Date = new DateTime(2023, 6, 15) },
-            new TestClass { Name = "Test", Date = new DateTime(2023, 6, 16) }
-        };
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesDefaults(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithParamNames_NullInput_ReturnsFalse()
-    {
-        // Arrange
-        TestClass? input = null;
-
-        // Act
-        var result = input.AllPropertiesDefault("Name");
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithParamNames_NullNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-
-        // Act
-        var result = input.AllPropertiesDefault((string[]?)null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefault_WithParamNames_SpecifiedPropertiesAllDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Date = new DateTime(2023, 6, 15)
+            new() { Id = 1, Name = "Test1" },
+            new() { Id = 2, Name = "Test2" }
         };
 
-        // Act
-        var result = input.AllPropertiesDefault("Name");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesDefaults_WithParamNames_AllObjectsWithSpecifiedPropertiesDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Date = new DateTime(2023, 6, 15) },
-            new TestClass { Date = new DateTime(2023, 6, 16) }
-        };
+        var propertyNames = new[] { "Active", "Date" };
 
         // Act
-        var result = input.AllPropertiesDefaults("Name");
+        var result = collection.AllPropertiesDefaults(propertyNames);
 
         // Assert
         Assert.True(result);
@@ -415,329 +180,150 @@ public partial class YANObjectTest
     #region AllPropertiesNotDefault
 
     [Fact]
-    public void AllPropertiesNotDefault_NullInput_ReturnsFalse()
+    public void AllPropertiesNotDefault_NullObject_ReturnsFalse_Property()
     {
         // Arrange
-        TestClass? input = null;
+        TestClass? obj = null;
 
         // Act
-        var result = input.AllPropertiesNotDefault();
+        var result = obj.AllPropertiesNotDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_AllDefaultProperties_ReturnsFalse()
+    public void AllPropertiesNotDefault_ObjectWithAllNonDefaultProperties_ReturnsTrue_Property()
     {
         // Arrange
-        var input = new TestClass();
-
-        // Act
-        var result = input.AllPropertiesNotDefault();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_MixedProperties_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass { Name = "Test" };
-
-        // Act
-        var result = input.AllPropertiesNotDefault();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_NoDefaultProperties_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
-            Date = new DateTime(2023, 6, 15),
+            Id = 1,
+            Name = "Test",
+            Active = true,
+            Date = DateTime.Now
+        };
+
+        // Act
+        var result = obj.AllPropertiesNotDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllPropertiesNotDefault_ObjectWithSomeDefaultProperties_ReturnsFalse_Property()
+    {
+        // Arrange
+        var obj = new TestClass
+        {
+            Id = 1,
             Name = "Test"
         };
 
         // Act
-        var result = input.AllPropertiesNotDefault();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_NullCollection_ReturnsFalse()
-    {
-        // Arrange
-        IEnumerable<TestClass>? input = null;
-
-        // Act
-        var result = input.AllPropertiesNotDefaults();
+        var result = obj.AllPropertiesNotDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_EmptyCollection_ReturnsFalse()
+    public void AllPropertiesNotDefaults_NullCollection_ReturnsFalse_Property()
     {
         // Arrange
-        var input = Array.Empty<TestClass>();
+        IEnumerable<TestClass?>? collection = null;
 
         // Act
-        var result = input.AllPropertiesNotDefaults();
+        var result = collection.AllPropertiesNotDefaults();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_AllObjectsWithNoDefaultProperties_ReturnsTrue()
+    public void AllPropertiesNotDefaults_EmptyCollection_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new[]
+        var collection = Array.Empty<TestClass?>();
+
+        // Act
+        var result = collection.AllPropertiesNotDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllPropertiesNotDefaults_CollectionWithAllNonDefaultObjects_ReturnsTrue_Property()
+    {
+        // Arrange
+        var collection = new TestClass?[]
         {
-            new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test1" },
-            new TestClass { Date = new DateTime(2023, 6, 16), Name = "Test2" }
+            new() { Id = 1, Name = "Test1", Active = true, Date = DateTime.Now },
+            new() { Id = 2, Name = "Test2", Active = true, Date = DateTime.Now }
         };
 
         // Act
-        var result = input.AllPropertiesNotDefaults();
+        var result = collection.AllPropertiesNotDefaults();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_MixedObjects_ReturnsFalse()
+    public void AllPropertiesNotDefaults_CollectionWithSomeDefaultProperties_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new[]
+        var collection = new TestClass?[]
         {
-            new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test" },
-            new TestClass { Date = new DateTime(2023, 6, 16) }
+            new() { Id = 1, Name = "Test1", Active = true, Date = DateTime.Now },
+            new() { Id = 2, Name = "Test2" }
         };
 
         // Act
-        var result = input.AllPropertiesNotDefaults();
+        var result = collection.AllPropertiesNotDefaults();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AllPropertiesNotDefaults_AllObjectsWithDefaultProperties_ReturnsFalse()
+    public void AllPropertiesNotDefault_WithSpecificPropertyNames_AllNonDefaultValues_ReturnsTrue_Property()
     {
         // Arrange
-        var input = new[] { new TestClass(), new TestClass() };
-
-        // Act
-        var result = input.AllPropertiesNotDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_Params_NullArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AllPropertiesNotDefaults((TestClass[]?)null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_Params_EmptyArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AllPropertiesNotDefaults<TestClass>();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_Params_AllObjectsWithNoDefaultProperties_ReturnsTrue()
-    {
-        // Act
-        var result = YANObject.AllPropertiesNotDefaults(new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test1" }, new TestClass { Date = new DateTime(2023, 6, 16), Name = "Test2" });
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_WithNames_NullInput_ReturnsFalse()
-    {
-        // Arrange
-        TestClass? input = null;
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_WithNames_NullNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        IEnumerable<string?>? names = null;
-
-        // Act
-        var result = input.AllPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_WithNames_EmptyNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        var names = Array.Empty<string>();
-
-        // Act
-        var result = input.AllPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_WithNames_SpecifiedPropertiesAllNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
+            Id = 1,
             Name = "Test"
         };
 
-        var names = new[] { "Name" };
+        var propertyNames = new[] { "Id", "Name" };
 
         // Act
-        var result = input.AllPropertiesNotDefault(names);
+        var result = obj.AllPropertiesNotDefault(propertyNames);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AllPropertiesNotDefault_WithNames_SpecifiedPropertiesMixed_ReturnsFalse()
+    public void AllPropertiesNotDefault_WithSpecificPropertyNames_SomeDefaultValues_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
+            Id = 1,
             Name = "Test"
         };
 
-        var names = new[] { "Name", "Date" };
+        var propertyNames = new[] { "Id", "Date" };
 
         // Act
-        var result = input.AllPropertiesNotDefault(names);
+        var result = obj.AllPropertiesNotDefault(propertyNames);
 
         // Assert
         Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_WithNames_NonExistentProperty_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test"
-        };
-
-        var names = new[] { "NonExistentProperty" };
-
-        // Act
-        var result = input.AllPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_WithNames_AllObjectsWithSpecifiedPropertiesNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test1" },
-            new TestClass { Name = "Test2" }
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesNotDefaults(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_WithNames_MixedObjects_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test" },
-            new TestClass()
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AllPropertiesNotDefaults(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefault_WithParamNames_SpecifiedPropertiesAllNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test"
-        };
-
-        // Act
-        var result = input.AllPropertiesNotDefault("Name");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AllPropertiesNotDefaults_WithParamNames_AllObjectsWithSpecifiedPropertiesNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test1" },
-            new TestClass { Name = "Test2" }
-        };
-
-        // Act
-        var result = input.AllPropertiesNotDefaults("Name");
-
-        // Assert
-        Assert.True(result);
     }
 
     #endregion
@@ -745,329 +331,147 @@ public partial class YANObjectTest
     #region AnyPropertiesDefault
 
     [Fact]
-    public void AnyPropertiesDefault_NullInput_ReturnsFalse()
+    public void AnyPropertiesDefault_NullObject_ReturnsFalse_Property()
     {
         // Arrange
-        TestClass? input = null;
+        TestClass? obj = null;
 
         // Act
-        var result = input.AnyPropertiesDefault();
+        var result = obj.AnyPropertiesDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AnyPropertiesDefault_AllDefaultProperties_ReturnsTrue()
+    public void AnyPropertiesDefault_ObjectWithAllNonDefaultProperties_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass();
+        var obj = new TestClass
+        {
+            Id = 1,
+            Name = "Test",
+            Active = true,
+            Date = DateTime.Now
+        };
 
         // Act
-        var result = input.AnyPropertiesDefault();
+        var result = obj.AnyPropertiesDefault();
 
         // Assert
-        Assert.True(result);
+        Assert.False(result);
     }
 
     [Fact]
-    public void AnyPropertiesDefault_MixedProperties_ReturnsTrue()
+    public void AnyPropertiesDefault_ObjectWithSomeDefaultProperties_ReturnsTrue_Property()
     {
         // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
+            Id = 1,
             Name = "Test"
         };
 
         // Act
-        var result = input.AnyPropertiesDefault();
+        var result = obj.AnyPropertiesDefault();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyPropertiesDefault_NoDefaultProperties_ReturnsFalse()
+    public void AnyPropertiesDefaults_NullCollection_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass
+        IEnumerable<TestClass?>? collection = null;
+
+        // Act
+        var result = collection.AnyPropertiesDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesDefaults_EmptyCollection_ReturnsFalse_Property()
+    {
+        // Arrange
+        var collection = Array.Empty<TestClass?>();
+
+        // Act
+        var result = collection.AnyPropertiesDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesDefaults_CollectionWithNoDefaultProperties_ReturnsFalse_Property()
+    {
+        // Arrange
+        var collection = new TestClass?[]
         {
-            Date = new DateTime(2023, 6, 15),
+            new() { Id = 1, Name = "Test1", Active = true, Date = DateTime.Now },
+            new() { Id = 2, Name = "Test2", Active = true, Date = DateTime.Now }
+        };
+
+        // Act
+        var result = collection.AnyPropertiesDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesDefaults_CollectionWithSomeDefaultProperties_ReturnsTrue_Property()
+    {
+        // Arrange
+        var collection = new TestClass?[]
+        {
+            new() { Id = 1, Name = "Test1", Active = true, Date = DateTime.Now },
+            new() { Id = 2, Name = "Test2" }
+        };
+
+        // Act
+        var result = collection.AnyPropertiesDefaults();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesDefault_WithSpecificPropertyNames_NoDefaultValues_ReturnsFalse_Property()
+    {
+        // Arrange
+        var obj = new TestClass
+        {
+            Id = 1,
             Name = "Test"
         };
 
+        var propertyNames = new[] { "Id", "Name" };
+
         // Act
-        var result = input.AnyPropertiesDefault();
+        var result = obj.AnyPropertiesDefault(propertyNames);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AnyPropertiesDefaults_NullCollection_ReturnsFalse()
+    public void AnyPropertiesDefault_WithSpecificPropertyNames_SomeDefaultValues_ReturnsTrue_Property()
     {
         // Arrange
-        IEnumerable<TestClass>? input = null;
-
-        // Act
-        var result = input.AnyPropertiesDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_EmptyCollection_ReturnsFalse()
-    {
-        // Arrange
-        var input = Array.Empty<TestClass>();
-
-        // Act
-        var result = input.AnyPropertiesDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_AllObjectsWithDefaultProperties_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[] { new TestClass(), new TestClass() };
-
-        // Act
-        var result = input.AnyPropertiesDefaults();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_MixedObjects_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
+        var obj = new TestClass
         {
-            new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test" },
-            new TestClass()
-        };
-
-        // Act
-        var result = input.AnyPropertiesDefaults();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_NoObjectsWithDefaultProperties_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test1" },
-            new TestClass { Date = new DateTime(2023, 6, 16), Name = "Test2" }
-        };
-
-        // Act
-        var result = input.AnyPropertiesDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_Params_NullArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AnyPropertiesDefaults((TestClass[]?)null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_Params_EmptyArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AnyPropertiesDefaults<TestClass>();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_Params_AllObjectsWithDefaultProperties_ReturnsTrue()
-    {
-        // Act
-        var result = YANObject.AnyPropertiesDefaults(new TestClass(), new TestClass());
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithNames_NullInput_ReturnsFalse()
-    {
-        // Arrange
-        TestClass? input = null;
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithNames_NullNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        IEnumerable<string?>? names = null;
-
-        // Act
-        var result = input.AnyPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithNames_EmptyNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        var names = Array.Empty<string>();
-
-        // Act
-        var result = input.AnyPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithNames_SpecifiedPropertiesAllDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Date = new DateTime(2023, 6, 15)
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesDefault(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithNames_SpecifiedPropertiesMixed_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
+            Id = 1,
             Name = "Test"
         };
 
-        var names = new[] { "Name", "Date" };
+        var propertyNames = new[] { "Id", "Date" };
 
         // Act
-        var result = input.AnyPropertiesDefault(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithNames_SpecifiedPropertiesAllNotDefault_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test"
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_WithNames_AnyObjectWithSpecifiedPropertiesDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test" },
-            new TestClass()
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesDefaults(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_WithNames_NoObjectsWithSpecifiedPropertiesDefault_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test1" },
-            new TestClass { Name = "Test2" }
-        };
-
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesDefaults(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefault_WithParamNames_SpecifiedPropertiesAnyDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test"
-        };
-
-        // Act
-        var result = input.AnyPropertiesDefault("Date");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesDefaults_WithParamNames_AnyObjectWithSpecifiedPropertiesDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test" },
-            new TestClass()
-        };
-
-        // Act
-        var result = input.AnyPropertiesDefaults("Name");
+        var result = obj.AnyPropertiesDefault(propertyNames);
 
         // Assert
         Assert.True(result);
@@ -1078,324 +482,136 @@ public partial class YANObjectTest
     #region AnyPropertiesNotDefault
 
     [Fact]
-    public void AnyPropertiesNotDefault_NullInput_ReturnsFalse()
+    public void AnyPropertiesNotDefault_NullObject_ReturnsFalse_Property()
     {
         // Arrange
-        TestClass? input = null;
+        TestClass? obj = null;
 
         // Act
-        var result = input.AnyPropertiesNotDefault();
+        var result = obj.AnyPropertiesNotDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_AllDefaultProperties_ReturnsFalse()
+    public void AnyPropertiesNotDefault_ObjectWithAllDefaultProperties_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass();
+        var obj = new TestClass();
 
         // Act
-        var result = input.AnyPropertiesNotDefault();
+        var result = obj.AnyPropertiesNotDefault();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_MixedProperties_ReturnsTrue()
+    public void AnyPropertiesNotDefault_ObjectWithSomeNonDefaultProperties_ReturnsTrue_Property()
     {
         // Arrange
-        var input = new TestClass
+        var obj = new TestClass
         {
-            Name = "Test"
+            Id = 1
         };
 
         // Act
-        var result = input.AnyPropertiesNotDefault();
+        var result = obj.AnyPropertiesNotDefault();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyPropertiesNotDefault_NoDefaultProperties_ReturnsTrue()
+    public void AnyPropertiesNotDefaults_NullCollection_ReturnsFalse_Property()
     {
         // Arrange
-        var input = new TestClass
+        IEnumerable<TestClass?>? collection = null;
+
+        // Act
+        var result = collection.AnyPropertiesNotDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesNotDefaults_EmptyCollection_ReturnsFalse_Property()
+    {
+        // Arrange
+        var collection = Array.Empty<TestClass?>();
+
+        // Act
+        var result = collection.AnyPropertiesNotDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesNotDefaults_CollectionWithAllDefaultObjects_ReturnsFalse_Property()
+    {
+        // Arrange
+        var collection = new TestClass?[]
         {
-            Date = new DateTime(2023, 6, 15),
-            Name = "Test"
+            new(),
+            new(),
+            new()
         };
 
         // Act
-        var result = input.AnyPropertiesNotDefault();
+        var result = collection.AnyPropertiesNotDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesNotDefaults_CollectionWithSomeNonDefaultObjects_ReturnsTrue_Property()
+    {
+        // Arrange
+        var collection = new TestClass?[]
+        {
+            new(),
+            new() { Id = 1 },
+            new()
+        };
+
+        // Act
+        var result = collection.AnyPropertiesNotDefaults();
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_NullCollection_ReturnsFalse()
+    public void AnyPropertiesNotDefault_WithSpecificPropertyNames_AllDefaultValues_ReturnsFalse_Property()
     {
         // Arrange
-        IEnumerable<TestClass>? input = null;
+        var obj = new TestClass();
+        var propertyNames = new[] { "Id", "Name" };
 
         // Act
-        var result = input.AnyPropertiesNotDefaults();
+        var result = obj.AnyPropertiesNotDefault(propertyNames);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_EmptyCollection_ReturnsFalse()
+    public void AnyPropertiesNotDefault_WithSpecificPropertyNames_SomeNonDefaultValues_ReturnsTrue_Property()
     {
         // Arrange
-        var input = Array.Empty<TestClass>();
-
-        // Act
-        var result = input.AnyPropertiesNotDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_AllObjectsWithDefaultProperties_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[] { new TestClass(), new TestClass() };
-
-        // Act
-        var result = input.AnyPropertiesNotDefaults();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_MixedObjects_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
+        var obj = new TestClass
         {
-            new TestClass { Name = "Test" },
-            new TestClass()
+            Id = 1
         };
 
-        // Act
-        var result = input.AnyPropertiesNotDefaults();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_AllObjectsWithNotDefaultProperties_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Date = new DateTime(2023, 6, 15), Name = "Test1" },
-            new TestClass { Date = new DateTime(2023, 6, 16), Name = "Test2" }
-        };
+        var propertyNames = new[] { "Id", "Name" };
 
         // Act
-        var result = input.AnyPropertiesNotDefaults();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_Params_NullArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AnyPropertiesNotDefaults((TestClass[]?)null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_Params_EmptyArray_ReturnsFalse()
-    {
-        // Act
-        var result = YANObject.AnyPropertiesNotDefaults<TestClass>();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_Params_AnyObjectWithNotDefaultProperties_ReturnsTrue()
-    {
-        // Act
-        var result = YANObject.AnyPropertiesNotDefaults(new TestClass { Name = "Test" }, new TestClass());
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithNames_NullInput_ReturnsFalse()
-    {
-        // Arrange
-        TestClass? input = null;
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithNames_NullNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        IEnumerable<string?>? names = null;
-
-        // Act
-        var result = input.AnyPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithNames_EmptyNames_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        var names = Array.Empty<string>();
-
-        // Act
-        var result = input.AnyPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithNames_SpecifiedPropertiesAllDefault_ReturnsFalse()
-    {
-        // Arrange
-        var input = new TestClass();
-        var names = new[] { "Name", "Date" };
-
-        // Act
-        var result = input.AnyPropertiesNotDefault(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithNames_SpecifiedPropertiesMixed_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test"
-        };
-
-        var names = new[] { "Name", "Date" };
-
-        // Act
-        var result = input.AnyPropertiesNotDefault(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithNames_SpecifiedPropertiesAllNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test",
-            Date = new DateTime(2023, 6, 15)
-        };
-
-        var names = new[] { "Name", "Date" };
-
-        // Act
-        var result = input.AnyPropertiesNotDefault(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_WithNames_AnyObjectWithSpecifiedPropertiesNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test" },
-            new TestClass()
-        };
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesNotDefaults(names);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_WithNames_NoObjectsWithSpecifiedPropertiesNotDefault_ReturnsFalse()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass(),
-            new TestClass()
-        };
-        var names = new[] { "Name" };
-
-        // Act
-        var result = input.AnyPropertiesNotDefaults(names);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefault_WithParamNames_SpecifiedPropertiesAnyNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new TestClass
-        {
-            Name = "Test"
-        };
-
-        // Act
-        var result = input.AnyPropertiesNotDefault("Name");
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void AnyPropertiesNotDefaults_WithParamNames_AnyObjectWithSpecifiedPropertiesNotDefault_ReturnsTrue()
-    {
-        // Arrange
-        var input = new[]
-        {
-            new TestClass { Name = "Test" },
-            new TestClass()
-        };
-
-        // Act
-        var result = input.AnyPropertiesNotDefaults("Name");
+        var result = obj.AnyPropertiesNotDefault(propertyNames);
 
         // Assert
         Assert.True(result);

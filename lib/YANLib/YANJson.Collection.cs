@@ -16,7 +16,7 @@ public static partial class YANJson
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<string?>? Serializes(this System.Collections.IEnumerable input, JsonSerializerOptions? options = null) => input.SerializesImplement(options);
+    public static IEnumerable<string?>? Serializes(this System.Collections.IEnumerable? input, JsonSerializerOptions? options = null) => input.SerializesImplement(options);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -28,7 +28,7 @@ public static partial class YANJson
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<byte[]?>? SerializesToBytes(this System.Collections.IEnumerable input, JsonSerializerOptions? options = null) => input.SerializesToBytesImplement(options);
+    public static IEnumerable<byte[]?>? SerializesToBytes(this System.Collections.IEnumerable? input, JsonSerializerOptions? options = null) => input.SerializesToBytesImplement(options);
 
     [DebuggerHidden]
     [DebuggerStepThrough]

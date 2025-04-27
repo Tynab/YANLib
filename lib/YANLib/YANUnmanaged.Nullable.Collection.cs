@@ -15,5 +15,5 @@ public static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static IEnumerable<T?>? Parses<T>(this System.Collections.IEnumerable input) => input.ParsesImplement<T>();
+    public static IEnumerable<T?>? Parses<T>(this System.Collections.IEnumerable? input) => input.ParsesImplement<T>();
 }

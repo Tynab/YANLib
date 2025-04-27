@@ -15,7 +15,7 @@ internal static partial class YANJson
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? SerializesImplement(this System.Collections.IEnumerable input, JsonSerializerOptions? options = null)
+    internal static IEnumerable<string?>? SerializesImplement(this System.Collections.IEnumerable? input, JsonSerializerOptions? options = null)
         => input.IsNullImplement() ? default : input.Cast<object?>().SerializesImplement(options);
 
     [DebuggerHidden]
@@ -28,7 +28,7 @@ internal static partial class YANJson
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<byte[]?>? SerializesToBytesImplement(this System.Collections.IEnumerable input, JsonSerializerOptions? options = null)
+    internal static IEnumerable<byte[]?>? SerializesToBytesImplement(this System.Collections.IEnumerable? input, JsonSerializerOptions? options = null)
         => input.IsNullImplement() ? default : input.Cast<object?>().SerializesToBytesImplement(options);
 
     [DebuggerHidden]

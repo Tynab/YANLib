@@ -35,6 +35,6 @@ internal static partial class YANDateTime
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<DateTime?>? ChangeTimeZonesImplement(this System.Collections.IEnumerable input, object? tzSrc = null, object? tzDst = null)
+    internal static IEnumerable<DateTime?>? ChangeTimeZonesImplement(this System.Collections.IEnumerable? input, object? tzSrc = null, object? tzDst = null)
         => input.IsNullImplement() ? default : input.Cast<object?>().ChangeTimeZonesImplement(tzSrc, tzDst);
 }

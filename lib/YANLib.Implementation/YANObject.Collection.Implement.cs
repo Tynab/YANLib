@@ -44,27 +44,27 @@ internal static partial class YANObject
 
     #endregion
 
-    #region NullEmpty
+    #region NullDefault
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AllNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullImplement() && x.AnyPropertiesNotDefaultImplement());
+    internal static bool AllNullDefaultImplement<T>(this IEnumerable<T?>? input) where T : class
+        => typeof(T) == typeof(string) ? YANText.AllNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AnyNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullImplement() || x.AllPropertiesDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AnyNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AllNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullImplement() || x.AllPropertiesDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AllNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AnyNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullImplement() || x.AnyPropertiesNotDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AnyNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullDefaultImplement());
 
     #endregion
 

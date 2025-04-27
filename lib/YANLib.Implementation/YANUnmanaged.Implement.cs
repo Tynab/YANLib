@@ -12,6 +12,7 @@ internal static partial class YANUnmanaged
     private static readonly Dictionary<Type, Type?> UnderlyingTypeCache = [];
 
     #region Private
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null)
@@ -95,6 +96,7 @@ internal static partial class YANUnmanaged
 
         return underlyingType;
     }
+
     #endregion
 
     [DebuggerHidden]

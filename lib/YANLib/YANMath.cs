@@ -9,25 +9,25 @@ public static partial class YANMath
 
     public static T? Min<T>(params T?[]? input) => input.MinImplement();
 
-    public static T? Min<T>(this System.Collections.IEnumerable input) => input.MinImplement<T>();
+    public static T? Min<T>(this System.Collections.IEnumerable? input) => input.MinImplement<T>();
 
     public static T? Max<T>(this IEnumerable<T?>? input) => input.MaxImplement();
 
     public static T? Max<T>(params T?[]? input) => input.MaxImplement();
 
-    public static T? Max<T>(this System.Collections.IEnumerable input) => input.MaxImplement<T>();
+    public static T? Max<T>(this System.Collections.IEnumerable? input) => input.MaxImplement<T>();
 
     public static T? Average<T>(this IEnumerable<T?>? input) => input.AverageImplement();
 
     public static T? Average<T>(params T?[]? input) => input.AverageImplement();
 
-    public static T? Average<T>(this System.Collections.IEnumerable input) => input.AverageImplement<T>();
+    public static T? Average<T>(this System.Collections.IEnumerable? input) => input.AverageImplement<T>();
 
     public static T? Sum<T>(this IEnumerable<T?>? input) => input.SumImplement();
 
     public static T? Sum<T>(params T?[]? input) => input.SumImplement();
 
-    public static T? Sum<T>(this System.Collections.IEnumerable input) => input.SumImplement<T>();
+    public static T? Sum<T>(this System.Collections.IEnumerable? input) => input.SumImplement<T>();
 
     public static T? Truncate<T>(this T? input) => input.TruncateImplement();
 

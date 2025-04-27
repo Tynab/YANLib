@@ -1,33 +1,38 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using static System.Diagnostics.Process;
+using static System.IO.Path;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANProcess
 {
     #region Private
+
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static async Task KillAndDisposeAsync(Process proc, CancellationToken cancellation)
+    private static async Task KillAndDisposeAsync(string? processNameOrPath)
     {
-        try
+        if (processNameOrPath.IsNullWhiteSpaceImplement())
         {
-            if (!proc.CloseMainWindow())
-            {
-                proc.Kill();
-            }
+            return;
+        }
 
-            await proc.WaitForExitAsync(cancellation);
-        }
-        catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+        var processes = GetProcessesByName(GetFileNameWithoutExtension(GetFileName(processNameOrPath)));
+
+        foreach (var process in processes)
         {
-            throw new InvalidOperationException($"Failed to kill process {proc.Id} ({proc.ProcessName}).", ex);
-        }
-        finally
-        {
-            proc.Dispose();
+            try
+            {
+                process.Kill(true);
+                await process.WaitForExitAsync();
+            }
+            finally
+            {
+                process.Dispose();
+            }
         }
     }
+
     #endregion
 
     [DebuggerHidden]
