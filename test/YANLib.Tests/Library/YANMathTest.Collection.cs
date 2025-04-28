@@ -18,7 +18,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Truncates_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Truncates_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -27,7 +27,7 @@ public partial class YANMathTest
         var result = input.Truncates<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Ceilings_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Ceilings_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -93,7 +93,7 @@ public partial class YANMathTest
         var result = input.Ceilings<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Floors_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Floors_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -159,7 +159,7 @@ public partial class YANMathTest
         var result = input.Floors<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Rounds_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Rounds_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -225,7 +225,7 @@ public partial class YANMathTest
         var result = input.Rounds<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -238,7 +238,7 @@ public partial class YANMathTest
         var result = input.Rounds<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 4.0, -2.0, 0.0 }, result);
+        Assert.Equal(new List<double> { 4.0, -2.0, 1.0 }, result);
     }
 
     [Fact]
@@ -251,7 +251,7 @@ public partial class YANMathTest
         var result = input.Rounds<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 4.0, default, 0.0 }, result);
+        Assert.Equal(new List<double> { 4.0, default, 1.0 }, result);
     }
 
     [Fact]
@@ -298,7 +298,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Sqrts_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Sqrts_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -307,7 +307,7 @@ public partial class YANMathTest
         var result = input.Sqrts<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -364,7 +364,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Pows_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Pows_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -373,7 +373,7 @@ public partial class YANMathTest
         var result = input.Pows<double>(2);
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -420,7 +420,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Abss_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Abss_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -429,7 +429,7 @@ public partial class YANMathTest
         var result = input.Abss<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -486,7 +486,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Logs_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Logs_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -495,7 +495,7 @@ public partial class YANMathTest
         var result = input.Logs<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -531,7 +531,7 @@ public partial class YANMathTest
         var input = new List<object?> { 10.0, 100.0, 1000.0 };
 
         // Act
-        var result = input.Logs<double>(10);
+        var result = input.Logs<double>(10).Rounds();
 
         // Assert
         Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
@@ -555,7 +555,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Log10s_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Log10s_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -564,7 +564,7 @@ public partial class YANMathTest
         var result = input.Log10s<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -621,7 +621,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Log2s_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Log2s_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -630,7 +630,7 @@ public partial class YANMathTest
         var result = input.Log2s<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -687,7 +687,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Sins_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Sins_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -696,7 +696,7 @@ public partial class YANMathTest
         var result = input.Sins<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -730,7 +730,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Coss_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Coss_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -739,7 +739,7 @@ public partial class YANMathTest
         var result = input.Coss<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -773,7 +773,7 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Tans_EmptyCollection_ReturnsEmptyCollection_MathCollection()
+    public void Tans_EmptyCollection_ReturnsNullCollection_MathCollection()
     {
         // Arrange
         var input = new List<double?>();
@@ -782,7 +782,7 @@ public partial class YANMathTest
         var result = input.Tans<double>();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -796,6 +796,468 @@ public partial class YANMathTest
 
         // Assert
         Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15));
+    }
+
+    #endregion
+
+    #region Asins
+
+    [Fact]
+    public void Asins_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Asins<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Asins_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Asins<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Asins_CollectionWithValues_ReturnsAsinValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, 1.0, -1.0 };
+
+        // Act
+        var result = input.Asins<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
+    }
+
+    [Fact]
+    public void Asins_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, null, 1.0 };
+
+        // Act
+        var result = input.Asins<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 0.0, default, Math.PI / 2 }, result);
+    }
+
+    [Fact]
+    public void Asins_ParamsOverload_ReturnsAsinValues_MathCollection()
+    {
+        // Act
+        var result = YANMath.Asins<double>(0.0, 1.0, -1.0);
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
+    }
+
+    #endregion
+
+    #region Acoss
+
+    [Fact]
+    public void Acoss_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Acoss<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Acoss_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Acoss<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Acoss_CollectionWithValues_ReturnsAcosValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 1.0, 0.0, -1.0 };
+
+        // Act
+        var result = input.Acoss<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
+    }
+
+    [Fact]
+    public void Acoss_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 1.0, null, -1.0 };
+
+        // Act
+        var result = input.Acoss<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 0.0, default, Math.PI }, result);
+    }
+
+    [Fact]
+    public void Acoss_ParamsOverload_ReturnsAcosValues_MathCollection()
+    {
+        // Act
+        var result = YANMath.Acoss<double>(1.0, 0.0, -1.0);
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
+    }
+
+    #endregion
+
+    #region Atans
+
+    [Fact]
+    public void Atans_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Atans<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Atans_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Atans<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Atans_CollectionWithValues_ReturnsAtanValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, 1.0, -1.0 };
+
+        // Act
+        var result = input.Atans<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
+    }
+
+    [Fact]
+    public void Atans_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, null, 1.0 };
+
+        // Act
+        var result = input.Atans<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 0.0, default, Math.PI / 4 }, result);
+    }
+
+    [Fact]
+    public void Atans_ParamsOverload_ReturnsAtanValues_MathCollection()
+    {
+        // Act
+        var result = YANMath.Atans<double>(0.0, 1.0, -1.0);
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
+    }
+
+    #endregion
+
+    #region Cbrts
+
+    [Fact]
+    public void Cbrts_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Cbrts<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Cbrts_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Cbrts<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Cbrts_CollectionWithValues_ReturnsCbrtValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 8.0, 27.0, -27.0 };
+
+        // Act
+        var result = input.Cbrts<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result);
+    }
+
+    [Fact]
+    public void Cbrts_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 8.0, null, 27.0 };
+
+        // Act
+        var result = input.Cbrts<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 2.0, default, 3.0 }, result);
+    }
+
+    [Fact]
+    public void Cbrts_ParamsOverload_ReturnsCbrtValues_MathCollection()
+    {
+        // Act
+        var result = YANMath.Cbrts<double?>(8.0, 27.0, -27.0);
+
+        // Assert
+        Assert.Equal([2.0, 3.0, -3.0], result);
+    }
+
+    #endregion
+
+    #region Exps
+
+    [Fact]
+    public void Exps_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Exps<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Exps_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Exps<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Exps_CollectionWithValues_ReturnsExpValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, 1.0, 2.0 };
+
+        // Act
+        var result = input.Exps<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
+    }
+
+    [Fact]
+    public void Exps_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, null, 1.0 };
+
+        // Act
+        var result = input.Exps<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, default, Math.E }, result);
+    }
+
+    [Fact]
+    public void Exps_ParamsOverload_ReturnsExpValues_MathCollection()
+    {
+        // Act
+        var result = YANMath.Exps(0.0, 1.0, 2.0);
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
+    }
+
+    #endregion
+
+    #region Exp2s
+
+    [Fact]
+    public void Exp2s_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Exp2s<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Exp2s_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Exp2s<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Exp2s_CollectionWithValues_ReturnsExp2Values_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, 1.0, 2.0, 3.0 };
+
+        // Act
+        var result = input.Exp2s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 4.0, 8.0 }, result);
+    }
+
+    [Fact]
+    public void Exp2s_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, null, 2.0 };
+
+        // Act
+        var result = input.Exp2s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, default, 4.0 }, result);
+    }
+
+    [Fact]
+    public void Exp2s_ParamsOverload_ReturnsExp2Values_MathCollection()
+    {
+        // Act
+        var result = YANMath.Exp2s<double?>(0.0, 1.0, 2.0, 3.0);
+
+        // Assert
+        Assert.Equal([1.0, 2.0, 4.0, 8.0], result);
+    }
+
+    #endregion
+
+    #region ILogBs
+
+    [Fact]
+    public void ILogBs_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.ILogBs<int>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ILogBs_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.ILogBs<int>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ILogBs_CollectionWithValues_ReturnsILogBValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, 4.0, 8.0, 16.0 };
+
+        // Act
+        var result = input.ILogBs<int>();
+
+        // Assert
+        Assert.Equal(new List<int> { 1, 2, 3, 4 }, result);
+    }
+
+    [Fact]
+    public void ILogBs_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, null, 8.0 };
+
+        // Act
+        var result = input.ILogBs<int>();
+
+        // Assert
+        Assert.Equal(new List<int> { 1, default, 3 }, result);
+    }
+
+    [Fact]
+    public void ILogBs_ParamsOverload_ReturnsILogBValues_MathCollection()
+    {
+        // Act
+        var result = YANMath.ILogBs<int?>(2.0, 4.0, 8.0, 16.0);
+
+        // Assert
+        Assert.Equal([1, 2, 3, 4], result);
     }
 
     #endregion

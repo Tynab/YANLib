@@ -173,7 +173,7 @@ public static partial class YANObject
 
     #endregion
 
-    #region NullEmpty
+    #region NullDefault
 
     /// <summary>
     /// Determines whether all elements in the specified collection are <c>null</c> or empty.
@@ -183,7 +183,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if all elements are <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.AllNullDefaultImplement();
+    public static bool AllNullDefault<T>(this IEnumerable<T?>? input) where T : class => input.AllNullDefaultImplement();
 
     /// <summary>
     /// Determines whether all elements in the specified array are <c>null</c> or empty.
@@ -193,7 +193,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if all elements are <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNullEmpty<T>(params T?[]? input) where T : class => input.AllNullDefaultImplement();
+    public static bool AllNullDefault<T>(params T?[]? input) where T : class => input.AllNullDefaultImplement();
 
     /// <summary>
     /// Determines whether any element in the specified collection is <c>null</c> or empty.
@@ -203,7 +203,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if any element is <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.AnyNullEmptyImplement();
+    public static bool AnyNullDefault<T>(this IEnumerable<T?>? input) where T : class => input.AnyNullEmptyImplement();
 
     /// <summary>
     /// Determines whether any element in the specified array is <c>null</c> or empty.
@@ -213,7 +213,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if any element is <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNullEmpty<T>(params T?[]? input) where T : class => input.AnyNullEmptyImplement();
+    public static bool AnyNullDefault<T>(params T?[]? input) where T : class => input.AnyNullEmptyImplement();
 
     /// <summary>
     /// Determines whether all elements in the specified collection are not <c>null</c> and not empty.
@@ -223,7 +223,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if all elements are not <c>null</c> and not empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.AllNotNullEmptyImplement();
+    public static bool AllNotNullDefault<T>(this IEnumerable<T?>? input) where T : class => input.AllNotNullEmptyImplement();
 
     /// <summary>
     /// Determines whether all elements in the specified array are not <c>null</c> and not empty.
@@ -233,7 +233,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if all elements are not <c>null</c> and not empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotNullEmpty<T>(params T?[]? input) where T : class => input.AllNotNullEmptyImplement();
+    public static bool AllNotNullDefault<T>(params T?[]? input) where T : class => input.AllNotNullEmptyImplement();
 
     /// <summary>
     /// Determines whether any element in the specified collection is not <c>null</c> and not empty.
@@ -243,7 +243,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if any element is not <c>null</c> and not empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullEmpty<T>(this IEnumerable<T?>? input) where T : class => input.AnyNotNullEmptyImplement();
+    public static bool AnyNotNullDefault<T>(this IEnumerable<T?>? input) where T : class => input.AnyNotNullEmptyImplement();
 
     /// <summary>
     /// Determines whether any element in the specified array is not <c>null</c> and not empty.
@@ -253,7 +253,7 @@ public static partial class YANObject
     /// <returns><c>true</c> if any element is not <c>null</c> and not empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AnyNotNullEmpty<T>(params T?[]? input) where T : class => input.AnyNotNullEmptyImplement();
+    public static bool AnyNotNullDefault<T>(params T?[]? input) where T : class => input.AnyNotNullEmptyImplement();
 
     #endregion
 

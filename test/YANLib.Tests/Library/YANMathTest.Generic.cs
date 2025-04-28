@@ -11,7 +11,7 @@ public partial class YANMathTest
         IEnumerable<object?>? input = null;
 
         // Act
-        int? result = input.Min<int>();
+        var result = input.Min<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -24,7 +24,7 @@ public partial class YANMathTest
         var input = new List<object?>();
 
         // Act
-        int? result = input.Min<int>();
+        var result = input.Min<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -90,7 +90,7 @@ public partial class YANMathTest
         IEnumerable<object?>? input = null;
 
         // Act
-        int? result = input.Max<int>();
+        var result = input.Max<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -103,7 +103,7 @@ public partial class YANMathTest
         var input = new List<object?>();
 
         // Act
-        int? result = input.Max<int>();
+        var result = input.Max<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -169,7 +169,7 @@ public partial class YANMathTest
         IEnumerable<object?>? input = null;
 
         // Act
-        double? result = input.Average<double>();
+        var result = input.Average<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -182,7 +182,7 @@ public partial class YANMathTest
         var input = new List<object?>();
 
         // Act
-        double? result = input.Average<double>();
+        var result = input.Average<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -248,7 +248,7 @@ public partial class YANMathTest
         IEnumerable<object?>? input = null;
 
         // Act
-        int? result = input.Sum<int>();
+        var result = input.Sum<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -261,7 +261,7 @@ public partial class YANMathTest
         var input = new List<object?>();
 
         // Act
-        int? result = input.Sum<int>();
+        var result = input.Sum<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -327,7 +327,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Truncate<double>();
+        var result = input.Truncate<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -383,7 +383,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Ceiling<double>();
+        var result = input.Ceiling<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -439,7 +439,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Floor<double>();
+        var result = input.Floor<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -495,7 +495,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Round<double>();
+        var result = input.Round<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -577,7 +577,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Sqrt<double>();
+        var result = input.Sqrt<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -633,7 +633,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Pow<double>(2);
+        var result = input.Pow<double>(2);
 
         // Assert
         Assert.Equal(default, result);
@@ -646,7 +646,7 @@ public partial class YANMathTest
         object? input = 2.0;
 
         // Act
-        double? result = input.Pow<double>(null);
+        var result = input.Pow<double>(null);
 
         // Assert
         Assert.Equal(default, result);
@@ -689,7 +689,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Abs<double>();
+        var result = input.Abs<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -745,7 +745,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Log<double>();
+        var result = input.Log<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -801,7 +801,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Log10<double>();
+        var result = input.Log10<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -844,7 +844,7 @@ public partial class YANMathTest
         object? input = null;
 
         // Act
-        double? result = input.Log2<double>();
+        var result = input.Log2<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -874,6 +874,553 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    #endregion
+
+    #region Sin
+
+    [Fact]
+    public void Sin_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Sin<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Sin_ZeroValue_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Sin<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Sin_PiHalfValue_ReturnsOne_MathGeneric()
+    {
+        // Arrange
+        object? input = Math.PI / 2;
+
+        // Act
+        double? result = input.Sin<double>();
+
+        // Assert
+        Assert.Equal(1.0, result.Value, 15);
+    }
+
+    [Fact]
+    public void Sin_StringValue_ConvertsAndCalculatesSin_MathGeneric()
+    {
+        // Arrange
+        object? input = "1.5707963267948966";
+
+        // Act
+        double? result = input.Sin<double>();
+
+        // Assert
+        Assert.Equal(1.0, result.Value, 15);
+    }
+
+    #endregion
+
+    #region Cos
+
+    [Fact]
+    public void Cos_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Cos<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Cos_ZeroValue_ReturnsOne_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Cos<double>();
+
+        // Assert
+        Assert.Equal(1.0, result);
+    }
+
+    [Fact]
+    public void Cos_PiValue_ReturnsMinusOne_MathGeneric()
+    {
+        // Arrange
+        object? input = Math.PI;
+
+        // Act
+        double? result = input.Cos<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result.Value, 15);
+    }
+
+    [Fact]
+    public void Cos_StringValue_ConvertsAndCalculatesCos_MathGeneric()
+    {
+        // Arrange
+        object? input = "3.141592653589793";
+
+        // Act
+        double? result = input.Cos<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result.Value, 15);
+    }
+
+    #endregion
+
+    #region Tan
+
+    [Fact]
+    public void Tan_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Tan<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Tan_ZeroValue_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Tan<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Tan_PiQuarterValue_ReturnsOne_MathGeneric()
+    {
+        // Arrange
+        object? input = Math.PI / 4;
+
+        // Act
+        double? result = input.Tan<double>();
+
+        // Assert
+        Assert.Equal(1.0, result.Value, 15);
+    }
+
+    [Fact]
+    public void Tan_StringValue_ConvertsAndCalculatesTan_MathGeneric()
+    {
+        // Arrange
+        object? input = "0.7853981633974483";
+
+        // Act
+        double? result = input.Tan<double>();
+
+        // Assert
+        Assert.Equal(1.0, result.Value, 15);
+    }
+
+    #endregion
+
+    #region Asin
+
+    [Fact]
+    public void Asin_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Asin<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Asin_ZeroValue_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Asin<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Asin_OneValue_ReturnsPiHalf_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.0;
+
+        // Act
+        double? result = input.Asin<double>();
+
+        // Assert
+        Assert.Equal(Math.PI / 2, result);
+    }
+
+    [Fact]
+    public void Asin_StringValue_ConvertsAndCalculatesAsin_MathGeneric()
+    {
+        // Arrange
+        object? input = "1.0";
+
+        // Act
+        double? result = input.Asin<double>();
+
+        // Assert
+        Assert.Equal(Math.PI / 2, result);
+    }
+
+    #endregion
+
+    #region Acos
+
+    [Fact]
+    public void Acos_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Acos<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Acos_OneValue_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.0;
+
+        // Act
+        double? result = input.Acos<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Acos_MinusOneValue_ReturnsPi_MathGeneric()
+    {
+        // Arrange
+        object? input = -1.0;
+
+        // Act
+        double? result = input.Acos<double>();
+
+        // Assert
+        Assert.Equal(Math.PI, result);
+    }
+
+    [Fact]
+    public void Acos_StringValue_ConvertsAndCalculatesAcos_MathGeneric()
+    {
+        // Arrange
+        object? input = "-1.0";
+
+        // Act
+        double? result = input.Acos<double>();
+
+        // Assert
+        Assert.Equal(Math.PI, result);
+    }
+
+    #endregion
+
+    #region Atan
+
+    [Fact]
+    public void Atan_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Atan<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Atan_ZeroValue_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Atan<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Atan_OneValue_ReturnsPiQuarter_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.0;
+
+        // Act
+        double? result = input.Atan<double>();
+
+        // Assert
+        Assert.Equal(Math.PI / 4, result);
+    }
+
+    [Fact]
+    public void Atan_StringValue_ConvertsAndCalculatesAtan_MathGeneric()
+    {
+        // Arrange
+        object? input = "1.0";
+
+        // Act
+        double? result = input.Atan<double>();
+
+        // Assert
+        Assert.Equal(Math.PI / 4, result);
+    }
+
+    #endregion
+
+    #region Cbrt
+
+    [Fact]
+    public void Cbrt_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Cbrt<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Cbrt_PositiveValue_ReturnsCubeRoot_MathGeneric()
+    {
+        // Arrange
+        object? input = 27.0;
+
+        // Act
+        double? result = input.Cbrt<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Cbrt_NegativeValue_ReturnsNegativeCubeRoot_MathGeneric()
+    {
+        // Arrange
+        object? input = -27.0;
+
+        // Act
+        double? result = input.Cbrt<double>();
+
+        // Assert
+        Assert.Equal(-3.0, result);
+    }
+
+    [Fact]
+    public void Cbrt_StringValue_ConvertsAndCalculatesCbrt_MathGeneric()
+    {
+        // Arrange
+        object? input = "27.0";
+
+        // Act
+        double? result = input.Cbrt<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
+    }
+
+    #endregion
+
+    #region Exp
+
+    [Fact]
+    public void Exp_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Exp<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Exp_ZeroValue_ReturnsOne_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Exp<double>();
+
+        // Assert
+        Assert.Equal(1.0, result);
+    }
+
+    [Fact]
+    public void Exp_OneValue_ReturnsE_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.0;
+
+        // Act
+        double? result = input.Exp<double>();
+
+        // Assert
+        Assert.Equal(Math.E, result);
+    }
+
+    [Fact]
+    public void Exp_StringValue_ConvertsAndCalculatesExp_MathGeneric()
+    {
+        // Arrange
+        object? input = "1.0";
+
+        // Act
+        double? result = input.Exp<double>();
+
+        // Assert
+        Assert.Equal(Math.E, result);
+    }
+
+    #endregion
+
+    #region Exp2
+
+    [Fact]
+    public void Exp2_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.Exp2<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Exp2_ZeroValue_ReturnsOne_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Exp2<double>();
+
+        // Assert
+        Assert.Equal(1.0, result);
+    }
+
+    [Fact]
+    public void Exp2_PositiveValue_ReturnsPowerOfTwo_MathGeneric()
+    {
+        // Arrange
+        object? input = 3.0;
+
+        // Act
+        double? result = input.Exp2<double>();
+
+        // Assert
+        Assert.Equal(8.0, result);
+    }
+
+    [Fact]
+    public void Exp2_StringValue_ConvertsAndCalculatesExp2_MathGeneric()
+    {
+        // Arrange
+        object? input = "3.0";
+
+        // Act
+        double? result = input.Exp2<double>();
+
+        // Assert
+        Assert.Equal(8.0, result);
+    }
+
+    #endregion
+
+    #region ILogB
+
+    [Fact]
+    public void ILogB_NullValue_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.ILogB<int>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void ILogB_PowerOfTwo_ReturnsExponent_MathGeneric()
+    {
+        // Arrange
+        object? input = 8.0;
+
+        // Act
+        int? result = input.ILogB<int>();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void ILogB_StringValue_ConvertsAndCalculatesILogB_MathGeneric()
+    {
+        // Arrange
+        object? input = "8.0";
+
+        // Act
+        int? result = input.ILogB<int>();
+
+        // Assert
+        Assert.Equal(3, result);
     }
 
     #endregion

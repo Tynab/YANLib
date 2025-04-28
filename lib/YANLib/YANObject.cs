@@ -52,6 +52,18 @@ public static partial class YANObject
 
     #endregion
 
+    #region NullDefault
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNullDefault<T>(this T? input) where T : class => input.IsNullDefaultImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNotNullDefault<T>(this T? input) where T : class => input.IsNotNullDefaultImplement();
+
+    #endregion
+
     #region NullEmpty
 
     /// <summary>

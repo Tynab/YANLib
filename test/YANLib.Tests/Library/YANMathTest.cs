@@ -11,7 +11,7 @@ public partial class YANMathTest
         IEnumerable<int?>? input = null;
 
         // Act
-        int? result = input.Min<int>();
+        var result = input.Min<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -24,7 +24,7 @@ public partial class YANMathTest
         var input = new List<int?>();
 
         // Act
-        int? result = input.Min<int>();
+        var result = input.Min<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -77,7 +77,7 @@ public partial class YANMathTest
         IEnumerable<int?>? input = null;
 
         // Act
-        int? result = input.Max<int>();
+        var result = input.Max<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -90,7 +90,7 @@ public partial class YANMathTest
         var input = new List<int?>();
 
         // Act
-        int? result = input.Max<int>();
+        var result = input.Max<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -143,7 +143,7 @@ public partial class YANMathTest
         IEnumerable<int?>? input = null;
 
         // Act
-        double? result = input.Average<double>();
+        var result = input.Average<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -156,7 +156,7 @@ public partial class YANMathTest
         var input = new List<int?>();
 
         // Act
-        double? result = input.Average<double>();
+        var result = input.Average<double>();
 
         // Assert
         Assert.Equal(default, result);
@@ -209,7 +209,7 @@ public partial class YANMathTest
         IEnumerable<int?>? input = null;
 
         // Act
-        int? result = input.Sum<int>();
+        var result = input.Sum<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -222,7 +222,7 @@ public partial class YANMathTest
         var input = new List<int?>();
 
         // Act
-        int? result = input.Sum<int>();
+        var result = input.Sum<int>();
 
         // Assert
         Assert.Equal(default, result);
@@ -269,16 +269,16 @@ public partial class YANMathTest
     #region Truncate
 
     [Fact]
-    public void Truncate_NullValue_ReturnsNull_Math()
+    public void Truncate_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Truncate<double>();
+        var result = input.Truncate<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -312,16 +312,16 @@ public partial class YANMathTest
     #region Ceiling
 
     [Fact]
-    public void Ceiling_NullValue_ReturnsNull_Math()
+    public void Ceiling_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Ceiling<double>();
+        var result = input.Ceiling<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -355,16 +355,16 @@ public partial class YANMathTest
     #region Floor
 
     [Fact]
-    public void Floor_NullValue_ReturnsNull_Math()
+    public void Floor_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Floor<double>();
+        var result = input.Floor<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -398,16 +398,16 @@ public partial class YANMathTest
     #region Round
 
     [Fact]
-    public void Round_NullValue_ReturnsNull_Math()
+    public void Round_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Round<double>();
+        var result = input.Round<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -467,16 +467,16 @@ public partial class YANMathTest
     #region Sqrt
 
     [Fact]
-    public void Sqrt_NullValue_ReturnsNull_Math()
+    public void Sqrt_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Sqrt<double>();
+        var result = input.Sqrt<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -516,7 +516,7 @@ public partial class YANMathTest
         double? input = null;
 
         // Act
-        double? result = input.Pow<double>(2);
+        var result = input.Pow<double>(2);
 
         // Assert
         Assert.Equal(default, result);
@@ -529,7 +529,7 @@ public partial class YANMathTest
         double? input = 2.0;
 
         // Act
-        double? result = input.Pow<double>(null);
+        var result = input.Pow<double>(null);
 
         // Assert
         Assert.Equal(default, result);
@@ -566,16 +566,16 @@ public partial class YANMathTest
     #region Abs
 
     [Fact]
-    public void Abs_NullValue_ReturnsNull_Math()
+    public void Abs_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Abs<double>();
+        var result = input.Abs<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -622,16 +622,16 @@ public partial class YANMathTest
     #region Log
 
     [Fact]
-    public void Log_NullValue_ReturnsNull_Math()
+    public void Log_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Log<double>();
+        var result = input.Log<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -665,16 +665,16 @@ public partial class YANMathTest
     #region Log10
 
     [Fact]
-    public void Log10_NullValue_ReturnsNull_Math()
+    public void Log10_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Log10<double>();
+        var result = input.Log10<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -695,16 +695,16 @@ public partial class YANMathTest
     #region Log2
 
     [Fact]
-    public void Log2_NullValue_ReturnsNull_Math()
+    public void Log2_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Log2<double>();
+        var result = input.Log2<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -725,16 +725,16 @@ public partial class YANMathTest
     #region Sin
 
     [Fact]
-    public void Sin_NullValue_ReturnsNull_Math()
+    public void Sin_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Sin<double>();
+        var result = input.Sin<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -768,16 +768,16 @@ public partial class YANMathTest
     #region Cos
 
     [Fact]
-    public void Cos_NullValue_ReturnsNull_Math()
+    public void Cos_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Cos<double>();
+        var result = input.Cos<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -811,16 +811,16 @@ public partial class YANMathTest
     #region Tan
 
     [Fact]
-    public void Tan_NullValue_ReturnsNull_Math()
+    public void Tan_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Tan<double>();
+        var result = input.Tan<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -854,16 +854,16 @@ public partial class YANMathTest
     #region Asin
 
     [Fact]
-    public void Asin_NullValue_ReturnsNull_Math()
+    public void Asin_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Asin<double>();
+        var result = input.Asin<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -897,16 +897,16 @@ public partial class YANMathTest
     #region Acos
 
     [Fact]
-    public void Acos_NullValue_ReturnsNull_Math()
+    public void Acos_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Acos<double>();
+        var result = input.Acos<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -940,16 +940,16 @@ public partial class YANMathTest
     #region Atan
 
     [Fact]
-    public void Atan_NullValue_ReturnsNull_Math()
+    public void Atan_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Atan<double>();
+        var result = input.Atan<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -983,16 +983,16 @@ public partial class YANMathTest
     #region Cbrt
 
     [Fact]
-    public void Cbrt_NullValue_ReturnsNull_Math()
+    public void Cbrt_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Cbrt<double>();
+        var result = input.Cbrt<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -1026,16 +1026,16 @@ public partial class YANMathTest
     #region Exp
 
     [Fact]
-    public void Exp_NullValue_ReturnsNull_Math()
+    public void Exp_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Exp<double>();
+        var result = input.Exp<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -1069,16 +1069,16 @@ public partial class YANMathTest
     #region Exp2
 
     [Fact]
-    public void Exp2_NullValue_ReturnsNull_Math()
+    public void Exp2_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        double? result = input.Exp2<double>();
+        var result = input.Exp2<double>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
@@ -1112,16 +1112,16 @@ public partial class YANMathTest
     #region ILogB
 
     [Fact]
-    public void ILogB_NullValue_ReturnsNull_Math()
+    public void ILogB_NullValue_ReturnsDefault_Math()
     {
         // Arrange
         double? input = null;
 
         // Act
-        int? result = input.ILogB<int>();
+        var result = input.ILogB<int>();
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(default, result);
     }
 
     [Fact]
