@@ -158,7 +158,8 @@ public partial class YANObjectTest
         {
             StringProperty = "test",
             IntProperty = 42,
-            DateProperty = new DateTime(2023, 1, 1)
+            DateProperty = new DateTime(2023, 1, 1),
+            Value = ""
         };
 
         // Act
@@ -236,7 +237,11 @@ public partial class YANObjectTest
     public void AllPropertiesNotDefaults_CollectionWithAllNonDefaultObjects_ReturnsTrue_ObjectProperty()
     {
         // Arrange
-        IEnumerable<TestClass?> input = [new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1) }, new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2) }];
+        IEnumerable<TestClass?> input =
+        [
+            new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
+            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+        ];
 
         // Act
         var result = input.AllPropertiesNotDefaults();
@@ -313,7 +318,8 @@ public partial class YANObjectTest
         {
             StringProperty = "test",
             IntProperty = 42,
-            DateProperty = new DateTime(2023, 1, 1)
+            DateProperty = new DateTime(2023, 1, 1),
+            Value = ""
         };
 
         // Act

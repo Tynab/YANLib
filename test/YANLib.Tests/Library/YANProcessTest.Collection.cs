@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace YANLib.Tests.Library;
+﻿namespace YANLib.Tests.Library;
 
 public partial class YANProcessTest
 {

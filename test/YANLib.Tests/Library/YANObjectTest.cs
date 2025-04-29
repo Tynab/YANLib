@@ -174,6 +174,100 @@ public partial class YANObjectTest
 
     #endregion
 
+    #region IsNullDefault
+
+    [Fact]
+    public void IsNullDefault_NullObject_ReturnsTrue_Object()
+    {
+        // Arrange
+        TestClass? input = null;
+
+        // Act
+        var result = input.IsNullDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNullDefault_ObjectWithDefaultValues_ReturnsTrue_Object()
+    {
+        // Arrange
+        var input = new TestClass();
+
+        // Act
+        var result = input.IsNullDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNullDefault_ObjectWithNonDefaultValues_ReturnsFalse_Object()
+    {
+        // Arrange
+        var input = new TestClass
+        {
+            StringProperty = "test",
+            IntProperty = 42
+        };
+
+        // Act
+        var result = input.IsNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
+    #region IsNotNullDefault
+
+    [Fact]
+    public void IsNotNullDefault_NullObject_ReturnsFalse_Object()
+    {
+        // Arrange
+        TestClass? input = null;
+
+        // Act
+        var result = input.IsNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullDefault_ObjectWithDefaultValues_ReturnsFalse_Object()
+    {
+        // Arrange
+        var input = new TestClass();
+
+        // Act
+        var result = input.IsNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullDefault_ObjectWithNonDefaultValues_ReturnsTrue_Object()
+    {
+        // Arrange
+        var input = new TestClass
+        {
+            StringProperty = "test",
+            IntProperty = 42
+        };
+
+        // Act
+        var result = input.IsNotNullDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    #endregion
+
     #region IsNullEmpty
 
     [Fact]
@@ -286,8 +380,8 @@ public partial class YANObjectTest
             IntProperty = 42
         };
 
-        var tzSrc = TimeSpan.Zero;
-        var tzDst = TimeSpan.FromHours(7);
+        var tzSrc = 0;
+        var tzDst = 7;
 
         // Act
         var result = input.ChangeTimeZoneAllProperty(tzSrc, tzDst);

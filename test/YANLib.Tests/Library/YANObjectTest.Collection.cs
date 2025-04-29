@@ -271,7 +271,7 @@ public partial class YANObjectTest
     public void AllDefault_CollectionWithAllDefaults_ReturnsTrue_ObjectCollection()
     {
         // Arrange
-        IEnumerable<int?> input = [0, 0, 0];
+        IEnumerable<int> input = [0, 0, 0];
 
         // Act
         var result = input.AllDefault();
@@ -327,7 +327,7 @@ public partial class YANObjectTest
     public void AnyDefault_CollectionWithSomeDefaults_ReturnsTrue_ObjectCollection()
     {
         // Arrange
-        IEnumerable<int?> input = [1, 0, 2];
+        IEnumerable<int> input = [1, 0, 2];
 
         // Act
         var result = input.AnyDefault();
@@ -396,7 +396,7 @@ public partial class YANObjectTest
     public void AllNotDefault_CollectionWithSomeDefaults_ReturnsFalse_ObjectCollection()
     {
         // Arrange
-        IEnumerable<int?> input = [1, 0, 3];
+        IEnumerable<int> input = [1, 0, 3];
 
         // Act
         var result = input.AllNotDefault();
@@ -452,7 +452,7 @@ public partial class YANObjectTest
     public void AnyNotDefault_CollectionWithAllDefaults_ReturnsFalse_ObjectCollection()
     {
         // Arrange
-        IEnumerable<int?> input = [0, 0, 0];
+        IEnumerable<int> input = [0, 0, 0];
 
         // Act
         var result = input.AnyNotDefault();
@@ -463,10 +463,10 @@ public partial class YANObjectTest
 
     #endregion
 
-    #region AllNullEmpty
+    #region AllNullDefault
 
     [Fact]
-    public void AllNullEmpty_NullCollection_ReturnsFalse_ObjectCollection()
+    public void AllNullDefault_NullCollection_ReturnsFalse_ObjectCollection()
     {
         // Arrange
         IEnumerable<TestClass?>? input = null;
@@ -479,7 +479,7 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_EmptyCollection_ReturnsFalse_ObjectCollection()
+    public void AllNullDefault_EmptyCollection_ReturnsFalse_ObjectCollection()
     {
         // Arrange
         IEnumerable<TestClass?> input = [];
@@ -492,10 +492,10 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_CollectionWithAllNullOrEmptyObjects_ReturnsTrue_ObjectCollection()
+    public void AllNullDefault_CollectionWithAllNullsOrDefaults_ReturnsTrue_ObjectCollection()
     {
         // Arrange
-        IEnumerable<TestClass?> input = [null, new()];
+        IEnumerable<TestClass?> input = [null, new TestClass(), null];
 
         // Act
         var result = input.AllNullDefault();
@@ -505,13 +505,181 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllNullEmpty_CollectionWithSomeNonEmptyObjects_ReturnsFalse_ObjectCollection()
+    public void AllNullDefault_CollectionWithSomeNonDefaults_ReturnsFalse_ObjectCollection()
     {
         // Arrange
-        IEnumerable<TestClass?> input = [null, new() { Value = "test" }];
+        IEnumerable<TestClass?> input = [null, new TestClass { StringProperty = "test" }, new TestClass()];
 
         // Act
         var result = input.AllNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
+    #region AnyNullDefault
+
+    [Fact]
+    public void AnyNullDefault_NullCollection_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?>? input = null;
+
+        // Act
+        var result = input.AnyNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullDefault_EmptyCollection_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [];
+
+        // Act
+        var result = input.AnyNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNullDefault_CollectionWithSomeNullsOrDefaults_ReturnsTrue_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new TestClass { StringProperty = "test" }, null, new TestClass { IntProperty = 42 }];
+
+        // Act
+        var result = input.AnyNullDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullDefault_CollectionWithNoNullsOrDefaults_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new TestClass { StringProperty = "test1", IntProperty = 1 }, new TestClass { StringProperty = "test2", IntProperty = 2 }];
+
+        // Act
+        var result = input.AnyNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
+    #region AllNotNullDefault
+
+    [Fact]
+    public void AllNotNullDefault_NullCollection_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?>? input = null;
+
+        // Act
+        var result = input.AllNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullDefault_EmptyCollection_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [];
+
+        // Act
+        var result = input.AllNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotNullDefault_CollectionWithAllNonNullNonDefaults_ReturnsTrue_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new TestClass { StringProperty = "test1", IntProperty = 1 }, new TestClass { StringProperty = "test2", IntProperty = 2 }];
+
+        // Act
+        var result = input.AllNotNullDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotNullDefault_CollectionWithSomeNullsOrDefaults_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new TestClass { StringProperty = "test" }, null, new TestClass()];
+
+        // Act
+        var result = input.AllNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
+    #region AnyNotNullDefault
+
+    [Fact]
+    public void AnyNotNullDefault_NullCollection_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?>? input = null;
+
+        // Act
+        var result = input.AnyNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullDefault_EmptyCollection_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [];
+
+        // Act
+        var result = input.AnyNotNullDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotNullDefault_CollectionWithSomeNonNullNonDefaults_ReturnsTrue_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [null, new TestClass { StringProperty = "test" }, new TestClass()];
+
+        // Act
+        var result = input.AnyNotNullDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotNullDefault_CollectionWithAllNullsOrDefaults_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [null, new TestClass(), null];
+
+        // Act
+        var result = input.AnyNotNullDefault();
 
         // Assert
         Assert.False(result);
@@ -557,8 +725,8 @@ public partial class YANObjectTest
             new() { DateProperty = new DateTime(2023, 1, 2, 12, 0, 0, DateTimeKind.Utc), StringProperty = "test2" }
         ];
 
-        var tzSrc = TimeSpan.Zero;
-        var tzDst = TimeSpan.FromHours(7);
+        var tzSrc = 0;
+        var tzDst = 7;
 
         // Act
         var result = input.ChangeTimeZoneAllProperties(tzSrc, tzDst)?.ToList();
