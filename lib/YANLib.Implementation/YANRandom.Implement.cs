@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
+using static System.BitConverter;
 
 namespace YANLib.Implementation;
 
@@ -11,7 +12,16 @@ internal static partial class YANRandom
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static decimal NextDecimalImplement(this Random random) => new(random.NextInt32Implement(), random.NextInt32Implement(), random.NextInt32Implement(), random.Next(2) is 1, (byte)random.Next(29));
+    internal static decimal NextDecimalImplement(this Random random)
+    {
+        var bytes = new byte[16];
+
+        random.NextBytes(bytes);
+
+        var dec = new decimal(ToInt32(bytes, 0), ToInt32(bytes, 4), ToInt32(bytes, 8), false, 28);
+
+        return dec > 1 ? dec / 10 : dec;
+    }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -94,7 +104,21 @@ internal static partial class YANRandom
         var minValue = min.IsNullImplement() ? ulong.MinValue : min.ParseImplement<ulong>();
         var maxValue = max.IsNullImplement() ? ulong.MaxValue : max.ParseImplement<ulong>();
 
-        return minValue > maxValue ? default : (random.NextInt64(long.MinValue, (long)(maxValue - (minValue - (BigInteger)long.MinValue))) - long.MinValue).ParseImplement<ulong>() + minValue;
+        if (minValue > maxValue)
+        {
+            return default;
+        }
+        else
+        {
+            var buffer = new byte[8];
+
+            random.NextBytes(buffer);
+
+            var rand = ToUInt64(buffer, 0);
+            var range = maxValue - minValue;
+
+            return range == ulong.MaxValue ? rand : rand % (range + 1) + minValue;
+        }
     }
 
     [DebuggerHidden]
@@ -121,8 +145,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static float NextSingleImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? float.MinValue * 1 / 100 : min.ParseImplement<float>();
-        var maxValue = max.IsNullImplement() ? float.MaxValue * 1 / 100 : max.ParseImplement<float>();
+        var minValue = min.IsNullImplement() ? float.MinValue / 100 : min.ParseImplement<float>();
+        var maxValue = max.IsNullImplement() ? float.MaxValue / 100 : max.ParseImplement<float>();
 
         return minValue < maxValue ? random.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
@@ -131,8 +155,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static double NextDoubleImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? double.MinValue * 1 / 100 : min.ParseImplement<double>();
-        var maxValue = max.IsNullImplement() ? double.MaxValue * 1 / 100 : max.ParseImplement<double>();
+        var minValue = min.IsNullImplement() ? double.MinValue / 100 : min.ParseImplement<double>();
+        var maxValue = max.IsNullImplement() ? double.MaxValue / 100 : max.ParseImplement<double>();
 
         return minValue < maxValue ? random.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
@@ -141,8 +165,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static decimal NextDecimalImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? decimal.MinValue * 1 / 100 : min.ParseImplement<decimal>();
-        var maxValue = max.IsNullImplement() ? decimal.MaxValue * 1 / 100 : max.ParseImplement<decimal>();
+        var minValue = min.IsNullImplement() ? decimal.MinValue / 100 : min.ParseImplement<decimal>();
+        var maxValue = max.IsNullImplement() ? decimal.MaxValue / 100 : max.ParseImplement<decimal>();
 
         return minValue < maxValue ? random.NextDecimalImplement() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
@@ -168,7 +192,7 @@ internal static partial class YANRandom
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string NextStringImplement(this Random random, object? size = null) => string.Concat(GenerateRandomsImplement<string>(size: size ?? random.NextByteImplement()));
+    internal static string NextStringImplement(this Random random, object? size = null) => string.Concat(GenerateRandomsImplement<char>(size: size ?? random.NextByteImplement()));
 
     [DebuggerHidden]
     [DebuggerStepThrough]

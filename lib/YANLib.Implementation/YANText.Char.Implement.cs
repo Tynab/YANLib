@@ -12,7 +12,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotEmptyImplement(this char input) => !input.IsEmptyImplement();
+    internal static bool IsNotEmptyImplement(this char input) => input is not char.MinValue;
 
     #endregion
 
@@ -24,7 +24,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotWhiteSpaceImplement(this char input) => !input.IsWhiteSpaceImplement();
+    internal static bool IsNotWhiteSpaceImplement(this char input) => !char.IsWhiteSpace(input);
 
     #endregion
 
@@ -36,7 +36,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotWhiteSpaceEmptyImplement(this char input) => !input.IsWhiteSpaceEmptyImplement();
+    internal static bool IsNotWhiteSpaceEmptyImplement(this char input) => input.IsNotEmptyImplement() && input.IsNotWhiteSpaceImplement();
 
     #endregion
 
@@ -48,7 +48,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotAlphabeticImplement(this char input) => !input.IsAlphabeticImplement();
+    internal static bool IsNotAlphabeticImplement(this char input) => !char.IsLetter(input);
 
     #endregion
 
@@ -60,7 +60,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotPunctuationImplement(this char input) => !input.IsPunctuationImplement();
+    internal static bool IsNotPunctuationImplement(this char input) => !char.IsPunctuation(input);
 
     #endregion
 
@@ -72,7 +72,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNumberImplement(this char input) => !input.IsNumberImplement();
+    internal static bool IsNotNumberImplement(this char input) => !char.IsDigit(input);
 
     #endregion
 
@@ -84,7 +84,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotAlphanumericImplement(this char input) => !input.IsAlphanumericImplement();
+    internal static bool IsNotAlphanumericImplement(this char input) => !char.IsLetterOrDigit(input);
 
     #endregion
 
@@ -96,7 +96,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool NotEqualsIgnoreCaseImplement(this char input1, char input2) => !input1.NotEqualsIgnoreCaseImplement(input2);
+    internal static bool NotEqualsIgnoreCaseImplement(this char input1, char input2) => input1.LowerInvariantImplement() != input2.LowerInvariantImplement();
 
     #endregion
 
@@ -136,7 +136,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotUpperImplement(this char input) => input.IsNotWhiteSpaceEmptyImplement() && !char.IsUpper(input);
+    internal static bool IsNotUpperImplement(this char input) => !input.IsUpperImplement();
 
     #endregion
 }

@@ -36,18 +36,6 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? LogsImplement<T>(this IEnumerable<object?>? input, object? baseValue = null) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LogImplement<T>(baseValue));
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? Log10sImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(static x => x.Log10Implement<T?>());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? Log2sImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(static x => x.Log2Implement<T?>());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<T?>? SinsImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(static x => x.SinImplement<T?>());
 
     [DebuggerHidden]
@@ -81,6 +69,18 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T?>? Exp2sImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(static x => x.Exp2Implement<T?>());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? LogsImplement<T>(this IEnumerable<object?>? input, object? baseValue = null) => input.IsNullEmptyImplement() ? default : input.Select(x => x.LogImplement<T>(baseValue));
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? Log10sImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(static x => x.Log10Implement<T?>());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? Log2sImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Select(static x => x.Log2Implement<T?>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

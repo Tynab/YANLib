@@ -119,6 +119,16 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyNullEmpty_ParamsOverload_SomeNullOrDefaultChars_ReturnsTrue_NullableCollection()
+    {
+        // Act
+        var result = YANText.AnyNullEmpty('a', null, 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void AllNotNullEmpty_AllNonNullNonDefaultChars_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -270,6 +280,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyAlphabetic_NoLetters_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { '5', '6', '@', null };
+
+        // Act
+        var result = collection.AnyAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyAlphabetic_SomeLetters_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -283,10 +306,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphabetic_NoLetters_ReturnsFalse_NullableCollection()
+    public void AnyAlphabetic_ContainsNull_ReturnsFalse_NullableCollection()
     {
         // Arrange
-        var collection = new char?[] { '5', '6', '@', null };
+        var collection = new char?[] { '5', null, '@' };
 
         // Act
         var result = collection.AnyAlphabetic();
@@ -365,6 +388,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyPunctuation_NoPunctuationChars_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', 'b', 'c', null };
+
+        // Act
+        var result = collection.AnyPunctuation();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyPunctuation_SomePunctuationChars_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -378,10 +414,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyPunctuation_NoPunctuationChars_ReturnsFalse_NullableCollection()
+    public void AnyPunctuation_ContainsNull_ReturnsFalse_NullableCollection()
     {
         // Arrange
-        var collection = new char?[] { 'a', 'b', 'c', null };
+        var collection = new char?[] { 'a', null, 'c' };
 
         // Act
         var result = collection.AnyPunctuation();
@@ -460,6 +496,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyNumber_NoDigits_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', 'b', 'c', null };
+
+        // Act
+        var result = collection.AnyNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyNumber_SomeDigits_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -473,10 +522,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyNumber_NoDigits_ReturnsFalse_NullableCollection()
+    public void AnyNumber_ContainsNull_ReturnsFalse_NullableCollection()
     {
         // Arrange
-        var collection = new char?[] { 'a', 'b', 'c', null };
+        var collection = new char?[] { 'a', null, 'c' };
 
         // Act
         var result = collection.AnyNumber();
@@ -555,6 +604,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyAlphanumeric_NoAlphanumericChars_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { '@', '#', '$', null };
+
+        // Act
+        var result = collection.AnyAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyAlphanumeric_SomeAlphanumericChars_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -568,10 +630,10 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void AnyAlphanumeric_NoAlphanumericChars_ReturnsFalse_NullableCollection()
+    public void AnyAlphanumeric_ContainsNull_ReturnsFalse_NullableCollection()
     {
         // Arrange
-        var collection = new char?[] { '@', '#', '$', null };
+        var collection = new char?[] { '@', null, '#' };
 
         // Act
         var result = collection.AnyAlphanumeric();
@@ -675,6 +737,45 @@ public partial class YANTextTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_SomeDifferentLetters_ReturnsTrue_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', 'A', 'c' };
+
+        // Act
+        var result = collection.AnyNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_ContainsNull_ReturnsTrue_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', null, 'A' };
+
+        // Act
+        var result = collection.AnyNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_AllSameLetterDifferentCase_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', 'A', 'a' };
+
+        // Act
+        var result = collection.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region Lower
@@ -745,6 +846,45 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void LowerInvariant_ListWithNulls_PreservesNulls_NullableCollection()
+    {
+        // Arrange
+        var list = new List<char?> { 'A', null, 'C' };
+
+        // Act
+        list.LowerInvariant();
+
+        // Assert
+        Assert.Equal(['a', null, 'c'], list);
+    }
+
+    [Fact]
+    public void LowerInvariants_EnumerableWithUppercaseLetters_ReturnsLowercaseLetters_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'A', 'B', 'C' };
+
+        // Act
+        var result = collection.LowerInvariants();
+
+        // Assert
+        Assert.Equal(['a', 'b', 'c'], result);
+    }
+
+    [Fact]
+    public void LowerInvariants_EnumerableWithNulls_PreservesNulls_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'A', null, 'C' };
+
+        // Act
+        var result = collection.LowerInvariants();
+
+        // Assert
+        Assert.Equal(['a', null, 'c'], result);
+    }
+
+    [Fact]
     public void AllLowers_AllLowercaseLetters_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -784,6 +924,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyLowers_NoLowercaseLetters_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'A', 'B', 'C' };
+
+        // Act
+        var result = collection.AnyLowers();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyLowers_SomeLowercaseLetters_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -794,6 +947,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyLowers_ContainsNull_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'A', null, 'C' };
+
+        // Act
+        var result = collection.AnyLowers();
+
+        // Assert
+        Assert.False(result);
     }
 
     #endregion
@@ -866,6 +1032,45 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void UpperInvariant_ListWithNulls_PreservesNulls_NullableCollection()
+    {
+        // Arrange
+        var list = new List<char?> { 'a', null, 'c' };
+
+        // Act
+        list.UpperInvariant();
+
+        // Assert
+        Assert.Equal(['A', null, 'C'], list);
+    }
+
+    [Fact]
+    public void UpperInvariants_EnumerableWithLowercaseLetters_ReturnsUppercaseLetters_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.UpperInvariants();
+
+        // Assert
+        Assert.Equal(['A', 'B', 'C'], result);
+    }
+
+    [Fact]
+    public void UpperInvariants_EnumerableWithNulls_PreservesNulls_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', null, 'c' };
+
+        // Act
+        var result = collection.UpperInvariants();
+
+        // Assert
+        Assert.Equal(['A', null, 'C'], result);
+    }
+
+    [Fact]
     public void AllUppers_AllUppercaseLetters_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -905,6 +1110,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyUppers_NoUppercaseLetters_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.AnyUppers();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyUppers_SomeUppercaseLetters_ReturnsTrue_NullableCollection()
     {
         // Arrange
@@ -915,6 +1133,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyUppers_ContainsNull_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { 'a', null, 'c' };
+
+        // Act
+        var result = collection.AnyUppers();
+
+        // Assert
+        Assert.False(result);
     }
 
     #endregion

@@ -470,207 +470,6 @@ public partial class YANMathTest
 
     #endregion
 
-    #region Logs
-
-    [Fact]
-    public void Logs_NullCollection_ReturnsNull_MathCollection()
-    {
-        // Arrange
-        IEnumerable<double?>? input = null;
-
-        // Act
-        var result = input.Logs<double>();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Logs_EmptyCollection_ReturnsNullCollection_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?>();
-
-        // Act
-        var result = input.Logs<double>();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Logs_CollectionWithValues_ReturnsLogValues_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?> { Math.E, Math.E * Math.E };
-
-        // Act
-        var result = input.Logs<double>();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, 2.0 }, result);
-    }
-
-    [Fact]
-    public void Logs_CollectionWithNullValues_PreservesNulls_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?> { Math.E, null, Math.E * Math.E };
-
-        // Act
-        var result = input.Logs<double>();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, default, 2.0 }, result);
-    }
-
-    [Fact]
-    public void Logs_WithBase_ReturnsLogValues_MathCollection()
-    {
-        // Arrange
-        var input = new List<object?> { 10.0, 100.0, 1000.0 };
-
-        // Act
-        var result = input.Logs<double>(10).Rounds();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
-    }
-
-    #endregion
-
-    #region Log10s
-
-    [Fact]
-    public void Log10s_NullCollection_ReturnsNull_MathCollection()
-    {
-        // Arrange
-        IEnumerable<double?>? input = null;
-
-        // Act
-        var result = input.Log10s<double>();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Log10s_EmptyCollection_ReturnsNullCollection_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?>();
-
-        // Act
-        var result = input.Log10s<double>();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Log10s_CollectionWithValues_ReturnsLog10Values_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?> { 10.0, 100.0, 1000.0 };
-
-        // Act
-        var result = input.Log10s<double>();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
-    }
-
-    [Fact]
-    public void Log10s_CollectionWithNullValues_PreservesNulls_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?> { 10.0, null, 1000.0 };
-
-        // Act
-        var result = input.Log10s<double>();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, default, 3.0 }, result);
-    }
-
-    [Fact]
-    public void Log10s_ParamsOverload_ReturnsLog10Values_MathCollection()
-    {
-        // Act
-        var result = YANMath.Log10s<double?>(10.0, 100.0, 1000.0);
-
-        // Assert
-        Assert.Equal([1.0, 2.0, 3.0], result);
-    }
-
-    #endregion
-
-    #region Log2s
-
-    [Fact]
-    public void Log2s_NullCollection_ReturnsNull_MathCollection()
-    {
-        // Arrange
-        IEnumerable<double?>? input = null;
-
-        // Act
-        var result = input.Log2s<double>();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Log2s_EmptyCollection_ReturnsNullCollection_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?>();
-
-        // Act
-        var result = input.Log2s<double>();
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Log2s_CollectionWithValues_ReturnsLog2Values_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?> { 2.0, 4.0, 8.0 };
-
-        // Act
-        var result = input.Log2s<double>();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
-    }
-
-    [Fact]
-    public void Log2s_CollectionWithNullValues_PreservesNulls_MathCollection()
-    {
-        // Arrange
-        var input = new List<double?> { 2.0, null, 8.0 };
-
-        // Act
-        var result = input.Log2s<double>();
-
-        // Assert
-        Assert.Equal(new List<double> { 1.0, default, 3.0 }, result);
-    }
-
-    [Fact]
-    public void Log2s_ParamsOverload_ReturnsLog2Values_MathCollection()
-    {
-        // Act
-        var result = YANMath.Log2s<double?>(2.0, 4.0, 8.0);
-
-        // Assert
-        Assert.Equal([1.0, 2.0, 3.0], result);
-    }
-
-    #endregion
-
     #region Sins
 
     [Fact]
@@ -1192,6 +991,207 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal([1.0, 2.0, 4.0, 8.0], result);
+    }
+
+    #endregion
+
+    #region Logs
+
+    [Fact]
+    public void Logs_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Logs<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Logs_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Logs<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Logs_CollectionWithValues_ReturnsLogValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { Math.E, Math.E * Math.E };
+
+        // Act
+        var result = input.Logs<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0 }, result);
+    }
+
+    [Fact]
+    public void Logs_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { Math.E, null, Math.E * Math.E };
+
+        // Act
+        var result = input.Logs<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, default, 2.0 }, result);
+    }
+
+    [Fact]
+    public void Logs_WithBase_ReturnsLogValues_MathCollection()
+    {
+        // Arrange
+        var input = new List<object?> { 10.0, 100.0, 1000.0 };
+
+        // Act
+        var result = input.Logs<double>(10).Rounds();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
+    }
+
+    #endregion
+
+    #region Log10s
+
+    [Fact]
+    public void Log10s_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Log10s<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Log10s_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Log10s<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Log10s_CollectionWithValues_ReturnsLog10Values_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 10.0, 100.0, 1000.0 };
+
+        // Act
+        var result = input.Log10s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
+    }
+
+    [Fact]
+    public void Log10s_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 10.0, null, 1000.0 };
+
+        // Act
+        var result = input.Log10s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, default, 3.0 }, result);
+    }
+
+    [Fact]
+    public void Log10s_ParamsOverload_ReturnsLog10Values_MathCollection()
+    {
+        // Act
+        var result = YANMath.Log10s<double?>(10.0, 100.0, 1000.0);
+
+        // Assert
+        Assert.Equal([1.0, 2.0, 3.0], result);
+    }
+
+    #endregion
+
+    #region Log2s
+
+    [Fact]
+    public void Log2s_NullCollection_ReturnsNull_MathCollection()
+    {
+        // Arrange
+        IEnumerable<double?>? input = null;
+
+        // Act
+        var result = input.Log2s<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Log2s_EmptyCollection_ReturnsNullCollection_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?>();
+
+        // Act
+        var result = input.Log2s<double>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Log2s_CollectionWithValues_ReturnsLog2Values_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, 4.0, 8.0 };
+
+        // Act
+        var result = input.Log2s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
+    }
+
+    [Fact]
+    public void Log2s_CollectionWithNullValues_PreservesNulls_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, null, 8.0 };
+
+        // Act
+        var result = input.Log2s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, default, 3.0 }, result);
+    }
+
+    [Fact]
+    public void Log2s_ParamsOverload_ReturnsLog2Values_MathCollection()
+    {
+        // Act
+        var result = YANMath.Log2s<double?>(2.0, 4.0, 8.0);
+
+        // Assert
+        Assert.Equal([1.0, 2.0, 3.0], result);
     }
 
     #endregion

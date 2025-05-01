@@ -119,6 +119,16 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyEmpty_ParamsOverload_SomeDefaultChars_ReturnsTrue_Collection()
+    {
+        // Act
+        var result = YANText.AnyEmpty('a', default, 'c');
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void AllNotEmpty_AllNonDefaultChars_ReturnsTrue_Collection()
     {
         // Arrange
@@ -680,6 +690,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AllNotEqualsIgnoreCase_AllSameLetterDifferentCase_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'A', 'a' };
+
+        // Act
+        var result = collection.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AllNotEqualsIgnoreCase_AllDifferentLetters_ReturnsTrue_Collection()
     {
         // Arrange
@@ -687,6 +710,19 @@ public partial class YANTextTest
 
         // Act
         var result = collection.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_SomeDifferentLetters_ReturnsTrue_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'A', 'b' };
+
+        // Act
+        var result = collection.AnyNotEqualsIgnoreCase();
 
         // Assert
         Assert.True(result);
@@ -736,6 +772,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void LowerInvariants_EnumerableWithUppercaseLetters_ReturnsLowercaseLetters_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'A', 'B', 'C' };
+
+        // Act
+        var result = collection.LowerInvariants();
+
+        // Assert
+        Assert.Equal(['a', 'b', 'c'], result);
+    }
+
+    [Fact]
     public void AllLowers_AllLowercaseLetters_ReturnsTrue_Collection()
     {
         // Arrange
@@ -756,6 +805,19 @@ public partial class YANTextTest
 
         // Act
         var result = collection.AllLowers();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyLowers_NoLowercaseLetters_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'A', 'B', 'C' };
+
+        // Act
+        var result = collection.AnyLowers();
 
         // Assert
         Assert.False(result);
@@ -818,6 +880,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void UpperInvariants_EnumerableWithLowercaseLetters_ReturnsUppercaseLetters_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.UpperInvariants();
+
+        // Assert
+        Assert.Equal(['A', 'B', 'C'], result);
+    }
+
+    [Fact]
     public void AllUppers_AllUppercaseLetters_ReturnsTrue_Collection()
     {
         // Arrange
@@ -838,6 +913,19 @@ public partial class YANTextTest
 
         // Act
         var result = collection.AllUppers();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyUppers_NoUppercaseLetters_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.AnyUppers();
 
         // Assert
         Assert.False(result);

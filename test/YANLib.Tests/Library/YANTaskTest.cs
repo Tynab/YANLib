@@ -113,6 +113,46 @@ public partial class YANTaskTest
         _ = await Assert.ThrowsAsync<TaskCanceledException>(() => tasks.WaitAnyWithCondition(predicate, cts.Token));
     }
 
+    [Fact]
+    public async Task WaitAnyWithCondition_DelayedTasks_WaitsForAllTasks_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.Delay(100).ContinueWith(_ => 1),
+            Task.Delay(50).ContinueWith(_ => 2),
+            Task.Delay(10).ContinueWith(_ => 3)
+        };
+
+        static bool predicate(int x) => x > 2;
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(predicate);
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_DelayedTasksNoMatch_ReturnsDefault_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.Delay(100).ContinueWith(_ => 1),
+            Task.Delay(50).ContinueWith(_ => 2),
+            Task.Delay(10).ContinueWith(_ => 3)
+        };
+
+        static bool predicate(int x) => x > 10;
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(predicate);
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
     #endregion
 
     #region WhenAnyWithCondition

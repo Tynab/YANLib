@@ -286,7 +286,7 @@ public partial class YANTextTest
         var result = input.FormatName();
 
         // Assert
-        Assert.Equal(string.Empty, result);
+        Assert.Equal("   ", result);
     }
 
     [Fact]

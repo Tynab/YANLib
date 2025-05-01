@@ -3,6 +3,14 @@ using YANLib.Implementation;
 
 namespace YANLib;
 
+/// <summary>
+/// Provides extension methods for property-based object operations and validation.
+/// </summary>
+/// <remarks>
+/// This partial class extends <see cref="YANObject"/> with methods for working with object properties.
+/// It includes methods for checking if properties have default values, if all or any properties meet certain conditions,
+/// and for working with specific named properties of objects and collections.
+/// </remarks>
 public static partial class YANObject
 {
     #region AllPropertiesDefault

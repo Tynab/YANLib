@@ -305,6 +305,48 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void NotEqualsIgnoreCase_BothNull_ReturnsFalse_String()
+    {
+        // Arrange
+        string? input1 = null;
+        string? input2 = null;
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void NotEqualsIgnoreCase_OneNull_ReturnsTrue_String()
+    {
+        // Arrange
+        string? input1 = null;
+        var input2 = "hello";
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void NotEqualsIgnoreCase_BothEmpty_ReturnsFalse_String()
+    {
+        // Arrange
+        var input1 = string.Empty;
+        var input2 = string.Empty;
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void NotEqualsIgnoreCase_SameCase_ReturnsFalse_String()
     {
         // Arrange
@@ -429,10 +471,49 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void LowerInvariant_EmptyString_ReturnsEmpty_String()
+    {
+        // Arrange
+        var input = string.Empty;
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void LowerInvariant_WhitespaceString_ReturnsWhitespace_String()
+    {
+        // Arrange
+        var input = "   ";
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal("   ", result);
+    }
+
+    [Fact]
     public void LowerInvariant_UppercaseString_ReturnsLowercase_String()
     {
         // Arrange
         var input = "HELLO WORLD";
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal("hello world", result);
+    }
+
+    [Fact]
+    public void LowerInvariant_MixedCaseString_ReturnsLowercase_String()
+    {
+        // Arrange
+        var input = "Hello World";
 
         // Act
         var result = input.LowerInvariant();
@@ -524,10 +605,49 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void UpperInvariant_EmptyString_ReturnsEmpty_String()
+    {
+        // Arrange
+        var input = string.Empty;
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void UpperInvariant_WhitespaceString_ReturnsWhitespace_String()
+    {
+        // Arrange
+        var input = "   ";
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal("   ", result);
+    }
+
+    [Fact]
     public void UpperInvariant_LowercaseString_ReturnsUppercase_String()
     {
         // Arrange
         var input = "hello world";
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal("HELLO WORLD", result);
+    }
+
+    [Fact]
+    public void UpperInvariant_MixedCaseString_ReturnsUppercase_String()
+    {
+        // Arrange
+        var input = "Hello World";
 
         // Act
         var result = input.UpperInvariant();

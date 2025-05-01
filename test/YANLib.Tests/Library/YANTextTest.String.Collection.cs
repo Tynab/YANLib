@@ -119,6 +119,16 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyNull_ParamsOverload_SomeNullValues_ReturnsTrue_StringCollection()
+    {
+        // Act
+        var result = YANText.AnyNull("hello", null, "test");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void AllNotNull_AllNonNullValues_ReturnsTrue_StringCollection()
     {
         // Arrange
@@ -257,6 +267,16 @@ public partial class YANTextTest
 
         // Act
         var result = collection.AnyNullEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNullEmpty_ParamsOverload_SomeNullOrEmptyValues_ReturnsTrue_StringCollection()
+    {
+        // Act
+        var result = YANText.AnyNullEmpty("hello", null, "test");
 
         // Assert
         Assert.True(result);
@@ -407,6 +427,16 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyNullWhiteSpace_ParamsOverload_SomeNullEmptyOrWhitespaceValues_ReturnsTrue_StringCollection()
+    {
+        // Act
+        var result = YANText.AnyNullWhiteSpace("hello", null, "test");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void AllNotNullWhiteSpace_AllNonNullNonEmptyNonWhitespaceValues_ReturnsTrue_StringCollection()
     {
         // Arrange
@@ -525,6 +555,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyEqualsIgnoreCase_NoSameStrings_ReturnsFalse_StringCollection()
+    {
+        // Arrange
+        var collection = new string?[] { "hello", "world", "test" };
+
+        // Act
+        var result = collection.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyEqualsIgnoreCase_SomeSameStringDifferentCase_ReturnsTrue_StringCollection()
     {
         // Arrange
@@ -532,6 +575,16 @@ public partial class YANTextTest
 
         // Act
         var result = collection.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_ParamsOverload_SomeSameStringDifferentCase_ReturnsTrue_StringCollection()
+    {
+        // Act
+        var result = YANText.AnyEqualsIgnoreCase("hello", "HELLO", "test");
 
         // Assert
         Assert.True(result);
@@ -660,6 +713,16 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void LowerInvariant_EmptyList_DoesNotThrowException_StringCollection()
+    {
+        // Arrange
+        var input = new List<string?>();
+
+        // Act & Assert
+        input.LowerInvariant();
+    }
+
+    [Fact]
     public void LowerInvariant_ListWithStrings_ModifiesList_StringCollection()
     {
         // Arrange
@@ -670,6 +733,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.Equal(["hello", "world", "test"], input);
+    }
+
+    [Fact]
+    public void LowerInvariant_ListWithNullValues_PreservesNulls_StringCollection()
+    {
+        // Arrange
+        var input = new List<string?> { "HELLO", null, "TEST" };
+
+        // Act
+        input.LowerInvariant();
+
+        // Assert
+        Assert.Equal(["hello", null, "test"], input);
     }
 
     [Fact]
@@ -693,6 +769,16 @@ public partial class YANTextTest
 
         // Act
         var result = input.LowerInvariants();
+
+        // Assert
+        Assert.Equal(["hello", "world", "test"], result);
+    }
+
+    [Fact]
+    public void LowerInvariants_ParamsOverload_ReturnsLowercaseStrings_StringCollection()
+    {
+        // Act
+        var result = YANText.LowerInvariants("HELLO", "WORLD", "TEST");
 
         // Assert
         Assert.Equal(["hello", "world", "test"], result);
@@ -795,6 +881,16 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void UpperInvariant_EmptyList_DoesNotThrowException_StringCollection()
+    {
+        // Arrange
+        var input = new List<string?>();
+
+        // Act & Assert
+        input.UpperInvariant();
+    }
+
+    [Fact]
     public void UpperInvariant_ListWithStrings_ModifiesList_StringCollection()
     {
         // Arrange
@@ -805,6 +901,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.Equal(["HELLO", "WORLD", "TEST"], input);
+    }
+
+    [Fact]
+    public void UpperInvariant_ListWithNullValues_PreservesNulls_StringCollection()
+    {
+        // Arrange
+        var input = new List<string?> { "hello", null, "test" };
+
+        // Act
+        input.UpperInvariant();
+
+        // Assert
+        Assert.Equal(["HELLO", null, "TEST"], input);
     }
 
     [Fact]
@@ -828,6 +937,16 @@ public partial class YANTextTest
 
         // Act
         var result = input.UpperInvariants();
+
+        // Assert
+        Assert.Equal(["HELLO", "WORLD", "TEST"], result);
+    }
+
+    [Fact]
+    public void UpperInvariants_ParamsOverload_ReturnsUppercaseStrings_StringCollection()
+    {
+        // Act
+        var result = YANText.UpperInvariants("hello", "world", "test");
 
         // Assert
         Assert.Equal(["HELLO", "WORLD", "TEST"], result);

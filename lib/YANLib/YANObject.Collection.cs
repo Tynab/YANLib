@@ -3,6 +3,13 @@ using YANLib.Implementation;
 
 namespace YANLib;
 
+/// <summary>
+/// Provides extension methods for collection-based object operations and validation.
+/// </summary>
+/// <remarks>
+/// This partial class extends <see cref="YANObject"/> with methods for working with collections of objects.
+/// It includes methods for checking null values, default values, and manipulating properties across collections.
+/// </remarks>
 public static partial class YANObject
 {
     #region Null

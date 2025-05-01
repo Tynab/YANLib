@@ -64,6 +64,25 @@ public partial class YANObjectTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void AllPropertiesDefault_ObjectWithAllNonDefaultValues_ReturnsFalse_ObjectProperty()
+    {
+        // Arrange
+        var input = new TestClass
+        {
+            StringProperty = "test",
+            IntProperty = 42,
+            DateProperty = new DateTime(2023, 1, 1),
+            Value = ""
+        };
+
+        // Act
+        var result = input.AllPropertiesDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region AllPropertiesDefaults
@@ -203,6 +222,19 @@ public partial class YANObjectTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void AllPropertiesNotDefault_ObjectWithAllDefaultValues_ReturnsFalse_ObjectProperty()
+    {
+        // Arrange
+        var input = new TestClass();
+
+        // Act
+        var result = input.AllPropertiesNotDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region AllPropertiesNotDefaults
@@ -261,6 +293,19 @@ public partial class YANObjectTest
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void AllPropertiesNotDefaults_CollectionWithSpecificProperties_ChecksOnlySpecifiedProperties_ObjectProperty()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new() { StringProperty = "test1" }, new() { StringProperty = "test2" }];
+
+        // Act
+        var result = input.AllPropertiesNotDefaults(["StringProperty"]);
+
+        // Assert
+        Assert.True(result);
     }
 
     #endregion
@@ -377,10 +422,40 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void AnyPropertiesDefaults_CollectionWithAllNonDefaultProperties_ReturnsFalse_ObjectProperty()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input =
+        [
+            new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
+            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+        ];
+
+        // Act
+        var result = input.AnyPropertiesDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyPropertiesDefaults_CollectionWithSomeDefaultProperties_ReturnsTrue_ObjectProperty()
     {
         // Arrange
         IEnumerable<TestClass?> input = [new() { StringProperty = "test" }, new() { IntProperty = 42 }];
+
+        // Act
+        var result = input.AnyPropertiesDefaults();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesDefaults_CollectionWithAllDefaultProperties_ReturnsTrue_ObjectProperty()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new(), new()];
 
         // Act
         var result = input.AnyPropertiesDefaults();
@@ -426,6 +501,25 @@ public partial class YANObjectTest
         var input = new TestClass
         {
             StringProperty = "test"
+        };
+
+        // Act
+        var result = input.AnyPropertiesNotDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyPropertiesNotDefault_ObjectWithNoDefaultValues_ReturnsTrue_ObjectProperty()
+    {
+        // Arrange
+        var input = new TestClass
+        {
+            StringProperty = "test",
+            IntProperty = 42,
+            DateProperty = new DateTime(2023, 1, 1),
+            Value = ""
         };
 
         // Act
@@ -483,6 +577,19 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void AnyPropertiesNotDefaults_CollectionWithAllDefaultProperties_ReturnsFalse_ObjectProperty()
+    {
+        // Arrange
+        IEnumerable<TestClass?> input = [new(), new()];
+
+        // Act
+        var result = input.AnyPropertiesNotDefaults();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AnyPropertiesNotDefaults_CollectionWithSomeNonDefaultProperties_ReturnsTrue_ObjectProperty()
     {
         // Arrange
@@ -496,16 +603,20 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyPropertiesNotDefaults_CollectionWithAllDefaultProperties_ReturnsFalse_ObjectProperty()
+    public void AnyPropertiesNotDefaults_CollectionWithAllNonDefaultProperties_ReturnsTrue_ObjectProperty()
     {
         // Arrange
-        IEnumerable<TestClass?> input = [new(), new()];
+        IEnumerable<TestClass?> input =
+        [
+            new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
+            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+        ];
 
         // Act
         var result = input.AnyPropertiesNotDefaults();
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
     #endregion

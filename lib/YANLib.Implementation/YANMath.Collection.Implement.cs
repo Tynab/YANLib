@@ -65,30 +65,6 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? LogsImplement<T>(this IEnumerable<T?>? input, object? baseValue = null) => input.IsNullEmptyImplement() ? input : input.Select(x => x.LogImplement(baseValue));
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? LogsImplement<T>(this System.Collections.IEnumerable? input, object? baseValue = null) => input.IsNullImplement() ? default : input.Cast<object?>().LogsImplement<T?>(baseValue);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? Log10sImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? input : input.Select(static x => x.Log10Implement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? Log10sImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().Log10sImplement<T?>();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? Log2sImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? input : input.Select(static x => x.Log2Implement());
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static IEnumerable<T?>? Log2sImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().Log2sImplement<T?>();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<T?>? SinsImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? input : input.Select(static x => x.SinImplement());
 
     [DebuggerHidden]
@@ -158,6 +134,30 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T?>? Exp2sImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().Exp2sImplement<T?>();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? LogsImplement<T>(this IEnumerable<T?>? input, object? baseValue = null) => input.IsNullEmptyImplement() ? input : input.Select(x => x.LogImplement(baseValue));
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? LogsImplement<T>(this System.Collections.IEnumerable? input, object? baseValue = null) => input.IsNullImplement() ? default : input.Cast<object?>().LogsImplement<T?>(baseValue);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? Log10sImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? input : input.Select(static x => x.Log10Implement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? Log10sImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().Log10sImplement<T?>();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? Log2sImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? input : input.Select(static x => x.Log2Implement());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static IEnumerable<T?>? Log2sImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().Log2sImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

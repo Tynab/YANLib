@@ -72,19 +72,6 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? LogImplement<T>(this T? input, object? baseValue = null)
-        => input.IsNullImplement() ? input : baseValue.IsNullImplement() ? Math.Log(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Log(input.ParseImplement<double>(), baseValue.ParseImplement<double>()).ParseImplement<T?>();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? Log10Implement<T>(this T? input) => input.IsNullImplement() ? input : Math.Log10(input.ParseImplement<double>()).ParseImplement<T?>();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? Log2Implement<T>(this T? input) => input.IsNullImplement() ? input : Math.Log(input.ParseImplement<double>(), 2).ParseImplement<T?>();
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? SinImplement<T>(this T? input) => input.IsNullImplement() ? input : Math.Sin(input.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
@@ -118,6 +105,19 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static T? Exp2Implement<T>(this T? input) => input.IsNullImplement() ? input : Math.Pow(2, input.ParseImplement<double>()).ParseImplement<T?>();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static T? LogImplement<T>(this T? input, object? baseValue = null)
+        => input.IsNullImplement() ? input : baseValue.IsNullImplement() ? Math.Log(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Log(input.ParseImplement<double>(), baseValue.ParseImplement<double>()).ParseImplement<T?>();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static T? Log10Implement<T>(this T? input) => input.IsNullImplement() ? input : Math.Log10(input.ParseImplement<double>()).ParseImplement<T?>();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static T? Log2Implement<T>(this T? input) => input.IsNullImplement() ? input : Math.Log(input.ParseImplement<double>(), 2).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

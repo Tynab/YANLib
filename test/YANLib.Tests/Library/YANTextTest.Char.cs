@@ -126,6 +126,32 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void IsNotWhiteSpace_Tab_ReturnsFalse()
+    {
+        // Arrange
+        var input = '\t';
+
+        // Act
+        var result = input.IsNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotWhiteSpace_NewLine_ReturnsFalse()
+    {
+        // Arrange
+        var input = '\n';
+
+        // Act
+        var result = input.IsNotWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void IsNotWhiteSpace_Letter_ReturnsTrue()
     {
         // Arrange
@@ -290,10 +316,36 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void IsNotAlphabetic_UppercaseLetter_ReturnsFalse()
+    {
+        // Arrange
+        var input = 'Z';
+
+        // Act
+        var result = input.IsNotAlphabetic();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void IsNotAlphabetic_Number_ReturnsTrue()
     {
         // Arrange
         var input = '5';
+
+        // Act
+        var result = input.IsNotAlphabetic();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotAlphabetic_Symbol_ReturnsTrue()
+    {
+        // Arrange
+        var input = '@';
 
         // Act
         var result = input.IsNotAlphabetic();
@@ -363,6 +415,19 @@ public partial class YANTextTest
     {
         // Arrange
         var input = 'a';
+
+        // Act
+        var result = input.IsNotPunctuation();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotPunctuation_Space_ReturnsTrue()
+    {
+        // Arrange
+        var input = ' ';
 
         // Act
         var result = input.IsNotPunctuation();
@@ -475,6 +540,19 @@ public partial class YANTextTest
     {
         // Arrange
         var input = 'a';
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotAlphanumeric_Digit_ReturnsFalse()
+    {
+        // Arrange
+        var input = '5';
 
         // Act
         var result = input.IsNotAlphanumeric();
@@ -641,6 +719,32 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void LowerInvariant_LowercaseLetter_ReturnsSameChar()
+    {
+        // Arrange
+        var input = 'a';
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal('a', result);
+    }
+
+    [Fact]
+    public void LowerInvariant_NonLetter_ReturnsSameChar()
+    {
+        // Arrange
+        var input = '5';
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal('5', result);
+    }
+
+    [Fact]
     public void IsLower_LowercaseLetter_ReturnsTrue()
     {
         // Arrange
@@ -697,6 +801,19 @@ public partial class YANTextTest
     {
         // Arrange
         var input = 'A';
+
+        // Act
+        var result = input.IsNotLower();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotLower_NonLetter_ReturnsTrue()
+    {
+        // Arrange
+        var input = '5';
 
         // Act
         var result = input.IsNotLower();
@@ -762,6 +879,32 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void UpperInvariant_UppercaseLetter_ReturnsSameChar()
+    {
+        // Arrange
+        var input = 'A';
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal('A', result);
+    }
+
+    [Fact]
+    public void UpperInvariant_NonLetter_ReturnsSameChar()
+    {
+        // Arrange
+        var input = '5';
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal('5', result);
+    }
+
+    [Fact]
     public void IsUpper_UppercaseLetter_ReturnsTrue()
     {
         // Arrange
@@ -818,6 +961,19 @@ public partial class YANTextTest
     {
         // Arrange
         var input = 'a';
+
+        // Act
+        var result = input.IsNotUpper();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotUpper_NonLetter_ReturnsTrue()
+    {
+        // Arrange
+        var input = '5';
 
         // Act
         var result = input.IsNotUpper();

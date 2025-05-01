@@ -54,7 +54,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullImplement([NotNullWhen(true)] this object? input) => !input.IsNullImplement();
+    internal static bool IsNotNullImplement([NotNullWhen(true)] this object? input) => input is not null;
 
     #endregion
 
@@ -66,7 +66,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotDefaultImplement<T>(this T input) => !input.IsDefaultImplement();
+    internal static bool IsNotDefaultImplement<T>(this T input) => !EqualityComparer<T>.Default.Equals(input.ParseImplement<T>(), default);
 
     #endregion
 

@@ -15,7 +15,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullEmptyImplement([NotNullWhen(true)] this string? input) => !input.IsNullEmptyImplement();
+    internal static bool IsNotNullEmptyImplement([NotNullWhen(true)] this string? input) => !string.IsNullOrEmpty(input);
 
     #endregion
 
@@ -27,7 +27,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullWhiteSpaceImplement([NotNullWhen(true)] this string? input) => !input.IsNullWhiteSpaceImplement();
+    internal static bool IsNotNullWhiteSpaceImplement([NotNullWhen(true)] this string? input) => !string.IsNullOrWhiteSpace(input);
 
     #endregion
 
@@ -39,7 +39,7 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool NotEqualsIgnoreCaseImplement(this string? input1, string? input2) => !input1.EqualsIgnoreCaseImplement(input2);
+    internal static bool NotEqualsIgnoreCaseImplement(this string? input1, string? input2) => !string.Equals(input1, input2, OrdinalIgnoreCase);
 
     #endregion
 

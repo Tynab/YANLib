@@ -69,6 +69,19 @@ public partial class YANTextTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void IsNotNullEmpty_DefaultChar_ReturnsFalse_Nullable()
+    {
+        // Arrange
+        char? input = default(char);
+
+        // Act
+        var result = input.IsNotNullEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region NullWhiteSpace
@@ -130,6 +143,19 @@ public partial class YANTextTest
     {
         // Arrange
         char? input = null;
+
+        // Act
+        var result = input.IsNotNullWhiteSpace();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNullWhiteSpace_DefaultChar_ReturnsFalse_Nullable()
+    {
+        // Arrange
+        char? input = default(char);
 
         // Act
         var result = input.IsNotNullWhiteSpace();
@@ -493,6 +519,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void IsNotAlphanumeric_Digit_ReturnsFalse_Nullable()
+    {
+        // Arrange
+        char? input = '5';
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void IsNotAlphanumeric_Symbol_ReturnsTrue_Nullable()
     {
         // Arrange
@@ -580,11 +619,53 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void NotEqualsIgnoreCase_BothNull_ReturnsFalse_Nullable()
+    {
+        // Arrange
+        char? input1 = null;
+        char? input2 = null;
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void NotEqualsIgnoreCase_OneNull_ReturnsTrue_Nullable()
+    {
+        // Arrange
+        char? input1 = null;
+        char? input2 = 'a';
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void NotEqualsIgnoreCase_SameCase_ReturnsFalse_Nullable()
     {
         // Arrange
         char? input1 = 'a';
         char? input2 = 'a';
+
+        // Act
+        var result = input1.NotEqualsIgnoreCase(input2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void NotEqualsIgnoreCase_DifferentCase_ReturnsFalse_Nullable()
+    {
+        // Arrange
+        char? input1 = 'a';
+        char? input2 = 'A';
 
         // Act
         var result = input1.NotEqualsIgnoreCase(input2);
@@ -677,6 +758,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void LowerInvariant_LowercaseLetter_ReturnsSameChar_Nullable()
+    {
+        // Arrange
+        char? input = 'a';
+
+        // Act
+        var result = input.LowerInvariant();
+
+        // Assert
+        Assert.Equal('a', result);
+    }
+
+    [Fact]
     public void IsLower_NullChar_ReturnsFalse_Nullable()
     {
         // Arrange
@@ -739,6 +833,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotLower_UppercaseLetter_ReturnsTrue_Nullable()
+    {
+        // Arrange
+        char? input = 'A';
+
+        // Act
+        var result = input.IsNotLower();
+
+        // Assert
+        Assert.True(result);
     }
 
     #endregion
@@ -811,6 +918,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void UpperInvariant_UppercaseLetter_ReturnsSameChar_Nullable()
+    {
+        // Arrange
+        char? input = 'A';
+
+        // Act
+        var result = input.UpperInvariant();
+
+        // Assert
+        Assert.Equal('A', result);
+    }
+
+    [Fact]
     public void IsUpper_NullChar_ReturnsFalse_Nullable()
     {
         // Arrange
@@ -854,6 +974,32 @@ public partial class YANTextTest
     {
         // Arrange
         char? input = null;
+
+        // Act
+        var result = input.IsNotUpper();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotUpper_UppercaseLetter_ReturnsFalse_Nullable()
+    {
+        // Arrange
+        char? input = 'A';
+
+        // Act
+        var result = input.IsNotUpper();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotUpper_LowercaseLetter_ReturnsTrue_Nullable()
+    {
+        // Arrange
+        char? input = 'a';
 
         // Act
         var result = input.IsNotUpper();

@@ -619,109 +619,6 @@ public partial class YANMathTest
 
     #endregion
 
-    #region Log
-
-    [Fact]
-    public void Log_NullValue_ReturnsDefault_Math()
-    {
-        // Arrange
-        double? input = null;
-
-        // Act
-        var result = input.Log<double>();
-
-        // Assert
-        Assert.Equal(default, result);
-    }
-
-    [Fact]
-    public void Log_PositiveValueNoBase_ReturnsNaturalLog_Math()
-    {
-        // Arrange
-        double? input = Math.E;
-
-        // Act
-        double? result = input.Log<double>();
-
-        // Assert
-        Assert.Equal(1.0, result);
-    }
-
-    [Fact]
-    public void Log_PositiveValueWithBase_ReturnsLogWithBase_Math()
-    {
-        // Arrange
-        double? input = 100.0;
-
-        // Act
-        double? result = input.Log<double>(10);
-
-        // Assert
-        Assert.Equal(2.0, result);
-    }
-
-    #endregion
-
-    #region Log10
-
-    [Fact]
-    public void Log10_NullValue_ReturnsDefault_Math()
-    {
-        // Arrange
-        double? input = null;
-
-        // Act
-        var result = input.Log10<double>();
-
-        // Assert
-        Assert.Equal(default, result);
-    }
-
-    [Fact]
-    public void Log10_PositiveValue_ReturnsLog10Value_Math()
-    {
-        // Arrange
-        double? input = 100.0;
-
-        // Act
-        double? result = input.Log10<double>();
-
-        // Assert
-        Assert.Equal(2.0, result);
-    }
-
-    #endregion
-
-    #region Log2
-
-    [Fact]
-    public void Log2_NullValue_ReturnsDefault_Math()
-    {
-        // Arrange
-        double? input = null;
-
-        // Act
-        var result = input.Log2<double>();
-
-        // Assert
-        Assert.Equal(default, result);
-    }
-
-    [Fact]
-    public void Log2_PositiveValue_ReturnsLog2Value_Math()
-    {
-        // Arrange
-        double? input = 8.0;
-
-        // Act
-        double? result = input.Log2<double>();
-
-        // Assert
-        Assert.Equal(3.0, result);
-    }
-
-    #endregion
-
     #region Sin
 
     [Fact]
@@ -1105,6 +1002,109 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(8.0, result);
+    }
+
+    #endregion
+
+    #region Log
+
+    [Fact]
+    public void Log_NullValue_ReturnsDefault_Math()
+    {
+        // Arrange
+        double? input = null;
+
+        // Act
+        var result = input.Log<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Log_PositiveValueNoBase_ReturnsNaturalLog_Math()
+    {
+        // Arrange
+        double? input = Math.E;
+
+        // Act
+        double? result = input.Log<double>();
+
+        // Assert
+        Assert.Equal(1.0, result);
+    }
+
+    [Fact]
+    public void Log_PositiveValueWithBase_ReturnsLogWithBase_Math()
+    {
+        // Arrange
+        double? input = 100.0;
+
+        // Act
+        double? result = input.Log<double>(10);
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
+    #endregion
+
+    #region Log10
+
+    [Fact]
+    public void Log10_NullValue_ReturnsDefault_Math()
+    {
+        // Arrange
+        double? input = null;
+
+        // Act
+        var result = input.Log10<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Log10_PositiveValue_ReturnsLog10Value_Math()
+    {
+        // Arrange
+        double? input = 100.0;
+
+        // Act
+        double? result = input.Log10<double>();
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
+    #endregion
+
+    #region Log2
+
+    [Fact]
+    public void Log2_NullValue_ReturnsDefault_Math()
+    {
+        // Arrange
+        double? input = null;
+
+        // Act
+        var result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void Log2_PositiveValue_ReturnsLog2Value_Math()
+    {
+        // Arrange
+        double? input = 8.0;
+
+        // Act
+        double? result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
     }
 
     #endregion
