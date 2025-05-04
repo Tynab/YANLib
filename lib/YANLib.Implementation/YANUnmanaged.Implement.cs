@@ -20,6 +20,10 @@ internal static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
+    private static Guid ParseGuid(this string? input, Guid defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : Guid.TryParse(input, out var guidResult) ? guidResult : defaultValue;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     private static T ParseEnum<T>(this string? input, T defaultValue = default) where T : unmanaged
         => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var enumResult) ? enumResult.ParseImplement<T>() : defaultValue;
 
@@ -38,6 +42,11 @@ internal static partial class YANUnmanaged
         if (typeof(T) == typeof(DateTime))
         {
             return (input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format).ParseImplement<T>();
+        }
+
+        if (typeof(T) == typeof(Guid))
+        {
+            return (input?.ToString() ?? default).ParseGuid((defaultValue?.ToString() ?? default).ParseGuid(default)).ParseImplement<T>();
         }
 
         if (typeof(T).IsEnum)

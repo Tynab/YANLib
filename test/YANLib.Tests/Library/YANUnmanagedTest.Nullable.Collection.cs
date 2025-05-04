@@ -218,5 +218,50 @@ public partial class YANUnmanagedTest
         Assert.Equal([null, null, null, null, guid, null, null], guidResults);
     }
 
+    [Fact]
+    public void Parses_DateTimeWithFormat_UsesFormat_NullableCollection()
+    {
+        // Arrange
+        var input = new object?[] { "15/06/2023", "20/07/2023", "25/12/2023" };
+
+        // Act
+        var result = input.Parses<DateTime?>()?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+
+        Assert.All(result, item => Assert.Null(item));
+    }
+
+    [Fact]
+    public void Parses_InvalidDateTimeFormat_ReturnsNullValues_NullableCollection()
+    {
+        // Arrange
+        var input = new object?[] { "2023/13/45", "invalid date", "2023-02-30" };
+        var expected = new DateTime?[] { null, null, null };
+
+        // Act
+        var result = input.Parses<DateTime?>()?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void Parses_IEnumerableWithInvalidValues_ReturnsNullsForInvalid_NullableCollection()
+    {
+        // Arrange
+        ArrayList input = ["123", "not a number", "789"];
+        var expected = new int?[] { 123, null, 789 };
+
+        // Act
+        var result = input.Parses<int?>()?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expected, result);
+    }
+
     #endregion
 }

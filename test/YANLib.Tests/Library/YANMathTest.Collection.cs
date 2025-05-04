@@ -66,6 +66,19 @@ public partial class YANMathTest
         Assert.Equal([3.0, -2.0, 0.0], result);
     }
 
+    [Fact]
+    public void Truncates_CollectionWithMixedTypes_ConvertsTypes_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 3.75, double.Parse("-2.25"), 0.5 };
+
+        // Act
+        var result = input.Truncates<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 3.0, -2.0, 0.0 }, result);
+    }
+
     #endregion
 
     #region Ceilings
@@ -132,6 +145,19 @@ public partial class YANMathTest
         Assert.Equal([4.0, -2.0, 1.0], result);
     }
 
+    [Fact]
+    public void Ceilings_CollectionWithMixedTypes_ConvertsTypes_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 3.75, double.Parse("-2.25"), 0.5 };
+
+        // Act
+        var result = input.Ceilings<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 4.0, -2.0, 1.0 }, result);
+    }
+
     #endregion
 
     #region Floors
@@ -196,6 +222,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal([3.0, -3.0, 0.0], result);
+    }
+
+    [Fact]
+    public void Floors_CollectionWithMixedTypes_ConvertsTypes_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 3.75, double.Parse("-2.25"), 0.5 };
+
+        // Act
+        var result = input.Floors<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 3.0, -3.0, 0.0 }, result);
     }
 
     #endregion
@@ -280,6 +319,19 @@ public partial class YANMathTest
         Assert.Equal(new List<double> { 2.0, 4.0 }, result);
     }
 
+    [Fact]
+    public void Rounds_CollectionWithMixedTypes_ConvertsAndRounds_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 3.75, double.Parse("-2.25"), 0.5 };
+
+        // Act
+        var result = input.Rounds<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 4.0, -2.0, 1.0 }, result);
+    }
+
     #endregion
 
     #region Sqrts
@@ -346,6 +398,19 @@ public partial class YANMathTest
         Assert.Equal([2.0, 3.0, 4.0], result);
     }
 
+    [Fact]
+    public void Sqrts_CollectionWithMixedTypes_ConvertsAndCalculatesSqrt_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 4.0, double.Parse("9.0"), 16.0 };
+
+        // Act
+        var result = input.Sqrts<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 2.0, 3.0, 4.0 }, result);
+    }
+
     #endregion
 
     #region Pows
@@ -400,6 +465,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(new List<double> { 4.0, default, 16.0 }, result);
+    }
+
+    [Fact]
+    public void Pows_CollectionWithMixedTypes_ConvertsAndCalculatesPow_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, double.Parse("3.0"), 4.0 };
+
+        // Act
+        var result = input.Pows<double>(2);
+
+        // Assert
+        Assert.Equal(new List<double> { 4.0, 9.0, 16.0 }, result);
     }
 
     #endregion
@@ -468,6 +546,19 @@ public partial class YANMathTest
         Assert.Equal([3.0, 2.0, 0.0], result);
     }
 
+    [Fact]
+    public void Abss_CollectionWithMixedTypes_ConvertsAndCalculatesAbs_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 3.0, double.Parse("-2.0"), 0.0 };
+
+        // Act
+        var result = input.Abss<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 3.0, 2.0, 0.0 }, result);
+    }
+
     #endregion
 
     #region Sins
@@ -503,6 +594,19 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new List<double?> { 0.0, Math.PI / 2, Math.PI };
+
+        // Act
+        var result = input.Sins<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15), item => Assert.Equal(0.0, item, 15));
+    }
+
+    [Fact]
+    public void Sins_CollectionWithMixedTypes_ConvertsAndCalculatesSin_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse((Math.PI / 2).ToString()), Math.PI };
 
         // Act
         var result = input.Sins<double>();
@@ -554,6 +658,19 @@ public partial class YANMathTest
         Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(0.0, item, 15), item => Assert.Equal(-1.0, item, 15));
     }
 
+    [Fact]
+    public void Coss_CollectionWithMixedTypes_ConvertsAndCalculatesCos_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse((Math.PI / 2).ToString()), Math.PI };
+
+        // Act
+        var result = input.Coss<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(0.0, item, 15), item => Assert.Equal(-1.0, item, 15));
+    }
+
     #endregion
 
     #region Tans
@@ -589,6 +706,19 @@ public partial class YANMathTest
     {
         // Arrange
         var input = new List<double?> { 0.0, Math.PI / 4 };
+
+        // Act
+        var result = input.Tans<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15));
+    }
+
+    [Fact]
+    public void Tans_CollectionWithMixedTypes_ConvertsAndCalculatesTan_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse((Math.PI / 4).ToString()) };
 
         // Act
         var result = input.Tans<double>();
@@ -663,6 +793,19 @@ public partial class YANMathTest
         Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
     }
 
+    [Fact]
+    public void Asins_CollectionWithMixedTypes_ConvertsAndCalculatesAsin_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse("1.0"), -1.0 };
+
+        // Act
+        var result = input.Asins<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
+    }
+
     #endregion
 
     #region Acoss
@@ -724,6 +867,19 @@ public partial class YANMathTest
     {
         // Act
         var result = YANMath.Acoss<double>(1.0, 0.0, -1.0);
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
+    }
+
+    [Fact]
+    public void Acoss_CollectionWithMixedTypes_ConvertsAndCalculatesAcos_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 1.0, double.Parse("0.0"), -1.0 };
+
+        // Act
+        var result = input.Acoss<double>();
 
         // Assert
         Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
@@ -795,6 +951,19 @@ public partial class YANMathTest
         Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
     }
 
+    [Fact]
+    public void Atans_CollectionWithMixedTypes_ConvertsAndCalculatesAtan_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse("1.0"), -1.0 };
+
+        // Act
+        var result = input.Atans<double>();
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
+    }
+
     #endregion
 
     #region Cbrts
@@ -861,6 +1030,19 @@ public partial class YANMathTest
         Assert.Equal([2.0, 3.0, -3.0], result);
     }
 
+    [Fact]
+    public void Cbrts_CollectionWithMixedTypes_ConvertsAndCalculatesCbrt_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 8.0, double.Parse("27.0"), -27.0 };
+
+        // Act
+        var result = input.Cbrts<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result);
+    }
+
     #endregion
 
     #region Exps
@@ -922,6 +1104,19 @@ public partial class YANMathTest
     {
         // Act
         var result = YANMath.Exps(0.0, 1.0, 2.0);
+
+        // Assert
+        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
+    }
+
+    [Fact]
+    public void Exps_CollectionWithMixedTypes_ConvertsAndCalculatesExp_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse("1.0"), 2.0 };
+
+        // Act
+        var result = input.Exps<double>();
 
         // Assert
         Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
@@ -993,6 +1188,19 @@ public partial class YANMathTest
         Assert.Equal([1.0, 2.0, 4.0, 8.0], result);
     }
 
+    [Fact]
+    public void Exp2s_CollectionWithMixedTypes_ConvertsAndCalculatesExp2_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 0.0, double.Parse("1.0"), 2.0, double.Parse("3.0") };
+
+        // Act
+        var result = input.Exp2s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 4.0, 8.0 }, result);
+    }
+
     #endregion
 
     #region Logs
@@ -1062,6 +1270,19 @@ public partial class YANMathTest
         Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
     }
 
+    [Fact]
+    public void Logs_CollectionWithMixedTypes_ConvertsAndCalculatesLog_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { Math.E, double.Parse(Math.E.ToString()), Math.E * Math.E };
+
+        // Act
+        var result = input.Logs<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 1.0, 2.0 }, result);
+    }
+
     #endregion
 
     #region Log10s
@@ -1126,6 +1347,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal([1.0, 2.0, 3.0], result);
+    }
+
+    [Fact]
+    public void Log10s_CollectionWithMixedTypes_ConvertsAndCalculatesLog10_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 10.0, double.Parse("100.0"), 1000.0 };
+
+        // Act
+        var result = input.Log10s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
     }
 
     #endregion
@@ -1194,6 +1428,19 @@ public partial class YANMathTest
         Assert.Equal([1.0, 2.0, 3.0], result);
     }
 
+    [Fact]
+    public void Log2s_CollectionWithMixedTypes_ConvertsAndCalculatesLog2_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, double.Parse("4.0"), 8.0 };
+
+        // Act
+        var result = input.Log2s<double>();
+
+        // Assert
+        Assert.Equal(new List<double> { 1.0, 2.0, 3.0 }, result);
+    }
+
     #endregion
 
     #region ILogBs
@@ -1258,6 +1505,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal([1, 2, 3, 4], result);
+    }
+
+    [Fact]
+    public void ILogBs_CollectionWithMixedTypes_ConvertsAndCalculatesILogB_MathCollection()
+    {
+        // Arrange
+        var input = new List<double?> { 2.0, double.Parse("4.0"), 8.0, double.Parse("16.0") };
+
+        // Act
+        var result = input.ILogBs<int>();
+
+        // Assert
+        Assert.Equal(new List<int> { 1, 2, 3, 4 }, result);
     }
 
     #endregion

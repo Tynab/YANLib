@@ -17,7 +17,7 @@ internal static partial class YANDateTime
     [DebuggerStepThrough]
     internal static DateTime ChangeTimeZoneImplement(this DateTime input, object? tzSrc = null, object? tzDst = null)
     {
-        var diff = tzDst.ParseImplement<int>() - tzSrc.ParseImplement<int>();
+        var diff = tzDst.ParseImplement<double>() - tzSrc.ParseImplement<double>();
 
         return diff switch
         {

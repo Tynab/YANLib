@@ -77,5 +77,23 @@ public partial class YANRandomTest
         Assert.Equal(size, result.Count);
     }
 
+    [Fact]
+    public void GenerateRandoms_NullableDouble_WithSize_ReturnsCollectionOfRandomDoubles_RandomNullableCollection()
+    {
+        // Arrange
+        var size = 10;
+
+        // Act
+        var result = YANRandom.GenerateRandoms<double?>(size).ToList();
+
+        // Assert
+        Assert.Equal(size, result.Count);
+        Assert.All(result, item =>
+        {
+            _ = Assert.IsType<double>(item);
+            Assert.True(double.IsFinite((double)item));
+        });
+    }
+
     #endregion
 }

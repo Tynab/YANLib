@@ -678,6 +678,19 @@ public partial class YANMathTest
         Assert.Equal(8.0, result);
     }
 
+    [Fact]
+    public void Pow_ZeroValuePositivePower_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Pow<double>(3);
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
     #endregion
 
     #region Abs
@@ -732,6 +745,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(5.0, result);
+    }
+
+    [Fact]
+    public void Abs_ZeroValue_ReturnsZero_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.0;
+
+        // Act
+        double? result = input.Abs<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
     }
 
     #endregion
@@ -1337,6 +1363,19 @@ public partial class YANMathTest
         Assert.Equal(2.0, result);
     }
 
+    [Fact]
+    public void Log10_FractionalValue_ReturnsCorrectValue_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.1;
+
+        // Act
+        double? result = input.Log10<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result);
+    }
+
     #endregion
 
     #region Log2
@@ -1380,6 +1419,19 @@ public partial class YANMathTest
         Assert.Equal(3.0, result);
     }
 
+    [Fact]
+    public void Log2_FractionalValue_ReturnsCorrectValue_MathGeneric()
+    {
+        // Arrange
+        object? input = 0.5;
+
+        // Act
+        double? result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result);
+    }
+
     #endregion
 
     #region ILogB
@@ -1421,6 +1473,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void ILogB_LargeValue_ReturnsCorrectExponent_MathGeneric()
+    {
+        // Arrange
+        object? input = 1024.0;
+
+        // Act
+        int? result = input.ILogB<int>();
+
+        // Assert
+        Assert.Equal(10, result);
     }
 
     #endregion

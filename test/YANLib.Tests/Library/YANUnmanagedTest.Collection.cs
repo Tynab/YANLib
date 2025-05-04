@@ -214,5 +214,59 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, result);
     }
 
+    [Fact]
+    public void Parses_ParamsOverload_ReturnsValues_Collection()
+    {
+        // Act
+        var result = YANUnmanaged.Parses<int?>("123", "456", "789").Parses<int>()?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([123, 456, 789], result);
+    }
+
+    [Fact]
+    public void Parses_MixedTypes_HandlesEachAppropriately_Collection()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+        var input = new object?[]
+        {
+            "123",
+            "true",
+            "2023-06-15",
+            "Monday",
+            guid.ToString(),
+            "not valid",
+            null
+        };
+
+        var defaultValue = 42;
+
+        // Act
+        var intResults = input.Parses<int>(defaultValue)?.ToArray();
+        var boolResults = input.Parses<bool>(false)?.ToArray();
+        var dateResults = input.Parses<DateTime>(new DateTime(2000, 1, 1))?.ToArray();
+        var enumResults = input.Parses<DayOfWeek>(DayOfWeek.Friday)?.ToArray();
+        var guidResults = input.Parses<Guid>(Guid.Empty)?.ToArray();
+
+        // Assert
+        Assert.NotNull(intResults);
+        Assert.Equal([123, 42, 42, 42, 42, 42, 42], intResults);
+
+        Assert.NotNull(boolResults);
+        Assert.Equal([false, true, false, false, false, false, false], boolResults);
+
+        Assert.NotNull(dateResults);
+        var defaultDate = new DateTime(2000, 1, 1);
+        Assert.Equal([defaultDate, defaultDate, new DateTime(2023, 6, 15), defaultDate, defaultDate, defaultDate, defaultDate], dateResults);
+
+        Assert.NotNull(enumResults);
+        Assert.Equal([(DayOfWeek)123, DayOfWeek.Friday, DayOfWeek.Friday, DayOfWeek.Monday, DayOfWeek.Friday, DayOfWeek.Friday, DayOfWeek.Friday], enumResults);
+
+        Assert.NotNull(guidResults);
+        Assert.Equal([Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty, guid, Guid.Empty, Guid.Empty], guidResults);
+    }
+
     #endregion
 }

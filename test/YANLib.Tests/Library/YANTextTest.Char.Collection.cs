@@ -690,6 +690,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void AnyEqualsIgnoreCase_NoMatchingChars_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void AllNotEqualsIgnoreCase_AllSameLetterDifferentCase_ReturnsFalse_Collection()
     {
         // Arrange
@@ -726,6 +739,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotEqualsIgnoreCase_AllSameLetterDifferentCase_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'A', 'a' };
+
+        // Act
+        var result = collection.AnyNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
     }
 
     #endregion
@@ -836,6 +862,58 @@ public partial class YANTextTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void AllNotLowers_AllUppercaseLetters_ReturnsTrue_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'A', 'B', 'C' };
+
+        // Act
+        var result = collection.AllNotLowers();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotLowers_MixedCaseLetters_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'A', 'b', 'C' };
+
+        // Act
+        var result = collection.AllNotLowers();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotLowers_SomeUppercaseLetters_ReturnsTrue_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'B', 'c' };
+
+        // Act
+        var result = collection.AnyNotLowers();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotLowers_AllLowercaseLetters_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.AnyNotLowers();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region Upper
@@ -942,6 +1020,58 @@ public partial class YANTextTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotUppers_AllLowercaseLetters_ReturnsTrue_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'b', 'c' };
+
+        // Act
+        var result = collection.AllNotUppers();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotUppers_MixedCaseLetters_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'a', 'B', 'c' };
+
+        // Act
+        var result = collection.AllNotUppers();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotUppers_SomeLowercaseLetters_ReturnsTrue_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'A', 'b', 'C' };
+
+        // Act
+        var result = collection.AnyNotUppers();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotUppers_AllUppercaseLetters_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var collection = new[] { 'A', 'B', 'C' };
+
+        // Act
+        var result = collection.AnyNotUppers();
+
+        // Assert
+        Assert.False(result);
     }
 
     #endregion

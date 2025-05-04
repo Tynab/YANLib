@@ -66,6 +66,19 @@ public partial class YANMathTest
         Assert.Equal(1, result);
     }
 
+    [Fact]
+    public void Min_CollectionWithMixedTypes_ConvertsTypes_Math()
+    {
+        // Arrange
+        var input = new List<int?> { 5, 2, 8, 1, 9 };
+
+        // Act
+        int? result = input.Min<int>();
+
+        // Assert
+        Assert.Equal(1, result);
+    }
+
     #endregion
 
     #region Max
@@ -127,6 +140,19 @@ public partial class YANMathTest
     {
         // Act
         int? result = YANMath.Max(5, 2, 8, 1, 9);
+
+        // Assert
+        Assert.Equal(9, result);
+    }
+
+    [Fact]
+    public void Max_CollectionWithMixedTypes_ConvertsTypes_Math()
+    {
+        // Arrange
+        var input = new List<int?> { 5, 2, 8, 1, 9 };
+
+        // Act
+        int? result = input.Max<int>();
 
         // Assert
         Assert.Equal(9, result);
@@ -198,6 +224,19 @@ public partial class YANMathTest
         Assert.Equal(6.0, result);
     }
 
+    [Fact]
+    public void Average_CollectionWithMixedTypes_ConvertsTypes_Math()
+    {
+        // Arrange
+        var input = new List<int?> { 2, 4, 6, 8, 10 };
+
+        // Act
+        double? result = input.Average<double>();
+
+        // Assert
+        Assert.Equal(6.0, result);
+    }
+
     #endregion
 
     #region Sum
@@ -264,6 +303,19 @@ public partial class YANMathTest
         Assert.Equal(30, result);
     }
 
+    [Fact]
+    public void Sum_CollectionWithMixedTypes_ConvertsTypes_Math()
+    {
+        // Arrange
+        var input = new List<int?> { 2, 4, 6, 8, 10 };
+
+        // Act
+        int? result = input.Sum<int>();
+
+        // Assert
+        Assert.Equal(30, result);
+    }
+
     #endregion
 
     #region Truncate
@@ -305,6 +357,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(-3.0, result);
+    }
+
+    [Fact]
+    public void Truncate_StringValue_ConvertsAndTruncates_Math()
+    {
+        // Arrange
+        var input = "3.75";
+
+        // Act
+        double? result = input.Truncate<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
     }
 
     #endregion
@@ -350,6 +415,19 @@ public partial class YANMathTest
         Assert.Equal(-3.0, result);
     }
 
+    [Fact]
+    public void Ceiling_StringValue_ConvertsAndCeils_Math()
+    {
+        // Arrange
+        var input = "3.75";
+
+        // Act
+        double? result = input.Ceiling<double>();
+
+        // Assert
+        Assert.Equal(4.0, result);
+    }
+
     #endregion
 
     #region Floor
@@ -391,6 +469,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(-4.0, result);
+    }
+
+    [Fact]
+    public void Floor_StringValue_ConvertsAndFloors_Math()
+    {
+        // Arrange
+        var input = "3.75";
+
+        // Act
+        double? result = input.Floor<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
     }
 
     #endregion
@@ -462,6 +553,19 @@ public partial class YANMathTest
         Assert.Equal(2.0, result);
     }
 
+    [Fact]
+    public void Round_StringValue_ConvertsAndRounds_Math()
+    {
+        // Arrange
+        var input = "3.75";
+
+        // Act
+        double? result = input.Round<double>();
+
+        // Assert
+        Assert.Equal(4.0, result);
+    }
+
     #endregion
 
     #region Sqrt
@@ -503,6 +607,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Sqrt_StringValue_ConvertsAndCalculatesSqrt_Math()
+    {
+        // Arrange
+        var input = "16.0";
+
+        // Act
+        double? result = input.Sqrt<double>();
+
+        // Assert
+        Assert.Equal(4.0, result);
     }
 
     #endregion
@@ -561,6 +678,19 @@ public partial class YANMathTest
         Assert.Equal(0.0, result);
     }
 
+    [Fact]
+    public void Pow_StringValueAndPower_ConvertsAndCalculatesPow_Math()
+    {
+        // Arrange
+        var input = "2.0";
+
+        // Act
+        double? result = input.Pow<double>(3);
+
+        // Assert
+        Assert.Equal(8.0, result);
+    }
+
     #endregion
 
     #region Abs
@@ -617,6 +747,19 @@ public partial class YANMathTest
         Assert.Equal(0.0, result);
     }
 
+    [Fact]
+    public void Abs_StringValue_ConvertsAndCalculatesAbs_Math()
+    {
+        // Arrange
+        var input = "-5.0";
+
+        // Act
+        double? result = input.Abs<double>();
+
+        // Assert
+        Assert.Equal(5.0, result);
+    }
+
     #endregion
 
     #region Sin
@@ -652,6 +795,19 @@ public partial class YANMathTest
     {
         // Arrange
         double? input = Math.PI / 2;
+
+        // Act
+        double? result = input.Sin<double>();
+
+        // Assert
+        Assert.Equal(1.0, result.Value, 15);
+    }
+
+    [Fact]
+    public void Sin_StringValue_ConvertsAndCalculatesSin_Math()
+    {
+        // Arrange
+        var input = "1.5707963267948966";
 
         // Act
         double? result = input.Sin<double>();
@@ -703,6 +859,19 @@ public partial class YANMathTest
         Assert.Equal(-1.0, result.Value, 15);
     }
 
+    [Fact]
+    public void Cos_StringValue_ConvertsAndCalculatesCos_Math()
+    {
+        // Arrange
+        var input = "3.141592653589793";
+
+        // Act
+        double? result = input.Cos<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result.Value, 15);
+    }
+
     #endregion
 
     #region Tan
@@ -738,6 +907,19 @@ public partial class YANMathTest
     {
         // Arrange
         double? input = Math.PI / 4;
+
+        // Act
+        double? result = input.Tan<double>();
+
+        // Assert
+        Assert.Equal(1.0, result.Value, 15);
+    }
+
+    [Fact]
+    public void Tan_StringValue_ConvertsAndCalculatesTan_Math()
+    {
+        // Arrange
+        var input = "0.7853981633974483";
 
         // Act
         double? result = input.Tan<double>();
@@ -789,6 +971,19 @@ public partial class YANMathTest
         Assert.Equal(Math.PI / 2, result);
     }
 
+    [Fact]
+    public void Asin_StringValue_ConvertsAndCalculatesAsin_Math()
+    {
+        // Arrange
+        var input = "1.0";
+
+        // Act
+        double? result = input.Asin<double>();
+
+        // Assert
+        Assert.Equal(Math.PI / 2, result);
+    }
+
     #endregion
 
     #region Acos
@@ -824,6 +1019,19 @@ public partial class YANMathTest
     {
         // Arrange
         double? input = -1.0;
+
+        // Act
+        double? result = input.Acos<double>();
+
+        // Assert
+        Assert.Equal(Math.PI, result);
+    }
+
+    [Fact]
+    public void Acos_StringValue_ConvertsAndCalculatesAcos_Math()
+    {
+        // Arrange
+        var input = "-1.0";
 
         // Act
         double? result = input.Acos<double>();
@@ -875,6 +1083,19 @@ public partial class YANMathTest
         Assert.Equal(Math.PI / 4, result);
     }
 
+    [Fact]
+    public void Atan_StringValue_ConvertsAndCalculatesAtan_Math()
+    {
+        // Arrange
+        var input = "1.0";
+
+        // Act
+        double? result = input.Atan<double>();
+
+        // Assert
+        Assert.Equal(Math.PI / 4, result);
+    }
+
     #endregion
 
     #region Cbrt
@@ -918,6 +1139,19 @@ public partial class YANMathTest
         Assert.Equal(-3.0, result);
     }
 
+    [Fact]
+    public void Cbrt_StringValue_ConvertsAndCalculatesCbrt_Math()
+    {
+        // Arrange
+        var input = "27.0";
+
+        // Act
+        double? result = input.Cbrt<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
+    }
+
     #endregion
 
     #region Exp
@@ -953,6 +1187,19 @@ public partial class YANMathTest
     {
         // Arrange
         double? input = 1.0;
+
+        // Act
+        double? result = input.Exp<double>();
+
+        // Assert
+        Assert.Equal(Math.E, result);
+    }
+
+    [Fact]
+    public void Exp_StringValue_ConvertsAndCalculatesExp_Math()
+    {
+        // Arrange
+        var input = "1.0";
 
         // Act
         double? result = input.Exp<double>();
@@ -1004,6 +1251,19 @@ public partial class YANMathTest
         Assert.Equal(8.0, result);
     }
 
+    [Fact]
+    public void Exp2_StringValue_ConvertsAndCalculatesExp2_Math()
+    {
+        // Arrange
+        var input = "3.0";
+
+        // Act
+        double? result = input.Exp2<double>();
+
+        // Assert
+        Assert.Equal(8.0, result);
+    }
+
     #endregion
 
     #region Log
@@ -1047,6 +1307,19 @@ public partial class YANMathTest
         Assert.Equal(2.0, result);
     }
 
+    [Fact]
+    public void Log_StringValue_ConvertsAndCalculatesLog_Math()
+    {
+        // Arrange
+        var input = "100.0";
+
+        // Act
+        double? result = input.Log<double>(10);
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
     #endregion
 
     #region Log10
@@ -1075,6 +1348,32 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(2.0, result);
+    }
+
+    [Fact]
+    public void Log10_StringValue_ConvertsAndCalculatesLog10_Math()
+    {
+        // Arrange
+        var input = "100.0";
+
+        // Act
+        double? result = input.Log10<double>();
+
+        // Assert
+        Assert.Equal(2.0, result);
+    }
+
+    [Fact]
+    public void Log10_FractionalValue_ReturnsCorrectValue_Math()
+    {
+        // Arrange
+        double? input = 0.1;
+
+        // Act
+        double? result = input.Log10<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result);
     }
 
     #endregion
@@ -1107,6 +1406,32 @@ public partial class YANMathTest
         Assert.Equal(3.0, result);
     }
 
+    [Fact]
+    public void Log2_StringValue_ConvertsAndCalculatesLog2_Math()
+    {
+        // Arrange
+        var input = "8.0";
+
+        // Act
+        double? result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Log2_FractionalValue_ReturnsCorrectValue_Math()
+    {
+        // Arrange
+        double? input = 0.5;
+
+        // Act
+        double? result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(-1.0, result);
+    }
+
     #endregion
 
     #region ILogB
@@ -1135,6 +1460,32 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void ILogB_StringValue_ConvertsAndCalculatesILogB_Math()
+    {
+        // Arrange
+        var input = "8.0";
+
+        // Act
+        int? result = input.ILogB<int>();
+
+        // Assert
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void ILogB_LargeValue_ReturnsCorrectExponent_Math()
+    {
+        // Arrange
+        double? input = 1024.0;
+
+        // Act
+        int? result = input.ILogB<int>();
+
+        // Assert
+        Assert.Equal(10, result);
     }
 
     #endregion

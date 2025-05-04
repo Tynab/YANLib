@@ -467,6 +467,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void IsNumber_Symbol_ReturnsFalse()
+    {
+        // Arrange
+        var input = '@';
+
+        // Act
+        var result = input.IsNumber();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void IsNotNumber_Digit_ReturnsFalse()
     {
         // Arrange
@@ -484,6 +497,19 @@ public partial class YANTextTest
     {
         // Arrange
         var input = 'a';
+
+        // Act
+        var result = input.IsNotNumber();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotNumber_Symbol_ReturnsTrue()
+    {
+        // Arrange
+        var input = '@';
 
         // Act
         var result = input.IsNotNumber();
@@ -536,6 +562,19 @@ public partial class YANTextTest
     }
 
     [Fact]
+    public void IsAlphanumeric_UppercaseLetter_ReturnsTrue()
+    {
+        // Arrange
+        var input = 'A';
+
+        // Act
+        var result = input.IsAlphanumeric();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void IsNotAlphanumeric_Letter_ReturnsFalse()
     {
         // Arrange
@@ -572,6 +611,19 @@ public partial class YANTextTest
 
         // Assert
         Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotAlphanumeric_UppercaseLetter_ReturnsFalse()
+    {
+        // Arrange
+        var input = 'A';
+
+        // Act
+        var result = input.IsNotAlphanumeric();
+
+        // Assert
+        Assert.False(result);
     }
 
     #endregion

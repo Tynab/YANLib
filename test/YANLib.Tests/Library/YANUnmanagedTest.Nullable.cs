@@ -195,5 +195,47 @@ public partial class YANUnmanagedTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public void Parse_ValidDoubleInput_ReturnsDoubleValue_Nullable()
+    {
+        // Arrange
+        object input = "123.45";
+
+        // Act
+        var result = input.Parse<double?>();
+
+        // Assert
+        _ = Assert.NotNull(result);
+        Assert.Equal(123.45, result);
+    }
+
+    [Fact]
+    public void Parse_DateTimeWithFormat_UsesFormat_Nullable()
+    {
+        // Arrange
+        object input = "2023/06/15";
+        var expected = new DateTime(2023, 6, 15);
+
+        // Act
+        var result = input.Parse<DateTime?>();
+
+        // Assert
+        _ = Assert.NotNull(result);
+        Assert.Equal(expected.Date, result.Value.Date);
+    }
+
+    [Fact]
+    public void Parse_InvalidDateTimeFormat_ReturnsNull_Nullable()
+    {
+        // Arrange
+        object input = "2023/13/45";
+
+        // Act
+        var result = input.Parse<DateTime?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 }

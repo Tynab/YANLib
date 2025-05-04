@@ -145,6 +145,50 @@ public partial class YANJsonTest
         Assert.Equal("\"four\"", result[3]);
     }
 
+    [Fact]
+    public void Serializes_ComplexNestedObjects_SerializesCorrectly_GenericCollection()
+    {
+        // Arrange
+        var input = new List<TestClassWithNesting?>
+        {
+            new()
+            {
+                Id = 1,
+                Name = "Test1",
+                Child = new TestClass
+                {
+                    Id = 3,
+                    Name = "Nested1"
+                }
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Test2",
+                Child = new TestClass
+                {
+                    Id = 4,
+                    Name = "Nested2"
+                }
+            }
+        };
+
+        // Act
+        var result = input.Serializes()?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Length);
+        Assert.Contains("\"id\":1", result[0]);
+        Assert.Contains("\"name\":\"Test1\"", result[0]);
+        Assert.Contains("\"child\":", result[0]);
+        Assert.Contains("\"name\":\"Nested1\"", result[0]);
+        Assert.Contains("\"id\":2", result[1]);
+        Assert.Contains("\"name\":\"Test2\"", result[1]);
+        Assert.Contains("\"child\":", result[1]);
+        Assert.Contains("\"name\":\"Nested2\"", result[1]);
+    }
+
     #endregion
 
     #region SerializesToBytes

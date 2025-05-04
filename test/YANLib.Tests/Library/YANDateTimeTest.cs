@@ -69,6 +69,19 @@ public partial class YANDateTimeTest
         Assert.Equal(9, result);
     }
 
+    [Fact]
+    public void GetWeekOfYear_CustomDateObject_ReturnsCorrectWeek()
+    {
+        // Arrange
+        var container = new TestDateContainer { Date = new DateTime(2023, 6, 15) };
+
+        // Act
+        var result = container.Date.GetWeekOfYear();
+
+        // Assert
+        Assert.Equal(24, result);
+    }
+
     #endregion
 
     #region TotalMonth
@@ -171,6 +184,34 @@ public partial class YANDateTimeTest
         Assert.Equal(29, result);
     }
 
+    [Fact]
+    public void TotalMonth_DifferentDaysSameMonthYear_ReturnsZero()
+    {
+        // Arrange
+        var input1 = new DateTime(2023, 6, 5);
+        var input2 = new DateTime(2023, 6, 25);
+
+        // Act
+        var result = YANDateTime.TotalMonth(input1, input2);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void TotalMonth_CustomDateObjects_CalculatesCorrectly()
+    {
+        // Arrange
+        var container1 = new TestDateContainer { Date = new DateTime(2023, 6, 15) };
+        var container2 = new TestDateContainer { Date = new DateTime(2022, 6, 15) };
+
+        // Act
+        var result = YANDateTime.TotalMonth(container1.Date, container2.Date);
+
+        // Assert
+        Assert.Equal(12, result);
+    }
+
     #endregion
 
     #region ChangeTimeZone
@@ -253,6 +294,63 @@ public partial class YANDateTimeTest
 
         // Assert
         Assert.Equal(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_StringTimeZones_ConvertsAndApplies()
+    {
+        // Arrange
+        var input = new DateTime(2023, 6, 15, 10, 0, 0);
+        var expected = new DateTime(2023, 6, 15, 13, 0, 0);
+
+        // Act
+        var result = input.ChangeTimeZone("0", "3");
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_DecimalTimeZones_ConvertsAndApplies()
+    {
+        // Arrange
+        var input = new DateTime(2023, 6, 15, 10, 0, 0);
+        var expected = new DateTime(2023, 6, 15, 13, 30, 0);
+
+        // Act
+        var result = input.ChangeTimeZone(0, 3.5m);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_InvalidTimeZones_UsesDefaultValues()
+    {
+        // Arrange
+        var input = new DateTime(2023, 6, 15, 10, 0, 0);
+
+        // Act
+        var result = input.ChangeTimeZone("invalid", "timezone");
+
+        // Assert
+        Assert.Equal(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZone_CustomObjectTimeZones_ConvertsAndApplies()
+    {
+        // Arrange
+        var input = new DateTime(2023, 6, 15, 10, 0, 0);
+        var expected = new DateTime(2023, 6, 15, 12, 0, 0);
+        var tzSrc = 0;
+        var tzDst = 2;
+
+        // Act
+        var result = input.ChangeTimeZone(tzSrc, tzDst);
+
+        // Assert
+        Assert.Equal(expected, result);
     }
 
     #endregion

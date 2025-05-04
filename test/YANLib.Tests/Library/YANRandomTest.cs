@@ -831,5 +831,27 @@ public partial class YANRandomTest
         Assert.True(result >= DateTime.MinValue && result <= DateTime.MaxValue);
     }
 
+    [Fact]
+    public void GenerateRandom_String_ReturnsRandomString_RandomGeneric()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom<string>();
+
+        // Assert
+        _ = Assert.IsType<string>(result);
+        Assert.NotNull(result);
+        Assert.True(result.All(c => char.IsLower(c) && char.IsLetter(c)));
+    }
+
+    [Fact]
+    public void GenerateRandom_Bool_ReturnsRandomBool_RandomGeneric()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom<bool>();
+
+        // Assert
+        _ = Assert.IsType<bool>(result);
+    }
+
     #endregion
 }

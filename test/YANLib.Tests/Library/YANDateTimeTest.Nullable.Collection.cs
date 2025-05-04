@@ -297,5 +297,53 @@ public partial class YANDateTimeTest
         Assert.Equal(expected, result);
     }
 
+    [Fact]
+    public void ChangeTimeZones_DecimalTimeZones_ConvertsAndApplies_NullableCollection()
+    {
+        // Arrange
+        var input = new object?[]
+        {
+            new DateTime(2023, 1, 1, 10, 0, 0),
+            "2023-06-15 12:00:00"
+        };
+
+        var expected = new DateTime?[]
+        {
+            new DateTime(2023, 1, 1, 13, 30, 0),
+            new DateTime(2023, 6, 15, 15, 30, 0)
+        };
+
+        // Act
+        var result = input.ChangeTimeZones(0, 3.5m)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZones_MixedValidAndNullValues_HandlesNullsProperly_NullableCollection()
+    {
+        // Arrange
+        var input = new DateTime?[]
+        {
+            new DateTime(2023, 6, 15, 10, 30, 0),
+            null,
+            new DateTime(2023, 12, 25, 15, 45, 0)
+        };
+        var fromOffset = 0;
+        var toOffset = 2;
+
+        // Act
+        var result = input.ChangeTimeZones(fromOffset, toOffset)?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result!.Length);
+        Assert.Equal(new DateTime(2023, 6, 15, 12, 30, 0), result[0]);
+        Assert.Null(result[1]);
+        Assert.Equal(new DateTime(2023, 12, 25, 17, 45, 0), result[2]);
+    }
+
     #endregion
 }

@@ -181,5 +181,47 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, result);
     }
 
+    [Fact]
+    public void Parse_InvalidGuidInput_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = "not a guid";
+        var defaultValue = Guid.NewGuid();
+
+        // Act
+        var result = input.Parse<Guid>(defaultValue);
+
+        // Assert
+        Assert.Equal(defaultValue, result);
+    }
+
+    [Fact]
+    public void Parse_EmptyString_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = "";
+        var defaultValue = 42;
+
+        // Act
+        var result = input.Parse<int>(defaultValue);
+
+        // Assert
+        Assert.Equal(defaultValue, result);
+    }
+
+    [Fact]
+    public void Parse_WhitespaceString_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = "   ";
+        var defaultValue = 42;
+
+        // Act
+        var result = input.Parse<int>(defaultValue);
+
+        // Assert
+        Assert.Equal(defaultValue, result);
+    }
+
     #endregion
 }
