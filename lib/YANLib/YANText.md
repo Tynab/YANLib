@@ -126,15 +126,18 @@ Work safely with nullable characters:
 ```csharp
 // Null checking
 char? nullChar = null;
+
 nullChar.IsNullEmpty(); // Returns true
 
 // Character type checking with null safety
 char? c = 'a';
+
 c.IsAlphabetic(); // Returns true
 nullChar.IsAlphabetic(); // Returns false
 
 // Case conversion with null safety
 char? upper = 'A';
+
 upper.Lower(); // Returns 'a'
 nullChar.Lower(); // Returns null
 ```

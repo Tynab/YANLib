@@ -99,7 +99,9 @@ public async Task<string> FindFirstValidUrl(IEnumerable<string> potentialUrls)
         try
         {
             using var client = new HttpClient();
+
             var response = await client.GetAsync(url);
+
             return new { Url = url, IsValid = response.IsSuccessStatusCode };
         }
         catch
@@ -109,6 +111,7 @@ public async Task<string> FindFirstValidUrl(IEnumerable<string> potentialUrls)
     });
 
     var result = await tasks.WaitAnyWithCondition(r => r.IsValid);
+
     return result?.Url ?? string.Empty;
 }
 ```
@@ -122,6 +125,7 @@ public async Task<int> ProcessDataWithFilter(IEnumerable<string> dataFiles)
     {
         var data = await File.ReadAllTextAsync(file);
         var processedValue = ProcessData(data);
+
         return processedValue;
     });
 
@@ -145,6 +149,7 @@ public async Task<T> ExecuteWithTimeoutAndFallback<T>(
     TimeSpan timeout)
 {
     var cts = new CancellationTokenSource();
+    
     cts.CancelAfter(timeout);
 
     try

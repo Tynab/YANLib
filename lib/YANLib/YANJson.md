@@ -260,6 +260,7 @@ public T SafeDeserialize<T>(string json) where T : class
     catch (Exception ex)
     {
         Console.WriteLine($"Error deserializing JSON: {ex.Message}");
+        
         return null;
     }
 }
