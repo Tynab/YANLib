@@ -1,14 +1,6 @@
-﻿using System;
+﻿namespace YANLib.RedisDtos;
 
-namespace YANLib.RedisDtos;
-
-public sealed class DeveloperTypeRedisDto
+public sealed class DeveloperTypeRedisDto : YANLibApplicationRedisDto
 {
-    public string Name { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
+    public string? Name { get; set; }
 }

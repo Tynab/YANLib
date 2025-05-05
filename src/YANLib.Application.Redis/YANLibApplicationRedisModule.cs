@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp;
 using Volo.Abp.Modularity;
-using YANLib.Application.Redis.ConnectionFactory;
-using YANLib.Application.Redis.Services;
-using YANLib.Application.Redis.Services.Implements;
-using YANLib.RedisDtos;
+using YANLib.ConnectionFactories;
+using YANLib.Services;
+using YANLib.Services.Implements;
 
-namespace YANLib.Application.Redis;
+namespace YANLib;
 
 [DependsOn(
     typeof(YANLibApplicationContractsModule),
@@ -19,7 +18,7 @@ public class YANLibApplicationRedisModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         Configure<RedisOptions>(o => o.RedisConnectionString = configuration["Redis:Configuration"]);
-        _ = context.Services.AddSingleton<IRedisService<DeveloperTypeRedisDto>, DeveloperTypeRedisService>();
+        _ = context.Services.AddSingleton(typeof(IRedisService<>), typeof(RedisService<>));
     }
 
     public override void OnApplicationShutdown(ApplicationShutdownContext context) => context.ServiceProvider.GetRequiredService<IRedisConnectionFactory>().Connection().CloseAsync();

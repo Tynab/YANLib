@@ -1,20 +1,23 @@
-﻿using System;
+﻿using Id_Generator_Snowflake;
 using System.ComponentModel.DataAnnotations.Schema;
-using Volo.Abp.Domain.Entities;
+using static System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption;
+using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
+using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Entities;
 
-[Table("DeveloperTypes")]
-public sealed class DeveloperType : Entity<int>
+public sealed class DeveloperType : YANLibDomainEntity<long>
 {
     [Column("Code")]
-    public override int Id { get; protected set; }
+    [DatabaseGenerated(None)]
+    public override long Id { get; protected set; }
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
-    public bool IsActive { get; set; }
+    public DeveloperType()
+    {
+        IdGenerator idGenerator = new(DeveloperId, YanlibId);
 
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
+        Id = idGenerator.NextId();
+    }
 }

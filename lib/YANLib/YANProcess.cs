@@ -1,73 +1,26 @@
-﻿using YANLib.Core;
-using static System.Diagnostics.Process;
-using static System.Threading.Tasks.Task;
+﻿using System.Diagnostics;
+using YANLib.Implementation;
 
 namespace YANLib;
 
+/// <summary>
+/// Provides extension methods for process management.
+/// </summary>
+/// <remarks>
+/// This class contains methods for managing system processes, including killing processes by name.
+/// </remarks>
 public static partial class YANProcess
 {
-
-    public static async Task KillAllProcessesByNames(this string? name)
-    {
-        if (name.IsNotWhiteSpaceAndNull())
-        {
-            await WhenAll(GetProcessesByName(name).Select(x =>
-            {
-                if (!x.CloseMainWindow())
-                {
-                    x.Kill();
-                }
-
-                return x.WaitForExitAsync();
-            }));
-        }
-    }
-
-    public static async Task KillAllProcessesByNames(this IEnumerable<string?>? names)
-    {
-        if (names.IsNotEmptyAndNull() && names.AllNotWhiteSpaceAndNull())
-        {
-            await WhenAll(names.SelectMany(GetProcessesByName).Select(x =>
-            {
-                if (!x.CloseMainWindow())
-                {
-                    x.Kill();
-                }
-
-                return x.WaitForExitAsync();
-            }));
-        }
-    }
-
-    public static async Task KillAllProcessesByNames(this ICollection<string?>? names)
-    {
-        if (names.IsNotEmptyAndNull() && names.AllNotWhiteSpaceAndNull())
-        {
-            await WhenAll(names.SelectMany(GetProcessesByName).Select(x =>
-            {
-                if (!x.CloseMainWindow())
-                {
-                    x.Kill();
-                }
-
-                return x.WaitForExitAsync();
-            }));
-        }
-    }
-
-    public static async Task KillAllProcessesByNames(params string?[]? names)
-    {
-        if (names.IsNotEmptyAndNull() && names.AllNotWhiteSpaceAndNull())
-        {
-            await WhenAll(names.SelectMany(GetProcessesByName).Select(x =>
-            {
-                if (!x.CloseMainWindow())
-                {
-                    x.Kill();
-                }
-
-                return x.WaitForExitAsync();
-            }));
-        }
-    }
+    /// <summary>
+    /// Kills all processes with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the processes to kill. If <c>null</c> or whitespace, no action is taken.</param>
+    /// <returns>A task that represents the asynchronous kill operation.</returns>
+    /// <remarks>
+    /// This method finds all processes with the specified name (without file extension) and kills them.
+    /// It waits for each process to exit before completing.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static async Task KillAllProcessesByName(this string? name) => await name.KillAllProcessesByNameImplement();
 }

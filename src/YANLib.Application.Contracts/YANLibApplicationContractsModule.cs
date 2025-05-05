@@ -9,6 +9,4 @@ namespace YANLib;
     typeof(AbpDddApplicationContractsModule),
     typeof(AbpAuthorizationModule)
 )]
-public class YANLibApplicationContractsModule : AbpModule
-{
-}
+public class YANLibApplicationContractsModule : AbpModule { }

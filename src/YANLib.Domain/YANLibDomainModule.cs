@@ -7,6 +7,4 @@ namespace YANLib;
     typeof(YANLibDomainSharedModule),
     typeof(AbpDddDomainModule)
 )]
-public class YANLibDomainModule : AbpModule
-{
-}
+public class YANLibDomainModule : AbpModule { }

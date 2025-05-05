@@ -3,26 +3,30 @@
 	<Import Project="..\..\common.props" />
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
 		<RootNamespace>YANLib</RootNamespace>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
+		<ProjectReference Include="..\YANLib.Application.Elasticsearch\YANLib.Application.Elasticsearch.csproj" />
 		<ProjectReference Include="..\YANLib.Application.Redis\YANLib.Application.Redis.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
 		<ProjectReference Include="..\YANLib.Application.Contracts\YANLib.Application.Contracts.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DotNetCore.CAP.Kafka" Version="6.2.1" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="TynabXLongkunz.IdGeneratorSnowflake" Version="1.0.2" />
-		<PackageReference Include="Volo.Abp.AutoMapper" Version="7.4.5" />
-		<PackageReference Include="Volo.Abp.Ddd.Application" Version="7.4.5" />
-		<PackageReference Include="Volo.Abp.FluentValidation" Version="7.4.5" />
-		<PackageReference Include="Volo.Abp.Http.Client" Version="7.4.5" />
+		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.3.1">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+		<PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.AutoMapper" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.BackgroundJobs.Abstractions" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.Ddd.Application" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.FluentValidation" Version="8.3.4" />
+		<PackageReference Include="Volo.Abp.Http.Client" Version="8.3.4" />
 	</ItemGroup>
 
 </Project>

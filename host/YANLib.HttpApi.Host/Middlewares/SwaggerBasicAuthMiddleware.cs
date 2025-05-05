@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using YANLib.Core;
 using static System.Convert;
 using static System.DateTime;
 using static System.Net.HttpStatusCode;
@@ -19,13 +18,20 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
     {
         if (context.Request.Path.StartsWithSegments("/swagger"))
         {
-            string authHeader = context.Request.Headers["Authorization"];
+            string? authHeader = context.Request.Headers.Authorization;
 
-            if (authHeader.IsNotWhiteSpaceAndNull() && authHeader.StartsWith("Basic "))
+            if (authHeader.IsNotNullWhiteSpace() && authHeader.StartsWith("Basic "))
             {
-                var decoded = UTF8.GetString(FromBase64String(authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim()))?.Split(':', 2);
+                var newVarName = authHeader.Split(' ', 2, RemoveEmptyEntries)[1]?.Trim();
 
-                if (IsAuthorized(decoded[0], decoded[1]))
+                if (newVarName.IsNullWhiteSpace())
+                {
+                    return;
+                }
+
+                var decoded = UTF8.GetString(FromBase64String(newVarName))?.Split(':', 2);
+
+                if (decoded.IsNotNullEmpty() && IsAuthorized(decoded[0], decoded[1]))
                 {
                     await _next.Invoke(context);
 
@@ -33,8 +39,8 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
                 }
             }
 
-            context.Response.Headers["WWW-Authenticate"] = "Basic";
-            context.Response.StatusCode = Unauthorized.ToInt();
+            context.Response.Headers.WWWAuthenticate = "Basic";
+            context.Response.StatusCode = Unauthorized.Parse<int>();
         }
         else
         {
@@ -42,5 +48,5 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
         }
     }
 
-    private bool IsAuthorized(string username, string password) => username.Equals($"{_configuration["Auth:Username"]}{Today.Day}") && password.Equals($"{_configuration["Auth:Password"]}{Now.Minute}");
+    private bool IsAuthorized(string username, string password) => username.Equals($"{_configuration["Auth:Username"]}{Today.Day}") && password.Equals($"{_configuration["Auth:Password"]}{UtcNow.Minute}");
 }

@@ -2,5 +2,5 @@
 
 public readonly struct KafkaTopic
 {
-    public const string CERT_CRT = "yanlib.certificate.create";
+    public const string PROJECT_CREATE = "yanlib.project.create";
 }

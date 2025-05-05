@@ -13,5 +13,5 @@ public class HttpBenchmark
     public void Setup() => _httpClient = new HttpClient();
 
     [Benchmark]
-    public async ValueTask<string> FetchUrl() => await _httpClient!.GetStringAsync("https://dev-api-support.hoozing.com/api/hoozing-support/agency-property-assignments/get-by-agent-id?agentId=0c4dec3a-c421-4a51-b94d-201fa9125256");
+    public async ValueTask<string> FetchUrl() => await _httpClient!.GetStringAsync("url");
 }
