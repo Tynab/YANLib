@@ -9,21 +9,23 @@
 		<Title>YANLib</Title>
 		<Authors>Yami An</Authors>
 		<Company>YAN</Company>
-		<Description>YANLib (YAMI AN NEPHILIM LIBRARY) is a comprehensive .NET utility library providing powerful extension methods that enhance developer productivity. Built on .NET 6.0 LTS, it offers high-performance utilities for JSON serialization, text manipulation, object validation, task coordination, mathematical operations, DateTime handling, and more.
+		<Description>
+			YANLib (YAMI AN NEPHILIM LIBRARY) is a comprehensive .NET utility library providing powerful extension methods that enhance developer productivity. Built on .NET 6.0 LTS, it offers high-performance utilities for JSON serialization, text manipulation, object validation, task coordination, mathematical operations, DateTime handling, and more.
 
-Key features:
-• YANJson: High-performance JSON serialization with robust error handling
-• YANText: String manipulation, validation, and transformation with null safety
-• YANObject: Object validation, property analysis, and deep copying
-• YANTask: Enhanced task coordination with conditional waiting and error handling
-• YANUnmanaged: Type parsing and conversion with built-in error handling
-• YANRandom: Random value generation for various types and collections
-• YANMath: Mathematical operations with null handling and type conversion
-• YANDateTime: Time zone conversion and date calculations
-• YANProcess: Process management utilities
-• YANExpression: Dynamic property access and expression tree utilities
+			Key features:
+			• YANJson: High-performance JSON serialization with robust error handling
+			• YANText: String manipulation, validation, and transformation with null safety
+			• YANObject: Object validation, property analysis, and deep copying
+			• YANTask: Enhanced task coordination with conditional waiting and error handling
+			• YANUnmanaged: Type parsing and conversion with built-in error handling
+			• YANRandom: Random value generation for various types and collections
+			• YANMath: Mathematical operations with null handling and type conversion
+			• YANDateTime: Time zone conversion and date calculations
+			• YANProcess: Process management utilities
+			• YANExpression: Dynamic property access and expression tree utilities
 
-All components feature fluent APIs, robust null handling, collection support, and performance optimizations. YANLib simplifies common programming tasks while maintaining high performance, making it an essential toolkit for .NET developers.</Description>
+			All components feature fluent APIs, robust null handling, collection support, and performance optimizations. YANLib simplifies common programming tasks while maintaining high performance, making it an essential toolkit for .NET developers.
+		</Description>
 		<Copyright>Copyright ©  2023</Copyright>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
@@ -32,30 +34,32 @@ All components feature fluent APIs, robust null handling, collection support, an
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>## YANLib 8.0.0 - Complete Rebuild for .NET 8
+		<PackageReleaseNotes>
+			## YANLib 8.0.0 - Complete Rebuild for .NET 8
 
-### Breaking Changes
-- Complete rebuild targeting .NET 8
-- All previous extensions are now obsolete
-- New namespace structure and API design
-- Not backward compatible with previous versions
+			### Breaking Changes
+			- Complete rebuild targeting .NET 8
+			- All previous extensions are now obsolete
+			- New namespace structure and API design
+			- Not backward compatible with previous versions
 
-### New Features
-- Rebuilt components with modern architecture: YANJson, YANUnmanaged, YANRandom, YANTask, YANText, YANObject, YANProcess, YANMath, YANDateTime, YANExpression
-- Consistent null handling and collection operations
-- Enhanced generic type support
-- Thread-safety improvements
+			### New Features
+			- Rebuilt components with modern architecture: YANJson, YANUnmanaged, YANRandom, YANTask, YANText, YANObject, YANProcess, YANMath, YANDateTime, YANExpression
+			- Consistent null handling and collection operations
+			- Enhanced generic type support
+			- Thread-safety improvements
 
-### Performance
-- Significant performance improvements across all components
-- Reduced memory allocations
-- Optimized algorithms and caching strategies
+			### Performance
+			- Significant performance improvements across all components
+			- Reduced memory allocations
+			- Optimized algorithms and caching strategies
 
-See full documentation at: https://github.com/Tynab/YANLib/wiki</PackageReleaseNotes>
+			See full documentation at: https://github.com/Tynab/YANLib/wiki
+		</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.0.0</Version>
+		<Version>8.0.1</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>
@@ -78,7 +82,9 @@ See full documentation at: https://github.com/Tynab/YANLib/wiki</PackageReleaseN
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\YANLib.Implementation\YANLib.Implementation.csproj" />
+		<ProjectReference Include="..\YANLib.Implementation\YANLib.Implementation.csproj">
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
