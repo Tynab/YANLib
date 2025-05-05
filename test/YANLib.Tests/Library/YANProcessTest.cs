@@ -56,7 +56,7 @@ public partial class YANProcessTest
         {
             var process = Process.Start("notepad.exe");
 
-            if (process != null)
+            if (process.IsNotNull())
             {
                 // Act
                 await processName.KillAllProcessesByName();

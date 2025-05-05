@@ -331,6 +331,7 @@ public partial class YANDateTimeTest
             null,
             new DateTime(2023, 12, 25, 15, 45, 0)
         };
+
         var fromOffset = 0;
         var toOffset = 2;
 

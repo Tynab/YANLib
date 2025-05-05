@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using YANLib;
 using static Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult;
 
-namespace Microsoft.Extensions.Hosting;
+namespace YANLib.ServiceDefaults;
 
 public static class Extensions
 {

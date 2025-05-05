@@ -183,6 +183,7 @@ public partial class YANUnmanagedTest
     {
         // Arrange
         var guid = Guid.NewGuid();
+
         var input = new object?[]
         {
             "123",

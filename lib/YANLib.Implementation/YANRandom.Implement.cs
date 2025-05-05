@@ -115,9 +115,9 @@ internal static partial class YANRandom
             random.NextBytes(buffer);
 
             var rand = ToUInt64(buffer, 0);
-            var range = maxValue - minValue;
+            var r = maxValue - minValue;
 
-            return range == ulong.MaxValue ? rand : rand % (range + 1) + minValue;
+            return r == ulong.MaxValue ? rand : rand % (r + 1) + minValue;
         }
     }
 

@@ -43,6 +43,7 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Count);
+
         Assert.All(result, item =>
         {
             _ = Assert.IsType<string>(item);
@@ -88,6 +89,7 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Count);
+
         Assert.All(result, item =>
         {
             _ = Assert.IsType<double>(item);

@@ -19,7 +19,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
         var json = new JsonResponse
         {
             Id = NewGuid()
-        }.StandardSerialize();
+        }.Serialize();
 
         var jsonCamel = new JsonResponse
         {

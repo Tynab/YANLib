@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using YANLib.ServiceDefaults;
 using static Microsoft.AspNetCore.Builder.WebApplication;
 using static Serilog.Events.LogEventLevel;
 using static System.StringComparison;
@@ -21,7 +22,7 @@ public class Program
 #else
             .MinimumLevel.Information()
 #endif
-            .MinimumLevel.Override("Microsoft", Information).MinimumLevel.Override("Microsoft.EntityFrameworkCore", Warning).Enrich.FromLogContext().WriteTo.Async(c => c.Console()).CreateLogger();
+            .MinimumLevel.Override("Microsoft", Information).MinimumLevel.Override("Microsoft.EntityFrameworkCore", Warning).Enrich.FromLogContext().WriteTo.Async(static c => c.Console()).CreateLogger();
 
         try
         {
@@ -31,7 +32,7 @@ public class Program
 
             //await builder.Configuration.AddConfigFromAws(builder.Environment.EnvironmentName);
 
-            _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog((t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
+            _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog(static (t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
             _ = builder.AddServiceDefaults();
             _ = await builder.AddApplicationAsync<YANLibHttpApiHostModule>();
 

@@ -17,10 +17,7 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
+		<PackageReference Include="Tynab.YANLib" Version="8.0.1" />
 	</ItemGroup>
 
 </Project>

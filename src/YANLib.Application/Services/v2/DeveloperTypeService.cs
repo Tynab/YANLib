@@ -139,14 +139,14 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         try
         {
             var cleanTask = _redisService.DeleteAll(DeveloperTypeGroup).AsTask();
-            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
+            var entitiesTask = _repository.GetListAsync(static x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);
 
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsNullEmpty() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
+            return entities.IsNullEmpty() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(static x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
         }
         catch (Exception ex)
         {

@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
 		<ProjectReference Include="..\..\src\YANLib.HttpApi.Client\YANLib.HttpApi.Client.csproj" />
 	</ItemGroup>
 

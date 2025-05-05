@@ -16,5 +16,5 @@ namespace YANLib;
 )]
 public class YANLibApplicationModule : AbpModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context) => Configure<AbpAutoMapperOptions>(o => o.AddMaps<YANLibApplicationModule>());
+    public override void ConfigureServices(ServiceConfigurationContext context) => Configure<AbpAutoMapperOptions>(static o => o.AddMaps<YANLibApplicationModule>());
 }

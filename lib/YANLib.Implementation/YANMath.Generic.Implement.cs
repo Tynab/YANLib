@@ -7,19 +7,19 @@ internal static partial class YANMath
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MinImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(x => x.IsNotNullImplement()).Min(x => x.ParseImplement<T?>());
+    internal static T? MinImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x.IsNotNullImplement()).Min(x => x.ParseImplement<T?>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MaxImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(x => x.IsNotNullImplement()).Max(x => x.ParseImplement<T?>());
+    internal static T? MaxImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x.IsNotNullImplement()).Max(x => x.ParseImplement<T?>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AverageImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(x => x.IsNotNullImplement()).Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AverageImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x.IsNotNullImplement()).Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? SumImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Sum(x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? SumImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Sum(static x => x.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -36,11 +36,7 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static T? RoundImplement<T>(this object? input, object? digits = null, MidpointRounding mode = AwayFromZero)
-        => input.IsNullImplement()
-        ? default
-        : digits.IsNullImplement()
-        ? Math.Round(input.ParseImplement<double>(), mode).ParseImplement<T?>()
-        : Math.Round(input.ParseImplement<double>(), digits.ParseImplement<int>(), mode).ParseImplement<T?>();
+        => input.IsNullImplement() ? default : digits.IsNullImplement() ? Math.Round(input.ParseImplement<double>(), mode).ParseImplement<T?>() : Math.Round(input.ParseImplement<double>(), digits.ParseImplement<int>(), mode).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

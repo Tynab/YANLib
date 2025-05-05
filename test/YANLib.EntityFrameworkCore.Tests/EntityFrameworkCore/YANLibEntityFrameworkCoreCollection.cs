@@ -3,7 +3,4 @@
 namespace YANLib.EntityFrameworkCore;
 
 [CollectionDefinition(YANLibTestConsts.CollectionDefinitionName)]
-public class YANLibEntityFrameworkCoreCollection : ICollectionFixture<YANLibEntityFrameworkCoreFixture>
-{
-
-}
+public class YANLibEntityFrameworkCoreCollection : ICollectionFixture<YANLibEntityFrameworkCoreFixture> { }

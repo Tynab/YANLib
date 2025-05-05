@@ -19,6 +19,7 @@ public partial class YANExpressionTest
         Assert.Equal(typeof(Func<TestClass, object>), result.Type);
 
         var func = result.Compile();
+
         var testObj = new TestClass
         {
             Name = "Test",
@@ -42,6 +43,7 @@ public partial class YANExpressionTest
         Assert.NotNull(result);
 
         var func = result.Compile();
+
         var testObj = new TestClass
         {
             Name = "Test",
@@ -65,6 +67,7 @@ public partial class YANExpressionTest
         Assert.NotNull(result);
 
         var func = result.Compile();
+
         var testObj = new TestClass
         {
             IsActive = true
@@ -88,6 +91,7 @@ public partial class YANExpressionTest
         Assert.NotNull(result);
 
         var func = result.Compile();
+
         var testObj = new TestClass
         {
             CreatedDate = date
