@@ -5,7 +5,7 @@
 [Home](Home) | 
 [Repository](https://github.com/tynab/YANLib) | 
 [Releases](https://github.com/tynab/YANLib/releases) | 
-[Package](https://www.nuget.org/packages/YANLib)
+[Package](https://www.nuget.org/packages/Tynab.YANLib)
 
 <sub>YANLib © 2023 - Documentation last updated: May 4, 2025</sub>
 

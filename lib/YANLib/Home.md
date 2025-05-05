@@ -212,6 +212,7 @@ public Customer PrepareCustomerData(Customer customer)
 {
     // Create a copy and normalize the data
     var normalizedCustomer = customer.Copy();
+    
     normalizedCustomer.Name = normalizedCustomer.Name.CleanSpace().FormatName();
     normalizedCustomer.Email = normalizedCustomer.Email.Lower();
     normalizedCustomer.PhoneNumber = normalizedCustomer.PhoneNumber.FilterNumber();

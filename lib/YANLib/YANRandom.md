@@ -281,6 +281,7 @@ public class PerformanceTester
         var result = data.Select(x => Math.Pow(x, 2)).Sum();
         
         stopwatch.Stop();
+
         return stopwatch.Elapsed;
     }
 }
@@ -294,6 +295,7 @@ public class PasswordGenerator
     public string GenerateRandomPassword(int length)
     {
         var random = new Random();
+        
         return new string(Enumerable.Range(0, length)
             .Select(_ => random.NextChar())
             .ToArray());

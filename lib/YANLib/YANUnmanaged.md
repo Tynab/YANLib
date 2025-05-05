@@ -209,6 +209,7 @@ public class CsvProcessor
                 continue;
                 
             var columns = line.Split(',');
+
             yield return rowMapper(columns);
         }
     }
@@ -253,6 +254,7 @@ public class ApiClient
         try
         {
             var response = await _httpClient.GetAsync(endpoint);
+            
             response.EnsureSuccessStatusCode();
             
             var content = await response.Content.ReadAsStringAsync();

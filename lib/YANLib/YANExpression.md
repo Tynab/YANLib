@@ -145,6 +145,7 @@ public object GetPropertyValue<T>(T obj, string propertyName)
 {
     var expression = YANExpression.PropertyExpression<T>("x", propertyName);
     var func = expression.Compile();
+
     return func(obj);
 }
 
@@ -164,6 +165,7 @@ Use with LINQ to create dynamic queries:
 public IQueryable<T> OrderBy<T>(IQueryable<T> source, string propertyName)
 {
     var expression = YANExpression.PropertyExpression<T>("x", propertyName);
+
     return source.OrderBy(expression);
 }
 
@@ -183,16 +185,19 @@ public object TryGetPropertyValue<T>(T obj, string propertyName)
     {
         var expression = YANExpression.PropertyExpression<T>("x", propertyName);
         var func = expression.Compile();
+
         return func(obj);
     }
     catch (ArgumentException ex) when (ex.Message.Contains("does not contain a property named"))
     {
         Console.WriteLine($"Property '{propertyName}' does not exist on type {typeof(T).Name}");
+
         return null;
     }
     catch (Exception ex)
     {
         Console.WriteLine($"Error accessing property: {ex.Message}");
+
         return null;
     }
 }
@@ -225,6 +230,7 @@ public static Action<T, TProperty> CreatePropertySetter<T, TProperty>(string pro
     var valueParameter = Expression.Parameter(typeof(TProperty), "value");
     
     var property = typeof(T).GetProperty(propertyName);
+
     if (property == null)
         throw new ArgumentException($"Type {typeof(T).Name} does not contain a property named {propertyName}");
         
@@ -232,6 +238,7 @@ public static Action<T, TProperty> CreatePropertySetter<T, TProperty>(string pro
     var assign = Expression.Assign(propertyAccess, valueParameter);
     
     var lambda = Expression.Lambda<Action<T, TProperty>>(assign, parameter, valueParameter);
+    
     return lambda.Compile();
 }
 

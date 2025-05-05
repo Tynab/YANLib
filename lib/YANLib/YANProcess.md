@@ -23,6 +23,7 @@ await YANProcess.KillAllProcessesByNames("chrome", "firefox", "edge");
 
 // Kill processes from a collection of names
 List<string> processesToKill = ["notepad", "calc", "mspaint"];
+
 await processesToKill.KillAllProcessesByNames();
 ```
 
@@ -58,6 +59,7 @@ await YANProcess.KillAllProcessesByNames("chrome", "firefox", "edge", "opera");
 
 // Terminate processes from a collection
 List<string> backgroundProcesses = ["svhost", "wininit", "lsass"];
+
 await backgroundProcesses.KillAllProcessesByNames();
 ```
 
@@ -135,6 +137,7 @@ public class SystemManager
     {
         // Terminate processes that might be consuming too many resources
         List<string> resourceHungryProcesses = GetResourceIntensiveProcesses();
+        
         await resourceHungryProcesses.KillAllProcessesByNames();
     }
     
