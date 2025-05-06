@@ -31,8 +31,8 @@ public sealed class DeveloperProjectAutoMapperProfile : Profile
             .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => UtcNow))
             .ForMember(d => d.IsActive, o => o.MapFrom(static s => true))
             .ForMember(d => d.IsDeleted, o => o.MapFrom(static s => false))
-            .Ignore(d => d.UpdatedBy)
-            .Ignore(d => d.UpdatedAt);
+            .Ignore(static d => d.UpdatedBy)
+            .Ignore(static d => d.UpdatedAt);
 
         _ = CreateMap<(Guid Id, Requests.v2.Update.DeveloperProjectUpdateRequest Request), DeveloperProjectDto>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
@@ -40,7 +40,7 @@ public sealed class DeveloperProjectAutoMapperProfile : Profile
             .ForMember(d => d.ProjectId, o => o.MapFrom(static s => s.Request.ProjectId))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Request.IsActive))
-            .Ignore(d => d.IsDeleted);
+            .Ignore(static d => d.IsDeleted);
 
         _ = CreateMap<DeveloperProject, DeveloperProjectRedisDto>();
 

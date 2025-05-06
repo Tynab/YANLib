@@ -599,7 +599,7 @@ public partial class YANMathTest
         var result = input.Sins<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15), item => Assert.Equal(0.0, item, 15));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(1.0, item, 15), static item => Assert.Equal(0.0, item, 15));
     }
 
     [Fact]
@@ -612,7 +612,7 @@ public partial class YANMathTest
         var result = input.Sins<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15), item => Assert.Equal(0.0, item, 15));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(1.0, item, 15), static item => Assert.Equal(0.0, item, 15));
     }
 
     #endregion
@@ -655,7 +655,7 @@ public partial class YANMathTest
         var result = input.Coss<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(0.0, item, 15), item => Assert.Equal(-1.0, item, 15));
+        Assert.Collection(result!, static item => Assert.Equal(1.0, item), static item => Assert.Equal(0.0, item, 15), static item => Assert.Equal(-1.0, item, 15));
     }
 
     [Fact]
@@ -668,7 +668,7 @@ public partial class YANMathTest
         var result = input.Coss<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(0.0, item, 15), item => Assert.Equal(-1.0, item, 15));
+        Assert.Collection(result!, static item => Assert.Equal(1.0, item), static item => Assert.Equal(0.0, item, 15), static item => Assert.Equal(-1.0, item, 15));
     }
 
     #endregion
@@ -711,7 +711,7 @@ public partial class YANMathTest
         var result = input.Tans<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(1.0, item, 15));
     }
 
     [Fact]
@@ -724,7 +724,7 @@ public partial class YANMathTest
         var result = input.Tans<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(1.0, item, 15));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(1.0, item, 15));
     }
 
     #endregion
@@ -767,7 +767,7 @@ public partial class YANMathTest
         var result = input.Asins<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 2, item), static item => Assert.Equal(-Math.PI / 2, item));
     }
 
     [Fact]
@@ -790,7 +790,7 @@ public partial class YANMathTest
         var result = YANMath.Asins<double>(0.0, 1.0, -1.0);
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 2, item), static item => Assert.Equal(-Math.PI / 2, item));
     }
 
     [Fact]
@@ -803,7 +803,7 @@ public partial class YANMathTest
         var result = input.Asins<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(-Math.PI / 2, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 2, item), static item => Assert.Equal(-Math.PI / 2, item));
     }
 
     #endregion
@@ -846,7 +846,7 @@ public partial class YANMathTest
         var result = input.Acoss<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 2, item), static item => Assert.Equal(Math.PI, item));
     }
 
     [Fact]
@@ -869,7 +869,7 @@ public partial class YANMathTest
         var result = YANMath.Acoss<double>(1.0, 0.0, -1.0);
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 2, item), static item => Assert.Equal(Math.PI, item));
     }
 
     [Fact]
@@ -882,7 +882,7 @@ public partial class YANMathTest
         var result = input.Acoss<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 2, item), item => Assert.Equal(Math.PI, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 2, item), static item => Assert.Equal(Math.PI, item));
     }
 
     #endregion
@@ -925,7 +925,7 @@ public partial class YANMathTest
         var result = input.Atans<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 4, item), static item => Assert.Equal(-Math.PI / 4, item));
     }
 
     [Fact]
@@ -948,7 +948,7 @@ public partial class YANMathTest
         var result = YANMath.Atans<double>(0.0, 1.0, -1.0);
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 4, item), static item => Assert.Equal(-Math.PI / 4, item));
     }
 
     [Fact]
@@ -961,7 +961,7 @@ public partial class YANMathTest
         var result = input.Atans<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(0.0, item), item => Assert.Equal(Math.PI / 4, item), item => Assert.Equal(-Math.PI / 4, item));
+        Assert.Collection(result!, static item => Assert.Equal(0.0, item), static item => Assert.Equal(Math.PI / 4, item), static item => Assert.Equal(-Math.PI / 4, item));
     }
 
     #endregion
@@ -1083,7 +1083,7 @@ public partial class YANMathTest
         var result = input.Exps<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
+        Assert.Collection(result!, static item => Assert.Equal(1.0, item), static item => Assert.Equal(Math.E, item), static item => Assert.Equal(Math.E * Math.E, item, 14));
     }
 
     [Fact]
@@ -1106,7 +1106,7 @@ public partial class YANMathTest
         var result = YANMath.Exps(0.0, 1.0, 2.0);
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
+        Assert.Collection(result!, static item => Assert.Equal(1.0, item), static item => Assert.Equal(Math.E, item), static item => Assert.Equal(Math.E * Math.E, item, 14));
     }
 
     [Fact]
@@ -1119,7 +1119,7 @@ public partial class YANMathTest
         var result = input.Exps<double>();
 
         // Assert
-        Assert.Collection(result!, item => Assert.Equal(1.0, item), item => Assert.Equal(Math.E, item), item => Assert.Equal(Math.E * Math.E, item, 14));
+        Assert.Collection(result!, static item => Assert.Equal(1.0, item), static item => Assert.Equal(Math.E, item), static item => Assert.Equal(Math.E * Math.E, item, 14));
     }
 
     #endregion

@@ -163,7 +163,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
                 throw new BusinessException(BAD_REQUEST);
             }
 
-            await _database.HashSetAsync(group.ToLowerInvariant(), [.. fields.Select(p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.Serialize()))]);
+            await _database.HashSetAsync(group.ToLowerInvariant(), [.. fields.Select(static p => new HashEntry(p.Key.ToLowerInvariant(), p.Value.Serialize()))]);
 
             return true;
         }
@@ -236,7 +236,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
             var dic = await GetAll(group);
 
-            return dic.IsNullEmpty() || await DeleteBulk(group, [.. dic.Select(p => p.Key)]);
+            return dic.IsNullEmpty() || await DeleteBulk(group, [.. dic.Select(static p => p.Key)]);
         }
         catch (Exception ex)
         {

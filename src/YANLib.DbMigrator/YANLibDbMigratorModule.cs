@@ -11,5 +11,5 @@ namespace YANLib.DbMigrator;
 )]
 public class YANLibDbMigratorModule : AbpModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context) => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
+    public override void ConfigureServices(ServiceConfigurationContext context) => Configure<AbpDbContextOptions>(static o => o.UseSqlServer());
 }

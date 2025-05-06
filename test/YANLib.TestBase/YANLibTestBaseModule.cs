@@ -20,7 +20,7 @@ public class YANLibTestBaseModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        Configure<AbpBackgroundJobOptions>(o => o.IsJobExecutionEnabled = false);
+        Configure<AbpBackgroundJobOptions>(static o => o.IsJobExecutionEnabled = false);
         _ = context.Services.AddAlwaysAllowAuthorization();
     }
 

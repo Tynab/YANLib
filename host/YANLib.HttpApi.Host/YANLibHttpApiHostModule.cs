@@ -92,7 +92,7 @@ public class YANLibHttpApiHostModule : AbpModule
         //ConfigureHealthChecks(context, configuration);
     }
 
-    private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
+    private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(static o => o.UseSqlServer());
 
     private void ConfigureApiVersioning(ServiceConfigurationContext context)
     {
