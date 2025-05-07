@@ -5,7 +5,6 @@ using Volo.Abp.Autofac;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Data;
 using Volo.Abp.Modularity;
-using Volo.Abp.Threading;
 using static Volo.Abp.Threading.AsyncHelper;
 
 namespace YANLib;

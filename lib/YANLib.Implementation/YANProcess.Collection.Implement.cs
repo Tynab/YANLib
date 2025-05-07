@@ -7,7 +7,7 @@ internal static partial class YANProcess
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static async Task KillAllProcessesByNamesImplement(this IEnumerable<string?>? names, CancellationToken cancellation = default)
+    internal static async Task KillAllProcessesByNamesImplement(this IEnumerable<string?>? names)
     {
         if (names.IsNullEmptyImplement() || names.AnyNullWhiteSpaceImplement())
         {

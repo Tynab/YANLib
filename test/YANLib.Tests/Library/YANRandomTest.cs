@@ -774,7 +774,7 @@ public partial class YANRandomTest
 
         // Assert
         _ = Assert.IsType<string>(result);
-        Assert.True(result.All(c => char.IsLower(c) && char.IsLetter(c)));
+        Assert.True(result.All(static c => char.IsLower(c) && char.IsLetter(c)));
     }
 
     [Fact]
@@ -789,7 +789,7 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Length);
-        Assert.True(result.All(c => char.IsLower(c) && char.IsLetter(c)));
+        Assert.True(result.All(static c => char.IsLower(c) && char.IsLetter(c)));
     }
 
     #endregion
@@ -840,7 +840,7 @@ public partial class YANRandomTest
         // Assert
         _ = Assert.IsType<string>(result);
         Assert.NotNull(result);
-        Assert.True(result.All(c => char.IsLower(c) && char.IsLetter(c)));
+        Assert.True(result.All(static c => char.IsLower(c) && char.IsLetter(c)));
     }
 
     [Fact]

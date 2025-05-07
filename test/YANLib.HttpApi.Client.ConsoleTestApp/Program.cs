@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Threading.Tasks;
 using Volo.Abp;
 using YANLib.HttpApi.Client.ConsoleTestApp;
 

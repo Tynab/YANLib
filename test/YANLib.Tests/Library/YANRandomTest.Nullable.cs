@@ -23,7 +23,7 @@ public partial class YANRandomTest
         // Assert
         _ = Assert.IsType<string>(result);
         Assert.NotNull(result);
-        Assert.True(result.All(c => char.IsLower(c) && char.IsLetter(c)));
+        Assert.True(result.All(static c => char.IsLower(c) && char.IsLetter(c)));
     }
 
     [Fact]
