@@ -128,6 +128,8 @@ Extends the standard .NET Task API with additional methods for task coordination
 
 - Conditional task waiting
 - Conditional task completion
+- Asynchronous enumeration of task results
+- Result limiting capabilities
 - Graceful error handling
 - Cancellation support
 
@@ -145,6 +147,19 @@ var result = await tasks.WaitAnyWithCondition(x => x > 10);
 
 // Similar functionality with WhenAny pattern
 var result2 = await tasks.WhenAnyWithCondition(x => x > 20); // Returns 25
+
+// Process multiple matching results as an asynchronous stream
+// Internal methods accessible via InternalsVisibleTo for testing
+var results = tasks.WaitAnyWithConditions(x => x > 10);
+
+await foreach (var item in results)
+{
+    Console.WriteLine(item); // Outputs 15, then 25
+}
+
+// Limit the number of results returned
+var limitedResults = tasks.WhenAnyWithConditions(x => x > 0, taken: 2);
+// Will only process the first 2 matching results
 ```
 
 ### YANText
@@ -337,7 +352,7 @@ YANLib is designed with performance in mind. The library uses various optimizati
 YANJson is built on System.Text.Json, which offers significantly better performance compared to Newtonsoft.Json, especially for large datasets.
 
 <div align="center">
-  <img src='pic/1.jpg' alt="JSON Performance Comparison">
+  <img src='https://raw.githubusercontent.com/Tynab/YANLib/refs/heads/main/pic/1.jpg' alt="JSON Performance Comparison">
 </div>
 
 System.Text.Json is designed to provide better performance and security compared to other JSON libraries. It supports advanced features like parallel parsing and support for new data types such as Span and Utf8JsonReader, enabling faster data processing and reduced memory usage.
@@ -362,7 +377,7 @@ For the most recent performance benchmarks, visit:
 [https://yanlib.yamiannephilim.com/api/json/yan-vs-standards?quantity=10000&hideSystem=true](https://yanlib.yamiannephilim.com/api/json/yan-vs-standards?quantity=10000&hideSystem=true)
 
 <div align="center">
-  <img src='pic/0.jpg' alt="YAN vs Standards Performance">
+  <img src='https://raw.githubusercontent.com/Tynab/YANLib/refs/heads/main/pic/0.jpg' alt="YAN vs Standards Performance">
 </div>
 
 ## 💻 Code Examples
