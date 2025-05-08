@@ -9,7 +9,7 @@ internal static partial class YANTask
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, bool firstOnly, CancellationToken cancellationToken)
+    private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, bool firstOnly, CancellationToken cancellationToken = default)
     {
         await Yield();
 

@@ -20,11 +20,11 @@ public class Program
 #else
             .MinimumLevel.Override("YANLib", Information)
 #endif
-            .Enrich.FromLogContext().WriteTo.Async(c => c.File($"Logs/{Today:yyyy-MM-dd}.log")).WriteTo.Async(c => c.Console()).CreateLogger();
+            .Enrich.FromLogContext().WriteTo.Async(static c => c.File($"Logs/{Today:yyyy-MM-dd}.log")).WriteTo.Async(static c => c.Console()).CreateLogger();
 
         await CreateHostBuilder(args).RunConsoleAsync();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)
-        => CreateDefaultBuilder(args).AddAppSettingsSecretsJson().ConfigureLogging((c, l) => l.ClearProviders()).ConfigureServices((h, s) => s.AddHostedService<DbMigratorHostedService>());
+        => CreateDefaultBuilder(args).AddAppSettingsSecretsJson().ConfigureLogging(static (c, l) => l.ClearProviders()).ConfigureServices(static (h, s) => s.AddHostedService<DbMigratorHostedService>());
 }

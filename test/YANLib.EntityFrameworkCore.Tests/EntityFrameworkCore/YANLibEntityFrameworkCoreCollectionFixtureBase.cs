@@ -2,7 +2,4 @@
 
 namespace YANLib.EntityFrameworkCore;
 
-public class YANLibEntityFrameworkCoreCollectionFixtureBase : ICollectionFixture<YANLibEntityFrameworkCoreFixture>
-{
-
-}
+public class YANLibEntityFrameworkCoreCollectionFixtureBase : ICollectionFixture<YANLibEntityFrameworkCoreFixture> { }

@@ -44,9 +44,55 @@ var tasks = new[]
 var result = await tasks.WhenAnyWithCondition(x => x > 10);
 ```
 
+### Asynchronous Enumeration with Conditions
+
+Process multiple matching task results as an asynchronous stream:
+
+```csharp
+// Get all tasks that return values greater than 10
+var tasks = new[]
+{
+    Task.FromResult(5),
+    Task.FromResult(15),
+    Task.FromResult(25)
+};
+
+// Use internal methods via reflection or InternalsVisibleTo for testing
+// Returns an IAsyncEnumerable with values 15 and 25
+var results = tasks.WaitAnyWithConditions(x => x > 10);
+
+await foreach (var item in results)
+{
+    Console.WriteLine(item); // Outputs 15, then 25
+}
+```
+
+### Limited Result Collection
+
+Limit the number of results returned from conditional task enumeration:
+
+```csharp
+var tasks = new[]
+{
+    Task.FromResult(5),
+    Task.FromResult(15),
+    Task.FromResult(25),
+    Task.FromResult(35)
+};
+
+// Only take the first 2 matching results
+var results = tasks.WhenAnyWithConditions(x => x > 10, taken: 2);
+
+// Will only contain 15 and 25, even though 35 also matches
+await foreach (var item in results)
+{
+    Console.WriteLine(item);
+}
+```
+
 ### Graceful Error Handling
 
-Both methods handle exceptions gracefully, continuing to check other tasks if one throws an exception:
+All methods handle exceptions gracefully, continuing to check other tasks if one throws an exception:
 
 ```csharp
 var tasks = new[]
@@ -66,6 +112,7 @@ Support for cancellation tokens to stop waiting for tasks:
 
 ```csharp
 var cts = new CancellationTokenSource();
+
 var tasks = new[]
 {
     Task.Delay(1000).ContinueWith(_ => 5),
@@ -116,6 +163,41 @@ public async Task<string> FindFirstValidUrl(IEnumerable<string> potentialUrls)
 }
 ```
 
+### Collecting Multiple Valid Results
+
+```csharp
+public async Task<List<string>> FindAllValidUrls(IEnumerable<string> potentialUrls, int maxResults = 0)
+{
+    var tasks = potentialUrls.Select(async url =>
+    {
+        try
+        {
+            using var client = new HttpClient();
+
+            var response = await client.GetAsync(url);
+
+            return new { Url = url, IsValid = response.IsSuccessStatusCode };
+        }
+        catch
+        {
+            return new { Url = url, IsValid = false };
+        }
+    });
+
+    var validUrls = new List<string>();
+    
+    // Use internal methods via reflection or InternalsVisibleTo for testing
+    var results = tasks.WaitAnyWithConditions(r => r.IsValid, maxResults > 0 ? (uint)maxResults : 0);
+    
+    await foreach (var result in results)
+    {
+        validUrls.Add(result.Url);
+    }
+
+    return validUrls;
+}
+```
+
 ### Parallel Data Processing with Filtering
 
 ```csharp
@@ -156,8 +238,8 @@ public async Task<T> ExecuteWithTimeoutAndFallback<T>(
     {
         var primaryTask = primaryOperation();
         var timeoutTask = Task.Delay(timeout).ContinueWith(_ => default(T));
-
         var tasks = new[] { primaryTask, timeoutTask };
+
         var result = await tasks.WhenAnyWithCondition(
             r => !EqualityComparer<T>.Default.Equals(r, default),
             cts.Token);
@@ -209,6 +291,34 @@ private async Task<WeatherData> GetWeatherFromProvider3(string location)
 }
 ```
 
+### Collecting Results from Multiple Providers
+
+```csharp
+public async Task<List<WeatherData>> GetWeatherFromAllProviders(string location, int maxResults = 0)
+{
+    var providers = new[]
+    {
+        GetWeatherFromProvider1(location),
+        GetWeatherFromProvider2(location),
+        GetWeatherFromProvider3(location)
+    };
+
+    var results = new List<WeatherData>();
+    
+    // Use internal methods via reflection or InternalsVisibleTo for testing
+    var weatherData = providers.WhenAnyWithConditions(
+        data => data != null && data.IsValid, 
+        maxResults > 0 ? (uint)maxResults : 0);
+    
+    await foreach (var data in weatherData)
+    {
+        results.Add(data);
+    }
+
+    return results;
+}
+```
+
 ### Distributed Computing with Result Validation
 
 ```csharp
@@ -235,3 +345,5 @@ public async Task<Solution> SolveComplexProblemDistributed(Problem problem)
 - The methods continue checking other tasks if one throws an exception, providing resilience against partial failures.
 - Cancellation tokens are fully supported, allowing for timeouts and manual cancellation.
 - The methods work with both immediate and delayed tasks, waiting for completion before checking the condition.
+- The internal `WaitAnyWithConditions` and `WhenAnyWithConditions` methods provide more advanced functionality for collecting multiple results as an asynchronous stream.
+- The `taken` parameter allows limiting the number of results returned from the asynchronous enumeration methods.

@@ -5,14 +5,9 @@ using Volo.Abp.MultiTenancy;
 
 namespace YANLib;
 
-public class YANLibTestDataSeedContributor : IDataSeedContributor, ITransientDependency
+public class YANLibTestDataSeedContributor(ICurrentTenant currentTenant) : IDataSeedContributor, ITransientDependency
 {
-    private readonly ICurrentTenant _currentTenant;
-
-    public YANLibTestDataSeedContributor(ICurrentTenant currentTenant)
-    {
-        _currentTenant = currentTenant;
-    }
+    private readonly ICurrentTenant _currentTenant = currentTenant;
 
     public Task SeedAsync(DataSeedContext context)
     {

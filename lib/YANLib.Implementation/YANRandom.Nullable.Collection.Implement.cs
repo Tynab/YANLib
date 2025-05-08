@@ -12,6 +12,6 @@ internal static partial class YANRandom
         var n = size.ParseImplement<uint>().ParseImplement<int>();
         var r = Range(0, n);
 
-        return n < 1_000 ? r.Select(i => GenerateRandomImplement<T>()) : r.AsParallel().Select(i => GenerateRandomImplement<T>());
+        return n < 1_000 ? r.Select(i => GenerateRandomImplement<T>()) : r.AsParallel().Select(static i => GenerateRandomImplement<T>());
     }
 }

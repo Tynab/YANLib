@@ -6,6 +6,5 @@ public class YANLibEntityFrameworkCoreFixture : IDisposable
 {
     public void Dispose()
     {
-
     }
 }

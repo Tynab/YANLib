@@ -5,7 +5,7 @@ using Volo.Abp.Autofac;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Data;
 using Volo.Abp.Modularity;
-using Volo.Abp.Threading;
+using static Volo.Abp.Threading.AsyncHelper;
 
 namespace YANLib;
 
@@ -19,29 +19,16 @@ public class YANLibTestBaseModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        Configure<AbpBackgroundJobOptions>(options =>
-        {
-            options.IsJobExecutionEnabled = false;
-        });
-
-        context.Services.AddAlwaysAllowAuthorization();
+        Configure<AbpBackgroundJobOptions>(static o => o.IsJobExecutionEnabled = false);
+        _ = context.Services.AddAlwaysAllowAuthorization();
     }
 
-    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    public override void OnApplicationInitialization(ApplicationInitializationContext context) => SeedTestData(context);
+
+    private static void SeedTestData(ApplicationInitializationContext context) => RunSync(async () =>
     {
-        SeedTestData(context);
-    }
+        using var scope = context.ServiceProvider.CreateScope();
 
-    private static void SeedTestData(ApplicationInitializationContext context)
-    {
-        AsyncHelper.RunSync(async () =>
-        {
-            using (var scope = context.ServiceProvider.CreateScope())
-            {
-                await scope.ServiceProvider
-                    .GetRequiredService<IDataSeeder>()
-                    .SeedAsync();
-            }
-        });
-    }
+        await scope.ServiceProvider.GetRequiredService<IDataSeeder>().SeedAsync();
+    });
 }

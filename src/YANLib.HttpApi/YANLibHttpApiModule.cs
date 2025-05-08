@@ -14,5 +14,5 @@ public class YANLibHttpApiModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context) => ConfigureLocalization();
 
-    private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(o => o.Resources.Get<YANLibResource>().AddBaseTypes(typeof(AbpUiResource)));
+    private void ConfigureLocalization() => Configure<AbpLocalizationOptions>(static o => o.Resources.Get<YANLibResource>().AddBaseTypes(typeof(AbpUiResource)));
 }

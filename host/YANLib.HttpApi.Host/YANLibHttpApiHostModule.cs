@@ -92,7 +92,7 @@ public class YANLibHttpApiHostModule : AbpModule
         //ConfigureHealthChecks(context, configuration);
     }
 
-    private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(o => o.UseSqlServer());
+    private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(static o => o.UseSqlServer());
 
     private void ConfigureApiVersioning(ServiceConfigurationContext context)
     {
@@ -107,7 +107,7 @@ public class YANLibHttpApiHostModule : AbpModule
             o.SubstituteApiVersionInUrl = true;
         });
 
-        Configure<AbpAspNetCoreMvcOptions>(o => o.ChangeControllerModelApiExplorerGroupName = false);
+        Configure<AbpAspNetCoreMvcOptions>(static o => o.ChangeControllerModelApiExplorerGroupName = false);
     }
 
     private static void ConfigureAzureApplicationInsights(ServiceConfigurationContext context) => context.Services.AddApplicationInsightsTelemetry();
@@ -131,7 +131,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
     private static void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration)
     {
-        var corsOrigins = configuration["App:CorsOrigins"]?.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(origin => origin.RemovePostFix("/")).ToArray();
+        var corsOrigins = configuration["App:CorsOrigins"]?.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(o => o.RemovePostFix("/")).ToArray();
 
         if (corsOrigins.IsNullEmpty())
         {
@@ -158,6 +158,7 @@ public class YANLibHttpApiHostModule : AbpModule
         }, o =>
         {
             o.OperationFilter<SwaggerDefaultValues>();
+
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -182,7 +183,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 }
             });
 
-            //o.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
+            //o.CustomSchemaIds(static t => t.FullName?.Replace("+", "."));
             o.DocumentFilter<CustomSwaggerFilter>(); //o.HideAbpEndpoints();
             o.EnableAnnotations();
             o.DescribeAllParametersInCamelCase();
@@ -198,6 +199,7 @@ public class YANLibHttpApiHostModule : AbpModule
         {
             _ = c.UseDashboard(o => o.PathMatch = "/cap");
             //_ = c.UseSqlServer(configuration.GetConnectionString(ConnectionStringName.Default) ?? string.Empty);
+
             _ = c.UseMongoDB(o =>
             {
                 var dbName = configuration["CAP:DBName"];
@@ -371,6 +373,7 @@ public class YANLibHttpApiHostModule : AbpModule
                 {
                     x.Credentials = credentials;
                     x.BucketName = bucketName;
+
                     x.S3Config = new AmazonS3Config
                     {
                         RegionEndpoint = APSoutheast1
@@ -446,6 +449,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseUnitOfWork();
         _ = app.UseAuditing();
         _ = app.UseAbpSerilogEnrichers();
+
         _ = app.UseHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = _ => true,

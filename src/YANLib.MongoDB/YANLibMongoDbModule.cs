@@ -11,5 +11,5 @@ namespace YANLib.MongoDB;
 )]
 public class YANLibMongoDbModule : AbpModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context) => context.Services.AddMongoDbContext<YANLibMongoDbContext>(o => { });
+    public override void ConfigureServices(ServiceConfigurationContext context) => context.Services.AddMongoDbContext<YANLibMongoDbContext>(static o => { });
 }

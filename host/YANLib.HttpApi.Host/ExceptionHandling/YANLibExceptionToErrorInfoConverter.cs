@@ -21,10 +21,10 @@ public class YANLibExceptionToErrorInfoConverter(
     IServiceProvider serviceProvider
 ) : DefaultExceptionToErrorInfoConverter(localizationOptions, stringLocalizerFactory, stringLocalizer, serviceProvider), ITransientDependency
 {
-    private readonly HashSet<string?> _errorCodes = new(typeof(YANLibDomainErrorCodes).GetFields(Public | Static | FlattenHierarchy)
-                                                                                      .Where(x => x.IsLiteral && !x.IsInitOnly)
-                                                                                      .Select(x => x.GetRawConstantValue()?.ToString())
-                                                                                      .Where(x => x.IsNotNull()));
+    private readonly HashSet<string?> _errorCodes = [.. typeof(YANLibDomainErrorCodes).GetFields(Public | Static | FlattenHierarchy)
+                                                                                      .Where(static x => x.IsLiteral && !x.IsInitOnly)
+                                                                                      .Select(static x => x.GetRawConstantValue()?.ToString())
+                                                                                      .Where(static x => x.IsNotNull())];
 
     protected override RemoteServiceErrorInfo CreateErrorInfoWithoutCode(Exception exception, AbpExceptionHandlingOptions options)
     {

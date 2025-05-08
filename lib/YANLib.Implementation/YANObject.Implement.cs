@@ -16,7 +16,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, t => t.GetProperties(Public | Instance | DeclaredOnly));
+    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, static t => t.GetProperties(Public | Instance | DeclaredOnly));
 
     #endregion
 
@@ -131,7 +131,7 @@ internal static partial class YANObject
             return input;
         }
 
-        var props = input.GetType().GetProperties(Public | Instance).Where(x => x.CanRead && x.CanWrite);
+        var props = input.GetType().GetProperties(Public | Instance).Where(static x => x.CanRead && x.CanWrite);
 
         foreach (var prop in props)
         {

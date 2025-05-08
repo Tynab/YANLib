@@ -35,31 +35,38 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>
-			## YANLib 8.0.0 - Complete Rebuild for .NET 8
-
-			### Breaking Changes
-			- Complete rebuild targeting .NET 8
-			- All previous extensions are now obsolete
-			- New namespace structure and API design
-			- Not backward compatible with previous versions
+			## YANLib 8.1.0 - Enhanced Task Collection Operations
 
 			### New Features
-			- Rebuilt components with modern architecture: YANJson, YANUnmanaged, YANRandom, YANTask, YANText, YANObject, YANProcess, YANMath, YANDateTime, YANExpression
-			- Consistent null handling and collection operations
-			- Enhanced generic type support
-			- Thread-safety improvements
+
+			- Added new asynchronous collection operations to YANTask component
+			- Introduced `WaitAnyWithConditions&lt;T&gt;` for efficient conditional task filtering with early termination
+			- Added `WhenAnyWithConditions&lt;T&gt;` for comprehensive conditional task processing
+			- Support for limiting result collection with the `taken` parameter
+			- Full cancellation token integration for all new methods
+			- Enhanced asynchronous enumeration capabilities
 
 			### Performance
-			- Significant performance improvements across all components
-			- Reduced memory allocations
-			- Optimized algorithms and caching strategies
+
+			- Optimized task collection processing with minimal allocations
+			- Improved exception handling with zero overhead for failed tasks
+			- Efficient early termination when conditions are met
+			- Smart task completion detection to avoid unnecessary waiting
+			- Reduced memory pressure through streaming result pattern
+
+			### Improvements
+
+			- Comprehensive XML documentation for all new methods
+			- Extended test coverage for edge cases and concurrency scenarios
+			- Consistent behavior with existing YANTask methods
+			- Graceful handling of null collections and empty task sets
 
 			See full documentation at: https://github.com/Tynab/YANLib/wiki
 		</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.0.1</Version>
+		<Version>8.1.0</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>

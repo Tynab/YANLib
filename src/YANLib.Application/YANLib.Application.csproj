@@ -10,7 +10,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\lib\YANLib\YANLib.csproj" />
 		<ProjectReference Include="..\YANLib.Application.Elasticsearch\YANLib.Application.Elasticsearch.csproj" />
 		<ProjectReference Include="..\YANLib.Application.Redis\YANLib.Application.Redis.csproj" />
 		<ProjectReference Include="..\YANLib.Domain\YANLib.Domain.csproj" />
@@ -21,6 +20,7 @@
 		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.3.1">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
+		<PackageReference Include="Tynab.YANLib" Version="8.0.1" />
 		<PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.AutoMapper" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.BackgroundJobs.Abstractions" Version="8.3.4" />

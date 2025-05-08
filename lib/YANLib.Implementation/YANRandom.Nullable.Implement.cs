@@ -17,6 +17,7 @@ internal static partial class YANRandom
         }
 
         var random = new Random();
+
         object? raw = targetType switch
         {
             Type byteType when byteType == typeof(byte) => random.NextByteImplement(),

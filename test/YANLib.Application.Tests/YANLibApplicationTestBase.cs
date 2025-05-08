@@ -2,8 +2,4 @@
 
 namespace YANLib;
 
-public abstract class YANLibApplicationTestBase<TStartupModule> : YANLibTestBase<TStartupModule>
-    where TStartupModule : IAbpModule
-{
-
-}
+public abstract class YANLibApplicationTestBase<TStartupModule> : YANLibTestBase<TStartupModule> where TStartupModule : IAbpModule { }

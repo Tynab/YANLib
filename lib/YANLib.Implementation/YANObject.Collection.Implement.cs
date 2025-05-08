@@ -8,19 +8,19 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullImplement());
+    internal static bool AllNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNotNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullImplement());
+    internal static bool AnyNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullImplement());
+    internal static bool AllNotNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNullImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullImplement());
+    internal static bool AnyNotNullImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsNotNullImplement());
 
     #endregion
 
@@ -28,19 +28,19 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotDefaultImplement());
+    internal static bool AllDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsDefaultImplement());
+    internal static bool AnyDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(x => x.IsDefaultImplement());
+    internal static bool AllNotDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyNotDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotDefaultImplement());
+    internal static bool AnyNotDefaultImplement<T>(this IEnumerable<T?>? input) => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsNotDefaultImplement());
 
     #endregion
 
@@ -49,22 +49,22 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllNullDefaultImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AllNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNotNullDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AllNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNotNullDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AnyNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNullDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AnyNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(static x => x.IsNullDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AllNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(x => x.IsNullDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AllNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNullDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyNotNullEmptyImplement<T>(this IEnumerable<T?>? input) where T : class
-        => typeof(T) == typeof(string) ? YANText.AnyNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(x => x.IsNotNullDefaultImplement());
+        => typeof(T) == typeof(string) ? YANText.AnyNotNullEmptyImplement(input as IEnumerable<string>) : input.IsNotNullEmptyImplement() && input.Any(static x => x.IsNotNullDefaultImplement());
 
     #endregion
 

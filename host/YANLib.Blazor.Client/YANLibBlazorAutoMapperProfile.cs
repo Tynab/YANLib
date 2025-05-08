@@ -1,3 +1,5 @@
+using AutoMapper;
+
 namespace YANLib.Blazor.Client;
 
 public class YANLibBlazorAutoMapperProfile : Profile

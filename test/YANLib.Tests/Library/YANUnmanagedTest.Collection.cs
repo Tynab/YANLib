@@ -84,6 +84,7 @@ public partial class YANUnmanagedTest
     {
         // Arrange
         var input = new object?[] { "15/06/2023", "20/07/2023", "25/12/2023" };
+
         var expected = new DateTime[]
         {
             new(2023, 6, 15),
@@ -149,6 +150,7 @@ public partial class YANUnmanagedTest
     {
         // Arrange
         var input = new object?[] { "15/06/2023", "20/07/2023" };
+
         var expected = new DateTime[]
         {
             new(2023, 6, 15),
@@ -168,6 +170,7 @@ public partial class YANUnmanagedTest
     {
         // Arrange
         ArrayList input = ["15/06/2023", "20/07/2023"];
+
         var expected = new DateTime[]
         {
             new(2023, 6, 15),
@@ -230,6 +233,7 @@ public partial class YANUnmanagedTest
     {
         // Arrange
         var guid = Guid.NewGuid();
+
         var input = new object?[]
         {
             "123",

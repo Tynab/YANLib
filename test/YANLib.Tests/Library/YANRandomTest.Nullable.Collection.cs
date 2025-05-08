@@ -15,7 +15,7 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Count);
-        Assert.All(result, item => Assert.IsType<int>(item));
+        Assert.All(result, static item => Assert.IsType<int>(item));
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Count);
-        Assert.All(result, item => Assert.IsType<DateTime>(item));
+        Assert.All(result, static item => Assert.IsType<DateTime>(item));
     }
 
     [Fact]
@@ -43,11 +43,12 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Count);
+
         Assert.All(result, item =>
         {
             _ = Assert.IsType<string>(item);
             Assert.NotNull(item);
-            Assert.True(item.All(c => char.IsLower(c) && char.IsLetter(c)));
+            Assert.True(item.All(static c => char.IsLower(c) && char.IsLetter(c)));
         });
     }
 
@@ -88,6 +89,7 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(size, result.Count);
+
         Assert.All(result, item =>
         {
             _ = Assert.IsType<double>(item);

@@ -12,8 +12,8 @@ public sealed class DeveloperAutoMapperProfile : Profile
     public DeveloperAutoMapperProfile()
     {
         _ = CreateMap<DeveloperCreateRequest, Developer>()
-            .Ignore(d => d.UpdatedBy)
-            .Ignore(d => d.UpdatedAt);
+            .Ignore(static d => d.UpdatedBy)
+            .Ignore(static d => d.UpdatedAt);
 
         _ = CreateMap<DeveloperUpdateRequest, Developer>();
 

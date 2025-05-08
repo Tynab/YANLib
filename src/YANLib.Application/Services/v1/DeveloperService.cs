@@ -44,7 +44,7 @@ public class DeveloperService(
             {
                 x.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(y => y.Id == x.DeveloperType?.Id));
                 x.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>(
-                    developerProjects.Where(y => y.DeveloperId == x.Id).Select(y => projects.FirstOrDefault(z => z.Id == y.ProjectId)).ToList()
+                    [.. developerProjects.Where(y => y.DeveloperId == x.Id).Select(y => projects.FirstOrDefault(z => z.Id == y.ProjectId))]
                 );
             });
 
@@ -67,7 +67,7 @@ public class DeveloperService(
             var projects = await _projectRepository.GetListAsync(x => developerProjects.Select(x => x.ProjectId).Distinct().Contains(x.Id));
 
             result.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(await _developerTypeRepository.FindAsync(result.DeveloperType!.Id));
-            result.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>(developerProjects.Select(x => projects.FirstOrDefault(y => y.Id == x.ProjectId)).ToList());
+            result.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>([.. developerProjects.Select(x => projects.FirstOrDefault(y => y.Id == x.ProjectId))]);
 
             return result;
         }

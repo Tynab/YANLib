@@ -22,7 +22,7 @@ public class ConcurrentCollectionBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        _allData = [.. Range(1, Size).Select(i => new SampleClass
+        _allData = [.. Range(1, Size).Select(static i => new SampleClass
         {
             Id = NewGuid()
         })];

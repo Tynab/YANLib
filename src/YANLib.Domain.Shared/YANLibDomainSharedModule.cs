@@ -15,14 +15,14 @@ public class YANLibDomainSharedModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        Configure<AbpVirtualFileSystemOptions>(o => o.FileSets.AddEmbedded<YANLibDomainSharedModule>());
+        Configure<AbpVirtualFileSystemOptions>(static o => o.FileSets.AddEmbedded<YANLibDomainSharedModule>());
 
-        Configure<AbpLocalizationOptions>(o =>
+        Configure<AbpLocalizationOptions>(static o =>
         {
             _ = o.Resources.Add<YANLibResource>("vi").AddBaseTypes(typeof(AbpValidationResource)).AddVirtualJson("/Localization/YANLib");
             o.DefaultResourceType = typeof(YANLibResource);
         });
 
-        Configure<AbpExceptionLocalizationOptions>(o => o.MapCodeNamespace("YANLib", typeof(YANLibResource)));
+        Configure<AbpExceptionLocalizationOptions>(static o => o.MapCodeNamespace("YANLib", typeof(YANLibResource)));
     }
 }

@@ -97,6 +97,7 @@ public partial class YANTaskTest
     {
         // Arrange
         var cts = new CancellationTokenSource();
+
         var tasks = new[]
         {
             Task.Delay(1000).ContinueWith(_ => 1),
@@ -250,6 +251,7 @@ public partial class YANTaskTest
     {
         // Arrange
         var cts = new CancellationTokenSource();
+
         var tasks = new[]
         {
             Task.Delay(1000).ContinueWith(_ => 1),

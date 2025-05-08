@@ -33,7 +33,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(x => x.AnyPropertiesNotDefaultImplement());
+    internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.AnyPropertiesNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -94,7 +94,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(x => x.AnyPropertiesDefaultImplement());
+    internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.AnyPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -160,7 +160,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(x => x.AnyPropertiesDefaultImplement());
+    internal static bool AnyPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(static x => x.AnyPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -220,7 +220,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(x => x.AnyPropertiesNotDefaultImplement());
+    internal static bool AnyPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(static x => x.AnyPropertiesNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

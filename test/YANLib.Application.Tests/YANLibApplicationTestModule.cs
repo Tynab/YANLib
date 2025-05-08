@@ -6,7 +6,4 @@ namespace YANLib;
     typeof(YANLibApplicationModule),
     typeof(YANLibDomainTestModule)
 )]
-public class YANLibApplicationTestModule : AbpModule
-{
-
-}
+public class YANLibApplicationTestModule : AbpModule { }

@@ -253,6 +253,7 @@ public partial class YANJsonTest
     {
         // Arrange
         var input = "{\"Id\":1,\"Name\":\"Test\"}";
+
         var options = new JsonSerializerOptions
         {
             PropertyNamingPolicy = null
@@ -333,6 +334,7 @@ public partial class YANJsonTest
         // Arrange
         var jsonString = "{\"Id\":1,\"Name\":\"Test\"}";
         var input = Encoding.UTF8.GetBytes(jsonString);
+
         var options = new JsonSerializerOptions
         {
             PropertyNamingPolicy = null
