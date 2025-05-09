@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ public class DeveloperProjectService(
                 queryableItems = queryableItems.OrderBy(input.Sorting);
             }
 
-            return new PagedResultDto<DeveloperProjectResponse>(queryableItems.Count(), [.. queryableItems.Skip(input.SkipCount).Take(input.MaxResultCount)]);
+             return new PagedResultDto<DeveloperProjectResponse>(queryableItems.Count(), [.. queryableItems.Skip(input.SkipCount).Take(input.MaxResultCount)]);
         }
         catch (Exception ex)
         {
