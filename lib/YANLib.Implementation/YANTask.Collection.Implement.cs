@@ -57,7 +57,7 @@ internal static partial class YANTask
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static async IAsyncEnumerable<T> AsyncEnumerableEmptyImplement<T>()
+    internal static async IAsyncEnumerable<T> AsyncEnumerableEmptyImplement<T>()
     {
         await Yield();
 
