@@ -5,6 +5,7 @@
 
 * [YANObject](YANObject)
 * [YANUnmanaged](YANUnmanaged)
+* [YANEnumerable](YANEnumerable)
 * [YANText](YANText)
 
 

@@ -1,260 +1,265 @@
-### YANMath Component
-
-The `YANMath` component is part of the YANLib library, providing a comprehensive set of mathematical operations and functions with robust null handling and type conversion capabilities.
-
+### YANMath - Mathematical Operations Utility Library
 
 ## Overview
 
-YANMath offers an extensive collection of extension methods for performing mathematical operations on both single values and collections. It supports various numeric types, nullable values, and even automatic type conversion from strings or other convertible types.
+`YANMath` is a comprehensive utility library that provides extension methods for mathematical operations in C# applications. It offers a wide range of mathematical functions for both single values and collections, with support for generic types and null-safe operations.
 
+## Features
 
-## Key Features
+The library is organized into several functional categories:
 
 ### Basic Mathematical Operations
 
-Perform common mathematical operations on single values or collections:
+- **Statistical Functions**: Min, Max, Average, Sum
+- **Rounding Operations**: Truncate, Ceiling, Floor, Round
+- **Power Functions**: Square root, Cube root, Power, Absolute value
 
-```csharp
-// Single value operations
-int min = YANMath.Min(5, 2, 8, 1, 9);       // Returns 1
-int max = YANMath.Max(5, 2, 8, 1, 9);       // Returns 9
-double avg = YANMath.Average<double>(2, 4, 6, 8, 10);  // Returns 6.0
-int sum = YANMath.Sum(2, 4, 6, 8, 10);      // Returns 30
-
-// Collection operations
-var numbers = new List<int?> { 5, 2, 8, 1, 9 };
-int? min = numbers.Min<int>();              // Returns 1
-int? max = numbers.Max<int>();              // Returns 9
-```
-
-### Rounding Functions
-
-Round numbers in various ways:
-
-```csharp
-// Single value operations
-double truncated = 3.75.Truncate<double>();  // Returns 3.0
-double ceiling = 3.75.Ceiling<double>();     // Returns 4.0
-double floor = (-3.75).Floor<double>();      // Returns -4.0
-double rounded = 3.14159.Round<double>(2);   // Returns 3.14
-
-// Collection operations
-var values = new List<double?> { 3.75, -2.25, 0.5 };
-var truncated = values.Truncates<double>();  // Returns [3.0, -2.0, 0.0]
-var ceilings = values.Ceilings<double>();    // Returns [4.0, -2.0, 1.0]
-var floors = values.Floors<double>();        // Returns [3.0, -3.0, 0.0]
-```
-
-### Power and Root Functions
-
-Calculate powers, square roots, and cube roots:
-
-```csharp
-// Single value operations
-double sqrt = 16.0.Sqrt<double>();           // Returns 4.0
-double pow = 2.0.Pow<double>(3);             // Returns 8.0
-double cbrt = 27.0.Cbrt<double>();           // Returns 3.0
-
-// Collection operations
-var values = new List<double?> { 4.0, 9.0, 16.0 };
-var sqrts = values.Sqrts<double>();          // Returns [2.0, 3.0, 4.0]
-var pows = values.Pows<double>(2);           // Returns [16.0, 81.0, 256.0]
-```
 
 ### Trigonometric Functions
 
-Perform trigonometric calculations:
+- **Basic Trigonometry**: Sin, Cos, Tan
+- **Inverse Trigonometry**: Asin, Acos, Atan
+- **Angle Conversions**: Radians to degrees, Degrees to radians
 
-```csharp
-// Single value operations
-double sin = (Math.PI / 2).Sin<double>();    // Returns 1.0
-double cos = Math.PI.Cos<double>();          // Returns -1.0
-double tan = (Math.PI / 4).Tan<double>();    // Returns 1.0
-
-// Inverse trigonometric functions
-double asin = 1.0.Asin<double>();            // Returns π/2
-double acos = 0.0.Acos<double>();            // Returns π/2
-double atan = 1.0.Atan<double>();            // Returns π/4
-
-// Collection operations
-var angles = new List<double?> { 0.0, Math.PI / 2, Math.PI };
-var sines = angles.Sins<double>();           // Returns [0.0, 1.0, 0.0]
-var cosines = angles.Coss<double>();         // Returns [1.0, 0.0, -1.0]
-```
 
 ### Logarithmic and Exponential Functions
 
-Calculate logarithms and exponentials:
-
-```csharp
-// Single value operations
-double log = 100.0.Log<double>(10);          // Returns 2.0
-double log10 = 100.0.Log10<double>();        // Returns 2.0
-double log2 = 8.0.Log2<double>();            // Returns 3.0
-int ilogb = 8.0.ILogB<int>();                // Returns 3
-
-double exp = 1.0.Exp<double>();              // Returns Math.E
-double exp2 = 3.0.Exp2<double>();            // Returns 8.0
-
-// Collection operations
-var values = new List<double?> { 10.0, 100.0, 1000.0 };
-var log10s = values.Log10s<double>();        // Returns [1.0, 2.0, 3.0]
-var log2s = new List<double?> { 2.0, 4.0, 8.0 }.Log2s<double>();  // Returns [1.0, 2.0, 3.0]
-```
-
-### Absolute Value
-
-Calculate absolute values:
-
-```csharp
-// Single value operations
-double abs = (-5.0).Abs<double>();           // Returns 5.0
-
-// Collection operations
-var values = new List<double?> { 3.0, -2.0, 0.0 };
-var abss = values.Abss<double>();            // Returns [3.0, 2.0, 0.0]
-```
+- **Logarithms**: Natural logarithm, Base-10 logarithm, Base-2 logarithm
+- **Integer Logarithm**: Base-2 integer logarithm (ILogB)
+- **Exponential Functions**: Exp (e^x), Exp2 (2^x)
 
 
-## Null Handling
+### Collection Operations
 
-YANMath provides robust null handling:
-
-- Null inputs return default values for single operations
-- Null values in collections are preserved or ignored as appropriate
-- Empty collections return null
-
-```csharp
-// Null handling for single values
-double? nullValue = null;
-double? result = nullValue.Sqrt<double>();   // Returns default(double)
-
-// Null handling for collections
-var mixedValues = new List<double?> { 3.75, null, 0.5 };
-var truncated = mixedValues.Truncates<double>();  // Returns [3.0, default, 0.0]
-```
+- **Collection Processing**: Apply math operations to collections of values
+- **Parallel Processing**: Automatic parallel processing for large collections
+- **Null Handling**: Graceful handling of null values in collections
 
 
-## Type Conversion
+### Generic Type Support
 
-YANMath supports automatic type conversion:
-
-```csharp
-// String to numeric conversion
-object stringValue = "3.75";
-double? result = stringValue.Truncate<double>();  // Returns 3.0
-
-// Mixed type collections
-var mixedTypes = new List<object?> { 5, 2.5, "8", 1, "9" };
-int? min = mixedTypes.Min<int>();            // Returns 1
-```
-
-
-## Generic Type Support
-
-Operations can be performed with generic type parameters:
-
-```csharp
-// Generic single operations
-object input = 16.0;
-double? sqrt = input.Sqrt<double>();         // Returns 4.0
-
-// Generic collection operations
-var inputs = new List<object?> { 4.0, "9.0", 16.0 };
-var sqrts = inputs.Sqrts<double>();          // Returns [2.0, 3.0, 4.0]
-```
+- **Type Conversion**: Automatic conversion between numeric types
+- **Object Processing**: Apply math operations to objects of any type
+- **Generic Collections**: Support for collections of any object type
 
 
 ## Usage Examples
 
-### Basic Calculations
+### Basic Mathematical Operations
 
 ```csharp
-// Find the minimum and maximum values
-int min = YANMath.Min(10, 5, 8, 3, 7);       // Returns 3
-int max = YANMath.Max(10, 5, 8, 3, 7);       // Returns 10
+// Statistical functions
+double min = YANMath.Min(5.2, 3.1, 7.8, 2.4); // Returns 2.4
+double max = YANMath.Max(5.2, 3.1, 7.8, 2.4); // Returns 7.8
+double avg = YANMath.Average(5.2, 3.1, 7.8, 2.4); // Returns 4.625
+double sum = YANMath.Sum(5.2, 3.1, 7.8, 2.4); // Returns 18.5
 
-// Calculate average and sum
-double avg = YANMath.Average<double>(10, 20, 30, 40);  // Returns 25.0
-int sum = YANMath.Sum(10, 20, 30, 40);       // Returns 100
+// Rounding operations
+double value = 3.75;
+double truncated = value.Truncate(); // Returns 3.0
+double ceiling = value.Ceiling(); // Returns 4.0
+double floor = value.Floor(); // Returns 3.0
+double rounded = value.Round(); // Returns 4.0
+double roundedToDigits = value.Round(1); // Returns 3.8
+
+// Negative values
+double negValue = -3.75;
+double negTruncated = negValue.Truncate(); // Returns -3.0
+double negCeiling = negValue.Ceiling(); // Returns -3.0
+double negFloor = negValue.Floor(); // Returns -4.0
+double negRounded = negValue.Round(); // Returns -4.0
+
+// Power functions
+double sqrt = 16.0.Sqrt(); // Returns 4.0
+double cbrt = 27.0.Cbrt(); // Returns 3.0
+double powered = 2.0.Pow(3); // Returns 8.0
+double abs = (-5.0).Abs(); // Returns 5.0
 ```
 
-### Rounding Numbers
+### Trigonometric Functions
 
 ```csharp
-// Round a number to 2 decimal places
-double pi = 3.14159;
-double rounded = pi.Round<double>(2);        // Returns 3.14
+// Basic trigonometric functions
+double sinValue = 0.0.Sin(); // Returns 0.0
+double cosValue = 0.0.Cos(); // Returns 1.0
+double tanValue = 0.0.Tan(); // Returns 0.0
 
-// Round a collection of numbers
-var prices = new List<double?> { 19.95, 29.99, 9.49 };
-var roundedPrices = prices.Rounds<double>(0); // Returns [20.0, 30.0, 9.0]
+double piHalf = Math.PI / 2;
+double sinPiHalf = piHalf.Sin(); // Returns 1.0
+double cosPiHalf = piHalf.Cos(); // Returns 0.0
 
-// Use different rounding modes
-double midpoint = 2.5;
-double rounded1 = midpoint.Round<double>(0, MidpointRounding.AwayFromZero); // Returns 3.0
-double rounded2 = midpoint.Round<double>(0, MidpointRounding.ToEven);       // Returns 2.0
+// Inverse trigonometric functions
+double asinValue = 1.0.Asin(); // Returns π/2 (1.5707...)
+double acosValue = 1.0.Acos(); // Returns 0.0
+double atanValue = 1.0.Atan(); // Returns π/4 (0.7853...)
+
+// Working with degrees (requires conversion to radians)
+double degrees = 90;
+double radians = degrees * Math.PI / 180;
+double sinDegrees = radians.Sin(); // Returns 1.0
 ```
 
-### Financial Calculations
+### Logarithmic and Exponential Functions
 
 ```csharp
-// Calculate compound interest
-double principal = 1000;
-double rate = 0.05;
-int years = 5;
-double amount = principal * (1 + rate).Pow<double>(years);  // Returns 1276.28
+// Logarithmic functions
+double naturalLog = Math.E.Log(); // Returns 1.0
+double base10Log = 100.0.Log10(); // Returns 2.0
+double base2Log = 8.0.Log2(); // Returns 3.0
+double customBaseLog = 100.0.Log(10); // Returns 2.0
 
-// Round monetary values
-var amounts = new List<double?> { 19.955, 29.994, 9.496 };
-var roundedAmounts = amounts.Rounds<double>(2);  // Returns [19.96, 29.99, 9.50]
+// Integer logarithm
+int intLog = 8.0.ILogB<int>(); // Returns 3
+
+// Exponential functions
+double expValue = 1.0.Exp(); // Returns e (2.7182...)
+double exp2Value = 3.0.Exp2(); // Returns 8.0
 ```
 
-### Scientific Calculations
+### Collection Operations
 
 ```csharp
-// Calculate the area of a circle
-double radius = 5;
-double area = Math.PI * radius.Pow<double>(2);  // Returns 78.54
+// Statistical functions on collections
+var numbers = new List<double?> { 5.2, 3.1, 7.8, 2.4 };
+double? min = numbers.Min(); // Returns 2.4
+double? max = numbers.Max(); // Returns 7.8
+double? avg = numbers.Average(); // Returns 4.625
+double? sum = numbers.Sum(); // Returns 18.5
 
-// Convert degrees to radians
-double degrees = 180;
-double radians = degrees * (Math.PI / 180);     // Returns 3.14159
+// Rounding operations on collections
+var values = new List<double?> { 3.75, -2.25, 0.5 };
+IEnumerable<double?>? truncated = values.Truncates(); // Returns [3.0, -2.0, 0.0]
+IEnumerable<double?>? ceilings = values.Ceilings(); // Returns [4.0, -2.0, 1.0]
+IEnumerable<double?>? floors = values.Floors(); // Returns [3.0, -3.0, 0.0]
+IEnumerable<double?>? rounded = values.Rounds(); // Returns [4.0, -2.0, 1.0]
 
-// Calculate sine and cosine
-double sin90 = radians.Sin<double>();           // Returns 0.0 (approximately)
-double cos90 = radians.Cos<double>();           // Returns -1.0 (approximately)
+// Trigonometric functions on collections
+var angles = new List<double?> { 0.0, Math.PI / 2, Math.PI };
+IEnumerable<double?>? sines = angles.Sins(); // Returns [0.0, 1.0, 0.0]
+IEnumerable<double?>? cosines = angles.Coss(); // Returns [1.0, 0.0, -1.0]
+IEnumerable<double?>? tangents = angles.Tans(); // Returns [0.0, ∞, 0.0]
+
+// Power functions on collections
+var bases = new List<double?> { 4.0, 9.0, 16.0 };
+IEnumerable<double?>? squareRoots = bases.Sqrts(); // Returns [2.0, 3.0, 4.0]
+
+var exponents = new List<double?> { 2.0, 3.0, 4.0 };
+IEnumerable<double?>? powers = exponents.Pows(2); // Returns [4.0, 9.0, 16.0]
+
+// Handling null values in collections
+var withNulls = new List<double?> { 4.0, null, 16.0 };
+IEnumerable<double?>? sqrtsWithNull = withNulls.Sqrts(); // Returns [2.0, null, 4.0]
 ```
 
-### Statistical Operations
+### Generic Type Support
 
 ```csharp
-// Calculate standard deviation
-var values = new List<double?> { 2, 4, 4, 4, 5, 5, 7, 9 };
-double mean = values.Average<double>().Value;
-var squaredDiffs = values.Select(v => (v - mean).Pow<double>(2));
-double variance = squaredDiffs.Average<double>().Value;
-double stdDev = variance.Sqrt<double>().Value;  // Returns 2.0
+// Operations on objects of any type
+object value = 3.75;
+double truncated = value.Truncate<double>(); // Returns 3.0
+double ceiling = value.Ceiling<double>(); // Returns 4.0
+double floor = value.Floor<double>(); // Returns 3.0
+
+// String to number conversion and operation
+string strValue = "3.75";
+double rounded = strValue.Round<double>(); // Returns 4.0
+
+// Collections of objects
+var mixedObjects = new List<object?> { 3.75, "2.25", 0.5 };
+IEnumerable<double?>? truncatedObjects = mixedObjects.Truncates<double>(); // Returns [3.0, 2.0, 0.0]
+IEnumerable<double?>? roundedObjects = mixedObjects.Rounds<double>(); // Returns [4.0, 2.0, 1.0]
+
+// Min/Max/Average/Sum on object collections
+var objectNumbers = new List<object?> { 5, 2.5, "8", 1, "9" };
+int minValue = objectNumbers.Min<int>(); // Returns 1
+int maxValue = objectNumbers.Max<int>(); // Returns 9
+double avgValue = objectNumbers.Average<double>(); // Returns 5.1
+int sumValue = objectNumbers.Sum<int>(); // Returns 25
 ```
 
-### Working with Mixed Types
+### Advanced Usage Examples
 
 ```csharp
-// Process data from different sources
-var measurements = new List<object?> { 10, "15.5", 20.75, null, "25" };
-double? average = measurements.Average<double>();  // Returns 17.81 (ignoring null)
+// Chaining operations
+double result = 16.0.Sqrt().Pow(3).Round(2); // √16 = 4, 4³ = 64, rounded to 64.0
 
-// Convert and process string inputs
-var stringValues = new List<string?> { "10", "20", "30", null, "40" };
-var numericValues = stringValues.Select(s => s.As<double>()).ToList();
-double? sum = numericValues.Sum<double>();  // Returns 100.0 (ignoring null)
+// Combining with LINQ
+var numbers = Enumerable.Range(1, 10).Select(x => (double)x);
+var processed = numbers
+    .Where(x => x > 3)
+    .Select(x => x.Pow(2))
+    .Where(x => x.Sqrt() > 3)
+    .Average();
+// Result: Average of squares of numbers > 3 where square root > 3
+
+// Processing collections with multiple operations
+var values = new List<double?> { 3.14159, 2.71828, 1.41421 };
+var results = values
+    .Rounds(2) // Round to 2 decimal places: [3.14, 2.72, 1.41]
+    .Pows(2)   // Square each value: [9.8596, 7.3984, 1.9881]
+    .Sqrts()   // Take square root: [3.14, 2.72, 1.41]
+    .ToList();
+
+// Parallel processing for large collections (happens automatically)
+var largeCollection = Enumerable.Range(1, 10000).Select(x => (double)x).ToList();
+var squareRoots = largeCollection.Sqrts(); // Uses parallel processing internally
+
+// Handling null values gracefully
+double? nullValue = null;
+double? result1 = nullValue.Sqrt(); // Returns null
+double? result2 = nullValue.Round(2); // Returns null
+double? result3 = nullValue.Pow(3); // Returns null
+
+// Type conversion in operations
+int intValue = 16;
+double sqrtResult = intValue.Sqrt(); // Returns 4.0
+float floatResult = intValue.Sqrt<float>(); // Returns 4.0f
+decimal decimalResult = intValue.Sqrt<decimal>(); // Returns 4.0m
 ```
 
-### Batch Processing
+## Performance Considerations
 
-```csharp
-// Process multiple values at once
-var temperatures = new List<double?> { 98.6, 99.2, 97.9, 100.5, 98.2 };
-var rounded = temperatures.Rounds<double>(1);  // Returns [98.6, 99.2, 97.9, 100.5, 98.2]
-var elevated = temperatures.Where(t => t > 99.0).ToList();  // Returns [99.2, 100.5]
-```
+- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
+- **Null Handling**: All methods handle null inputs gracefully, returning null rather than throwing exceptions
+- **Caching**: Some operations use internal caching to improve performance for repeated calculations
+- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+
+
+## Implementation Details
+
+- **Extension Methods**: All operations are implemented as extension methods for better integration with existing code
+- **Generic Type Support**: Methods use generic type parameters to support various numeric types
+- **Null Safety**: All methods are designed to be null-safe, handling null inputs gracefully
+- **Partial Classes**: Uses partial classes to organize functionality by category
+- **Internal Implementation**: Core implementation details are separated from the public API for better maintainability
+
+
+## Mathematical Functions Coverage
+
+The library provides comprehensive coverage of mathematical functions:
+
+| Category | Functions |
+|----------|-----------|
+| **Statistical** | Min, Max, Average, Sum |
+| **Rounding** | Truncate, Ceiling, Floor, Round |
+| **Power** | Sqrt, Cbrt, Pow, Abs |
+| **Trigonometric** | Sin, Cos, Tan, Asin, Acos, Atan |
+| **Logarithmic** | Log, Log10, Log2, ILogB |
+| **Exponential** | Exp, Exp2 |
+| **Collection Operations** | Collection versions of all operations (e.g., Mins, Maxes, Averages, Sums, Truncates, etc.) |
+| **Generic Operations** | Generic versions of all operations |
+| **Nullable Operations** | Support for nullable numeric types |
+
+
+## Technical Details
+
+- **Math Function Implementation**: Wraps `System.Math` methods with extension methods for better usability
+- **Numeric Type Support**: Implements operations for all numeric types (int, double, decimal, etc.)
+- **Overflow Protection**: Includes safeguards against numeric overflow in mathematical operations
+- **NaN Handling**: Properly handles NaN (Not a Number) values in floating-point operations
+- **Infinity Handling**: Includes special handling for positive and negative infinity values
+- **Rounding Precision**: Supports configurable decimal precision in rounding operations
+- **Parallel Processing**: Implements parallel processing using `Parallel.ForEach` for collections with more than 1000 elements
+- **Generic Implementation**: Uses generic type parameters with constraints to support various numeric types
+- **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code

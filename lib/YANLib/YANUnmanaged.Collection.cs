@@ -76,4 +76,19 @@ public static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable? input, object? defaultValue = null, params string?[]? format) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
+
+    /// <summary>
+    /// Parses a lookup of objects to a lookup of the specified nullable key and element types.
+    /// </summary>
+    /// <typeparam name="TKey">The key type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <typeparam name="TElement">The element type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The lookup of objects to parse. If <c>null</c> or empty, returns an empty lookup.</param>
+    /// <returns>A lookup with keys of type <typeparamref name="TKey"/> and elements of type <typeparamref name="TElement"/>, or an empty lookup if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This method parses both the keys and elements of the input lookup to the specified types.
+    /// Keys and elements that cannot be parsed will be <c>null</c> in the resulting lookup.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static Dictionary<TKey, TValue?> Parses<TKey, TValue>(this IDictionary<object, object?>? input) where TKey : unmanaged => input.ParsesImplement<TKey, TValue>();
 }

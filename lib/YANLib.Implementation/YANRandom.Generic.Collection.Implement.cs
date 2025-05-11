@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using static System.Linq.Enumerable;
 using static System.Math;
 
@@ -44,7 +39,7 @@ internal static partial class YANRandom
         else
         {
             var m = Min(n, list.Count);
-            var pool = list.ToList<T>();
+            var pool = list.ToListImplement<T>();
 
             for (var i = 0; i < m; i++)
             {

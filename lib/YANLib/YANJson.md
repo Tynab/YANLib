@@ -1,126 +1,86 @@
-### YANJson Component
-
-The `YANJson` component is part of the YANLib library, providing powerful and flexible JSON serialization and deserialization utilities with robust error handling and collection support.
-
+### YANJson - JSON Serialization Utility Library
 
 ## Overview
 
-YANJson offers a comprehensive set of extension methods for working with JSON data, built on top of System.Text.Json. It provides a clean, fluent API for converting between .NET objects and JSON representations, with support for both string and binary formats.
+`YANJson` is a comprehensive utility library that provides extension methods for JSON serialization and deserialization in C# applications. It offers a simplified API for converting objects to and from JSON format, with support for both single objects and collections, and handles both string and byte array representations.
+
+## Features
+
+The library is organized into several functional categories:
+
+### Single Object Operations
+
+- **Object Serialization**: Convert objects to JSON strings or byte arrays
+- **Object Deserialization**: Convert JSON strings or byte arrays to strongly-typed objects
+- **Default Formatting**: Automatic camel case property naming for serialization
+- **Error Handling**: Graceful handling of serialization/deserialization errors
 
 
-## Key Features
+### Collection Operations
 
-### Simple Object Serialization
-
-Convert objects to JSON strings or byte arrays:
-
-```csharp
-// Serialize an object to a JSON string
-string json = myObject.Serialize();
-
-// Serialize an object to a byte array
-byte[] bytes = myObject.SerializeToBytes();
-```
-
-### Object Deserialization
-
-Convert JSON strings or byte arrays back to objects:
-
-```csharp
-// Deserialize a JSON string to an object
-MyClass obj = jsonString.Deserialize<MyClass>();
-
-// Deserialize a byte array to an object
-MyClass obj = byteArray.DeserializeFromBytes<MyClass>();
-```
-
-### Collection Processing
-
-Batch process collections of objects:
-
-```csharp
-// Serialize a collection of objects to JSON strings
-IEnumerable<string> jsonStrings = myObjects.Serializes();
-
-// Deserialize a collection of JSON strings to objects
-IEnumerable<MyClass> objects = jsonStrings.Deserializes<MyClass>();
-```
-
-### Customization Options
-
-Configure serialization behavior with JsonSerializerOptions:
-
-```csharp
-var options = new JsonSerializerOptions
-{
-    PropertyNamingPolicy = null,  // Use property names as-is
-    WriteIndented = true          // Format JSON with indentation
-};
-
-string json = myObject.Serialize(options);
-```
+- **Collection Serialization**: Convert collections of objects to JSON strings or byte arrays
+- **Collection Deserialization**: Convert collections of JSON strings or byte arrays to strongly-typed objects
+- **Generic Collection Support**: Type-specific processing for generic collections
+- **Non-Generic Collection Support**: Support for legacy `IEnumerable` collections
 
 
-## Null Handling
+### Performance Optimizations
 
-YANJson provides robust null handling:
-
-- Null inputs return null outputs
-- Empty collections return null
-- Invalid JSON is handled gracefully, returning null instead of throwing exceptions
-- Collections with mixed null values preserve the nulls in the result
-
-
-## Technical Details
-
-### Single Object Methods
-
-| Method | Description
-|-----|-----
-| `Serialize()` | Converts an object to a JSON string
-| `SerializeToBytes()` | Converts an object to a JSON byte array
-| `Deserialize<T>()` | Converts a JSON string to an object of type T
-| `DeserializeFromBytes<T>()` | Converts a JSON byte array to an object of type T
-
-### Collection Methods
-
-| Method | Description
-|-----|-----
-| `Serializes()` | Converts a collection of objects to JSON strings
-| `SerializesToBytes()` | Converts a collection of objects to JSON byte arrays
-| `Deserializes<T>()` | Converts a collection of JSON strings to objects of type T
-| `DeserializesFromBytes<T>()` | Converts a collection of JSON byte arrays to objects of type T
+- **Byte Array Support**: Direct serialization to/from UTF-8 encoded byte arrays for better performance
+- **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
+- **Default Options Caching**: Reuse of common serialization/deserialization options
 
 
 ## Usage Examples
 
-### Basic Serialization and Deserialization
+### Single Object Operations
 
 ```csharp
-// Define a class
-public class Person
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-}
-
-// Create an object
+// Serialize an object to a JSON string
 var person = new Person { Id = 1, Name = "John Doe" };
-
-// Serialize to JSON
 string json = person.Serialize();
 // Result: {"id":1,"name":"John Doe"}
 
-// Deserialize back to object
-Person deserializedPerson = json.Deserialize<Person>();
-// deserializedPerson.Id == 1
-// deserializedPerson.Name == "John Doe"
+// Serialize with custom options
+var options = new JsonSerializerOptions
+{
+    PropertyNamingPolicy = null, // Use original property names
+    WriteIndented = true // Format with indentation
+};
+string prettyJson = person.Serialize(options);
+// Result:
+// {
+//   "Id": 1,
+//   "Name": "John Doe"
+// }
+
+// Serialize to UTF-8 byte array (more efficient for APIs)
+byte[] jsonBytes = person.SerializeToBytes();
+
+// Deserialize from JSON string
+string personJson = "{\"id\":1,\"name\":\"John Doe\"}";
+Person? deserializedPerson = personJson.Deserialize<Person>();
+// Result: Person { Id = 1, Name = "John Doe" }
+
+// Deserialize with case-insensitive property matching
+string differentCaseJson = "{\"ID\":1,\"NAME\":\"John Doe\"}";
+Person? caseInsensitivePerson = differentCaseJson.Deserialize<Person>();
+// Result: Person { Id = 1, Name = "John Doe" }
+
+// Deserialize from UTF-8 byte array
+byte[] personJsonBytes = Encoding.UTF8.GetBytes("{\"id\":1,\"name\":\"John Doe\"}");
+Person? byteDeserializedPerson = personJsonBytes.DeserializeFromBytes<Person>();
+// Result: Person { Id = 1, Name = "John Doe" }
+
+// Graceful error handling
+string invalidJson = "{invalid json}";
+Person? nullResult = invalidJson.Deserialize<Person>(); // Returns null instead of throwing
 ```
 
-### Working with Collections
+### Collection Operations
 
 ```csharp
-// Create a collection of objects
+// Serialize a collection of objects to JSON strings
 var people = new List<Person>
 {
     new Person { Id = 1, Name = "John Doe" },
@@ -128,148 +88,164 @@ var people = new List<Person>
     new Person { Id = 3, Name = "Bob Johnson" }
 };
 
-// Serialize collection to JSON strings
-IEnumerable<string> jsonStrings = people.Serializes();
+IEnumerable<string?>? jsonStrings = people.Serializes();
 // Result: ["{"id":1,"name":"John Doe"}", "{"id":2,"name":"Jane Smith"}", "{"id":3,"name":"Bob Johnson"}"]
 
-// Deserialize collection back to objects
-IEnumerable<Person> deserializedPeople = jsonStrings.Deserializes<Person>();
-```
+// Serialize a collection to byte arrays
+IEnumerable<byte[]?>? jsonByteArrays = people.SerializesToBytes();
 
-### Binary Serialization
+// Serialize with params syntax
+IEnumerable<string?>? moreJsonStrings = YANJson.Serializes(
+    new Person { Id = 1, Name = "John Doe" },
+    new Person { Id = 2, Name = "Jane Smith" }
+);
 
-```csharp
-// Serialize to byte array
-var person = new Person { Id = 1, Name = "John Doe" };
-byte[] bytes = person.SerializeToBytes();
-
-// Deserialize from byte array
-Person deserializedPerson = bytes.DeserializeFromBytes<Person>();
-```
-
-### Handling Null Values
-
-```csharp
-// Null input handling
-Person nullPerson = null;
-string json = nullPerson.Serialize(); // Returns null
-
-// Empty string handling
-Person result = "".Deserialize<Person>(); // Returns null
-
-// Invalid JSON handling
-Person result = "{invalid json}".Deserialize<Person>(); // Returns null
-
-// Mixed null values in collections
-var mixedPeople = new Person[]
+// Serialize non-generic collections
+System.Collections.ArrayList legacyList = new()
 {
-    new Person { Id = 1, Name = "John" },
-    null,
-    new Person { Id = 3, Name = "Bob" }
+    new Person { Id = 1, Name = "John Doe" },
+    new Person { Id = 2, Name = "Jane Smith" }
+};
+IEnumerable<string?>? legacyJsonStrings = legacyList.Serializes();
+
+// Deserialize a collection of JSON strings
+var jsonCollection = new string?[]
+{
+    "{\"id\":1,\"name\":\"John Doe\"}",
+    "{\"id\":2,\"name\":\"Jane Smith\"}",
+    null, // Handles null values gracefully
+    "{\"id\":3,\"name\":\"Bob Johnson\"}"
 };
 
-var jsonStrings = mixedPeople.Serializes();
-// Result: ["{"id":1,"name":"John"}", null, "{"id":3,"name":"Bob"}"]
+IEnumerable<Person?>? deserializedPeople = jsonCollection.Deserializes<Person>();
+// Result: [Person { Id = 1, Name = "John Doe" }, Person { Id = 2, Name = "Jane Smith" }, null, Person { Id = 3, Name = "Bob Johnson" }]
 
-var deserializedMixed = jsonStrings.Deserializes<Person>();
-// Result: [Person{Id=1, Name="John"}, null, Person{Id=3, Name="Bob"}]
+// Deserialize with params syntax
+IEnumerable<Person?>? morePeople = YANJson.Deserializes<Person>(
+    "{\"id\":1,\"name\":\"John Doe\"}",
+    "{\"id\":2,\"name\":\"Jane Smith\"}"
+);
+
+// Deserialize from byte arrays
+var byteArrayCollection = new byte[]?[]
+{
+    Encoding.UTF8.GetBytes("{\"id\":1,\"name\":\"John Doe\"}"),
+    Encoding.UTF8.GetBytes("{\"id\":2,\"name\":\"Jane Smith\"}"),
+    null // Handles null values gracefully
+};
+
+IEnumerable<Person?>? bytesDeserializedPeople = byteArrayCollection.DeserializesFromBytes<Person>();
 ```
 
-### Custom Serialization Options
+### Generic Collection Operations
 
 ```csharp
-// Create custom options
+// Serialize a generic collection with specific type
+IEnumerable<int?> numbers = new int?[] { 1, 2, null, 4, 5 };
+IEnumerable<string?>? serializedNumbers = numbers.Serializes();
+// Result: ["1", "2", null, "4", "5"]
+
+// Serialize a generic collection to byte arrays
+IEnumerable<byte[]?>? numberByteArrays = numbers.SerializesToBytes();
+
+// Mixed type collections with nulls
+var mixedPeople = new Person?[]
+{
+    new Person { Id = 1, Name = "John Doe" },
+    null,
+    new Person { Id = 3, Name = "Bob Johnson" }
+};
+
+IEnumerable<string?>? mixedJsonStrings = mixedPeople.Serializes();
+// Result: ["{"id":1,"name":"John Doe"}", null, "{"id":3,"name":"Bob Johnson"}"]
+```
+
+### Advanced Usage Examples
+
+```csharp
+// Custom serialization options
 var options = new JsonSerializerOptions
 {
-    PropertyNamingPolicy = null, // Use original property names
-    WriteIndented = true,        // Format with indentation
-    IgnoreNullValues = true      // Exclude null properties
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    WriteIndented = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 };
 
-// Use custom options
-var person = new Person { Id = 1, Name = "John Doe" };
-string json = person.Serialize(options);
-// Result:
-// {
-//   "Id": 1,
-//   "Name": "John Doe"
-// }
-
-// Custom options with deserialization
-Person deserializedPerson = json.Deserialize<Person>(options);
-```
-
-### Params Overloads
-
-```csharp
-// Serialize multiple objects at once
-var jsonStrings = YANJson.Serializes(
-    new Person { Id = 1, Name = "John" },
-    new Person { Id = 2, Name = "Jane" },
-    new Person { Id = 3, Name = "Bob" }
-);
-
-// Deserialize multiple JSON strings at once
-var people = YANJson.Deserializes<Person>(
-    "{\"id\":1,\"name\":\"John\"}",
-    "{\"id\":2,\"name\":\"Jane\"}",
-    "{\"id\":3,\"name\":\"Bob\"}"
-);
-```
-
-### Working with Complex Objects
-
-```csharp
-// Define a complex class with nesting
-public class Department
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public List<Person> Employees { get; set; }
-}
-
-// Create and serialize a complex object
-var department = new Department
+// Serialize complex nested objects
+var company = new Company
 {
     Id = 1,
-    Name = "Engineering",
+    Name = "Acme Corp",
     Employees = new List<Person>
     {
-        new Person { Id = 1, Name = "John" },
-        new Person { Id = 2, Name = "Jane" }
+        new Person { Id = 1, Name = "John Doe" },
+        new Person { Id = 2, Name = "Jane Smith" }
     }
 };
 
-string json = department.Serialize();
-// Result: {"id":1,"name":"Engineering","employees":[{"id":1,"name":"John"},{"id":2,"name":"Jane"}]}
+string companyJson = company.Serialize(options);
 
-// Deserialize complex object
-Department deserializedDept = json.Deserialize<Department>();
+// Process large collections efficiently (automatic parallel processing)
+var largePeopleList = Enumerable.Range(1, 10000)
+    .Select(i => new Person { Id = i, Name = $"Person {i}" })
+    .ToList();
+
+// This will automatically use parallel processing
+IEnumerable<string?>? largeJsonCollection = largePeopleList.Serializes();
+
+// Combining with LINQ for advanced scenarios
+var processedData = people
+    .Where(p => p.Id > 1)
+    .Select(p => new { p.Name, UppercaseName = p.Name?.ToUpper() })
+    .Serializes()
+    .Where(json => json != null)
+    .Select(json => json!.Contains("JANE") ? json : null)
+    .ToList();
 ```
-
-### Error Handling
-
-```csharp
-// Safe deserialization with error handling
-public T SafeDeserialize<T>(string json) where T : class
-{
-    try
-    {
-        return json.Deserialize<T>() ?? throw new InvalidOperationException("Deserialization returned null");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error deserializing JSON: {ex.Message}");
-        
-        return null;
-    }
-}
-```
-
 
 ## Performance Considerations
 
-- YANJson uses System.Text.Json under the hood, which offers better performance than Newtonsoft.Json
-- Collection methods process each item individually, allowing for partial success even when some items fail
-- The library handles edge cases gracefully without throwing exceptions, improving robustness
-- Consider using byte array methods for large objects to avoid string encoding/decoding overhead
+- **Byte Array Operations**: Using `SerializeToBytes` and `DeserializeFromBytes` is more efficient when working with APIs that accept byte arrays
+- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Default Options Caching**: The library caches commonly used serialization options to avoid recreating them for each operation
+- **Error Handling**: Deserialization methods catch exceptions internally and return null/default instead of throwing, which can improve application resilience
+- **Memory Efficiency**: The implementation is designed to minimize unnecessary memory allocations
+
+
+## Implementation Details
+
+- **Default Serialization Options**: Uses camel case property naming by default for serialization
+- **Default Deserialization Options**: Uses case-insensitive property matching by default for deserialization
+- **Null Handling**: All methods handle null inputs gracefully, returning null rather than throwing exceptions
+- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Extension Methods**: Implemented as extension methods for better integration with existing code
+- **Partial Classes**: Uses partial classes to organize functionality by category
+
+
+## JSON Serialization Coverage
+
+The library provides comprehensive coverage of JSON serialization operations:
+
+| Category | Functions |
+|----------|-----------|
+| **Object Serialization** | Serialize, SerializeToBytes |
+| **Object Deserialization** | Deserialize<T>, DeserializeFromBytes<T> |
+| **Collection Serialization** | Serializes, SerializesToBytes |
+| **Collection Deserialization** | Deserializes<T>, DeserializesFromBytes<T> |
+| **Options Customization** | All methods support custom JsonSerializerOptions |
+| **Non-Generic Collection Support** | Extension methods for IEnumerable |
+| **Params Array Support** | Static methods with params object[] parameters |
+| **Error Handling** | All deserialization methods handle exceptions gracefully |
+
+
+## Technical Details
+
+- **JSON Serialization**: Uses `System.Text.Json` for modern, high-performance JSON processing
+- **Default Options**: Configures default serialization options with camelCase property naming
+- **Default Deserialization Options**: Uses case-insensitive property matching for more flexible deserialization
+- **UTF-8 Encoding**: Implements direct byte array serialization/deserialization for better performance
+- **Options Caching**: Caches commonly used serialization/deserialization options to avoid recreation
+- **Exception Handling**: Implements try-catch patterns to prevent exceptions from propagating to calling code
+- **Parallel Processing**: Uses parallel processing for serializing/deserializing large collections
+- **Memory Efficiency**: Minimizes memory allocations during serialization/deserialization operations
+- **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code

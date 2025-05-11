@@ -223,4 +223,30 @@ public static partial class YANRandom
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T GenerateRandom<T>(object? min = null, object? max = null) where T : unmanaged => Implementation.YANRandom.GenerateRandomImplement<T>(min, max);
+
+    /// <summary>
+    /// Generates a random value from the specified input collection.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type of elements in the collection.</typeparam>
+    /// <param name="input">The source collection to select a random value from. If <c>null</c> or empty, returns the default value for the type.</param>
+    /// <returns>A random value selected from the input collection, or the default value if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This method selects a single random element from the input collection.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static T GenerateRandom<T>(this IEnumerable<T>? input) where T : unmanaged => input.GenerateRandomImplement();
+
+    /// <summary>
+    /// Generates a random value from the specified array of values.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type of elements in the array.</typeparam>
+    /// <param name="input">The source array to select a random value from. If <c>null</c> or empty, returns the default value for the type.</param>
+    /// <returns>A random value selected from the input array, or the default value if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This method provides a convenient way to select a random value from an array without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static T GenerateRandom<T>(params T[]? input) where T : unmanaged => input.GenerateRandomImplement();
 }

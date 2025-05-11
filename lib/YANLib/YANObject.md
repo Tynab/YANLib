@@ -1,249 +1,177 @@
-### YANObject Component
-
-The `YANObject` component is part of the YANLib library, providing a comprehensive set of utility methods for object manipulation, validation, and analysis.
-
+### YANObject - Object Utility Library
 
 ## Overview
 
-YANObject offers an extensive collection of extension methods for working with objects and collections. It provides convenient ways to check for null or default values, analyze object properties, work with collections, and perform operations like copying objects or changing time zones for DateTime properties.
+`YANObject` is a comprehensive utility library that provides extension methods for object operations and validations in C# applications. It offers a wide range of methods for checking null values, default values, property states, and manipulating objects and collections.
 
+## Features
 
-## Key Features
+The library is organized into several functional categories:
 
-### Null and Default Value Checking
+### Basic Object Operations
 
-Easily check if objects are null or have default values:
+- **Null Checking**: Determine if objects are null or not null
+- **Default Value Checking**: Check if values match their type's default value
+- **Null/Default Combined Checking**: Verify if objects are null or have default property values
+- **Collection Emptiness**: Check if collections are null or empty
 
-```csharp
-// Null checking
-bool isNull = someObject.IsNull();       // Returns true if object is null
-bool isNotNull = someObject.IsNotNull(); // Returns true if object is not null
-
-// Default value checking
-bool isDefault = someValue.IsDefault();       // Returns true if value equals default(T)
-bool isNotDefault = someValue.IsNotDefault(); // Returns true if value doesn't equal default(T)
-
-// Combined checks
-bool isNullOrDefault = someObject.IsNullDefault();       // Returns true if null or all properties have default values
-bool isNotNullOrDefault = someObject.IsNotNullDefault(); // Returns true if not null and has at least one non-default property
-
-// Collection emptiness checking
-bool isNullOrEmpty = someCollection.IsNullEmpty();       // Returns true if collection is null or empty
-bool isNotNullOrEmpty = someCollection.IsNotNullEmpty(); // Returns true if collection is not null and not empty
-```
-
-### Property Analysis
-
-Analyze object properties to check if they have default or non-default values:
-
-```csharp
-// Check if all properties have default values
-bool allDefault = myObject.AllPropertiesDefault();
-
-// Check if all properties have non-default values
-bool allNonDefault = myObject.AllPropertiesNotDefault();
-
-// Check if any property has a default value
-bool anyDefault = myObject.AnyPropertiesDefault();
-
-// Check if any property has a non-default value
-bool anyNonDefault = myObject.AnyPropertiesNotDefault();
-
-// Check specific properties only
-bool specificPropsDefault = myObject.AllPropertiesDefault(["PropertyName1", "PropertyName2"]);
-```
 
 ### Collection Operations
 
-Perform checks on collections of objects:
+- **Null Checking**: Methods to check if all or any elements in a collection are null
+- **Default Value Checking**: Determine if all or any elements have default values
+- **Combined Checks**: Methods that combine null and default value checks for collections
 
-```csharp
-// Check if all items in a collection are null
-bool allNull = myCollection.AllNull();
 
-// Check if any item in a collection is null
-bool anyNull = myCollection.AnyNull();
+### Property Operations
 
-// Check if all items in a collection are not null
-bool allNotNull = myCollection.AllNotNull();
+- **Property Default Checking**: Check if all or any properties of an object have default values
+- **Property Selection**: Perform checks on specific named properties
+- **Collection Property Checks**: Apply property checks across collections of objects
 
-// Check if any item in a collection is not null
-bool anyNotNull = myCollection.AnyNotNull();
-
-// Similar methods for default values
-bool allDefault = myCollection.AllDefault();
-bool anyDefault = myCollection.AnyDefault();
-bool allNotDefault = myCollection.AllNotDefault();
-bool anyNotDefault = myCollection.AnyNotDefault();
-
-// Combined null and default checks for collections
-bool allNullOrDefault = myCollection.AllNullDefault();
-bool anyNullOrDefault = myCollection.AnyNullDefault();
-bool allNotNullOrDefault = myCollection.AllNotNullDefault();
-bool anyNotNullOrDefault = myCollection.AnyNotNullDefault();
-
-// Property checks for collections
-bool allPropsDefault = myCollection.AllPropertiesDefaults();
-bool allPropsNotDefault = myCollection.AllPropertiesNotDefaults();
-bool anyPropsDefault = myCollection.AnyPropertiesDefaults();
-bool anyPropsNotDefault = myCollection.AnyPropertiesNotDefaults();
-```
 
 ### Object Manipulation
 
-Perform operations on objects:
-
-```csharp
-// Create a deep copy of an object
-MyClass copy = myObject.Copy();
-
-// Change time zone for all DateTime properties in an object
-var convertedObject = myObject.ChangeTimeZoneAllProperty(0, 7); // Convert from UTC to UTC+7
-
-// Change time zone for all DateTime properties in a collection of objects
-var convertedCollection = myCollection.ChangeTimeZoneAllProperties(0, 7);
-```
+- **Time Zone Conversion**: Change time zones for all DateTime properties in objects or collections
+- **Object Copying**: Create shallow copies of objects
 
 
 ## Usage Examples
 
-### Basic Object Validation
+### Basic Object Operations
 
 ```csharp
-public void ProcessOrder(Order order)
-{
-    // Check if order is null
-    if (order.IsNull())
-    {
-        throw new ArgumentNullException(nameof(order));
-    }
+// Null checking
+object? obj = null;
+bool isNull = obj.IsNull();      // Returns true
+bool isNotNull = obj.IsNotNull(); // Returns false
 
-    // Check if order has any non-default properties
-    if (!order.AnyPropertiesNotDefault())
-    {
-        throw new ArgumentException("Order must have at least one property set", nameof(order));
-    }
+// Default value checking
+int value = 0;
+bool isDefault = value.IsDefault();      // Returns true
+bool isNotDefault = value.IsNotDefault(); // Returns false
 
-    // Process the order...
-}
+// Combined null/default checking
+TestClass? testObj = new TestClass();
+bool isNullDefault = testObj.IsNullDefault();      // Returns true if null or all properties are default
+bool isNotNullDefault = testObj.IsNotNullDefault(); // Returns true if not null and has non-default properties
+
+// Collection emptiness
+IEnumerable<int>? collection = new List<int>();
+bool isNullEmpty = collection.IsNullEmpty();      // Returns true if null or empty
+bool isNotNullEmpty = collection.IsNotNullEmpty(); // Returns true if not null and not empty
 ```
 
-### Working with Collections
+### Collection Operations
 
 ```csharp
-public void ProcessOrders(List<Order> orders)
-{
-    // Check if orders collection is null or empty
-    if (orders.IsNullEmpty())
-    {
-        throw new ArgumentException("Orders cannot be null or empty", nameof(orders));
-    }
+// Check if all elements are null
+IEnumerable<object?> collection = new object?[] { null, null, null };
+bool allNull = collection.AllNull(); // Returns true
 
-    // Check if all orders have required properties set
-    if (!orders.AllPropertiesNotDefaults(["CustomerId", "OrderDate", "TotalAmount"]))
-    {
-        throw new ArgumentException("All orders must have customer ID, date, and amount", nameof(orders));
-    }
+// Check if any element is null
+IEnumerable<object?> mixedCollection = new object?[] { new object(), null, new object() };
+bool anyNull = mixedCollection.AnyNull(); // Returns true
 
-    // Process valid orders...
-}
+// Check if all elements are not null
+IEnumerable<object?> nonNullCollection = new object?[] { new object(), new object(), new object() };
+bool allNotNull = nonNullCollection.AllNotNull(); // Returns true
+
+// Check if all elements have default values
+IEnumerable<int> defaultCollection = new int[] { 0, 0, 0 };
+bool allDefault = defaultCollection.AllDefault(); // Returns true
+
+// Check if any element has a non-default value
+IEnumerable<int> mixedDefaultCollection = new int[] { 0, 1, 0 };
+bool anyNotDefault = mixedDefaultCollection.AnyNotDefault(); // Returns true
 ```
 
-### Data Validation
+### Property Operations
 
 ```csharp
-public bool IsValidCustomer(Customer customer)
+// Check if all properties have default values
+var obj = new TestClass();
+bool allPropsDefault = obj.AllPropertiesDefault(); // Returns true if all properties have default values
+
+// Check if any property has a non-default value
+var objWithValue = new TestClass { StringProperty = "test" };
+bool anyPropNotDefault = objWithValue.AnyPropertiesNotDefault(); // Returns true
+
+// Check specific properties
+var objWithMixedValues = new TestClass { StringProperty = "test", IntProperty = 0 };
+bool specificPropDefault = objWithMixedValues.AllPropertiesDefault(["IntProperty"]); // Returns true
+
+// Check properties across a collection
+IEnumerable<TestClass?> objCollection = new TestClass?[] 
 {
-    // Customer must not be null and must have all required properties set
-    return customer.IsNotNull() && 
-           !customer.AnyPropertiesDefault(["Name", "Email", "PhoneNumber"]);
-}
+    new TestClass { StringProperty = "test1" },
+    new TestClass { StringProperty = "test2" }
+};
+bool allCollectionPropsNotDefault = objCollection.AllPropertiesNotDefaults(["StringProperty"]); // Returns true
 ```
 
-### Time Zone Conversion
+### Object Manipulation
 
 ```csharp
-public void ConvertOrderTimesToLocalTimeZone(Order order)
+// Change time zone for DateTime properties
+var dateObj = new TestClass
 {
-    // Convert all DateTime properties from UTC to local time zone (e.g., UTC+7)
-    var localOrder = order.ChangeTimeZoneAllProperty(0, 7);
-    
-    // Now all DateTime properties (OrderDate, ShipDate, etc.) are in local time
-    DisplayOrder(localOrder);
-}
+    DateProperty = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc),
+    StringProperty = "test"
+};
+var convertedObj = dateObj.ChangeTimeZoneAllProperty(0, 7); // Convert from UTC to UTC+7
+
+// Create a shallow copy of an object
+var original = new TestClass
+{
+    DateProperty = new DateTime(2023, 1, 1),
+    StringProperty = "test",
+    IntProperty = 42
+};
+var copy = original.Copy(); // Creates a new instance with the same property values
 ```
 
-### Batch Processing with Filtering
+## Performance Considerations
 
-```csharp
-public List<Product> GetActiveProducts(List<Product> products)
-{
-    // Filter out null or default products
-    return products
-        .Where(p => p.IsNotNullDefault())
-        .ToList();
-}
-```
+- The library uses caching for property reflection to improve performance
+- For large collections (>1000 items), parallel processing is automatically used for time zone conversion
+- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
-### Object Copying
 
-```csharp
-public Order CreateOrderCopy(Order originalOrder)
-{
-    // Create a deep copy of the order
-    var orderCopy = originalOrder.Copy();
-    
-    // Modify some properties of the copy
-    orderCopy.OrderId = Guid.NewGuid();
-    orderCopy.OrderDate = DateTime.UtcNow;
-    
-    return orderCopy;
-}
-```
+## Implementation Details
 
-### Conditional Processing
+- Extension methods are implemented in partial classes for better organization
+- Internal implementation methods are separated from the public API
+- The library uses nullable reference types for better null safety
+- All public methods are well-documented with XML comments
 
-```csharp
-public void ProcessPayment(Payment payment)
-{
-    // Different processing based on payment properties
-    if (payment.AllPropertiesDefault(["CreditCardInfo"]) && 
-        payment.AllPropertiesNotDefault(["BankTransferInfo"]))
-    {
-        ProcessBankTransfer(payment);
-    }
-    else if (payment.AllPropertiesDefault(["BankTransferInfo"]) && 
-             payment.AllPropertiesNotDefault(["CreditCardInfo"]))
-    {
-        ProcessCreditCard(payment);
-    }
-    else
-    {
-        throw new ArgumentException("Invalid payment information");
-    }
-}
-```
 
-### Collection Analysis
+## Object Operations Coverage
 
-```csharp
-public string GetCollectionStatus(List<Task> tasks)
-{
-    if (tasks.AllNull())
-        return "All tasks are null";
-        
-    if (tasks.AnyNull())
-        return "Some tasks are null";
-        
-    if (tasks.AllPropertiesDefaults())
-        return "All tasks are empty";
-        
-    if (tasks.AllPropertiesNotDefaults(["CompletedDate"]))
-        return "All tasks are completed";
-        
-    if (tasks.AnyPropertiesNotDefaults(["CompletedDate"]))
-        return "Some tasks are completed";
-        
-    return "No tasks are completed";
-}
-```
+The library provides comprehensive coverage of object operations:
+
+| Category | Functions |
+|----------|-----------|
+| **Null Checking** | IsNull, IsNotNull |
+| **Default Value Checking** | IsDefault, IsNotDefault |
+| **Combined Checking** | IsNullDefault, IsNotNullDefault |
+| **Collection Checking** | IsNullEmpty, IsNotNullEmpty |
+| **Collection Null Operations** | AllNull, AnyNull, AllNotNull, AnyNotNull |
+| **Collection Default Operations** | AllDefault, AnyDefault, AllNotDefault, AnyNotDefault |
+| **Collection Combined Operations** | AllNullDefault, AnyNullDefault, AllNotNullDefault, AnyNotNullDefault |
+| **Property Operations** | AllPropertiesDefault, AnyPropertiesDefault, AllPropertiesNotDefault, AnyPropertiesNotDefault |
+| **Collection Property Operations** | AllPropertiesDefaults, AnyPropertiesDefaults, AllPropertiesNotDefaults, AnyPropertiesNotDefaults |
+| **Object Manipulation** | ChangeTimeZoneAllProperty, Copy |
+
+
+## Technical Details
+
+- **Reflection Usage**: Uses reflection to access and evaluate object properties
+- **Property Caching**: Implements caching of property information to improve performance
+- **Default Value Comparison**: Uses `EqualityComparer<T>.Default` for type-safe default value comparison
+- **Null Propagation**: Implements null-safe property access throughout the API
+- **Collection Processing**: Processes collections of objects with property evaluation
+- **DateTime Handling**: Includes specialized handling for DateTime properties
+- **Object Copying**: Implements shallow copying of objects using reflection
+- **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code
+- **Memory Efficiency**: Optimizes reflection operations to minimize memory allocations

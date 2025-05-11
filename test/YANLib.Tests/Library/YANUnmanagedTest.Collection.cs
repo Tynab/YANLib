@@ -272,5 +272,224 @@ public partial class YANUnmanagedTest
         Assert.Equal([Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty, guid, Guid.Empty, Guid.Empty], guidResults);
     }
 
+    [Fact]
+    public void Parses_NullDictionary_ReturnsEmptyDictionary_Collection()
+    {
+        // Arrange
+        IDictionary<object, object?>? input = null;
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Parses_EmptyDictionary_ReturnsEmptyDictionary_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>();
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Parses_ValidIntStringDictionary_ReturnsIntStringDictionary_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "Value1" },
+            { "2", "Value2" },
+            { "3", "Value3" }
+        };
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal("Value1", result[1]);
+        Assert.Equal("Value2", result[2]);
+        Assert.Equal("Value3", result[3]);
+    }
+
+    [Fact]
+    public void Parses_MixedKeyTypes_ParsesKeysCorrectly_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "Value1" },
+            { 2, "Value2" },
+            { "3.5", "Value3" }
+        };
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal("Value1", result[1]);
+        Assert.Equal("Value2", result[2]);
+        Assert.Equal("Value3", result[4]);
+    }
+
+    [Fact]
+    public void Parses_MixedValueTypes_ParsesValuesCorrectly_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "100" },
+            { "2", 200 },
+            { "3", "300.5" }
+        };
+
+        // Act
+        var result = input.Parses<int, int>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal(100, result[1]);
+        Assert.Equal(200, result[2]);
+        Assert.Equal(300, result[3]);
+    }
+
+    [Fact]
+    public void Parses_NullValues_HandlesNullValuesCorrectly_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "Value1" },
+            { "2", null },
+            { "3", "Value3" }
+        };
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal("Value1", result[1]);
+        Assert.Null(result[2]);
+        Assert.Equal("Value3", result[3]);
+    }
+
+    [Fact]
+    public void Parses_InvalidKeyValues_HandlesDefaultValues_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "not a number", "Value1" },
+            { "2", "Value2" },
+            { new object(), "Value3" }
+        };
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(input.Parses<int, string>);
+
+        // Assert
+        Assert.Contains("An item with the same key has already been added", exception.Message);
+    }
+
+    [Fact]
+    public void Parses_DateTimeKeys_ParsesKeysCorrectly_Collection()
+    {
+        // Arrange
+        var date1 = new DateTime(2023, 1, 1);
+        var date2 = new DateTime(2023, 2, 1);
+
+        var input = new Dictionary<object, object?>
+        {
+            { "2023-01-01", "January" },
+            { date2, "February" }
+        };
+
+        // Act
+        var result = input.Parses<DateTime, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal("January", result[date1]);
+        Assert.Equal("February", result[date2]);
+    }
+
+    [Fact]
+    public void Parses_EnumValues_ParsesValuesCorrectly_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "Monday" },
+            { "2", DayOfWeek.Tuesday },
+            { "3", "Wednesday" }
+        };
+
+        // Act
+        var result = input.Parses<int, DayOfWeek>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal(DayOfWeek.Monday, result[1]);
+        Assert.Equal(DayOfWeek.Tuesday, result[2]);
+        Assert.Equal(DayOfWeek.Wednesday, result[3]);
+    }
+
+    [Fact]
+    public void Parses_DuplicateKeys_ThrowsArgumentException_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "Original" },
+            { 1, "Duplicate" }
+        };
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(input.Parses<int, string>);
+
+        // Assert
+        Assert.Contains("An item with the same key has already been added", exception.Message);
+    }
+
+    [Fact]
+    public void Parses_ComplexTypes_HandlesComplexTypesCorrectly_Collection()
+    {
+        // Arrange
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+
+        var input = new Dictionary<object, object?>
+        {
+            { "2023-01-01", guid1.ToString() },
+            { "2023-02-01", guid2 }
+        };
+
+        // Act
+        var result = input.Parses<DateTime, Guid>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(guid1, result[new DateTime(2023, 1, 1)]);
+        Assert.Equal(guid2, result[new DateTime(2023, 2, 1)]);
+    }
+
     #endregion
 }

@@ -1,374 +1,262 @@
-### YANText Component
-
-The `YANText` component is part of the YANLib library, providing a comprehensive set of extension methods for text manipulation, validation, and transformation in .NET applications.
-
+### YANText - Text Manipulation Utility Library
 
 ## Overview
 
-YANText offers an extensive collection of extension methods for working with strings and characters, both individually and in collections. It provides convenient ways to perform common text operations like case conversion, whitespace handling, character filtering, and validation with built-in null safety.
+`YANText` is a comprehensive utility library that provides extension methods for text manipulation, character operations, and string validation in C# applications. It offers a wide range of methods for working with strings, characters, and collections of text elements, with support for both non-nullable and nullable types.
 
+## Features
 
-## Key Features
+The library is organized into several functional categories:
 
-### String Manipulation
+### String Operations
 
-Transform strings with ease:
+- **Case Conversion**: Convert strings to different cases (lowercase, uppercase, title case)
+- **Text Formatting**: Format strings as proper names, clean whitespace, capitalize text
+- **Content Filtering**: Extract specific character types (alphabetic, numeric, alphanumeric)
+- **Null/Empty Checking**: Determine if strings are null, empty, or whitespace
 
-```csharp
-// Title case conversion
-"hello world".Title(); // Returns "Hello World"
-
-// Capitalize first letter only
-"hello world".Capitalize(); // Returns "Hello world"
-
-// Clean whitespace (trim and normalize)
-"  hello  world  ".CleanSpace(); // Returns "hello world"
-
-// Format names
-"john.doe".FormatName(); // Returns "John Doe"
-
-// Filter characters
-"abc123!@#".FilterAlphabetic(); // Returns "abc"
-"abc123!@#".FilterNumber(); // Returns "123"
-"abc123!@#".FilterAlphanumeric(); // Returns "abc123"
-```
-
-### String Validation
-
-Check string properties with null safety:
-
-```csharp
-// Null or empty checking
-string? nullString = null;
-nullString.IsNullEmpty(); // Returns true
-"".IsNullEmpty(); // Returns true
-"hello".IsNullEmpty(); // Returns false
-
-// Null or whitespace checking
-"   ".IsNullWhiteSpace(); // Returns true
-"hello".IsNullWhiteSpace(); // Returns false
-
-// Case-insensitive comparison
-"hello".EqualsIgnoreCase("HELLO"); // Returns true
-"hello".NotEqualsIgnoreCase("world"); // Returns true
-```
-
-### Case Conversion
-
-Convert string case with null safety:
-
-```csharp
-// Lowercase conversion
-"HELLO".Lower(); // Returns "hello"
-"HELLO".LowerInvariant(); // Returns "hello" (culture-invariant)
-
-// Uppercase conversion
-"hello".Upper(); // Returns "HELLO"
-"hello".UpperInvariant(); // Returns "HELLO" (culture-invariant)
-```
 
 ### Character Operations
 
-Work with individual characters:
+- **Type Checking**: Check if characters are empty, whitespace, alphabetic, numeric, etc.
+- **Case Conversion**: Convert characters to uppercase or lowercase
+- **Case Comparison**: Compare characters ignoring case differences
+- **Collection Operations**: Perform operations on collections of characters
 
-```csharp
-// Empty checking
-default(char).IsEmpty(); // Returns true
-'a'.IsEmpty(); // Returns false
-
-// Whitespace checking
-' '.IsWhiteSpace(); // Returns true
-'a'.IsWhiteSpace(); // Returns false
-
-// Character type checking
-'a'.IsAlphabetic(); // Returns true
-'5'.IsNumber(); // Returns true
-'a'.IsAlphanumeric(); // Returns true
-'.'.IsPunctuation(); // Returns true
-
-// Case checking and conversion
-'a'.IsLower(); // Returns true
-'A'.IsUpper(); // Returns true
-'A'.Lower(); // Returns 'a'
-'a'.Upper(); // Returns 'A'
-```
-
-### Collection Operations
-
-Process collections of strings or characters:
-
-```csharp
-// Check if all strings in a collection are null
-new string?[] { null, null }.AllNull(); // Returns true
-
-// Check if any strings in a collection are null or empty
-new string?[] { "hello", null }.AnyNullEmpty(); // Returns true
-
-// Check if all strings in a collection are equal (case-insensitive)
-new string?[] { "hello", "HELLO" }.AllEqualsIgnoreCase(); // Returns true
-
-// Convert all strings in a collection to lowercase
-var strings = new List<string?> { "HELLO", "WORLD" };
-strings.Lower(); // Modifies list to ["hello", "world"]
-
-// Get a new collection with all strings in lowercase
-var lowerStrings = new[] { "HELLO", "WORLD" }.Lowers(); // Returns ["hello", "world"]
-
-// Apply text operations to collections
-new[] { "hello world", "GOOD MORNING" }.Titles(); // Returns ["Hello World", "Good Morning"]
-new[] { "  hello  world  ", " GOOD  MORNING " }.CleanSpaces(); // Returns ["hello world", "GOOD MORNING"]
-```
 
 ### Nullable Character Support
 
-Work safely with nullable characters:
+- **Null Handling**: Special handling for nullable character operations
+- **Type Checking**: Check if nullable characters are null, empty, whitespace, etc.
+- **Case Conversion**: Convert nullable characters to uppercase or lowercase
+- **Collection Operations**: Perform operations on collections of nullable characters
 
-```csharp
-// Null checking
-char? nullChar = null;
 
-nullChar.IsNullEmpty(); // Returns true
+### Collection Operations
 
-// Character type checking with null safety
-char? c = 'a';
-
-c.IsAlphabetic(); // Returns true
-nullChar.IsAlphabetic(); // Returns false
-
-// Case conversion with null safety
-char? upper = 'A';
-
-upper.Lower(); // Returns 'a'
-nullChar.Lower(); // Returns null
-```
+- **Bulk Processing**: Apply text operations to collections of strings or characters
+- **Validation**: Check if all or any elements in a collection meet specific criteria
+- **Case Conversion**: Convert all strings or characters in a collection to a specific case
+- **Parallel Processing**: Automatic parallel processing for large collections
 
 
 ## Usage Examples
 
-### Text Formatting
+### String Operations
 
 ```csharp
-public class TextFormatter
-{
-    public string FormatUserInput(string? input)
-    {
-        if (input.IsNullWhiteSpace())
-        {
-            return string.Empty;
-        }
+// Case conversion
+string text = "hello world";
+string upper = text.Upper(); // Returns "HELLO WORLD"
+string lower = text.Lower(); // Returns "hello world"
+string title = text.Title(); // Returns "Hello World"
+string capitalized = text.Capitalize(); // Returns "Hello world"
 
-        // Clean up whitespace and capitalize
-        return input.CleanSpace().Capitalize();
-    }
+// Text formatting
+string name = "john.doe";
+string formatted = name.FormatName(); // Returns "John Doe"
 
-    public string FormatUserName(string? firstName, string? lastName)
-    {
-        // Format and combine names
-        var formattedFirst = firstName.FormatName();
-        var formattedLast = lastName.FormatName();
+string messy = "  hello   world  ";
+string clean = messy.CleanSpace(); // Returns "hello world"
 
-        if (formattedFirst.IsNullWhiteSpace() && formattedLast.IsNullWhiteSpace())
-        {
-            return string.Empty;
-        }
-        else if (formattedFirst.IsNullWhiteSpace())
-        {
-            return formattedLast;
-        }
-        else if (formattedLast.IsNullWhiteSpace())
-        {
-            return formattedFirst;
-        }
-        else
-        {
-            return $"{formattedFirst} {formattedLast}";
-        }
-    }
-}
+// Content filtering
+string mixed = "abc123!@#";
+string letters = mixed.FilterAlphabetic(); // Returns "abc"
+string numbers = mixed.FilterNumber(); // Returns "123"
+string alphanumeric = mixed.FilterAlphanumeric(); // Returns "abc123"
+
+// Null/empty checking
+string? nullString = null;
+bool isNull = nullString.IsNullEmpty(); // Returns true
+bool isNotNull = nullString.IsNotNullEmpty(); // Returns false
+
+string empty = "";
+bool isEmpty = empty.IsNullEmpty(); // Returns true
+bool isNotEmpty = empty.IsNotNullEmpty(); // Returns false
+
+string whitespace = "   ";
+bool isWhitespace = whitespace.IsNullWhiteSpace(); // Returns true
+bool isNotWhitespace = whitespace.IsNotNullWhiteSpace(); // Returns false
 ```
 
-### Input Validation
+### Character Operations
 
 ```csharp
-public class InputValidator
-{
-    public bool IsValidUsername(string? username)
-    {
-        // Check if username is not null or whitespace
-        if (username.IsNullWhiteSpace())
-        {
-            return false;
-        }
+// Type checking
+char c = 'a';
+bool isAlphabetic = c.IsAlphabetic(); // Returns true
+bool isNumeric = c.IsNumber(); // Returns false
+bool isAlphanumeric = c.IsAlphanumeric(); // Returns true
+bool isPunctuation = c.IsPunctuation(); // Returns false
+bool isWhitespace = c.IsWhiteSpace(); // Returns false
 
-        // Check if username contains only alphanumeric characters
-        return username == username.FilterAlphanumeric();
-    }
+char whitespace = ' ';
+bool isWhitespace2 = whitespace.IsWhiteSpace(); // Returns true
 
-    public bool IsValidPhoneNumber(string? phoneNumber)
-    {
-        // Check if phone number is not null or whitespace
-        if (phoneNumber.IsNullWhiteSpace())
-        {
-            return false;
-        }
+char defaultChar = default;
+bool isEmpty = defaultChar.IsEmpty(); // Returns true
 
-        // Extract only the digits
-        var digits = phoneNumber.FilterNumber();
+// Case conversion
+char upper = 'a'.Upper(); // Returns 'A'
+char lower = 'A'.Lower(); // Returns 'a'
 
-        // Check if we have the right number of digits
-        return digits.Length >= 10;
-    }
-}
+// Case comparison
+bool equals = 'a'.EqualsIgnoreCase('A'); // Returns true
+bool notEquals = 'a'.NotEqualsIgnoreCase('b'); // Returns true
+
+// Character collections
+char[] chars = ['a', 'B', 'c'];
+bool allAlphabetic = chars.AllAlphabetic(); // Returns true
+bool anyUpper = chars.AnyUppers(); // Returns true
+bool allLower = chars.AllLowers(); // Returns false
+
+// Convert case in collections
+List<char> charList = ['a', 'b', 'c'];
+charList.Upper(); // Modifies list to ['A', 'B', 'C']
+
+IEnumerable<char> upperChars = chars.Uppers(); // Returns ['A', 'B', 'C']
 ```
 
-### Text Processing
+### Nullable Character Operations
 
 ```csharp
-public class TextProcessor
-{
-    public IEnumerable<string> ProcessTextLines(IEnumerable<string?> lines)
-    {
-        // Skip null or whitespace lines
-        var validLines = lines.Where(line => line.IsNotNullWhiteSpace());
+// Type checking with nullable characters
+char? nullChar = null;
+bool isNull = nullChar.IsNullEmpty(); // Returns true
+bool isNotNull = nullChar.IsNotNullEmpty(); // Returns false
 
-        // Clean whitespace and convert to title case
-        return validLines.Select(line => line.CleanSpace().Title());
-    }
+char? c = 'a';
+bool isAlphabetic = c.IsAlphabetic(); // Returns true
+bool isNumeric = c.IsNumber(); // Returns false
 
-    public string ExtractLettersAndNumbers(string? input)
-    {
-        if (input.IsNullWhiteSpace())
-        {
-            return string.Empty;
-        }
+// Case conversion with nullable characters
+char? upper = c.Upper(); // Returns 'A'
+char? lower = 'A'.Lower(); // Returns 'a'
+char? nullResult = nullChar.Upper(); // Returns null
 
-        // Extract only alphanumeric characters
-        return input.FilterAlphanumeric();
-    }
-}
+// Nullable character collections
+char?[] chars = ['a', null, 'c'];
+bool anyNull = chars.AnyNullEmpty(); // Returns true
+bool allAlphabetic = chars.AllAlphabetic(); // Returns false
+bool anyAlphabetic = chars.AnyAlphabetic(); // Returns true
+
+// Convert case in nullable collections
+List<char?> charList = ['a', null, 'c'];
+charList.Upper(); // Modifies list to ['A', null, 'C']
+
+IEnumerable<char?> upperChars = chars.Uppers(); // Returns ['A', null, 'C']
 ```
 
-### Case-Insensitive Comparison
+### String Collection Operations
 
 ```csharp
-public class TextComparer
-{
-    public bool AreAllStringsEqual(IEnumerable<string?> strings)
-    {
-        // Check if all strings are equal, ignoring case
-        return strings.AllEqualsIgnoreCase();
-    }
+// Check if all strings in a collection are null
+IEnumerable<string?> allNulls = [null, null, null];
+bool allNull = allNulls.AllNull(); // Returns true
 
-    public bool ContainsCaseInsensitive(IEnumerable<string?> collection, string? value)
-    {
-        if (collection == null || value.IsNullEmpty())
-        {
-            return false;
-        }
+// Check if any string in a collection is null
+IEnumerable<string?> someNulls = ["text", null, "more text"];
+bool anyNull = someNulls.AnyNull(); // Returns true
 
-        // Check if any string in the collection equals the value, ignoring case
-        return collection.Any(item => item.EqualsIgnoreCase(value));
-    }
-}
+// Check if all strings are not null or empty
+IEnumerable<string?> nonEmpty = ["text1", "text2", "text3"];
+bool allNotEmpty = nonEmpty.AllNotNullEmpty(); // Returns true
+
+// Check if all strings are equal (ignoring case)
+IEnumerable<string?> sameText = ["text", "TEXT", "Text"];
+bool allEqual = sameText.AllEqualsIgnoreCase(); // Returns true
+
+// Convert all strings in a collection to uppercase
+List<string?> texts = ["hello", "world", null];
+texts.Upper(); // Modifies list to ["HELLO", "WORLD", null]
+
+// Get a new collection with all strings converted to lowercase
+IEnumerable<string?> lowerTexts = texts.Lowers(); // Returns ["hello", "world", null]
+
+// Format all strings in a collection
+IEnumerable<string?> names = ["john.doe", "jane.smith", null];
+IEnumerable<string?> formattedNames = names.FormatNames(); // Returns ["John Doe", "Jane Smith", null]
+
+// Clean whitespace in all strings in a collection
+IEnumerable<string?> messyTexts = ["  hello  ", "  world  ", null];
+IEnumerable<string?> cleanTexts = messyTexts.CleanSpaces(); // Returns ["hello", "world", null]
 ```
 
-### Character Analysis
+### Advanced Usage Examples
 
 ```csharp
-public class CharacterAnalyzer
-{
-    public bool IsPasswordComplex(string? password)
-    {
-        if (password.IsNullWhiteSpace())
-        {
-            return false;
-        }
+// Combining operations
+string text = "  JOHN.DOE@123  ";
+string result = text.CleanSpace().FilterAlphabetic().Lower().Capitalize(); // Returns "Johndoe"
 
-        // Check if password contains at least one uppercase letter
-        bool hasUppercase = password.Any(c => c.IsUpper());
+// Processing collections with multiple operations
+IEnumerable<string?> inputs = ["  JOHN.DOE  ", "  jane.SMITH  ", null, "  bob.123.JOHNSON  "];
+var results = inputs
+    .Where(x => x.IsNotNullWhiteSpace())
+    .Select(x => x.CleanSpace().FormatName())
+    .ToList(); // Returns ["John Doe", "Jane Smith", "Bob Johnson"]
 
-        // Check if password contains at least one lowercase letter
-        bool hasLowercase = password.Any(c => c.IsLower());
+// Character analysis
+string password = "Password123!";
+bool hasLower = password.ToCharArray().AnyLowers(); // Returns true
+bool hasUpper = password.ToCharArray().AnyUppers(); // Returns true
+bool hasNumber = password.ToCharArray().AnyNumber(); // Returns true
+bool hasPunctuation = password.ToCharArray().AnyPunctuation(); // Returns true
 
-        // Check if password contains at least one number
-        bool hasNumber = password.Any(c => c.IsNumber());
-
-        // Check if password contains at least one special character
-        bool hasSpecial = password.Any(c => c.IsNotAlphanumeric());
-
-        return hasUppercase && hasLowercase && hasNumber && hasSpecial;
-    }
-
-    public Dictionary<string, int> CountCharacterTypes(string? input)
-    {
-        var result = new Dictionary<string, int>
-        {
-            ["Uppercase"] = 0,
-            ["Lowercase"] = 0,
-            ["Digits"] = 0,
-            ["Punctuation"] = 0,
-            ["Whitespace"] = 0,
-            ["Other"] = 0
-        };
-
-        if (input.IsNullEmpty())
-        {
-            return result;
-        }
-
-        foreach (var c in input)
-        {
-            if (c.IsUpper())
-                result["Uppercase"]++;
-            else if (c.IsLower())
-                result["Lowercase"]++;
-            else if (c.IsNumber())
-                result["Digits"]++;
-            else if (c.IsPunctuation())
-                result["Punctuation"]++;
-            else if (c.IsWhiteSpace())
-                result["Whitespace"]++;
-            else
-                result["Other"]++;
-        }
-
-        return result;
-    }
-}
+// Complex string formatting
+string rawName = "john.q.public123";
+string formattedName = rawName
+    .FilterAlphanumeric() // Remove special characters
+    .Replace("123", "") // Remove numbers
+    .FormatName(); // Format as proper name
+// Returns "John Q Public"
 ```
 
-### Batch Text Processing
+## Performance Considerations
 
-```csharp
-public class BatchTextProcessor
-{
-    public List<string> NormalizeNames(List<string?> names)
-    {
-        // Remove null or empty names
-        var validNames = names.Where(name => name.IsNotNullEmpty()).ToList();
+- The library uses optimized implementations for different text operations
+- For large collections (>1000 items), parallel processing is automatically used
+- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- String operations are designed to minimize memory allocations where possible
 
-        // Format all names
-        validNames.FormatName();
 
-        return validNames;
-    }
+## Implementation Details
 
-    public List<string> ExtractDigitsFromTexts(List<string?> texts)
-    {
-        // Filter out null or empty texts
-        var validTexts = texts.Where(text => text.IsNotNullEmpty()).ToList();
+- Extension methods are implemented in partial classes for better organization
+- Internal implementation methods are separated from the public API
+- The library uses nullable reference types for better null safety
+- All public methods are well-documented with XML comments
+- Character and string operations handle edge cases gracefully
 
-        // Extract only digits from each text
-        return validTexts.Select(text => text.FilterNumber()).ToList();
-    }
-}
-```
 
-## Implementation Notes
+## Text Operations Coverage
 
-- All methods handle null values gracefully, avoiding NullReferenceExceptions
-- String operations preserve null values in collections
-- Case conversion methods have both culture-specific and culture-invariant versions
-- Collection operations have both in-place (modifying) and non-modifying versions
-- Character operations support both regular and nullable characters
-- All methods are implemented as extension methods for easy chaining
+The library provides comprehensive coverage of text manipulation operations:
+
+| Category | Functions |
+|----------|-----------|
+| **String Case Conversion** | Upper, Lower, Title, Capitalize |
+| **String Formatting** | FormatName, CleanSpace |
+| **String Content Filtering** | FilterAlphabetic, FilterNumber, FilterAlphanumeric |
+| **String Validation** | IsNullEmpty, IsNotNullEmpty, IsNullWhiteSpace, IsNotNullWhiteSpace |
+| **Character Type Checking** | IsEmpty, IsWhiteSpace, IsAlphabetic, IsNumber, IsAlphanumeric, IsPunctuation |
+| **Character Case Operations** | Upper, Lower, EqualsIgnoreCase, NotEqualsIgnoreCase |
+| **Nullable Character Operations** | IsNullEmpty, IsNotNullEmpty, Upper, Lower for nullable char |
+| **Character Collection Operations** | AllEmpty, AnyEmpty, AllWhiteSpace, AnyWhiteSpace, AllAlphabetic, AnyAlphabetic, AllNumber, AnyNumber, AllAlphanumeric, AnyAlphanumeric, AllPunctuation, AnyPunctuation, AllLowers, AnyLowers, AllUppers, AnyUppers |
+| **String Collection Operations** | AllNull, AnyNull, AllNullEmpty, AnyNullEmpty, AllNullWhiteSpace, AnyNullWhiteSpace, AllNotNull, AnyNotNull, AllNotNullEmpty, AnyNotNullEmpty, AllNotNullWhiteSpace, AnyNotNullWhiteSpace, AllEqualsIgnoreCase, AnyEqualsIgnoreCase |
+| **Collection Case Conversion** | Upper, Lower, Uppers, Lowers, Titles, Capitalizes |
+| **Collection Formatting** | FormatNames, CleanSpaces |
+| **Collection Content Filtering** | FilterAlphabetics, FilterNumbers, FilterAlphanumerics |
+
+
+## Technical Details
+
+- **String Manipulation**: Implements efficient string manipulation using `StringBuilder` where appropriate
+- **Character Classification**: Uses `char` methods like `char.IsLetter()`, `char.IsDigit()` for character classification
+- **Case Conversion**: Uses `ToUpper()` and `ToLower()` with culture considerations for case conversion
+- **Whitespace Handling**: Implements specialized methods for cleaning and normalizing whitespace
+- **String Formatting**: Uses regex and string replacement for complex text formatting operations
+- **Collection Processing**: Implements specialized methods for processing collections of strings or characters
+- **Null Safety**: Implements comprehensive null checking throughout the API
+- **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code
+- **Memory Efficiency**: Optimizes string operations to minimize memory allocations and garbage collection
