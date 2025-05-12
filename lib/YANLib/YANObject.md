@@ -1,8 +1,10 @@
 ### YANObject - Object Utility Library
 
+
 ## Overview
 
 `YANObject` is a comprehensive utility library that provides extension methods for object operations and validations in C# applications. It offers a wide range of methods for checking null values, default values, property states, and manipulating objects and collections.
+
 
 ## Features
 
@@ -15,20 +17,17 @@ The library is organized into several functional categories:
 - **Null/Default Combined Checking**: Verify if objects are null or have default property values
 - **Collection Emptiness**: Check if collections are null or empty
 
-
 ### Collection Operations
 
 - **Null Checking**: Methods to check if all or any elements in a collection are null
 - **Default Value Checking**: Determine if all or any elements have default values
 - **Combined Checks**: Methods that combine null and default value checks for collections
 
-
 ### Property Operations
 
 - **Property Default Checking**: Check if all or any properties of an object have default values
 - **Property Selection**: Perform checks on specific named properties
 - **Collection Property Checks**: Apply property checks across collections of objects
-
 
 ### Object Manipulation
 
@@ -107,6 +106,7 @@ IEnumerable<TestClass?> objCollection = new TestClass?[]
     new TestClass { StringProperty = "test1" },
     new TestClass { StringProperty = "test2" }
 };
+
 bool allCollectionPropsNotDefault = objCollection.AllPropertiesNotDefaults(["StringProperty"]); // Returns true
 ```
 
@@ -119,6 +119,7 @@ var dateObj = new TestClass
     DateProperty = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc),
     StringProperty = "test"
 };
+
 var convertedObj = dateObj.ChangeTimeZoneAllProperty(0, 7); // Convert from UTC to UTC+7
 
 // Create a shallow copy of an object
@@ -128,8 +129,10 @@ var original = new TestClass
     StringProperty = "test",
     IntProperty = 42
 };
+
 var copy = original.Copy(); // Creates a new instance with the same property values
 ```
+
 
 ## Performance Considerations
 

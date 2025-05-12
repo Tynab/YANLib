@@ -1,8 +1,10 @@
 ### YANJson - JSON Serialization Utility Library
 
+
 ## Overview
 
 `YANJson` is a comprehensive utility library that provides extension methods for JSON serialization and deserialization in C# applications. It offers a simplified API for converting objects to and from JSON format, with support for both single objects and collections, and handles both string and byte array representations.
+
 
 ## Features
 
@@ -15,14 +17,12 @@ The library is organized into several functional categories:
 - **Default Formatting**: Automatic camel case property naming for serialization
 - **Error Handling**: Graceful handling of serialization/deserialization errors
 
-
 ### Collection Operations
 
 - **Collection Serialization**: Convert collections of objects to JSON strings or byte arrays
 - **Collection Deserialization**: Convert collections of JSON strings or byte arrays to strongly-typed objects
 - **Generic Collection Support**: Type-specific processing for generic collections
 - **Non-Generic Collection Support**: Support for legacy `IEnumerable` collections
-
 
 ### Performance Optimizations
 
@@ -47,6 +47,7 @@ var options = new JsonSerializerOptions
     PropertyNamingPolicy = null, // Use original property names
     WriteIndented = true // Format with indentation
 };
+
 string prettyJson = person.Serialize(options);
 // Result:
 // {
@@ -106,6 +107,7 @@ System.Collections.ArrayList legacyList = new()
     new Person { Id = 1, Name = "John Doe" },
     new Person { Id = 2, Name = "Jane Smith" }
 };
+
 IEnumerable<string?>? legacyJsonStrings = legacyList.Serializes();
 
 // Deserialize a collection of JSON strings
@@ -202,6 +204,7 @@ var processedData = people
     .Select(json => json!.Contains("JANE") ? json : null)
     .ToList();
 ```
+
 
 ## Performance Considerations
 

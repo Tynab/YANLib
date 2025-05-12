@@ -36,16 +36,19 @@
 ## 📥 Installation
 
 ### Package Manager
+
 ```
 PM> NuGet\Install-Package Tynab.YANLib
 ```
 
 ### .NET CLI
+
 ```
 dotnet add package Tynab.YANLib
 ```
 
 ### Package Reference
+
 ```xml
 <PackageReference Include="Tynab.YANLib" Version="x.x.x" />
 ```
@@ -80,7 +83,6 @@ A comprehensive utility library for object operations and validations, offering 
 - Collection operations
 - Object manipulation (copy, time zone conversion)
 
-
 ```csharp
 // Null checking
 object? obj = null;
@@ -107,7 +109,6 @@ A powerful utility library for parsing and converting objects to unmanaged types
 - Collection parsing with robust error handling
 - Format support for date/time and culture-specific parsing
 
-
 ```csharp
 // Parse string to int
 object input = "123";
@@ -132,7 +133,6 @@ A versatile utility library for converting collections of objects to strongly-ty
 - Dictionary and Lookup creation
 - Immutable collection support
 - Type parsing during conversion
-
 
 ```csharp
 // Convert collection of objects to array of integers
@@ -160,7 +160,6 @@ A comprehensive utility library for text manipulation, character operations, and
 - Character operations
 - Collection text operations
 - Nullable character support
-
 
 ```csharp
 // Case conversion
@@ -191,7 +190,6 @@ A comprehensive utility library for JSON serialization and deserialization, supp
 - Default formatting with camel case property naming
 - Error handling for serialization/deserialization errors
 
-
 ```csharp
 // Serialize an object to a JSON string
 var person = new Person { Id = 1, Name = "John Doe" };
@@ -219,7 +217,6 @@ A comprehensive utility library for mathematical operations, providing extension
 - Trigonometric functions (Sin, Cos, Tan, Asin, Acos, Atan)
 - Logarithmic and exponential functions
 
-
 ```csharp
 // Statistical functions
 double min = YANMath.Min(5.2, 3.1, 7.8, 2.4); // Returns 2.4
@@ -243,7 +240,6 @@ A comprehensive utility library for DateTime operations, offering methods for we
 - Time zone conversion
 - Collection operations
 - Generic type support
-
 
 ```csharp
 // Get week number for a specific date
@@ -271,7 +267,6 @@ A comprehensive utility library for generating random values of various types, s
 - Collection operations for generating random collections
 - Type flexibility with generic support
 
-
 ```csharp
 // Generate random values of various types
 int randomInt = YANRandom.GenerateRandom<int>(); // Random int
@@ -295,7 +290,6 @@ A specialized utility library that extends the Task Parallel Library (TPL), prov
 - Asynchronous enumeration
 - Error handling with exception safety
 - Cancellation support
-
 
 ```csharp
 // Wait for any task that returns a value greater than 5
@@ -327,7 +321,6 @@ A specialized utility library for managing system processes, focusing on process
 - Asynchronous operations
 - Process cleanup with automatic resource disposal
 
-
 ```csharp
 // Kill all instances of a process with a specific name
 await "notepad".KillAllProcessesByName();
@@ -339,6 +332,7 @@ var processNames = new List<string?>
     "calc",
     "mspaint"
 };
+
 await processNames.KillAllProcessesByNames();
 ```
 
@@ -353,7 +347,6 @@ A specialized utility library for creating and manipulating strongly-typed expre
 - Value type handling with automatic boxing
 - Expression caching for better performance
 
-
 ```csharp
 // Create a property expression for accessing the Name property on a Person object
 var expression = YANExpression.PropertyExpression<Person>("p", "Name");
@@ -364,6 +357,7 @@ var person = new Person { Name = "John", Age = 30 };
 string name = (string)func(person); // Returns "John"
 ```
 
+
 ## 📊 Performance Benchmarks
 
 YANLib is designed with performance in mind. The library uses various optimizations to ensure high performance:
@@ -373,14 +367,15 @@ YANLib is designed with performance in mind. The library uses various optimizati
 - Parallel processing for large collections where appropriate
 - Optimized algorithms for common operations
 
-
 ### JSON Performance
 
 YANJson is built on System.Text.Json, which offers significantly better performance compared to Newtonsoft.Json, especially for large datasets.
 
-`<div align="center">
+<div align="center">
   <img src='https://raw.githubusercontent.com/Tynab/YANLib/refs/heads/main/pic/1.jpg' alt="JSON Performance Comparison">
-</div>`System.Text.Json is designed to provide better performance and security compared to other JSON libraries. It supports advanced features like parallel parsing and support for new data types such as Span and Utf8JsonReader, enabling faster data processing and reduced memory usage.
+</div>
+
+System.Text.Json is designed to provide better performance and security compared to other JSON libraries. It supports advanced features like parallel parsing and support for new data types such as Span and Utf8JsonReader, enabling faster data processing and reduced memory usage.
 
 Based on performance benchmark tests conducted in different environments and scenarios, System.Text.Json is generally considered to have the best performance among these libraries. According to performance tests, the results show that System.Text.Json has significantly faster JSON-to-.NET object and vice versa conversion times compared to Newtonsoft.Json, especially in cases with large data.
 
@@ -402,9 +397,12 @@ However, using these options can affect performance. YANJson provides optimized 
 For the most recent performance benchmarks, visit:
 [https://yanlib.yamiannephilim.com/api/json/yan-vs-standards?quantity=10000&hideSystem=true](https://yanlib.yamiannephilim.com/api/json/yan-vs-standards?quantity=10000&hideSystem=true)
 
-`<div align="center">
+<div align="center">
   <img src='https://raw.githubusercontent.com/Tynab/YANLib/refs/heads/main/pic/0.jpg' alt="YAN vs Standards Performance">
-</div>`## 💻 Code Examples
+</div>
+
+
+## 💻 Code Examples
 
 ### Data Processing Pipeline
 
@@ -512,6 +510,7 @@ public double CalculateStatistics(IEnumerable<double> values)
 }
 ```
 
+
 ## 🏗️ Project Architecture
 
 YANLib is based on .NET 8.0 (LTS) and consists of the following main components:
@@ -529,7 +528,6 @@ YANLib is based on .NET 8.0 (LTS) and consists of the following main components:
 - Task
 - Process
 - Expression
-
 
 ### Project Structure
 

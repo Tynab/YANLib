@@ -1,8 +1,10 @@
 ### YANProcess - Process Management Utility Library
 
+
 ## Overview
 
 `YANProcess` is a specialized utility library that provides extension methods for managing system processes in C# applications. It offers a streamlined approach to common process management tasks, particularly focused on terminating processes by name. The library is designed to be robust, handling edge cases gracefully and providing asynchronous operations for better performance.
+
 
 ## Features
 
@@ -15,13 +17,11 @@ The library is organized into several functional categories:
 - **Asynchronous Operations**: All operations are asynchronous, returning Tasks
 - **Process Cleanup**: Automatically disposes of process resources after termination
 
-
 ### Error Handling
 
 - **Null Safety**: Graceful handling of null or empty process names
 - **Exception Safety**: Robust error handling during process termination
 - **Whitespace Handling**: Proper handling of whitespace in process names
-
 
 ### Collection Support
 
@@ -63,6 +63,7 @@ var processNames = new List<string?>
     "calc",
     "mspaint"
 };
+
 await processNames.KillAllProcessesByNames();
 
 // Kill multiple processes using params array
@@ -77,6 +78,7 @@ var mixedNames = new List<string?>
     "   ",
     "calc"
 };
+
 await mixedNames.KillAllProcessesByNames();
 
 // Null or empty collection (no action taken)
@@ -100,6 +102,7 @@ var similarProcesses = new List<string?>
     "excel",     // Microsoft Excel
     "powerpnt"   // Microsoft PowerPoint
 };
+
 await similarProcesses.KillAllProcessesByNames();
 
 // Kill processes that might not exist (no exceptions thrown)
@@ -171,6 +174,7 @@ public async Task ManualProcessKill(string processName)
     }
 }
 ```
+
 
 ## Performance Considerations
 

@@ -1,8 +1,10 @@
 ### YANRandom - Random Value Generation Utility Library
 
+
 ## Overview
 
 `YANRandom` is a comprehensive utility library that provides extension methods and utility functions for generating random values of various types in C# applications. It extends the functionality of the built-in `System.Random` class with methods to generate random values for a wide range of data types, including numeric types, booleans, characters, strings, and dates.
+
 
 ## Features
 
@@ -15,13 +17,11 @@ The library is organized into several functional categories:
 - **DateTime Values**: Generate random DateTime values within specified ranges
 - **Character and String Values**: Generate random characters and strings
 
-
 ### Range-Based Generation
 
 - **Min/Max Constraints**: Generate random values within specified ranges
 - **Default Ranges**: Use sensible defaults when ranges are not specified
 - **Type-Safe Ranges**: Ensure generated values respect the constraints of their types
-
 
 ### Collection Operations
 
@@ -29,7 +29,6 @@ The library is organized into several functional categories:
 - **Random Sampling**: Select random values from existing collections
 - **Duplicate Control**: Option to allow or prevent duplicates in generated collections
 - **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
-
 
 ### Type Flexibility
 
@@ -151,6 +150,7 @@ var customObjects = new object[] { "1.1", 2, "3.3", 4 };
 float randomFloat = customObjects.GenerateRandom<float>(); // Random float from parsed objects
 ```
 
+
 ## Performance Considerations
 
 - **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
@@ -167,12 +167,10 @@ float randomFloat = customObjects.GenerateRandom<float>(); // Random float from 
 - **Null Safety**: All methods are designed to be null-safe, handling null inputs gracefully
 - **Partial Classes**: Uses partial classes to organize functionality by category:
 
-- Core functionality (YANRandom.cs)
-- Collection operations (YANRandom.Collection.cs)
-- Generic operations (YANRandom.Generic.cs)
-- Nullable operations (YANRandom.Nullable.cs)
-
-
+    - Core functionality (YANRandom.cs)
+    - Collection operations (YANRandom.Collection.cs)
+    - Generic operations (YANRandom.Generic.cs)
+    - Nullable operations (YANRandom.Nullable.cs)
 
 - **Internal Implementation**: Core implementation details are separated from the public API for better maintainability
 

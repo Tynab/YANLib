@@ -1,8 +1,10 @@
 ### YANEnumerable - Collection Conversion Utility Library
 
+
 ## Overview
 
 `YANEnumerable` is a versatile utility library that provides extension methods for converting collections of objects to strongly-typed collections in C# applications. It offers a comprehensive set of methods for transforming generic and non-generic collections into arrays, lists, hash sets, dictionaries, lookups, and immutable collections of specific types.
+
 
 ## Features
 
@@ -15,13 +17,11 @@ The library is organized into several functional categories:
 - **HashSet Conversion**: Create strongly-typed hash sets from collections
 - **Type Parsing**: Automatically parse elements to the specified type during conversion
 
-
 ### Dictionary and Lookup Conversion
 
 - **Dictionary Creation**: Convert collections to dictionaries with typed keys and values
 - **Lookup Creation**: Transform collections into lookups with typed keys and elements
 - **Key/Value Selection**: Extract and convert keys and values from source elements
-
 
 ### Immutable Collection Support
 
@@ -31,7 +31,6 @@ The library is organized into several functional categories:
 - **Immutable Dictionaries**: Convert collections to immutable dictionaries
 - **Immutable Stacks/Queues**: Transform collections into immutable stacks or queues
 - **Immutable Sorted Collections**: Create immutable sorted sets and dictionaries
-
 
 ### Collection Source Support
 

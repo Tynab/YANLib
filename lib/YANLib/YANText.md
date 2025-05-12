@@ -1,8 +1,10 @@
 ### YANText - Text Manipulation Utility Library
 
+
 ## Overview
 
 `YANText` is a comprehensive utility library that provides extension methods for text manipulation, character operations, and string validation in C# applications. It offers a wide range of methods for working with strings, characters, and collections of text elements, with support for both non-nullable and nullable types.
+
 
 ## Features
 
@@ -15,7 +17,6 @@ The library is organized into several functional categories:
 - **Content Filtering**: Extract specific character types (alphabetic, numeric, alphanumeric)
 - **Null/Empty Checking**: Determine if strings are null, empty, or whitespace
 
-
 ### Character Operations
 
 - **Type Checking**: Check if characters are empty, whitespace, alphabetic, numeric, etc.
@@ -23,14 +24,12 @@ The library is organized into several functional categories:
 - **Case Comparison**: Compare characters ignoring case differences
 - **Collection Operations**: Perform operations on collections of characters
 
-
 ### Nullable Character Support
 
 - **Null Handling**: Special handling for nullable character operations
 - **Type Checking**: Check if nullable characters are null, empty, whitespace, etc.
 - **Case Conversion**: Convert nullable characters to uppercase or lowercase
 - **Collection Operations**: Perform operations on collections of nullable characters
-
 
 ### Collection Operations
 
@@ -112,6 +111,7 @@ bool allLower = chars.AllLowers(); // Returns false
 
 // Convert case in collections
 List<char> charList = ['a', 'b', 'c'];
+
 charList.Upper(); // Modifies list to ['A', 'B', 'C']
 
 IEnumerable<char> upperChars = chars.Uppers(); // Returns ['A', 'B', 'C']
@@ -142,6 +142,7 @@ bool anyAlphabetic = chars.AnyAlphabetic(); // Returns true
 
 // Convert case in nullable collections
 List<char?> charList = ['a', null, 'c'];
+
 charList.Upper(); // Modifies list to ['A', null, 'C']
 
 IEnumerable<char?> upperChars = chars.Uppers(); // Returns ['A', null, 'C']
@@ -211,6 +212,7 @@ string formattedName = rawName
     .FormatName(); // Format as proper name
 // Returns "John Q Public"
 ```
+
 
 ## Performance Considerations
 

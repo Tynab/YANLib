@@ -1,8 +1,10 @@
 ### YANUnmanaged - Type Conversion Utility Library
 
+
 ## Overview
 
 `YANUnmanaged` is a powerful utility library that provides extension methods for parsing and converting objects to unmanaged types in C# applications. It offers a comprehensive set of methods for converting objects, strings, and collections to various unmanaged types such as numeric types, DateTime, Guid, and enums, with support for both non-nullable and nullable types.
+
 
 ## Features
 
@@ -14,20 +16,17 @@ The library is organized into several functional categories:
 - **Default Value Handling**: Specify default values to use when parsing fails
 - **Format Support**: Use format strings for parsing DateTime values
 
-
 ### Collection Conversion
 
 - **Collection Parsing**: Convert collections of objects to collections of unmanaged types
 - **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
 - **Dictionary/Lookup Conversion**: Parse dictionaries with object keys/values to typed dictionaries
 
-
 ### Nullable Type Support
 
 - **Nullable Value Types**: Parse objects to nullable value types (int?, double?, DateTime?, etc.)
 - **Null Handling**: Proper handling of null values during conversion
 - **Type Inference**: Automatic detection of underlying types for nullable types
-
 
 ### Advanced Conversion
 
@@ -89,6 +88,7 @@ IDictionary<object, object?> dict = new Dictionary<object, object?>
     { "2", "Value2" },
     { "3", "Value3" }
 };
+
 Dictionary<int, string?> parsedDict = dict.Parses<int, string>(); // Returns {1: "Value1", 2: "Value2", 3: "Value3"}
 ```
 
@@ -141,6 +141,7 @@ IEnumerable<DateTime?> dateResults = mixedTypes.Parses<DateTime?>(); // [null, n
 IEnumerable<DayOfWeek?> enumResults = mixedTypes.Parses<DayOfWeek?>(); // [null, null, null, Monday, null]
 IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, null, null, guid]
 ```
+
 
 ## Performance Considerations
 

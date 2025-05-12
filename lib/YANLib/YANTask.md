@@ -1,8 +1,10 @@
 ### YANTask - Asynchronous Task Utility Library
 
+
 ## Overview
 
 `YANTask` is a specialized utility library that extends the functionality of the Task Parallel Library (TPL) in C#. It provides powerful extension methods for working with asynchronous tasks, particularly for filtering and processing task results based on conditions. The library simplifies complex asynchronous operations such as waiting for tasks that satisfy specific conditions and processing multiple matching results from concurrent operations.
+
 
 ## Features
 
@@ -15,13 +17,11 @@ The library is organized into several functional categories:
 - **Completion Strategies**: Options for waiting until first match or until all tasks complete
 - **Result Limiting**: Ability to limit the number of matching results returned
 
-
 ### Asynchronous Enumeration
 
 - **Async Streams**: Support for modern C# async streams (IAsyncEnumerable)
 - **Lazy Evaluation**: Results are yielded as soon as they become available
 - **Cancellation Support**: Full support for cancellation tokens to stop operations
-
 
 ### Error Handling
 
@@ -88,6 +88,7 @@ try
 {
     // Start the operation and cancel it immediately
     cts.Cancel();
+
     int? result = await delayedTasks.WaitAnyWithCondition(x => x > 5, cts.Token);
     
     // This line won't be reached if cancellation occurs
@@ -163,6 +164,7 @@ var apiTasks = new[]
 
 // Wait for the first successful API response (status code 200)
 var firstSuccess = await apiTasks.WaitAnyWithCondition(response => response.StatusCode == 200);
+
 Console.WriteLine($"First successful response: ID {firstSuccess?.Id}");
 
 // Get all successful API responses as they complete
@@ -175,12 +177,14 @@ await foreach (var response in apiTasks.WaitAnyWithConditions(r => r.StatusCode 
 async Task<ApiResponse> SimulateApiCall(int id, int delayMs)
 {
     await Task.Delay(delayMs);
+
     return new ApiResponse { Id = id, StatusCode = id % 2 == 0 ? 200 : 404 };
 }
 
 class ApiResponse
 {
     public int Id { get; set; }
+
     public int StatusCode { get; set; }
 }
 ```
@@ -199,6 +203,7 @@ var dataTasks = new[]
 
 // Wait for the first non-empty result
 var firstData = await dataTasks.WaitAnyWithCondition(data => data != null && data.Length > 0);
+
 Console.WriteLine($"First data source returned {firstData?.Length} bytes");
 
 // Process all data sources that return valid data
@@ -215,6 +220,7 @@ async Task<byte[]> ReadFromCacheAsync() => await Task.Delay(50).ContinueWith(_ =
 async Task<byte[]> ReadFromFileAsync() => await Task.Delay(300).ContinueWith(_ => new byte[150]);
 async Task ProcessDataAsync(byte[] data) => await Task.Delay(10);
 ```
+
 
 ## Performance Considerations
 

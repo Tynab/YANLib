@@ -1,8 +1,10 @@
 ### YANDateTime - DateTime Operations Utility Library
 
+
 ## Overview
 
 `YANDateTime` is a comprehensive utility library that provides extension methods for working with DateTime objects in C# applications. It offers a wide range of date and time operations for both single DateTime values and collections, with support for generic types and null-safe operations.
+
 
 ## Features
 
@@ -20,7 +22,6 @@ The library is organized into several functional categories:
 - **Batch Processing**: Apply date operations to collections of DateTime objects
 - **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
 - **Null Handling**: Graceful handling of null values in collections
-
 
 ### Type Flexibility
 
@@ -118,6 +119,7 @@ var dates = new DateTime?[]
     new DateTime(2023, 6, 15),
     new DateTime(2023, 12, 31)
 };
+
 var weekNumbers = dates.GetWeekOfYears<int>()?.ToArray(); // Returns [1, 24, 53]
 
 // Handle null values in collections
@@ -127,6 +129,7 @@ var datesWithNull = new DateTime?[]
     null,
     new DateTime(2023, 12, 31)
 };
+
 var weeksWithNull = datesWithNull.GetWeekOfYears<int>()?.ToArray(); // Returns [1, 0, 53]
 
 // Change time zone for a list of dates (modifies the list in-place)
@@ -136,6 +139,7 @@ var dateList = new List<DateTime>
     new(2023, 6, 15, 12, 0, 0),
     new(2023, 12, 31, 14, 0, 0)
 };
+
 dateList.ChangeTimeZone(0, 2); // Modifies list to [2023-1-1 12:00, 2023-6-15 14:00, 2023-12-31 16:00]
 
 // Change time zone for an enumerable (returns a new collection)
@@ -145,6 +149,7 @@ var dateArray = new DateTime[]
     new(2023, 6, 15, 12, 0, 0),
     new(2023, 12, 31, 14, 0, 0)
 };
+
 var convertedDates = dateArray.ChangeTimeZones(0, 3)?.ToArray(); // Returns new collection with converted dates
 
 // Process collections of objects that can be converted to DateTime
@@ -154,6 +159,7 @@ var objectDates = new object?[]
     "2023-06-15",
     1672444800000 // Unix timestamp
 };
+
 var objectWeeks = objectDates.GetWeekOfYears<int>()?.ToArray(); // Returns [1, 24, ...]
 
 // Process non-generic collections
@@ -182,6 +188,7 @@ var mixedObjects = new List<object?>
     "2023-06-15 12:00:00",
     new DateTime(2023, 12, 31, 14, 0, 0)
 };
+
 mixedObjects.ChangeTimeZone(0, 2); // Modifies list with converted DateTime objects
 
 // Process large collections with automatic parallel processing
@@ -197,8 +204,10 @@ var mixedValidInvalid = new object?[]
     "not a date",
     null
 };
+
 var safeResults = mixedValidInvalid.GetWeekOfYears<int?>()?.ToArray(); // Returns [1, null, null]
 ```
+
 
 ## Performance Considerations
 
@@ -215,10 +224,12 @@ var safeResults = mixedValidInvalid.GetWeekOfYears<int?>()?.ToArray(); // Return
 - **Generic Type Support**: Methods use generic type parameters to support various return types
 - **Null Safety**: All methods are designed to be null-safe, handling null inputs gracefully
 - **Partial Classes**: Uses partial classes to organize functionality by category:
+
     - Core functionality (YANDateTime.cs)
     - Collection operations (YANDateTime.Collection.cs)
     - Generic operations (YANDateTime.Generic.cs)
     - Nullable operations (YANDateTime.Nullable.cs)
+
 - **Internal Implementation**: Core implementation details are separated from the public API for better maintainability
 
 

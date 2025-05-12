@@ -1,8 +1,10 @@
 ### YANMath - Mathematical Operations Utility Library
 
+
 ## Overview
 
 `YANMath` is a comprehensive utility library that provides extension methods for mathematical operations in C# applications. It offers a wide range of mathematical functions for both single values and collections, with support for generic types and null-safe operations.
+
 
 ## Features
 
@@ -14,13 +16,11 @@ The library is organized into several functional categories:
 - **Rounding Operations**: Truncate, Ceiling, Floor, Round
 - **Power Functions**: Square root, Cube root, Power, Absolute value
 
-
 ### Trigonometric Functions
 
 - **Basic Trigonometry**: Sin, Cos, Tan
 - **Inverse Trigonometry**: Asin, Acos, Atan
 - **Angle Conversions**: Radians to degrees, Degrees to radians
-
 
 ### Logarithmic and Exponential Functions
 
@@ -28,13 +28,11 @@ The library is organized into several functional categories:
 - **Integer Logarithm**: Base-2 integer logarithm (ILogB)
 - **Exponential Functions**: Exp (e^x), Exp2 (2^x)
 
-
 ### Collection Operations
 
 - **Collection Processing**: Apply math operations to collections of values
 - **Parallel Processing**: Automatic parallel processing for large collections
 - **Null Handling**: Graceful handling of null values in collections
-
 
 ### Generic Type Support
 
@@ -216,6 +214,7 @@ double sqrtResult = intValue.Sqrt(); // Returns 4.0
 float floatResult = intValue.Sqrt<float>(); // Returns 4.0f
 decimal decimalResult = intValue.Sqrt<decimal>(); // Returns 4.0m
 ```
+
 
 ## Performance Considerations
 

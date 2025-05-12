@@ -35,38 +35,51 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>
-			## YANLib 8.1.0 - Enhanced Task Collection Operations
+			### YANLib 8.2.0 - Enhanced Collection Operations &amp; Type Conversion
 
-			### New Features
+			## New Features
 
-			- Added new asynchronous collection operations to YANTask component
-			- Introduced `WaitAnyWithConditions&lt;T&gt;` for efficient conditional task filtering with early termination
-			- Added `WhenAnyWithConditions&lt;T&gt;` for comprehensive conditional task processing
-			- Support for limiting result collection with the `taken` parameter
-			- Full cancellation token integration for all new methods
-			- Enhanced asynchronous enumeration capabilities
+			- **YANEnumerable Expansion**
 
-			### Performance
+			- Added `YANEnumerable.Generic` for converting collections of objects to strongly-typed collections
+			- Introduced `YANEnumerable.Generic.Immutable` for immutable collection support
+			- Comprehensive support for arrays, lists, hash sets, dictionaries, and lookups
 
-			- Optimized task collection processing with minimal allocations
-			- Improved exception handling with zero overhead for failed tasks
-			- Efficient early termination when conditions are met
-			- Smart task completion detection to avoid unnecessary waiting
-			- Reduced memory pressure through streaming result pattern
+			- **YANRandom Enhancements**
 
-			### Improvements
+			- Added `YANRandom.Generic` for generating random values from object collections
+			- Introduced `YANRandom.Generic.Collection` for generating random collections from object collections
+			- New methods for selecting random elements from existing collections
+			- Support for both generic and non-generic collection inputs
 
-			- Comprehensive XML documentation for all new methods
-			- Extended test coverage for edge cases and concurrency scenarios
-			- Consistent behavior with existing YANTask methods
-			- Graceful handling of null collections and empty task sets
+			- **YANUnmanaged Collection Parsing**
 
-			See full documentation at: https://github.com/Tynab/YANLib/wiki
+			- Added dictionary parsing with `Parses&lt;TKey, TValue&gt;` for IDictionary`&lt;object, object?&gt;`
+			- Introduced lookup parsing with `Parses&lt;TKey, TElement&gt;` for ILookup`&lt;object?, object?&gt;`
+			- Enhanced type conversion for complex collection structures
+
+			## Performance
+
+			- Optimized collection conversion with specialized implementations for different collection types
+			- Improved random value generation with efficient selection algorithms
+			- Enhanced parsing performance for dictionaries and lookups
+			- Parallel processing for large collections to maximize throughput
+			- Reduced memory allocations through careful implementation
+
+			## Improvements
+
+			- Fixed internal `AsyncEnumerableEmpty&lt;T&gt;` method in YANTask.Collection
+			- Extended XML documentation for all new methods
+			- Consistent behavior across all collection operations
+			- Improved type safety with generic constraints
+			- Graceful handling of null collections and edge cases
+
+			See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)
 		</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.1.0</Version>
+		<Version>8.2.0</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>

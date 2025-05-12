@@ -2,9 +2,11 @@
 
 Welcome to the YANLib documentation! YANLib is a comprehensive .NET utility library that provides a wide range of extension methods and helper classes to simplify common programming tasks and enhance developer productivity.
 
+
 ## Overview
 
 YANLib offers a collection of specialized components, each focusing on a specific area of functionality. The library is designed with a consistent API, robust error handling, and support for both nullable and non-nullable types. All components are implemented as extension methods, allowing for a fluent and intuitive coding experience.
+
 
 ## Key Components
 
@@ -193,6 +195,7 @@ var processNames = new List<string?>
     "calc",
     "mspaint"
 };
+
 await processNames.KillAllProcessesByNames();
 ```
 
@@ -251,6 +254,7 @@ using YANLib;
 ```
 
 Now you can start using any of the extension methods provided by the library.
+
 
 ## Examples
 
@@ -354,6 +358,7 @@ public double CalculateStatistics(IEnumerable<double> values)
     return transformed.Average();
 }
 ```
+
 
 ## Contributing
 
