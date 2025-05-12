@@ -7,5 +7,5 @@ namespace YANLib.RemoteServices;
 
 public interface IRemoteService : IApplicationService
 {
-    public ValueTask<T?> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string>? headers = null, string? jsonInput = null, Dictionary<string, object>? queryParams = null);
+    public Task<T?> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string>? headers = null, string? jsonInput = null, Dictionary<string, object>? queryParams = null);
 }

@@ -25,13 +25,13 @@ public class YANLibDbMigrationService(
 
     public ILogger<YANLibDbMigrationService> Logger { get; set; } = NullLogger<YANLibDbMigrationService>.Instance;
 
-    public async ValueTask MigrateAsync()
+    public async Task MigrateAsync()
     {
         await MigrateDatabaseSchemaAsync();
         await SeedAsync();
     }
 
-    private async ValueTask MigrateDatabaseSchemaAsync()
+    private async Task MigrateDatabaseSchemaAsync()
     {
         foreach (var migrator in _dbSchemaMigrators)
         {
@@ -39,7 +39,7 @@ public class YANLibDbMigrationService(
         }
     }
 
-    private async ValueTask SeedAsync()
+    private async Task SeedAsync()
     {
         var createdBy = NewGuid();
 

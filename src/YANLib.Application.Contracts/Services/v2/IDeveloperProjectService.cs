@@ -10,17 +10,17 @@ namespace YANLib.Services.v2;
 
 public interface IDeveloperProjectService : IApplicationService
 {
-    public ValueTask<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId);
+    public Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId);
 
-    public ValueTask<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId);
+    public Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId);
 
-    public ValueTask<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request);
+    public Task<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request);
 
-    public ValueTask<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request);
+    public Task<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request);
 
-    public ValueTask<bool?> Delete(Guid developerId, string projectId, Guid updatedBy);
+    public Task<bool?> Delete(Guid developerId, string projectId, Guid updatedBy);
 
-    public ValueTask<bool> SyncDbToRedis();
+    public Task<bool> SyncDbToRedis();
 
-    public ValueTask<bool> SyncDbToRedisByDeveloper(Guid developerId);
+    public Task<bool> SyncDbToRedisByDeveloper(Guid developerId);
 }

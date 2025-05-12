@@ -22,7 +22,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
 
-    public async ValueTask<PagedResultDto<TEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<TEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
@@ -57,7 +57,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<TEsIndex?> Get(DocumentPath<TEsIndex> id)
+    public async Task<TEsIndex?> Get(DocumentPath<TEsIndex> id)
     {
         try
         {
@@ -71,7 +71,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<bool> Set(TEsIndex data)
+    public async Task<bool> Set(TEsIndex data)
     {
         try
         {
@@ -85,7 +85,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<bool> SetBulk(List<TEsIndex> datas, string indexPath)
+    public async Task<bool> SetBulk(List<TEsIndex> datas, string indexPath)
     {
         try
         {
@@ -113,7 +113,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<bool> Delete(DocumentPath<TEsIndex> id)
+    public async Task<bool> Delete(DocumentPath<TEsIndex> id)
     {
         try
         {
@@ -127,7 +127,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<bool> DeleteAll(string indexPath)
+    public async Task<bool> DeleteAll(string indexPath)
     {
         try
         {
@@ -141,7 +141,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
     {
         try
         {
@@ -182,7 +182,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
     {
         try
         {
@@ -223,7 +223,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
     {
         try
         {
@@ -264,7 +264,7 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
     {
         try
         {

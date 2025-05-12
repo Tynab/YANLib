@@ -31,7 +31,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         _database = _connectionMultiplexer.GetDatabase();
     }
 
-    public async ValueTask<TRedisDto?> Get(string group, string key)
+    public async Task<TRedisDto?> Get(string group, string key)
     {
         try
         {
@@ -52,7 +52,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<IDictionary<string, TRedisDto?>?> GetBulk(string group, params string[] keys)
+    public async Task<IDictionary<string, TRedisDto?>?> GetBulk(string group, params string[] keys)
     {
         try
         {
@@ -93,7 +93,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<IDictionary<string, TRedisDto?>?> GetAll(string? group)
+    public async Task<IDictionary<string, TRedisDto?>?> GetAll(string? group)
     {
         try
         {
@@ -134,7 +134,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<bool> Set(string group, string key, TRedisDto value)
+    public async Task<bool> Set(string group, string key, TRedisDto value)
     {
         var jsonVal = value.Serialize();
 
@@ -154,7 +154,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<bool> SetBulk(string group, IDictionary<string, TRedisDto> fields)
+    public async Task<bool> SetBulk(string group, IDictionary<string, TRedisDto> fields)
     {
         try
         {
@@ -175,7 +175,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<bool> Delete(string group, string key)
+    public async Task<bool> Delete(string group, string key)
     {
         try
         {
@@ -189,7 +189,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<bool> DeleteBulk(string group, params string[] keys)
+    public async Task<bool> DeleteBulk(string group, params string[] keys)
     {
         try
         {
@@ -225,7 +225,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<bool> DeleteAll(string group)
+    public async Task<bool> DeleteAll(string group)
     {
         try
         {
@@ -246,7 +246,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<IDictionary<string, IDictionary<string, TRedisDto?>?>?> GetGroup(string groupPreffix)
+    public async Task<IDictionary<string, IDictionary<string, TRedisDto?>?>?> GetGroup(string groupPreffix)
     {
         try
         {
@@ -294,7 +294,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    public async ValueTask<bool> DeleteGroup(string groupPreffix)
+    public async Task<bool> DeleteGroup(string groupPreffix)
     {
         try
         {
@@ -317,7 +317,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
         }
     }
 
-    private async ValueTask<RedisResult> GetGroupKeys(string groupPreffix)
+    private async Task<RedisResult> GetGroupKeys(string groupPreffix)
     {
         try
         {

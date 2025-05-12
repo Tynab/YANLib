@@ -10,15 +10,15 @@ namespace YANLib.Services.v2;
 
 public interface IDeveloperTypeService : IApplicationService
 {
-    public ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input);
+    public Task<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input);
 
-    public ValueTask<DeveloperTypeResponse?> Get(long code);
+    public Task<DeveloperTypeResponse?> Get(long code);
 
-    public ValueTask<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request);
+    public Task<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request);
 
-    public ValueTask<DeveloperTypeResponse?> Modify(long code, DeveloperTypeUpdateRequest request);
+    public Task<DeveloperTypeResponse?> Modify(long code, DeveloperTypeUpdateRequest request);
 
-    public ValueTask<bool> Delete(long code, Guid updatedBy);
+    public Task<bool> Delete(long code, Guid updatedBy);
 
-    public ValueTask<bool> SyncDbToRedis();
+    public Task<bool> SyncDbToRedis();
 }

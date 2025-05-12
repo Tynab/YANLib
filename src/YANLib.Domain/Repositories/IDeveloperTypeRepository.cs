@@ -8,5 +8,5 @@ namespace YANLib.Repositories;
 
 public interface IDeveloperTypeRepository : IRepository<DeveloperType, long>, ITransientDependency
 {
-    public ValueTask<DeveloperType?> Modify(DeveloperTypeDto dto);
+    public Task<DeveloperType?> Modify(DeveloperTypeDto dto);
 }

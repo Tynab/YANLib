@@ -15,7 +15,7 @@ public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService r
     private readonly ILogger<EcommerceService> _logger = logger;
     private readonly IRemoteService _remoteService = remoteService;
 
-    public async ValueTask<object?> GetAccessToken(EcommerceLoginRequest request)
+    public async Task<object?> GetAccessToken(EcommerceLoginRequest request)
     {
         var json = request.Serialize();
 
@@ -35,7 +35,7 @@ public class EcommerceService(ILogger<EcommerceService> logger, IRemoteService r
         }
     }
 
-    public async ValueTask<object?> GetRefreshToken(string accessToken)
+    public async Task<object?> GetRefreshToken(string accessToken)
     {
         try
         {

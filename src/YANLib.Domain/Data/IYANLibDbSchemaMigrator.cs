@@ -4,5 +4,5 @@ namespace YANLib.Data;
 
 public interface IYANLibDbSchemaMigrator
 {
-    public ValueTask MigrateAsync();
+    public Task MigrateAsync();
 }

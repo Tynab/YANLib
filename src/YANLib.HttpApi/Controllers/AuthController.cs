@@ -18,7 +18,7 @@ public sealed class AuthController(ILogger<AuthController> logger, IAuthService 
     [IgnoreAntiforgeryToken]
     [HttpPost("generate-token")]
     [SwaggerOperation(Summary = "Tạo token")]
-    public async ValueTask<IActionResult> GenerateToken([Required] UserLoginRequest request)
+    public async Task<IActionResult> GenerateToken([Required] UserLoginRequest request)
     {
         _logger.LogInformation("GenerateToken-AuthController: {Request}", request.Serialize());
 

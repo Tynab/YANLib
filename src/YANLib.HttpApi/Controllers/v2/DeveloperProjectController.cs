@@ -30,7 +30,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpGet("get-by-developer")]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ của lập trình viên theo mã định danh")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
@@ -43,7 +43,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpGet("get-by-developer-and-project")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ của lập trình viên theo mã định danh và mã chứng chỉ")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject([Required] Guid developerId, [Required] string projectId)
+    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject([Required] Guid developerId, [Required] string projectId)
     {
         _logger.LogInformation("GetByDeveloperAndProject-DeveloperProjectController: {DeveloperId} - {ProjectId}", developerId, projectId);
 
@@ -52,7 +52,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> Insert(DeveloperProjectCreateRequest request)
+    public async Task<ActionResult<DeveloperProjectResponse>> Insert(DeveloperProjectCreateRequest request)
     {
         _logger.LogInformation("Insert-DeveloperProjectController: {Request}", request.Serialize());
 
@@ -61,7 +61,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpPatch]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> Modify(DeveloperProjectUpdateRequest request)
+    public async Task<ActionResult<DeveloperProjectResponse>> Modify(DeveloperProjectUpdateRequest request)
     {
         _logger.LogInformation("Modify-DeveloperProjectController: {Request}", request.Serialize());
 
@@ -70,7 +70,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpDelete]
     [SwaggerOperation(Summary = "Xóa chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> Delete([Required] Guid developerId, [Required] string projectId, [Required] Guid updatedBy)
+    public async Task<ActionResult<DeveloperProjectResponse>> Delete([Required] Guid developerId, [Required] string projectId, [Required] Guid updatedBy)
     {
         _logger.LogInformation("Delete-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
@@ -82,14 +82,14 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 #endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ của lập trình viên từ Database sang Redis")]
-    public async ValueTask<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
+    public async Task<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ chứng chỉ của lập trình viên từ Database sang Redis theo mã định danh")]
-    public async ValueTask<IActionResult> SyncDbToRedisByDeveloper([Required] Guid developerId)
+    public async Task<IActionResult> SyncDbToRedisByDeveloper([Required] Guid developerId)
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 

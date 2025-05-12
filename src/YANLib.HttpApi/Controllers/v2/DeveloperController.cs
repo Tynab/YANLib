@@ -27,7 +27,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy Developer theo mã định danh")]
-    public async ValueTask<IActionResult> GetByIdCard(Guid id)
+    public async Task<IActionResult> GetByIdCard(Guid id)
     {
         _logger.LogInformation("GetById-CardDeveloperController: {Id}", id);
 
@@ -36,7 +36,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
-    public async ValueTask<IActionResult> Insert([Required] DeveloperCreateRequest request)
+    public async Task<IActionResult> Insert([Required] DeveloperCreateRequest request)
     {
         _logger.LogInformation("Insert-DeveloperController: {Request}", request.Serialize());
 
@@ -45,7 +45,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPatch("{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
-    public async ValueTask<IActionResult> Adjust(string idCard, [Required] DeveloperUpdateRequest request)
+    public async Task<IActionResult> Adjust(string idCard, [Required] DeveloperUpdateRequest request)
     {
         _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 
@@ -57,5 +57,5 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 #endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả Developers từ Database lên Elasticsearch")]
-    public async ValueTask<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
+    public async Task<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
 }

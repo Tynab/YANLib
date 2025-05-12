@@ -8,5 +8,5 @@ namespace YANLib.Repositories;
 
 public interface IProjectRepository : IRepository<Project, string>, ITransientDependency
 {
-    public ValueTask<Project?> Modify(ProjectDto dto);
+    public Task<Project?> Modify(ProjectDto dto);
 }

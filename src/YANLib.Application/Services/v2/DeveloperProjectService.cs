@@ -35,7 +35,7 @@ public class DeveloperProjectService(
     private readonly IDeveloperService _developerService = developerService;
     private readonly IProjectService _projectService = projectService;
 
-    public async ValueTask<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId)
+    public async Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId)
     {
         try
         {
@@ -63,7 +63,7 @@ public class DeveloperProjectService(
         }
     }
 
-    public async ValueTask<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId)
+    public async Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId)
     {
         try
         {
@@ -81,12 +81,12 @@ public class DeveloperProjectService(
         }
     }
 
-    public async ValueTask<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request)
+    public async Task<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request)
     {
         try
         {
-            var devTask = _developerService.Get(request.DeveloperId).AsTask();
-            var certTask = _projectService.Get(request.ProjectId).AsTask();
+            var devTask = _developerService.Get(request.DeveloperId);
+            var certTask = _projectService.Get(request.ProjectId);
 
             _ = await WhenAny(devTask, certTask);
 
@@ -120,7 +120,7 @@ public class DeveloperProjectService(
         }
     }
 
-    public async ValueTask<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request)
+    public async Task<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request)
     {
         try
         {
@@ -143,7 +143,7 @@ public class DeveloperProjectService(
         }
     }
 
-    public async ValueTask<bool?> Delete(Guid developerId, string projectId, Guid updatedBy)
+    public async Task<bool?> Delete(Guid developerId, string projectId, Guid updatedBy)
     {
         try
         {
@@ -164,11 +164,11 @@ public class DeveloperProjectService(
         }
     }
 
-    public async ValueTask<bool> SyncDbToRedis()
+    public async Task<bool> SyncDbToRedis()
     {
         try
         {
-            var cleanTask = _redisService.DeleteGroup($"{DeveloperProjectGroupPrefix}:").AsTask();
+            var cleanTask = _redisService.DeleteGroup($"{DeveloperProjectGroupPrefix}:");
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);
@@ -207,11 +207,11 @@ public class DeveloperProjectService(
         }
     }
 
-    public async ValueTask<bool> SyncDbToRedisByDeveloper(Guid developerId)
+    public async Task<bool> SyncDbToRedisByDeveloper(Guid developerId)
     {
         try
         {
-            var cleanTask = _redisService.DeleteAll($"{DeveloperProjectGroupPrefix}:{developerId}").AsTask();
+            var cleanTask = _redisService.DeleteAll($"{DeveloperProjectGroupPrefix}:{developerId}");
             var entitiesTask = _repository.GetListAsync(x => x.DeveloperId == developerId && !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);

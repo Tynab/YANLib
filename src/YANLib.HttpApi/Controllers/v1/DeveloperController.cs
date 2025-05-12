@@ -29,7 +29,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<DeveloperResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetAll-DeveloperCrudController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
@@ -42,7 +42,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy lập trình viên theo Id")]
-    public async ValueTask<ActionResult<DeveloperResponse>> Get(Guid id)
+    public async Task<ActionResult<DeveloperResponse>> Get(Guid id)
     {
         _logger.LogInformation("Get-DeveloperCrudController: {Id}", id);
 
@@ -51,7 +51,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperResponse>> Create(DeveloperCreateRequest input)
+    public async Task<ActionResult<DeveloperResponse>> Create(DeveloperCreateRequest input)
     {
         _logger.LogInformation("Create-DeveloperCrudController: {Input}", input.Serialize());
 
@@ -60,7 +60,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperResponse>> Update(Guid id, DeveloperUpdateRequest input)
+    public async Task<ActionResult<DeveloperResponse>> Update(Guid id, DeveloperUpdateRequest input)
     {
         _logger.LogInformation("Update-DeveloperCrudController: {Id} - {Input}", id, input.Serialize());
 
@@ -69,7 +69,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa lập trình viên")]
-    public async ValueTask<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Delete-DeveloperCrudController: {Id}", id);
         await _service.DeleteAsync(id);

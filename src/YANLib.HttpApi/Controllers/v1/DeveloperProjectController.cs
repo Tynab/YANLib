@@ -26,7 +26,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetAll-DeveloperProjectController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
@@ -35,7 +35,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ của lập trình viên theo Id")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> Get(Guid id)
+    public async Task<ActionResult<DeveloperProjectResponse>> Get(Guid id)
     {
         _logger.LogInformation("Get-DeveloperProjectController: {Id}", id);
 
@@ -44,7 +44,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> Create(Requests.v1.Create.DeveloperProjectCreateRequest input)
+    public async Task<ActionResult<DeveloperProjectResponse>> Create(Requests.v1.Create.DeveloperProjectCreateRequest input)
     {
         _logger.LogInformation("Create-DeveloperProjectController: {Input}", input.Serialize());
 
@@ -53,7 +53,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ của lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperProjectResponse>> Update(Guid id, Requests.v1.Update.DeveloperProjectUpdateRequest input)
+    public async Task<ActionResult<DeveloperProjectResponse>> Update(Guid id, Requests.v1.Update.DeveloperProjectUpdateRequest input)
     {
         _logger.LogInformation("Update-DeveloperProjectController: {Id} - {Input}", id, input.Serialize());
 
@@ -62,7 +62,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ của lập trình viên")]
-    public async ValueTask<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Delete-DeveloperProjectController: {Id}", id);
         await _service.DeleteAsync(id);

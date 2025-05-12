@@ -28,7 +28,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ")]
-    public async ValueTask<ActionResult<PagedResultDto<ProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetAll-ProjectController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
@@ -41,7 +41,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id")]
-    public async ValueTask<ActionResult<ProjectResponse>> Get(string id)
+    public async Task<ActionResult<ProjectResponse>> Get(string id)
     {
         _logger.LogInformation("Get-ProjectController: {Id}", id);
 
@@ -50,7 +50,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    public async ValueTask<ActionResult<ProjectResponse>> Create(ProjectCreateRequest input)
+    public async Task<ActionResult<ProjectResponse>> Create(ProjectCreateRequest input)
     {
         _logger.LogInformation("Create-ProjectController: {Input}", input.Serialize());
 
@@ -59,7 +59,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<ActionResult<ProjectResponse>> Update(string id, ProjectUpdateRequest input)
+    public async Task<ActionResult<ProjectResponse>> Update(string id, ProjectUpdateRequest input)
     {
         _logger.LogInformation("Update-ProjectController: {Id} - {Input}", id, input.Serialize());
 
@@ -68,7 +68,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    public async ValueTask<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         _logger.LogInformation("Delete-ProjectController: {Id}", id);
         await _service.DeleteAsync(id);

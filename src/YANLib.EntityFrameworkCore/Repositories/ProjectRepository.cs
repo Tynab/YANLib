@@ -21,17 +21,17 @@ public class ProjectRepository(
     private readonly ILogger<ProjectRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<Project?> Modify(ProjectDto dto)
+    public async Task<Project?> Modify(ProjectDto dto)
     {
         try
         {
             return await _dbContext.Projects.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.Name, x => dto.Name ?? x.Name)
-                .SetProperty(x => x.Description, x => dto.Description ?? x.Description)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
+                .SetProperty(x => x.Name, x => dto.Name ?? x.Name)
+                .SetProperty(x => x.Description, x => dto.Description ?? x.Description)
             ) > 0 ? await _dbContext.Projects.FindAsync(dto.Id) : default;
         }
         catch (Exception ex)

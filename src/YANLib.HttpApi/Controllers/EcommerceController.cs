@@ -23,7 +23,7 @@ public sealed class EcommerceController(ILogger<EcommerceController> logger, IEc
 
     [HttpPost("access-token")]
     [SwaggerOperation(Summary = "Lấy access token của API login của trang Ecommerce")]
-    public async ValueTask<IActionResult> GetAccessToken([Required] EcommerceLoginRequest request)
+    public async Task<IActionResult> GetAccessToken([Required] EcommerceLoginRequest request)
     {
         _logger.LogInformation("GetAccessToken-EcommerceController: {Request}", request.Serialize());
 
@@ -32,7 +32,7 @@ public sealed class EcommerceController(ILogger<EcommerceController> logger, IEc
 
     [HttpGet("refresh-token")]
     [SwaggerOperation(Summary = "Lấy refresh token của API refresh của trang Ecommerce")]
-    public async ValueTask<IActionResult> GetRefreshToken([Required] string accessToken)
+    public async Task<IActionResult> GetRefreshToken([Required] string accessToken)
     {
         _logger.LogInformation("GetRefreshToken-EcommerceController: {AccessToken}", accessToken);
 

@@ -28,7 +28,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetAll-DeveloperTypeController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
@@ -41,7 +41,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Id")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long id)
+    public async Task<ActionResult<DeveloperTypeResponse>> Get(long id)
     {
         _logger.LogInformation("Get-DeveloperTypeCrudController: {Id}", id);
 
@@ -50,7 +50,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest input)
+    public async Task<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest input)
     {
         _logger.LogInformation("Create-DeveloperTypeCrudController: {Input}", input.Serialize());
 
@@ -59,7 +59,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(long id, DeveloperTypeUpdateRequest input)
+    public async Task<ActionResult<DeveloperTypeResponse>> Update(long id, DeveloperTypeUpdateRequest input)
     {
         _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Input}", id, input.Serialize());
 
@@ -68,7 +68,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    public async ValueTask<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(long id)
     {
         _logger.LogInformation("Delete-DeveloperTypeCrudController: {Id}", id);
         await _service.DeleteAsync(id);

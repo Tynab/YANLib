@@ -21,7 +21,7 @@ public class DeveloperProjectRepository(
     private readonly ILogger<DeveloperProjectRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<DeveloperProject?> Modify(DeveloperProjectDto dto)
+    public async Task<DeveloperProject?> Modify(DeveloperProjectDto dto)
     {
         try
         {
@@ -30,6 +30,8 @@ public class DeveloperProjectRepository(
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
+                .SetProperty(x => x.DeveloperId, dto.DeveloperId)
+                .SetProperty(x => x.ProjectId, dto.ProjectId)
             ) > 0 ? await _dbContext.DeveloperProjects.FindAsync(dto.Id) : default;
         }
         catch (Exception ex)

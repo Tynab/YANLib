@@ -30,7 +30,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ")]
-    public async ValueTask<ActionResult<PagedResultDto<ProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetAll-ProjectController: {PageNumber} - {PageSize}", pageNumber, pageSize);
 
@@ -43,7 +43,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
-    public async ValueTask<IActionResult> Get(string id)
+    public async Task<IActionResult> Get(string id)
     {
         _logger.LogInformation("Get-ProjectController: {Id}", id);
 
@@ -52,7 +52,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    public async ValueTask<IActionResult> Insert([Required] ProjectCreateRequest request)
+    public async Task<IActionResult> Insert([Required] ProjectCreateRequest request)
     {
         _logger.LogInformation("Insert-ProjectController: {Request}", request.Serialize());
 
@@ -61,7 +61,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpPatch("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<IActionResult> Modify(string id, [Required] ProjectUpdateRequest request)
+    public async Task<IActionResult> Modify(string id, [Required] ProjectUpdateRequest request)
     {
         _logger.LogInformation("Modify-ProjectController: {Id} - {Request}", id, request.Serialize());
 
@@ -70,7 +70,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    public async ValueTask<IActionResult> Delete(string id, [Required] Guid updatedBy)
+    public async Task<IActionResult> Delete(string id, [Required] Guid updatedBy)
     {
         _logger.LogInformation("Delete-ProjectController: {Id} - {UpdatedBy}", id, updatedBy);
 
@@ -82,11 +82,11 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 #endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ từ Database sang Elasticsearch")]
-    public async ValueTask<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
+    public async Task<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
 
     [HttpGet("search-with-wild-card")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo ký tự đại diện trong tên hoặc mô tả")]
-    public async ValueTask<IActionResult> SearchWithWildcard([Required] string searchText = "pro*", byte pageNumber = 1, byte pageSize = 10)
+    public async Task<IActionResult> SearchWithWildcard([Required] string searchText = "pro*", byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("SearchWithWildcard-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -99,7 +99,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet("search-with-phrase-prefix")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ đầu tiên trong tên hoặc mô tả")]
-    public async ValueTask<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "proficien", byte pageNumber = 1, byte pageSize = 10)
+    public async Task<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "proficien", byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("SearchWithPhrasePrefix-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -112,7 +112,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet("search-with-exact-phrase")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ chính xác trong tên hoặc mô tả")]
-    public async ValueTask<IActionResult> SearchWithExactPhrase([Required] string searchText = "data analysis", byte pageNumber = 1, byte pageSize = 10)
+    public async Task<IActionResult> SearchWithExactPhrase([Required] string searchText = "data analysis", byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("SearchWithExactPhrase-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -125,7 +125,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet("search-with-keywords")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo từ khóa trong tên hoặc mô tả")]
-    public async ValueTask<IActionResult> SearchWithKeywords([Required] string searchText = "programming web", byte pageNumber = 1, byte pageSize = 10)
+    public async Task<IActionResult> SearchWithKeywords([Required] string searchText = "programming web", byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("SearchWithKeywords-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 

@@ -9,23 +9,23 @@ namespace YANLib.Services.v2;
 
 public interface IProjectService
 {
-    public ValueTask<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input);
+    public Task<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input);
 
-    public ValueTask<ProjectResponse?> Get(string id);
+    public Task<ProjectResponse?> Get(string id);
 
-    public ValueTask<ProjectResponse?> Insert(ProjectCreateRequest request);
+    public Task<ProjectResponse?> Insert(ProjectCreateRequest request);
 
-    public ValueTask<ProjectResponse?> Modify(string id, ProjectUpdateRequest dto);
+    public Task<ProjectResponse?> Modify(string id, ProjectUpdateRequest dto);
 
-    public ValueTask<bool> Delete(string id, Guid updatedBy);
+    public Task<bool> Delete(string id, Guid updatedBy);
 
-    public ValueTask<bool> SyncDbToEs();
+    public Task<bool> SyncDbToEs();
 
-    public ValueTask<PagedResultDto<ProjectResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText);
 
-    public ValueTask<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText);
 
-    public ValueTask<PagedResultDto<ProjectResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText);
 
-    public ValueTask<PagedResultDto<ProjectResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText);
 }

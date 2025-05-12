@@ -30,7 +30,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     private readonly IRedisService<DeveloperTypeRedisDto> _redisService = redisService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
@@ -58,7 +58,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Get(long id)
+    public async Task<DeveloperTypeResponse?> Get(long id)
     {
         try
         {
@@ -74,7 +74,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request)
+    public async Task<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request)
     {
         try
         {
@@ -94,7 +94,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<DeveloperTypeResponse?> Modify(long id, DeveloperTypeUpdateRequest request)
+    public async Task<DeveloperTypeResponse?> Modify(long id, DeveloperTypeUpdateRequest request)
     {
         try
         {
@@ -115,7 +115,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<bool> Delete(long id, Guid updatedBy)
+    public async Task<bool> Delete(long id, Guid updatedBy)
     {
         try
         {
@@ -134,11 +134,11 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
     }
 
-    public async ValueTask<bool> SyncDbToRedis()
+    public async Task<bool> SyncDbToRedis()
     {
         try
         {
-            var cleanTask = _redisService.DeleteAll(DeveloperTypeGroup).AsTask();
+            var cleanTask = _redisService.DeleteAll(DeveloperTypeGroup);
             var entitiesTask = _repository.GetListAsync(static x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);

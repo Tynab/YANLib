@@ -28,7 +28,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
     private readonly IEsService<ProjectEsIndex> _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
@@ -42,7 +42,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<ProjectResponse?> Get(string id)
+    public async Task<ProjectResponse?> Get(string id)
     {
         try
         {
@@ -58,7 +58,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<ProjectResponse?> Insert(ProjectCreateRequest request)
+    public async Task<ProjectResponse?> Insert(ProjectCreateRequest request)
     {
         try
         {
@@ -76,7 +76,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<ProjectResponse?> Modify(string id, ProjectUpdateRequest request)
+    public async Task<ProjectResponse?> Modify(string id, ProjectUpdateRequest request)
     {
         try
         {
@@ -95,7 +95,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<bool> Delete(string id, Guid updatedBy)
+    public async Task<bool> Delete(string id, Guid updatedBy)
     {
         try
         {
@@ -114,11 +114,11 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<bool> SyncDbToEs()
+    public async Task<bool> SyncDbToEs()
     {
         try
         {
-            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Project).AsTask();
+            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Project);
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);
@@ -160,7 +160,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText)
     {
         try
         {
@@ -174,7 +174,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText)
     {
         try
         {
@@ -188,7 +188,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText)
     {
         try
         {
@@ -202,7 +202,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText)
     {
         try
         {

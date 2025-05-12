@@ -23,7 +23,7 @@ public class AuthService(ILogger<AuthService> logger, IConfiguration configurati
     private readonly ILogger<AuthService> _logger = logger;
     private readonly IConfiguration _configuration = configuration;
 
-    public async ValueTask<string?> GenerateToken(string username, string password)
+    public async Task<string?> GenerateToken(string username, string password)
     {
         try
         {

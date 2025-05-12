@@ -38,7 +38,7 @@ public sealed class ProjectAutoMapperProfile : Profile
         _ = CreateMap<(string Id, Requests.v2.Update.ProjectUpdateRequest Request), ProjectDto>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
-            .ForMember(d => d.GPA, o => o.MapFrom(static s => s.Request.GPA))
+            //.ForMember(d => d.GPA, o => o.MapFrom(static s => s.Request.GPA))
             .ForMember(d => d.Description, o => o.MapFrom(static s => s.Request.Description))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Request.IsActive))

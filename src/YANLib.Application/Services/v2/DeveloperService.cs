@@ -34,7 +34,7 @@ public class DeveloperService(
     private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
     private readonly IProjectRepository _projectRepository = projectRepository;
 
-    public async ValueTask<PagedResultDto<DeveloperResponse>> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<DeveloperResponse>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
@@ -48,7 +48,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Get(Guid id)
+    public async Task<DeveloperResponse?> Get(Guid id)
     {
         try
         {
@@ -64,7 +64,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Insert(DeveloperCreateRequest request)
+    public async Task<DeveloperResponse?> Insert(DeveloperCreateRequest request)
     {
         try
         {
@@ -74,7 +74,7 @@ public class DeveloperService(
             }
 
             var entityTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request));
-            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeCode).AsTask();
+            var devTypeTask = _developerTypeService.Get(request.DeveloperTypeCode);
 
             _ = await WhenAny(entityTask, devTypeTask);
 
@@ -97,7 +97,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest request)
+    public async Task<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest request)
     {
         try
         {
@@ -131,7 +131,7 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<bool> Delete(string idCard, Guid updatedBy)
+    public async Task<bool> Delete(string idCard, Guid updatedBy)
     {
         try
         {
@@ -152,11 +152,11 @@ public class DeveloperService(
         }
     }
 
-    public async ValueTask<bool> SyncDbToEs()
+    public async Task<bool> SyncDbToEs()
     {
         try
         {
-            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Developer).AsTask();
+            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Developer);
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);

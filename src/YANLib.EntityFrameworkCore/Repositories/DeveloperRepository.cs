@@ -3,11 +3,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using YANLib.DbContexts;
 using YANLib.Dtos;
 using YANLib.Entities;
+using static Microsoft.EntityFrameworkCore.EntityState;
 using static System.DateTime;
 
 namespace YANLib.Repositories;
@@ -21,19 +23,19 @@ public class DeveloperRepository(
     private readonly ILogger<DeveloperRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<Developer?> Modify(DeveloperDto dto)
+    public async Task<Developer?> Modify(DeveloperDto dto)
     {
         try
         {
             return await _dbContext.Developers.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.Name, x => dto.Name.IsNull() ? x.Name : dto.Name)
-                .SetProperty(x => x.Phone, x => dto.Phone.IsNull() ? x.Phone : dto.Phone)
-                .SetProperty(x => x.IdCard, x => dto.IdCard.IsNull() ? x.IdCard : dto.IdCard)
-                //.SetProperty(x => x.DeveloperTypeId, x => dto.DeveloperTypeId ?? x.DeveloperTypeId)
                 .SetProperty(x => x.UpdatedBy, dto.UpdatedBy)
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
+                .SetProperty(x => x.Name, x => dto.Name ?? x.Name)
+                .SetProperty(x => x.Phone, x => dto.Phone ?? x.Phone)
+                .SetProperty(x => x.IdCard, x => dto.IdCard ?? x.IdCard)
+                .SetProperty(x => x.DeveloperTypeCode, x => dto.DeveloperTypeCode ?? x.DeveloperTypeCode)
             ) > 0 ? await _dbContext.Developers.FindAsync(dto.Id) : default;
         }
         catch (Exception ex)
@@ -44,17 +46,49 @@ public class DeveloperRepository(
         }
     }
 
-    public async ValueTask<Developer?> Adjust(Developer entity)
+    public async Task<Developer?> Adjust(Developer entity)
     {
         try
         {
-            var rslt = await _dbContext.Developers.AddAsync(entity);
+            var latestEntity = await _dbContext.Developers
+                .Where(x => x.IdCard == entity.IdCard && x.IsDeleted == false)
+                .OrderByDescending(x => x.Version)
+                .FirstOrDefaultAsync();
 
-            return await _dbContext.Developers.Where(x => x.IdCard == entity.IdCard && x.Version == entity.Version - 1 && x.IsDeleted == false).ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.UpdatedBy, entity.UpdatedBy)
-                .SetProperty(x => x.UpdatedAt, UtcNow)
-                .SetProperty(x => x.IsDeleted, true)
-            ) > 0 ? rslt.Entity : default;
+            if (latestEntity.IsNull())
+            {
+                throw new EntityNotFoundException(typeof(Developer), entity.IdCard);
+            }
+
+            var newEntity = new Developer
+            {
+                Name = entity.Name ?? latestEntity.Name,
+                Phone = entity.Phone ?? latestEntity.Phone,
+                IdCard = entity.IdCard ?? latestEntity.IdCard,
+                DeveloperTypeCode = entity.DeveloperTypeCode.IsNotDefault() ? entity.DeveloperTypeCode : latestEntity.DeveloperTypeCode,
+                Version = latestEntity.Version + 1,
+                CreatedBy = latestEntity.CreatedBy,
+                CreatedAt = latestEntity.CreatedAt,
+                UpdatedBy = entity.UpdatedBy,
+                UpdatedAt = UtcNow,
+                IsActive = entity.IsActive,
+                IsDeleted = entity.IsDeleted,
+            };
+
+            latestEntity.UpdatedBy = entity.UpdatedBy;
+            latestEntity.UpdatedAt = UtcNow;
+            latestEntity.IsDeleted = true;
+
+            var updatedEntity = _dbContext.Update(latestEntity);
+
+            if (updatedEntity.State is not Modified)
+            {
+                throw new Exception("Failed to update the latest entity.");
+            }
+
+            var result = await _dbContext.Developers.AddAsync(newEntity);
+
+            return result.State is not Added ? throw new Exception("Failed to add the new entity.") : await _dbContext.SaveChangesAsync() <= 0 ? throw new Exception("Failed to save changes.") : result.Entity;
         }
         catch (Exception ex)
         {
