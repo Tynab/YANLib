@@ -37,7 +37,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 
             for (var i = 0; i < quantity; i++)
             {
-                var curJson = i is 0 ? json : jsonCamel;
+                var curJson = i.IsDefault() ? json : jsonCamel;
 
                 if (curJson.IsNullWhiteSpace())
                 {
@@ -51,7 +51,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
                     return default;
                 }
 
-                first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
+                first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
             }
 
@@ -71,7 +71,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 
             for (var i = 0; i < quantity; i++)
             {
-                var curJson = i is 0 ? json : jsonCamel;
+                var curJson = i.IsDefault() ? json : jsonCamel;
 
                 if (curJson.IsNullWhiteSpace())
                 {
@@ -80,7 +80,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 
                 var dto = (JsonResponse)_jsonSerializer.Deserialize(typeof(JsonResponse), curJson);
 
-                first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
+                first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
             }
 
@@ -100,14 +100,14 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 
             for (var i = 0; i < quantity; i++)
             {
-                var dto = (i is 0 ? json : jsonCamel).Deserialize<JsonResponse>();
+                var dto = (i.IsDefault() ? json : jsonCamel).Deserialize<JsonResponse>();
 
                 if (dto.IsNull())
                 {
                     return default;
                 }
 
-                first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
+                first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
                 last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
             }
 
@@ -129,7 +129,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 
                 for (var i = 0; i < quantity; i++)
                 {
-                    var curJson = i is 0 ? json : jsonCamel;
+                    var curJson = i.IsDefault() ? json : jsonCamel;
 
                     if (curJson.IsNullWhiteSpace())
                     {
@@ -143,7 +143,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
                         return default;
                     }
 
-                    first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
+                    first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
                     last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
                 }
 
@@ -163,7 +163,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 
                 for (var i = 0; i < quantity; i++)
                 {
-                    var curJson = i is 0 ? json : jsonCamel;
+                    var curJson = i.IsDefault() ? json : jsonCamel;
 
                     if (curJson.IsNullWhiteSpace())
                     {
@@ -182,7 +182,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
                         return default;
                     }
 
-                    first = i is 0 ? dto.Id.ToString().Replace("-", string.Empty) : first;
+                    first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
                     last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
                 }
 

@@ -219,4 +219,18 @@ internal static partial class YANRandom
             _ => random.NextBoolImplement().ParseImplement<T>(),
         };
     }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static T GenerateRandomImplement<T>(this IEnumerable<T>? input) where T : unmanaged
+    {
+        if (input.IsNullEmptyImplement())
+        {
+            return default;
+        }
+
+        var list = input as IList<T> ?? [.. input];
+
+        return list[GenerateRandomImplement<int>(0, list.Count)];
+    }
 }

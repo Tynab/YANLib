@@ -853,5 +853,196 @@ public partial class YANRandomTest
         _ = Assert.IsType<bool>(result);
     }
 
+    [Fact]
+    public void GenerateRandom_NullCollection_ReturnsDefault_RandomCollection()
+    {
+        // Arrange
+        IEnumerable<int>? collection = null;
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_EmptyCollection_ReturnsDefault_RandomCollection()
+    {
+        // Arrange
+        var collection = Array.Empty<int>();
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_SingleItemCollection_ReturnsThatItem_RandomCollection()
+    {
+        // Arrange
+        var collection = new[] { 42 };
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Equal(42, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_MultipleItemCollection_ReturnsItemFromCollection_RandomCollection()
+    {
+        // Arrange
+        var collection = new[] { 1, 2, 3, 4, 5 };
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Contains(result, collection);
+    }
+
+    [Fact]
+    public void GenerateRandom_ListCollection_ReturnsItemFromCollection_RandomCollection()
+    {
+        // Arrange
+        var collection = new List<int> { 10, 20, 30, 40, 50 };
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Contains(result, collection);
+    }
+
+    [Fact]
+    public void GenerateRandom_FloatCollection_ReturnsItemFromCollection_RandomCollection()
+    {
+        // Arrange
+        var collection = new[] { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f };
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Contains(result, collection);
+    }
+
+    [Fact]
+    public void GenerateRandom_DateTimeCollection_ReturnsItemFromCollection_RandomCollection()
+    {
+        // Arrange
+        var collection = new[]
+        {
+            new DateTime(2020, 1, 1),
+            new DateTime(2021, 1, 1),
+            new DateTime(2022, 1, 1),
+            new DateTime(2023, 1, 1)
+        };
+
+        // Act
+        var result = collection.GenerateRandom();
+
+        // Assert
+        Assert.Contains(result, collection);
+    }
+
+    [Fact]
+    public void GenerateRandom_NullParams_ReturnsDefault_RandomParams()
+    {
+        // Arrange
+        int[]? parameters = null;
+
+        // Act
+        var result = YANRandom.GenerateRandom(parameters);
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_EmptyParams_ReturnsDefault_RandomParams()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom(Array.Empty<int>());
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_SingleItemParams_ReturnsThatItem_RandomParams()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom(42);
+
+        // Assert
+        Assert.Equal(42, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_MultipleItemParams_ReturnsItemFromParams_RandomParams()
+    {
+        // Arrange
+        var parameters = new[] { 1, 2, 3, 4, 5 };
+
+        // Act
+        var result = YANRandom.GenerateRandom(1, 2, 3, 4, 5);
+
+        // Assert
+        Assert.Contains(result, parameters);
+    }
+
+    [Fact]
+    public void GenerateRandom_FloatParams_ReturnsItemFromParams_RandomParams()
+    {
+        // Arrange
+        var parameters = new[] { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f };
+
+        // Act
+        var result = YANRandom.GenerateRandom(1.1f, 2.2f, 3.3f, 4.4f, 5.5f);
+
+        // Assert
+        Assert.Contains(result, parameters);
+    }
+
+    [Fact]
+    public void GenerateRandom_DateTimeParams_ReturnsItemFromParams_RandomParams()
+    {
+        // Arrange
+        var date1 = new DateTime(2020, 1, 1);
+        var date2 = new DateTime(2021, 1, 1);
+        var date3 = new DateTime(2022, 1, 1);
+        var date4 = new DateTime(2023, 1, 1);
+
+        var parameters = new[] { date1, date2, date3, date4 };
+
+        // Act
+        var result = YANRandom.GenerateRandom(date1, date2, date3, date4);
+
+        // Assert
+        Assert.Contains(result, parameters);
+    }
+
+    [Fact]
+    public void GenerateRandom_MultipleCallsReturnDifferentValues_RandomParams()
+    {
+        // Arrange
+        var parameters = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        var results = new HashSet<int>();
+
+        // Act
+        for (var i = 0; i < 50; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom(parameters));
+        }
+
+        // Assert
+        Assert.True(results.Count >= 3);
+    }
+
     #endregion
 }

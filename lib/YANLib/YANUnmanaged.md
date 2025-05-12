@@ -1,335 +1,188 @@
-### YANUnmanaged Component
-
-The `YANUnmanaged` component is part of the YANLib library, providing a comprehensive set of utilities for parsing and converting unmanaged types in .NET applications.
+### YANUnmanaged - Type Conversion Utility Library
 
 
 ## Overview
 
-YANUnmanaged offers a robust set of extension methods for parsing objects into various unmanaged types (such as int, double, DateTime, Guid, enum, etc.) with built-in error handling, format support, and collection operations. It provides a consistent API for working with both non-nullable and nullable types, making it easier to handle data conversion in a type-safe manner.
+`YANUnmanaged` is a powerful utility library that provides extension methods for parsing and converting objects to unmanaged types in C# applications. It offers a comprehensive set of methods for converting objects, strings, and collections to various unmanaged types such as numeric types, DateTime, Guid, and enums, with support for both non-nullable and nullable types.
 
 
-## Key Features
+## Features
 
-### Object Parsing
+The library is organized into several functional categories:
 
-Parse objects into various types with built-in error handling:
+### Basic Type Conversion
 
-```csharp
-// Parse string to int with default value
-object input = "123";
-int result = input.Parse<int>(); // Returns 123
+- **Single Object Parsing**: Convert objects to unmanaged types like int, double, DateTime, Guid, and enums
+- **Default Value Handling**: Specify default values to use when parsing fails
+- **Format Support**: Use format strings for parsing DateTime values
 
-// Handle invalid input with default value
-object invalidInput = "not a number";
-int resultWithDefault = invalidInput.Parse<int>(42); // Returns 42
+### Collection Conversion
 
-// Parse to various types
-double doubleResult = "123.45".Parse<double>(); // Returns 123.45
-DateTime dateResult = "2023-06-15".Parse<DateTime>(); // Returns DateTime(2023, 6, 15)
-DayOfWeek enumResult = "Tuesday".Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
-bool boolResult = "true".Parse<bool>(); // Returns true
-char charResult = "A".Parse<char>(); // Returns 'A'
-Guid guidResult = someGuidString.Parse<Guid>(); // Returns parsed Guid
-```
+- **Collection Parsing**: Convert collections of objects to collections of unmanaged types
+- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
+- **Dictionary/Lookup Conversion**: Parse dictionaries with object keys/values to typed dictionaries
 
-### Nullable Type Parsing
+### Nullable Type Support
 
-Parse objects into nullable types, returning null for invalid inputs:
+- **Nullable Value Types**: Parse objects to nullable value types (int?, double?, DateTime?, etc.)
+- **Null Handling**: Proper handling of null values during conversion
+- **Type Inference**: Automatic detection of underlying types for nullable types
 
-```csharp
-// Parse string to nullable int
-object input = "123";
-int? result = input.Parse<int?>(); // Returns 123
+### Advanced Conversion
 
-// Return null for invalid input
-object invalidInput = "not a number";
-int? nullableResult = invalidInput.Parse<int?>(); // Returns null
-
-// Handle null input
-object? nullInput = null;
-int? nullResult = nullInput.Parse<int?>(); // Returns null
-
-// Parse to various nullable types
-DateTime? dateResult = "2023-06-15".Parse<DateTime?>(); // Returns DateTime(2023, 6, 15)
-DayOfWeek? enumResult = "Tuesday".Parse<DayOfWeek?>(); // Returns DayOfWeek.Tuesday
-bool? boolResult = "true".Parse<bool?>(); // Returns true
-```
-
-### Collection Parsing
-
-Parse collections of objects into typed collections:
-
-```csharp
-// Parse collection of strings to ints
-var input = new object[] { "123", "456", "789" };
-IEnumerable<int> results = input.Parses<int>(); // Returns [123, 456, 789]
-
-// Handle invalid values with default
-var mixedInput = new object[] { "123", "not a number", "789" };
-IEnumerable<int> mixedResults = mixedInput.Parses<int>(42); // Returns [123, 42, 789]
-
-// Parse to various types
-IEnumerable<DateTime> dateResults = new[] { "2023-06-15", "2023-07-20" }.Parses<DateTime>();
-IEnumerable<DayOfWeek> enumResults = new[] { "Monday", "Tuesday" }.Parses<DayOfWeek>();
-IEnumerable<bool> boolResults = new[] { "true", "false" }.Parses<bool>();
-```
-
-### Nullable Collection Parsing
-
-Parse collections of objects into collections of nullable types:
-
-```csharp
-// Parse collection of strings to nullable ints
-var input = new object[] { "123", "456", "789" };
-IEnumerable<int?> results = input.Parses<int?>(); // Returns [123, 456, 789]
-
-// Return null for invalid values
-var mixedInput = new object[] { "123", "not a number", "789" };
-IEnumerable<int?> mixedResults = mixedInput.Parses<int?>(); // Returns [123, null, 789]
-
-// Handle null values
-var inputWithNull = new object[] { "123", null, "789" };
-IEnumerable<int?> resultsWithNull = inputWithNull.Parses<int?>(); // Returns [123, null, 789]
-```
-
-### Format Support
-
-Parse date and time values with custom formats:
-
-```csharp
-// Parse date with specific format
-object dateInput = "15/06/2023";
-DateTime result = dateInput.Parse<DateTime>(default, "dd/MM/yyyy"); // Returns DateTime(2023, 6, 15)
-
-// Parse collection of dates with specific format
-var dates = new object[] { "15/06/2023", "20/07/2023", "25/12/2023" };
-IEnumerable<DateTime> results = dates.Parses<DateTime>(default, "dd/MM/yyyy");
-```
+- **Enum Parsing**: Case-insensitive parsing of string values to enum types
+- **Type Coercion**: Intelligent type conversion between compatible types
+- **Error Handling**: Graceful handling of conversion errors with default values
 
 
 ## Usage Examples
 
-### Data Import and Validation
+### Basic Type Conversion
 
 ```csharp
-public class DataImporter
-{
-    public List<Product> ImportProducts(IEnumerable<Dictionary<string, object>> rawData)
-    {
-        var products = new List<Product>();
-        
-        foreach (var item in rawData)
-        {
-            var product = new Product
-            {
-                Id = item.TryGetValue("id", out var id) ? id.Parse<int>(-1) : -1,
-                Name = item.TryGetValue("name", out var name) ? name?.ToString() : string.Empty,
-                Price = item.TryGetValue("price", out var price) ? price.Parse<decimal>(0) : 0,
-                IsAvailable = item.TryGetValue("available", out var available) ? available.Parse<bool>(false) : false,
-                CreatedDate = item.TryGetValue("created", out var created) ? created.Parse<DateTime>(DateTime.Now) : DateTime.Now
-            };
-            
-            // Only add valid products
-            if (product.Id > 0 && !string.IsNullOrEmpty(product.Name))
-            {
-                products.Add(product);
-            }
-        }
-        
-        return products;
-    }
-}
+// Parse string to int
+object input = "123";
+int result = input.Parse<int>(); // Returns 123
 
-public class Product
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-    public bool IsAvailable { get; set; }
-    public DateTime CreatedDate { get; set; }
-}
+// Parse with default value
+object invalidInput = "not a number";
+int resultWithDefault = invalidInput.Parse<int>(42); // Returns 42
+
+// Parse to DateTime
+object dateInput = "2023-06-15";
+DateTime dateResult = dateInput.Parse<DateTime>(); // Returns DateTime(2023, 6, 15)
+
+// Parse with format
+object formattedDate = "15/06/2023";
+DateTime dateWithFormat = formattedDate.Parse<DateTime>(null, "dd/MM/yyyy"); // Returns DateTime(2023, 6, 15)
+
+// Parse to enum
+object enumInput = "Tuesday";
+DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
+
+// Parse to Guid
+var guid = Guid.NewGuid();
+object guidInput = guid.ToString();
+Guid guidResult = guidInput.Parse<Guid>(); // Returns the original Guid
 ```
 
-### Configuration Parser
+### Collection Conversion
 
 ```csharp
-public class ConfigurationParser
+// Parse collection of strings to ints
+IEnumerable<object?> numbers = new object?[] { "123", "456", "789" };
+IEnumerable<int> intResults = numbers.Parses<int>(); // Returns [123, 456, 789]
+
+// Handle mixed valid and invalid inputs
+IEnumerable<object?> mixedInputs = new object?[] { "123", "not a number", "789" };
+IEnumerable<int> mixedResults = mixedInputs.Parses<int>(0); // Returns [123, 0, 789]
+
+// Parse non-generic collection
+ArrayList arrayList = new ArrayList { "123", "456", "789" };
+IEnumerable<int> arrayListResults = arrayList.Parses<int>(); // Returns [123, 456, 789]
+
+// Parse dictionary
+IDictionary<object, object?> dict = new Dictionary<object, object?>
 {
-    private readonly Dictionary<string, object> _configValues;
-    
-    public ConfigurationParser(Dictionary<string, object> configValues)
-    {
-        _configValues = configValues;
-    }
-    
-    public T GetValue<T>(string key, T defaultValue = default)
-    {
-        if (_configValues.TryGetValue(key, out var value))
-        {
-            return value.Parse<T>(defaultValue);
-        }
-        
-        return defaultValue;
-    }
-    
-    public T? GetNullableValue<T>(string key) where T : struct
-    {
-        if (_configValues.TryGetValue(key, out var value))
-        {
-            return value.Parse<T?>();
-        }
-        
-        return null;
-    }
-    
-    public IEnumerable<T> GetValues<T>(string key, T defaultValue = default)
-    {
-        if (_configValues.TryGetValue(key, out var value) && value is IEnumerable<object> values)
-        {
-            return values.Parses<T>(defaultValue);
-        }
-        
-        return Enumerable.Empty<T>();
-    }
-}
+    { "1", "Value1" },
+    { "2", "Value2" },
+    { "3", "Value3" }
+};
+
+Dictionary<int, string?> parsedDict = dict.Parses<int, string>(); // Returns {1: "Value1", 2: "Value2", 3: "Value3"}
 ```
 
-### CSV Data Processing
+### Nullable Type Support
 
 ```csharp
-public class CsvProcessor
-{
-    public IEnumerable<T> ProcessCsv<T>(string csvContent, Func<string[], T> rowMapper)
-    {
-        var lines = csvContent.Split('\n');
-        
-        foreach (var line in lines.Skip(1)) // Skip header
-        {
-            if (string.IsNullOrWhiteSpace(line))
-                continue;
-                
-            var columns = line.Split(',');
+// Parse to nullable int
+object input = "123";
+int? nullableResult = input.Parse<int?>(); // Returns 123
 
-            yield return rowMapper(columns);
-        }
-    }
-    
-    public IEnumerable<SalesRecord> ProcessSalesData(string csvContent)
-    {
-        return ProcessCsv(csvContent, columns => new SalesRecord
-        {
-            OrderId = columns[0].Parse<int>(),
-            ProductId = columns[1].Parse<int>(),
-            Quantity = columns[2].Parse<int>(),
-            UnitPrice = columns[3].Parse<decimal>(),
-            OrderDate = columns[4].Parse<DateTime>(DateTime.Now, "yyyy-MM-dd")
-        });
-    }
-}
+// Handle invalid input
+object invalidInput = "not a number";
+int? nullableInvalidResult = invalidInput.Parse<int?>(); // Returns null
 
-public class SalesRecord
-{
-    public int OrderId { get; set; }
-    public int ProductId { get; set; }
-    public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
-    public DateTime OrderDate { get; set; }
-}
+// Parse collection to nullable types
+IEnumerable<object?> mixedInputs = new object?[] { "123", "not a number", "789" };
+IEnumerable<int?> nullableResults = mixedInputs.Parses<int?>(); // Returns [123, null, 789]
+
+// Handle null values in collection
+IEnumerable<object?> withNulls = new object?[] { "123", null, "789" };
+IEnumerable<int?> nullableWithNulls = withNulls.Parses<int?>(); // Returns [123, null, 789]
 ```
 
-### API Response Handling
+### Advanced Conversion Examples
 
 ```csharp
-public class ApiClient
-{
-    private readonly HttpClient _httpClient;
-    
-    public ApiClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-    
-    public async Task<ApiResponse<T>> GetAsync<T>(string endpoint)
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync(endpoint);
-            
-            response.EnsureSuccessStatusCode();
-            
-            var content = await response.Content.ReadAsStringAsync();
-            var data = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
-            
-            return new ApiResponse<T>
-            {
-                Success = data.TryGetValue("success", out var success) && success.Parse<bool>(),
-                Data = data.TryGetValue("data", out var value) ? value.Parse<T>() : default,
-                Timestamp = data.TryGetValue("timestamp", out var timestamp) 
-                    ? timestamp.Parse<DateTime>(DateTime.Now) 
-                    : DateTime.Now
-            };
-        }
-        catch (Exception ex)
-        {
-            return new ApiResponse<T>
-            {
-                Success = false,
-                Error = ex.Message
-            };
-        }
-    }
-}
+// Parse different types of DateTime inputs
+IEnumerable<object?> dates = new object?[] { "2023-06-15", "2023-07-20", "2023-12-25" };
+IEnumerable<DateTime> dateResults = dates.Parses<DateTime>(); // Returns collection of DateTime objects
 
-public class ApiResponse<T>
-{
-    public bool Success { get; set; }
-    public T? Data { get; set; }
-    public string? Error { get; set; }
-    public DateTime Timestamp { get; set; }
-}
-```
+// Parse enum values case-insensitively
+IEnumerable<object?> days = new object?[] { "Monday", "tuesday", "WEDNESDAY" };
+IEnumerable<DayOfWeek> dayResults = days.Parses<DayOfWeek>(); // Returns [Monday, Tuesday, Wednesday]
 
-### Form Data Processing
-
-```csharp
-public class FormProcessor
+// Parse mixed types appropriately
+var guid = Guid.NewGuid();
+var mixedTypes = new object?[]
 {
-    public UserProfile ProcessUserForm(Dictionary<string, string> formData)
-    {
-        return new UserProfile
-        {
-            UserId = formData.TryGetValue("userId", out var id) ? id.Parse<int>(-1) : -1,
-            Name = formData.TryGetValue("name", out var name) ? name : string.Empty,
-            BirthDate = formData.TryGetValue("birthDate", out var birthDate) 
-                ? birthDate.Parse<DateTime?>(null, "yyyy-MM-dd") 
-                : null,
-            PreferredCategories = formData.TryGetValue("categories", out var categories)
-                ? categories.Split(',').Parses<int>()
-                : Enumerable.Empty<int>(),
-            IsSubscribed = formData.TryGetValue("isSubscribed", out var subscribed) 
-                ? subscribed.Parse<bool>() 
-                : false
-        };
-    }
-}
+    "123",
+    "true",
+    "2023-06-15",
+    "Monday",
+    guid.ToString()
+};
 
-public class UserProfile
-{
-    public int UserId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public DateTime? BirthDate { get; set; }
-    public IEnumerable<int> PreferredCategories { get; set; } = Enumerable.Empty<int>();
-    public bool IsSubscribed { get; set; }
-}
+// Each Parse operation handles the appropriate values
+IEnumerable<int?> intResults = mixedTypes.Parses<int?>(); // [123, null, null, null, null]
+IEnumerable<bool?> boolResults = mixedTypes.Parses<bool?>(); // [null, true, null, null, null]
+IEnumerable<DateTime?> dateResults = mixedTypes.Parses<DateTime?>(); // [null, null, 2023-06-15, null, null]
+IEnumerable<DayOfWeek?> enumResults = mixedTypes.Parses<DayOfWeek?>(); // [null, null, null, Monday, null]
+IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, null, null, guid]
 ```
 
 
-## Implementation Notes
+## Performance Considerations
 
-- All parsing methods handle null values gracefully, avoiding NullReferenceExceptions
-- Invalid inputs return either default values or null (for nullable types)
-- Collection methods preserve the structure of the input collection
-- Format support is available for types that require it (like DateTime)
-- Case-insensitive parsing is supported for enums
-- All methods are implemented as extension methods for easy chaining
-- Empty strings and whitespace are treated as invalid inputs
+- The library uses caching for type reflection to improve performance
+- For large collections (>1000 items), parallel processing is automatically used
+- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- Type conversion is optimized for common scenarios
+
+
+## Implementation Details
+
+- Extension methods are implemented in partial classes for better organization
+- Internal implementation methods are separated from the public API
+- The library uses nullable reference types for better null safety
+- All public methods are well-documented with XML comments
+- Type conversion logic handles edge cases gracefully
+
+
+## Type Conversion Coverage
+
+The library provides comprehensive coverage of type conversion operations:
+
+| Category | Functions |
+|----------|-----------|
+| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<float>, Parse<double>, Parse<decimal> |
+| **Other Value Types** | Parse<bool>, Parse<char>, Parse<DateTime>, Parse<DateTimeOffset>, Parse<TimeSpan>, Parse<Guid> |
+| **Enum Types** | Parse<TEnum> where TEnum : struct, Enum |
+| **Nullable Types** | Parse<T?> where T : struct |
+| **Collection Conversion** | Parses<T>, Parses<TKey, TValue> |
+| **Dictionary Conversion** | Parses<TKey, TValue> for IDictionary<object, object?> |
+| **Format Support** | Parse<T>(format) for DateTime and other format-dependent types |
+
+
+## Technical Details
+
+- **Type Parsing**: Implements specialized parsing methods for each unmanaged type
+- **Default Value Handling**: Provides configurable default values when parsing fails
+- **Format Support**: Supports custom format strings for parsing formatted values like dates
+- **Enum Parsing**: Implements case-insensitive enum parsing with name and value support
+- **Type Conversion**: Uses `Convert.ChangeType()` and specialized conversion methods for type conversion
+- **Nullable Type Support**: Implements special handling for nullable value types
+- **Collection Processing**: Processes collections of objects with efficient type conversion
+- **Dictionary Conversion**: Implements key and value parsing for dictionary type conversion
+- **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code

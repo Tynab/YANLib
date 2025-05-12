@@ -264,5 +264,325 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, result);
     }
 
+    [Fact]
+    public void Parses_NullLookup_ReturnsEmptyLookup_NullableCollection()
+    {
+        // Arrange
+        ILookup<object?, object?>? input = null;
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Parses_EmptyLookup_ReturnsEmptyLookup_NullableCollection()
+    {
+        // Arrange
+        var input = Enumerable.Empty<(object? Key, object? Value)>().ToLookup(static item => item.Key, static item => item.Value);
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Parses_BasicLookup_ParsesCorrectly_NullableCollection()
+    {
+        // Arrange
+        var data = new[]
+        {
+            ("1", "Value1"),
+            ("1", "Value2"),
+            ("2", "Value3"),
+            ("3", "Value4"),
+            ("3", "Value5")
+        };
+
+        var input = data.ToLookup(static item => (object?)item.Item1, static item => (object?)item.Item2);
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+
+        var group1 = result[1].ToList();
+        Assert.Equal(2, group1.Count);
+        Assert.Contains("Value1", group1);
+        Assert.Contains("Value2", group1);
+
+        var group2 = result[2].ToList();
+        _ = Assert.Single(group2);
+        Assert.Equal("Value3", group2[0]);
+
+        var group3 = result[3].ToList();
+        Assert.Equal(2, group3.Count);
+        Assert.Contains("Value4", group3);
+        Assert.Contains("Value5", group3);
+    }
+
+    [Fact]
+    public void Parses_MixedKeyTypes_ParsesKeysCorrectly_NullableCollection()
+    {
+        // Arrange
+        var data = new (object?, object?)[]
+        {
+            ("1", "Value1"),
+            (1, "Value2"),
+            ("2.5", "Value3"),
+            (3, "Value4")
+        };
+
+        var input = data.ToLookup(static item => item.Item1, static item => item.Item2);
+
+        // Act
+        var result = input.Parses<double, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+
+        var group1 = result[1].ToList();
+        Assert.Equal(2, group1.Count);
+        Assert.Contains("Value1", group1);
+        Assert.Contains("Value2", group1);
+
+        var group2 = result[2.5].ToList();
+        _ = Assert.Single(group2);
+        Assert.Equal("Value3", group2[0]);
+
+        var group3 = result[3].ToList();
+        _ = Assert.Single(group3);
+        Assert.Equal("Value4", group3[0]);
+    }
+
+    [Fact]
+    public void Parses_MixedValueTypes_ParsesValuesCorrectly_NullableCollection()
+    {
+        // Arrange
+        var data = new (object?, object?)[]
+        {
+            ("1", "100"),
+            ("1", 200),
+            ("2", "300.5"),
+            ("2", 400)
+        };
+
+        var input = data.ToLookup(static item => item.Item1, static item => item.Item2);
+
+        // Act
+        var result = input.Parses<int, int>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+
+        var group1 = result[1].ToList();
+        Assert.Equal(2, group1.Count);
+        Assert.Contains(100, group1);
+        Assert.Contains(200, group1);
+
+        var group2 = result[2].ToList();
+        Assert.Equal(2, group2.Count);
+        Assert.Contains(300, group2);
+        Assert.Contains(400, group2);
+    }
+
+    [Fact]
+    public void Parses_NullKeysAndValues_HandlesNullsCorrectly_NullableCollection()
+    {
+        // Arrange
+        var data = new (object?, object?)[]
+        {
+            (null, "NullKey1"),
+            (null, "NullKey2"),
+            ("1", null),
+            ("2", "NotNull")
+        };
+
+        var input = data.ToLookup(static item => item.Item1, static item => item.Item2);
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+
+        var nullGroup = result[default].ToList();
+        Assert.Equal(2, nullGroup.Count);
+        Assert.Contains("NullKey1", nullGroup);
+        Assert.Contains("NullKey2", nullGroup);
+
+        var group1 = result[1].ToList();
+        _ = Assert.Single(group1);
+        Assert.Null(group1[0]);
+
+        var group2 = result[2].ToList();
+        _ = Assert.Single(group2);
+        Assert.Equal("NotNull", group2[0]);
+    }
+
+    [Fact]
+    public void Parses_InvalidKeyValues_HandlesDefaultValues_NullableCollection()
+    {
+        // Arrange
+        var data = new[]
+        {
+            ("not a number", "Value1"),
+            ("not a number", "Value2"),
+            ("2", "Value3")
+        };
+
+        var input = data.ToLookup(static item => (object?)item.Item1, static item => (object?)item.Item2);
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+
+        var group0 = result[0].ToList();
+        Assert.Equal(2, group0.Count);
+        Assert.Contains("Value1", group0);
+        Assert.Contains("Value2", group0);
+
+        var group2 = result[2].ToList();
+        _ = Assert.Single(group2);
+        Assert.Equal("Value3", group2[0]);
+    }
+
+    [Fact]
+    public void Parses_DateTimeKeys_ParsesKeysCorrectly_NullableCollection()
+    {
+        // Arrange
+        var date1 = new DateTime(2023, 1, 1);
+        var date2 = new DateTime(2023, 2, 1);
+
+        var data = new (object?, object?)[]
+        {
+            ("2023-01-01", "January1"),
+            ("2023-01-01", "January2"),
+            (date2, "February")
+        };
+
+        var input = data.ToLookup(static item => item.Item1, static item => item.Item2);
+
+        // Act
+        var result = input.Parses<DateTime, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+
+        var group1 = result[date1].ToList();
+        Assert.Equal(2, group1.Count);
+        Assert.Contains("January1", group1);
+        Assert.Contains("January2", group1);
+
+        var group2 = result[date2].ToList();
+        _ = Assert.Single(group2);
+        Assert.Equal("February", group2[0]);
+    }
+
+    [Fact]
+    public void Parses_EnumValues_ParsesValuesCorrectly_NullableCollection()
+    {
+        // Arrange
+        var data = new (object?, object?)[]
+        {
+            ("1", "Monday"),
+            ("1", DayOfWeek.Monday),
+            ("2", "Tuesday"),
+            ("2", DayOfWeek.Tuesday)
+        };
+
+        var input = data.ToLookup(static item => item.Item1, static item => item.Item2);
+
+        // Act
+        var result = input.Parses<int, DayOfWeek>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+
+        var group1 = result[1].ToList();
+        Assert.Equal(2, group1.Count);
+        Assert.All(group1, static item => Assert.Equal(DayOfWeek.Monday, item));
+
+        var group2 = result[2].ToList();
+        Assert.Equal(2, group2.Count);
+        Assert.All(group2, static item => Assert.Equal(DayOfWeek.Tuesday, item));
+    }
+
+    [Fact]
+    public void Parses_ComplexTypes_HandlesComplexTypesCorrectly_NullableCollection()
+    {
+        // Arrange
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+
+        var data = new (object?, object?)[]
+        {
+            ("2023-01-01", guid1.ToString()),
+            ("2023-01-01", guid2.ToString()),
+            ("2023-02-01", guid1)
+        };
+
+        var input = data.ToLookup(static item => item.Item1, static item => item.Item2);
+
+        // Act
+        var result = input.Parses<DateTime, Guid>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+
+        var group1 = result[new DateTime(2023, 1, 1)].ToList();
+        Assert.Equal(2, group1.Count);
+        Assert.Contains(guid1, group1);
+        Assert.Contains(guid2, group1);
+
+        var group2 = result[new DateTime(2023, 2, 1)].ToList();
+        _ = Assert.Single(group2);
+        Assert.Equal(guid1, group2[0]);
+    }
+
+    [Fact]
+    public void Parses_LargeNumberOfGroups_HandlesEfficiently_NullableCollection()
+    {
+        // Arrange
+        var data = Enumerable.Range(1, 100).SelectMany(i => Enumerable.Range(1, 5).Select(j => (i.ToString(), $"Value{i}-{j}")));
+        var input = data.ToLookup(item => (object?)item.Item1, item => (object?)item.Item2);
+
+        // Act
+        var result = input.Parses<int, string>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(100, result.Count);
+
+        for (var i = 1; i <= 100; i++)
+        {
+            var group = result[i].ToList();
+
+            Assert.Equal(5, group.Count);
+
+            for (var j = 1; j <= 5; j++)
+            {
+                Assert.Contains($"Value{i}-{j}", group);
+            }
+        }
+    }
+
     #endregion
 }

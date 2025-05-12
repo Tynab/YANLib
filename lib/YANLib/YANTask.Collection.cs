@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using YANLib.Implementation;
+using static YANLib.Implementation.YANTask;
 
 namespace YANLib;
 
@@ -24,7 +25,7 @@ public static partial class YANTask
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static IAsyncEnumerable<T> AsyncEnumerableEmpty<T>() => AsyncEnumerableEmpty<T>();
+    internal static IAsyncEnumerable<T> AsyncEnumerableEmpty<T>() => AsyncEnumerableEmptyImplement<T>();
 
     /// <summary>
     /// Asynchronously enumerates tasks that complete and meet the specified condition, stopping after finding the specified number of matching tasks.

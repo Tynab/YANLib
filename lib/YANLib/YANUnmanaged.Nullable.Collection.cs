@@ -56,4 +56,21 @@ public static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<T?>? Parses<T>(this System.Collections.IEnumerable? input) => input.ParsesImplement<T>();
+
+    /// <summary>
+    /// Parses a dictionary of objects to a dictionary with keys of the specified unmanaged type and values of the specified nullable type.
+    /// </summary>
+    /// <typeparam name="TKey">The unmanaged key type to parse to.</typeparam>
+    /// <typeparam name="TValue">The value type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The dictionary of objects to parse. If <c>null</c> or empty, returns an empty dictionary.</param>
+    /// <returns>A dictionary with keys of type <typeparamref name="TKey"/> and values of type <typeparamref name="TValue"/>, or an empty dictionary if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This method parses both the keys and values of the input dictionary to the specified types.
+    /// Keys that cannot be parsed will use the default value of <typeparamref name="TKey"/>.
+    /// Values that cannot be parsed will be <c>null</c> in the resulting dictionary.
+    /// If duplicate keys are encountered after parsing, an exception will be thrown.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static ILookup<TKey?, TElement?> Parses<TKey, TElement>(this ILookup<object?, object?>? input) => input.ParsesImplement<TKey, TElement>();
 }

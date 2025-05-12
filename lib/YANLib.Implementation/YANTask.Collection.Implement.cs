@@ -23,7 +23,7 @@ internal static partial class YANTask
 
         var pending = new HashSet<Task<T>>(tasks);
         var emitted = 0;
-        var maxToEmit = taken is 0 ? pending.Count.ParseImplement<uint>() : taken;
+        var maxToEmit = taken.IsDefaultImplement() ? pending.Count.ParseImplement<uint>() : taken;
 
         while (pending.Count > 0 && emitted < maxToEmit)
         {
@@ -57,7 +57,7 @@ internal static partial class YANTask
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static async IAsyncEnumerable<T> AsyncEnumerableEmptyImplement<T>()
+    internal static async IAsyncEnumerable<T> AsyncEnumerableEmptyImplement<T>()
     {
         await Yield();
 

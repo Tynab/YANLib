@@ -1,132 +1,41 @@
-### YANRandom Component
-
-The `YANRandom` component is part of the YANLib library, providing a comprehensive set of utilities for generating random values of various types in .NET applications.
+### YANRandom - Random Value Generation Utility Library
 
 
 ## Overview
 
-YANRandom offers both extension methods for the standard `Random` class and static methods for generating random values of different types. It supports generating single random values, collections of random values, and handles nullable types seamlessly. The component provides a consistent API for working with random data across various data types.
+`YANRandom` is a comprehensive utility library that provides extension methods and utility functions for generating random values of various types in C# applications. It extends the functionality of the built-in `System.Random` class with methods to generate random values for a wide range of data types, including numeric types, booleans, characters, strings, and dates.
 
 
-## Key Features
+## Features
+
+The library is organized into several functional categories:
 
 ### Random Value Generation
 
-Generate random values of various types:
+- **Numeric Types**: Generate random values for all numeric types (byte, sbyte, short, ushort, int, uint, long, ulong, nint, nuint, float, double, decimal)
+- **Boolean Values**: Generate random boolean values
+- **DateTime Values**: Generate random DateTime values within specified ranges
+- **Character and String Values**: Generate random characters and strings
 
-```csharp
-// Using static methods
-int randomInt = YANRandom.GenerateRandom<int>();
-double randomDouble = YANRandom.GenerateRandom<double>(-100.5, 100.5);
-DateTime randomDate = YANRandom.GenerateRandom<DateTime>();
-string randomString = YANRandom.GenerateRandom<string>();
-bool randomBool = YANRandom.GenerateRandom<bool>();
+### Range-Based Generation
 
-// Using Random extensions
-var random = new Random();
-int randomInt = random.NextInt();
-double randomDouble = random.NextDouble(-100.5, 100.5);
-DateTime randomDate = random.NextDateTime();
-string randomString = random.NextString();
-bool randomBool = random.NextBool();
-```
+- **Min/Max Constraints**: Generate random values within specified ranges
+- **Default Ranges**: Use sensible defaults when ranges are not specified
+- **Type-Safe Ranges**: Ensure generated values respect the constraints of their types
 
-### Random Collection Generation
+### Collection Operations
 
-Generate collections of random values:
+- **Random Value Collections**: Generate collections of random values of specified types
+- **Random Sampling**: Select random values from existing collections
+- **Duplicate Control**: Option to allow or prevent duplicates in generated collections
+- **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
 
-```csharp
-// Generate a collection of 10 random integers
-IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10);
+### Type Flexibility
 
-// Generate a collection of 10 random doubles between -100.5 and 100.5
-IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-100.5, 100.5, 10);
-
-// Generate a collection of 10 random DateTime values
-IEnumerable<DateTime> randomDates = YANRandom.GenerateRandoms<DateTime>(size: 10);
-```
-
-### Support for Nullable Types
-
-Generate random nullable values:
-
-```csharp
-// Generate a random nullable int (always returns a non-null value)
-int? randomNullableInt = YANRandom.GenerateRandom<int?>();
-
-// Generate a random nullable DateTime (always returns a non-null value)
-DateTime? randomNullableDate = YANRandom.GenerateRandom<DateTime?>();
-
-// Generate a collection of random nullable values
-IEnumerable<int?> randomNullableInts = YANRandom.GenerateRandoms<int?>(10);
-```
-
-### Support for Various Numeric Types
-
-Generate random values for all numeric types:
-
-```csharp
-// Byte
-byte randomByte = random.NextByte();
-byte randomByteInRange = random.NextByte(10, 100);
-
-// SByte
-sbyte randomSByte = random.NextSbyte();
-sbyte randomSByteInRange = random.NextSbyte(-50, 50);
-
-// Short
-short randomShort = random.NextShort();
-short randomShortInRange = random.NextShort(-1000, 1000);
-
-// UShort
-ushort randomUShort = random.NextUshort();
-ushort randomUShortInRange = random.NextUshort(1000, 5000);
-
-// Int
-int randomInt = random.NextInt();
-int randomIntInRange = random.NextInt(-10000, 10000);
-
-// UInt
-uint randomUInt = random.NextUint();
-uint randomUIntInRange = random.NextUint(10000, 50000);
-
-// Long
-long randomLong = random.NextLong();
-long randomLongInRange = random.NextLong(-1000000, 1000000);
-
-// ULong
-ulong randomULong = random.NextUlong();
-ulong randomULongInRange = random.NextUlong(1000000, 5000000);
-
-// NInt (native int)
-nint randomNInt = random.NextNint();
-nint randomNIntInRange = random.NextNint(-10000, 10000);
-
-// NUInt (native unsigned int)
-nuint randomNUInt = random.NextNuint();
-nuint randomNUIntInRange = random.NextNuint(10000, 50000);
-
-// Float
-float randomFloat = random.NextSingle();
-float randomFloatInRange = random.NextSingle(-100.5f, 100.5f);
-
-// Double
-double randomDouble = random.NextDouble();
-double randomDoubleInRange = random.NextDouble(-100.5, 100.5);
-
-// Decimal
-decimal randomDecimal = random.NextDecimal();
-decimal randomDecimalInRange = random.NextDecimal(-100m, 100m);
-```
-
-### Parallel Processing for Large Collections
-
-Automatically uses parallel processing for generating large collections of random values:
-
-```csharp
-// Generate a large collection of random integers (uses parallel processing)
-IEnumerable<int> manyRandomInts = YANRandom.GenerateRandoms<int>(size: 2000);
-```
+- **Generic Support**: Generate random values of any unmanaged type
+- **Nullable Types**: Support for generating nullable random values
+- **Type Conversion**: Automatic conversion between different types
+- **Object Collections**: Process collections of objects of any type
 
 
 ## Usage Examples
@@ -134,180 +43,164 @@ IEnumerable<int> manyRandomInts = YANRandom.GenerateRandoms<int>(size: 2000);
 ### Basic Random Value Generation
 
 ```csharp
-// Create a random instance
+// Create a random number generator
 var random = new Random();
 
-// Generate random values of different types
-int randomInt = random.NextInt(-100, 100);
-double randomDouble = random.NextDouble(0, 1);
-DateTime randomDate = random.NextDateTime(
-    new DateTime(2000, 1, 1),
-    new DateTime(2023, 12, 31)
-);
-
-bool randomBool = random.NextBool();
-string randomString = random.NextString(10); // 10-character random string
+// Generate random values of various types
+int randomInt = random.NextInt(); // Random int (full range)
+int boundedInt = random.NextInt(1, 100); // Random int between 1 (inclusive) and 100 (exclusive)
+double randomDouble = random.NextDouble(); // Random double between 0.0 and 1.0
+double boundedDouble = random.NextDouble(-10.5, 10.5); // Random double in range
+decimal randomDecimal = random.NextDecimal(); // Random decimal value
+bool randomBool = random.NextBool(); // Random boolean (true or false)
+byte randomByte = random.NextByte(0, 255); // Random byte in range
+DateTime randomDate = random.NextDateTime(); // Random DateTime
+DateTime boundedDate = random.NextDateTime(
+    new DateTime(2023, 1, 1), 
+    new DateTime(2023, 12, 31)); // Random date in 2023
+char randomChar = random.NextChar(); // Random lowercase letter
+string randomString = random.NextString(10); // Random string of 10 lowercase letters
 ```
 
-### Using Static Methods
+### Using Static Methods for Unmanaged Types
 
 ```csharp
-// Generate random values using static methods
-int randomInt = YANRandom.GenerateRandom<int>();
-double randomDouble = YANRandom.GenerateRandom<double>(0, 100);
-DateTime randomDate = YANRandom.GenerateRandom<DateTime>();
-string randomString = YANRandom.GenerateRandom<string>();
+// Generate random values of specific types
+int randomInt = YANRandom.GenerateRandom<int>(); // Random int
+int boundedInt = YANRandom.GenerateRandom<int>(1, 100); // Random int in range
+float randomFloat = YANRandom.GenerateRandom<float>(); // Random float
+double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in range
+DateTime randomDate = YANRandom.GenerateRandom<DateTime>(); // Random DateTime
+bool randomBool = YANRandom.GenerateRandom<bool>(); // Random boolean
+
+// Generate random values from collections
+var numbers = new[] { 1, 2, 3, 4, 5 };
+int randomNumber = numbers.GenerateRandom(); // Random element from the array
+
+// Using params for convenience
+int randomFromParams = YANRandom.GenerateRandom(1, 2, 3, 4, 5); // Random element from params
 ```
 
-### Generating Test Data
+### Generating Collections of Random Values
 
 ```csharp
-public class TestDataGenerator
-{
-    public List<User> GenerateUsers(int count)
-    {
-        return YANRandom.GenerateRandoms<int>(size: count)
-            .Select(i => new User
-            {
-                Id = i,
-                Name = YANRandom.GenerateRandom<string>(),
-                Age = YANRandom.GenerateRandom<int>(18, 80),
-                RegistrationDate = YANRandom.GenerateRandom<DateTime>(
-                    new DateTime(2020, 1, 1),
-                    DateTime.Now
-                ),
-                IsActive = YANRandom.GenerateRandom<bool>()
-            })
-            .ToList();
-    }
-}
+// Generate collections of random values
+IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10); // 10 random ints
+IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in range
+IEnumerable<DateTime> randomDates = YANRandom.GenerateRandoms<DateTime>(size: 3); // 3 random dates
 
-public class User
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public int Age { get; set; }
-    public DateTime RegistrationDate { get; set; }
-    public bool IsActive { get; set; }
-}
+// Generate random values from an existing collection
+var numbers = new[] { 1, 2, 3, 4, 5 };
+IEnumerable<int> randomSelection = numbers.GenerateRandoms(size: 10); // 10 random elements (with duplicates)
+IEnumerable<int> uniqueRandoms = numbers.GenerateRandoms(size: 5, allowDuplicates: false); // All 5 elements in random order
+
+// Generate random values from a non-generic collection
+ArrayList list = [1, 2, 3, 4, 5];
+IEnumerable<int> randomFromList = list.GenerateRandoms<int>(size: 3); // 3 random elements from ArrayList
 ```
 
-### Random Data for Unit Tests
+### Working with Nullable Types
 
 ```csharp
-[Fact]
-public void CalculateDiscount_WithValidInput_ReturnsCorrectDiscount()
-{
-    // Arrange
-    var price = YANRandom.GenerateRandom<decimal>(100, 1000);
-    var discountPercentage = YANRandom.GenerateRandom<decimal>(5, 50);
-    var expectedDiscount = price * (discountPercentage / 100);
-    
-    // Act
-    var actualDiscount = DiscountCalculator.CalculateDiscount(price, discountPercentage);
-    
-    // Assert
-    Assert.Equal(expectedDiscount, actualDiscount, 2); // Compare with precision of 2 decimal places
-}
+// Generate nullable random values
+int? nullableInt = YANRandom.GenerateRandom<int?>(); // Random nullable int (non-null)
+double? nullableDouble = YANRandom.GenerateRandom<double?>(); // Random nullable double (non-null)
+DateTime? nullableDate = YANRandom.GenerateRandom<DateTime?>(); // Random nullable DateTime (non-null)
+
+// Generate collections of nullable random values
+IEnumerable<int?> nullableInts = YANRandom.GenerateRandoms<int?>(size: 10); // 10 random nullable ints
+IEnumerable<double?> nullableDoubles = YANRandom.GenerateRandoms<double?>(size: 5); // 5 random nullable doubles
 ```
 
-### Generating Random Collections
+### Working with Object Collections
 
 ```csharp
-public class ProductGenerator
-{
-    public List<Product> GenerateRandomProducts(int count)
-    {
-        var categories = new[] { "Electronics", "Clothing", "Books", "Home", "Sports" };
-        
-        return YANRandom.GenerateRandoms<int>(size: count)
-            .Select(i => new Product
-            {
-                Id = i,
-                Name = $"Product-{YANRandom.GenerateRandom<string>()}",
-                Price = YANRandom.GenerateRandom<decimal>(10, 1000),
-                Category = categories[YANRandom.GenerateRandom<int>(0, categories.Length - 1)],
-                IsInStock = YANRandom.GenerateRandom<bool>()
-            })
-            .ToList();
-    }
-}
+// Generate random values from collections of objects
+var objectCollection = new object[] { 1, "2", 3.5, "4", 5 };
+int randomInt = objectCollection.GenerateRandom<int>(); // Random int from the collection
+IEnumerable<int> randomInts = objectCollection.GenerateRandoms<int>(size: 10); // 10 random ints from the collection
 
-public class Product
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public decimal Price { get; set; }
-    public string Category { get; set; }
-    public bool IsInStock { get; set; }
-}
+// Generate random values from mixed-type collections
+var mixedTypes = new object[] { 1, "2.5", 3.7, "four", null };
+double randomDouble = mixedTypes.GenerateRandom<double>(); // Random double from valid elements
+IEnumerable<double> randomDoubles = mixedTypes.GenerateRandoms<double>(size: 5); // 5 random doubles from valid elements
 ```
 
-### Random Date Generation
+### Advanced Usage Examples
 
 ```csharp
-public class DateRangeGenerator
-{
-    public (DateTime Start, DateTime End) GenerateRandomDateRange(int maxDaysBetween)
-    {
-        var start = YANRandom.GenerateRandom<DateTime>(
-            DateTime.Now.AddYears(-1),
-            DateTime.Now
-        );
-        
-        var end = YANRandom.GenerateRandom<DateTime>(
-            start,
-            start.AddDays(maxDaysBetween)
-        );
-        
-        return (start, end);
-    }
-}
-```
+// Generate a large collection of random values (uses parallel processing)
+IEnumerable<int> largeCollection = YANRandom.GenerateRandoms<int>(size: 10000); // 10,000 random ints
 
-### Performance Testing with Random Data
+// Generate random values with custom min/max for different types
+byte randomByte = YANRandom.GenerateRandom<byte>(10, 20); // Random byte between 10 and 20
+short randomShort = YANRandom.GenerateRandom<short>(-100, 100); // Random short between -100 and 100
+long randomLong = YANRandom.GenerateRandom<long>(long.MinValue / 2, long.MaxValue / 2); // Random long in range
 
-```csharp
-public class PerformanceTester
-{
-    public TimeSpan MeasureProcessingTime(int dataSize)
-    {
-        // Generate a large collection of random data
-        var data = YANRandom.GenerateRandoms<double>(size: dataSize).ToList();
-        
-        var stopwatch = Stopwatch.StartNew();
-        
-        // Process the data
-        var result = data.Select(x => Math.Pow(x, 2)).Sum();
-        
-        stopwatch.Stop();
+// Generate random values from a collection with no duplicates
+var sourceCollection = Enumerable.Range(1, 100).ToList();
+var uniqueSample = sourceCollection.GenerateRandoms(size: 50, allowDuplicates: false); // 50 unique random elements
 
-        return stopwatch.Elapsed;
-    }
-}
-```
+// Generate random values from a non-generic collection with type conversion
+ArrayList mixedList = [1, "2", 3.5, "4.7"];
+IEnumerable<double> convertedRandoms = mixedList.GenerateRandoms<double>(size: 10); // 10 random doubles
 
-### Random String Generation
-
-```csharp
-public class PasswordGenerator
-{
-    public string GenerateRandomPassword(int length)
-    {
-        var random = new Random();
-        
-        return new string(Enumerable.Range(0, length)
-            .Select(_ => random.NextChar())
-            .ToArray());
-    }
-}
+// Generate random values with custom object parsing
+var customObjects = new object[] { "1.1", 2, "3.3", 4 };
+float randomFloat = customObjects.GenerateRandom<float>(); // Random float from parsed objects
 ```
 
 
-## Implementation Notes
+## Performance Considerations
 
-- All methods handle edge cases gracefully (e.g., min > max returns default value)
-- The component uses parallel processing for generating large collections of random values
-- String generation produces lowercase letters by default
-- DateTime generation ensures values are within the valid DateTime range
-- All methods are thread-safe when used with separate Random instances
+- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
+- **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
+- **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges
+- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+
+
+## Implementation Details
+
+- **Extension Methods**: All operations are implemented as extension methods for better integration with existing code
+- **Generic Type Support**: Methods use generic type parameters to support various types
+- **Null Safety**: All methods are designed to be null-safe, handling null inputs gracefully
+- **Partial Classes**: Uses partial classes to organize functionality by category:
+
+    - Core functionality (YANRandom.cs)
+    - Collection operations (YANRandom.Collection.cs)
+    - Generic operations (YANRandom.Generic.cs)
+    - Nullable operations (YANRandom.Nullable.cs)
+
+- **Internal Implementation**: Core implementation details are separated from the public API for better maintainability
+
+
+## Random Value Generation Coverage
+
+The library provides comprehensive coverage of random value generation:
+
+| Category | Functions |
+|----------|-----------|
+| **Numeric Types** | NextByte, NextSbyte, NextShort, NextUshort, NextInt, NextUint, NextLong, NextUlong, NextNint, NextNuint, NextSingle, NextDouble, NextDecimal |
+| **Boolean** | NextBool |
+| **DateTime** | NextDateTime |
+| **Text** | NextChar, NextString |
+| **Generic** | GenerateRandom<T> |
+| **Collections** | GenerateRandoms<T> |
+| **Collection Sampling** | GenerateRandom, GenerateRandoms |
+| **Nullable Types** | Support for generating nullable random values |
+| **Range Control** | Min/max parameters for all numeric types |
+
+
+## Technical Details
+
+- **Random Number Generation**: Extends `System.Random` with additional methods for various data types
+- **Range Validation**: Implements boundary checking to ensure generated values stay within specified ranges
+- **Type-Specific Generation**: Uses specialized methods for each primitive type to ensure proper range and distribution
+- **DateTime Generation**: Generates random DateTime values within the supported DateTime range
+- **String Generation**: Implements character-based random string generation with configurable length
+- **Collection Sampling**: Uses reservoir sampling algorithm for selecting random elements from collections
+- **Duplicate Control**: Implements tracking mechanism to prevent duplicates when requested
+- **Thread Safety**: Uses thread-local Random instances to prevent contention in multi-threaded scenarios
+- **Parallel Processing**: Implements parallel processing for generating large collections of random values
+- **Generic Implementation**: Uses generic type parameters with constraints to support various types
