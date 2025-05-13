@@ -433,7 +433,6 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
-
 #if RELEASE
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 #endif

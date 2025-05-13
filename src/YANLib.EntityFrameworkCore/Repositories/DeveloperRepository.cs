@@ -50,30 +50,12 @@ public class DeveloperRepository(
     {
         try
         {
-            var latestEntity = await _dbContext.Developers
-                .Where(x => x.IdCard == entity.IdCard && x.IsDeleted == false)
-                .OrderByDescending(x => x.Version)
-                .FirstOrDefaultAsync();
+            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.IdCard == entity.IdCard && x.IsDeleted == false);
 
             if (latestEntity.IsNull())
             {
                 throw new EntityNotFoundException(typeof(Developer), entity.IdCard);
             }
-
-            var newEntity = new Developer
-            {
-                Name = entity.Name ?? latestEntity.Name,
-                Phone = entity.Phone ?? latestEntity.Phone,
-                IdCard = entity.IdCard ?? latestEntity.IdCard,
-                DeveloperTypeCode = entity.DeveloperTypeCode.IsNotDefault() ? entity.DeveloperTypeCode : latestEntity.DeveloperTypeCode,
-                Version = latestEntity.Version + 1,
-                CreatedBy = latestEntity.CreatedBy,
-                CreatedAt = latestEntity.CreatedAt,
-                UpdatedBy = entity.UpdatedBy,
-                UpdatedAt = UtcNow,
-                IsActive = entity.IsActive,
-                IsDeleted = entity.IsDeleted,
-            };
 
             latestEntity.UpdatedBy = entity.UpdatedBy;
             latestEntity.UpdatedAt = UtcNow;
@@ -86,7 +68,20 @@ public class DeveloperRepository(
                 throw new Exception("Failed to update the latest entity.");
             }
 
-            var result = await _dbContext.Developers.AddAsync(newEntity);
+            var result = await _dbContext.Developers.AddAsync(new Developer
+            {
+                Name = entity.Name ?? latestEntity.Name,
+                Phone = entity.Phone ?? latestEntity.Phone,
+                IdCard = entity.IdCard ?? latestEntity.IdCard,
+                DeveloperTypeCode = entity.DeveloperTypeCode.IsNotDefault() ? entity.DeveloperTypeCode : latestEntity.DeveloperTypeCode,
+                Version = latestEntity.Version + 1,
+                CreatedBy = latestEntity.CreatedBy,
+                CreatedAt = latestEntity.CreatedAt,
+                UpdatedBy = entity.UpdatedBy,
+                UpdatedAt = UtcNow,
+                IsActive = entity.IsActive,
+                IsDeleted = entity.IsDeleted,
+            });
 
             return result.State is not Added ? throw new Exception("Failed to add the new entity.") : await _dbContext.SaveChangesAsync() <= 0 ? throw new Exception("Failed to save changes.") : result.Entity;
         }

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using YANLib.Requests.v2.Create;
-using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 
 namespace YANLib.Services.v2;
@@ -14,11 +14,9 @@ public interface IDeveloperProjectService : IApplicationService
 
     public Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId);
 
-    public Task<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request);
+    public Task<DeveloperProjectResponse?> Assign(DeveloperProjectCreateRequest request, CancellationToken cancellationToken);
 
-    public Task<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request);
-
-    public Task<bool?> Delete(Guid developerId, string projectId, Guid updatedBy);
+    public Task<bool> Unassign(Guid developerId, string projectId, Guid updatedBy);
 
     public Task<bool> SyncDbToRedis();
 

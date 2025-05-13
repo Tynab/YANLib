@@ -12,9 +12,8 @@ using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
-using YANLib.Requests.v2.Create;
-using YANLib.Requests.v2.Update;
 using YANLib.Responses;
+using static System.DateTime;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
@@ -81,69 +80,52 @@ public class DeveloperProjectService(
         }
     }
 
-    public async Task<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request)
+    public async Task<bool> Assign(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken)
     {
         try
         {
-            var devTask = _developerService.Get(request.DeveloperId);
-            var certTask = _projectService.Get(request.ProjectId);
+            var devTask = _developerService.Get(developerId);
+            var projTask = _projectService.Get(projectId);
 
-            _ = await WhenAny(devTask, certTask);
+            _ = await WhenAny(devTask, projTask);
 
             var dev = await devTask;
 
             if (dev.IsNull())
             {
-                throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
+                throw new EntityNotFoundException(typeof(Developer), developerId);
             }
 
-            var cert = await certTask;
+            var proj = await projTask;
 
-            if (cert.IsNull())
+            if (proj.IsNull())
             {
-                throw new EntityNotFoundException(typeof(Project), request.ProjectId);
+                throw new EntityNotFoundException(typeof(Project), projectId);
             }
 
-            var entity = await _repository.InsertAsync(ObjectMapper.Map<(Guid DeveloperId, string ProjectId, DeveloperProjectCreateRequest Request), DeveloperProject>((dev.Id, cert.Id, request)));
+            var entity = await _repository.InsertAsync(new DeveloperProject
+            {
+                DeveloperId = developerId,
+                ProjectId = projectId,
+                CreatedBy = updatedBy,
+                CreatedAt = UtcNow,
+                IsActive = true,
+                IsDeleted = false
+            }, cancellationToken: cancellationToken);
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.Set($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity))
-                ? ObjectMapper.Map<(Guid DeveloperId, string ProjectId, DeveloperProject Entity), DeveloperProjectResponse>((dev.Id, cert.Id, entity))
-                : throw new BusinessException(REDIS_SERVER_ERROR);
+                : await _redisService.Set($"{DeveloperProjectGroupPrefix}:{developerId}", projectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Insert-DeveloperProjectService-Exception: {Request}", request.Serialize());
+            _logger.LogError(ex, "Assign-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
             throw;
         }
     }
 
-    public async Task<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request)
-    {
-        try
-        {
-            var entity = await _repository.Modify(ObjectMapper.Map<(Guid Id, DeveloperProjectUpdateRequest Request), DeveloperProjectDto>(((
-                await _redisService.Get($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId)
-                ?? throw new EntityNotFoundException(typeof(DeveloperProjectRedisDto))
-            ).Id, request)));
-
-            return entity.IsNull()
-                ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.Set($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity))
-                ? ObjectMapper.Map<(Guid DeveloperId, string ProjectId, DeveloperProject Entity), DeveloperProjectResponse>((request.DeveloperId, request.ProjectId, entity))
-                : throw new BusinessException(REDIS_SERVER_ERROR);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Modify-DeveloperProjectService-Exception: {Request}", request.Serialize());
-
-            throw;
-        }
-    }
-
-    public async Task<bool?> Delete(Guid developerId, string projectId, Guid updatedBy)
+    public async Task<bool> Unassign(Guid developerId, string projectId, Guid updatedBy)
     {
         try
         {
@@ -158,7 +140,7 @@ public class DeveloperProjectService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
+            _logger.LogError(ex, "Unassign-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
             throw;
         }
@@ -181,11 +163,11 @@ public class DeveloperProjectService(
                 return result;
             }
 
-            var ss = new SemaphoreSlim(1);
+            var slim = new SemaphoreSlim(1);
 
             await WhenAll(entities.GroupBy(x => x.DeveloperId).Select(async g =>
             {
-                await ss.WaitAsync();
+                await slim.WaitAsync();
 
                 try
                 {
@@ -193,7 +175,7 @@ public class DeveloperProjectService(
                 }
                 finally
                 {
-                    _ = ss.Release();
+                    _ = slim.Release();
                 }
             }));
 

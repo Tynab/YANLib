@@ -6,7 +6,5 @@ public sealed class ProjectCreateEto
 
     public string? Name { get; set; }
 
-    public double? GPA { get; set; }
-
-    public string? DeveloperId { get; set; }
+    public string? Description { get; set; }
 }

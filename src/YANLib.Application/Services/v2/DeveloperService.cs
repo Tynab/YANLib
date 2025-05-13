@@ -101,16 +101,7 @@ public class DeveloperService(
     {
         try
         {
-            var dto = await _esService.Get(idCard) ?? throw new EntityNotFoundException(typeof(DeveloperEsIndex));
-            var model = ObjectMapper.Map<DeveloperEsIndex, Developer>(dto);
-
-            model.Name = request.Name ?? model.Name;
-            model.Phone = request.Phone ?? model.Phone;
-            model.IdCard = idCard;
-            model.DeveloperTypeCode = request.DeveloperTypeCode ?? model.DeveloperTypeCode;
-            model.IsActive = request.IsActive ?? model.IsActive;
-
-            var entity = await _repository.Adjust(model);
+            var entity = await _repository.Adjust(ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request));
 
             if (entity.IsNull())
             {
@@ -119,7 +110,7 @@ public class DeveloperService(
 
             var result = ObjectMapper.Map<Developer, DeveloperResponse>(entity);
 
-            result.DeveloperType = await _developerTypeService.Get(model.DeveloperTypeCode);
+            result.DeveloperType = await _developerTypeService.Get(entity.DeveloperTypeCode);
 
             return await _esService.Set(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result)) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
@@ -170,13 +161,13 @@ public class DeveloperService(
             }
 
             var datas = new List<DeveloperEsIndex>();
-            var ss = new SemaphoreSlim(1);
+            var slim = new SemaphoreSlim(1);
 
             await WhenAll(entities.Select(async x =>
             {
                 var dto = ObjectMapper.Map<Developer, DeveloperEsIndex>(x);
 
-                await ss.WaitAsync();
+                await slim.WaitAsync();
 
                 try
                 {
@@ -185,7 +176,7 @@ public class DeveloperService(
                 }
                 finally
                 {
-                    _ = ss.Release();
+                    _ = slim.Release();
                 }
             }));
 

@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.Requests.v2.Create;
-using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
 using static Nest.SortOrder;
@@ -28,9 +29,11 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     private readonly ILogger<DeveloperProjectController> _logger = logger;
     private readonly IDeveloperProjectService _service = service;
 
-    [HttpGet("get-by-developer")]
-    [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ của lập trình viên theo mã định danh")]
-    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, byte pageNumber = 1, byte pageSize = 10)
+    [HttpGet]
+    [SwaggerOperation(Summary = "Lấy tất cả dự án của lập trình viên theo mã định danh")]
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), 200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, CancellationToken cancellationToken, byte pageNumber = 1, byte pageSize = 10)
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
@@ -38,61 +41,71 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
             pageNumber,
             pageSize,
             $"{nameof(DeveloperProjectResponse.CreatedAt)} {Descending}"
-        )), developerId));
+        )), developerId, cancellationToken));
     }
 
-    [HttpGet("get-by-developer-and-project")]
-    [SwaggerOperation(Summary = "Lấy chứng chỉ của lập trình viên theo mã định danh và mã chứng chỉ")]
-    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject([Required] Guid developerId, [Required] string projectId)
+    [HttpGet("{developerId:guid}/{projectId}")]
+    [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo mã nhân viên và mã dự án")]
+    [ProducesResponseType(typeof(DeveloperProjectResponse), 200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("GetByDeveloperAndProject-DeveloperProjectController: {DeveloperId} - {ProjectId}", developerId, projectId);
 
-        return Ok(await _service.GetByDeveloperAndProject(developerId, projectId));
+        var result = await _service.GetByDeveloperAndProject(developerId, projectId, cancellationToken);
+
+        return result.IsNull() ? (ActionResult<DeveloperProjectResponse>)NotFound() : Ok(result);
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới chứng chỉ của lập trình viên")]
-    public async Task<ActionResult<DeveloperProjectResponse>> Insert(DeveloperProjectCreateRequest request)
+    [SwaggerOperation(Summary = "Gán dự án cho lập trình viên")]
+    [ProducesResponseType(typeof(DeveloperProjectResponse), 201)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Assign([FromBody][Required] DeveloperProjectCreateRequest request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Insert-DeveloperProjectController: {Request}", request.Serialize());
+        _logger.LogInformation("Assign-DeveloperProjectController: {Request}", request.Serialize());
 
-        return Ok(await _service.Insert(request));
+        var result = await _service.Assign(request, cancellationToken);
+
+        return result.IsNull()
+            ? Conflict()
+            : CreatedAtAction(nameof(GetByDeveloperAndProject), new
+            {
+                developerId = result.DeveloperId,
+                projectId = result.ProjectId
+            }, result);
     }
 
-    [HttpPatch]
-    [SwaggerOperation(Summary = "Cập nhật chứng chỉ của lập trình viên")]
-    public async Task<ActionResult<DeveloperProjectResponse>> Modify(DeveloperProjectUpdateRequest request)
+    [HttpDelete("{developerId:guid}/{projectId}")]
+    [SwaggerOperation(Summary = "Gỡ gán dự án cho lập trình viên")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> Unassign(Guid developerId, string projectId, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Modify-DeveloperProjectController: {Request}", request.Serialize());
+        _logger.LogInformation("Unassign-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
-        return Ok(await _service.Modify(request));
-    }
-
-    [HttpDelete]
-    [SwaggerOperation(Summary = "Xóa chứng chỉ của lập trình viên")]
-    public async Task<ActionResult<DeveloperProjectResponse>> Delete([Required] Guid developerId, [Required] string projectId, [Required] Guid updatedBy)
-    {
-        _logger.LogInformation("Delete-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
-
-        return Ok(await _service.Delete(developerId, projectId, updatedBy));
+        return await _service.Unassign(developerId, projectId, updatedBy, cancellationToken) ? NoContent() : NotFound();
     }
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-redis")]
-    [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ của lập trình viên từ Database sang Redis")]
-    public async Task<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
+    [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken) => Ok(await _service.SyncDbToRedis(cancellationToken));
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-db-to-redis-by-developer")]
-    [SwaggerOperation(Summary = "Đồng bộ chứng chỉ của lập trình viên từ Database sang Redis theo mã định danh")]
-    public async Task<IActionResult> SyncDbToRedisByDeveloper([Required] Guid developerId)
+    [SwaggerOperation(Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> SyncDbToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
-        return Ok(await _service.SyncDbToRedisByDeveloper(developerId));
+        return Ok(await _service.SyncDbToRedisByDeveloper(developerId, cancellationToken));
     }
 }

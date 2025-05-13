@@ -62,11 +62,11 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
             }
 
             var result = new Dictionary<string, TRedisDto?>();
-            var ss = new SemaphoreSlim(1);
+            var slim = new SemaphoreSlim(1);
 
             await WhenAll(keys.Select(async k =>
             {
-                await ss.WaitAsync();
+                await slim.WaitAsync();
 
                 try
                 {
@@ -79,7 +79,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
                 }
                 finally
                 {
-                    _ = ss.Release();
+                    _ = slim.Release();
                 }
             }));
 
@@ -103,7 +103,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
             }
 
             var result = new Dictionary<string, TRedisDto?>();
-            var ss = new SemaphoreSlim(1);
+            var slim = new SemaphoreSlim(1);
 
             await WhenAll((await _database.HashGetAllAsync(group.ToLowerInvariant())).Where(e => e.Name.HasValue && e.Value.HasValue).Select(async x =>
             {
@@ -111,7 +111,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
                 if (val.HasValue)
                 {
-                    await ss.WaitAsync();
+                    await slim.WaitAsync();
 
                     try
                     {
@@ -119,7 +119,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
                     }
                     finally
                     {
-                        _ = ss.Release();
+                        _ = slim.Release();
                     }
                 }
             }));
@@ -136,19 +136,19 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
     public async Task<bool> Set(string group, string key, TRedisDto value)
     {
-        var jsonVal = value.Serialize();
+        var json = value.Serialize();
 
         try
         {
             _ = group.IsNullWhiteSpace() || key.IsNullWhiteSpace() || value.IsNull()
                 ? throw new BusinessException(BAD_REQUEST)
-                : await _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), jsonVal);
+                : await _database.HashSetAsync((RedisKey)group.ToLowerInvariant(), (RedisValue)key.ToLowerInvariant(), json);
 
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Set-RedisService-Exception: {Group} - {Key} - {Value}", group, key, jsonVal);
+            _logger.LogError(ex, "Set-RedisService-Exception: {Group} - {Key} - {Value}", group, key, json);
 
             throw;
         }
@@ -199,11 +199,11 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
             }
 
             var result = true;
-            var ss = new SemaphoreSlim(1);
+            var slim = new SemaphoreSlim(1);
 
             await WhenAll(keys.Where(k => k.IsNotNullWhiteSpace()).Select(async k =>
             {
-                await ss.WaitAsync();
+                await slim.WaitAsync();
 
                 try
                 {
@@ -211,7 +211,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
                 }
                 finally
                 {
-                    _ = ss.Release();
+                    _ = slim.Release();
                 }
             }));
 
@@ -234,9 +234,9 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
                 throw new BusinessException(BAD_REQUEST);
             }
 
-            var dic = await GetAll(group);
+            var dict = await GetAll(group);
 
-            return dic.IsNullEmpty() || await DeleteBulk(group, [.. dic.Select(static p => p.Key)]);
+            return dict.IsNullEmpty() || await DeleteBulk(group, [.. dict.Select(static p => p.Key)]);
         }
         catch (Exception ex)
         {
@@ -262,23 +262,23 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
             if (keys.IsNotNullEmpty())
             {
-                var ss = new SemaphoreSlim(1);
+                var slim = new SemaphoreSlim(1);
 
                 await WhenAll(keys.Select(async k =>
                 {
-                    var dic = await GetAll(k);
+                    var dict = await GetAll(k);
 
-                    if (dic.IsNotNullEmpty())
+                    if (dict.IsNotNullEmpty())
                     {
-                        await ss.WaitAsync();
+                        await slim.WaitAsync();
 
                         try
                         {
-                            result.Add(k.ToString().Split(":").AsEnumerable().Reverse().FirstOrDefault() ?? string.Empty, dic);
+                            result.Add(k.ToString().Split(":").AsEnumerable().Reverse().FirstOrDefault() ?? string.Empty, dict);
                         }
                         finally
                         {
-                            _ = ss.Release();
+                            _ = slim.Release();
                         }
                     }
                 }));

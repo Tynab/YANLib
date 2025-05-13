@@ -86,6 +86,7 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
+		<PackageReference Include="Tynab.YANLib" Version="8.2.0" />
 		<PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="8.3.4" />

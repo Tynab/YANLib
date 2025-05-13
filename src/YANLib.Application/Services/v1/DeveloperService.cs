@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,13 +39,11 @@ public class DeveloperService(
             var projectIds = developerProjects.Select(x => x.ProjectId).Distinct();
             var projects = await _projectRepository.GetListAsync(x => projectIds.Contains(x.Id));
 
-            result.Items.ForEach(x =>
+            foreach (var item in result.Items)
             {
-                x.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(y => y.Id == x.DeveloperType?.Id));
-                x.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>(
-                    [.. developerProjects.Where(y => y.DeveloperId == x.Id).Select(y => projects.FirstOrDefault(z => z.Id == y.ProjectId))]
-                );
-            });
+                item.DeveloperType = ObjectMapper.Map<DeveloperType?, DeveloperTypeResponse?>(developerTypes.FirstOrDefault(x => x.Id == item.DeveloperType?.Id));
+                item.Projects = ObjectMapper.Map<List<Project?>, List<ProjectResponse?>>([.. developerProjects.Where(x => x.DeveloperId == item.Id).Select(x => projects.FirstOrDefault(y => y.Id == x.ProjectId))]);
+            }
 
             return result;
         }
