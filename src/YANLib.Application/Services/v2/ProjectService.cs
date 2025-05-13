@@ -21,18 +21,18 @@ using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Services.v2;
 
-public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IEsService<ProjectEsIndex> esService) : YANLibAppService, IProjectService
+public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IElasticsearchService<ProjectEsIndex> esService) : YANLibAppService, IProjectService
 {
     private readonly ILogger<ProjectService> _logger = logger;
     private readonly IProjectRepository _repository = repository;
-    private readonly IEsService<ProjectEsIndex> _esService = esService;
+    private readonly IElasticsearchService<ProjectEsIndex> _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
     public async Task<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.GetAll(input));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.GetAllAsync(input));
         }
         catch (Exception ex)
         {
@@ -46,7 +46,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
     {
         try
         {
-            var dto = await _esService.Get(id);
+            var dto = await _esService.GetAsync(id);
 
             return dto.IsNull() ? default : ObjectMapper.Map<ProjectEsIndex, ProjectResponse>(dto);
         }
@@ -64,7 +64,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         {
             var entity = await _repository.InsertAsync(ObjectMapper.Map<(string Id, ProjectCreateRequest Request), Project>((_idGenerator.NextIdAlphabetic(), request)));
 
-            return entity.IsNotNull() && await _esService.Set(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
+            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
                 : throw new EntityNotFoundException(typeof(Project));
         }
@@ -80,10 +80,10 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
     {
         try
         {
-            var dto = await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id);
+            var dto = await _esService.GetAsync(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id);
             var entity = await _repository.Modify(ObjectMapper.Map<(string Id, ProjectUpdateRequest Request), ProjectDto>((id, request)));
 
-            return entity.IsNotNull() && await _esService.Set(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
+            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
                 : throw new EntityNotFoundException(typeof(Project), id);
         }
@@ -101,10 +101,10 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         {
             return (await _repository.Modify(new ProjectDto
             {
-                Id = (await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id)).Id.ToString(),
+                Id = (await _esService.GetAsync(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id)).Id.ToString(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            })).IsNotNull() && await _esService.Delete(id);
+            })).IsNotNull() && await _esService.DeleteAsync(id);
         }
         catch (Exception ex)
         {
@@ -118,7 +118,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
     {
         try
         {
-            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Project);
+            var cleanTask = _esService.DeleteAllAsync(ElasticsearchIndex.Project);
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);
@@ -150,7 +150,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
                 }
             }));
 
-            return result && await _esService.SetBulk(datas, ElasticsearchIndex.Project);
+            return result && await _esService.SetBulkAsync(datas, ElasticsearchIndex.Project);
         }
         catch (Exception ex)
         {

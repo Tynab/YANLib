@@ -93,7 +93,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
         return Ok(await _service.SearchWithWildcard(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
             pageNumber,
             pageSize,
-            $"{nameof(ProjectResponse.GPA)} {Descending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
+            $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
         )), searchText));
     }
 

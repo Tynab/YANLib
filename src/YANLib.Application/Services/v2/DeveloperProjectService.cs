@@ -12,6 +12,7 @@ using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
+using YANLib.Requests.v2.Create;
 using YANLib.Responses;
 using static System.DateTime;
 using static System.Threading.Tasks.Task;
@@ -34,11 +35,11 @@ public class DeveloperProjectService(
     private readonly IDeveloperService _developerService = developerService;
     private readonly IProjectService _projectService = projectService;
 
-    public async Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId)
+    public async Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var dtos = await _redisService.GetAll($"{DeveloperProjectGroupPrefix}:{developerId}");
+            var dtos = await _redisService.GetAllAsync($"{DeveloperProjectGroupPrefix}:{developerId}", cancellationToken);
 
             if (dtos.IsNullEmpty())
             {
@@ -62,11 +63,11 @@ public class DeveloperProjectService(
         }
     }
 
-    public async Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId)
+    public async Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var dto = await _redisService.Get($"{DeveloperProjectGroupPrefix}:{developerId}", projectId);
+            var dto = await _redisService.GetAsync($"{DeveloperProjectGroupPrefix}:{developerId}", projectId, cancellationToken);
 
             return dto.IsNull()
                 ? throw new EntityNotFoundException(typeof(DeveloperProjectRedisDto), projectId)
@@ -80,11 +81,11 @@ public class DeveloperProjectService(
         }
     }
 
-    public async Task<bool> Assign(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken)
+    public async Task<DeveloperProjectResponse?> Assign(DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
         try
         {
-            var devTask = _developerService.Get(developerId);
+            var devTask = _developerService.Get(request.DeveloperId, cancellationToken);
             var projTask = _projectService.Get(projectId);
 
             _ = await WhenAny(devTask, projTask);
@@ -125,18 +126,18 @@ public class DeveloperProjectService(
         }
     }
 
-    public async Task<bool> Unassign(Guid developerId, string projectId, Guid updatedBy)
+    public async Task<bool> Unassign(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken = default)
     {
         try
         {
             var entity = await _repository.Modify(new DeveloperProjectDto
             {
-                Id = (await _redisService.Get($"{DeveloperProjectGroupPrefix}:{developerId}", projectId) ?? throw new EntityNotFoundException(typeof(DeveloperProjectRedisDto))).Id,
+                Id = (await _redisService.GetAsync($"{DeveloperProjectGroupPrefix}:{developerId}", projectId, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperProjectRedisDto))).Id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             });
 
-            return entity.IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.Delete($"{DeveloperProjectGroupPrefix}:{developerId}", projectId);
+            return entity.IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.DeleteAsync($"{DeveloperProjectGroupPrefix}:{developerId}", projectId);
         }
         catch (Exception ex)
         {
@@ -146,12 +147,12 @@ public class DeveloperProjectService(
         }
     }
 
-    public async Task<bool> SyncDbToRedis()
+    public async Task<bool> SyncDbToRedis(CancellationToken cancellationToken = default)
     {
         try
         {
-            var cleanTask = _redisService.DeleteGroup($"{DeveloperProjectGroupPrefix}:");
-            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
+            var cleanTask = _redisService.DeleteGroupAsync($"{DeveloperProjectGroupPrefix}:", cancellationToken);
+            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted, cancellationToken: cancellationToken);
 
             _ = await WhenAny(cleanTask, entitiesTask);
 
@@ -167,11 +168,11 @@ public class DeveloperProjectService(
 
             await WhenAll(entities.GroupBy(x => x.DeveloperId).Select(async g =>
             {
-                await slim.WaitAsync();
+                await slim.WaitAsync(cancellationToken);
 
                 try
                 {
-                    result &= await _redisService.SetBulk($"{DeveloperProjectGroupPrefix}:{g.Key}", g.ToDictionary(y => y.ProjectId, y => ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(y)));
+                    result &= await _redisService.SetBulkAsync($"{DeveloperProjectGroupPrefix}:{g.Key}", g.ToDictionary(y => y.ProjectId, y => ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(y)));
                 }
                 finally
                 {
@@ -189,11 +190,11 @@ public class DeveloperProjectService(
         }
     }
 
-    public async Task<bool> SyncDbToRedisByDeveloper(Guid developerId)
+    public async Task<bool> SyncDbToRedisByDeveloper(Guid developerId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var cleanTask = _redisService.DeleteAll($"{DeveloperProjectGroupPrefix}:{developerId}");
+            var cleanTask = _redisService.DeleteAllAsync($"{DeveloperProjectGroupPrefix}:{developerId}");
             var entitiesTask = _repository.GetListAsync(x => x.DeveloperId == developerId && !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);
@@ -203,7 +204,7 @@ public class DeveloperProjectService(
 
             return entities.IsNullEmpty()
                 ? result
-                : (result &= await _redisService.SetBulk($"{DeveloperProjectGroupPrefix}:{developerId}", entities.ToDictionary(x => x.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>)));
+                : (result &= await _redisService.SetBulkAsync($"{DeveloperProjectGroupPrefix}:{developerId}", entities.ToDictionary(x => x.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>)));
         }
         catch (Exception ex)
         {

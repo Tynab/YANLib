@@ -34,7 +34,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var dtos = await _redisService.GetAll(DeveloperTypeGroup);
+            var dtos = await _redisService.GetAllAsync(DeveloperTypeGroup);
 
             if (dtos.IsNullEmpty())
             {
@@ -62,7 +62,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, id.ToString());
+            var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString());
 
             return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id) : ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((id, dto));
         }
@@ -82,7 +82,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.Set(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
+                : await _redisService.SetAsync(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
                 : throw new BusinessException(REDIS_SERVER_ERROR);
         }
@@ -98,12 +98,12 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var dto = await _redisService.Get(DeveloperTypeGroup, id.ToString()) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
+            var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString()) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
             var entity = await _repository.Modify(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)));
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.Set(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
+                : await _redisService.SetAsync(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
                 : throw new BusinessException(REDIS_SERVER_ERROR);
         }
@@ -124,7 +124,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
                 Id = id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.Delete(DeveloperTypeGroup, id.ToString());
+            })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.DeleteAsync(DeveloperTypeGroup, id.ToString());
         }
         catch (Exception ex)
         {
@@ -138,7 +138,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            var cleanTask = _redisService.DeleteAll(DeveloperTypeGroup);
+            var cleanTask = _redisService.DeleteAllAsync(DeveloperTypeGroup);
             var entitiesTask = _repository.GetListAsync(static x => !x.IsDeleted);
 
             _ = await WhenAny(cleanTask, entitiesTask);
@@ -146,7 +146,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsNullEmpty() ? result : result && await _redisService.SetBulk(DeveloperTypeGroup, entities.ToDictionary(static x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
+            return entities.IsNullEmpty() ? result : result && await _redisService.SetBulkAsync(DeveloperTypeGroup, entities.ToDictionary(static x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
         }
         catch (Exception ex)
         {

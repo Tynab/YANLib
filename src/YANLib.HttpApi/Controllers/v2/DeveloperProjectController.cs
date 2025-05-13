@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -33,7 +32,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Lấy tất cả dự án của lập trình viên theo mã định danh")]
     [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), 200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, CancellationToken cancellationToken, byte pageNumber = 1, byte pageSize = 10)
+    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
@@ -48,7 +47,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo mã nhân viên và mã dự án")]
     [ProducesResponseType(typeof(DeveloperProjectResponse), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken)
+    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("GetByDeveloperAndProject-DeveloperProjectController: {DeveloperId} - {ProjectId}", developerId, projectId);
 
@@ -61,7 +60,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Gán dự án cho lập trình viên")]
     [ProducesResponseType(typeof(DeveloperProjectResponse), 201)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Assign([FromBody][Required] DeveloperProjectCreateRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Assign([FromBody][Required] DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Assign-DeveloperProjectController: {Request}", request.Serialize());
 
@@ -80,7 +79,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Gỡ gán dự án cho lập trình viên")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> Unassign(Guid developerId, string projectId, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken)
+    public async Task<IActionResult> Unassign(Guid developerId, string projectId, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Unassign-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
@@ -93,7 +92,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken) => Ok(await _service.SyncDbToRedis(cancellationToken));
+    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDbToRedis(cancellationToken));
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
@@ -102,7 +101,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> SyncDbToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken)
+    public async Task<IActionResult> SyncDbToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
