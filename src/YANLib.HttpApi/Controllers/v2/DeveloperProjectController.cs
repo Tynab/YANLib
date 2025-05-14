@@ -36,7 +36,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
-        return Ok(await _service.GetByDeveloper(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+        return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
             pageNumber,
             pageSize,
             $"{nameof(DeveloperProjectResponse.CreatedAt)} {Descending}"
@@ -51,7 +51,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("GetByDeveloperAndProject-DeveloperProjectController: {DeveloperId} - {ProjectId}", developerId, projectId);
 
-        var result = await _service.GetByDeveloperAndProject(developerId, projectId, cancellationToken);
+        var result = await _service.GetByDeveloperAndProjectAsync(developerId, projectId, cancellationToken);
 
         return result.IsNull() ? (ActionResult<DeveloperProjectResponse>)NotFound() : Ok(result);
     }
@@ -64,7 +64,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("Assign-DeveloperProjectController: {Request}", request.Serialize());
 
-        var result = await _service.Assign(request, cancellationToken);
+        var result = await _service.AssignAsync(request, cancellationToken);
 
         return result.IsNull()
             ? Conflict()
@@ -83,7 +83,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("Unassign-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
-        return await _service.Unassign(developerId, projectId, updatedBy, cancellationToken) ? NoContent() : NotFound();
+        return await _service.UnassignAsync(developerId, projectId, updatedBy, cancellationToken) ? NoContent() : NotFound();
     }
 
 #if RELEASE
@@ -92,7 +92,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDbToRedis(cancellationToken));
+    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
@@ -105,6 +105,6 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
-        return Ok(await _service.SyncDbToRedisByDeveloper(developerId, cancellationToken));
+        return Ok(await _service.SyncDataToRedisByDeveloperAsync(developerId, cancellationToken));
     }
 }

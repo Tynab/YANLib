@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.ListQueries.v2;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
@@ -30,24 +31,28 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy danh sách định nghĩa loại lập trình viên")]
-    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), 200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll([FromQuery] DeveloperTypeListQuery query)
     {
-        _logger.LogInformation("GetAll-DeveloperTypeController: {PageNumber} - {PageSize}", pageNumber, pageSize);
+        _logger.LogInformation("GetAll-DeveloperTypeController: {Query}", query.Serialize());
 
-        return Ok(await _service.GetAll(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            pageNumber,
-            pageSize,
+        return Ok(await _service.GetAllAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
+            query.PageNumber,
+            query.PageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
         ))));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
-    public async Task<ActionResult<DeveloperTypeResponse>> Get(long id)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id)
     {
         _logger.LogInformation("Get-DeveloperTypeController: {Id}", id);
 
-        return Ok(await _service.Get(id));
+        return Ok(await _service.GetAsync(id));
     }
 
     [HttpPost]
@@ -56,7 +61,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     {
         _logger.LogInformation("Insert-DeveloperTypeController: {Request}", request.Serialize());
 
-        return Ok(await _service.Insert(request));
+        return Ok(await _service.InsertAsync(request));
     }
 
     [HttpPatch("{id}")]
@@ -65,7 +70,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     {
         _logger.LogInformation("Modify-DeveloperTypeController: {Id} - {Request}", id, request.Serialize());
 
-        return Ok(await _service.Modify(id, request));
+        return Ok(await _service.ModifyAsync(id, request));
     }
 
     [HttpDelete("{id}")]
@@ -74,7 +79,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     {
         _logger.LogInformation("Delete-DeveloperTypeController: {Id} - {UpdatedBy}", id, updatedBy);
 
-        return Ok(await _service.Delete(id, updatedBy));
+        return Ok(await _service.DeleteAsync(id, updatedBy));
     }
 
 #if RELEASE
@@ -82,5 +87,5 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 #endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
-    public async Task<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDbToRedis());
+    public async Task<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDataToRedisAsync());
 }

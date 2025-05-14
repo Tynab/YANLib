@@ -9,7 +9,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-using YANLib.ListQueries;
+using YANLib.ListQueries.v1;
 using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.Requests.v2.Create;
@@ -9,23 +10,23 @@ namespace YANLib.Services.v2;
 
 public interface IProjectService
 {
-    public Task<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input);
+    public Task<PagedResultDto<ProjectResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default);
 
-    public Task<ProjectResponse?> Get(string id);
+    public Task<ProjectResponse?> GetAsync(string id, CancellationToken cancellationToken = default);
 
-    public Task<ProjectResponse?> Insert(ProjectCreateRequest request);
+    public Task<ProjectResponse?> InsertAsync(ProjectCreateRequest request, CancellationToken cancellationToken = default);
 
-    public Task<ProjectResponse?> Modify(string id, ProjectUpdateRequest dto);
+    public Task<ProjectResponse?> ModifyAsync(string id, ProjectUpdateRequest dto, CancellationToken cancellationToken = default);
 
-    public Task<bool> Delete(string id, Guid updatedBy);
+    public Task<bool> DeleteAsync(string id, Guid updatedBy, CancellationToken cancellationToken = default);
 
-    public Task<bool> SyncDbToEs();
+    public Task<bool> SyncDataToElasticsearchAsync(CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
 }

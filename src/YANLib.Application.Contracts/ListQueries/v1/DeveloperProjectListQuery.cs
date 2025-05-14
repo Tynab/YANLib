@@ -1,3 +1,3 @@
-﻿namespace YANLib.ListQueries;
+﻿namespace YANLib.ListQueries.v1;
 
 public sealed class DeveloperProjectListQuery : YANLibApplicationListQuery { }

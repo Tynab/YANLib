@@ -9,7 +9,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-using YANLib.ListQueries;
+using YANLib.ListQueries.v1;
+using YANLib.Requests.v1.Create;
+using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
 
@@ -54,7 +56,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Thêm mới dự án của lập trình viên")]
     [ProducesResponseType(typeof(DeveloperResponse), 201)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Create([FromBody][Required] Requests.v1.Create.DeveloperProjectCreateRequest input)
+    public async Task<IActionResult> Create([FromBody][Required] DeveloperProjectCreateRequest input)
     {
         _logger.LogInformation("Create-DeveloperProjectController: {Input}", input.Serialize());
 
@@ -72,7 +74,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [ProducesResponseType(typeof(DeveloperResponse), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<DeveloperProjectResponse>> Update([FromRoute] Guid id, [FromBody][Required] Requests.v1.Update.DeveloperProjectUpdateRequest input)
+    public async Task<ActionResult<DeveloperProjectResponse>> Update([FromRoute] Guid id, [FromBody][Required] DeveloperProjectUpdateRequest input)
     {
         _logger.LogInformation("Update-DeveloperProjectController: {Id} - {Input}", id, input.Serialize());
 

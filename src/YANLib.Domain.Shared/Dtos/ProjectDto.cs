@@ -1,6 +1,6 @@
 ﻿namespace YANLib.Dtos;
 
-public sealed class ProjectDto : YANLibDomainDto<string>
+public sealed class ProjectDto : YANLibDomainDto<string?>
 {
     public string? Name { get; set; }
 

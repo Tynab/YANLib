@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -30,11 +31,13 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     private readonly IRedisService<DeveloperTypeRedisDto> _redisService = redisService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async Task<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<DeveloperTypeResponse>?> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var dtos = await _redisService.GetAllAsync(DeveloperTypeGroup);
+            var dtos = await _redisService.GetAllAsync(DeveloperTypeGroup, cancellationToken);
 
             if (dtos.IsNullEmpty())
             {
@@ -52,71 +55,79 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-DeveloperTypeService-Exception: {Input}", input.Serialize());
+            _logger.LogError(ex, "GetAllAsync-DeveloperTypeService-Exception: {Input}", input.Serialize());
 
             throw;
         }
     }
 
-    public async Task<DeveloperTypeResponse?> Get(long id)
+    public async Task<DeveloperTypeResponse?> GetAsync(long id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString());
+            var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString(), cancellationToken);
 
             return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id) : ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((id, dto));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Get-DeveloperTypeService-Exception: {Id}", id);
+            _logger.LogError(ex, "GetAsync-DeveloperTypeService-Exception: {Id}", id);
 
             throw;
         }
     }
 
-    public async Task<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request)
+    public async Task<DeveloperTypeResponse?> InsertAsync(DeveloperTypeCreateRequest request, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var entity = await _repository.InsertAsync(ObjectMapper.Map<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)));
+            var entity = await _repository.InsertAsync(ObjectMapper.Map<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)), cancellationToken: cancellationToken);
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.SetAsync(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
+                : await _redisService.SetAsync(DeveloperTypeGroup, entity.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity), cancellationToken)
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
                 : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Insert-DeveloperTypeService-Exception: {Request}", request.Serialize());
+            _logger.LogError(ex, "InsertAsync-DeveloperTypeService-Exception: {Request}", request.Serialize());
 
             throw;
         }
     }
 
-    public async Task<DeveloperTypeResponse?> Modify(long id, DeveloperTypeUpdateRequest request)
+    public async Task<DeveloperTypeResponse?> ModifyAsync(long id, DeveloperTypeUpdateRequest request, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString()) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
-            var entity = await _repository.ModifyAsync(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)));
+            var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString(), cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
+            var entity = await _repository.ModifyAsync(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)), cancellationToken);
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.SetAsync(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity))
+                : await _redisService.SetAsync(DeveloperTypeGroup, id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>(entity), cancellationToken)
                 ? ObjectMapper.Map<DeveloperType, DeveloperTypeResponse>(entity)
                 : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-DeveloperTypeService-Exception: {Id} - {Request}", id, request.Serialize());
+            _logger.LogError(ex, "ModifyAsync-DeveloperTypeService-Exception: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }
     }
 
-    public async Task<bool> Delete(long id, Guid updatedBy)
+    public async Task<bool> DeleteAsync(long id, Guid updatedBy, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             return (await _repository.ModifyAsync(new DeveloperTypeDto
@@ -124,33 +135,37 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
                 Id = id,
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            })).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.DeleteAsync(DeveloperTypeGroup, id.ToString());
+            }, cancellationToken)).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _redisService.DeleteAsync(DeveloperTypeGroup, id.ToString(), cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-DeveloperTypeService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
+            _logger.LogError(ex, "DeleteAsync-DeveloperTypeService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
 
             throw;
         }
     }
 
-    public async Task<bool> SyncDbToRedis()
+    public async Task<bool> SyncDataToRedisAsync(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var cleanTask = _redisService.DeleteAllAsync(DeveloperTypeGroup);
-            var entitiesTask = _repository.GetListAsync(static x => !x.IsDeleted);
+            var cleanTask = _redisService.DeleteAllAsync(DeveloperTypeGroup, cancellationToken);
+            var entitiesTask = _repository.GetListAsync(static x => !x.IsDeleted, cancellationToken: cancellationToken);
 
             _ = await WhenAny(cleanTask, entitiesTask);
 
             var result = await cleanTask;
             var entities = await entitiesTask;
 
-            return entities.IsNullEmpty() ? result : result && await _redisService.SetBulkAsync(DeveloperTypeGroup, entities.ToDictionary(static x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>));
+            return entities.IsNullEmpty()
+                ? result
+                : result && await _redisService.SetBulkAsync(DeveloperTypeGroup, entities.ToDictionary(static x => x.Id.ToString(), ObjectMapper.Map<DeveloperType, DeveloperTypeRedisDto>), cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SyncDbToRedis-DeveloperTypeService-Exception");
+            _logger.LogError(ex, "SyncDataToRedisAsync-DeveloperTypeService-Exception");
 
             throw;
         }

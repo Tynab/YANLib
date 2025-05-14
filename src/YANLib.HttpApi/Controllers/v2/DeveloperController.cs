@@ -31,7 +31,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     {
         _logger.LogInformation("GetById-CardDeveloperController: {Id}", id);
 
-        return Ok(await _service.Get(id));
+        return Ok(await _service.GetAsync(id));
     }
 
     [HttpPost]
@@ -40,7 +40,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     {
         _logger.LogInformation("Insert-DeveloperController: {Request}", request.Serialize());
 
-        return Ok(await _service.Insert(request));
+        return Ok(await _service.InsertAsync(request));
     }
 
     [HttpPatch("{idCard}")]
@@ -49,7 +49,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     {
         _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 
-        return Ok(await _service.Adjust(idCard, request));
+        return Ok(await _service.AdjustAsync(idCard, request));
     }
 
 #if RELEASE
@@ -57,5 +57,5 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 #endif
     [HttpPost("sync-db-to-es")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả Developers từ Database lên Elasticsearch")]
-    public async Task<IActionResult> SyncDbToEs() => Ok(await _service.SyncDbToEs());
+    public async Task<IActionResult> SyncDbToEs() => Ok(await _service.SyncDataToElasticsearchAsync());
 }

@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-using YANLib.ListQueries;
+using YANLib.ListQueries.v1;
 using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
@@ -43,8 +43,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         ))));
     }
 
-    [HttpGet("{id:guid}")]
-    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Id")]
+    [HttpGet("{id:long}")]
+    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
     [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
     [ProducesResponseType(404)]
     public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id)
@@ -73,7 +73,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         }, result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:long}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
     [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
     [ProducesResponseType(400)]
@@ -87,7 +87,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         return result.IsNull() ? NotFound() : Ok(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:long}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
