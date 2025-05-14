@@ -74,58 +74,58 @@ void RunBenchmark(int choice)
     switch (choice)
     {
         case 1:
-        {
-            _ = Run<ClassTypeBenchmark>();
+            {
+                _ = Run<ClassTypeBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 2:
-        {
-            _ = Run<ModelTypeBenchmark>();
+            {
+                _ = Run<ModelTypeBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 3:
-        {
-            _ = Run<ConditionBenchmark>();
+            {
+                _ = Run<ConditionBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 4:
-        {
-            _ = Run<LoopBenchmark>();
+            {
+                _ = Run<LoopBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 5:
-        {
-            _ = Run<ConcurrentBenchmark>();
+            {
+                _ = Run<ConcurrentBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 6:
-        {
-            _ = Run<ConcurrentCollectionBenchmark>();
+            {
+                _ = Run<ConcurrentCollectionBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 7:
-        {
-            _ = Run<HttpBenchmark>();
+            {
+                _ = Run<HttpBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 8:
-        {
-            _ = Run<JsonSerializeBenchmark>();
+            {
+                _ = Run<JsonSerializeBenchmark>();
 
-            break;
-        }
+                break;
+            }
         case 9:
-        {
-            _ = Run<JsonDeserializeBenchmark>();
+            {
+                _ = Run<JsonDeserializeBenchmark>();
 
-            break;
-        }
+                break;
+            }
     }
 }

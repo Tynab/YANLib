@@ -99,7 +99,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
         try
         {
             var dto = await _redisService.GetAsync(DeveloperTypeGroup, id.ToString()) ?? throw new EntityNotFoundException(typeof(DeveloperTypeResponse), id);
-            var entity = await _repository.Modify(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)));
+            var entity = await _repository.ModifyAsync(ObjectMapper.Map<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>((id, request)));
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
@@ -119,7 +119,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
     {
         try
         {
-            return (await _repository.Modify(new DeveloperTypeDto
+            return (await _repository.ModifyAsync(new DeveloperTypeDto
             {
                 Id = id,
                 UpdatedBy = updatedBy,

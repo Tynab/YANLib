@@ -101,7 +101,7 @@ public class DeveloperService(
     {
         try
         {
-            var entity = await _repository.Adjust(ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request));
+            var entity = await _repository.AdjustAsync(ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request));
 
             if (entity.IsNull())
             {
@@ -128,7 +128,7 @@ public class DeveloperService(
         {
             var dto = await _esService.GetAsync(idCard) ?? throw new EntityNotFoundException(typeof(DeveloperEsIndex));
 
-            return (await _repository.Modify(new DeveloperDto
+            return (await _repository.ModifyAsync(new DeveloperDto
             {
                 Id = dto.Id.Parse<Guid>(),
                 UpdatedBy = updatedBy,

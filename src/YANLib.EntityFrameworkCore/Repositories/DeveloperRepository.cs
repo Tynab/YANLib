@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
@@ -23,8 +24,10 @@ public class DeveloperRepository(
     private readonly ILogger<DeveloperRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async Task<Developer?> Modify(DeveloperDto dto)
+    public async Task<Developer?> ModifyAsync(DeveloperDto dto, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             return await _dbContext.Developers.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
@@ -36,21 +39,23 @@ public class DeveloperRepository(
                 .SetProperty(x => x.Phone, x => dto.Phone ?? x.Phone)
                 .SetProperty(x => x.IdCard, x => dto.IdCard ?? x.IdCard)
                 .SetProperty(x => x.DeveloperTypeCode, x => dto.DeveloperTypeCode ?? x.DeveloperTypeCode)
-            ) > 0 ? await _dbContext.Developers.FindAsync(dto.Id) : default;
+            , cancellationToken) > 0 ? await _dbContext.Developers.FindAsync([dto.Id, cancellationToken], cancellationToken) : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-DeveloperRepository-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "ModifyAsync-DeveloperRepository-Exception: {DTO}", dto.Serialize());
 
             throw;
         }
     }
 
-    public async Task<Developer?> Adjust(Developer entity)
+    public async Task<Developer?> AdjustAsync(Developer entity, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.IdCard == entity.IdCard && x.IsDeleted == false);
+            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.IdCard == entity.IdCard && x.IsDeleted == false, cancellationToken);
 
             if (latestEntity.IsNull())
             {
@@ -81,13 +86,13 @@ public class DeveloperRepository(
                 UpdatedAt = UtcNow,
                 IsActive = entity.IsActive,
                 IsDeleted = entity.IsDeleted,
-            });
+            }, cancellationToken);
 
-            return result.State is not Added ? throw new Exception("Failed to add the new entity.") : await _dbContext.SaveChangesAsync() <= 0 ? throw new Exception("Failed to save changes.") : result.Entity;
+            return result.State is not Added ? throw new Exception("Failed to add the new entity.") : await _dbContext.SaveChangesAsync(cancellationToken) <= 0 ? throw new Exception("Failed to save changes.") : result.Entity;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Adjust-DeveloperRepository-Exception: {Entity}", entity.Serialize());
+            _logger.LogError(ex, "AdjustAsync-DeveloperRepository-Exception: {Entity}", entity.Serialize());
 
             throw;
         }

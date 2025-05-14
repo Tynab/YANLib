@@ -1,6 +1,5 @@
 ﻿using Elastic.Apm.StackExchange.Redis;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

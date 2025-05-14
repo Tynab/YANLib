@@ -81,7 +81,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         try
         {
             var dto = await _esService.GetAsync(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id);
-            var entity = await _repository.Modify(ObjectMapper.Map<(string Id, ProjectUpdateRequest Request), ProjectDto>((id, request)));
+            var entity = await _repository.ModifyAsync(ObjectMapper.Map<(string Id, ProjectUpdateRequest Request), ProjectDto>((id, request)));
 
             return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
@@ -99,7 +99,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
     {
         try
         {
-            return (await _repository.Modify(new ProjectDto
+            return (await _repository.ModifyAsync(new ProjectDto
             {
                 Id = (await _esService.GetAsync(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id)).Id.ToString(),
                 UpdatedBy = updatedBy,

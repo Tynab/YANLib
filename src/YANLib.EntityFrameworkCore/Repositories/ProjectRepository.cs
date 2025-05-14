@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -21,7 +22,7 @@ public class ProjectRepository(
     private readonly ILogger<ProjectRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async Task<Project?> Modify(ProjectDto dto)
+    public async Task<Project?> ModifyAsync(ProjectDto dto, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -32,11 +33,11 @@ public class ProjectRepository(
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
                 .SetProperty(x => x.Name, x => dto.Name ?? x.Name)
                 .SetProperty(x => x.Description, x => dto.Description ?? x.Description)
-            ) > 0 ? await _dbContext.Projects.FindAsync(dto.Id) : default;
+            , cancellationToken) > 0 ? await _dbContext.Projects.FindAsync([dto.Id, cancellationToken], cancellationToken) : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-DeveloperProjectRepository-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "ModifyAsync-DeveloperProjectRepository-Exception: {DTO}", dto.Serialize());
 
             throw;
         }
