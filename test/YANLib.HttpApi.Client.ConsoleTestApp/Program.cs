@@ -9,7 +9,7 @@ using var application = await AbpApplicationFactory.CreateAsync<YANLibConsoleApi
     var builder = new ConfigurationBuilder();
 
     _ = builder.AddJsonFile("appsettings.json", false);
-    _ = builder.AddJsonFile("appsettings.secrets.json", true);
+    _ = builder.AddJsonFile("appsettings.Development.json", true);
     _ = o.Services.ReplaceConfiguration(builder.Build());
     o.UseAutofac();
 });

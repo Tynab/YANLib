@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\YANLib.EntityFrameworkCore\YANLib.EntityFrameworkCore.csproj" />
-		<ProjectReference Include="..\YANLib.Application.Tests\YANLib.Application.Tests.csproj" />
+		<ProjectReference Include="..\YANLib.TestBase\YANLib.TestBase.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -18,7 +18,7 @@ public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartu
         var builder = new ConfigurationBuilder();
 
         _ = builder.AddJsonFile("appsettings.json", false);
-        _ = builder.AddJsonFile("appsettings.secrets.json", true);
+        _ = builder.AddJsonFile("appsettings.Development.json", true);
         _ = services.ReplaceConfiguration(builder.Build());
     }
 
@@ -49,6 +49,7 @@ public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartu
         var result = await func();
 
         await uow.CompleteAsync();
+
         return result;
     }
 }

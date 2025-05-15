@@ -1,75 +1,48 @@
-﻿//using Microsoft.Data.Sqlite;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Infrastructure;
-//using Microsoft.EntityFrameworkCore.Storage;
-//using Microsoft.Extensions.DependencyInjection;
-//using Volo.Abp;
-//using Volo.Abp.EntityFrameworkCore;
-//using Volo.Abp.EntityFrameworkCore.Sqlite;
-//using Volo.Abp.Modularity;
-//using Volo.Abp.Uow;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp;
+using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Sqlite;
+using Volo.Abp.Modularity;
+using YANLib.DbContexts.Implements;
 
-//namespace YANLib.EntityFrameworkCore;
+namespace YANLib.EntityFrameworkCore;
 
-//[DependsOn(
-//    typeof(YANLibApplicationTestModule),
-//    typeof(YANLibEntityFrameworkCoreModule),
-//    typeof(AbpEntityFrameworkCoreSqliteModule)
-//)]
-//public class YANLibEntityFrameworkCoreTestModule : AbpModule
-//{
-//    private SqliteConnection? _sqliteConnection;
+[DependsOn(
+    typeof(YANLibEntityFrameworkCoreModule),
+    typeof(YANLibTestBaseModule),
+    typeof(AbpEntityFrameworkCoreSqliteModule)
+)]
+public class YANLibEntityFrameworkCoreTestModule : AbpModule
+{
+    private SqliteConnection? _sqliteConnection;
 
-//    public override void ConfigureServices(ServiceConfigurationContext context)
-//    {
-//        Configure<FeatureManagementOptions>(options =>
-//        {
-//            options.SaveStaticFeaturesToDatabase = false;
-//            options.IsDynamicFeatureStoreEnabled = false;
-//        });
-//        Configure<PermissionManagementOptions>(options =>
-//        {
-//            options.SaveStaticPermissionsToDatabase = false;
-//            options.IsDynamicPermissionStoreEnabled = false;
-//        });
-//        context.Services.AddAlwaysDisableUnitOfWorkTransaction();
+    public override void ConfigureServices(ServiceConfigurationContext context) => ConfigureInMemorySqlite(context.Services);
 
-//        ConfigureInMemorySqlite(context.Services);
+    private void ConfigureInMemorySqlite(IServiceCollection services)
+    {
+        _sqliteConnection = CreateDatabaseAndGetConnection();
+        _ = services.Configure<AbpDbContextOptions>(o => o.Configure(c => c.DbContextOptions.UseSqlite(_sqliteConnection)));
+    }
 
-//    }
+    public override void OnApplicationShutdown(ApplicationShutdownContext context) => _sqliteConnection?.Dispose();
 
-//    private void ConfigureInMemorySqlite(IServiceCollection services)
-//    {
-//        _sqliteConnection = CreateDatabaseAndGetConnection();
+    private static SqliteConnection CreateDatabaseAndGetConnection()
+    {
+        var connection = new SqliteConnection("Data Source=:memory:");
 
-//        services.Configure<AbpDbContextOptions>(options =>
-//        {
-//            options.Configure(context =>
-//            {
-//                context.DbContextOptions.UseSqlite(_sqliteConnection);
-//            });
-//        });
-//    }
+        connection.Open();
 
-//    public override void OnApplicationShutdown(ApplicationShutdownContext context)
-//    {
-//        _sqliteConnection?.Dispose();
-//    }
+        var options = new DbContextOptionsBuilder<YANLibDbContext>().UseSqlite(connection).Options;
 
-//    private static SqliteConnection CreateDatabaseAndGetConnection()
-//    {
-//        var connection = new SqliteConnection("Data Source=:memory:");
-//        connection.Open();
+        using (var context = new YANLibDbContext(options))
+        {
+            context.GetService<IRelationalDatabaseCreator>().CreateTables();
+        }
 
-//        var options = new DbContextOptionsBuilder<YANLibDbContext>()
-//            .UseSqlite(connection)
-//            .Options;
-
-//        using (var context = new YANLibDbContext(options))
-//        {
-//            context.GetService<IRelationalDatabaseCreator>().CreateTables();
-//        }
-
-//        return connection;
-//    }
-//}
+        return connection;
+    }
+}

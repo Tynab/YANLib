@@ -20,4 +20,6 @@ public class RedisConnectionFactory : IRedisConnectionFactory, ISingletonDepende
     public ConnectionMultiplexer Connection() => _connection.Value;
 
     public string ConnectionString() => (_option.RedisConnectionString ?? ",").Split(',')[0];
+
+    public bool HasConnection => _connection.IsValueCreated;
 }

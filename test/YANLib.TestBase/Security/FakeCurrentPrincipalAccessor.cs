@@ -11,8 +11,8 @@ public class FakeCurrentPrincipalAccessor : ThreadCurrentPrincipalAccessor
 
     private static ClaimsPrincipal GetPrincipal() => new(new ClaimsIdentity(
     [
-        new(AbpClaimTypes.UserId, "2e701e62-0953-4dd3-910b-dc6cc93ccb0d"),
-        new(AbpClaimTypes.UserName, "admin"),
-        new(AbpClaimTypes.Email, "admin@abp.io")
+        new(AbpClaimTypes.UserId, "42D5D099-69CF-0F09-C8A7-3A14A554C170"),
+        new(AbpClaimTypes.UserName, "OtherUser"),
+        new(AbpClaimTypes.Role, "OtherRole")
     ]));
 }
