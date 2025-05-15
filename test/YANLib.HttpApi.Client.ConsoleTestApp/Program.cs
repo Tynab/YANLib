@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Threading.Tasks;
-using Volo.Abp;
 using static Microsoft.Extensions.Hosting.Host;
 
 namespace YANLib.HttpApi.Client.ConsoleTestApp;

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -9,7 +8,7 @@ using Volo.Abp.Uow;
 
 namespace YANLib;
 
-public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartupModule>where TStartupModule : IAbpModule
+public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartupModule> where TStartupModule : IAbpModule
 {
     protected override void SetAbpApplicationCreationOptions(AbpApplicationCreationOptions options) => options.UseAutofac();
 

@@ -1,6 +1,7 @@
 ﻿using Nest;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Modularity;
 using Xunit;
 using YANLib.ListQueries.v1;
 using YANLib.Responses;
@@ -9,7 +10,7 @@ using YANLib.Services.v1;
 namespace YANLib.Services;
 
 [Collection(YANLibTestConsts.CollectionDefinitionName)]
-public class DeveloperTypeServiceTests : YANLibApplicationTestBase<YANLibApplicationTestModule>
+public class DeveloperTypeServiceTests<TStartupModule> : YANLibApplicationTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
     private readonly IDeveloperTypeService _developerTypeService;
 
