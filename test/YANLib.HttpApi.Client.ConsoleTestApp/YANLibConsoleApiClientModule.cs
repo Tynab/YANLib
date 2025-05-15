@@ -9,8 +9,8 @@ using static System.TimeSpan;
 namespace YANLib.HttpApi.Client.ConsoleTestApp;
 
 [DependsOn(
-    typeof(AbpAutofacModule),
     typeof(YANLibHttpApiClientModule),
+    typeof(AbpAutofacModule),
     typeof(AbpHttpClientIdentityModelModule)
 )]
 public class YANLibConsoleApiClientModule : AbpModule

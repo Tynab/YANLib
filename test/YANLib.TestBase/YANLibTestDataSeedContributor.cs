@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using YANLib.Repositories;
 
-namespace YANLib.DataSeedContributors;
+namespace YANLib;
 
-public class DeveloperTypeTestDataSeedContributor(IDeveloperTypeRepository repository) : IDataSeedContributor, ITransientDependency
+public class YANLibTestDataSeedContributor(IDeveloperTypeRepository repository) : IDataSeedContributor, ITransientDependency
 {
     private readonly IDeveloperTypeRepository _repository = repository;
 

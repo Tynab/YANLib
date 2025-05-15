@@ -9,18 +9,9 @@ using Volo.Abp.Uow;
 
 namespace YANLib;
 
-public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartupModule> where TStartupModule : IAbpModule
+public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartupModule>where TStartupModule : IAbpModule
 {
     protected override void SetAbpApplicationCreationOptions(AbpApplicationCreationOptions options) => options.UseAutofac();
-
-    protected override void BeforeAddApplication(IServiceCollection services)
-    {
-        var builder = new ConfigurationBuilder();
-
-        _ = builder.AddJsonFile("appsettings.json", false);
-        _ = builder.AddJsonFile("appsettings.Development.json", true);
-        _ = services.ReplaceConfiguration(builder.Build());
-    }
 
     protected virtual Task WithUnitOfWorkAsync(Func<Task> func) => WithUnitOfWorkAsync(new AbpUnitOfWorkOptions(), func);
 

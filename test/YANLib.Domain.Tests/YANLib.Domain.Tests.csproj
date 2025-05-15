@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\YANLib.EntityFrameworkCore.Tests\YANLib.EntityFrameworkCore.Tests.csproj" />
+		<ProjectReference Include="..\..\src\YANLib.Domain\YANLib.Domain.csproj" />
 		<ProjectReference Include="..\YANLib.TestBase\YANLib.TestBase.csproj" />
 	</ItemGroup>
 

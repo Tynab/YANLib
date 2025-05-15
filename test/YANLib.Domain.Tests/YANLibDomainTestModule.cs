@@ -1,9 +1,10 @@
 ﻿using Volo.Abp.Modularity;
-using YANLib.EntityFrameworkCore;
 
 namespace YANLib;
 
 [DependsOn(
-    typeof(YANLibEntityFrameworkCoreTestModule)
+    typeof(YANLibDomainModule),
+    typeof(YANLibTestBaseModule)
+    //typeof(YANLibEntityFrameworkCoreTestModule)
 )]
 public class YANLibDomainTestModule : AbpModule { }

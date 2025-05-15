@@ -7,20 +7,26 @@ using Volo.Abp;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Sqlite;
 using Volo.Abp.Modularity;
+using Volo.Abp.Uow;
 using YANLib.DbContexts.Implements;
 
-namespace YANLib.EntityFrameworkCore;
+namespace YANLib;
 
 [DependsOn(
     typeof(YANLibEntityFrameworkCoreModule),
-    typeof(YANLibTestBaseModule),
+    typeof(YANLibApplicationTestModule),
     typeof(AbpEntityFrameworkCoreSqliteModule)
 )]
 public class YANLibEntityFrameworkCoreTestModule : AbpModule
 {
     private SqliteConnection? _sqliteConnection;
 
-    public override void ConfigureServices(ServiceConfigurationContext context) => ConfigureInMemorySqlite(context.Services);
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        _ = context.Services.AddAlwaysDisableUnitOfWorkTransaction();
+
+        ConfigureInMemorySqlite(context.Services);
+    }
 
     private void ConfigureInMemorySqlite(IServiceCollection services)
     {
