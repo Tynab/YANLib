@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
 using Xunit;
 using YANLib.Dtos;
+using YANLib.Entities;
 using YANLib.Repositories;
 
 namespace YANLib.EntityFrameworkCore.Repositories;
@@ -16,35 +17,6 @@ public class DeveloperTypeRepositoryTests : YANLibEntityFrameworkCoreTestBase
     public DeveloperTypeRepositoryTests() => _repository = GetRequiredService<IDeveloperTypeRepository>();
 
     [Fact]
-    public async Task Should_Get_All_DeveloperTypes()
-    {
-        // Arrange
-        await AddTestDeveloperTypes();
-
-        // Act
-        var developerTypes = await _repository.GetListAsync();
-
-        // Assert
-        _ = developerTypes.ShouldNotBeNull();
-        developerTypes.Count.ShouldBeGreaterThan(0);
-    }
-
-    [Fact]
-    public async Task Should_Get_DeveloperType_By_Id()
-    {
-        // Arrange
-        var developerType = await AddTestDeveloperType("Test Get Developer Type");
-
-        // Act
-        var result = await _repository.GetAsync(developerType.Id);
-
-        // Assert
-        _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(developerType.Id);
-        result.Name.ShouldBe(developerType.Name);
-    }
-
-    [Fact]
     public async Task Should_Insert_DeveloperType()
     {
         // Arrange
@@ -52,14 +24,14 @@ public class DeveloperTypeRepositoryTests : YANLibEntityFrameworkCoreTestBase
         var createdBy = Guid.NewGuid();
 
         // Act
-        var result = await _repository.InsertAsync(new Entities.DeveloperType
+        var result = await _repository.InsertAsync(new DeveloperType
         {
             Name = name,
             CreatedBy = createdBy,
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
             IsDeleted = false
-        });
+        }, true);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -70,55 +42,85 @@ public class DeveloperTypeRepositoryTests : YANLibEntityFrameworkCoreTestBase
         var inserted = await _repository.GetAsync(result.Id);
         _ = inserted.ShouldNotBeNull();
         inserted.Name.ShouldBe(name);
+        inserted.CreatedBy.ShouldBe(createdBy);
+    }
+
+    [Fact]
+    public async Task Should_Get_All_DeveloperTypes()
+    {
+        // Arrange
+        await AddTestDeveloperTypes();
+
+        // Act
+        var result = await _repository.GetListAsync();
+
+        // Assert
+        _ = result.ShouldNotBeNull();
+        result.Count.ShouldBeGreaterThan(0);
+    }
+
+    [Fact]
+    public async Task Should_Get_DeveloperType_By_Id()
+    {
+        // Arrange
+        var request = await AddTestDeveloperType("Test Get Developer Type");
+
+        // Act
+        var result = await _repository.GetAsync(request.Id);
+
+        // Assert
+        _ = result.ShouldNotBeNull();
+        result.Id.ShouldBe(request.Id);
+        result.Name.ShouldBe(request.Name);
     }
 
     [Fact]
     public async Task Should_Update_DeveloperType()
     {
         // Arrange
-        var developerType = await AddTestDeveloperType("Test Update Developer Type");
+        var request = await AddTestDeveloperType("Test Update Developer Type");
         var updatedName = "Updated Developer Type";
 
-        developerType.Name = updatedName;
-        developerType.UpdatedBy = Guid.NewGuid();
-        developerType.UpdatedAt = DateTime.UtcNow;
+        request.Name = updatedName;
+        request.UpdatedBy = Guid.NewGuid();
+        request.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        _ = await _repository.UpdateAsync(developerType);
+        _ = await _repository.UpdateAsync(request, true);
 
         // Assert
-        var updated = await _repository.GetAsync(developerType.Id);
+        var updated = await _repository.GetAsync(request.Id);
 
         _ = updated.ShouldNotBeNull();
-        updated.Id.ShouldBe(developerType.Id);
+        updated.Id.ShouldBe(request.Id);
         updated.Name.ShouldBe(updatedName);
-        updated.UpdatedBy.ShouldBe(developerType.UpdatedBy);
+        updated.UpdatedBy.ShouldBe(request.UpdatedBy);
     }
 
     [Fact]
     public async Task Should_Delete_DeveloperType()
     {
         // Arrange
-        var developerType = await AddTestDeveloperType("Test Delete Developer Type");
+        var request = await AddTestDeveloperType("Test Delete Developer Type");
 
         // Act
-        await _repository.DeleteAsync(developerType.Id);
+        await _repository.DeleteAsync(request.Id);
 
         // Assert
-        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(developerType.Id));
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(request.Id));
     }
 
     [Fact]
     public async Task Should_Modify_DeveloperType_Using_ModifyAsync()
     {
         // Arrange
-        var developerType = await AddTestDeveloperType("Test ModifyAsync Developer Type");
+        var request = await AddTestDeveloperType("Test ModifyAsync Developer Type");
         var updatedName = "Modified Developer Type";
         var updatedBy = Guid.NewGuid();
 
         var dto = new DeveloperTypeDto
         {
-            Id = developerType.Id,
+            Id = request.Id,
             Name = updatedName,
             UpdatedBy = updatedBy,
             IsActive = true
@@ -129,13 +131,14 @@ public class DeveloperTypeRepositoryTests : YANLibEntityFrameworkCoreTestBase
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(developerType.Id);
+        result.Id.ShouldBe(request.Id);
         result.Name.ShouldBe(updatedName);
         result.UpdatedBy.ShouldBe(updatedBy);
 
-        var modified = await _repository.GetAsync(developerType.Id);
+        var modified = await _repository.GetAsync(request.Id);
         _ = modified.ShouldNotBeNull();
         modified.Name.ShouldBe(updatedName);
+        modified.UpdatedBy.ShouldBe(updatedBy);
     }
 
     [Fact]
@@ -146,14 +149,14 @@ public class DeveloperTypeRepositoryTests : YANLibEntityFrameworkCoreTestBase
         _ = await AddTestDeveloperType("Deleted Type", isDeleted: true);
 
         // Act
-        var activeTypes = await _repository.GetListAsync(x => !x.IsDeleted);
-        var deletedTypes = await _repository.GetListAsync(x => x.IsDeleted);
+        var active = await _repository.GetListAsync(x => !x.IsDeleted);
+        var deleted = await _repository.GetListAsync(x => x.IsDeleted);
 
         // Assert
-        activeTypes.ShouldContain(x => x.Name == "Active Type");
-        activeTypes.ShouldNotContain(x => x.Name == "Deleted Type");
-        deletedTypes.ShouldContain(x => x.Name == "Deleted Type");
-        deletedTypes.ShouldNotContain(x => x.Name == "Active Type");
+        active.ShouldContain(x => x.Name == "Active Type");
+        active.ShouldNotContain(x => x.Name == "Deleted Type");
+        deleted.ShouldContain(x => x.Name == "Deleted Type");
+        deleted.ShouldNotContain(x => x.Name == "Active Type");
     }
 
     [Fact]
@@ -164,24 +167,24 @@ public class DeveloperTypeRepositoryTests : YANLibEntityFrameworkCoreTestBase
         _ = await AddTestDeveloperType("Inactive Type", isActive: false);
 
         // Act
-        var activeTypes = await _repository.GetListAsync(x => x.IsActive);
-        var inactiveTypes = await _repository.GetListAsync(x => !x.IsActive);
+        var active = await _repository.GetListAsync(x => x.IsActive);
+        var inactive = await _repository.GetListAsync(x => !x.IsActive);
 
         // Assert
-        activeTypes.ShouldContain(x => x.Name == "Active Type");
-        activeTypes.ShouldNotContain(x => x.Name == "Inactive Type");
-        inactiveTypes.ShouldContain(x => x.Name == "Inactive Type");
-        inactiveTypes.ShouldNotContain(x => x.Name == "Active Type");
+        active.ShouldContain(x => x.Name == "Active Type");
+        active.ShouldNotContain(x => x.Name == "Inactive Type");
+        inactive.ShouldContain(x => x.Name == "Inactive Type");
+        inactive.ShouldNotContain(x => x.Name == "Active Type");
     }
 
-    private async Task<Entities.DeveloperType> AddTestDeveloperType(string name, bool isActive = true, bool isDeleted = false) => await _repository.InsertAsync(new Entities.DeveloperType
+    private async Task<DeveloperType> AddTestDeveloperType(string name, bool isActive = true, bool isDeleted = false) => await _repository.InsertAsync(new DeveloperType
     {
         Name = name,
         CreatedBy = Guid.NewGuid(),
         CreatedAt = DateTime.UtcNow,
         IsActive = isActive,
         IsDeleted = isDeleted
-    });
+    }, true);
 
     private async Task AddTestDeveloperTypes()
     {

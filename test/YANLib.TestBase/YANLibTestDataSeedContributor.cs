@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -6,41 +7,116 @@ using YANLib.Repositories;
 
 namespace YANLib;
 
-public class YANLibTestDataSeedContributor(IDeveloperTypeRepository repository) : IDataSeedContributor, ITransientDependency
+public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTypeRepository, IProjectRepository projectRepository) : IDataSeedContributor, ITransientDependency
 {
-    private readonly IDeveloperTypeRepository _repository = repository;
+    private readonly IDeveloperTypeRepository _developerTypeRepository = developerTypeRepository;
+    private readonly IProjectRepository _projectRepository = projectRepository;
+    private static readonly object _lockObject = new();
+    private static bool _seeded = false;
 
-    public async Task SeedAsync(DataSeedContext context) => await SeedDeveloperTypeAsync();
+    public async Task SeedAsync(DataSeedContext context)
+    {
+        if (_seeded)
+        {
+            return;
+        }
+
+        lock (_lockObject)
+        {
+            if (_seeded)
+            {
+                return;
+            }
+
+            _seeded = true;
+        }
+
+        await SeedDeveloperTypeAsync();
+        await SeedProjectsAsync();
+    }
 
     public async Task SeedDeveloperTypeAsync()
     {
-        var createdBy = Guid.NewGuid();
-
-        _ = await _repository.InsertAsync(new()
+        try
         {
-            Name = "Front-End",
-            CreatedBy = createdBy,
-            CreatedAt = DateTime.Now,
-            IsActive = true,
-            IsDeleted = false
-        });
+            if ((await _developerTypeRepository.GetListAsync()).Count.IsNotDefault())
+            {
+                return;
+            }
 
-        _ = await _repository.InsertAsync(new()
-        {
-            Name = "Back-End",
-            CreatedBy = createdBy,
-            CreatedAt = DateTime.Now,
-            IsActive = true,
-            IsDeleted = false
-        });
+            var createdBy = Guid.NewGuid();
 
-        _ = await _repository.InsertAsync(new()
+            _ = await _developerTypeRepository.InsertAsync(new()
+            {
+                Name = "Front-End",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+
+            _ = await _developerTypeRepository.InsertAsync(new()
+            {
+                Name = "Back-End",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+
+            _ = await _developerTypeRepository.InsertAsync(new()
+            {
+                Name = "Full-Stack",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+        }
+        catch (DbUpdateException) { }
+    }
+
+    public async Task SeedProjectsAsync()
+    {
+        try
         {
-            Name = "Full-Stack",
-            CreatedBy = createdBy,
-            CreatedAt = DateTime.Now,
-            IsActive = true,
-            IsDeleted = false
-        });
+            if ((await _projectRepository.GetListAsync()).Count.IsNotDefault())
+            {
+                return;
+            }
+
+            var createdBy = Guid.NewGuid();
+
+            _ = await _projectRepository.InsertAsync(new()
+            {
+                Name = "Seed Project 1",
+                Description = "Seed Project Description 1",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+
+            _ = await _projectRepository.InsertAsync(new()
+            {
+                Name = "Seed Project 2",
+                Description = "Seed Project Description 2",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+
+            _ = await _projectRepository.InsertAsync(new()
+            {
+                Name = "Seed Project 3",
+                Description = "Seed Project Description 3",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+        }
+        catch (DbUpdateException) { }
     }
 }

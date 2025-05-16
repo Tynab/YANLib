@@ -4,4 +4,4 @@ using YANLib.Repositories;
 namespace YANLib.EntityFrameworkCore.Domains;
 
 [Collection(YANLibTestConsts.CollectionDefinitionName)]
-public class EFCoreDeveloperTypeDomainTests : DeveloperTypeDomainTests<YANLibEntityFrameworkCoreTestModule> { }
+public class EFCoreProjectDomainTests : ProjectDomainTests<YANLibEntityFrameworkCoreTestModule> { }

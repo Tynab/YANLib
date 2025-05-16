@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Modularity;
 using Xunit;
-using YANLib.Repositories;
+using YANLib.Entities;
 
-namespace YANLib.DeveloperType;
+namespace YANLib.Repositories;
 
 public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
@@ -18,7 +18,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
     public async Task Should_Create_DeveloperType()
     {
         // Arrange
-        var developerType = new YANLib.Entities.DeveloperType
+        var developerType = new DeveloperType
         {
             Name = "Domain Test Developer Type",
             CreatedBy = Guid.NewGuid(),
@@ -28,7 +28,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
         };
 
         // Act
-        var result = await _repository.InsertAsync(developerType);
+        var result = await _repository.InsertAsync(developerType, true);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -37,10 +37,21 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
     }
 
     [Fact]
+    public async Task Should_Get_All_DeveloperTypes()
+    {
+        // Act
+        var result = await _repository.GetListAsync();
+
+        // Assert
+        _ = result.ShouldNotBeNull();
+        result.Count.ShouldBeGreaterThan(0);
+    }
+
+    [Fact]
     public async Task Should_Get_DeveloperType_By_Id()
     {
         // Arrange
-        var developerType = new YANLib.Entities.DeveloperType
+        var developerType = new DeveloperType
         {
             Name = "Domain Test Get Developer Type",
             CreatedBy = Guid.NewGuid(),
@@ -49,7 +60,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
             IsDeleted = false
         };
 
-        var created = await _repository.InsertAsync(developerType);
+        var created = await _repository.InsertAsync(developerType, true);
 
         // Act
         var result = await _repository.GetAsync(created.Id);
@@ -64,7 +75,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
     public async Task Should_Update_DeveloperType()
     {
         // Arrange
-        var developerType = new YANLib.Entities.DeveloperType
+        var developerType = new DeveloperType
         {
             Name = "Domain Test Update Developer Type",
             CreatedBy = Guid.NewGuid(),
@@ -73,14 +84,14 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
             IsDeleted = false
         };
 
-        var created = await _repository.InsertAsync(developerType);
+        var created = await _repository.InsertAsync(developerType, true);
 
         created.Name = "Updated Domain Test Developer Type";
         created.UpdatedBy = Guid.NewGuid();
         created.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        _ = await _repository.UpdateAsync(created);
+        _ = await _repository.UpdateAsync(created, true);
 
         var updated = await _repository.GetAsync(created.Id);
 
@@ -95,7 +106,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
     public async Task Should_Delete_DeveloperType()
     {
         // Arrange
-        var developerType = new YANLib.Entities.DeveloperType
+        var developerType = new DeveloperType
         {
             Name = "Domain Test Delete Developer Type",
             CreatedBy = Guid.NewGuid(),
@@ -104,7 +115,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
             IsDeleted = false
         };
 
-        var created = await _repository.InsertAsync(developerType);
+        var created = await _repository.InsertAsync(developerType, true);
 
         // Act
         await _repository.DeleteAsync(created.Id);

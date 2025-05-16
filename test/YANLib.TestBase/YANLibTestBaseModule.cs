@@ -17,6 +17,9 @@ namespace YANLib;
 )]
 public class YANLibTestBaseModule : AbpModule
 {
+    private static bool _dataSeeded = false;
+    private static readonly object _lockObject = new();
+
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         Configure<AbpBackgroundJobOptions>(static o => o.IsJobExecutionEnabled = false);
@@ -25,10 +28,28 @@ public class YANLibTestBaseModule : AbpModule
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context) => SeedTestData(context);
 
-    private static void SeedTestData(ApplicationInitializationContext context) => RunSync(async () =>
+    private static void SeedTestData(ApplicationInitializationContext context)
     {
-        using var scope = context.ServiceProvider.CreateScope();
+        if (_dataSeeded)
+        {
+            return;
+        }
 
-        await scope.ServiceProvider.GetRequiredService<IDataSeeder>().SeedAsync();
-    });
+        lock (_lockObject)
+        {
+            if (_dataSeeded)
+            {
+                return;
+            }
+
+            RunSync(async () =>
+            {
+                using var scope = context.ServiceProvider.CreateScope();
+
+                await scope.ServiceProvider.GetRequiredService<IDataSeeder>().SeedAsync();
+            });
+
+            _dataSeeded = true;
+        }
+    }
 }

@@ -11,19 +11,20 @@ using YANLib.Services.v1;
 
 namespace YANLib.Services;
 
-public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibApplicationTestBase<TStartupModule> where TStartupModule : IAbpModule
+public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplicationTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
-    private readonly IDeveloperTypeService _service;
+    private readonly IProjectService _service;
 
-    protected DeveloperTypeAppServiceTests() => _service = GetRequiredService<IDeveloperTypeService>();
+    protected ProjectAppServiceTests() => _service = GetRequiredService<IProjectService>();
 
     [Fact]
-    public async Task Should_Create_DeveloperType()
+    public async Task Should_Create_Project()
     {
         // Arrange
-        var request = new DeveloperTypeCreateRequest
+        var request = new ProjectCreateRequest
         {
-            Name = "Test Developer Type",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -35,16 +36,17 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldNotBe(0);
+        _ = result.Id.ShouldNotBeNull();
         result.Name.ShouldBe(request.Name);
+        result.Description.ShouldBe(request.Description);
 
-        var retrievedType = await _service.GetAsync(result.Id);
-        _ = retrievedType.ShouldNotBeNull();
-        retrievedType.Name.ShouldBe(request.Name);
+        var retrieved = await _service.GetAsync(result.Id);
+        _ = retrieved.ShouldNotBeNull();
+        retrieved.Name.ShouldBe(request.Name);
     }
 
     [Fact]
-    public async Task Should_Get_All_DeveloperTypes()
+    public async Task Should_Get_All_Projects()
     {
         // Act
         var result = await _service.GetListAsync(new PagedAndSortedResultRequestDto
@@ -59,12 +61,13 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
     }
 
     [Fact]
-    public async Task Should_Get_DeveloperType_By_Id()
+    public async Task Should_Get_Project_By_Id()
     {
         // Arrange
-        var request = new DeveloperTypeCreateRequest
+        var request = new ProjectCreateRequest
         {
-            Name = "Test Developer Type for Get By Id",
+            Name = "Test Project for Get By Id",
+            Description = "Test Project Description for Get By Id",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -79,16 +82,18 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         // Assert
         _ = result.ShouldNotBeNull();
         result.Id.ShouldBe(created.Id);
-        result.Name.ShouldBe(created.Name);
+        result.Name.ShouldBe(request.Name);
+        result.Description.ShouldBe(request.Description);
     }
 
     [Fact]
-    public async Task Should_Update_DeveloperType()
+    public async Task Should_Update_Project()
     {
         // Arrange
-        var createRequest = new DeveloperTypeCreateRequest
+        var createRequest = new ProjectCreateRequest
         {
-            Name = "Developer Type To Update",
+            Name = "Test Project for Update",
+            Description = "Test Project Description for Update",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -97,9 +102,10 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
 
         var created = await _service.CreateAsync(createRequest);
 
-        var updateRequest = new DeveloperTypeUpdateRequest
+        var updateRequest = new ProjectUpdateRequest
         {
-            Name = "Updated Developer Type",
+            Name = "Updated Test Project",
+            Description = "Updated Test Project Description",
             CreatedBy = created.CreatedBy,
             CreatedAt = created.CreatedAt,
             UpdatedBy = Guid.NewGuid(),
@@ -115,21 +121,23 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         _ = result.ShouldNotBeNull();
         result.Id.ShouldBe(created.Id);
         result.Name.ShouldBe(updateRequest.Name);
+        result.Description.ShouldBe(updateRequest.Description);
 
         var retrieved = await _service.GetAsync(created.Id);
-        _ = retrieved.ShouldNotBeNull();
         retrieved.Name.ShouldBe(updateRequest.Name);
+        retrieved.Description.ShouldBe(updateRequest.Description);
     }
 
     [Fact]
-    public async Task Should_Delete_DeveloperType()
+    public async Task Should_Delete_Project()
     {
         // Arrange
-        var request = new DeveloperTypeCreateRequest
+        var request = new ProjectCreateRequest
         {
-            Name = "Developer Type To Delete",
+            Name = "Test Project for Delete",
+            Description = "Test Project Description for Delete",
             CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.Now,
             IsActive = true,
             IsDeleted = false
         };
