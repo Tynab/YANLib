@@ -107,7 +107,7 @@ A powerful utility library for parsing and converting objects to unmanaged types
 - Object parsing with default value fallbacks
 - Nullable type parsing with null for invalid inputs
 - Collection parsing with robust error handling
-- Format support for date/time and culture-specific parsing
+- Format support for date/time, TimeSpan, and culture-specific parsing
 
 ```csharp
 // Parse string to int
@@ -121,6 +121,10 @@ int resultWithDefault = invalidInput.Parse<int>(42); // Returns 42
 // Parse to enum
 object enumInput = "Tuesday";
 DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
+
+// Parse to TimeSpan
+object timeInput = "01:30:45";
+TimeSpan time = timeInput.Parse<TimeSpan>(); // Returns TimeSpan of 1 hour, 30 minutes, 45 seconds
 ```
 
 ### YANEnumerable

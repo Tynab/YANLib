@@ -64,6 +64,14 @@ DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
 var guid = Guid.NewGuid();
 object guidInput = guid.ToString();
 Guid guidResult = guidInput.Parse<Guid>(); // Returns the original Guid
+
+// Parse to TimeSpan
+object timeInput = "01:30:45";
+TimeSpan timeResult = timeInput.Parse<TimeSpan>(); // Returns TimeSpan(1, 30, 45)
+
+// Parse TimeSpan with days
+object timeWithDays = "2.03:30:45";
+TimeSpan daysResult = timeWithDays.Parse<TimeSpan>(); // Returns TimeSpan(2, 3, 30, 45)
 ```
 
 ### Collection Conversion
@@ -90,6 +98,14 @@ IDictionary<object, object?> dict = new Dictionary<object, object?>
 };
 
 Dictionary<int, string?> parsedDict = dict.Parses<int, string>(); // Returns {1: "Value1", 2: "Value2", 3: "Value3"}
+
+// Parse collection of strings to TimeSpan values
+IEnumerable<object?> timeInputs = new object?[] { "01:30:45", "02:15:30", "03:45:10" };
+IEnumerable<TimeSpan> timeResults = timeInputs.Parses<TimeSpan>(); // Returns collection of TimeSpan objects
+
+// Handle mixed valid and invalid TimeSpan inputs
+IEnumerable<object?> mixedTimeInputs = new object?[] { "01:30:45", "not a timespan", "03:45:10" };
+IEnumerable<TimeSpan> mixedTimeResults = mixedTimeInputs.Parses<TimeSpan>(TimeSpan.Zero); // Returns [01:30:45, 00:00:00, 03:45:10]
 ```
 
 ### Nullable Type Support
