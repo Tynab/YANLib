@@ -5,8 +5,10 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.ListQueries.v1;
 using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
@@ -28,51 +30,72 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), 200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll([FromQuery] DeveloperTypeListQuery query)
     {
-        _logger.LogInformation("GetAll-DeveloperTypeController: {PageNumber} - {PageSize}", pageNumber, pageSize);
+        _logger.LogInformation("GetAll-DeveloperTypeController: {Query}", query.Serialize());
 
         return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            pageNumber,
-            pageSize,
+            query.PageNumber,
+            query.PageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
         ))));
     }
 
-    [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo Id")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Get(long id)
+    [HttpGet("{id:long}")]
+    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
+    [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id)
     {
         _logger.LogInformation("Get-DeveloperTypeCrudController: {Id}", id);
 
-        return Ok(await _service.GetAsync(id));
+        var result = await _service.GetAsync(id);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Create(DeveloperTypeCreateRequest input)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), 201)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Create([FromBody][Required] DeveloperTypeCreateRequest input)
     {
         _logger.LogInformation("Create-DeveloperTypeCrudController: {Input}", input.Serialize());
 
-        return Ok(await _service.CreateAsync(input));
+        var result = await _service.CreateAsync(input);
+
+        return CreatedAtAction(nameof(Get), new
+        {
+            id = result.Id,
+            version = "1.0"
+        }, result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:long}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async ValueTask<ActionResult<DeveloperTypeResponse>> Update(long id, DeveloperTypeUpdateRequest input)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<DeveloperTypeResponse>> Update([FromRoute] long id, [FromBody][Required] DeveloperTypeUpdateRequest input)
     {
         _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Input}", id, input.Serialize());
 
-        return Ok(await _service.UpdateAsync(id, input));
+        var result = await _service.UpdateAsync(id, input);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:long}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    public async ValueTask<IActionResult> Delete(long id)
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> Delete([FromRoute] long id)
     {
         _logger.LogInformation("Delete-DeveloperTypeCrudController: {Id}", id);
         await _service.DeleteAsync(id);
 
-        return Ok();
+        return NoContent();
     }
 }

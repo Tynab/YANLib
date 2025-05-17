@@ -25,7 +25,7 @@ public sealed class SampleController(ILogger<SampleController> logger, ISampleSe
     [MapToApiVersion(1)]
     [HttpGet("test")]
     [SwaggerOperation(Summary = "Đo tốc độ xử lý JSON của thư viện YANLib và các chuẩn khác")]
-    public async ValueTask<IActionResult> Test([Required] uint quantity = 10000, [Required] bool hideSystem = true)
+    public async Task<IActionResult> Test([Required] uint quantity = 10000, [Required] bool hideSystem = true)
     {
         _logger.LogInformation("JsonTest-SampleController: {Quantity} - {HideSystem}", quantity, hideSystem);
 
@@ -35,7 +35,7 @@ public sealed class SampleController(ILogger<SampleController> logger, ISampleSe
     [MapToApiVersion(2)]
     [HttpGet("test")]
     [SwaggerOperation(Summary = "Trả về dữ liệu linh hoạt")]
-    public async ValueTask<IActionResult> TestV2() => (GenerateRandom<byte>(1, byte.MaxValue) % 7) switch
+    public async Task<IActionResult> TestV2() => (GenerateRandom<byte>(1, byte.MaxValue) % 7) switch
     {
         1 => await FromResult(Ok(GenerateRandom<bool>())),
         2 => await FromResult(Ok(GenerateRandom<char>())),

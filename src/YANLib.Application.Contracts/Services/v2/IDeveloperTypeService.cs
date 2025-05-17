@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -10,15 +11,15 @@ namespace YANLib.Services.v2;
 
 public interface IDeveloperTypeService : IApplicationService
 {
-    public ValueTask<PagedResultDto<DeveloperTypeResponse>?> GetAll(PagedAndSortedResultRequestDto input);
+    public Task<PagedResultDto<DeveloperTypeResponse>?> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperTypeResponse?> Get(long code);
+    public Task<DeveloperTypeResponse?> GetAsync(long code, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperTypeResponse?> Insert(DeveloperTypeCreateRequest request);
+    public Task<DeveloperTypeResponse?> InsertAsync(DeveloperTypeCreateRequest request, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperTypeResponse?> Modify(long code, DeveloperTypeUpdateRequest request);
+    public Task<DeveloperTypeResponse?> ModifyAsync(long code, DeveloperTypeUpdateRequest request, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> Delete(long code, Guid updatedBy);
+    public Task<bool> DeleteAsync(long code, Guid updatedBy, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> SyncDbToRedis();
+    public Task<bool> SyncDataToRedisAsync(CancellationToken cancellationToken = default);
 }

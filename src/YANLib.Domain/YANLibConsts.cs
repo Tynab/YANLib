@@ -43,7 +43,7 @@ public static class YANLibConsts
         public const string DeveloperPrefix = "developer";
         public const string ProjectPrefix = "project";
 
-        public static readonly string DeveloperProjectGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}{ProjectPrefix}";
+        public static readonly string DeveloperProjectGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperPrefix}{ProjectPrefix}";
 
         public static readonly string DeveloperTypeGroup = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}";
     }

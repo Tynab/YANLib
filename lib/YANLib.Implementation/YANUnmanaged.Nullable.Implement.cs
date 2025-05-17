@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using static System.Convert;
-using static System.Guid;
 using static System.Nullable;
 
 namespace YANLib.Implementation;
@@ -20,9 +19,11 @@ internal static partial class YANUnmanaged
                 Type stringType when stringType == typeof(string) => (T?)(object?)input.ToString(),
                 Type dateTimeType when dateTimeType == typeof(DateTime) => (T)(object)input.ToString().ParseDateTime(),
                 Type nullableDateTimeType when nullableDateTimeType == typeof(DateTime?) => (T?)(object?)input.ToString().ParseDateTimeNullable(),
-                Type guidType when guidType == typeof(Guid) && TryParse(input.ToString(), out var guidValue) => (T)(object)guidValue,
-                Type nullableGuidType when nullableGuidType == typeof(Guid?) && TryParse(input.ToString(), out var guidValue) => (T?)(object?)guidValue,
-                Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var enumValue) => (T)enumValue,
+                Type guidType when guidType == typeof(Guid) => (T)(object)input.ToString().ParseGuid(),
+                Type nullableGuidType when nullableGuidType == typeof(Guid?) => (T?)(object?)input.ToString().ParseGuidNullable(),
+                Type timeSpanType when timeSpanType == typeof(TimeSpan) => (T)(object)input.ToString().ParseTimeSpan(),
+                Type nullableTimeSpanType when nullableTimeSpanType == typeof(TimeSpan?) => (T?)(object?)input.ToString().ParseTimeSpanNullable(),
+                Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var e) => (T)e,
                 _ => GetUnderlyingTypeCached(typeof(T)) is Type underlyingType ? ChangeTypeOrDefault(input, underlyingType) : ChangeTypeOrDefault(input, typeof(T))
             };
 

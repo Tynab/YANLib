@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -12,15 +11,6 @@ namespace YANLib;
 public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartupModule> where TStartupModule : IAbpModule
 {
     protected override void SetAbpApplicationCreationOptions(AbpApplicationCreationOptions options) => options.UseAutofac();
-
-    protected override void BeforeAddApplication(IServiceCollection services)
-    {
-        var builder = new ConfigurationBuilder();
-
-        _ = builder.AddJsonFile("appsettings.json", false);
-        _ = builder.AddJsonFile("appsettings.secrets.json", true);
-        _ = services.ReplaceConfiguration(builder.Build());
-    }
 
     protected virtual Task WithUnitOfWorkAsync(Func<Task> func) => WithUnitOfWorkAsync(new AbpUnitOfWorkOptions(), func);
 
@@ -49,6 +39,7 @@ public abstract class YANLibTestBase<TStartupModule> : AbpIntegratedTest<TStartu
         var result = await func();
 
         await uow.CompleteAsync();
+
         return result;
     }
 }

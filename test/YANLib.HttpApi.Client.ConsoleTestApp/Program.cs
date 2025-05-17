@@ -1,25 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using Volo.Abp;
-using YANLib.HttpApi.Client.ConsoleTestApp;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+using static Microsoft.Extensions.Hosting.Host;
 
-using var application = await AbpApplicationFactory.CreateAsync<YANLibConsoleApiClientModule>(static o =>
+namespace YANLib.HttpApi.Client.ConsoleTestApp;
+
+internal class Program
 {
-    var builder = new ConfigurationBuilder();
+    private static async Task Main(string[] args) => await CreateHostBuilder(args).RunConsoleAsync();
 
-    _ = builder.AddJsonFile("appsettings.json", false);
-    _ = builder.AddJsonFile("appsettings.secrets.json", true);
-    _ = o.Services.ReplaceConfiguration(builder.Build());
-    o.UseAutofac();
-});
-
-await application.InitializeAsync();
-
-//var demo = application.ServiceProvider.GetRequiredService<ClientDemoService>();
-//await demo.RunAsync();
-
-Console.WriteLine("Press ENTER to stop application...");
-Console.ReadLine();
-
-await application.ShutdownAsync();
+    public static IHostBuilder CreateHostBuilder(string[] args) => CreateDefaultBuilder(args).AddAppSettingsSecretsJson().ConfigureServices(static (h, s) => s.AddHostedService<ConsoleTestAppHostedService>());
+}

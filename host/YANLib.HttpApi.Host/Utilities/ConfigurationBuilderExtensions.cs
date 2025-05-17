@@ -13,7 +13,7 @@ namespace YANLib.Utilities;
 
 public static class ConfigurationBuilderExtensions
 {
-    public static async ValueTask<IConfigurationBuilder> AddConfigFromAws(this IConfigurationBuilder configurationBuilder, string environment)
+    public static async Task<IConfigurationBuilder> AddConfigFromAws(this IConfigurationBuilder configurationBuilder, string environment)
     {
         var profileName = "Tynab";
         var secretId = $"{environment}/YANLib/appsettings";

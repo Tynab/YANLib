@@ -5,5 +5,5 @@ namespace YANLib.Services;
 
 public interface ISampleService : IApplicationService
 {
-    public ValueTask<string> Test(uint quantity, bool hideSystem);
+    public Task<string> Test(uint quantity, bool hideSystem);
 }

@@ -14,7 +14,7 @@ public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, I
 {
     private readonly IJsonSerializer _jsonSerializer = jsonSerializer;
 
-    public async ValueTask<string> Test(uint quantity, bool hideSystem)
+    public async Task<string> Test(uint quantity, bool hideSystem)
     {
         var json = new JsonResponse
         {

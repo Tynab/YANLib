@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\YANLib.HttpApi.Host\YANLib.HttpApi.Host.csproj" />
+		<ProjectReference Include="..\YANLib.HttpApi.Host\YANLib.HttpApi.Host.csproj" />
 	</ItemGroup>
 
 </Project>

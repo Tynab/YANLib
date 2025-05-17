@@ -1,26 +1,24 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using YANLib.Requests.v2.Create;
-using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 
 namespace YANLib.Services.v2;
 
 public interface IDeveloperProjectService : IApplicationService
 {
-    public ValueTask<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId);
+    public Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloperAsync(PagedAndSortedResultRequestDto input, Guid developerId, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId);
+    public Task<DeveloperProjectResponse?> GetByDeveloperAndProjectAsync(Guid developerId, string projectId, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperProjectResponse?> Insert(DeveloperProjectCreateRequest request);
+    public Task<DeveloperProjectResponse?> AssignAsync(DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperProjectResponse?> Modify(DeveloperProjectUpdateRequest request);
+    public Task<bool> UnassignAsync(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool?> Delete(Guid developerId, string projectId, Guid updatedBy);
+    public Task<bool> SyncDataToRedisAsync(CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> SyncDbToRedis();
-
-    public ValueTask<bool> SyncDbToRedisByDeveloper(Guid developerId);
+    public Task<bool> SyncDataToRedisByDeveloperAsync(Guid developerId, CancellationToken cancellationToken = default);
 }

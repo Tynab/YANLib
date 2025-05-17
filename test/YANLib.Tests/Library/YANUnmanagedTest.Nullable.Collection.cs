@@ -179,6 +179,27 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parses_TimeSpanInputs_ReturnsTimeSpanValues_NullableCollection()
+    {
+        // Arrange
+        var input = new object?[] { "01:30:45", "02:15:30", "03:45:10" };
+
+        var expected = new TimeSpan?[]
+        {
+            new TimeSpan(1, 30, 45),
+            new TimeSpan(2, 15, 30),
+            new TimeSpan(3, 45, 10)
+        };
+
+        // Act
+        var result = input.Parses<TimeSpan?>()?.ToArray();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
     public void Parses_MixedTypes_HandlesEachAppropriately_NullableCollection()
     {
         // Arrange

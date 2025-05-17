@@ -4,5 +4,5 @@ using static YANLib.RabbitMq.RabbitMqTopic;
 
 namespace YANLib.RabbitMq.Etos;
 
-[EventName(NOTIF_SEND)]
+[EventName(NOTIFICATION_SEND)]
 public sealed record NotificationEto(string? Message, Guid SentBy);

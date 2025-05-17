@@ -11,5 +11,5 @@ namespace YANLib;
 )]
 public class YANLibApplicationElasticsearchModule : AbpModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context) => context.Services.AddSingleton(typeof(IEsService<>), typeof(EsService<>));
+    public override void ConfigureServices(ServiceConfigurationContext context) => context.Services.AddSingleton(typeof(IElasticsearchService<>), typeof(ElasticsearchService<>));
 }

@@ -5,25 +5,15 @@ using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.Requests.v1.Create;
-using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using static System.DateTime;
 
-namespace YANLib.AutoMapperProfiles;
+namespace YANLib.AutoMapperProfiles.v2;
 
 public sealed class ProjectAutoMapperProfile : Profile
 {
     public ProjectAutoMapperProfile()
     {
-        _ = CreateMap<ProjectCreateRequest, Project>()
-            .Ignore(static d => d.UpdatedBy)
-            .Ignore(static d => d.UpdatedAt);
-
-        _ = CreateMap<ProjectUpdateRequest, Project>();
-
-        _ = CreateMap<Project, ProjectResponse>();
-
         _ = CreateMap<(string Id, Requests.v2.Create.ProjectCreateRequest Request), Project>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
@@ -38,7 +28,6 @@ public sealed class ProjectAutoMapperProfile : Profile
         _ = CreateMap<(string Id, Requests.v2.Update.ProjectUpdateRequest Request), ProjectDto>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
-            .ForMember(d => d.GPA, o => o.MapFrom(static s => s.Request.GPA))
             .ForMember(d => d.Description, o => o.MapFrom(static s => s.Request.Description))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Request.UpdatedBy))
             .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Request.IsActive))

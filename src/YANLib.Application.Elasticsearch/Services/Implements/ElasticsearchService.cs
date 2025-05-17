@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using static Nest.SortOrder;
@@ -16,14 +17,17 @@ using static YANLib.YANExpression;
 
 namespace YANLib.Services.Implements;
 
-public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration) : IEsService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
+public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration)
+    : IElasticsearchService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
 {
-    private readonly ILogger<EsService<TEsIndex>> _logger = logger;
+    private readonly ILogger<ElasticsearchService<TEsIndex>> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
 
-    public async ValueTask<PagedResultDto<TEsIndex>> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<TEsIndex>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
@@ -45,48 +49,72 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                     return f;
                 }))
                 .Query(q => q.MatchAll())
-            );
+            , cancellationToken);
 
             return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method}", nameof(GetAllAsync));
+
+            throw new OperationCanceledException($"Elasticsearch GetAllAsync operation canceled", ex, cancellationToken);
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-EsService-Exception with paging");
+            _logger.LogError(ex, "GetAllAsync-EsService-Exception");
 
             throw;
         }
     }
 
-    public async ValueTask<TEsIndex?> Get(DocumentPath<TEsIndex> id)
+    public async Task<TEsIndex?> GetAsync(DocumentPath<TEsIndex> id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return (await _elasticClient.GetAsync(id)).Source ?? default;
+            return (await _elasticClient.GetAsync(id, ct: cancellationToken)).Source ?? default;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {Id}", nameof(GetAsync), id);
+
+            throw new OperationCanceledException($"Elasticsearch GetAsync operation canceled for {id}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Get-EsService-Exception: {Id}", id);
+            _logger.LogError(ex, "GetAsync-EsService-Exception: {Id}", id);
 
             throw;
         }
     }
 
-    public async ValueTask<bool> Set(TEsIndex data)
+    public async Task<bool> SetAsync(TEsIndex data, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return (await _elasticClient.IndexDocumentAsync(data)).IsNotNull();
+            return (await _elasticClient.IndexDocumentAsync(data, cancellationToken)).IsNotNull();
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {Id}", nameof(SetAsync), data.Id);
+
+            throw new OperationCanceledException($"Elasticsearch SetAsync operation canceled for {data.Id}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Set-EsService-Exception: {Data}", data.Serialize());
+            _logger.LogError(ex, "SetAsync-EsService-Exception: {Data}", data.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<bool> SetBulk(List<TEsIndex> datas, string indexPath)
+    public async Task<bool> SetBulkAsync(List<TEsIndex> datas, string indexPath, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var index = _configuration.GetSection(indexPath)?.Value;
@@ -100,48 +128,72 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
 
             foreach (var data in datas.OrderBy(x => x.CreatedAt))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 _ = requests.Index<TEsIndex>(x => x.Document(data).Index(index));
             }
 
-            return (await _elasticClient.BulkAsync(requests)).IsNotNull();
+            return (await _elasticClient.BulkAsync(requests, cancellationToken)).IsNotNull();
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {IndexPath}", nameof(SetBulkAsync), indexPath);
+
+            throw new OperationCanceledException(
+                $"Elasticsearch SetBulkAsync operation canceled for {indexPath}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulk-EsService-Exception: {Datas} - {IndexPath}", datas.Serialize(), indexPath);
+            _logger.LogError(ex, "SetBulkAsync-EsService-Exception: {Datas} - {IndexPath}", datas.Serialize(), indexPath);
 
             throw;
         }
     }
 
-    public async ValueTask<bool> Delete(DocumentPath<TEsIndex> id)
+    public async Task<bool> DeleteAsync(DocumentPath<TEsIndex> id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return (await _elasticClient.DeleteAsync<TEsIndex>(id)).IsNotNull();
+            return (await _elasticClient.DeleteAsync(id, ct: cancellationToken)).IsNotNull();
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {Id}", nameof(DeleteAsync), id);
+
+            throw new OperationCanceledException($"Elasticsearch DeleteAsync operation canceled for {id}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-EsService-Exception: {Id}", id);
+            _logger.LogError(ex, "DeleteAsync-EsService-Exception: {Id}", id);
 
             throw;
         }
     }
 
-    public async ValueTask<bool> DeleteAll(string indexPath)
+    public async Task<bool> DeleteAllAsync(string indexPath, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return await FromResult(_elasticClient.DeleteIndex(_configuration, indexPath).IsNotNull());
+            return await FromResult(_elasticClient.DeleteIndexAsync(_configuration, indexPath, cancellationToken).IsNotNull());
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method} - {IndexPath}", nameof(DeleteAllAsync), indexPath);
+
+            throw new OperationCanceledException($"Elasticsearch DeleteAllAsync operation canceled for {indexPath}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAll-EsService-Exception: {IndexPath}", indexPath);
+            _logger.LogError(ex, "DeleteAllAsync-EsService-Exception: {IndexPath}", indexPath);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -170,19 +222,19 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 d.Wildcard(w => w
                                     .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Value($"*{searchText}*"))
-                            )).ToArray()))));
+                            )).ToArray()))), cancellationToken);
 
             return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchKeywordsByString-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithWildcardAsync-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -211,19 +263,19 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 d.MatchPhrasePrefix(m => m
                                     .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchText))
-                            )).ToArray()))));
+                            )).ToArray()))), cancellationToken);
 
             return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchTextsByString-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithPhrasePrefixAsync-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -252,19 +304,19 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 d.MatchPhrase(m => m
                                     .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchText))
-                            )).ToArray()))));
+                            )).ToArray()))), cancellationToken);
 
             return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchTextsByWords-EsService-Exception: {Input} - {SearchWords} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithExactPhraseAsync-EsService-Exception: {Input} - {SearchWords} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<TEsIndex>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText, params string[] fieldNames)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -293,13 +345,13 @@ public class EsService<TEsIndex>(ILogger<EsService<TEsIndex>> logger, IElasticCl
                                 d.Match(m => m
                                     .Field(PropertyExpression<TEsIndex>("c", x))
                                     .Query(searchText))
-                            )).ToArray()))));
+                            )).ToArray()))), cancellationToken);
 
             return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByKeywords-EsService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithKeywordsAsync-EsService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 
@@ -6,23 +7,23 @@ namespace YANLib.Services;
 
 public interface IRedisService<TRedisDto> : IApplicationService where TRedisDto : YANLibApplicationRedisDto
 {
-    public ValueTask<TRedisDto?> Get(string group, string key);
+    public Task<TRedisDto?> GetAsync(string group, string key, CancellationToken cancellationToken = default);
 
-    public ValueTask<IDictionary<string, TRedisDto?>?> GetBulk(string group, params string[] keys);
+    public Task<IDictionary<string, TRedisDto?>?> GetBulkAsync(string group, IEnumerable<string> keys, CancellationToken cancellationToken = default);
 
-    public ValueTask<IDictionary<string, TRedisDto?>?> GetAll(string group);
+    public Task<IDictionary<string, TRedisDto?>?> GetAllAsync(string group, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> Set(string group, string key, TRedisDto value);
+    public Task<bool> SetAsync(string group, string key, TRedisDto value, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> SetBulk(string group, IDictionary<string, TRedisDto> fields);
+    public Task<bool> SetBulkAsync(string group, IDictionary<string, TRedisDto> fields, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> Delete(string group, string key);
+    public Task<bool> DeleteAsync(string group, string key, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> DeleteBulk(string group, params string[] keys);
+    public Task<bool> DeleteBulkAsync(string group, IEnumerable<string> keys, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> DeleteAll(string group);
+    public Task<bool> DeleteAllAsync(string group, CancellationToken cancellationToken = default);
 
-    public ValueTask<IDictionary<string, IDictionary<string, TRedisDto?>?>?> GetGroup(string groupPreffix);
+    public Task<IDictionary<string, IDictionary<string, TRedisDto?>?>?> GetGroupAsync(string groupPreffix, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> DeleteGroup(string groupPreffix);
+    public Task<bool> DeleteGroupAsync(string groupPreffix, CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -10,17 +11,17 @@ namespace YANLib.Services.v2;
 
 public interface IDeveloperService : IApplicationService
 {
-    public ValueTask<PagedResultDto<DeveloperResponse>> GetAll(PagedAndSortedResultRequestDto input);
+    public Task<PagedResultDto<DeveloperResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperResponse?> Get(Guid id);
+    public Task<DeveloperResponse?> GetAsync(Guid id, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperResponse?> Insert(DeveloperCreateRequest request);
+    public Task<DeveloperResponse?> InsertAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default);
 
-    public ValueTask<DeveloperResponse?> Adjust(string idCard, DeveloperUpdateRequest request);
+    public Task<DeveloperResponse?> AdjustAsync(string idCard, DeveloperUpdateRequest request, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> Delete(string idCard, Guid updatedBy);
+    public Task<bool> DeleteAsync(string idCard, Guid updatedBy, CancellationToken cancellationToken = default);
 
-    public ValueTask<bool> SyncDbToEs();
+    public Task<bool> SyncDataToElasticsearchAsync(CancellationToken cancellationToken = default);
 
-    //public ValueTask<DeveloperResponse?> GetByIdCard(string idCard);
+    //public Task<DeveloperResponse?> GetByIdCard(string idCard);
 }

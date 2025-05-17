@@ -16,7 +16,7 @@ public class NotificationService(ILogger<NotificationService> logger, IDistribut
     private readonly IDistributedEventBus _distributedEventBus = distributedEventBus;
     private readonly IBackgroundJobManager _backgroundJobManager = backgroundJobManager;
 
-    public async ValueTask Send(NotificationRequest request)
+    public async Task Send(NotificationRequest request)
     {
         try
         {
@@ -33,7 +33,7 @@ public class NotificationService(ILogger<NotificationService> logger, IDistribut
         }
     }
 
-    public async ValueTask Schedule(NotificationRequest request)
+    public async Task Schedule(NotificationRequest request)
     {
         try
         {

@@ -5,25 +5,15 @@ using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
-using YANLib.Requests.v1.Create;
-using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using static System.DateTime;
 
-namespace YANLib.AutoMapperProfiles;
+namespace YANLib.AutoMapperProfiles.v2;
 
 public sealed class DeveloperProjectAutoMapperProfile : Profile
 {
     public DeveloperProjectAutoMapperProfile()
     {
-        _ = CreateMap<DeveloperProjectCreateRequest, DeveloperProject>()
-            .Ignore(static d => d.UpdatedBy)
-            .Ignore(static d => d.UpdatedAt);
-
-        _ = CreateMap<DeveloperProjectUpdateRequest, DeveloperProject>();
-
-        _ = CreateMap<DeveloperProject, DeveloperProjectResponse>();
-
         _ = CreateMap<(Guid DeveloperId, string ProjectId, Requests.v2.Create.DeveloperProjectCreateRequest Request), DeveloperProject>()
             .ForMember(d => d.DeveloperId, o => o.MapFrom(static s => s.DeveloperId))
             .ForMember(d => d.ProjectId, o => o.MapFrom(static s => s.ProjectId))

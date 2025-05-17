@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using YANLib.Dtos;
 using YANLib.Entities;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domains;
 
 public interface IDeveloperRepository : IRepository<Developer, Guid>, ITransientDependency
 {
-    public ValueTask<Developer?> Modify(DeveloperDto dto);
+    public Task<Developer?> ModifyAsync(DeveloperDto dto, CancellationToken cancellationToken = default);
 
-    public ValueTask<Developer?> Adjust(Developer entity);
+    public Task<Developer?> AdjustAsync(Developer entity, CancellationToken cancellationToken = default);
 }

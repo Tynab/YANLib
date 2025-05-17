@@ -16,15 +16,12 @@
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
-		<None Remove="appsettings.secrets.json" />
-		<Content Include="appsettings.secrets.json">
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.11" />
+		<PackageReference Include="Tynab.YANLib" Version="8.2.0" />
 		<PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.TestBase" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.Authorization" Version="8.3.4" />
@@ -42,9 +39,13 @@
 		<PackageReference Include="xunit" Version="2.9.2" />
 		<PackageReference Include="xunit.extensibility.execution" Version="2.9.2" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\YANLib.Domain\YANLib.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

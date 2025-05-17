@@ -2,5 +2,5 @@
 
 public readonly struct RabbitMqTopic
 {
-    public const string NOTIF_SEND = "yanlib.notification.send";
+    public const string NOTIFICATION_SEND = "yanlib.notification.send";
 }

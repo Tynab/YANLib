@@ -6,7 +6,7 @@ namespace YANLib.Services;
 
 public interface INotificationService : IApplicationService
 {
-    public ValueTask Send(NotificationRequest request);
+    public Task Send(NotificationRequest request);
 
-    public ValueTask Schedule(NotificationRequest request);
+    public Task Schedule(NotificationRequest request);
 }

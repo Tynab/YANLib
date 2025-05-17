@@ -82,7 +82,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         ConfigureSqlServer();
         ConfigureApiVersioning(context);
-        ConfigureAzureApplicationInsights(context);
+        //ConfigureAzureApplicationInsights(context);
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
@@ -110,7 +110,7 @@ public class YANLibHttpApiHostModule : AbpModule
         Configure<AbpAspNetCoreMvcOptions>(static o => o.ChangeControllerModelApiExplorerGroupName = false);
     }
 
-    private static void ConfigureAzureApplicationInsights(ServiceConfigurationContext context) => context.Services.AddApplicationInsightsTelemetry();
+    //private static void ConfigureAzureApplicationInsights(ServiceConfigurationContext context) => context.Services.AddApplicationInsightsTelemetry();
 
     private static void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddAuthentication(AuthenticationScheme).AddJwtBearer(o =>
     {
@@ -307,7 +307,7 @@ public class YANLibHttpApiHostModule : AbpModule
 #if RELEASE
         var kafka = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
 
-        if (kafka.IsNotWhiteSpaceAndNull())
+        if (kafka.IsNotNullWhiteSpace())
         {
             healthChecksBuilder.AddKafka(new ProducerConfig(new Dictionary<string, string>
             {
@@ -433,7 +433,6 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
-
 #if RELEASE
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 #endif

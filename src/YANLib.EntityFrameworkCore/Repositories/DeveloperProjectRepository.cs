@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using YANLib.Dtos;
 using YANLib.Entities;
 using static System.DateTime;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domains;
 
 public class DeveloperProjectRepository(
     ILogger<DeveloperProjectRepository> logger,
@@ -21,7 +22,7 @@ public class DeveloperProjectRepository(
     private readonly ILogger<DeveloperProjectRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async ValueTask<DeveloperProject?> Modify(DeveloperProjectDto dto)
+    public async Task<DeveloperProject?> Modify(DeveloperProjectDto dto, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -30,7 +31,9 @@ public class DeveloperProjectRepository(
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-            ) > 0 ? await _dbContext.DeveloperProjects.FindAsync(dto.Id) : default;
+                .SetProperty(x => x.DeveloperId, dto.DeveloperId)
+                .SetProperty(x => x.ProjectId, dto.ProjectId)
+            , cancellationToken) > 0 ? await _dbContext.DeveloperProjects.FindAsync([dto.Id, cancellationToken], cancellationToken: cancellationToken) : default;
         }
         catch (Exception ex)
         {

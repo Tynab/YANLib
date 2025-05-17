@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using YANLib.EsIndices;
 using static Elasticsearch.Net.CertificateValidations;
 using static System.TimeSpan;
@@ -80,10 +82,10 @@ public static class ElasticsearchConfiguration
         _ = services.AddSingleton<IElasticClient>(client);
     }
 
-    public static DeleteIndexResponse? DeleteIndex(this IElasticClient client, IConfiguration configuration, string indexPath)
+    public static async Task<DeleteIndexResponse?> DeleteIndexAsync(this IElasticClient client, IConfiguration configuration, string indexPath, CancellationToken cancellationToken = default)
     {
         var index = configuration.GetSection(indexPath)?.Value;
 
-        return index.IsNullWhiteSpace() ? default : client.Indices.Delete(index);
+        return index.IsNullWhiteSpace() ? default : await client.Indices.DeleteAsync(index, ct: cancellationToken);
     }
 }

@@ -170,6 +170,34 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parse_TimeSpanInput_ReturnsTimeSpanValue_Nullable()
+    {
+        // Arrange
+        object input = "01:30:45";
+        var expected = new TimeSpan(1, 30, 45);
+
+        // Act
+        var result = input.Parse<TimeSpan?>();
+
+        // Assert
+        _ = Assert.NotNull(result);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void Parse_InvalidTimeSpanInput_ReturnsNull_Nullable()
+    {
+        // Arrange
+        object input = "not a timespan";
+
+        // Act
+        var result = input.Parse<TimeSpan?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
     public void Parse_EmptyString_ReturnsNull_Nullable()
     {
         // Arrange

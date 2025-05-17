@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
+using YANLib.Domains;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
-using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
@@ -21,105 +21,117 @@ using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Services.v2;
 
-public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IEsService<ProjectEsIndex> esService) : YANLibAppService, IProjectService
+public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IElasticsearchService<ProjectEsIndex> esService) : YANLibAppService, IProjectService
 {
     private readonly ILogger<ProjectService> _logger = logger;
     private readonly IProjectRepository _repository = repository;
-    private readonly IEsService<ProjectEsIndex> _esService = esService;
+    private readonly IElasticsearchService<ProjectEsIndex> _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> GetAll(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<ProjectResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.GetAll(input));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.GetAllAsync(input, cancellationToken));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAll-ProjectService-Exception: {Input}", input.Serialize());
+            _logger.LogError(ex, "GetAllAsync-ProjectService-Exception: {Input}", input.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<ProjectResponse?> Get(string id)
+    public async Task<ProjectResponse?> GetAsync(string id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var dto = await _esService.Get(id);
+            var dto = await _esService.GetAsync(id, cancellationToken);
 
             return dto.IsNull() ? default : ObjectMapper.Map<ProjectEsIndex, ProjectResponse>(dto);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Get-ProjectService-Exception: {Id}", id);
+            _logger.LogError(ex, "GetAsync-ProjectService-Exception: {Id}", id);
 
             throw;
         }
     }
 
-    public async ValueTask<ProjectResponse?> Insert(ProjectCreateRequest request)
+    public async Task<ProjectResponse?> InsertAsync(ProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var entity = await _repository.InsertAsync(ObjectMapper.Map<(string Id, ProjectCreateRequest Request), Project>((_idGenerator.NextIdAlphabetic(), request)));
+            var entity = await _repository.InsertAsync(ObjectMapper.Map<(string Id, ProjectCreateRequest Request), Project>((_idGenerator.NextIdAlphabetic(), request)), cancellationToken: cancellationToken);
 
-            return entity.IsNotNull() && await _esService.Set(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
+            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity), cancellationToken)
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
                 : throw new EntityNotFoundException(typeof(Project));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Insert-ProjectService-Exception: {Request}", request.Serialize());
+            _logger.LogError(ex, "InsertAsync-ProjectService-Exception: {Request}", request.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<ProjectResponse?> Modify(string id, ProjectUpdateRequest request)
+    public async Task<ProjectResponse?> ModifyAsync(string id, ProjectUpdateRequest request, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var dto = await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id);
-            var entity = await _repository.Modify(ObjectMapper.Map<(string Id, ProjectUpdateRequest Request), ProjectDto>((id, request)));
+            var dto = await _esService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id);
+            var entity = await _repository.ModifyAsync(ObjectMapper.Map<(string Id, ProjectUpdateRequest Request), ProjectDto>((id, request)), cancellationToken);
 
-            return entity.IsNotNull() && await _esService.Set(ObjectMapper.Map<Project, ProjectEsIndex>(entity))
+            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity), cancellationToken)
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
                 : throw new EntityNotFoundException(typeof(Project), id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-ProjectService-Exception: {Id} - {Dto}", id, request.Serialize());
+            _logger.LogError(ex, "ModifyAsync-ProjectService-Exception: {Id} - {Dto}", id, request.Serialize());
 
             throw;
         }
     }
 
-    public async ValueTask<bool> Delete(string id, Guid updatedBy)
+    public async Task<bool> DeleteAsync(string id, Guid updatedBy, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return (await _repository.Modify(new ProjectDto
+            return (await _repository.ModifyAsync(new ProjectDto
             {
-                Id = (await _esService.Get(id) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id)).Id.ToString(),
+                Id = (await _esService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id)).Id.ToString(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            })).IsNotNull() && await _esService.Delete(id);
+            }, cancellationToken)).IsNotNull() && await _esService.DeleteAsync(id, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete-ProjectService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
+            _logger.LogError(ex, "DeleteAsync-ProjectService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
 
             throw;
         }
     }
 
-    public async ValueTask<bool> SyncDbToEs()
+    public async Task<bool> SyncDataToElasticsearchAsync(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var cleanTask = _esService.DeleteAll(ElasticsearchIndex.Project).AsTask();
-            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted);
+            var cleanTask = _esService.DeleteAllAsync(ElasticsearchIndex.Project, cancellationToken);
+            var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted, cancellationToken: cancellationToken);
 
             _ = await WhenAny(cleanTask, entitiesTask);
 
@@ -132,13 +144,15 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
             }
 
             var datas = new List<ProjectEsIndex>();
-            var ss = new SemaphoreSlim(1);
+            var slim = new SemaphoreSlim(1);
 
             await WhenAll(entities.Select(async x =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var dto = ObjectMapper.Map<Project, ProjectEsIndex>(x);
 
-                await ss.WaitAsync();
+                await slim.WaitAsync(cancellationToken);
 
                 try
                 {
@@ -146,71 +160,99 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
                 }
                 finally
                 {
-                    _ = ss.Release();
+                    _ = slim.Release();
                 }
             }));
 
-            return result && await _esService.SetBulk(datas, ElasticsearchIndex.Project);
+            return result && await _esService.SetBulkAsync(datas, ElasticsearchIndex.Project, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SyncDbToEs-ProjectService-Exception");
+            _logger.LogError(ex, "SyncDataToElasticsearchAsync-ProjectService-Exception");
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithWildcard(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithWildcard(input, searchText, nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithWildcardAsync(
+                input,
+                searchText,
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
+                cancellationToken
+            ));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithWildcard-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+            _logger.LogError(ex, "SearchWithWildcardAsync-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefix(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithPhrasePrefix(input, searchText, nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithPhrasePrefixAsync(
+                input,
+                searchText,
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
+                cancellationToken
+            ));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithPhrasePrefix-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+            _logger.LogError(ex, "SearchWithPhrasePrefixAsync-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithExactPhrase(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithExactPhrase(input, searchText, nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithExactPhraseAsync(
+                input,
+                searchText,
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
+                cancellationToken
+            ));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithExactPhrase-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+            _logger.LogError(ex, "SearchWithExactPhraseAsync-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
 
             throw;
         }
     }
 
-    public async ValueTask<PagedResultDto<ProjectResponse>> SearchWithKeywords(PagedAndSortedResultRequestDto input, string searchText)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithKeywords(input, searchText, nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithKeywordsAsync(
+                input,
+                searchText,
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
+                cancellationToken
+            ));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithKeywords-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
+            _logger.LogError(ex, "SearchWithKeywordsAsync-ProjectService-Exception: {Input} - {SearchText}", input.Serialize(), searchText);
 
             throw;
         }

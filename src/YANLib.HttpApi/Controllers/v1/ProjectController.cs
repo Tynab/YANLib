@@ -5,8 +5,10 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.ListQueries.v1;
 using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
@@ -28,51 +30,72 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ")]
-    public async ValueTask<ActionResult<PagedResultDto<ProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), 200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll([FromQuery] ProjectListQuery query)
     {
-        _logger.LogInformation("GetAll-ProjectController: {PageNumber} - {PageSize}", pageNumber, pageSize);
+        _logger.LogInformation("GetAll-ProjectController: {Query}", query.Serialize());
 
         return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            pageNumber,
-            pageSize,
+            query.PageNumber,
+            query.PageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
         ))));
     }
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id")]
-    public async ValueTask<ActionResult<ProjectResponse>> Get(string id)
+    [ProducesResponseType(typeof(ProjectResponse), 200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<ProjectResponse>> Get([FromRoute] string id)
     {
         _logger.LogInformation("Get-ProjectController: {Id}", id);
 
-        return Ok(await _service.GetAsync(id));
+        var result = await _service.GetAsync(id);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    public async ValueTask<ActionResult<ProjectResponse>> Create(ProjectCreateRequest input)
+    [ProducesResponseType(typeof(DeveloperResponse), 201)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Create([FromBody][Required] ProjectCreateRequest input)
     {
         _logger.LogInformation("Create-ProjectController: {Input}", input.Serialize());
 
-        return Ok(await _service.CreateAsync(input));
+        var result = await _service.CreateAsync(input);
+
+        return CreatedAtAction(nameof(Get), new
+        {
+            id = result.Id,
+            version = "1.0"
+        }, result);
     }
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async ValueTask<ActionResult<ProjectResponse>> Update(string id, ProjectUpdateRequest input)
+    [ProducesResponseType(typeof(ProjectResponse), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<ProjectResponse>> Update([FromRoute] string id, [FromBody][Required] ProjectUpdateRequest input)
     {
         _logger.LogInformation("Update-ProjectController: {Id} - {Input}", id, input.Serialize());
 
-        return Ok(await _service.UpdateAsync(id, input));
+        var result = await _service.UpdateAsync(id, input);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    public async ValueTask<IActionResult> Delete(string id)
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> Delete(string id)
     {
         _logger.LogInformation("Delete-ProjectController: {Id}", id);
         await _service.DeleteAsync(id);
 
-        return Ok();
+        return NoContent();
     }
 }
