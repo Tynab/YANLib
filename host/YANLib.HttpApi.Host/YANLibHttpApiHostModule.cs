@@ -89,7 +89,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureElasticsearch(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHangfire(context, configuration);
-        //ConfigureHealthChecks(context, configuration);
+        ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(static o => o.UseSqlServer());
@@ -278,14 +278,14 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (sql.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddSqlServer(sql!, tags: ["db", "sql", "mssql"]);
+            healthChecksBuilder.AddSqlServer(sql, tags: ["db", "sql", "mssql"]);
         }
 
         var mongo = configuration["CAP:ConnectionString"];
 
         if (mongo.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddMongoDb(mongo!, tags: ["db", "nosql", "mongo"]);
+            healthChecksBuilder.AddMongoDb(mongo, tags: ["db", "nosql", "mongo"]);
         }
 
         var esUrl = configuration["Elasticsearch:Url"];
@@ -301,7 +301,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (redis.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddRedis(redis!, tags: ["db", "nosql", "redis"]);
+            healthChecksBuilder.AddRedis(redis, tags: ["db", "nosql", "redis"]);
         }
 
 #if RELEASE
@@ -349,7 +349,7 @@ public class YANLibHttpApiHostModule : AbpModule
         //var asb = configuration["Azure:ServiceBus:Connections:Default:ConnectionString"];
         //var asbTopic = configuration["Azure:EventBus:TopicName"];
 
-        //if (AllNotWhiteSpaceAndNull(asb, asbTopic))
+        //if (AllNotNullWhiteSpace(asb, asbTopic))
         //{
         //    healthChecksBuilder.AddAzureServiceBusTopic(asb!, asbTopic!, tags: ["db", "cloud", "asb"]);
         //}
@@ -433,6 +433,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
+
 #if RELEASE
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 #endif
@@ -455,7 +456,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI());
+        _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI(s => s.UIPath = "/health-ui"));
         _ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
