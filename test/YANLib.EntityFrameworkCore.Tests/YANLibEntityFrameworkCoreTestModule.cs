@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp;
+using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Sqlite;
 using Volo.Abp.Modularity;
@@ -32,6 +33,22 @@ public class YANLibEntityFrameworkCoreTestModule : AbpModule
     {
         _sqliteConnection = CreateDatabaseAndGetConnection();
         _ = services.Configure<AbpDbContextOptions>(o => o.Configure(c => c.DbContextOptions.UseSqlite(_sqliteConnection)));
+    }
+
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    {
+        base.OnApplicationInitialization(context);
+
+        SeedTestData(context);
+    }
+
+    private static void SeedTestData(ApplicationInitializationContext context)
+    {
+        using var scope = context.ServiceProvider.CreateScope();
+
+        var dataSeeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+
+        dataSeeder.SeedAsync().GetAwaiter().GetResult();
     }
 
     public override void OnApplicationShutdown(ApplicationShutdownContext context) => _sqliteConnection?.Dispose();

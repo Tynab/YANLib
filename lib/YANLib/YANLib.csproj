@@ -34,52 +34,43 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>
-			### YANLib 8.2.0 - Enhanced Collection Operations &amp; Type Conversion
+		<PackageReleaseNotes>### YANLib 8.2.1 - TimeSpan Support &amp; Parsing Enhancements
 
-			## New Features
+## Enhanced Type Support
 
-			- **YANEnumerable Expansion**
+- **TimeSpan Parsing Integration**
 
-			- Added `YANEnumerable.Generic` for converting collections of objects to strongly-typed collections
-			- Introduced `YANEnumerable.Generic.Immutable` for immutable collection support
-			- Comprehensive support for arrays, lists, hash sets, dictionaries, and lookups
+	- Added comprehensive TimeSpan support to `Parse&lt;T&gt;` extension methods
+	- Implemented TimeSpan parsing with various format patterns (days, hours, minutes, seconds, milliseconds)
+	- Full support for nullable TimeSpan (`TimeSpan?`) parsing with graceful null handling
 
-			- **YANRandom Enhancements**
+- **Collection TimeSpan Support**
 
-			- Added `YANRandom.Generic` for generating random values from object collections
-			- Introduced `YANRandom.Generic.Collection` for generating random collections from object collections
-			- New methods for selecting random elements from existing collections
-			- Support for both generic and non-generic collection inputs
+	- Extended `Parses&lt;T&gt;` to handle collections of TimeSpan values
+	- Added TimeSpan support to dictionary parsing with `Parses&lt;TKey, TValue&gt;`
+	- Implemented TimeSpan support in lookup parsing with `Parses&lt;TKey, TElement&gt;`
+	- Support for mixed TimeSpan formats within collections
 
-			- **YANUnmanaged Collection Parsing**
+## Performance
 
-			- Added dictionary parsing with `Parses&lt;TKey, TValue&gt;` for IDictionary`&lt;object, object?&gt;`
-			- Introduced lookup parsing with `Parses&lt;TKey, TElement&gt;` for ILookup`&lt;object?, object?&gt;`
-			- Enhanced type conversion for complex collection structures
+- Optimized TimeSpan parsing with efficient string format detection
+- Improved handling of TimeSpan components for maximum accuracy
+- Enhanced parsing performance for TimeSpan collections
+- Reduced memory allocations in TimeSpan conversion operations
 
-			## Performance
+## Improvements
 
-			- Optimized collection conversion with specialized implementations for different collection types
-			- Improved random value generation with efficient selection algorithms
-			- Enhanced parsing performance for dictionaries and lookups
-			- Parallel processing for large collections to maximize throughput
-			- Reduced memory allocations through careful implementation
+- Consistent behavior between DateTime and TimeSpan parsing
+- Graceful handling of invalid TimeSpan formats
+- Extended XML documentation for all TimeSpan-related methods
+- Comprehensive test coverage for TimeSpan parsing scenarios
+- Improved type safety with TimeSpan-specific handling
 
-			## Improvements
-
-			- Fixed internal `AsyncEnumerableEmpty&lt;T&gt;` method in YANTask.Collection
-			- Extended XML documentation for all new methods
-			- Consistent behavior across all collection operations
-			- Improved type safety with generic constraints
-			- Graceful handling of null collections and edge cases
-
-			See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)
-		</PackageReleaseNotes>
+See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.2.0</Version>
+		<Version>8.2.1</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>
@@ -87,13 +78,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <Optimize>False</Optimize>
-	  <DebugType>portable</DebugType>
+		<Optimize>False</Optimize>
+		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <Optimize>True</Optimize>
-	  <DebugType>portable</DebugType>
+		<Optimize>True</Optimize>
+		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>

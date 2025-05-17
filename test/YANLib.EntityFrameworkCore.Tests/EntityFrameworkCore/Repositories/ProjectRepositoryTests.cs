@@ -3,9 +3,9 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
 using Xunit;
+using YANLib.Domains;
 using YANLib.Dtos;
 using YANLib.Entities;
-using YANLib.Repositories;
 
 namespace YANLib.EntityFrameworkCore.Repositories;
 
@@ -154,36 +154,36 @@ public class ProjectRepositoryTests : YANLibEntityFrameworkCoreTestBase
     public async Task Should_Filter_Projects_By_IsDeleted()
     {
         // Arrange
-        _ = await AddTestProjects("Test Active Project", "Test Active Project Description", isDeleted: false);
-        _ = await AddTestProjects("Test Deleted Project", "Test Deleted Project Description", isDeleted: true);
+        _ = await AddTestProjects("Active Project", "Test Active Project Description", isDeleted: false);
+        _ = await AddTestProjects("Deleted Project", "Test Deleted Project Description", isDeleted: true);
 
         // Act
         var active = await _repository.GetListAsync(x => !x.IsDeleted);
         var deleted = await _repository.GetListAsync(x => x.IsDeleted);
 
         // Assert
-        active.ShouldContain(x => x.Name == "Test Active Project");
-        active.ShouldNotContain(x => x.Name == "Test Deleted Project");
-        deleted.ShouldContain(x => x.Name == "Test Deleted Project");
-        deleted.ShouldNotContain(x => x.Name == "Test Active Project");
+        active.ShouldContain(x => x.Name == "Active Project");
+        active.ShouldNotContain(x => x.Name == "Deleted Project");
+        deleted.ShouldContain(x => x.Name == "Deleted Project");
+        deleted.ShouldNotContain(x => x.Name == "Active Project");
     }
 
     [Fact]
     public async Task Should_Filter_Projects_By_IsActive()
     {
         // Arrange
-        _ = await AddTestProjects("Test Active Project", "Test Active Project Description", isActive: true);
-        _ = await AddTestProjects("Test Inactive Project", "Test Inactive Project Description", isActive: false);
+        _ = await AddTestProjects("Active Project", "Test Active Project Description", isActive: true);
+        _ = await AddTestProjects("Inactive Project", "Test Inactive Project Description", isActive: false);
 
         // Act
         var active = await _repository.GetListAsync(x => x.IsActive);
         var inactive = await _repository.GetListAsync(x => !x.IsActive);
 
         // Assert
-        active.ShouldContain(x => x.Name == "Test Active Project");
-        active.ShouldNotContain(x => x.Name == "Test Inactive Project");
-        inactive.ShouldContain(x => x.Name == "Test Inactive Project");
-        inactive.ShouldNotContain(x => x.Name == "Test Active Project");
+        active.ShouldContain(x => x.Name == "Active Project");
+        active.ShouldNotContain(x => x.Name == "Inactive Project");
+        inactive.ShouldContain(x => x.Name == "Inactive Project");
+        inactive.ShouldNotContain(x => x.Name == "Active Project");
     }
 
     private async Task<Project> AddTestProjects(string name, string description, bool isActive = true, bool isDeleted = false) => await _repository.InsertAsync(new Project

@@ -11,7 +11,7 @@ using YANLib.Dtos;
 using YANLib.Entities;
 using static System.DateTime;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domains;
 
 public class DeveloperTypeRepository(
     ILogger<DeveloperTypeRepository> logger,

@@ -7,7 +7,7 @@ using Volo.Abp.Modularity;
 using Xunit;
 using YANLib.Entities;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domain;
 
 public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
@@ -41,6 +41,19 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
     [Fact]
     public async Task Should_Get_All_Projects()
     {
+        // Arrange
+        var project = new Project
+        {
+            Name = "Domain Test Project for GetList",
+            Description = "Domain Test Project Description for GetList",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        _ = await _repository.InsertAsync(project, true);
+
         // Act
         var result = await _repository.GetListAsync();
 

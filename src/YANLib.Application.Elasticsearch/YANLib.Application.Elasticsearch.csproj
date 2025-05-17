@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Tynab.YANLib" Version="8.2.0" />
+		<PackageReference Include="Tynab.YANLib" Version="8.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

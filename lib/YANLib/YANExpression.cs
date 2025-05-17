@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq.Expressions;
+using static YANLib.Implementation.YANExpression;
 
 namespace YANLib;
 

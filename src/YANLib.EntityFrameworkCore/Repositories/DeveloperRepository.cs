@@ -13,7 +13,7 @@ using YANLib.Entities;
 using static Microsoft.EntityFrameworkCore.EntityState;
 using static System.DateTime;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domains;
 
 public class DeveloperRepository(
     ILogger<DeveloperRepository> logger,

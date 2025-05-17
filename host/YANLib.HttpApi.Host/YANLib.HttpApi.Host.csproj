@@ -16,52 +16,52 @@
 
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.HealthChecks.Aws.S3" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.Aws.SecretsManager" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.Elasticsearch" Version="8.0.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.Hangfire" Version="8.0.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.Kafka" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="8.1.0">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.Publisher.ApplicationInsights" Version="8.0.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.Publisher.CloudWatch" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.2">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.Redis" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.SignalR" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.2" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.2" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.SqlServer.Storage" Version="8.0.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="DotNetCore.CAP" Version="8.3.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.3.1" />
 		<PackageReference Include="DotNetCore.CAP.Kafka" Version="8.3.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="DotNetCore.CAP.MongoDB" Version="8.3.1" />
 		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.3.1">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="DotNetCore.CAP.SqlServer" Version="8.3.1" />
 		<PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.23.0" />
@@ -69,22 +69,22 @@
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <TreatAsUsed>true</TreatAsUsed>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 		<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
 		<PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="Tynab.YANLib" Version="8.2.0" />
 		<PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
@@ -92,7 +92,7 @@
 		<PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="8.3.4">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="Volo.Abp.EventBus.Azure" Version="8.3.4" />
 		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="8.3.4" />

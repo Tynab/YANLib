@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using YANLib.Repositories;
+using YANLib.Domain;
 
 namespace YANLib.EntityFrameworkCore.Domains;
 

@@ -46,6 +46,18 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
     [Fact]
     public async Task Should_Get_All_DeveloperTypes()
     {
+        // Arrange
+        var request = new DeveloperTypeCreateRequest
+        {
+            Name = "Test Developer Type for GetList",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        _ = await _service.CreateAsync(request);
+
         // Act
         var result = await _service.GetListAsync(new PagedAndSortedResultRequestDto
         {

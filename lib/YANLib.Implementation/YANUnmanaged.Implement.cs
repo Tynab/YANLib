@@ -20,12 +20,16 @@ internal static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Guid ParseGuid(this string? input, Guid defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : Guid.TryParse(input, out var guidResult) ? guidResult : defaultValue;
+    private static Guid ParseGuid(this string? input, Guid defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : Guid.TryParse(input, out var guid) ? guid : defaultValue;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static TimeSpan ParseTimeSpan(this string? input, TimeSpan defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : TimeSpan.TryParse(input, out var ts) ? ts : defaultValue;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static T ParseEnum<T>(this string? input, T defaultValue = default) where T : unmanaged
-        => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var enumResult) ? enumResult.ParseImplement<T>() : defaultValue;
+        => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var e) ? e.ParseImplement<T>() : defaultValue;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -34,6 +38,22 @@ internal static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static Guid ParseGuid(this string? input) => input.IsNullWhiteSpaceImplement() ? default : Guid.TryParse(input, out var guid) ? guid : default;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static Guid? ParseGuidNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : Guid.TryParse(input, out var guid) ? guid : default(Guid?);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static TimeSpan ParseTimeSpan(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TimeSpan.TryParse(input, out var ts) ? ts : default;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static TimeSpan? ParseTimeSpanNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TimeSpan.TryParse(input, out var ts) ? ts : default(TimeSpan?);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -47,6 +67,11 @@ internal static partial class YANUnmanaged
         if (typeof(T) == typeof(Guid))
         {
             return (input?.ToString() ?? default).ParseGuid((defaultValue?.ToString() ?? default).ParseGuid(default)).ParseImplement<T>();
+        }
+
+        if (typeof(T) == typeof(TimeSpan))
+        {
+            return (input?.ToString() ?? default).ParseTimeSpan((defaultValue?.ToString() ?? default).ParseTimeSpan(default)).ParseImplement<T>();
         }
 
         if (typeof(T).IsEnum)

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
-using YANLib.Repositories;
+using YANLib.Domains;
 using static System.DateTime;
 using static System.Guid;
 

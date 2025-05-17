@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
-using YANLib.Repositories;
+using YANLib.Domains;
 
 namespace YANLib;
 

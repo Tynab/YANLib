@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Modularity;
 using Xunit;
+using YANLib.Domains;
 using YANLib.Entities;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domain;
 
 public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
@@ -39,6 +40,18 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
     [Fact]
     public async Task Should_Get_All_DeveloperTypes()
     {
+        // Arrange
+        var developerType = new DeveloperType
+        {
+            Name = "Domain Test Developer Type for GetList",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        _ = await _repository.InsertAsync(developerType, true);
+
         // Act
         var result = await _repository.GetListAsync();
 

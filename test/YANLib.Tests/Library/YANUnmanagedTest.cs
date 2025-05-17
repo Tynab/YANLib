@@ -168,6 +168,20 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parse_TimeSpanInput_ReturnsTimeSpanValue()
+    {
+        // Arrange
+        object input = "01:30:45";
+        var expected = new TimeSpan(1, 30, 45);
+
+        // Act
+        var result = input.Parse<TimeSpan>();
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
     public void Parse_ParamsFormatOverload_UsesFormat()
     {
         // Arrange

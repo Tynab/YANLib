@@ -48,6 +48,19 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
     [Fact]
     public async Task Should_Get_All_Projects()
     {
+        // Arrange
+        var request = new ProjectCreateRequest
+        {
+            Name = "Test Project for GetList",
+            Description = "Test Project Description for GetList",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        _ = await _service.CreateAsync(request);
+
         // Act
         var result = await _service.GetListAsync(new PagedAndSortedResultRequestDto
         {

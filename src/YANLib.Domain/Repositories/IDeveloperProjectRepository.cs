@@ -6,7 +6,7 @@ using Volo.Abp.Domain.Repositories;
 using YANLib.Dtos;
 using YANLib.Entities;
 
-namespace YANLib.Repositories;
+namespace YANLib.Domains;
 
 public interface IDeveloperProjectRepository : IRepository<DeveloperProject, Guid>, ITransientDependency
 {
