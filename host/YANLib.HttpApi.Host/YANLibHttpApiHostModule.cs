@@ -1,5 +1,4 @@
 #if RELEASE
-using Confluent.Kafka;
 using YANLib.Middlewares;
 #endif
 using Amazon.CloudWatch;
@@ -7,6 +6,7 @@ using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Confluent.Kafka;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.EntityFrameworkCore;
 using Elastic.Apm.NetCoreAll;
@@ -48,6 +48,9 @@ using YANLib.Options;
 using static Amazon.RegionEndpoint;
 using static Amazon.Runtime.CredentialManagement.AWSCredentialsFactory;
 using static Asp.Versioning.ApiVersionReader;
+using static Confluent.Kafka.Acks;
+using static Confluent.Kafka.SaslMechanism;
+using static Confluent.Kafka.SecurityProtocol;
 using static Elastic.Apm.Agent;
 using static HealthChecks.UI.Client.UIResponseWriter;
 using static Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults;
@@ -89,7 +92,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureElasticsearch(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHangfire(context, configuration);
-        //ConfigureHealthChecks(context, configuration);
+        ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(static o => o.UseSqlServer());
@@ -278,14 +281,14 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (sql.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddSqlServer(sql!, tags: ["db", "sql", "mssql"]);
+            _ = healthChecksBuilder.AddSqlServer(sql, tags: ["db", "sql", "mssql"]);
         }
 
         var mongo = configuration["CAP:ConnectionString"];
 
         if (mongo.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddMongoDb(mongo!, tags: ["db", "nosql", "mongo"]);
+            _ = healthChecksBuilder.AddMongoDb(mongo, tags: ["db", "nosql", "mongo"]);
         }
 
         var esUrl = configuration["Elasticsearch:Url"];
@@ -294,27 +297,34 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (AllNotNullWhiteSpace(esUrl, esUsername, esPassword))
         {
-            healthChecksBuilder.AddElasticsearch(x => x.UseServer(esUrl!).UseBasicAuthentication(esUsername!, esPassword!), tags: ["db", "nosql", "es"]);
+            _ = healthChecksBuilder.AddElasticsearch(x => x.UseServer(esUrl!).UseBasicAuthentication(esUsername!, esPassword!), tags: ["db", "nosql", "es"]);
         }
 
         var redis = configuration["Redis:Configuration"];
 
         if (redis.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddRedis(redis!, tags: ["db", "nosql", "redis"]);
+            _ = healthChecksBuilder.AddRedis(redis, tags: ["db", "nosql", "redis"]);
         }
 
-#if RELEASE
-        var kafka = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
+        var kafkaBootstrap = configuration["CAP:Kafka:Connections:Default:BootstrapServers"];
+        var kafkaUsername = configuration["CAP:Kafka:Username"];
+        var kafkaPassword = configuration["CAP:Kafka:Password"];
 
-        if (kafka.IsNotNullWhiteSpace())
+        if (kafkaBootstrap.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddKafka(new ProducerConfig(new Dictionary<string, string>
+            var kafkaConfig = new ProducerConfig
             {
-                { "bootstrap.servers", kafka }
-            }), tags: ["db", "nosql", "kafka"]);
+                Acks = Leader,
+                SecurityProtocol = SaslPlaintext,
+                SaslMechanism = Plain,
+                BootstrapServers = kafkaBootstrap,
+                SaslUsername = kafkaUsername,
+                SaslPassword = kafkaPassword
+            };
+
+            _ = healthChecksBuilder.AddKafka(kafkaConfig, tags: ["db", "nosql", "kafka"]);
         }
-#endif
 
         var rabbitHostName = configuration["RabbitMQ:Connections:Default:HostName"];
         var rabbitPort = configuration["RabbitMQ:Connections:Default:Port"].Parse<int>(5672);
@@ -326,7 +336,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (AllNotNullWhiteSpace(rabbitHostName, rabbitUsername, rabbitPassword))
         {
-            healthChecksBuilder.AddRabbitMQ((serviceProvider, rabbitOptions) =>
+            _ = healthChecksBuilder.AddRabbitMQ((serviceProvider, rabbitOptions) =>
             {
                 rabbitOptions.ConnectionFactory = new ConnectionFactory
                 {
@@ -349,12 +359,12 @@ public class YANLibHttpApiHostModule : AbpModule
         //var asb = configuration["Azure:ServiceBus:Connections:Default:ConnectionString"];
         //var asbTopic = configuration["Azure:EventBus:TopicName"];
 
-        //if (AllNotWhiteSpaceAndNull(asb, asbTopic))
+        //if (AllNotNullWhiteSpace(asb, asbTopic))
         //{
         //    healthChecksBuilder.AddAzureServiceBusTopic(asb!, asbTopic!, tags: ["db", "cloud", "asb"]);
         //}
 
-        healthChecksBuilder.AddHangfire(c =>
+        _ = healthChecksBuilder.AddHangfire(c =>
         {
             c.MaximumJobsFailed = 1;
             c.MinimumAvailableServers = 1;
@@ -369,7 +379,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
             if (bucketName.IsNotNullWhiteSpace())
             {
-                healthChecksBuilder.AddS3(x =>
+                _ = healthChecksBuilder.AddS3(x =>
                 {
                     x.Credentials = credentials;
                     x.BucketName = bucketName;
@@ -384,7 +394,7 @@ public class YANLibHttpApiHostModule : AbpModule
             var environmentName = context.Services.GetHostingEnvironment().EnvironmentName;
             var secretId = $"{environmentName}/YANLib/appsettings";
 
-            healthChecksBuilder.AddSecretsManager(x =>
+            _ = healthChecksBuilder.AddSecretsManager(x =>
             {
                 x.Credentials = credentials;
                 x.RegionEndpoint = APSoutheast1;
@@ -401,7 +411,7 @@ public class YANLibHttpApiHostModule : AbpModule
 
         if (aai.IsNotNullWhiteSpace())
         {
-            healthChecksBuilder.AddApplicationInsightsPublisher(aai);
+            _ = healthChecksBuilder.AddApplicationInsightsPublisher(aai);
         }
 
         _ = context.Services.AddHealthChecksUI()
@@ -433,6 +443,7 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
+
 #if RELEASE
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 #endif
@@ -455,7 +466,7 @@ public class YANLibHttpApiHostModule : AbpModule
             ResponseWriter = WriteHealthCheckUIResponse
         });
 
-        _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI());
+        _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI(s => s.UIPath = "/health-ui"));
         _ = app.UseHangfireDashboard();
         _ = app.UseConfiguredEndpoints();
     }
