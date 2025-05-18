@@ -604,6 +604,20 @@ Each component in YANLib is implemented with careful attention to performance, m
 - **YANExpression**: Uses expression trees with thread-safe caching in ConcurrentDictionary
 
 
+### Important Notes
+
+- Elastic.Apm... (v1.24.x and above) is spam logs.
+- DotNetCap.CAP... (v8.3.2 and above) error CreateConnectionAsync method.
+- Do not [Remove Unused References...] in layers:
+    - Host:
+        - Microsoft.EntityFrameworkCore.Tools
+        - DotNetCap.CAP...
+        - Serilog...
+        - Volo.Abp.EntityFrameworkCore.SqlServer
+    - Domain.Shared:
+        - Microsoft.Extensions.FileProviders.Embedded
+
+
 ## 📜 License
 
 YANLib is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

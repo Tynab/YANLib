@@ -1,6 +1,9 @@
 #if RELEASE
+
 using YANLib.Middlewares;
+
 #endif
+
 using Amazon.CloudWatch;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
@@ -445,7 +448,9 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseSwagger();
 
 #if RELEASE
+
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
+
 #endif
 
         _ = app.UseAbpSwaggerUI(c =>
