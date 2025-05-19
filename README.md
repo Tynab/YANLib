@@ -27,6 +27,7 @@
   - [YANTask](#yantask)
   - [YANProcess](#yanprocess)
   - [YANExpression](#yanexpression)
+  - [YANLib.Snowflake](#yanlibsnowflake)
 - [Performance Benchmarks](#-performance-benchmarks)
 - [Code Examples](#-code-examples)
 - [Project Architecture](#-project-architecture)
@@ -361,6 +362,56 @@ var person = new Person { Name = "John", Age = 30 };
 string name = (string)func(person); // Returns "John"
 ```
 
+### YANLib.Snowflake
+
+A robust implementation of the Snowflake ID algorithm for generating distributed, time-ordered unique identifiers in C# applications.
+
+#### Key Features
+
+- 64-bit unique ID generation
+- Alphabetic and alphanumeric string representations
+- Time-ordered IDs for easy sorting
+- Distributed system support with worker and datacenter IDs
+- Component extraction from existing IDs
+- Predefined bit allocation strategies for different use cases
+- Customizable bit allocation for specialized scaling needs
+
+```csharp
+// Create an ID generator with worker ID 1 and datacenter ID 1
+var generator = new IdGenerator(1, 1);
+
+// Generate a numeric ID
+long id = generator.NextId();
+// Example: 6982190104624234496
+
+// Generate an alphabetic ID (base-26, A-Z)
+string alphabeticId = generator.NextIdAlphabetic();
+// Example: "BPNHEBKDMGLCQ"
+
+// Generate an alphanumeric ID (base-36, 0-9, A-Z)
+string alphanumericId = generator.NextIdAlphanumeric();
+// Example: "1Z9DHPKW0S"
+
+// Create a generator with a predefined bit allocation strategy
+// MoreDistributed: 10 bits for worker ID (0-1023), 10 bits for datacenter ID (0-1023), 3 bits for sequence (0-7)
+var distributedGenerator = new IdGenerator(100, 200, BitAllocationStrategy.MoreDistributed);
+
+// HighVolume: 2 bits for worker ID (0-3), 2 bits for datacenter ID (0-3), 19 bits for sequence (0-524,287)
+var highVolumeGenerator = new IdGenerator(1, 1, BitAllocationStrategy.HighVolume);
+
+// Extract components from an ID
+var components = IdGenerator.ExtractIdComponents(id);
+DateTime timestamp = components.Timestamp;
+long workerId = components.WorkerId;
+long datacenterId = components.DatacenterId;
+
+// Extract components using the same strategy used to generate the ID
+var strategicComponents = IdGenerator.ExtractIdComponents(
+    distributedGenerator.NextId(),
+    BitAllocationStrategy.MoreDistributed
+);
+```
+
 
 ## 📊 Performance Benchmarks
 
@@ -468,6 +519,61 @@ public Customer PrepareCustomerData(Customer customer)
 }
 ```
 
+### Unique ID Generation with Snowflake
+
+```csharp
+public class IdService
+{
+    private readonly IdGenerator _userIdGenerator;
+    private readonly IdGenerator _orderIdGenerator;
+    private readonly IdGenerator _highVolumeGenerator;
+    
+    public IdService()
+    {
+        // Create separate generators for different entity types
+        _userIdGenerator = new IdGenerator(1, 1);
+        _orderIdGenerator = new IdGenerator(2, 1);
+        
+        // Create a high-volume generator with custom bit allocation
+        // 2 bits for worker ID, 2 bits for datacenter ID, 19 bits for sequence
+        _highVolumeGenerator = new IdGenerator(
+            workerId: 1,
+            datacenterId: 1,
+            sequence: 0,
+            workerIdBits: 2,
+            datacenterIdBits: 2,
+            sequenceBits: 19
+        );
+    }
+    
+    public string GenerateUserId()
+    {
+        // Generate a compact alphanumeric ID for users
+        return _userIdGenerator.NextIdAlphanumeric();
+    }
+    
+    public long GenerateOrderId()
+    {
+        // Generate a numeric ID for orders
+        return _orderIdGenerator.NextId();
+    }
+    
+    public long GenerateHighVolumeId()
+    {
+        // Generate an ID optimized for high volume (up to 524,287 IDs per millisecond)
+        return _highVolumeGenerator.NextId();
+    }
+    
+    public DateTime GetIdCreationTime(long id)
+    {
+        // Extract the timestamp from an ID
+        var components = IdGenerator.ExtractIdComponents(id);
+
+        return components.Timestamp;
+    }
+}
+```
+
 ### Random Test Data Generation
 
 ```csharp
@@ -532,6 +638,7 @@ YANLib is based on .NET 8.0 (LTS) and consists of the following main components:
 - Task
 - Process
 - Expression
+- Snowflake
 
 ### Project Structure
 
@@ -581,9 +688,13 @@ YANLib/
 │       ├── YANProcess.Collection.cs
 │       └── ...
 └── Advanced/
-    └── Expression/
-        ├── YANExpression.cs
-        ├── YANExpression.Implement.cs
+    ├── Expression/
+    │   ├── YANExpression.cs
+    │   ├── YANExpression.Implement.cs
+    │   └── ...
+    └── Snowflake/
+        ├── IdGenerator.Constant.cs
+        ├── IdGenerator.Constructor.cs
         └── ...
 ```
 
@@ -602,6 +713,7 @@ Each component in YANLib is implemented with careful attention to performance, m
 - **YANTask**: Uses HashSet<Task`<T>`> for efficient task tracking and implements async/await patterns
 - **YANProcess**: Uses Process.GetProcessesByName() with proper resource cleanup
 - **YANExpression**: Uses expression trees with thread-safe caching in ConcurrentDictionary
+- **YANLib.Snowflake**: Implements the Snowflake algorithm with bit manipulation for efficient ID generation and customizable bit allocation
 
 
 ### Important Notes

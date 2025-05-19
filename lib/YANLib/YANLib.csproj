@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<ApplicationIcon>ic.ico</ApplicationIcon>
+		<ApplicationIcon>favicon.ico</ApplicationIcon>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>YANLib</Title>
 		<Authors>Yami An</Authors>
@@ -34,43 +34,66 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.2.1 - TimeSpan Support &amp; Parsing Enhancements
+		<PackageReleaseNotes>### YANLib 8.3.0 - Snowflake ID Implementation &amp; Customizable Distributed Identifiers
 
-## Enhanced Type Support
+## Distributed ID Generation
 
-- **TimeSpan Parsing Integration**
+- **Snowflake Algorithm Integration**
 
-	- Added comprehensive TimeSpan support to `Parse&lt;T&gt;` extension methods
-	- Implemented TimeSpan parsing with various format patterns (days, hours, minutes, seconds, milliseconds)
-	- Full support for nullable TimeSpan (`TimeSpan?`) parsing with graceful null handling
+    - Added robust implementation of the Snowflake ID algorithm for distributed systems
+    - Implemented 64-bit unique ID generation with timestamp, worker ID, datacenter ID, and sequence components
+    - Full support for time-ordered, sortable identifiers with millisecond precision
+    - Thread-safe implementation for concurrent ID generation in multi-threaded environments
 
-- **Collection TimeSpan Support**
+- **Predefined Bit Allocation Strategies**
 
-	- Extended `Parses&lt;T&gt;` to handle collections of TimeSpan values
-	- Added TimeSpan support to dictionary parsing with `Parses&lt;TKey, TValue&gt;`
-	- Implemented TimeSpan support in lookup parsing with `Parses&lt;TKey, TElement&gt;`
-	- Support for mixed TimeSpan formats within collections
+    - Added BitAllocationStrategy enum for simplified bit allocation configuration
+    - Included four predefined strategies optimized for different use cases:
+
+        - Default (5-5-13): Balanced approach for most applications
+        - MoreDistributed (10-10-3): Optimized for systems with many workers and datacenters
+        - HighVolume (2-2-19): Optimized for generating many IDs per millisecond on few nodes
+        - Balanced (8-8-7): Middle ground between distribution and sequence capacity
+
+    - Simplified constructor overloads for intuitive API usage
+    - Automatic validation of worker and datacenter IDs based on selected strategy
+
+- **Customizable Bit Allocation**
+
+    - Added support for customizing bit allocation between worker ID, datacenter ID, and sequence components
+    - Flexible configuration to optimize for different distributed system requirements
+    - Automatic validation to ensure the total bit allocation remains within the 64-bit constraint
+    - Runtime calculation of maximum values based on configured bit allocations
+
+- **String Representation Support**
+
+    - Added base-26 alphabetic (A-Z) string representation for more compact IDs
+    - Implemented base-36 alphanumeric (0-9, A-Z) encoding for maximum compactness
+    - Bidirectional conversion between numeric IDs and string representations
+    - Support for custom epoch timestamps for application-specific time ranges
 
 ## Performance
 
-- Optimized TimeSpan parsing with efficient string format detection
-- Improved handling of TimeSpan components for maximum accuracy
-- Enhanced parsing performance for TimeSpan collections
-- Reduced memory allocations in TimeSpan conversion operations
+- Optimized bit manipulation operations for efficient ID composition
+- High-throughput ID generation with minimal overhead
+- Efficient string conversion algorithms for alphabetic and alphanumeric formats
+- Thread synchronization with minimal contention for concurrent scenarios
+- Automatic sequence handling with configurable capacity per millisecond
 
 ## Improvements
 
-- Consistent behavior between DateTime and TimeSpan parsing
-- Graceful handling of invalid TimeSpan formats
-- Extended XML documentation for all TimeSpan-related methods
-- Comprehensive test coverage for TimeSpan parsing scenarios
-- Improved type safety with TimeSpan-specific handling
+- Component extraction methods to retrieve timestamp, worker ID, and datacenter ID from existing IDs
+- Strategy-aware component extraction for simplified ID parsing
+- Clock drift protection to prevent duplicate IDs when system time moves backwards
+- Comprehensive XML documentation for all Snowflake ID-related methods
+- Configurable worker and datacenter IDs for distributed deployment scenarios
+- Seamless integration with existing YANLib components
 
 See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.2.1</Version>
+		<Version>8.3.0</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>
@@ -88,7 +111,7 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="ic.ico" />
+	  <Content Include="favicon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -97,8 +120,8 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 			<PackagePath>\</PackagePath>
 		</None>
 		<None Include="..\..\res\icon.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
 
