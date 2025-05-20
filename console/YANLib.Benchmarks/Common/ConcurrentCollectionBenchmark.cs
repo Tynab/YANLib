@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using YANLib.Benchmarks.Datas;
+using YANLib;
+using YANLib.Benchmarks.Models;
 using static System.Array;
 using static System.Guid;
 using static System.Linq.Enumerable;
@@ -7,7 +8,7 @@ using static System.Threading.Tasks.Parallel;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANMath;
 
-namespace YANLib.Benchmarks.Process.Common;
+namespace YANLib.Benchmarks.Common;
 
 public class ConcurrentCollectionBenchmark
 {

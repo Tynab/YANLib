@@ -1,10 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
-using YANLib.Benchmarks.Datas;
+using YANLib.Benchmarks.Models;
 using static Newtonsoft.Json.JsonConvert;
 using static System.DateTime;
 using static System.Guid;
 
-namespace YANLib.Benchmarks.Process.Library;
+namespace YANLib.Benchmarks.Library;
 
 public class JsonDeserializeBenchmark
 {

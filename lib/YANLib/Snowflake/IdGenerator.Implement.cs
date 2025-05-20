@@ -139,7 +139,7 @@ public partial class IdGenerator
             }
             else if (currentTimestamp == _lastTimestamp)
             {
-                Sequence = (Sequence + 1) & _maxSequence;
+                Sequence = (Sequence + 1) & MaxSequence;
 
                 if (Sequence is 0)
                 {
@@ -153,7 +153,7 @@ public partial class IdGenerator
 
             _lastTimestamp = currentTimestamp;
 
-            return ((currentTimestamp - timestampEpoch) << _timestampLeftShift) | (DatacenterId << _datacenterIdShift) | (WorkerId << _workerIdShift) | (Sequence & _maxSequence);
+            return ((currentTimestamp - timestampEpoch) << _timestampLeftShift) | (DatacenterId << _datacenterIdShift) | (WorkerId << _workerIdShift) | (Sequence & MaxSequence);
         }
     }
 

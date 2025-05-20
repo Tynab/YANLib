@@ -34,66 +34,48 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.3.0 - Snowflake ID Implementation &amp; Customizable Distributed Identifiers
+		<PackageReleaseNotes>### YANLib 8.3.1 - Snowflake ID Refinements &amp; Property Encapsulation Improvements
 
-## Distributed ID Generation
+## Snowflake ID Generator Enhancements
 
-- **Snowflake Algorithm Integration**
+- **Improved Property Encapsulation**
 
-    - Added robust implementation of the Snowflake ID algorithm for distributed systems
-    - Implemented 64-bit unique ID generation with timestamp, worker ID, datacenter ID, and sequence components
-    - Full support for time-ordered, sortable identifiers with millisecond precision
-    - Thread-safe implementation for concurrent ID generation in multi-threaded environments
+  - Refactored `IdGenerator` class to use auto-implemented properties for better encapsulation
+  - Changed `Sequence` property access modifier from `internal set` to `private set` for improved security
+  - Removed redundant private backing fields in favor of direct property initialization
 
-- **Predefined Bit Allocation Strategies**
+- **Code Structure Optimization**
 
-    - Added BitAllocationStrategy enum for simplified bit allocation configuration
-    - Included four predefined strategies optimized for different use cases:
+  - Streamlined internal implementation of bit allocation properties
+  - Enhanced memory efficiency by eliminating unnecessary field duplication
+  - Improved code readability and maintainability through consistent property patterns
 
-        - Default (5-5-13): Balanced approach for most applications
-        - MoreDistributed (10-10-3): Optimized for systems with many workers and datacenters
-        - HighVolume (2-2-19): Optimized for generating many IDs per millisecond on few nodes
-        - Balanced (8-8-7): Middle ground between distribution and sequence capacity
+- **Constructor Refinements**
 
-    - Simplified constructor overloads for intuitive API usage
-    - Automatic validation of worker and datacenter IDs based on selected strategy
+  - Optimized constructor implementation for better performance
+  - Enhanced initialization flow for predefined bit allocation strategies
+  - Maintained full backward compatibility with existing code
 
-- **Customizable Bit Allocation**
+## Architecture Improvements
 
-    - Added support for customizing bit allocation between worker ID, datacenter ID, and sequence components
-    - Flexible configuration to optimize for different distributed system requirements
-    - Automatic validation to ensure the total bit allocation remains within the 64-bit constraint
-    - Runtime calculation of maximum values based on configured bit allocations
+- Strengthened encapsulation of internal state management
+- Reduced memory footprint through elimination of redundant fields
+- Improved overall code quality and maintainability
+- Enhanced consistency across the Snowflake ID implementation
 
-- **String Representation Support**
+## Bug Fixes
 
-    - Added base-26 alphabetic (A-Z) string representation for more compact IDs
-    - Implemented base-36 alphanumeric (0-9, A-Z) encoding for maximum compactness
-    - Bidirectional conversion between numeric IDs and string representations
-    - Support for custom epoch timestamps for application-specific time ranges
+- Fixed potential thread safety issues with sequence property access
+- Addressed edge cases in property initialization patterns
+- Ensured consistent behavior across all constructor overloads
 
-## Performance
-
-- Optimized bit manipulation operations for efficient ID composition
-- High-throughput ID generation with minimal overhead
-- Efficient string conversion algorithms for alphabetic and alphanumeric formats
-- Thread synchronization with minimal contention for concurrent scenarios
-- Automatic sequence handling with configurable capacity per millisecond
-
-## Improvements
-
-- Component extraction methods to retrieve timestamp, worker ID, and datacenter ID from existing IDs
-- Strategy-aware component extraction for simplified ID parsing
-- Clock drift protection to prevent duplicate IDs when system time moves backwards
-- Comprehensive XML documentation for all Snowflake ID-related methods
-- Configurable worker and datacenter IDs for distributed deployment scenarios
-- Seamless integration with existing YANLib components
+This maintenance release focuses on internal improvements to the Snowflake ID implementation, enhancing code quality while maintaining full compatibility with existing applications.
 
 See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.3.0</Version>
+		<Version>8.3.1</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>

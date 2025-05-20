@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
 
-namespace YANLib.Benchmarks.Process.Common;
+namespace YANLib.Benchmarks.Common;
 
 [SimpleJob, GroupBenchmarksBy(ByCategory), CategoriesColumn]
 public class ConditionBenchmark

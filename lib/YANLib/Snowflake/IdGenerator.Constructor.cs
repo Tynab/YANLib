@@ -14,14 +14,6 @@ public partial class IdGenerator
     private long _lastTimestamp = -1;
     private readonly object _lock = new();
 
-    private readonly int _workerIdBits;
-    private readonly int _datacenterIdBits;
-    private readonly int _sequenceBits;
-
-    private readonly long _maxWorkerId;
-    private readonly long _maxDatacenterId;
-    private readonly long _maxSequence;
-
     private readonly int _workerIdShift;
     private readonly int _datacenterIdShift;
     private readonly int _timestampLeftShift;
@@ -99,29 +91,29 @@ public partial class IdGenerator
         }
 
         // Set bit allocations
-        _workerIdBits = workerIdBits;
-        _datacenterIdBits = datacenterIdBits;
-        _sequenceBits = sequenceBits;
+        WorkerIdBits = workerIdBits;
+        DatacenterIdBits = datacenterIdBits;
+        SequenceBits = sequenceBits;
 
         // Calculate maximum values
-        _maxWorkerId = -1L ^ (-1L << _workerIdBits);
-        _maxDatacenterId = -1L ^ (-1L << _datacenterIdBits);
-        _maxSequence = -1L ^ (-1L << _sequenceBits);
+        MaxWorkerId = -1L ^ (-1L << WorkerIdBits);
+        MaxDatacenterId = -1L ^ (-1L << DatacenterIdBits);
+        MaxSequence = -1L ^ (-1L << SequenceBits);
 
         // Calculate shifts
-        _workerIdShift = _sequenceBits;
-        _datacenterIdShift = _sequenceBits + _workerIdBits;
-        _timestampLeftShift = _sequenceBits + _workerIdBits + _datacenterIdBits;
+        _workerIdShift = SequenceBits;
+        _datacenterIdShift = SequenceBits + WorkerIdBits;
+        _timestampLeftShift = SequenceBits + WorkerIdBits + DatacenterIdBits;
 
         // Validate IDs
-        if (workerId < 0 || workerId > _maxWorkerId)
+        if (workerId < 0 || workerId > MaxWorkerId)
         {
-            throw new ArgumentException($"Worker ID must be between 0 and {_maxWorkerId}, but got {workerId}.", nameof(workerId));
+            throw new ArgumentException($"Worker ID must be between 0 and {MaxWorkerId}, but got {workerId}.", nameof(workerId));
         }
 
-        if (datacenterId < 0 || datacenterId > _maxDatacenterId)
+        if (datacenterId < 0 || datacenterId > MaxDatacenterId)
         {
-            throw new ArgumentException($"Datacenter ID must be between 0 and {_maxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
+            throw new ArgumentException($"Datacenter ID must be between 0 and {MaxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
         }
 
         WorkerId = workerId;
@@ -174,54 +166,58 @@ public partial class IdGenerator
         {
             case BitAllocationStrategy.MoreDistributed:
             {
-                _workerIdBits = MORE_DISTRIBUTED_WORKER_ID_BITS;
-                _datacenterIdBits = MORE_DISTRIBUTED_DATACENTER_ID_BITS;
-                _sequenceBits = MORE_DISTRIBUTED_SEQUENCE_BITS;
+                WorkerIdBits = MORE_DISTRIBUTED_WORKER_ID_BITS;
+                DatacenterIdBits = MORE_DISTRIBUTED_DATACENTER_ID_BITS;
+                SequenceBits = MORE_DISTRIBUTED_SEQUENCE_BITS;
+
                 break;
             }
             case BitAllocationStrategy.HighVolume:
             {
-                _workerIdBits = HIGH_VOLUME_WORKER_ID_BITS;
-                _datacenterIdBits = HIGH_VOLUME_DATACENTER_ID_BITS;
-                _sequenceBits = HIGH_VOLUME_SEQUENCE_BITS;
+                WorkerIdBits = HIGH_VOLUME_WORKER_ID_BITS;
+                DatacenterIdBits = HIGH_VOLUME_DATACENTER_ID_BITS;
+                SequenceBits = HIGH_VOLUME_SEQUENCE_BITS;
+
                 break;
             }
             case BitAllocationStrategy.Balanced:
             {
-                _workerIdBits = BALANCED_WORKER_ID_BITS;
-                _datacenterIdBits = BALANCED_DATACENTER_ID_BITS;
-                _sequenceBits = BALANCED_SEQUENCE_BITS;
+                WorkerIdBits = BALANCED_WORKER_ID_BITS;
+                DatacenterIdBits = BALANCED_DATACENTER_ID_BITS;
+                SequenceBits = BALANCED_SEQUENCE_BITS;
+
                 break;
             }
             case BitAllocationStrategy.Default:
             default:
             {
-                _workerIdBits = DEFAULT_WORKER_ID_BITS;
-                _datacenterIdBits = DEFAULT_DATACENTER_ID_BITS;
-                _sequenceBits = DEFAULT_SEQUENCE_BITS;
+                WorkerIdBits = DEFAULT_WORKER_ID_BITS;
+                DatacenterIdBits = DEFAULT_DATACENTER_ID_BITS;
+                SequenceBits = DEFAULT_SEQUENCE_BITS;
+
                 break;
             }
         }
 
         // Calculate maximum values
-        _maxWorkerId = -1L ^ (-1L << _workerIdBits);
-        _maxDatacenterId = -1L ^ (-1L << _datacenterIdBits);
-        _maxSequence = -1L ^ (-1L << _sequenceBits);
+        MaxWorkerId = -1L ^ (-1L << WorkerIdBits);
+        MaxDatacenterId = -1L ^ (-1L << DatacenterIdBits);
+        MaxSequence = -1L ^ (-1L << SequenceBits);
 
         // Calculate shifts
-        _workerIdShift = _sequenceBits;
-        _datacenterIdShift = _sequenceBits + _workerIdBits;
-        _timestampLeftShift = _sequenceBits + _workerIdBits + _datacenterIdBits;
+        _workerIdShift = SequenceBits;
+        _datacenterIdShift = SequenceBits + WorkerIdBits;
+        _timestampLeftShift = SequenceBits + WorkerIdBits + DatacenterIdBits;
 
         // Validate IDs
-        if (workerId < 0 || workerId > _maxWorkerId)
+        if (workerId < 0 || workerId > MaxWorkerId)
         {
-            throw new ArgumentException($"Worker ID must be between 0 and {_maxWorkerId}, but got {workerId}.", nameof(workerId));
+            throw new ArgumentException($"Worker ID must be between 0 and {MaxWorkerId}, but got {workerId}.", nameof(workerId));
         }
 
-        if (datacenterId < 0 || datacenterId > _maxDatacenterId)
+        if (datacenterId < 0 || datacenterId > MaxDatacenterId)
         {
-            throw new ArgumentException($"Datacenter ID must be between 0 and {_maxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
+            throw new ArgumentException($"Datacenter ID must be between 0 and {MaxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
         }
 
         WorkerId = workerId;
@@ -239,7 +235,7 @@ public partial class IdGenerator
     /// <remarks>
     /// The worker ID identifies the worker or process within a datacenter.
     /// </remarks>
-    public long WorkerId { get; protected set; }
+    public long WorkerId { get; }
 
     /// <summary>
     /// Gets the datacenter ID component of this ID generator.
@@ -247,7 +243,7 @@ public partial class IdGenerator
     /// <remarks>
     /// The datacenter ID identifies the datacenter where this ID generator is running.
     /// </remarks>
-    public long DatacenterId { get; protected set; }
+    public long DatacenterId { get; }
 
     /// <summary>
     /// Gets or sets the sequence component of this ID generator.
@@ -255,37 +251,37 @@ public partial class IdGenerator
     /// <remarks>
     /// The sequence is incremented for every ID generated within the same millisecond and is reset when the clock moves forward.
     /// </remarks>
-    public long Sequence { get; internal set; }
+    public long Sequence { get; private set; }
 
     /// <summary>
     /// Gets the number of bits allocated for the worker ID component.
     /// </summary>
-    public int WorkerIdBits => _workerIdBits;
+    public int WorkerIdBits { get; }
 
     /// <summary>
     /// Gets the number of bits allocated for the datacenter ID component.
     /// </summary>
-    public int DatacenterIdBits => _datacenterIdBits;
+    public int DatacenterIdBits { get; }
 
     /// <summary>
     /// Gets the number of bits allocated for the sequence component.
     /// </summary>
-    public int SequenceBits => _sequenceBits;
+    public int SequenceBits { get; }
 
     /// <summary>
     /// Gets the maximum value for the worker ID component.
     /// </summary>
-    public long MaxWorkerId => _maxWorkerId;
+    public long MaxWorkerId { get; }
 
     /// <summary>
     /// Gets the maximum value for the datacenter ID component.
     /// </summary>
-    public long MaxDatacenterId => _maxDatacenterId;
+    public long MaxDatacenterId { get; }
 
     /// <summary>
     /// Gets the maximum value for the sequence component.
     /// </summary>
-    public long MaxSequence => _maxSequence;
+    public long MaxSequence { get; }
 
     #endregion
 }

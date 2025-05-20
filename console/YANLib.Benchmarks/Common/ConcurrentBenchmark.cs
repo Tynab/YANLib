@@ -2,7 +2,7 @@
 using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
 using static System.Threading.Tasks.Task;
 
-namespace YANLib.Benchmarks.Process.Common;
+namespace YANLib.Benchmarks.Common;
 
 [SimpleJob, GroupBenchmarksBy(ByCategory), CategoriesColumn]
 public class ConcurrentBenchmark
