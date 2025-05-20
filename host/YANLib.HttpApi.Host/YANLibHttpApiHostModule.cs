@@ -196,7 +196,19 @@ public class YANLibHttpApiHostModule : AbpModule
         });
     }
 
-    private static void ConfigureElasticsearch(ServiceConfigurationContext context, IConfiguration configuration) => context.Services.AddElasticsearch(configuration);
+    private static void ConfigureElasticsearch(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        //
+        try
+        {
+            context.Services.AddElasticsearch(configuration);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error configuring Elasticsearch: {ex.Message}. Application will continue without Elasticsearch.");
+        }
+        //
+    }
 
     private static void ConfigureCap(ServiceConfigurationContext context, IConfiguration configuration)
     {
