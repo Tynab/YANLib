@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿#if RELEASE
+
+using YANLib.Utilities;
+
+#endif
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,7 +36,11 @@ public class Program
 
             var builder = CreateBuilder(args);
 
-            //await builder.Configuration.AddConfigFromAws(builder.Environment.EnvironmentName);
+#if RELEASE
+
+            await builder.Configuration.AddConfigFromAws(builder.Environment.EnvironmentName);
+
+#endif
 
             _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog(static (t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
             _ = builder.AddServiceDefaults();

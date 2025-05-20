@@ -1,5 +1,5 @@
-﻿using YANLib.Benchmarks.Datas;
-using YANLib.Benchmarks.Process.Common;
+﻿using YANLib.Benchmarks.Common;
+using YANLib.Benchmarks.Models;
 
 namespace YANLib.Tests;
 

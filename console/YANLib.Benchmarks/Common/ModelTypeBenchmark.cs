@@ -1,10 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
-using YANLib.Benchmarks.Datas;
 using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
 using static System.DateTime;
 using static System.Guid;
 
-namespace YANLib.Benchmarks.Process.Common;
+namespace YANLib.Benchmarks.Common;
 
 [SimpleJob, GroupBenchmarksBy(ByCategory), CategoriesColumn]
 public class ModelTypeBenchmark

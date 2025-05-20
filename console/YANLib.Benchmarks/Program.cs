@@ -1,5 +1,5 @@
-﻿using YANLib.Benchmarks.Process.Common;
-using YANLib.Benchmarks.Process.Library;
+﻿using YANLib.Benchmarks.Common;
+using YANLib.Benchmarks.Library;
 using static BenchmarkDotNet.Running.BenchmarkRunner;
 using static System.Console;
 

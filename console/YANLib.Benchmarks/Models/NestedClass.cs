@@ -1,4 +1,4 @@
-﻿namespace YANLib.Benchmarks.Datas;
+﻿namespace YANLib.Benchmarks.Models;
 
 public class NestedClass : SampleClass
 {

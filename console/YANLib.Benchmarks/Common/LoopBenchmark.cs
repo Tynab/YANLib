@@ -2,7 +2,7 @@
 using static System.Linq.Enumerable;
 using static System.Runtime.InteropServices.CollectionsMarshal;
 
-namespace YANLib.Benchmarks.Process.Common;
+namespace YANLib.Benchmarks.Common;
 
 public class LoopBenchmark
 {
