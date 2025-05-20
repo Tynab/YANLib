@@ -1,5 +1,4 @@
-﻿using Id_Generator_Snowflake;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,7 @@ using YANLib.EsIndices;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
+using YANLib.Snowflake;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;

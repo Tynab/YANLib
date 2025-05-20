@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using YANLib.Benchmarks.Models;
 using static BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule;
 using static System.DateTime;
 using static System.Guid;
