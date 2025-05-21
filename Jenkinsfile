@@ -32,6 +32,28 @@ pipeline {
     }
 
     stages {
+        stage('Configure AWS') {
+            steps {
+                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_AWS_CONFIG}' --form chat_id='${CHAT_ID}'"
+
+                sh '''
+                    if ! command -v aws &> /dev/null; then
+                        apt-get update
+                        apt-get install -y awscli
+                    fi
+                    aws --version
+                '''
+
+                sh '''
+                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+                    aws configure set default.region ${AWS_DEFAULT_REGION}
+                '''
+
+                sh 'aws sts get-caller-identity'
+            }
+        }
+
         stage('Run Unit Tests') {
             steps {
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST}' --form chat_id='${CHAT_ID}'"
@@ -74,38 +96,34 @@ pipeline {
             }
         }
 
-        stage('Configure AWS') {
-            steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_AWS_CONFIG}' --form chat_id='${CHAT_ID}'"
-
-                sh '''
-                    if ! command -v aws &> /dev/null; then
-                        apt-get update
-                        apt-get install -y awscli
-                    fi
-                    aws --version
-                '''
-
-                sh '''
-                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-                    aws configure set default.region ${AWS_DEFAULT_REGION}
-                '''
-
-                sh 'aws sts get-caller-identity'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PRE}' --form chat_id='${CHAT_ID}'"
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_BUILD}' --form chat_id='${CHAT_ID}'"
 
                 sh '''
+                    mkdir -p ~/.aws
+                    echo "[Tynab]" > ~/.aws/credentials
+                    echo "aws_access_key_id = ${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
+                    echo "aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+                    echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/credentials
+
+                    echo "[default]" >> ~/.aws/credentials
+                    echo "aws_access_key_id = ${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
+                    echo "aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+                    echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/credentials
+
+                    echo "[default]" > ~/.aws/config
+                    echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/config
+                    echo "output = json" >> ~/.aws/config
+                '''
+
+                sh '''
                     docker build \
                     --build-arg AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
                     --build-arg AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
                     --build-arg AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+                    --build-arg AWS_PROFILE=Tynab \
                     -t yamiannephilim/yanlib:latest .
                 '''
             }
@@ -150,6 +168,8 @@ pipeline {
                     -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
                     -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
                     -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+                    -e AWS_PROFILE=Tynab \
+                    -v ~/.aws:/root/.aws:ro \
                     -d yamiannephilim/yanlib:latest
                 '''
             }
