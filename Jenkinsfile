@@ -41,6 +41,7 @@ pipeline {
                     try {
                         sh '''
                             export PATH="$PATH:$HOME/.dotnet"
+                            dotnet workload install aspire
                             dotnet test --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
                         '''
 
@@ -137,7 +138,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'TestResults/**/*', allowEmptyArchive: true
-            step([$class: 'MSTestPublisher', testResultsFile:'TestResults/test-results.trx', failOnError: false, keepLongStdio: true])
+            junit testResults: 'TestResults/test-results.trx', allowEmptyResults: true
             cleanWs()
         }
 
