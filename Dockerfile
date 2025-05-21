@@ -3,6 +3,16 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    unzip \
+    python3 \
+    python3-pip \
+    && pip3 install awscli \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /yanlib
 COPY ["lib/YANLib/YANLib.csproj", "lib/YANLib/"]
@@ -27,4 +37,8 @@ RUN dotnet publish "YANLib.HttpApi.Host.csproj" -c Release -o /app/publish /p:Us
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "YANLib.HttpApi.Host.dll"]
+
+COPY aws-configure.sh /app/aws-configure.sh
+RUN chmod +x /app/aws-configure.sh
+
+ENTRYPOINT ["/bin/bash", "-c", "/app/aws-configure.sh && dotnet YANLib.HttpApi.Host.dll"]

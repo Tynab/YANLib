@@ -24,7 +24,6 @@ pipeline {
         TEXT_PUSH = "${JOB_NAME} is Pushing"
         TEXT_CLEAN = "${JOB_NAME} is Cleaning"
         TEXT_RUN = "${JOB_NAME} is Running"
-        TEXT_AWS_CONFIG = "${JOB_NAME} is Configuring AWS"
 
         // Telegram parameters
         TEXT_SUCCESS_BUILD = "${JOB_NAME} is Success"
@@ -33,28 +32,6 @@ pipeline {
     }
 
     stages {
-        stage('Configure AWS') {
-            steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_AWS_CONFIG}' --form chat_id='${CHAT_ID}'"
-
-                sh '''
-                    if ! command -v aws &> /dev/null; then
-                        apt-get update
-                        apt-get install -y awscli
-                    fi
-                    aws --version
-                '''
-
-                sh '''
-                    aws configure set profile.${AWS_PROFILE}.aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                    aws configure set profile.${AWS_PROFILE}.aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-                    aws configure set profile.${AWS_PROFILE}.region ${AWS_DEFAULT_REGION}
-                '''
-
-                sh 'aws sts get-caller-identity --profile ${AWS_PROFILE}'
-            }
-        }
-
         stage('Run Unit Tests') {
             steps {
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST}' --form chat_id='${CHAT_ID}'"
@@ -136,7 +113,16 @@ pipeline {
                 sh 'docker container stop yanlib || echo "this container does not exist"'
                 sh 'docker network create yan || echo "this network exist"'
                 sh 'echo y | docker container prune'
-                sh 'docker run --name yanlib -d yamiannephilim/yanlib:latest'
+                
+                // Pass AWS credentials to the container
+                sh '''
+                    docker run --name yanlib \
+                    -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+                    -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+                    -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+                    -e AWS_PROFILE=${AWS_PROFILE} \
+                    -d yamiannephilim/yanlib:latest
+                '''
             }
         }
     }
