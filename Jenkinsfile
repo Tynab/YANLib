@@ -10,6 +10,7 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('aws_access')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret')
         AWS_DEFAULT_REGION = 'ap-southeast-1'
+        AWS_PROFILE = 'Tynab'
 
         // Telegram message
         GIT_MESSAGE = sh(returnStdout: true, script: "git log -n 1 --format=%s ${GIT_COMMIT}").trim()
@@ -45,12 +46,12 @@ pipeline {
                 '''
 
                 sh '''
-                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-                    aws configure set default.region ${AWS_DEFAULT_REGION}
+                    aws configure set profile.${AWS_PROFILE}.aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                    aws configure set profile.${AWS_PROFILE}.aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+                    aws configure set profile.${AWS_PROFILE}.region ${AWS_DEFAULT_REGION}
                 '''
 
-                sh 'aws sts get-caller-identity'
+                sh 'aws sts get-caller-identity --profile ${AWS_PROFILE}'
             }
         }
 
@@ -100,32 +101,7 @@ pipeline {
             steps {
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PRE}' --form chat_id='${CHAT_ID}'"
                 sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_BUILD}' --form chat_id='${CHAT_ID}'"
-
-                sh '''
-                    mkdir -p ~/.aws
-                    echo "[Tynab]" > ~/.aws/credentials
-                    echo "aws_access_key_id = ${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
-                    echo "aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
-                    echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/credentials
-
-                    echo "[default]" >> ~/.aws/credentials
-                    echo "aws_access_key_id = ${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
-                    echo "aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
-                    echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/credentials
-
-                    echo "[default]" > ~/.aws/config
-                    echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/config
-                    echo "output = json" >> ~/.aws/config
-                '''
-
-                sh '''
-                    docker build \
-                    --build-arg AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
-                    --build-arg AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-                    --build-arg AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
-                    --build-arg AWS_PROFILE=Tynab \
-                    -t yamiannephilim/yanlib:latest .
-                '''
+                sh 'docker build -t yamiannephilim/yanlib:latest .'
             }
         }
 
@@ -160,18 +136,7 @@ pipeline {
                 sh 'docker container stop yanlib || echo "this container does not exist"'
                 sh 'docker network create yan || echo "this network exist"'
                 sh 'echo y | docker container prune'
-
-                sh '''
-                    docker run --name yanlib \
-                    --network yan \
-                    --restart=unless-stopped \
-                    -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
-                    -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-                    -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
-                    -e AWS_PROFILE=Tynab \
-                    -v ~/.aws:/root/.aws:ro \
-                    -d yamiannephilim/yanlib:latest
-                '''
+                sh 'docker run --name yanlib -d yamiannephilim/yanlib:latest'
             }
         }
     }
