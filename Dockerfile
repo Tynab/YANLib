@@ -9,9 +9,13 @@ RUN apt-get update && \
     unzip \
     python3 \
     python3-pip \
-    && pip3 install awscli \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf aws awscliv2.zip
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /yanlib
