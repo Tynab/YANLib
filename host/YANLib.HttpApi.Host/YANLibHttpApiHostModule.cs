@@ -95,7 +95,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureElasticsearch(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHangfire(context, configuration);
-        //ConfigureHealthChecks(context, configuration);
+        ConfigureHealthChecks(context, configuration);
     }
 
     private void ConfigureSqlServer() => Configure<AbpDbContextOptions>(static o => o.UseSqlServer());
@@ -367,11 +367,13 @@ public class YANLibHttpApiHostModule : AbpModule
         //    healthChecksBuilder.AddAzureServiceBusTopic(asb!, asbTopic!, tags: ["db", "cloud", "asb"]);
         //}
 
+        var signalRHubUrl = configuration["SignalRHub:Url"] ?? string.Empty;
+
         _ = healthChecksBuilder.AddHangfire(c =>
         {
             c.MaximumJobsFailed = 1;
             c.MinimumAvailableServers = 1;
-        }, tags: ["service", "job", "hangfire"]).AddSignalRHub("https://localhost:44380/yanlib/notification", tags: ["service", "noti", "signalr"]);
+        }, tags: ["service", "job", "hangfire"]).AddSignalRHub(signalRHubUrl, tags: ["service", "noti", "signalr"]);
 
         var profileName = "Tynab";
         var profileSource = new SharedCredentialsFile();
@@ -472,7 +474,12 @@ public class YANLibHttpApiHostModule : AbpModule
         });
 
         _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI(s => s.UIPath = "/health-ui"));
-        _ = app.UseHangfireDashboard();
+
+        _ = app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = [new AllowAllAuthorizationFilter()]
+        });
+
         _ = app.UseConfiguredEndpoints();
     }
 }
