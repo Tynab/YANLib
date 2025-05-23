@@ -114,9 +114,8 @@ pipeline {
                 sh 'docker network create yan || echo "this network exist"'
                 sh 'echo y | docker container prune'
                 
-                // Pass AWS credentials to the container
                 sh '''
-                    docker run --name yanlib \
+                    docker run --name yanlib --network yan \
                     -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
                     -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
                     -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
