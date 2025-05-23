@@ -472,7 +472,12 @@ public class YANLibHttpApiHostModule : AbpModule
         });
 
         _ = app.UseRouting().UseEndpoints(x => x.MapHealthChecksUI(s => s.UIPath = "/health-ui"));
-        _ = app.UseHangfireDashboard();
+
+        _ = app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = [new AllowAllAuthorizationFilter()]
+        });
+
         _ = app.UseConfiguredEndpoints();
     }
 }
