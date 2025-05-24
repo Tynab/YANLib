@@ -168,10 +168,19 @@ public static class ElasticsearchConfiguration
         {
             foreach (var mapping in indexMappings)
             {
-                _ = ((typeof(ConnectionSettingsBase<ConnectionSettings>).GetMethod(nameof(ConnectionSettingsBase<>.DefaultMappingFor))?.MakeGenericMethod(mapping.Key))?.Invoke(
-                    settings,
-                    [new Func<ClrTypeMappingDescriptor<object>, IClrTypeMapping<object>>(m => m.IndexName(mapping.Value))]
-                ));
+                var indexType = mapping.Key;
+                var indexName = mapping.Value;
+
+                // Use reflection to call the generic DefaultMappingFor method with the correct type
+                var method = typeof(ConnectionSettingsBase<ConnectionSettings>)
+                    .GetMethod(nameof(ConnectionSettingsBase<ConnectionSettings>.DefaultMappingFor))
+                    ?.MakeGenericMethod(indexType);
+
+                method?.Invoke(settings, new object[]
+                {
+                    new Func<ClrTypeMappingDescriptor<object>, IClrTypeMapping<object>>(
+                        m => (IClrTypeMapping<object>)m.IndexName(indexName))
+                });
             }
         }
 
