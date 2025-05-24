@@ -94,7 +94,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        ConfigureElasticsearch(context, configuration);
+        //ConfigureElasticsearch(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHangfire(context, configuration);
         ConfigureHealthChecks(context, configuration);
