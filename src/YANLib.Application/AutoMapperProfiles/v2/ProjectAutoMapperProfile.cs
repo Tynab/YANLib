@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
+using YANLib.ElasticsearchIndices;
 using YANLib.Entities;
-using YANLib.EsIndices;
 using YANLib.Responses;
 using static System.DateTime;
 
@@ -33,11 +33,11 @@ public sealed class ProjectAutoMapperProfile : Profile
             .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Request.IsActive))
             .Ignore(static d => d.IsDeleted);
 
-        _ = CreateMap<Project, ProjectEsIndex>();
+        _ = CreateMap<Project, ProjectElasticsearchIndex>();
 
-        _ = CreateMap<ProjectEsIndex, ProjectResponse>();
+        _ = CreateMap<ProjectElasticsearchIndex, ProjectResponse>();
 
-        CreateMap<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>().ConvertUsing((source, dest, context)
+        CreateMap<PagedResultDto<ProjectElasticsearchIndex>, PagedResultDto<ProjectResponse>>().ConvertUsing((source, dest, context)
             => new PagedResultDto<ProjectResponse>(source.TotalCount, context.Mapper.Map<IReadOnlyList<ProjectResponse>>(source.Items)));
     }
 }

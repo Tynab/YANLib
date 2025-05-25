@@ -40,6 +40,216 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
+    internal static string? CamelCaseImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpaceImplement())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmptyImplement())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                isPreviousCharWhiteSpace = true;
+
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append(input[i].LowerImplement());
+            isPreviousCharWhiteSpace = false;
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? PascalCaseImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpaceImplement())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmptyImplement())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                isPreviousCharWhiteSpace = true;
+
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append(input[i].LowerImplement());
+            isPreviousCharWhiteSpace = false;
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? SnakeLowerCaseImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpaceImplement())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmptyImplement())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                isPreviousCharWhiteSpace = true;
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].LowerImplement()) : sb.Append('_').Append(input[i].LowerImplement());
+
+            isPreviousCharWhiteSpace = false;
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? SnakeUpperCaseImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpaceImplement())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmptyImplement())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                isPreviousCharWhiteSpace = true;
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append('_').Append(input[i].UpperImplement());
+
+            isPreviousCharWhiteSpace = false;
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? KebabLowerCaseImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpaceImplement())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmptyImplement())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                isPreviousCharWhiteSpace = true;
+
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].LowerImplement()) : sb.Append('-').Append(input[i].LowerImplement());
+            isPreviousCharWhiteSpace = false;
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static string? KebabUpperCaseImplement(this string? input)
+    {
+        if (input.IsNullWhiteSpaceImplement())
+        {
+            return input;
+        }
+
+        input = input.Trim();
+
+        if (input.IsNullEmptyImplement())
+        {
+            return input;
+        }
+
+        var sb = new StringBuilder(input.Length);
+        var isPreviousCharWhiteSpace = true;
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].IsWhiteSpaceImplement())
+            {
+                isPreviousCharWhiteSpace = true;
+
+                continue;
+            }
+
+            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append('-').Append(input[i].UpperImplement());
+            isPreviousCharWhiteSpace = false;
+        }
+
+        return sb.ToString();
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
     internal static string? CleanSpaceImplement(this string? input)
     {
         if (input.IsNullEmptyImplement())
