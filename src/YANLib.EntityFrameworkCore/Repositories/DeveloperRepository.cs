@@ -13,7 +13,7 @@ using YANLib.Entities;
 using static Microsoft.EntityFrameworkCore.EntityState;
 using static System.DateTime;
 
-namespace YANLib.Domains;
+namespace YANLib.Repositories;
 
 public class DeveloperRepository(
     ILogger<DeveloperRepository> logger,
@@ -79,7 +79,7 @@ public class DeveloperRepository(
                 Phone = entity.Phone ?? latestEntity.Phone,
                 IdCard = entity.IdCard ?? latestEntity.IdCard,
                 DeveloperTypeCode = entity.DeveloperTypeCode.IsNotDefault() ? entity.DeveloperTypeCode : latestEntity.DeveloperTypeCode,
-                Version = latestEntity.Version + 1,
+                RawVersion = latestEntity.RawVersion + 1,
                 CreatedBy = latestEntity.CreatedBy,
                 CreatedAt = latestEntity.CreatedAt,
                 UpdatedBy = entity.UpdatedBy,

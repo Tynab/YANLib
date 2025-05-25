@@ -1,7 +1,5 @@
 ﻿#if RELEASE
-
 using YANLib.Utilities;
-
 #endif
 
 using Microsoft.AspNetCore.Builder;
@@ -37,11 +35,8 @@ public class Program
             var builder = CreateBuilder(args);
 
 #if RELEASE
-
             await builder.Configuration.AddConfigFromAws(builder.Environment.EnvironmentName);
-
 #endif
-
             _ = builder.Host.AddAppSettingsSecretsJson().UseAutofac().UseSerilog(static (t, f) => f.Enrich.FromLogContext().ReadFrom.Configuration(t.Configuration));
             _ = builder.AddServiceDefaults();
             _ = await builder.AddApplicationAsync<YANLibHttpApiHostModule>();
