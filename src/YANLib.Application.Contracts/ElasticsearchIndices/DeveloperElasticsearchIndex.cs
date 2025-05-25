@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using YANLib.Responses;
 
-namespace YANLib.EsIndices;
+namespace YANLib.ElasticsearchIndices;
 
-public sealed class DeveloperEsIndex : YANLibApplicationEsIndex<DocumentPath<DeveloperEsIndex>>
+public sealed class DeveloperElasticsearchIndex : YANLibApplicationEsIndex<DocumentPath<DeveloperElasticsearchIndex>>
 {
     public string? Name { get; set; }
 

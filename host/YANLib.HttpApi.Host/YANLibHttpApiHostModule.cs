@@ -46,7 +46,7 @@ using Volo.Abp.Http.Client;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using YANLib;
-using YANLib.EsIndices;
+using YANLib.ElasticsearchIndices;
 using YANLib.Filters;
 using YANLib.Options;
 using static Amazon.RegionEndpoint;
@@ -62,7 +62,6 @@ using static Microsoft.OpenApi.Models.ReferenceType;
 using static Microsoft.OpenApi.Models.SecuritySchemeType;
 using static System.Text.Encoding;
 using static YANLib.YANLibConsts;
-using static YANLib.YANLibConsts.ElasticsearchIndex;
 using static YANLib.YANText;
 
 namespace YANLib;
@@ -94,7 +93,7 @@ public class YANLibHttpApiHostModule : AbpModule
         ConfigureAuthentication(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        //ConfigureElasticsearch(context, configuration);
+        ConfigureElasticsearch(context, configuration);
         ConfigureCap(context, configuration);
         ConfigureHangfire(context, configuration);
         ConfigureHealthChecks(context, configuration);
@@ -199,10 +198,15 @@ public class YANLibHttpApiHostModule : AbpModule
     }
 
     private static void ConfigureElasticsearch(ServiceConfigurationContext context, IConfiguration configuration)
-        => context.Services.AddElasticsearch(configuration, defaultIndexName: configuration.GetSection(Developer)?.Value, indexMappings: configuration.CreateIndexMappings(
-            (typeof(DeveloperEsIndex), Developer),
-            (typeof(ProjectEsIndex), Project)
-        ));
+    {
+        var indexMappings = new Dictionary<Type, string?>
+        {
+            { typeof(DeveloperElasticsearchIndex), configuration["Elasticsearch:Index:Developer"] },
+            { typeof(ProjectElasticsearchIndex), configuration["Elasticsearch:Index:Project"] }
+        };
+
+        _ = context.Services.AddElasticsearch(configuration, indexMappings: indexMappings);
+    }
 
     private static void ConfigureCap(ServiceConfigurationContext context, IConfiguration configuration)
     {

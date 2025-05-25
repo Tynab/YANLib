@@ -9,8 +9,8 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Domains;
 using YANLib.Dtos;
+using YANLib.ElasticsearchIndices;
 using YANLib.Entities;
-using YANLib.EsIndices;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
@@ -23,14 +23,14 @@ namespace YANLib.Services.v2;
 public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,
-    IElasticsearchService<DeveloperEsIndex> esService,
+    IElasticsearchService<DeveloperElasticsearchIndex> esService,
     IDeveloperTypeService developerTypeService,
     IProjectRepository projectRepository
 ) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
-    private readonly IElasticsearchService<DeveloperEsIndex> _esService = esService;
+    private readonly IElasticsearchService<DeveloperElasticsearchIndex> _esService = esService;
     private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
     private readonly IProjectRepository _projectRepository = projectRepository;
 
@@ -40,7 +40,7 @@ public class DeveloperService(
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<DeveloperEsIndex>, PagedResultDto<DeveloperResponse>>(await _esService.GetAllAsync(input, cancellationToken));
+            return ObjectMapper.Map<PagedResultDto<DeveloperElasticsearchIndex>, PagedResultDto<DeveloperResponse>>(await _esService.GetAllAsync(input, cancellationToken));
         }
         catch (Exception ex)
         {
@@ -58,7 +58,7 @@ public class DeveloperService(
         {
             var dto = await _esService.GetAsync(id, cancellationToken);
 
-            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperEsIndex), id) : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex), id) : ObjectMapper.Map<DeveloperElasticsearchIndex, DeveloperResponse>(dto);
         }
         catch (Exception ex)
         {
@@ -93,7 +93,7 @@ public class DeveloperService(
 
             var result = ObjectMapper.Map<(DeveloperTypeResponse? DeveloperType, Developer Entity), DeveloperResponse>((await devTypeTask, entity));
 
-            return await _esService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
+            return await _esService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -120,7 +120,7 @@ public class DeveloperService(
 
             result.DeveloperType = await _developerTypeService.GetAsync(entity.DeveloperTypeCode, cancellationToken);
 
-            return await _esService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
+            return await _esService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -136,7 +136,7 @@ public class DeveloperService(
 
         try
         {
-            var dto = await _esService.GetAsync(idCard, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperEsIndex));
+            var dto = await _esService.GetAsync(idCard, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex));
 
             return (await _repository.ModifyAsync(new DeveloperDto
             {
@@ -172,14 +172,14 @@ public class DeveloperService(
                 return result;
             }
 
-            var datas = new List<DeveloperEsIndex>();
+            var datas = new List<DeveloperElasticsearchIndex>();
             var slim = new SemaphoreSlim(1);
 
             await WhenAll(entities.Select(async x =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var dto = ObjectMapper.Map<Developer, DeveloperEsIndex>(x);
+                var dto = ObjectMapper.Map<Developer, DeveloperElasticsearchIndex>(x);
 
                 await slim.WaitAsync(cancellationToken);
 
