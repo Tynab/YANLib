@@ -10,5 +10,5 @@ public sealed class DeveloperUpdateRequest : YANLibApplicationUpdateRequest
 
     public required long DeveloperTypeCode { get; set; }
 
-    public required int Version { get; set; }
+    public required int RawVersion { get; set; }
 }

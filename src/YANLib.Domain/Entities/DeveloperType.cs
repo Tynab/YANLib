@@ -8,16 +8,16 @@ namespace YANLib.Entities;
 
 public sealed class DeveloperType : YANLibDomainEntity<long>
 {
-    [Column("Code")]
-    [DatabaseGenerated(None)]
-    public override long Id { get; protected set; }
-
-    public string? Name { get; set; }
-
     public DeveloperType()
     {
         IdGenerator idGenerator = new(DeveloperId, YanlibId);
 
         Id = idGenerator.NextId();
     }
+
+    [Column("Code")]
+    [DatabaseGenerated(None)]
+    public override long Id { get; protected set; }
+
+    public string? Name { get; set; }
 }

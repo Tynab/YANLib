@@ -13,5 +13,5 @@ public sealed class DeveloperCreateRequest : YANLibApplicationCreateRequest
     public required long DeveloperTypeCode { get; set; }
 
     [DefaultValue(1)]
-    public required int Version { get; set; } = 1;
+    public required int RawVersion { get; set; } = 1;
 }

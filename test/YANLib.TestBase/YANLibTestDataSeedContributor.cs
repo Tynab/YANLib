@@ -3,13 +3,14 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
-using YANLib.Domains;
+using YANLib.Repositories;
 
 namespace YANLib;
 
-public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTypeRepository, IProjectRepository projectRepository) : IDataSeedContributor, ITransientDependency
+public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTypeRepository, IDeveloperRepository developerRepository, IProjectRepository projectRepository) : IDataSeedContributor, ITransientDependency
 {
     private readonly IDeveloperTypeRepository _developerTypeRepository = developerTypeRepository;
+    private readonly IDeveloperRepository _developerRepository = developerRepository;
     private readonly IProjectRepository _projectRepository = projectRepository;
     private static readonly object _lockObject = new();
     private static bool _seeded = false;
@@ -32,6 +33,7 @@ public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTyp
         }
 
         await SeedDeveloperTypeAsync();
+        await SeedDeveloperAsync();
         await SeedProjectsAsync();
     }
 
@@ -67,6 +69,68 @@ public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTyp
             _ = await _developerTypeRepository.InsertAsync(new()
             {
                 Name = "Full-Stack",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+        }
+        catch (DbUpdateException) { }
+    }
+
+    public async Task SeedDeveloperAsync()
+    {
+        try
+        {
+            if ((await _developerRepository.GetListAsync()).Count.IsNotDefault())
+            {
+                return;
+            }
+
+            var developerTypes = await _developerTypeRepository.GetListAsync();
+
+            if (developerTypes.Count == 0)
+            {
+                await SeedDeveloperTypeAsync();
+                developerTypes = await _developerTypeRepository.GetListAsync();
+            }
+
+            var firstDeveloperType = developerTypes[0];
+            var createdBy = Guid.NewGuid();
+
+            _ = await _developerRepository.InsertAsync(new()
+            {
+                Name = "John Doe",
+                Phone = "1234567890",
+                IdCard = "ID123456789",
+                DeveloperTypeCode = firstDeveloperType.Id,
+                RawVersion = 1,
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+
+            _ = await _developerRepository.InsertAsync(new()
+            {
+                Name = "Jane Smith",
+                Phone = "0987654321",
+                IdCard = "ID987654321",
+                DeveloperTypeCode = firstDeveloperType.Id,
+                RawVersion = 1,
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+
+            _ = await _developerRepository.InsertAsync(new()
+            {
+                Name = "Bob Johnson",
+                Phone = "5555555555",
+                IdCard = "ID555555555",
+                DeveloperTypeCode = firstDeveloperType.Id,
+                RawVersion = 1,
                 CreatedBy = createdBy,
                 CreatedAt = DateTime.Now,
                 IsActive = true,

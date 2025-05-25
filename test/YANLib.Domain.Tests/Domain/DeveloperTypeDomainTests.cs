@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Modularity;
 using Xunit;
-using YANLib.Domains;
 using YANLib.Entities;
+using YANLib.Repositories;
 
 namespace YANLib.Domain;
 

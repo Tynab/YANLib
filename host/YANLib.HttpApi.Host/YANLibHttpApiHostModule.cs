@@ -1,7 +1,5 @@
 #if RELEASE
-
 using YANLib.Middlewares;
-
 #endif
 
 using Amazon.CloudWatch;
