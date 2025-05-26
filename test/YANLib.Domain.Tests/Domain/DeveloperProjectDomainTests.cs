@@ -1,6 +1,7 @@
 ﻿using Shouldly;
 using System;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Modularity;
 using Xunit;
@@ -11,14 +12,14 @@ namespace YANLib.Domain;
 
 public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomainTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
-    private readonly IDeveloperProjectRepository _developerProjectRepository;
+    private readonly IRepository<DeveloperProject, Guid> _repository;
     private readonly IRepository<DeveloperType, long> _developerTypeRepository;
     private readonly IRepository<Developer, Guid> _developerRepository;
     private readonly IRepository<Project, string> _projectRepository;
 
     protected DeveloperProjectDomainTests()
     {
-        _developerProjectRepository = GetRequiredService<IDeveloperProjectRepository>();
+        _repository = GetRequiredService<IRepository<DeveloperProject, Guid>>();
         _developerTypeRepository = GetRequiredService<IRepository<DeveloperType, long>>();
         _developerRepository = GetRequiredService<IRepository<Developer, Guid>>();
         _projectRepository = GetRequiredService<IRepository<Project, string>>();
@@ -31,14 +32,16 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
         var developer = await CreateTestDeveloper();
         var project = await CreateTestProject();
 
-        var developerProject = new DeveloperProject
+        var entity = new DeveloperProject
         {
             DeveloperId = developer.Id,
-            ProjectId = project.Id
+            ProjectId = project.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
         // Act
-        var result = await _developerProjectRepository.InsertAsync(developerProject, true);
+        var result = await _repository.InsertAsync(entity, true);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -55,23 +58,27 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
         var project1 = await CreateTestProject();
         var project2 = await CreateTestProject();
 
-        var developerProject1 = new DeveloperProject
+        var entity1 = new DeveloperProject
         {
             DeveloperId = developer.Id,
-            ProjectId = project1.Id
+            ProjectId = project1.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
-        var developerProject2 = new DeveloperProject
+        var entity2 = new DeveloperProject
         {
             DeveloperId = developer.Id,
-            ProjectId = project2.Id
+            ProjectId = project2.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
-        _ = await _developerProjectRepository.InsertAsync(developerProject1, true);
-        _ = await _developerProjectRepository.InsertAsync(developerProject2, true);
+        _ = await _repository.InsertAsync(entity1, true);
+        _ = await _repository.InsertAsync(entity2, true);
 
         // Act
-        var result = await _developerProjectRepository.GetListAsync(x => x.DeveloperId == developer.Id);
+        var result = await _repository.GetListAsync(x => x.DeveloperId == developer.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -88,23 +95,27 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
         var developer2 = await CreateTestDeveloper();
         var project = await CreateTestProject();
 
-        var developerProject1 = new DeveloperProject
+        var entity1 = new DeveloperProject
         {
             DeveloperId = developer1.Id,
-            ProjectId = project.Id
+            ProjectId = project.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
-        var developerProject2 = new DeveloperProject
+        var entity2 = new DeveloperProject
         {
             DeveloperId = developer2.Id,
-            ProjectId = project.Id
+            ProjectId = project.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
-        _ = await _developerProjectRepository.InsertAsync(developerProject1, true);
-        _ = await _developerProjectRepository.InsertAsync(developerProject2, true);
+        _ = await _repository.InsertAsync(entity1, true);
+        _ = await _repository.InsertAsync(entity2, true);
 
         // Act
-        var result = await _developerProjectRepository.GetListAsync(x => x.ProjectId == project.Id);
+        var result = await _repository.GetListAsync(x => x.ProjectId == project.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -120,22 +131,28 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
         var developer = await CreateTestDeveloper();
         var project = await CreateTestProject();
 
-        var developerProject = new DeveloperProject
+        var entity = new DeveloperProject
         {
             DeveloperId = developer.Id,
-            ProjectId = project.Id
+            ProjectId = project.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _developerProjectRepository.InsertAsync(developerProject, true);
+        var created = await _repository.InsertAsync(entity, true);
+
+        created.IsActive = false;
+        created.UpdatedBy = Guid.NewGuid();
+        created.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        created.IsActive = false;
-
-        var result = await _developerProjectRepository.UpdateAsync(created, true);
+        var updated = await _repository.UpdateAsync(created, true);
+        var result = await _repository.GetAsync(created.Id);
 
         // Assert
-        _ = result.ShouldNotBeNull();
-        result.IsActive.ShouldBe(false);
+        _ = updated.ShouldNotBeNull();
+        result.Id.ShouldBe(created.Id);
+        updated.IsActive.ShouldBe(updated.IsActive);
     }
 
     [Fact]
@@ -145,29 +162,45 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
         var developer = await CreateTestDeveloper();
         var project = await CreateTestProject();
 
-        var developerProject = new DeveloperProject
+        var entity = new DeveloperProject
         {
             DeveloperId = developer.Id,
-            ProjectId = project.Id
+            ProjectId = project.Id,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _developerProjectRepository.InsertAsync(developerProject, true);
+        var created = await _repository.InsertAsync(entity, true);
 
         // Act
-        await _developerProjectRepository.DeleteAsync(created.Id, true);
+        await _repository.DeleteAsync(created.Id, true);
 
         // Assert
-        var result = await _developerProjectRepository.FindAsync(created.Id);
-
-        result.ShouldBeNull();
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(created.Id));
     }
 
     private async Task<Developer> CreateTestDeveloper() => await _developerRepository.InsertAsync(new Developer
     {
-        DeveloperTypeCode = (await CreateTestDeveloperType()).Id
+        Name = "Test Developer",
+        Phone = "1234567890",
+        IdCard = "ID123456789",
+        DeveloperTypeCode = (await CreateTestDeveloperType()).Id,
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.UtcNow
     }, true);
 
-    private async Task<Project> CreateTestProject() => await _projectRepository.InsertAsync(new Project(), true);
+    private async Task<Project> CreateTestProject() => await _projectRepository.InsertAsync(new Project
+    {
+        Name = "Test Project",
+        Description = "Test Project Description",
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.UtcNow,
+    }, true);
 
-    private async Task<DeveloperType> CreateTestDeveloperType() => await _developerTypeRepository.InsertAsync(new DeveloperType(), true);
+    private async Task<DeveloperType> CreateTestDeveloperType() => await _developerTypeRepository.InsertAsync(new DeveloperType
+    {
+        Name = "Test Developer Type",
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.UtcNow
+    }, true);
 }

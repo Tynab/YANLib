@@ -19,40 +19,37 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
     public async Task Should_Create_Project()
     {
         // Arrange
-        var project = new Project
+        var entity = new Project
         {
-            Name = "Domain Test Project",
-            Description = "Domain Test Project Description",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true,
-            IsDeleted = false
+            CreatedAt = DateTime.UtcNow
         };
 
         // Act
-        var result = await _repository.InsertAsync(project, true);
+        var result = await _repository.InsertAsync(entity, true);
 
         // Assert
-        _ = result.Id.ShouldNotBeNull();
-        result.Name.ShouldBe(project.Name);
-        result.Description.ShouldBe(project.Description);
+        _ = result.ShouldNotBeNull();
+        result.Id.ShouldNotBeNullOrWhiteSpace();
+        result.Name.ShouldBe(entity.Name);
+        result.Description.ShouldBe(entity.Description);
     }
 
     [Fact]
     public async Task Should_Get_All_Projects()
     {
         // Arrange
-        var project = new Project
+        var entity = new Project
         {
-            Name = "Domain Test Project for GetList",
-            Description = "Domain Test Project Description for GetList",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true,
-            IsDeleted = false
+            CreatedAt = DateTime.UtcNow
         };
 
-        _ = await _repository.InsertAsync(project, true);
+        _ = await _repository.InsertAsync(entity, true);
 
         // Act
         var result = await _repository.GetListAsync();
@@ -66,77 +63,69 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
     public async Task Should_Get_Project_By_Id()
     {
         // Arrange
-        var request = new Project
+        var entity = new Project
         {
-            Name = "Domain Test Project for Get",
-            Description = "Domain Test Project Description for Get",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true,
-            IsDeleted = false
+            CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(request, true);
+        var created = await _repository.InsertAsync(entity, true);
 
         // Act
-        var result = await _repository.GetAsync(created.Id);
+        var result = await _repository.FindAsync(created.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
         result.Id.ShouldBe(created.Id);
-        result.Name.ShouldBe(request.Name);
-        result.Description.ShouldBe(request.Description);
+        result.Name.ShouldBe(created.Name);
+        result.Description.ShouldBe(created.Description);
     }
 
     [Fact]
     public async Task Should_Update_Project()
     {
         // Arrange
-        var project = new Project
+        var entity = new Project
         {
-            Name = "Domain Test Project for Update",
-            Description = "Domain Test Project Description for Update",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true,
-            IsDeleted = false
+            CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(project, true);
+        var created = await _repository.InsertAsync(entity, true);
 
-        created.Name = "Updated Domain Test Project";
-        created.Description = "Updated Domain Test Project Description";
+        created.Name = "Updated Test Project";
+        created.Description = "Updated Test Project Description";
         created.UpdatedBy = Guid.NewGuid();
         created.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        _ = await _repository.UpdateAsync(created, true);
-
-        var updated = await _repository.GetAsync(created.Id);
+        var updated = await _repository.UpdateAsync(created, true);
+        var result = await _repository.FindAsync(created.Id);
 
         // Assert
-        _ = updated.ShouldNotBeNull();
-        updated.Id.ShouldBe(created.Id);
-        updated.Name.ShouldBe("Updated Domain Test Project");
-        updated.Description.ShouldBe("Updated Domain Test Project Description");
-        updated.UpdatedBy.ShouldBe(created.UpdatedBy);
+        _ = result.ShouldNotBeNull();
+        result.Id.ShouldBe(created.Id);
+        result.Name.ShouldBe(updated.Name);
+        result.Description.ShouldBe(updated.Description);
     }
 
     [Fact]
     public async Task Should_Delete_Project()
     {
         // Arrange
-        var project = new Project
+        var entity = new Project
         {
-            Name = "Domain Test Project for Delete",
-            Description = "Domain Test Project Description for Delete",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
-            IsActive = true,
-            IsDeleted = false
         };
 
-        var created = await _repository.InsertAsync(project, true);
+        var created = await _repository.InsertAsync(entity, true);
 
         // Act
         await _repository.DeleteAsync(created.Id);

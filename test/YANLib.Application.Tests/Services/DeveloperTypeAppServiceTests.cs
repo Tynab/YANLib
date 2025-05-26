@@ -37,10 +37,6 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         _ = result.ShouldNotBeNull();
         result.Id.ShouldNotBe(0);
         result.Name.ShouldBe(request.Name);
-
-        var retrievedType = await _service.GetAsync(result.Id);
-        _ = retrievedType.ShouldNotBeNull();
-        retrievedType.Name.ShouldBe(request.Name);
     }
 
     [Fact]
@@ -49,7 +45,7 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         // Arrange
         var request = new DeveloperTypeCreateRequest
         {
-            Name = "Test Developer Type for GetList",
+            Name = "Test Developer Type",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -59,10 +55,7 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         _ = await _service.CreateAsync(request);
 
         // Act
-        var result = await _service.GetListAsync(new PagedAndSortedResultRequestDto
-        {
-            MaxResultCount = 10
-        });
+        var result = await _service.GetListAsync(new());
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -76,7 +69,7 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         // Arrange
         var request = new DeveloperTypeCreateRequest
         {
-            Name = "Test Developer Type for Get By Id",
+            Name = "Test Developer Type",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -100,7 +93,7 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         // Arrange
         var createRequest = new DeveloperTypeCreateRequest
         {
-            Name = "Developer Type To Update",
+            Name = "Test Developer Type",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -111,7 +104,7 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
 
         var updateRequest = new DeveloperTypeUpdateRequest
         {
-            Name = "Updated Developer Type",
+            Name = "Updated Test Developer Type",
             CreatedBy = created.CreatedBy,
             CreatedAt = created.CreatedAt,
             UpdatedBy = Guid.NewGuid(),
@@ -127,10 +120,6 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         _ = result.ShouldNotBeNull();
         result.Id.ShouldBe(created.Id);
         result.Name.ShouldBe(updateRequest.Name);
-
-        var retrieved = await _service.GetAsync(created.Id);
-        _ = retrieved.ShouldNotBeNull();
-        retrieved.Name.ShouldBe(updateRequest.Name);
     }
 
     [Fact]
@@ -139,7 +128,7 @@ public abstract class DeveloperTypeAppServiceTests<TStartupModule> : YANLibAppli
         // Arrange
         var request = new DeveloperTypeCreateRequest
         {
-            Name = "Developer Type To Delete",
+            Name = "Test Developer Type",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,

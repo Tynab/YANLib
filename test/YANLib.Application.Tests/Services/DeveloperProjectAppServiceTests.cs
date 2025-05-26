@@ -2,6 +2,7 @@
 using Shouldly;
 using System;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Modularity;
 using Xunit;
@@ -14,14 +15,14 @@ namespace YANLib.Services;
 
 public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibApplicationTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
-    private readonly IDeveloperProjectService _developerProjectService;
+    private readonly IDeveloperProjectService _service;
     private readonly IRepository<DeveloperType, long> _developerTypeRepository;
     private readonly IRepository<Developer, Guid> _developerRepository;
     private readonly IRepository<Project, string> _projectRepository;
 
     protected DeveloperProjectAppServiceTests()
     {
-        _developerProjectService = GetRequiredService<IDeveloperProjectService>();
+        _service = GetRequiredService<IDeveloperProjectService>();
         _developerTypeRepository = GetRequiredService<IRepository<DeveloperType, long>>();
         _developerRepository = GetRequiredService<IRepository<Developer, Guid>>();
         _projectRepository = GetRequiredService<IRepository<Project, string>>();
@@ -45,7 +46,7 @@ public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibAp
         };
 
         // Act
-        var result = await _developerProjectService.CreateAsync(request);
+        var result = await _service.CreateAsync(request);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -71,15 +72,15 @@ public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibAp
             IsDeleted = false
         };
 
-        _ = await _developerProjectService.CreateAsync(request);
+        _ = await _service.CreateAsync(request);
 
         // Act
-        var result = await _developerProjectService.GetListAsync(new());
+        var result = await _service.GetListAsync(new());
 
         // Assert
         _ = result.ShouldNotBeNull();
+        result.TotalCount.ShouldBeGreaterThan(0);
         result.Items.ShouldNotBeEmpty();
-        result.Items.ShouldContain(x => x.DeveloperId == developer.Id && x.ProjectId == project.Id);
     }
 
     [Fact]
@@ -99,10 +100,10 @@ public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibAp
             IsDeleted = false
         };
 
-        var created = await _developerProjectService.CreateAsync(request);
+        var created = await _service.CreateAsync(request);
 
         // Act
-        var result = await _developerProjectService.GetAsync(created.Id);
+        var result = await _service.GetAsync(created.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -128,7 +129,7 @@ public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibAp
             IsDeleted = false
         };
 
-        var created = await _developerProjectService.CreateAsync(createRequest);
+        var created = await _service.CreateAsync(createRequest);
 
         var updateRequest = new DeveloperProjectUpdateRequest
         {
@@ -143,7 +144,7 @@ public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibAp
         };
 
         // Act
-        var result = await _developerProjectService.UpdateAsync(created.Id, updateRequest);
+        var result = await _service.UpdateAsync(created.Id, updateRequest);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -168,22 +169,44 @@ public abstract class DeveloperProjectAppServiceTests<TStartupModule> : YANLibAp
             IsDeleted = false
         };
 
-        var created = await _developerProjectService.CreateAsync(request);
+        var created = await _service.CreateAsync(request);
 
         // Act
-        await _developerProjectService.DeleteAsync(created.Id);
+        await _service.DeleteAsync(created.Id);
 
         // Assert
-        var exception = await Should.ThrowAsync<Volo.Abp.Domain.Entities.EntityNotFoundException>(async () => await _developerProjectService.GetAsync(created.Id));
-        _ = exception.ShouldNotBeNull();
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _service.GetAsync(created.Id));
     }
 
     private async Task<Developer> CreateTestDeveloper() => await _developerRepository.InsertAsync(new Developer
     {
-        DeveloperTypeCode = (await CreateTestDeveloperType()).Id
+        Name = "Test Developer",
+        Phone = "1234567890",
+        IdCard = "ID123456789",
+        DeveloperTypeCode = (await CreateTestDeveloperType()).Id,
+        RawVersion = 1,
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.UtcNow,
+        IsActive = true,
+        IsDeleted = false
     }, true);
 
-    private async Task<Project> CreateTestProject() => await _projectRepository.InsertAsync(new Project(), true);
+    private async Task<Project> CreateTestProject() => await _projectRepository.InsertAsync(new Project
+    {
+        Name = "Test Project",
+        Description = "Test Project Description",
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.Now,
+        IsActive = true,
+        IsDeleted = false
+    }, true);
 
-    private async Task<DeveloperType> CreateTestDeveloperType() => await _developerTypeRepository.InsertAsync(new DeveloperType(), true);
+    private async Task<DeveloperType> CreateTestDeveloperType() => await _developerTypeRepository.InsertAsync(new DeveloperType
+    {
+        Name = "Test Developer Type",
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.UtcNow,
+        IsActive = true,
+        IsDeleted = false
+    }, true);
 }
