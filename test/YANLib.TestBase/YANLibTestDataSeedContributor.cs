@@ -7,11 +7,17 @@ using YANLib.Repositories;
 
 namespace YANLib;
 
-public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTypeRepository, IDeveloperRepository developerRepository, IProjectRepository projectRepository) : IDataSeedContributor, ITransientDependency
+public class YANLibTestDataSeedContributor(
+    IDeveloperTypeRepository developerTypeRepository,
+    IDeveloperRepository developerRepository,
+    IProjectRepository projectRepository,
+    IDeveloperProjectRepository developerProjectRepository
+) : IDataSeedContributor, ITransientDependency
 {
     private readonly IDeveloperTypeRepository _developerTypeRepository = developerTypeRepository;
     private readonly IDeveloperRepository _developerRepository = developerRepository;
     private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly IDeveloperProjectRepository _developerProjectRepository = developerProjectRepository;
     private static readonly object _lockObject = new();
     private static bool _seeded = false;
 
@@ -34,7 +40,8 @@ public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTyp
 
         await SeedDeveloperTypeAsync();
         await SeedDeveloperAsync();
-        await SeedProjectsAsync();
+        await SeedProjectAsync();
+        await SeedDeveloperProjectAsync();
     }
 
     public async Task SeedDeveloperTypeAsync()
@@ -140,7 +147,7 @@ public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTyp
         catch (DbUpdateException) { }
     }
 
-    public async Task SeedProjectsAsync()
+    public async Task SeedProjectAsync()
     {
         try
         {
@@ -175,6 +182,50 @@ public class YANLibTestDataSeedContributor(IDeveloperTypeRepository developerTyp
             {
                 Name = "Seed Project 3",
                 Description = "Seed Project Description 3",
+                CreatedBy = createdBy,
+                CreatedAt = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false
+            }, true);
+        }
+        catch (DbUpdateException) { }
+    }
+
+    public async Task SeedDeveloperProjectAsync()
+    {
+        try
+        {
+            if ((await _developerProjectRepository.GetListAsync()).Count.IsNotDefault())
+            {
+                return;
+            }
+
+            var developers = await _developerRepository.GetListAsync();
+            var projects = await _projectRepository.GetListAsync();
+
+            if (developers.IsNullEmpty())
+            {
+                await SeedDeveloperAsync();
+                developers = await _developerRepository.GetListAsync();
+            }
+
+            if (projects.IsNullEmpty())
+            {
+                await SeedProjectAsync();
+                projects = await _projectRepository.GetListAsync();
+            }
+
+            if (developers.IsNullEmpty() || projects.IsNullEmpty())
+            {
+                return;
+            }
+
+            var createdBy = Guid.NewGuid();
+
+            _ = await _developerProjectRepository.InsertAsync(new()
+            {
+                DeveloperId = developers[0].Id,
+                ProjectId = projects[0].Id,
                 CreatedBy = createdBy,
                 CreatedAt = DateTime.Now,
                 IsActive = true,

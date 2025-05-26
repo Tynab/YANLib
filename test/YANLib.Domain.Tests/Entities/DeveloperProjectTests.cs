@@ -1,107 +1,285 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
+using System;
+using System.Threading.Tasks;
 using Xunit;
-using YANLib.Entities;
 
 namespace YANLib.Entities;
 
 public class DeveloperProjectTests : YANLibDomainTestBase<YANLibDomainTestModule>
 {
     [Fact]
-    public void Should_Create_DeveloperProject_With_Valid_Data()
+    public void Should_Create_DeveloperProject_With_Default_Id()
     {
-        // Arrange
-        var id = Guid.NewGuid();
-        var developerId = Guid.NewGuid();
-        var projectId = Guid.NewGuid();
-        var role = "Full Stack Developer";
-        var joinDate = DateTime.Now;
+        var developerType = new DeveloperType
+        {
+            Name = "Test Developer Type",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var developer = new Developer
+        {
+            Name = "Test Developer",
+            Phone = "1234567890",
+            IdCard = "ID123456789",
+            DeveloperTypeCode = developerType.Id,
+            RawVersion = 1,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var project = new Project
+        {
+            Name = "Test Project",
+            Description = "Test Project Description",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
 
         // Act
-        var developerProject = new DeveloperProject(id, developerId, projectId, role, joinDate);
+        var developerProject = new DeveloperProject
+        {
+            DeveloperId = developer.Id,
+            ProjectId = project.Id
+        };
 
         // Assert
-        developerProject.Id.ShouldBe(id);
+        _ = developerProject.ShouldNotBeNull();
+        developerProject.Id.ShouldNotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public void Should_Create_DeveloperProject_With_Properties()
+    {
+        var developerType = new DeveloperType
+        {
+            Name = "Test Developer Type",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var developer = new Developer
+        {
+            Name = "Test Developer",
+            Phone = "1234567890",
+            IdCard = "ID123456789",
+            DeveloperTypeCode = developerType.Id,
+            RawVersion = 1,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var project = new Project
+        {
+            Name = "Test Project",
+            Description = "Test Project Description",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        // Arrange
+        var developerId = developer.Id;
+        var projectId = project.Id;
+        var createdBy = Guid.NewGuid();
+        var createdAt = DateTime.UtcNow;
+        var isActive = true;
+        var isDeleted = false;
+
+        // Act
+        var developerProject = new DeveloperProject
+        {
+            DeveloperId = developerId,
+            ProjectId = projectId,
+            CreatedBy = createdBy,
+            CreatedAt = createdAt,
+            IsActive = isActive,
+            IsDeleted = isDeleted
+        };
+        // Assert
+        _ = developerProject.ShouldNotBeNull();
+        developerProject.Id.ShouldNotBe(Guid.Empty);
         developerProject.DeveloperId.ShouldBe(developerId);
         developerProject.ProjectId.ShouldBe(projectId);
-        developerProject.Role.ShouldBe(role);
-        developerProject.JoinDate.ShouldBe(joinDate);
-        developerProject.IsActive.ShouldBe(true); // Default value
-        developerProject.EndDate.ShouldBeNull();
+        developerProject.CreatedBy.ShouldBe(createdBy);
+        developerProject.CreatedAt.ShouldBe(createdAt);
+        developerProject.IsActive.ShouldBe(isActive);
+        developerProject.IsDeleted.ShouldBe(isDeleted);
     }
 
     [Fact]
-    public void Should_Throw_Exception_When_DeveloperId_Is_Empty()
+    public async Task Should_Create_DeveloperProjects_Different_Ids_For_Different_Instances()
     {
-        // Arrange & Act & Assert
-        Should.Throw<ArgumentException>(() =>
-            new DeveloperProject(Guid.NewGuid(), Guid.Empty, Guid.NewGuid(), "Developer", DateTime.Now)
-        );
-    }
+        var developerType = new DeveloperType
+        {
+            Name = "Test Developer Type",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
 
-    [Fact]
-    public void Should_Throw_Exception_When_ProjectId_Is_Empty()
-    {
-        // Arrange & Act & Assert
-        Should.Throw<ArgumentException>(() =>
-            new DeveloperProject(Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, "Developer", DateTime.Now)
-        );
-    }
+        var developer = new Developer
+        {
+            Name = "Test Developer",
+            Phone = "1234567890",
+            IdCard = "ID123456789",
+            DeveloperTypeCode = developerType.Id,
+            RawVersion = 1,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
 
-    [Fact]
-    public void Should_Throw_Exception_When_Role_Is_Null_Or_Empty()
-    {
-        // Arrange & Act & Assert
-        Should.Throw<ArgumentException>(() =>
-            new DeveloperProject(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), null, DateTime.Now)
-        );
-
-        Should.Throw<ArgumentException>(() =>
-            new DeveloperProject(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "", DateTime.Now)
-        );
-    }
-
-    [Fact]
-    public void Should_Set_EndDate_When_Deactivating()
-    {
-        // Arrange
-        var developerProject = new DeveloperProject(
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            "Developer",
-            DateTime.Now
-        );
-
-        var endDate = DateTime.Now.AddDays(30);
+        var project = new Project
+        {
+            Name = "Test Project",
+            Description = "Test Project Description",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
 
         // Act
-        developerProject.IsActive = false;
-        developerProject.EndDate = endDate;
+        var developerProject1 = new DeveloperProject
+        {
+            DeveloperId = developer.Id,
+            ProjectId = project.Id
+        };
+
+        await Task.Delay(1);
+
+        var developerProject2 = new DeveloperProject
+        {
+            DeveloperId = developer.Id,
+            ProjectId = project.Id
+        };
 
         // Assert
-        developerProject.IsActive.ShouldBe(false);
-        developerProject.EndDate.ShouldBe(endDate);
+        developerProject1.Id.ShouldNotBe(developerProject2.Id);
     }
 
     [Fact]
-    public void Should_Update_Role()
+    public void Should_Set_And_Get_DeveloperProject_Properties()
     {
-        // Arrange
-        var developerProject = new DeveloperProject(
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            "Junior Developer",
-            DateTime.Now
-        );
+        var developerType = new DeveloperType
+        {
+            Name = "Test Developer Type",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
 
-        var newRole = "Senior Developer";
+        var developer = new Developer
+        {
+            Name = "Test Developer",
+            Phone = "1234567890",
+            IdCard = "ID123456789",
+            DeveloperTypeCode = developerType.Id,
+            RawVersion = 1,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var project = new Project
+        {
+            Name = "Test Project",
+            Description = "Test Project Description",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        // Arrange
+        var developerId = developer.Id;
+        var projectId = project.Id;
+        var updatedBy = Guid.NewGuid();
+        var updatedAt = DateTime.UtcNow;
+        var isActive = false;
+
+        var developerProject = new DeveloperProject
+        {
+            DeveloperId = developerId,
+            ProjectId = projectId
+        };
 
         // Act
-        developerProject.Role = newRole;
+        developerProject.DeveloperId = developerId;
+        developerProject.ProjectId = projectId;
+        developerProject.UpdatedBy = updatedBy;
+        developerProject.UpdatedAt = updatedAt;
 
         // Assert
-        developerProject.Role.ShouldBe(newRole);
+        developerProject.DeveloperId.ShouldBe(developerId);
+        developerProject.ProjectId.ShouldBe(projectId);
+        developer.UpdatedBy.ShouldBe(updatedBy);
+        developer.UpdatedAt.ShouldBe(updatedAt);
+        developerProject.IsActive.ShouldBe(isActive);
+    }
+
+    [Fact]
+    public void Should_Have_DeveloperProject_Default_Values()
+    {
+        var developerType = new DeveloperType
+        {
+            Name = "Test Developer Type",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var developer = new Developer
+        {
+            Name = "Test Developer",
+            Phone = "1234567890",
+            IdCard = "ID123456789",
+            DeveloperTypeCode = developerType.Id,
+            RawVersion = 1,
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        var project = new Project
+        {
+            Name = "Test Project",
+            Description = "Test Project Description",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        // Arrange
+        var developerProject = new DeveloperProject
+        {
+            DeveloperId = developer.Id,
+            ProjectId = project.Id
+        };
+
+        // Assert
+        developerProject.IsActive.ShouldBeTrue();
+        developerProject.IsDeleted.ShouldBeFalse();
+        developerProject.UpdatedBy.ShouldBeNull();
+        developerProject.UpdatedAt.ShouldBeNull();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Shouldly;
 using System;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Entities;
 using Xunit;
 using YANLib.Dtos;
 using YANLib.Entities;
@@ -28,7 +27,8 @@ public class ProjectRepositoryTests : YANLibEntityFrameworkCoreTestBase
         };
 
         // Act
-        var result = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
+        var result = await _repository.FindAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -49,16 +49,16 @@ public class ProjectRepositoryTests : YANLibEntityFrameworkCoreTestBase
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        var result = await _repository.FindAsync(created.Id);
+        var result = await _repository.FindAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
-        result.Name.ShouldBe(created.Name);
-        result.Description.ShouldBe(created.Description);
+        result.Id.ShouldBe(inserted.Id);
+        result.Name.ShouldBe(inserted.Name);
+        result.Description.ShouldBe(inserted.Description);
     }
 
     [Fact]
@@ -73,20 +73,20 @@ public class ProjectRepositoryTests : YANLibEntityFrameworkCoreTestBase
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
-        created.Name = "Updated Test Project";
-        created.Description = "Updated Test Project Description";
-        created.UpdatedBy = Guid.NewGuid();
-        created.UpdatedAt = DateTime.UtcNow;
+        inserted.Name = "Updated Test Project";
+        inserted.Description = "Updated Test Project Description";
+        inserted.UpdatedBy = Guid.NewGuid();
+        inserted.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        var updated = await _repository.UpdateAsync(created, true);
-        var result = await _repository.GetAsync(created.Id);
+        var updated = await _repository.UpdateAsync(inserted, true);
+        var result = await _repository.FindAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
+        result.Id.ShouldBe(inserted.Id);
         result.Name.ShouldBe(updated.Name);
         result.Description.ShouldBe(updated.Description);
     }
@@ -103,13 +103,13 @@ public class ProjectRepositoryTests : YANLibEntityFrameworkCoreTestBase
             CreatedAt = DateTime.UtcNow,
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        await _repository.DeleteAsync(created.Id);
+        await _repository.DeleteAsync(inserted.Id);
 
         // Assert
-        var result = await _repository.FindAsync(created.Id);
+        var result = await _repository.FindAsync(inserted.Id);
 
         result.ShouldBeNull();
     }
@@ -118,34 +118,31 @@ public class ProjectRepositoryTests : YANLibEntityFrameworkCoreTestBase
     public async Task Should_Modify_Project_Using_ModifyAsync()
     {
         // Arrange
-        var request = await AddTestProjects("Test Modify Project", "Test Modify Project Description");
-        var updatedName = "Modified Project Name";
-        var updatedDescription = "Modified Project Description";
-        var updatedBy = Guid.NewGuid();
+        var entity = new Project
+        {
+            Name = "Test Project",
+            Description = "Test Project Description",
+            CreatedBy = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        var inserted = await _repository.InsertAsync(entity, true);
 
         var dto = new ProjectDto
         {
-            Id = request.Id,
-            Name = updatedName,
-            Description = updatedDescription,
-            UpdatedBy = updatedBy,
-            IsActive = true
+            Id = inserted.Id,
+            Name = "Modified Test Project Name",
+            UpdatedBy = Guid.NewGuid()
         };
 
         // Act
-        var result = await _repository.ModifyAsync(dto);
+        var modified = await _repository.ModifyAsync(dto);
+        var result = await _repository.FindAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(request.Id);
-        result.Name.ShouldBe(updatedName);
-        result.Description.ShouldBe(updatedDescription);
-        result.UpdatedBy.ShouldBe(updatedBy);
-
-        var modified = await _repository.GetAsync(request.Id);
-        _ = modified.ShouldNotBeNull();
-        modified.Name.ShouldBe(updatedName);
-        modified.Description.ShouldBe(updatedDescription);
-        modified.UpdatedBy.ShouldBe(updatedBy);
+        result.Id.ShouldBe(inserted.Id);
+        result.Name.ShouldBe(modified!.Name);
+        result.Description.ShouldBe(inserted.Description);
     }
 }

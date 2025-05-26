@@ -8,7 +8,7 @@ namespace YANLib.Entities;
 public class DeveloperTests
 {
     [Fact]
-    public void Should_Create_With_Default_Id()
+    public void Should_Create_Developer_With_Default_Id()
     {
         // Act
         var developer = new Developer();
@@ -19,34 +19,58 @@ public class DeveloperTests
     }
 
     [Fact]
-    public void Should_Create_With_Properties()
+    public void Should_Create_Developer_With_Properties()
     {
-        // Arrange & Act
-        var developer = new Developer
+        var developerType = new DeveloperType
         {
-            Name = "Test Developer",
-            Phone = "1234567890",
-            IdCard = "ID123456789",
-            DeveloperTypeCode = 1,
-            RawVersion = 1,
+            Name = "Test Developer Type",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
             IsDeleted = false
         };
 
+        // Arrange
+        var name = "Test Developer";
+        var phone = "1234567890";
+        var idCard = "ID123456789";
+        var developerTypeCode = developerType.Id;
+        var rawVersion = 1;
+        var createdBy = Guid.NewGuid();
+        var createdAt = DateTime.UtcNow;
+        var isActive = true;
+        var isDeleted = false;
+
+        // Act
+        var developer = new Developer
+        {
+            Name = name,
+            Phone = phone,
+            IdCard = idCard,
+            DeveloperTypeCode = developerTypeCode,
+            RawVersion = rawVersion,
+            CreatedBy = createdBy,
+            CreatedAt = createdAt,
+            IsActive = isActive,
+            IsDeleted = isDeleted
+        };
+
         // Assert
-        developer.Name.ShouldBe("Test Developer");
-        developer.Phone.ShouldBe("1234567890");
-        developer.IdCard.ShouldBe("ID123456789");
-        developer.DeveloperTypeCode.ShouldBe(1);
-        developer.RawVersion.ShouldBe(1);
-        developer.IsActive.ShouldBeTrue();
-        developer.IsDeleted.ShouldBeFalse();
+        _ = developerType.ShouldNotBeNull();
+        developer.Id.ShouldNotBe(Guid.Empty);
+        developer.Name.ShouldBe(name);
+        developer.Phone.ShouldBe(phone);
+        developer.IdCard.ShouldBe(idCard);
+        developer.DeveloperTypeCode.ShouldBe(developerTypeCode);
+        developer.RawVersion.ShouldBe(rawVersion);
+        developer.CreatedBy.ShouldBe(createdBy);
+        developer.CreatedAt.ShouldBe(createdAt);
+        developer.IsActive.ShouldBe(isActive);
+        developer.IsDeleted.ShouldBe(isDeleted);
     }
 
     [Fact]
-    public async Task Should_Create_Different_Ids_For_Different_Instances()
+    public async Task Should_Create_Developers_Different_Ids_For_Different_Instances()
     {
         // Act
         var developer1 = new Developer();
@@ -60,40 +84,33 @@ public class DeveloperTests
     }
 
     [Fact]
-    public void Should_Set_And_Get_Properties()
+    public void Should_Set_And_Get_Developer_Properties()
     {
         // Arrange
         var developer = new Developer();
-        var name = "Test Developer";
-        var phone = "1234567890";
-        var idCard = "ID123456789";
-        var createdBy = Guid.NewGuid();
-        var createdAt = DateTime.UtcNow;
-        var isActive = true;
-        var isDeleted = false;
+        var name = "Updated Test Developer";
+        var phone = "0987654321";
+        var idCard = "ID987654321";
+        var updatedBy = Guid.NewGuid();
+        var updatedAt = DateTime.UtcNow;
 
         // Act
         developer.Name = name;
         developer.Phone = phone;
         developer.IdCard = idCard;
-        developer.CreatedBy = createdBy;
-        developer.CreatedAt = createdAt;
-        developer.IsActive = isActive;
-        developer.IsDeleted = isDeleted;
+        developer.UpdatedBy = updatedBy;
+        developer.UpdatedAt = updatedAt;
 
         // Assert
-        _ = developer.ShouldNotBeNull();
         developer.Name.ShouldBe(name);
         developer.Phone.ShouldBe(phone);
         developer.IdCard.ShouldBe(idCard);
-        developer.CreatedBy.ShouldBe(createdBy);
-        developer.CreatedAt.ShouldBe(createdAt);
-        developer.IsActive.ShouldBe(isActive);
-        developer.IsDeleted.ShouldBe(isDeleted);
+        developer.UpdatedBy.ShouldBe(updatedBy);
+        developer.UpdatedAt.ShouldBe(updatedAt);
     }
 
     [Fact]
-    public void Should_Have_Default_Values()
+    public void Should_Have_Developer_Default_Values()
     {
         // Act
         var developer = new Developer();

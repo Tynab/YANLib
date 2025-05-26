@@ -140,7 +140,7 @@ public class DeveloperProjectService(
 
         try
         {
-            var entity = await _repository.Modify(new DeveloperProjectDto
+            var entity = await _repository.ModifyAsync(new DeveloperProjectDto
             {
                 Id = (await _redisService.GetAsync($"{DeveloperProjectGroupPrefix}:{developerId}", projectId, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperProjectRedisDto))).Id,
                 UpdatedBy = updatedBy,

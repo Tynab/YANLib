@@ -8,18 +8,18 @@ namespace YANLib.Entities;
 public class ProjectTests
 {
     [Fact]
-    public void Should_Create_With_Default_Id()
+    public void Should_Create_Project_With_Default_Id()
     {
         // Act
         var project = new Project();
 
         // Assert
         _ = project.ShouldNotBeNull();
-        project.Id.ShouldNotBeNullOrEmpty();
+        project.Id.ShouldNotBeNullOrWhiteSpace();
     }
 
     [Fact]
-    public void Should_Create_With_Properties()
+    public void Should_Create_Project_With_Properties()
     {
         // Arrange
         var name = "Test Project";
@@ -42,7 +42,7 @@ public class ProjectTests
 
         // Assert
         _ = project.ShouldNotBeNull();
-        project.Id.ShouldNotBeNullOrEmpty();
+        project.Id.ShouldNotBeNullOrWhiteSpace();
         project.Name.ShouldBe(name);
         project.Description.ShouldBe(description);
         project.CreatedBy.ShouldBe(createdBy);
@@ -52,7 +52,7 @@ public class ProjectTests
     }
 
     [Fact]
-    public async Task Should_Create_Different_Ids_For_Different_Instances()
+    public async Task Should_Create_Projects_Different_Ids_For_Different_Instances()
     {
         // Act
         var project1 = new Project();
@@ -66,37 +66,30 @@ public class ProjectTests
     }
 
     [Fact]
-    public void Should_Set_And_Get_Properties()
+    public void Should_Set_And_Get_Project_Properties()
     {
         // Arrange
         var project = new Project();
-        var name = "Test Project";
-        var description = "Test Project Description";
-        var createdBy = Guid.NewGuid();
-        var createdAt = DateTime.UtcNow;
-        var isActive = true;
-        var isDeleted = false;
+        var name = "Updated Test Project";
+        var description = "Updated Test Project Description";
+        var updatedBy = Guid.NewGuid();
+        var updatedAt = DateTime.UtcNow;
 
         // Act
         project.Name = name;
         project.Description = description;
-        project.CreatedBy = createdBy;
-        project.CreatedAt = createdAt;
-        project.IsActive = isActive;
-        project.IsDeleted = isDeleted;
+        project.UpdatedBy = updatedBy;
+        project.UpdatedAt = updatedAt;
 
         // Assert
-        _ = project.ShouldNotBeNull();
         project.Name.ShouldBe(name);
         project.Description.ShouldBe(description);
-        project.CreatedBy.ShouldBe(createdBy);
-        project.CreatedAt.ShouldBe(createdAt);
-        project.IsActive.ShouldBe(isActive);
-        project.IsDeleted.ShouldBe(isDeleted);
+        project.UpdatedBy.ShouldBe(updatedBy);
+        project.UpdatedAt.ShouldBe(updatedAt);
     }
 
     [Fact]
-    public void Should_Have_Default_Values()
+    public void Should_Have_Project_Default_Values()
     {
         // Act
         var project = new Project();

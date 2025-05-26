@@ -6,7 +6,6 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Modularity;
 using Xunit;
 using YANLib.Entities;
-using YANLib.Repositories;
 
 namespace YANLib.Domain;
 
@@ -17,7 +16,7 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
     protected DeveloperTypeDomainTests() => _repository = GetRequiredService<IRepository<DeveloperType, long>>();
 
     [Fact]
-    public async Task Should_Create_DeveloperType()
+    public async Task Should_Insert_DeveloperType()
     {
         // Arrange
         var entity = new DeveloperType
@@ -68,15 +67,15 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        var result = await _repository.GetAsync(created.Id);
+        var result = await _repository.GetAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
-        result.Name.ShouldBe(created.Name);
+        result.Id.ShouldBe(inserted.Id);
+        result.Name.ShouldBe(inserted.Name);
     }
 
     [Fact]
@@ -90,19 +89,19 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
-        created.Name = "Updated Test Developer Type";
-        created.UpdatedBy = Guid.NewGuid();
-        created.UpdatedAt = DateTime.UtcNow;
+        inserted.Name = "Updated Test Developer Type";
+        inserted.UpdatedBy = Guid.NewGuid();
+        inserted.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        var updated = await _repository.UpdateAsync(created, true);
-        var result = await _repository.GetAsync(created.Id);
+        var updated = await _repository.UpdateAsync(inserted, true);
+        var result = await _repository.GetAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
+        result.Id.ShouldBe(inserted.Id);
         result.Name.ShouldBe(updated.Name);
     }
 
@@ -119,12 +118,12 @@ public abstract class DeveloperTypeDomainTests<TStartupModule> : YANLibDomainTes
             IsDeleted = false
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        await _repository.DeleteAsync(created.Id);
+        await _repository.DeleteAsync(inserted.Id);
 
         // Assert
-        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(created.Id));
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(inserted.Id));
     }
 }

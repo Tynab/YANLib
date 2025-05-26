@@ -16,7 +16,7 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
     protected ProjectDomainTests() => _repository = GetRequiredService<IRepository<Project, string>>();
 
     [Fact]
-    public async Task Should_Create_Project()
+    public async Task Should_Insert_Project()
     {
         // Arrange
         var entity = new Project
@@ -71,16 +71,16 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        var result = await _repository.FindAsync(created.Id);
+        var result = await _repository.FindAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
-        result.Name.ShouldBe(created.Name);
-        result.Description.ShouldBe(created.Description);
+        result.Id.ShouldBe(inserted.Id);
+        result.Name.ShouldBe(inserted.Name);
+        result.Description.ShouldBe(inserted.Description);
     }
 
     [Fact]
@@ -95,20 +95,20 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
-        created.Name = "Updated Test Project";
-        created.Description = "Updated Test Project Description";
-        created.UpdatedBy = Guid.NewGuid();
-        created.UpdatedAt = DateTime.UtcNow;
+        inserted.Name = "Updated Test Project";
+        inserted.Description = "Updated Test Project Description";
+        inserted.UpdatedBy = Guid.NewGuid();
+        inserted.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        var updated = await _repository.UpdateAsync(created, true);
-        var result = await _repository.FindAsync(created.Id);
+        var updated = await _repository.UpdateAsync(inserted, true);
+        var result = await _repository.FindAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
+        result.Id.ShouldBe(inserted.Id);
         result.Name.ShouldBe(updated.Name);
         result.Description.ShouldBe(updated.Description);
     }
@@ -125,12 +125,12 @@ public abstract class ProjectDomainTests<TStartupModule> : YANLibDomainTestBase<
             CreatedAt = DateTime.UtcNow,
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        await _repository.DeleteAsync(created.Id);
+        await _repository.DeleteAsync(inserted.Id);
 
         // Assert
-        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(created.Id));
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(inserted.Id));
     }
 }

@@ -6,7 +6,6 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Modularity;
 using Xunit;
 using YANLib.Entities;
-using YANLib.Repositories;
 
 namespace YANLib.Domain;
 
@@ -26,7 +25,7 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
     }
 
     [Fact]
-    public async Task Should_Create_DeveloperProject()
+    public async Task Should_Insert_DeveloperProject()
     {
         // Arrange
         var developer = await CreateTestDeveloper();
@@ -139,19 +138,19 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
-        created.IsActive = false;
-        created.UpdatedBy = Guid.NewGuid();
-        created.UpdatedAt = DateTime.UtcNow;
+        inserted.IsActive = false;
+        inserted.UpdatedBy = Guid.NewGuid();
+        inserted.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        var updated = await _repository.UpdateAsync(created, true);
-        var result = await _repository.GetAsync(created.Id);
+        var updated = await _repository.UpdateAsync(inserted, true);
+        var result = await _repository.GetAsync(inserted.Id);
 
         // Assert
         _ = updated.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
+        result.Id.ShouldBe(inserted.Id);
         updated.IsActive.ShouldBe(updated.IsActive);
     }
 
@@ -170,13 +169,13 @@ public abstract class DeveloperProjectDomainTests<TStartupModule> : YANLibDomain
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        await _repository.DeleteAsync(created.Id, true);
+        await _repository.DeleteAsync(inserted.Id, true);
 
         // Assert
-        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(created.Id));
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(inserted.Id));
     }
 
     private async Task<Developer> CreateTestDeveloper() => await _developerRepository.InsertAsync(new Developer

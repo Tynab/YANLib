@@ -22,7 +22,7 @@ public class DeveloperProjectRepository(
     private readonly ILogger<DeveloperProjectRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async Task<DeveloperProject?> Modify(DeveloperProjectDto dto, CancellationToken cancellationToken = default)
+    public async Task<DeveloperProject?> ModifyAsync(DeveloperProjectDto dto, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -37,7 +37,7 @@ public class DeveloperProjectRepository(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-DeveloperProjectRepository-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "ModifyAsync-DeveloperProjectRepository-Exception: {DTO}", dto.Serialize());
 
             throw;
         }

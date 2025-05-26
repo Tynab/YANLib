@@ -1,5 +1,4 @@
-﻿using Nest;
-using Shouldly;
+﻿using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
