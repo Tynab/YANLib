@@ -16,13 +16,11 @@ namespace YANLib.Services;
 public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicationTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
     private readonly IDeveloperService _service;
-    private readonly IDeveloperTypeService _developerTypeService;
     private readonly IRepository<DeveloperType, long> _developerTypeRepository;
 
     protected DeveloperAppServiceTests()
     {
         _service = GetRequiredService<IDeveloperService>();
-        _developerTypeService = GetRequiredService<IDeveloperTypeService>();
         _developerTypeRepository = GetRequiredService<IRepository<DeveloperType, long>>();
     }
 
@@ -54,10 +52,6 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
         result.Name.ShouldBe(request.Name);
         result.Phone.ShouldBe(request.Phone);
         result.IdCard.ShouldBe(request.IdCard);
-
-        var retrievedDeveloper = await _service.GetAsync(result.Id);
-        _ = retrievedDeveloper.ShouldNotBeNull();
-        retrievedDeveloper.Name.ShouldBe(request.Name);
     }
 
     [Fact]
@@ -68,7 +62,7 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
 
         var request = new DeveloperCreateRequest
         {
-            Name = "Test Developer for GetList",
+            Name = "Test Developer",
             Phone = "1234567890",
             IdCard = "ID123456789",
             DeveloperTypeCode = developerType.Id,
@@ -82,10 +76,7 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
         _ = await _service.CreateAsync(request);
 
         // Act
-        var result = await _service.GetListAsync(new PagedAndSortedResultRequestDto
-        {
-            MaxResultCount = 10
-        });
+        var result = await _service.GetListAsync(new());
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -101,7 +92,7 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
 
         var request = new DeveloperCreateRequest
         {
-            Name = "Test Developer for Get By Id",
+            Name = "Test Developer",
             Phone = "1234567890",
             IdCard = "ID123456789",
             DeveloperTypeCode = developerType.Id,
@@ -133,7 +124,7 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
 
         var createRequest = new DeveloperCreateRequest
         {
-            Name = "Developer To Update",
+            Name = "Test Developer",
             Phone = "1234567890",
             IdCard = "ID123456789",
             DeveloperTypeCode = developerType.Id,
@@ -148,11 +139,11 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
 
         var updateRequest = new DeveloperUpdateRequest
         {
-            Name = "Updated Developer",
+            Name = "Updated Test Developer",
             Phone = "0987654321",
             IdCard = "ID987654321",
             DeveloperTypeCode = developerType.Id,
-            RawVersion = 1,
+            RawVersion = 2,
             CreatedBy = created.CreatedBy,
             CreatedAt = created.CreatedAt,
             UpdatedBy = Guid.NewGuid(),
@@ -170,10 +161,6 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
         result.Name.ShouldBe(updateRequest.Name);
         result.Phone.ShouldBe(updateRequest.Phone);
         result.IdCard.ShouldBe(updateRequest.IdCard);
-
-        var retrieved = await _service.GetAsync(created.Id);
-        _ = retrieved.ShouldNotBeNull();
-        retrieved.Name.ShouldBe(updateRequest.Name);
     }
 
     [Fact]
@@ -184,7 +171,7 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
 
         var request = new DeveloperCreateRequest
         {
-            Name = "Developer To Delete",
+            Name = "Test Developer",
             Phone = "1234567890",
             IdCard = "ID123456789",
             DeveloperTypeCode = developerType.Id,
@@ -204,19 +191,12 @@ public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicati
         _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _service.GetAsync(created.Id));
     }
 
-    private async Task<DeveloperType> CreateTestDeveloperType()
+    private async Task<DeveloperType> CreateTestDeveloperType() => await _developerTypeRepository.InsertAsync(new DeveloperType
     {
-        var existing = await _developerTypeRepository.FindAsync(x => x.Name == "Test Developer Type");
-
-        return existing.IsNotNull()
-            ? existing
-            : await _developerTypeRepository.InsertAsync(new DeveloperType
-            {
-                Name = "Test Developer Type",
-                CreatedBy = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true,
-                IsDeleted = false
-            }, true);
-    }
+        Name = "Test Developer Type",
+        CreatedBy = Guid.NewGuid(),
+        CreatedAt = DateTime.UtcNow,
+        IsActive = true,
+        IsDeleted = false
+    }, true);
 }

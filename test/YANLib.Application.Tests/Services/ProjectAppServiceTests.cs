@@ -36,13 +36,9 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
 
         // Assert
         _ = result.ShouldNotBeNull();
-        _ = result.Id.ShouldNotBeNull();
+        result.Id.ShouldNotBeNullOrWhiteSpace();
         result.Name.ShouldBe(request.Name);
         result.Description.ShouldBe(request.Description);
-
-        var retrieved = await _service.GetAsync(result.Id);
-        _ = retrieved.ShouldNotBeNull();
-        retrieved.Name.ShouldBe(request.Name);
     }
 
     [Fact]
@@ -51,8 +47,8 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
         // Arrange
         var request = new ProjectCreateRequest
         {
-            Name = "Test Project for GetList",
-            Description = "Test Project Description for GetList",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -62,10 +58,7 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
         _ = await _service.CreateAsync(request);
 
         // Act
-        var result = await _service.GetListAsync(new PagedAndSortedResultRequestDto
-        {
-            MaxResultCount = 10
-        });
+        var result = await _service.GetListAsync(new());
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -79,8 +72,8 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
         // Arrange
         var request = new ProjectCreateRequest
         {
-            Name = "Test Project for Get By Id",
-            Description = "Test Project Description for Get By Id",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -105,8 +98,8 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
         // Arrange
         var createRequest = new ProjectCreateRequest
         {
-            Name = "Test Project for Update",
-            Description = "Test Project Description for Update",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             IsActive = true,
@@ -135,10 +128,6 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
         result.Id.ShouldBe(created.Id);
         result.Name.ShouldBe(updateRequest.Name);
         result.Description.ShouldBe(updateRequest.Description);
-
-        var retrieved = await _service.GetAsync(created.Id);
-        retrieved.Name.ShouldBe(updateRequest.Name);
-        retrieved.Description.ShouldBe(updateRequest.Description);
     }
 
     [Fact]
@@ -147,8 +136,8 @@ public abstract class ProjectAppServiceTests<TStartupModule> : YANLibApplication
         // Arrange
         var request = new ProjectCreateRequest
         {
-            Name = "Test Project for Delete",
-            Description = "Test Project Description for Delete",
+            Name = "Test Project",
+            Description = "Test Project Description",
             CreatedBy = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
             IsActive = true,

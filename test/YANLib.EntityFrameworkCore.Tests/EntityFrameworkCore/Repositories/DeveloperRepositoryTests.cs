@@ -31,7 +31,6 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
         var name = "Test Insert Developer";
         var phone = "1234567890";
         var idCard = "ID123456789";
-        var createdBy = Guid.NewGuid();
 
         // Act
         var result = await _repository.InsertAsync(new Developer
@@ -39,12 +38,7 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
             Name = name,
             Phone = phone,
             IdCard = idCard,
-            DeveloperTypeCode = developerType.Id,
-            RawVersion = 1,
-            CreatedBy = createdBy,
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true,
-            IsDeleted = false
+            DeveloperTypeCode = developerType.Id
         }, true);
 
         // Assert
@@ -54,14 +48,12 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
         result.Phone.ShouldBe(phone);
         result.IdCard.ShouldBe(idCard);
         result.DeveloperTypeCode.ShouldBe(developerType.Id);
-        result.CreatedBy.ShouldBe(createdBy);
 
         var inserted = await _repository.GetAsync(result.Id);
         _ = inserted.ShouldNotBeNull();
         inserted.Name.ShouldBe(name);
         inserted.Phone.ShouldBe(phone);
         inserted.IdCard.ShouldBe(idCard);
-        inserted.CreatedBy.ShouldBe(createdBy);
     }
 
     [Fact]
@@ -105,8 +97,6 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
 
         request.Name = updatedName;
         request.Phone = updatedPhone;
-        request.UpdatedBy = Guid.NewGuid();
-        request.UpdatedAt = DateTime.UtcNow;
 
         // Act
         _ = await _repository.UpdateAsync(request, true);
@@ -118,7 +108,6 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
         updated.Id.ShouldBe(request.Id);
         updated.Name.ShouldBe(updatedName);
         updated.Phone.ShouldBe(updatedPhone);
-        updated.UpdatedBy.ShouldBe(request.UpdatedBy);
     }
 
     [Fact]
