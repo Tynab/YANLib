@@ -24,6 +24,8 @@ public class DeveloperProjectRepository(
 
     public async Task<DeveloperProject?> ModifyAsync(DeveloperProjectDto dto, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             return await _dbContext.DeveloperProjects.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
@@ -31,8 +33,8 @@ public class DeveloperProjectRepository(
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-                .SetProperty(x => x.DeveloperId, dto.DeveloperId)
-                .SetProperty(x => x.ProjectId, dto.ProjectId)
+                .SetProperty(x => x.DeveloperId, x => dto.DeveloperId ?? x.DeveloperId)
+                .SetProperty(x => x.ProjectId, x => dto.ProjectId ?? x.ProjectId)
             , cancellationToken) > 0 ? await _dbContext.DeveloperProjects.FindAsync([dto.Id, cancellationToken], cancellationToken: cancellationToken) : default;
         }
         catch (Exception ex)

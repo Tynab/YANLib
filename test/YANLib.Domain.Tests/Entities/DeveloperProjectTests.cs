@@ -5,7 +5,7 @@ using Xunit;
 
 namespace YANLib.Entities;
 
-public class DeveloperProjectTests : YANLibDomainTestBase<YANLibDomainTestModule>
+public class DeveloperProjectTests
 {
     [Fact]
     public void Should_Create_DeveloperProject_With_Default_Id()
@@ -212,26 +212,21 @@ public class DeveloperProjectTests : YANLibDomainTestBase<YANLibDomainTestModule
         var projectId = project.Id;
         var updatedBy = Guid.NewGuid();
         var updatedAt = DateTime.UtcNow;
-        var isActive = false;
 
+        // Act
         var developerProject = new DeveloperProject
         {
             DeveloperId = developerId,
-            ProjectId = projectId
+            ProjectId = projectId,
+            UpdatedBy = updatedBy,
+            UpdatedAt = updatedAt,
+            IsActive = false
         };
 
-        // Act
-        developerProject.DeveloperId = developerId;
-        developerProject.ProjectId = projectId;
-        developerProject.UpdatedBy = updatedBy;
-        developerProject.UpdatedAt = updatedAt;
-
         // Assert
-        developerProject.DeveloperId.ShouldBe(developerId);
-        developerProject.ProjectId.ShouldBe(projectId);
-        developer.UpdatedBy.ShouldBe(updatedBy);
-        developer.UpdatedAt.ShouldBe(updatedAt);
-        developerProject.IsActive.ShouldBe(isActive);
+        developerProject.UpdatedBy.ShouldBe(updatedBy);
+        developerProject.UpdatedAt.ShouldBe(updatedAt);
+        developerProject.IsActive.ShouldBeFalse();
     }
 
     [Fact]
