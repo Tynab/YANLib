@@ -10,5 +10,5 @@ namespace YANLib.Repositories;
 
 public interface IDeveloperProjectRepository : IRepository<DeveloperProject, Guid>, ITransientDependency
 {
-    public Task<DeveloperProject?> Modify(DeveloperProjectDto dto, CancellationToken cancellationToken = default);
+    public Task<DeveloperProject?> ModifyAsync(DeveloperProjectDto dto, CancellationToken cancellationToken = default);
 }

@@ -22,8 +22,10 @@ public class DeveloperProjectRepository(
     private readonly ILogger<DeveloperProjectRepository> _logger = logger;
     private readonly IYANLibDbContext _dbContext = dbContext;
 
-    public async Task<DeveloperProject?> Modify(DeveloperProjectDto dto, CancellationToken cancellationToken = default)
+    public async Task<DeveloperProject?> ModifyAsync(DeveloperProjectDto dto, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             return await _dbContext.DeveloperProjects.Where(x => x.Id == dto.Id && x.IsDeleted == false).ExecuteUpdateAsync(s => s
@@ -31,13 +33,13 @@ public class DeveloperProjectRepository(
                 .SetProperty(x => x.UpdatedAt, UtcNow)
                 .SetProperty(x => x.IsActive, x => dto.IsActive ?? x.IsActive)
                 .SetProperty(x => x.IsDeleted, x => dto.IsDeleted ?? x.IsDeleted)
-                .SetProperty(x => x.DeveloperId, dto.DeveloperId)
-                .SetProperty(x => x.ProjectId, dto.ProjectId)
+                .SetProperty(x => x.DeveloperId, x => dto.DeveloperId ?? x.DeveloperId)
+                .SetProperty(x => x.ProjectId, x => dto.ProjectId ?? x.ProjectId)
             , cancellationToken) > 0 ? await _dbContext.DeveloperProjects.FindAsync([dto.Id, cancellationToken], cancellationToken: cancellationToken) : default;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Modify-DeveloperProjectRepository-Exception: {DTO}", dto.Serialize());
+            _logger.LogError(ex, "ModifyAsync-DeveloperProjectRepository-Exception: {DTO}", dto.Serialize());
 
             throw;
         }

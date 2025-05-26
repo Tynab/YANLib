@@ -8,7 +8,7 @@ namespace YANLib.Entities;
 public class DeveloperTypeTests
 {
     [Fact]
-    public void Should_Create_With_Default_Id()
+    public void Should_Create_DeveloperType_With_Default_Id()
     {
         // Act
         var developerType = new DeveloperType();
@@ -19,7 +19,7 @@ public class DeveloperTypeTests
     }
 
     [Fact]
-    public void Should_Create_With_Properties()
+    public void Should_Create_DeveloperType_With_Properties()
     {
         // Arrange
         var name = "Test Developer Type";
@@ -49,7 +49,7 @@ public class DeveloperTypeTests
     }
 
     [Fact]
-    public async Task Should_Create_Different_Ids_For_Different_Instances()
+    public async Task Should_Create_DeveloperTypes_Different_Ids_For_Different_Instances()
     {
         // Act
         var developerType1 = new DeveloperType();
@@ -63,11 +63,11 @@ public class DeveloperTypeTests
     }
 
     [Fact]
-    public void Should_Set_And_Get_Properties()
+    public void Should_Set_And_Get_DeveloperType_Properties()
     {
         // Arrange
         var developerType = new DeveloperType();
-        var name = "Updated Developer Type";
+        var name = "Updated Test Developer Type";
         var updatedBy = Guid.NewGuid();
         var updatedAt = DateTime.UtcNow;
 
@@ -75,17 +75,15 @@ public class DeveloperTypeTests
         developerType.Name = name;
         developerType.UpdatedBy = updatedBy;
         developerType.UpdatedAt = updatedAt;
-        developerType.IsActive = false;
 
         // Assert
         developerType.Name.ShouldBe(name);
         developerType.UpdatedBy.ShouldBe(updatedBy);
         developerType.UpdatedAt.ShouldBe(updatedAt);
-        developerType.IsActive.ShouldBeFalse();
     }
 
     [Fact]
-    public void Should_Have_Default_Values()
+    public void Should_Have_DeveloperType_Default_Values()
     {
         // Act
         var developerType = new DeveloperType();

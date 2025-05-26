@@ -6,7 +6,6 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Modularity;
 using Xunit;
 using YANLib.Entities;
-using YANLib.Repositories;
 
 namespace YANLib.Domain;
 
@@ -22,7 +21,7 @@ public abstract class DeveloperDomainTests<TStartupModule> : YANLibDomainTestBas
     }
 
     [Fact]
-    public async Task Should_Create_Developer()
+    public async Task Should_Insert_Developer()
     {
         var developerType = await CreateTestDeveloperType();
 
@@ -91,18 +90,18 @@ public abstract class DeveloperDomainTests<TStartupModule> : YANLibDomainTestBas
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        var result = await _repository.GetAsync(created.Id);
+        var result = await _repository.GetAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
-        result.Name.ShouldBe(created.Name);
-        result.Phone.ShouldBe(created.Phone);
-        result.IdCard.ShouldBe(created.IdCard);
-        result.DeveloperTypeCode.ShouldBe(created.DeveloperTypeCode);
+        result.Id.ShouldBe(inserted.Id);
+        result.Name.ShouldBe(inserted.Name);
+        result.Phone.ShouldBe(inserted.Phone);
+        result.IdCard.ShouldBe(inserted.IdCard);
+        result.DeveloperTypeCode.ShouldBe(inserted.DeveloperTypeCode);
     }
 
     [Fact]
@@ -121,21 +120,21 @@ public abstract class DeveloperDomainTests<TStartupModule> : YANLibDomainTestBas
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
-        created.Name = "Updated Test Developer";
-        created.Phone = "0987654321";
-        created.IdCard = "ID987654321";
-        created.UpdatedBy = Guid.NewGuid();
-        created.UpdatedAt = DateTime.UtcNow;
+        inserted.Name = "Updated Test Developer";
+        inserted.Phone = "0987654321";
+        inserted.IdCard = "ID987654321";
+        inserted.UpdatedBy = Guid.NewGuid();
+        inserted.UpdatedAt = DateTime.UtcNow;
 
         // Act
-        var updated = await _repository.UpdateAsync(created, true);
-        var result = await _repository.GetAsync(created.Id);
+        var updated = await _repository.UpdateAsync(inserted, true);
+        var result = await _repository.GetAsync(inserted.Id);
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.Id.ShouldBe(created.Id);
+        result.Id.ShouldBe(inserted.Id);
         result.Name.ShouldBe(updated.Name);
         result.Phone.ShouldBe(updated.Phone);
         result.IdCard.ShouldBe(updated.IdCard);
@@ -158,13 +157,13 @@ public abstract class DeveloperDomainTests<TStartupModule> : YANLibDomainTestBas
             CreatedAt = DateTime.UtcNow
         };
 
-        var created = await _repository.InsertAsync(entity, true);
+        var inserted = await _repository.InsertAsync(entity, true);
 
         // Act
-        await _repository.DeleteAsync(created.Id);
+        await _repository.DeleteAsync(inserted.Id);
 
         // Assert
-        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(created.Id));
+        _ = await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _repository.GetAsync(inserted.Id));
     }
 
     private async Task<DeveloperType> CreateTestDeveloperType() => await _developerTypeRepository.InsertAsync(new DeveloperType
