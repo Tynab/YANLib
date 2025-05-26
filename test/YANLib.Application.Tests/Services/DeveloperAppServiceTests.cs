@@ -16,13 +16,11 @@ namespace YANLib.Services;
 public abstract class DeveloperAppServiceTests<TStartupModule> : YANLibApplicationTestBase<TStartupModule> where TStartupModule : IAbpModule
 {
     private readonly IDeveloperService _service;
-    private readonly IDeveloperTypeService _developerTypeService;
     private readonly IRepository<DeveloperType, long> _developerTypeRepository;
 
     protected DeveloperAppServiceTests()
     {
         _service = GetRequiredService<IDeveloperService>();
-        _developerTypeService = GetRequiredService<IDeveloperTypeService>();
         _developerTypeRepository = GetRequiredService<IRepository<DeveloperType, long>>();
     }
 
