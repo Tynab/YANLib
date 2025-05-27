@@ -85,7 +85,7 @@ public class DeveloperTypeService(ILogger<DeveloperTypeService> logger, IDevelop
 
         try
         {
-            var entity = await _repository.InsertAsync(ObjectMapper.Map<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)), cancellationToken: cancellationToken);
+            var entity = await _repository.InsertAsync(ObjectMapper.Map<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>((_idGenerator.NextId(), request)), true, cancellationToken);
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)

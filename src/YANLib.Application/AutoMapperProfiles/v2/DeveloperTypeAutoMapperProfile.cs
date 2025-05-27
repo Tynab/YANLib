@@ -4,6 +4,8 @@ using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.RedisDtos;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.DateTime;
 
@@ -13,7 +15,7 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
 {
     public DeveloperTypeAutoMapperProfile()
     {
-        _ = CreateMap<(long Id, Requests.v2.Create.DeveloperTypeCreateRequest Request), DeveloperType>()
+        _ = CreateMap<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
             .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Request.CreatedBy))
@@ -23,7 +25,7 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
             .Ignore(static d => d.UpdatedBy)
             .Ignore(static d => d.UpdatedAt);
 
-        _ = CreateMap<(long Id, Requests.v2.Update.DeveloperTypeUpdateRequest Request), DeveloperTypeDto>()
+        _ = CreateMap<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
             .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Request.UpdatedBy))

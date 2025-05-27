@@ -27,73 +27,70 @@ public static class ElasticsearchConfiguration
         int requestTimeout = 2
     )
     {
-        ConnectionSettings? settings;
-        var urlConfigSection = configuration.GetSection(urlConfigPath);
-        var urlConfigChildren = urlConfigSection.GetChildren();
-
-        if (urlConfigChildren.IsNullEmpty())
+        try
         {
-            var url = urlConfigSection.Value;
+            ConnectionSettings? settings;
+            var urlConfigSection = configuration.GetSection(urlConfigPath);
+            var urlConfigChildren = urlConfigSection.GetChildren();
 
-            if (url.IsNullWhiteSpace())
+            if (urlConfigChildren.IsNullEmpty())
             {
-                return services;
-            }
+                var url = urlConfigSection.Value;
 
-            settings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri(url))).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(requestTimeout));
-        }
-        else
-        {
-            settings = new ConnectionSettings(new StaticConnectionPool(
-                (urlConfigChildren.IsNullEmpty() ? [urlConfigSection] : urlConfigChildren.ToArray()).Select(static s => s.Value.IsNullWhiteSpace() ? default : new Uri(s.Value)).Where(static u => u.IsNotNull()).ToArray()
-            )).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(requestTimeout));
-        }
-
-        var username = configuration.GetSection(usernameConfigPath).Value;
-
-        if (username.IsNotNullWhiteSpace())
-        {
-            _ = settings.ServerCertificateValidationCallback(static (o, certificate, chain, errors) => true);
-            _ = settings.ServerCertificateValidationCallback(AllowAll);
-            _ = settings.BasicAuthentication(username, configuration.GetSection(passwordConfigPath).Value);
-        }
-
-        if (indexMappings.IsNotNull())
-        {
-            foreach (var mapping in indexMappings)
-            {
-                var indexType = mapping.Key;
-                var indexName = mapping.Value ?? $"{indexType.Namespace?.Split('.')[0]}_{indexType.Name
-                    .Replace("elasticsearchindex", string.Empty, OrdinalIgnoreCase)
-                    .Replace("elasticsearch", string.Empty, OrdinalIgnoreCase)
-                    .Replace("index", string.Empty, OrdinalIgnoreCase)}_index_{services.GetAbpHostEnvironment().EnvironmentName ?? "dev"}".ToLowerInvariant();
-
-                _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(ConfigureDefaultMappingGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [settings, indexName]);
-            }
-        }
-
-        var client = new ElasticClient(settings);
-
-        if (indexMappings.IsNotNull())
-        {
-            foreach (var mapping in indexMappings)
-            {
-                var indexType = mapping.Key;
-                var indexName = (mapping.Value ?? $"{indexType.Namespace?.Split('.')[0]}_{indexType.Name
-                    .Replace("elasticsearchindex", string.Empty, OrdinalIgnoreCase)
-                    .Replace("elasticsearch", string.Empty, OrdinalIgnoreCase)
-                    .Replace("index", string.Empty, OrdinalIgnoreCase)}_index_{services.GetAbpHostEnvironment().EnvironmentName ?? "dev"}").ToLowerInvariant();
-
-                if (!client.Indices.Exists(indexName).Exists)
+                if (url.IsNullWhiteSpace())
                 {
-                    _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(CreateIndexGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [client, indexName]);
+                    return services;
+                }
+
+                settings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri(url))).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(requestTimeout));
+            }
+            else
+            {
+                settings = new ConnectionSettings(new StaticConnectionPool(
+                    (urlConfigChildren.IsNullEmpty() ? [urlConfigSection] : urlConfigChildren.ToArray()).Select(static s => s.Value.IsNullWhiteSpace() ? default : new Uri(s.Value)).Where(static u => u.IsNotNull()).ToArray()
+                )).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(requestTimeout));
+            }
+
+            var username = configuration.GetSection(usernameConfigPath).Value;
+
+            if (username.IsNotNullWhiteSpace())
+            {
+                _ = settings.ServerCertificateValidationCallback(static (o, certificate, chain, errors) => true);
+                _ = settings.ServerCertificateValidationCallback(AllowAll);
+                _ = settings.BasicAuthentication(username, configuration.GetSection(passwordConfigPath).Value);
+            }
+
+            var client = new ElasticClient(settings);
+
+            if (indexMappings.IsNotNull())
+            {
+                foreach (var mapping in indexMappings)
+                {
+                    var indexType = mapping.Key;
+                    var indexName = (mapping.Value ?? $"{indexType.Namespace?.Split('.')[0]}_{indexType.Name
+                        .Replace("elasticsearchindex", string.Empty, OrdinalIgnoreCase)
+                        .Replace("elasticsearch", string.Empty, OrdinalIgnoreCase)
+                        .Replace("index", string.Empty, OrdinalIgnoreCase)}_index_{services.GetAbpHostEnvironment().EnvironmentName ?? "dev"}").ToLowerInvariant();
+
+                    _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(ConfigureDefaultMappingGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [settings, indexName]);
+
+                    if (!client.Indices.Exists(indexName).Exists)
+                    {
+                        _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(CreateIndexGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [client, indexName]);
+                    }
                 }
             }
+
+            _ = services.AddSingleton<IElasticClient>(client);
+
+            return services;
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error configuring Elasticsearch: {ex.Message}");
 
-        _ = services.AddSingleton<IElasticClient>(client);
-
-        return services;
+            return services;
+        }
     }
 
     private static void ConfigureDefaultMappingGeneric<T>(ConnectionSettings settings, string indexName) where T : class => settings.DefaultMappingFor<T>(m => m.IndexName(indexName));

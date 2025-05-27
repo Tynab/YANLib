@@ -118,7 +118,7 @@ public class DeveloperProjectService(
                 CreatedAt = UtcNow,
                 IsActive = true,
                 IsDeleted = false
-            }, cancellationToken: cancellationToken);
+            }, true, cancellationToken);
 
             return entity.IsNull()
                 ? throw new BusinessException(SQL_SERVER_ERROR)
