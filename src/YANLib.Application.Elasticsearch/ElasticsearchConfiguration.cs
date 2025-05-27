@@ -11,6 +11,7 @@ using static Elasticsearch.Net.CertificateValidations;
 using static System.Reflection.BindingFlags;
 using static System.StringComparison;
 using static System.TimeSpan;
+using static YANLib.YANExpression;
 
 namespace YANLib;
 
@@ -27,10 +28,12 @@ public static class ElasticsearchConfiguration
     )
     {
         ConnectionSettings? settings;
+        var urlConfigSection = configuration.GetSection(urlConfigPath);
+        var urlConfigChildren = urlConfigSection.GetChildren();
 
-        if (configuration.GetSection(urlConfigPath).GetChildren().IsNullEmpty())
+        if (urlConfigChildren.IsNullEmpty())
         {
-            var url = configuration.GetSection(urlConfigPath).Value;
+            var url = urlConfigSection.Value;
 
             if (url.IsNullWhiteSpace())
             {
@@ -41,11 +44,9 @@ public static class ElasticsearchConfiguration
         }
         else
         {
-            var uris = (configuration.GetSection(urlConfigPath).GetChildren().Any()
-                ? configuration.GetSection(urlConfigPath).GetChildren().ToArray()
-                : [configuration.GetSection(urlConfigPath)]).Select(s => s.Value.IsNullWhiteSpace() ? default : new Uri(s.Value)).Where(u => u.IsNotNull()).ToArray();
-
-            settings = new ConnectionSettings(new StaticConnectionPool(uris)).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(requestTimeout));
+            settings = new ConnectionSettings(new StaticConnectionPool(
+                (urlConfigChildren.IsNullEmpty() ? [urlConfigSection] : urlConfigChildren.ToArray()).Select(static s => s.Value.IsNullWhiteSpace() ? default : new Uri(s.Value)).Where(static u => u.IsNotNull()).ToArray()
+            )).EnableDebugMode().PrettyJson().RequestTimeout(FromMinutes(requestTimeout));
         }
 
         var username = configuration.GetSection(usernameConfigPath).Value;
@@ -55,6 +56,20 @@ public static class ElasticsearchConfiguration
             _ = settings.ServerCertificateValidationCallback(static (o, certificate, chain, errors) => true);
             _ = settings.ServerCertificateValidationCallback(AllowAll);
             _ = settings.BasicAuthentication(username, configuration.GetSection(passwordConfigPath).Value);
+        }
+
+        if (indexMappings.IsNotNull())
+        {
+            foreach (var mapping in indexMappings)
+            {
+                var indexType = mapping.Key;
+                var indexName = mapping.Value ?? $"{indexType.Namespace?.Split('.')[0]}_{indexType.Name
+                    .Replace("elasticsearchindex", string.Empty, OrdinalIgnoreCase)
+                    .Replace("elasticsearch", string.Empty, OrdinalIgnoreCase)
+                    .Replace("index", string.Empty, OrdinalIgnoreCase)}_index_{services.GetAbpHostEnvironment().EnvironmentName ?? "dev"}".ToLowerInvariant();
+
+                _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(ConfigureDefaultMappingGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [settings, indexName]);
+            }
         }
 
         var client = new ElasticClient(settings);
@@ -71,7 +86,7 @@ public static class ElasticsearchConfiguration
 
                 if (!client.Indices.Exists(indexName).Exists)
                 {
-                    _ = ((typeof(ElasticsearchConfiguration).GetMethod(nameof(CreateIndexGeneric), NonPublic | Static)?.MakeGenericMethod(indexType))?.Invoke(null, [client, indexName]));
+                    _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(CreateIndexGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [client, indexName]);
                 }
             }
         }
@@ -81,15 +96,14 @@ public static class ElasticsearchConfiguration
         return services;
     }
 
-    //private static void CreateIndexForType(IElasticClient client, string indexName, Type indexType)
-    //    => (typeof(ElasticsearchConfiguration).GetMethod(nameof(CreateIndexGeneric), NonPublic | Static)?.MakeGenericMethod(indexType))?.Invoke(null, [client, indexName]);
+    private static void ConfigureDefaultMappingGeneric<T>(ConnectionSettings settings, string indexName) where T : class => settings.DefaultMappingFor<T>(m => m.IndexName(indexName));
 
-    private static void CreateIndexGeneric<T>(IElasticClient client, string indexName) where T : class => client.Indices.Create(indexName, c => c
-        .Map<T>(t => t
+    private static void CreateIndexGeneric<T>(IElasticClient client, string indexName) where T : class => client.Indices.Create(indexName, static c => c
+        .Map<T>(static t => t
             .AutoMap()
-            .Properties(p => p
-                .Text(d => d
-                    .Name("Id")))));
+            .Properties(static p => p
+                .Text(static d => d
+                    .Name(PropertyExpression<T>("x", "Id"))))));
 
     public static async Task<DeleteIndexResponse?> DeleteIndexAsync(this IElasticClient client, IConfiguration configuration, string indexPath, CancellationToken cancellationToken = default)
     {

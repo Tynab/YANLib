@@ -199,8 +199,8 @@ public class YANLibHttpApiHostModule : AbpModule
     {
         var indexMappings = new Dictionary<Type, string?>
         {
-            { typeof(DeveloperElasticsearchIndex), configuration["Elasticsearch:Index:Developer"] },
-            { typeof(ProjectElasticsearchIndex), configuration["Elasticsearch:Index:Project"] }
+            { typeof(DeveloperElasticsearchIndex), configuration["Elasticsearch:Indices:Developer"] },
+            { typeof(ProjectElasticsearchIndex), configuration["Elasticsearch:Indices:Project"] }
         };
 
         _ = context.Services.AddElasticsearch(configuration, indexMappings: indexMappings);
