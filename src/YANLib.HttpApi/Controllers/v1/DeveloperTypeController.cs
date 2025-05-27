@@ -60,11 +60,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
     [ProducesResponseType(typeof(DeveloperTypeResponse), 201)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Create([FromBody][Required] DeveloperTypeCreateRequest input)
+    public async Task<IActionResult> Create([FromBody][Required] DeveloperTypeCreateRequest request)
     {
-        _logger.LogInformation("Create-DeveloperTypeCrudController: {Input}", input.Serialize());
+        _logger.LogInformation("Create-DeveloperTypeCrudController: {Request}", request.Serialize());
 
-        var result = await _service.CreateAsync(input);
+        var result = await _service.CreateAsync(request);
 
         return CreatedAtAction(nameof(Get), new
         {
@@ -78,11 +78,11 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<DeveloperTypeResponse>> Update([FromRoute] long id, [FromBody][Required] DeveloperTypeUpdateRequest input)
+    public async Task<ActionResult<DeveloperTypeResponse>> Update([FromRoute] long id, [FromBody][Required] DeveloperTypeUpdateRequest request)
     {
-        _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Input}", id, input.Serialize());
+        _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
 
-        var result = await _service.UpdateAsync(id, input);
+        var result = await _service.UpdateAsync(id, request);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }

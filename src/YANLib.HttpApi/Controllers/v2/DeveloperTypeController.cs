@@ -52,16 +52,28 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     {
         _logger.LogInformation("Get-DeveloperTypeController: {Id}", id);
 
-        return Ok(await _service.GetAsync(id));
+        var result = await _service.GetAsync(id);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    public async Task<ActionResult<DeveloperTypeResponse>> Insert([Required] DeveloperTypeCreateRequest request)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), 201)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Insert([Required] DeveloperTypeCreateRequest request)
     {
         _logger.LogInformation("Insert-DeveloperTypeController: {Request}", request.Serialize());
 
-        return Ok(await _service.InsertAsync(request));
+        var result = await _service.InsertAsync(request);
+
+        return result.IsNull()
+            ? Problem()
+            : CreatedAtAction(nameof(Get), new
+            {
+                id = result.Id,
+                version = "2.0"
+            }, result);
     }
 
     [HttpPatch("{id}")]
