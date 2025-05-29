@@ -21,6 +21,6 @@ public static class YANLibDomainErrorCodes
 
     public const string INTERNAL_SERVER_ERROR = "YANLib:500";
     public const string SQL_SERVER_ERROR = "YANLib:501";
-    public const string ES_SERVER_ERROR = "YANLib:502";
+    public const string ELASTICSEARCH_SERVER_ERROR = "YANLib:502";
     public const string REDIS_SERVER_ERROR = "YANLib:503";
 }

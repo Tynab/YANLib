@@ -14,6 +14,7 @@ using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
 using static Nest.SortOrder;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace YANLib.Controllers.v1;
 
@@ -30,8 +31,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
-    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), 200)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll([FromQuery] DeveloperTypeListQuery query)
     {
         _logger.LogInformation("GetAll-DeveloperTypeController: {Query}", query.Serialize());
@@ -45,8 +46,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet("{id:long}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
-    [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id)
     {
         _logger.LogInformation("Get-DeveloperTypeCrudController: {Id}", id);
@@ -58,8 +59,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    [ProducesResponseType(typeof(DeveloperTypeResponse), 201)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(DeveloperTypeResponse), Status201Created)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody][Required] DeveloperTypeCreateRequest request)
     {
         _logger.LogInformation("Create-DeveloperTypeCrudController: {Request}", request.Serialize());
@@ -75,9 +76,9 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpPut("{id:long}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperTypeResponse>> Update([FromRoute] long id, [FromBody][Required] DeveloperTypeUpdateRequest request)
     {
         _logger.LogInformation("Update-DeveloperTypeCrudController: {Id} - {Request}", id, request.Serialize());
@@ -89,8 +90,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpDelete("{id:long}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(Status204NoContent)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] long id)
     {
         _logger.LogInformation("Delete-DeveloperTypeCrudController: {Id}", id);

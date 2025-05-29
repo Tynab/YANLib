@@ -15,13 +15,13 @@ public interface IDeveloperService : IApplicationService
 
     public Task<DeveloperResponse?> GetAsync(Guid id, CancellationToken cancellationToken = default);
 
+    public Task<DeveloperResponse?> GetByIdCardAsync(string idCard, CancellationToken cancellationToken = default);
+
     public Task<DeveloperResponse?> InsertAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default);
 
-    public Task<DeveloperResponse?> AdjustAsync(string idCard, DeveloperUpdateRequest request, CancellationToken cancellationToken = default);
+    public Task<DeveloperResponse?> AdjustAsync(Guid id, DeveloperUpdateRequest request, CancellationToken cancellationToken = default);
 
-    public Task<bool> DeleteAsync(string idCard, Guid updatedBy, CancellationToken cancellationToken = default);
+    public Task<bool> DeleteAsync(Guid id, Guid updatedBy, CancellationToken cancellationToken = default);
 
     public Task<bool> SyncDataToElasticsearchAsync(CancellationToken cancellationToken = default);
-
-    //public Task<DeveloperResponse?> GetByIdCard(string idCard);
 }

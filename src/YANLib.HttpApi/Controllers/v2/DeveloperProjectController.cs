@@ -14,6 +14,8 @@ using YANLib.Requests.v2.Create;
 using YANLib.Responses;
 using YANLib.Services.v2;
 using static Nest.SortOrder;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+using YANLib.ListQueries.v2;
 
 namespace YANLib.Controllers.v2;
 
@@ -29,37 +31,37 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     private readonly IDeveloperProjectService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả dự án của lập trình viên theo mã định danh")]
-    [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), 200)]
-    [ProducesResponseType(400)]
-    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([Required] Guid developerId, byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
+    [SwaggerOperation(Summary = "Lấy tất cả dự án của lập trình viên theo mã lập trình viên")]
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([FromQuery][Required] DeveloperProjectListQuery query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
+        _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {Query}", query.Serialize());
 
         return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            pageNumber,
-            pageSize,
+            query.PageNumber,
+            query.PageSize,
             $"{nameof(DeveloperProjectResponse.CreatedAt)} {Descending}"
-        )), developerId, cancellationToken));
+        )), query.DeveloperId, cancellationToken));
     }
 
     [HttpGet("{developerId:guid}/{projectId}")]
-    [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo mã nhân viên và mã dự án")]
-    [ProducesResponseType(typeof(DeveloperProjectResponse), 200)]
-    [ProducesResponseType(404)]
-    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken = default)
+    [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo mã lập trình viên và mã dự án")]
+    [ProducesResponseType(typeof(DeveloperProjectResponse), Status200OK)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject([FromRoute] Guid developerId, [FromRoute] string projectId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("GetByDeveloperAndProject-DeveloperProjectController: {DeveloperId} - {ProjectId}", developerId, projectId);
 
         var result = await _service.GetByDeveloperAndProjectAsync(developerId, projectId, cancellationToken);
 
-        return result.IsNull() ? (ActionResult<DeveloperProjectResponse>)NotFound() : Ok(result);
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Gán dự án cho lập trình viên")]
-    [ProducesResponseType(typeof(DeveloperProjectResponse), 201)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(DeveloperProjectResponse), Status201Created)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Assign([FromBody][Required] DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Assign-DeveloperProjectController: {Request}", request.Serialize());
@@ -71,15 +73,16 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
             : CreatedAtAction(nameof(GetByDeveloperAndProject), new
             {
                 developerId = result.DeveloperId,
-                projectId = result.ProjectId
+                projectId = result.ProjectId,
+                version = "2.0"
             }, result);
     }
 
     [HttpDelete("{developerId:guid}/{projectId}")]
     [SwaggerOperation(Summary = "Gỡ gán dự án cho lập trình viên")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> Unassign(Guid developerId, string projectId, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
+    [ProducesResponseType(Status204NoContent)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<IActionResult> Unassign([FromRoute] Guid developerId, [FromRoute] string projectId, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Unassign-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
@@ -91,7 +94,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 #endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(bool), Status200OK)]
     public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 
 #if RELEASE
@@ -99,8 +102,8 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 #endif
     [HttpPost("sync-db-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(bool), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> SyncDbToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);

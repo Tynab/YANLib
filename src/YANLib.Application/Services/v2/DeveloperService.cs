@@ -23,14 +23,14 @@ namespace YANLib.Services.v2;
 public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,
-    IElasticsearchService<DeveloperElasticsearchIndex> esService,
+    IDeveloperElasticsearchService elasticsearchService,
     IDeveloperTypeService developerTypeService,
     IProjectRepository projectRepository
 ) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
-    private readonly IElasticsearchService<DeveloperElasticsearchIndex> _esService = esService;
+    private readonly IDeveloperElasticsearchService _elasticsearchService = elasticsearchService;
     private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
     private readonly IProjectRepository _projectRepository = projectRepository;
 
@@ -40,7 +40,7 @@ public class DeveloperService(
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<DeveloperElasticsearchIndex>, PagedResultDto<DeveloperResponse>>(await _esService.GetAllAsync(input, cancellationToken));
+            return ObjectMapper.Map<PagedResultDto<DeveloperElasticsearchIndex>, PagedResultDto<DeveloperResponse>>(await _elasticsearchService.GetAllAsync(input, cancellationToken));
         }
         catch (Exception ex)
         {
@@ -56,7 +56,7 @@ public class DeveloperService(
 
         try
         {
-            var dto = await _esService.GetAsync(id, cancellationToken);
+            var dto = await _elasticsearchService.GetAsync(id, cancellationToken);
 
             return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex), id) : ObjectMapper.Map<DeveloperElasticsearchIndex, DeveloperResponse>(dto);
         }
@@ -68,18 +68,36 @@ public class DeveloperService(
         }
     }
 
+    public async Task<DeveloperResponse?> GetByIdCardAsync(string idCard, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            var dto = (await _elasticsearchService.GetByIdCardAsync(idCard, cancellationToken)).FirstOrDefault();
+
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex), idCard) : ObjectMapper.Map<DeveloperElasticsearchIndex, DeveloperResponse>(dto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetByIdCardAsync-DeveloperService-Exception: {IdCard}", idCard);
+
+            throw;
+        }
+    }
+
     public async Task<DeveloperResponse?> InsertAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            if ((await _esService.GetAsync(request.IdCard, cancellationToken)).IsNotNull())
+            if ((await _elasticsearchService.GetByIdCardAsync(request.IdCard, cancellationToken)).IsNotNull())
             {
-                throw new BusinessException(EXIST_ID_CARD).WithData("IdCard", request.IdCard);
+                throw new BusinessException(EXIST_ID_CARD).WithData(nameof(Developer.IdCard), request.IdCard);
             }
 
-            var entityTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request), cancellationToken: cancellationToken);
+            var entityTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request), true, cancellationToken);
             var devTypeTask = _developerTypeService.GetAsync(request.DeveloperTypeCode, cancellationToken);
 
             _ = await WhenAny(entityTask, devTypeTask);
@@ -93,7 +111,7 @@ public class DeveloperService(
 
             var result = ObjectMapper.Map<(DeveloperTypeResponse? DeveloperType, Developer Entity), DeveloperResponse>((await devTypeTask, entity));
 
-            return await _esService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
+            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -103,7 +121,7 @@ public class DeveloperService(
         }
     }
 
-    public async Task<DeveloperResponse?> AdjustAsync(string idCard, DeveloperUpdateRequest request, CancellationToken cancellationToken = default)
+    public async Task<DeveloperResponse?> AdjustAsync(Guid id, DeveloperUpdateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -120,34 +138,34 @@ public class DeveloperService(
 
             result.DeveloperType = await _developerTypeService.GetAsync(entity.DeveloperTypeCode, cancellationToken);
 
-            return await _esService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
+            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustAsync-DeveloperService-Exception: {IdCard} - {Request}", idCard, request.Serialize());
+            _logger.LogError(ex, "AdjustAsync-DeveloperService-Exception: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }
     }
 
-    public async Task<bool> DeleteAsync(string idCard, Guid updatedBy, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id, Guid updatedBy, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var dto = await _esService.GetAsync(idCard, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex));
+            var dto = await _elasticsearchService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex));
 
             return (await _repository.ModifyAsync(new DeveloperDto
             {
                 Id = dto.Id.Parse<Guid>(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            }, cancellationToken)).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _esService.DeleteAsync(idCard, cancellationToken);
+            }, cancellationToken)).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _elasticsearchService.DeleteAsync(id, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAsync-DeveloperService-Exception: {IdCard} - {UpdatedBy}", idCard, updatedBy);
+            _logger.LogError(ex, "DeleteAsync-DeveloperService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
 
             throw;
         }
@@ -159,7 +177,7 @@ public class DeveloperService(
 
         try
         {
-            var cleanTask = _esService.DeleteAllAsync(ElasticsearchIndex.Developer, cancellationToken);
+            var cleanTask = _elasticsearchService.DeleteAllAsync(ElasticsearchIndex.Developer, cancellationToken);
             var entitiesTask = _repository.GetListAsync(x => !x.IsDeleted, cancellationToken: cancellationToken);
 
             _ = await WhenAny(cleanTask, entitiesTask);
@@ -194,7 +212,7 @@ public class DeveloperService(
                 }
             }));
 
-            return result && await _esService.SetBulkAsync(datas, ElasticsearchIndex.Developer, cancellationToken);
+            return result && await _elasticsearchService.SetBulkAsync(datas, ElasticsearchIndex.Developer, cancellationToken);
         }
         catch (Exception ex)
         {

@@ -17,12 +17,12 @@ using static YANLib.YANExpression;
 
 namespace YANLib.Services.Implements;
 
-public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsIndex>> logger, IElasticClient elasticClient, IConfiguration configuration)
+public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsIndex>> logger, IConfiguration configuration, IElasticClient elasticClient)
     : IElasticsearchService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
 {
     private readonly ILogger<ElasticsearchService<TEsIndex>> _logger = logger;
-    private readonly IElasticClient _elasticClient = elasticClient;
     private readonly IConfiguration _configuration = configuration;
+    private readonly IElasticClient _elasticClient = elasticClient;
 
     public async Task<PagedResultDto<TEsIndex>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
     {

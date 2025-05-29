@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 #endif
 using Asp.Versioning;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +17,8 @@ using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
 using static Nest.SortOrder;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+using System.Threading;
 
 namespace YANLib.Controllers.v2;
 
@@ -31,9 +35,9 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy danh sách định nghĩa loại lập trình viên")]
-    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), 200)]
-    [ProducesResponseType(400)]
-    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll([FromQuery] DeveloperTypeListQuery query)
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll([FromQuery] DeveloperTypeListQuery query, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("GetAll-DeveloperTypeController: {Query}", query.Serialize());
 
@@ -41,34 +45,34 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
             query.PageNumber,
             query.PageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
-        ))));
+        )), cancellationToken));
     }
 
     [HttpGet("{id:long}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
-    [ProducesResponseType(typeof(DeveloperTypeResponse), 200)]
-    [ProducesResponseType(404)]
-    public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Get-DeveloperTypeController: {Id}", id);
 
-        var result = await _service.GetAsync(id);
+        var result = await _service.GetAsync(id, cancellationToken);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
-    [ProducesResponseType(typeof(DeveloperTypeResponse), 201)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> Insert([Required] DeveloperTypeCreateRequest request)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), Status201Created)]
+    [ProducesResponseType(Status400BadRequest)]
+    public async Task<IActionResult> Insert([FromBody][Required] DeveloperTypeCreateRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Insert-DeveloperTypeController: {Request}", request.Serialize());
 
-        var result = await _service.InsertAsync(request);
+        var result = await _service.InsertAsync(request, cancellationToken);
 
         return result.IsNull()
-            ? Problem()
+            ? Conflict()
             : CreatedAtAction(nameof(Get), new
             {
                 id = result.Id,
@@ -76,22 +80,31 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
             }, result);
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("{id:long}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
-    public async Task<ActionResult<DeveloperTypeResponse>> Modify(long id, [Required] DeveloperTypeUpdateRequest request)
+    [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<ActionResult<DeveloperTypeResponse>> Modify([FromRoute] long id, [FromBody][Required] DeveloperTypeUpdateRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Modify-DeveloperTypeController: {Id} - {Request}", id, request.Serialize());
 
-        return Ok(await _service.ModifyAsync(id, request));
+        var result = await _service.ModifyAsync(id, request, cancellationToken);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:long}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
-    public async Task<IActionResult> Delete(long id, [Required] Guid updatedBy)
+    [ProducesResponseType(Status204NoContent)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<IActionResult> Delete([FromRoute] long id, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Delete-DeveloperTypeController: {Id} - {UpdatedBy}", id, updatedBy);
 
-        return Ok(await _service.DeleteAsync(id, updatedBy));
+        var result = await _service.DeleteAsync(id, updatedBy, cancellationToken);
+
+        return result ? NoContent() : NotFound();
     }
 
 #if RELEASE
@@ -99,5 +112,6 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 #endif
     [HttpPost("sync-db-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
-    public async Task<IActionResult> SyncDbToRedis() => Ok(await _service.SyncDataToRedisAsync());
+    [ProducesResponseType(typeof(bool), Status200OK)]
+    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 }

@@ -21,6 +21,6 @@ public static class YANLibDomainErrorMessages
 
     public const string INTERNAL_SERVER_ERROR = "Lỗi trong quá trình xử lý!";
     public const string SQL_SERVER_ERROR = "Lỗi trong quá trình xử lý SQL!";
-    public const string ES_SERVER_ERROR = "Lỗi trong quá trình xử lý Elasticsearch!";
+    public const string ELASTICSEARCH_SERVER_ERROR = "Lỗi trong quá trình xử lý Elasticsearch!";
     public const string REDIS_SERVER_ERROR = "Lỗi trong quá trình xử lý Redis!";
 }
