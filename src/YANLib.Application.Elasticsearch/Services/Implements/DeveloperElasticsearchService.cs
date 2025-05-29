@@ -3,13 +3,9 @@ using Microsoft.Extensions.Logging;
 using Nest;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 using YANLib.ElasticsearchIndices;
-using YANLib.Responses;
 
 namespace YANLib.Services.Implements;
 
@@ -37,6 +33,12 @@ public class DeveloperElasticsearchService(ILogger<ElasticsearchService<Develope
                     )
                 ), cancellationToken
             )).Documents;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning("Operation was canceled: {Method}", nameof(GetByIdCardAsync));
+
+            throw new OperationCanceledException($"Elasticsearch GetByIdCardAsync operation canceled", ex, cancellationToken);
         }
         catch (Exception ex)
         {

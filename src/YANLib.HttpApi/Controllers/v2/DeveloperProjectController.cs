@@ -10,12 +10,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.ListQueries.v2;
 using YANLib.Requests.v2.Create;
 using YANLib.Responses;
 using YANLib.Services.v2;
-using static Nest.SortOrder;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using YANLib.ListQueries.v2;
 
 namespace YANLib.Controllers.v2;
 
@@ -38,11 +37,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {Query}", query.Serialize());
 
-        return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            query.PageNumber,
-            query.PageSize,
-            $"{nameof(DeveloperProjectResponse.CreatedAt)} {Descending}"
-        )), query.DeveloperId, cancellationToken));
+        return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize), PagedAndSortedResultRequestDto>((query.PageNumber, query.PageSize)), query.DeveloperId, cancellationToken));
     }
 
     [HttpGet("{developerId:guid}/{projectId}")]
