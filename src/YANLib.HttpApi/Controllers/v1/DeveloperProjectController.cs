@@ -14,6 +14,7 @@ using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace YANLib.Controllers.v1;
 
@@ -30,8 +31,8 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả dự án của lập trình viên")]
-    [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), 200)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetAll([FromQuery] DeveloperProjectListQuery query)
     {
         _logger.LogInformation("GetAll-DeveloperProjectController: {Query}", query.Serialize());
@@ -40,9 +41,9 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     }
 
     [HttpGet("{id:guid}")]
-    [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo Id")]
-    [ProducesResponseType(typeof(DeveloperProjectResponse), 200)]
-    [ProducesResponseType(404)]
+    [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo mã")]
+    [ProducesResponseType(typeof(DeveloperProjectResponse), Status200OK)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperProjectResponse>> Get([FromRoute] Guid id)
     {
         _logger.LogInformation("Get-DeveloperProjectController: {Id}", id);
@@ -54,8 +55,8 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới dự án của lập trình viên")]
-    [ProducesResponseType(typeof(DeveloperResponse), 201)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(DeveloperResponse), Status201Created)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody][Required] DeveloperProjectCreateRequest input)
     {
         _logger.LogInformation("Create-DeveloperProjectController: {Input}", input.Serialize());
@@ -71,9 +72,9 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpPut("{id:guid}")]
     [SwaggerOperation(Summary = "Cập nhật dự án của lập trình viên")]
-    [ProducesResponseType(typeof(DeveloperResponse), 200)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(typeof(DeveloperResponse), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperProjectResponse>> Update([FromRoute] Guid id, [FromBody][Required] DeveloperProjectUpdateRequest input)
     {
         _logger.LogInformation("Update-DeveloperProjectController: {Id} - {Input}", id, input.Serialize());
@@ -85,8 +86,8 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 
     [HttpDelete("{id:guid}")]
     [SwaggerOperation(Summary = "Xóa dự án của lập trình viên")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(Status204NoContent)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         _logger.LogInformation("Delete-DeveloperProjectController: {Id}", id);

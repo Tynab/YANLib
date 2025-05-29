@@ -14,6 +14,7 @@ using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
 using static Nest.SortOrder;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace YANLib.Controllers.v1;
 
@@ -30,8 +31,8 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ")]
-    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), 200)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll([FromQuery] ProjectListQuery query)
     {
         _logger.LogInformation("GetAll-ProjectController: {Query}", query.Serialize());
@@ -44,9 +45,9 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Lấy chứng chỉ theo Id")]
-    [ProducesResponseType(typeof(ProjectResponse), 200)]
-    [ProducesResponseType(404)]
+    [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
+    [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<ProjectResponse>> Get([FromRoute] string id)
     {
         _logger.LogInformation("Get-ProjectController: {Id}", id);
@@ -58,8 +59,8 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    [ProducesResponseType(typeof(DeveloperResponse), 201)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(DeveloperResponse), Status201Created)]
+    [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody][Required] ProjectCreateRequest input)
     {
         _logger.LogInformation("Create-ProjectController: {Input}", input.Serialize());
@@ -75,9 +76,9 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    [ProducesResponseType(typeof(ProjectResponse), 200)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<ProjectResponse>> Update([FromRoute] string id, [FromBody][Required] ProjectUpdateRequest input)
     {
         _logger.LogInformation("Update-ProjectController: {Id} - {Input}", id, input.Serialize());
@@ -89,8 +90,8 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(Status204NoContent)]
+    [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete(string id)
     {
         _logger.LogInformation("Delete-ProjectController: {Id}", id);
