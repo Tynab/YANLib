@@ -1,6 +1,5 @@
 ﻿using Nest;
 using System;
-using System.Security.Cryptography;
 
 namespace YANLib;
 
