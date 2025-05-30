@@ -121,8 +121,8 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
-    [HttpPost("sync-db-to-es")]
+    [HttpPost("sync-data-to-elasticsearch")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả lập trình viên từ Database lên Elasticsearch")]
     [ProducesResponseType(typeof(bool), Status200OK)]
-    public async Task<IActionResult> SyncDbToEs(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToElasticsearchAsync(cancellationToken));
+    public async Task<IActionResult> SyncDataToElasticsearch(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToElasticsearchAsync(cancellationToken));
 }

@@ -49,17 +49,17 @@ public class DeveloperRepository(
         }
     }
 
-    public async Task<Developer?> AdjustAsync(Developer entity, CancellationToken cancellationToken = default)
+    public async Task<Developer?> AdjustAsync(Guid id, Developer entity, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.IdCard == entity.IdCard && x.IsDeleted == false, cancellationToken);
+            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.Id == id && x.IsDeleted == false, cancellationToken);
 
             if (latestEntity.IsNull())
             {
-                throw new EntityNotFoundException(typeof(Developer), entity.IdCard);
+                throw new EntityNotFoundException(typeof(Developer), id);
             }
 
             latestEntity.UpdatedBy = entity.UpdatedBy;

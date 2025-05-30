@@ -108,8 +108,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 #if RELEASE
     [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
-    [HttpPost("sync-db-to-redis")]
+    [HttpPost("sync-data-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
     [ProducesResponseType(typeof(bool), Status200OK)]
-    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
+    public async Task<IActionResult> SyncDataToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 }

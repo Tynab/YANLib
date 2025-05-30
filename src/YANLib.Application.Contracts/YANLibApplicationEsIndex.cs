@@ -1,11 +1,13 @@
 ﻿using Nest;
 using System;
+using System.Security.Cryptography;
 
 namespace YANLib;
 
-public class YANLibApplicationEsIndex<T>
+[ElasticsearchType(IdProperty = nameof(Id))]
+public class YANLibApplicationEsIndex<TId>
 {
-    public required T Id { get; set; }
+    public required TId Id { get; set; }
 
     public Guid CreatedBy { get; set; }
 

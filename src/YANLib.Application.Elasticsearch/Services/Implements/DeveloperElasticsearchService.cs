@@ -26,7 +26,7 @@ public class DeveloperElasticsearchService(ILogger<ElasticsearchService<Develope
                     .Bool(b => b
                         .Must(m => m
                             .Match(t => t
-                                .Field(f => f.DeveloperIdCard)
+                                .Field(f => f.IdCard)
                                 .Query(idCard)
                             )
                         )

@@ -12,5 +12,5 @@ public interface IDeveloperRepository : IRepository<Developer, Guid>, ITransient
 {
     public Task<Developer?> ModifyAsync(DeveloperDto dto, CancellationToken cancellationToken = default);
 
-    public Task<Developer?> AdjustAsync(Developer entity, CancellationToken cancellationToken = default);
+    public Task<Developer?> AdjustAsync(Guid id, Developer entity, CancellationToken cancellationToken = default);
 }

@@ -95,12 +95,7 @@ public static class ElasticsearchConfiguration
 
     private static void ConfigureDefaultMappingGeneric<T>(ConnectionSettings settings, string indexName) where T : class => settings.DefaultMappingFor<T>(m => m.IndexName(indexName));
 
-    private static void CreateIndexGeneric<T>(IElasticClient client, string indexName) where T : class => client.Indices.Create(indexName, static c => c
-        .Map<T>(static t => t
-            .AutoMap()
-            .Properties(static p => p
-                .Text(static d => d
-                    .Name(PropertyExpression<T>("x", "Id"))))));
+    private static void CreateIndexGeneric<T>(IElasticClient client, string indexName) where T : class => client.Indices.Create(indexName, static c => c.Map<T>(m => m.AutoMap()));
 
     public static async Task<DeleteIndexResponse?> DeleteIndexAsync(this IElasticClient client, IConfiguration configuration, string indexPath, CancellationToken cancellationToken = default)
     {

@@ -87,19 +87,19 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
-    [HttpPost("sync-db-to-redis")]
+    [HttpPost("sync-data-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
     [ProducesResponseType(typeof(bool), Status200OK)]
-    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
+    public async Task<IActionResult> SyncDataToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
-    [HttpPost("sync-db-to-redis-by-developer")]
+    [HttpPost("sync-data-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã")]
     [ProducesResponseType(typeof(bool), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
-    public async Task<IActionResult> SyncDbToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SyncDataToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 

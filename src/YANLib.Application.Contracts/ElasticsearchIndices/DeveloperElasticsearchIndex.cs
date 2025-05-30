@@ -12,7 +12,7 @@ public sealed class DeveloperElasticsearchIndex : YANLibApplicationEsIndex<Docum
     public string? Phone { get; set; }
 
     [Keyword]
-    public string? DeveloperIdCard { get; set; }
+    public string? IdCard { get; set; }
 
     [Nested]
     public DeveloperTypeResponse? DeveloperType { get; set; }
