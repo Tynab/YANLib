@@ -48,8 +48,8 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
 
                     return f;
                 }))
-                .Query(q => q.MatchAll())
-            , cancellationToken);
+                .Query(q => q.MatchAll()), cancellationToken
+            );
 
             return new PagedResultDto<TEsIndex>(Max(0, response.Total), [.. response.Documents]);
         }
@@ -61,7 +61,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAllAsync-EsService-Exception");
+            _logger.LogError(ex, "GetAllAsync-ElasticsearchService-Exception");
 
             throw;
         }
@@ -83,7 +83,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetAsync-EsService-Exception: {Id}", id);
+            _logger.LogError(ex, "GetAsync-ElasticsearchService-Exception: {Id}", id);
 
             throw;
         }
@@ -105,7 +105,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetAsync-EsService-Exception: {Data}", data.Serialize());
+            _logger.LogError(ex, "SetAsync-ElasticsearchService-Exception: {Data}", data.Serialize());
 
             throw;
         }
@@ -138,12 +138,11 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         {
             _logger.LogWarning("Operation was canceled: {Method} - {IndexPath}", nameof(SetBulkAsync), indexPath);
 
-            throw new OperationCanceledException(
-                $"Elasticsearch SetBulkAsync operation canceled for {indexPath}", ex, cancellationToken);
+            throw new OperationCanceledException($"Elasticsearch SetBulkAsync operation canceled for {indexPath}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SetBulkAsync-EsService-Exception: {Datas} - {IndexPath}", datas.Serialize(), indexPath);
+            _logger.LogError(ex, "SetBulkAsync-ElasticsearchService-Exception: {Datas} - {IndexPath}", datas.Serialize(), indexPath);
 
             throw;
         }
@@ -165,7 +164,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAsync-EsService-Exception: {Id}", id);
+            _logger.LogError(ex, "DeleteAsync-ElasticsearchService-Exception: {Id}", id);
 
             throw;
         }
@@ -187,7 +186,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAllAsync-EsService-Exception: {IndexPath}", indexPath);
+            _logger.LogError(ex, "DeleteAllAsync-ElasticsearchService-Exception: {IndexPath}", indexPath);
 
             throw;
         }
@@ -195,6 +194,8 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
 
     public async Task<PagedResultDto<TEsIndex>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
@@ -228,7 +229,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithWildcardAsync-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithWildcardAsync-ElasticsearchService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }
@@ -236,6 +237,8 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
 
     public async Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
@@ -269,7 +272,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithPhrasePrefixAsync-EsService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithPhrasePrefixAsync-ElasticsearchService-Exception: {Input} - {SearchString} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }
@@ -277,6 +280,8 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
 
     public async Task<PagedResultDto<TEsIndex>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
@@ -310,7 +315,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithExactPhraseAsync-EsService-Exception: {Input} - {SearchWords} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithExactPhraseAsync-ElasticsearchService-Exception: {Input} - {SearchWords} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }
@@ -318,6 +323,8 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
 
     public async Task<PagedResultDto<TEsIndex>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
@@ -351,7 +358,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithKeywordsAsync-EsService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithKeywordsAsync-ElasticsearchService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }

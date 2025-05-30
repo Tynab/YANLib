@@ -14,8 +14,8 @@ using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
-using static Nest.SortOrder;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static Nest.SortOrder;
 
 namespace YANLib.Controllers.v1;
 
@@ -41,7 +41,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
         return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
             query.PageNumber,
             query.PageSize,
-            $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
+            $"{nameof(DeveloperResponse.Name)} {Ascending},{nameof(DeveloperResponse.CreatedAt)} {Descending}"
         ))));
     }
 

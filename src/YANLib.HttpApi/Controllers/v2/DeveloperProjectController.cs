@@ -10,12 +10,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.ListQueries.v2;
 using YANLib.Requests.v2.Create;
 using YANLib.Responses;
 using YANLib.Services.v2;
-using static Nest.SortOrder;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using YANLib.ListQueries.v2;
 
 namespace YANLib.Controllers.v2;
 
@@ -38,11 +37,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {Query}", query.Serialize());
 
-        return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            query.PageNumber,
-            query.PageSize,
-            $"{nameof(DeveloperProjectResponse.CreatedAt)} {Descending}"
-        )), query.DeveloperId, cancellationToken));
+        return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize), PagedAndSortedResultRequestDto>((query.PageNumber, query.PageSize)), query.DeveloperId, cancellationToken));
     }
 
     [HttpGet("{developerId:guid}/{projectId}")]
@@ -92,19 +87,19 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
-    [HttpPost("sync-db-to-redis")]
+    [HttpPost("sync-data-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
     [ProducesResponseType(typeof(bool), Status200OK)]
-    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
+    public async Task<IActionResult> SyncDataToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
-    [HttpPost("sync-db-to-redis-by-developer")]
+    [HttpPost("sync-data-to-redis-by-developer")]
     [SwaggerOperation(Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã")]
     [ProducesResponseType(typeof(bool), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
-    public async Task<IActionResult> SyncDbToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SyncDataToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 

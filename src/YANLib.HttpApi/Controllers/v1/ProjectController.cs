@@ -13,8 +13,8 @@ using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
-using static Nest.SortOrder;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static Nest.SortOrder;
 
 namespace YANLib.Controllers.v1;
 

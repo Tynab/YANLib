@@ -10,12 +10,14 @@ using Volo.Abp.Domain.Entities;
 using YANLib.Dtos;
 using YANLib.ElasticsearchIndices;
 using YANLib.Entities;
+using YANLib.RedisDtos;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts;
+using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Services.v2;
@@ -24,14 +26,16 @@ public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,
     IDeveloperElasticsearchService elasticsearchService,
-    IDeveloperTypeService developerTypeService,
+    IRedisService<DeveloperTypeRedisDto> developerTypeRedisService,
+    IRedisService<DeveloperProjectRedisDto> developerProjectRedisService,
     IProjectRepository projectRepository
 ) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
     private readonly IDeveloperElasticsearchService _elasticsearchService = elasticsearchService;
-    private readonly IDeveloperTypeService _developerTypeService = developerTypeService;
+    private readonly IRedisService<DeveloperTypeRedisDto> _developerTypeRedisService = developerTypeRedisService;
+    private readonly IRedisService<DeveloperProjectRedisDto> _developerProjectRedisService = developerProjectRedisService;
     private readonly IProjectRepository _projectRepository = projectRepository;
 
     public async Task<PagedResultDto<DeveloperResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
@@ -98,7 +102,7 @@ public class DeveloperService(
             }
 
             var entityTask = _repository.InsertAsync(ObjectMapper.Map<DeveloperCreateRequest, Developer>(request), true, cancellationToken);
-            var devTypeTask = _developerTypeService.GetAsync(request.DeveloperTypeCode, cancellationToken);
+            var devTypeTask = _developerTypeRedisService.GetAsync(DeveloperTypeGroup, request.DeveloperTypeCode.ToString(), cancellationToken);
 
             _ = await WhenAny(entityTask, devTypeTask);
 
@@ -109,7 +113,9 @@ public class DeveloperService(
                 throw new BusinessException(SQL_SERVER_ERROR);
             }
 
-            var result = ObjectMapper.Map<(DeveloperTypeResponse? DeveloperType, Developer Entity), DeveloperResponse>((await devTypeTask, entity));
+            var result = ObjectMapper.Map<Developer, DeveloperResponse>(entity);
+
+            result.DeveloperType = ObjectMapper.Map<(long Id, DeveloperTypeRedisDto? Dto), DeveloperTypeResponse?>((request.DeveloperTypeCode, await devTypeTask));
 
             return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
         }
@@ -127,7 +133,7 @@ public class DeveloperService(
 
         try
         {
-            var entity = await _repository.AdjustAsync(ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request), cancellationToken);
+            var entity = await _repository.AdjustAsync(id, ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request), cancellationToken);
 
             if (entity.IsNull())
             {
@@ -136,7 +142,12 @@ public class DeveloperService(
 
             var result = ObjectMapper.Map<Developer, DeveloperResponse>(entity);
 
-            result.DeveloperType = await _developerTypeService.GetAsync(entity.DeveloperTypeCode, cancellationToken);
+            if (request.DeveloperTypeCode.HasValue)
+            {
+                result.DeveloperType = ObjectMapper.Map<(long? Id, DeveloperTypeRedisDto? Dto), DeveloperTypeResponse?>(
+                    (request.DeveloperTypeCode, await _developerTypeRedisService.GetAsync(DeveloperTypeGroup, request.DeveloperTypeCode.Value.ToString(), cancellationToken))
+                );
+            }
 
             return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
         }
@@ -198,12 +209,19 @@ public class DeveloperService(
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var dto = ObjectMapper.Map<Developer, DeveloperElasticsearchIndex>(x);
+                //var devProjDict = await _developerProjectRedisService.GetAllAsync($"{DeveloperProjectGroupPrefix}:{x.Id}", cancellationToken);
+
+                //if (devProjDict.IsNotNull())
+                //{
+                //    var projIds = devProjDict.Select(y => ObjectMapper.Map<(Guid DeveloperId, KeyValuePair<string, DeveloperProjectRedisDto?> Pair), DeveloperProjectResponse>((x.Id, y))).Select(y => y.ProjectId);
+
+                //    dto.Projects = [.. (await _projectRepository.GetListAsync(y => projIds.Contains(y.Id), cancellationToken: cancellationToken)).Select(y => ObjectMapper.Map<Project, ProjectResponse>(y))];
+                //}
 
                 await slim.WaitAsync(cancellationToken);
 
                 try
                 {
-                    //dto.Certificates = new List<CertificateResponse>(ObjectMapper.Map<List<Certificate>, List<CertificateResponse>>(await _certificateRepository.GetListAsync(y => y.DeveloperId == x.Id && y.IsDeleted == false)));
                     datas.Add(dto);
                 }
                 finally

@@ -18,6 +18,8 @@ public class YANLibApplicationAutoMapperProfile : Profile
             .ForMember(static d => d.MaxResultCount, static o => o.MapFrom(static s => s.PageSize))
             .ForMember(static d => d.Sorting, static o => o.MapFrom(static s => s.Sorting));
 
+        _ = CreateMap(typeof(PagedResultDto<>), typeof(PagedResultDto<>));
+
         _ = CreateMap<NotificationRequest, NotificationEto>();
     }
 }

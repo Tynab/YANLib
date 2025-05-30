@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 #endif
 using Asp.Versioning;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using YANLib.ListQueries.v2;
@@ -16,9 +15,8 @@ using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
-using static Nest.SortOrder;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using System.Threading;
+using static Nest.SortOrder;
 
 namespace YANLib.Controllers.v2;
 
@@ -44,7 +42,7 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
         return Ok(await _service.GetAllAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
             query.PageNumber,
             query.PageSize,
-            $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
+            $"{nameof(DeveloperTypeResponse.Name)} {Ascending},{nameof(DeveloperTypeResponse.CreatedAt)} {Descending}"
         )), cancellationToken));
     }
 
@@ -110,8 +108,8 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 #if RELEASE
     [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
-    [HttpPost("sync-db-to-redis")]
+    [HttpPost("sync-data-to-redis")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
     [ProducesResponseType(typeof(bool), Status200OK)]
-    public async Task<IActionResult> SyncDbToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
+    public async Task<IActionResult> SyncDataToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 }
