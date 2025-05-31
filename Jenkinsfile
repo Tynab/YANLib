@@ -31,7 +31,7 @@ pipeline {
         TEXT_TEST_RESULTS = "${JOB_NAME} Test Results"
 
         // Recipients
-        RECIPIENTS = 'yamiannephilim@gmail.com'
+        RECIPIENTS = 'nguyendangtruongan10071993@gmail.com'
     }
 
     stages {
