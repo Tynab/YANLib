@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Volo.Abp.AutoMapper;
-using YANLib.ElasticsearchIndices;
 using YANLib.Entities;
+using YANLib.EsIndices;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
@@ -14,7 +14,7 @@ public sealed class DeveloperAutoMapperProfile : Profile
 {
     public DeveloperAutoMapperProfile()
     {
-        _ = CreateMap<DeveloperElasticsearchIndex, DeveloperResponse>().ReverseMap();
+        _ = CreateMap<DeveloperEsIndex, DeveloperResponse>().ReverseMap();
 
         _ = CreateMap<DeveloperCreateRequest, Developer>()
             .ForMember(d => d.Id, o => o.MapFrom(static s => NewGuid()))
@@ -33,26 +33,8 @@ public sealed class DeveloperAutoMapperProfile : Profile
             .Ignore(static d => d.CreatedBy)
             .Ignore(static d => d.CreatedAt);
 
-        _ = CreateMap<Developer, DeveloperElasticsearchIndex>()
+        _ = CreateMap<Developer, DeveloperEsIndex>()
             .Ignore(static d => d.DeveloperType)
             .Ignore(static d => d.Projects);
-
-        //_ = CreateMap<Developer, DeveloperResponse>()
-        //    .Ignore(d => d.DeveloperType)
-        //    .Ignore(d => d.Certificates);
-        ////
-        //_ = CreateMap<DeveloperResponse, DeveloperEsIndex>()
-        //    .ForMember(d => d.Id, o => o.MapFrom(s => s.IdCard))
-        //    .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.Id));
-
-        //_ = CreateMap<Developer, DeveloperEsIndex>()
-        //    .ForMember(d => d.Id, o => o.MapFrom(s => s.IdCard))
-        //    .ForMember(d => d.DeveloperId, o => o.MapFrom(s => s.Id))
-        //    .Ignore(d => d.Certificates);
-
-        //_ = CreateMap<DeveloperEsIndex, Developer>()
-        //    .ForMember(d => d.Id, o => o.MapFrom(s => s.DeveloperId))
-        //    .ForMember(d => d.DeveloperTypeCode, o => o.MapFrom(s => s.DeveloperType.Code))
-        //    .Ignore(d => d.DeveloperType);
     }
 }

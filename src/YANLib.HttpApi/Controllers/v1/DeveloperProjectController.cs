@@ -57,11 +57,11 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [SwaggerOperation(Summary = "Thêm mới dự án của lập trình viên")]
     [ProducesResponseType(typeof(DeveloperResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody][Required] DeveloperProjectCreateRequest input)
+    public async Task<IActionResult> Create([FromBody][Required] DeveloperProjectCreateRequest request)
     {
-        _logger.LogInformation("Create-DeveloperProjectController: {Input}", input.Serialize());
+        _logger.LogInformation("Create-DeveloperProjectController: {Request}", request.Serialize());
 
-        var result = await _service.CreateAsync(input);
+        var result = await _service.CreateAsync(request);
 
         return CreatedAtAction(nameof(Get), new
         {
@@ -75,11 +75,11 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [ProducesResponseType(typeof(DeveloperResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<DeveloperProjectResponse>> Update([FromRoute] Guid id, [FromBody][Required] DeveloperProjectUpdateRequest input)
+    public async Task<ActionResult<DeveloperProjectResponse>> Update([FromRoute] Guid id, [FromBody][Required] DeveloperProjectUpdateRequest request)
     {
-        _logger.LogInformation("Update-DeveloperProjectController: {Id} - {Input}", id, input.Serialize());
+        _logger.LogInformation("Update-DeveloperProjectController: {Id} - {Request}", id, request.Serialize());
 
-        var result = await _service.UpdateAsync(id, input);
+        var result = await _service.UpdateAsync(id, request);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }

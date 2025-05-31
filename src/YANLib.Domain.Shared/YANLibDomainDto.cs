@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace YANLib;
 
-public class YANLibDomainDto<T>
+public class YANLibDomainDto<TKey>
 {
-    public required T Id { get; set; }
+    public required TKey Id { get; set; }
 
     public Guid UpdatedBy { get; set; }
 

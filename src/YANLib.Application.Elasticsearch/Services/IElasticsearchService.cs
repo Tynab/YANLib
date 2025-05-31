@@ -1,22 +1,20 @@
-﻿using Nest;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-
 namespace YANLib.Services;
 
-public interface IElasticsearchService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
+public interface IElasticsearchService<TEsIndex, TId> where TEsIndex : YANLibApplicationEsIndex<TId>
 {
     public Task<PagedResultDto<TEsIndex>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default);
 
-    public Task<TEsIndex?> GetAsync(DocumentPath<TEsIndex> id, CancellationToken cancellationToken = default);
+    public Task<TEsIndex?> GetAsync(TId id, CancellationToken cancellationToken = default);
 
     public Task<bool> SetAsync(TEsIndex data, CancellationToken cancellationToken = default);
 
     public Task<bool> SetBulkAsync(List<TEsIndex> datas, string indexPath, CancellationToken cancellationToken = default);
 
-    public Task<bool> DeleteAsync(DocumentPath<TEsIndex> id, CancellationToken cancellationToken = default);
+    public Task<bool> DeleteAsync(TId id, CancellationToken cancellationToken = default);
 
     public Task<bool> DeleteAllAsync(string indexPath, CancellationToken cancellationToken = default);
 

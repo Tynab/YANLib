@@ -37,7 +37,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("GetByDeveloper-DeveloperProjectController: {Query}", query.Serialize());
 
-        return Ok(await _service.GetByDeveloperAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize), PagedAndSortedResultRequestDto>((query.PageNumber, query.PageSize)), query.DeveloperId, cancellationToken));
+        return Ok(await _service.GetByDeveloper(ObjectMapper.Map<(byte PageNumber, byte PageSize), PagedAndSortedResultRequestDto>((query.PageNumber, query.PageSize)), query.DeveloperId, cancellationToken));
     }
 
     [HttpGet("{developerId:guid}/{projectId}")]
@@ -48,7 +48,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("GetByDeveloperAndProject-DeveloperProjectController: {DeveloperId} - {ProjectId}", developerId, projectId);
 
-        var result = await _service.GetByDeveloperAndProjectAsync(developerId, projectId, cancellationToken);
+        var result = await _service.GetByDeveloperAndProject(developerId, projectId, cancellationToken);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }
@@ -61,7 +61,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("Assign-DeveloperProjectController: {Request}", request.Serialize());
 
-        var result = await _service.AssignAsync(request, cancellationToken);
+        var result = await _service.Assign(request, cancellationToken);
 
         return result.IsNull()
             ? Conflict()
@@ -81,7 +81,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     {
         _logger.LogInformation("Unassign-DeveloperProjectController: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
-        return await _service.UnassignAsync(developerId, projectId, updatedBy, cancellationToken) ? NoContent() : NotFound();
+        return await _service.Unassign(developerId, projectId, updatedBy, cancellationToken) ? NoContent() : NotFound();
     }
 
 #if RELEASE

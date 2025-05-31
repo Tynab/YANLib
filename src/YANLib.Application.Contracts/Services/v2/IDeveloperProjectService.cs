@@ -10,13 +10,13 @@ namespace YANLib.Services.v2;
 
 public interface IDeveloperProjectService : IApplicationService
 {
-    public Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloperAsync(PagedAndSortedResultRequestDto input, Guid developerId, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId, CancellationToken cancellationToken = default);
 
-    public Task<DeveloperProjectResponse?> GetByDeveloperAndProjectAsync(Guid developerId, string projectId, CancellationToken cancellationToken = default);
+    public Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken = default);
 
-    public Task<DeveloperProjectResponse?> AssignAsync(DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default);
+    public Task<DeveloperProjectResponse?> Assign(DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default);
 
-    public Task<bool> UnassignAsync(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken = default);
+    public Task<bool> Unassign(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken = default);
 
     public Task<bool> SyncDataToRedisAsync(CancellationToken cancellationToken = default);
 

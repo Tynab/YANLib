@@ -63,11 +63,11 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Lấy lập trình viên theo mã định danh")]
     [ProducesResponseType(typeof(DeveloperResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<DeveloperResponse>> GetByIdCardAsync([FromRoute] string idCard, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<DeveloperResponse>> GetByIdCard([FromRoute] string idCard, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("GetByIdCardAsync-DeveloperController: {IdCard}", idCard);
+        _logger.LogInformation("GetByIdCard-DeveloperController: {IdCard}", idCard);
 
-        var result = await _service.GetByIdCardAsync(idCard, cancellationToken);
+        var result = await _service.GetByIdCard(idCard, cancellationToken);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }
@@ -91,29 +91,29 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
             }, result);
     }
 
-    [HttpPatch("{id:guid}")]
+    [HttpPatch("id-card/{idCard}")]
     [SwaggerOperation(Summary = "Cập nhật lập trình viên")]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<DeveloperResponse>> Adjust([FromRoute] Guid id, [FromBody][Required] DeveloperUpdateRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<DeveloperResponse>> Adjust([FromRoute] string idCard, [FromBody][Required] DeveloperUpdateRequest request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Adjust-DeveloperController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Adjust-DeveloperController: {IdCard} - {Request}", idCard, request.Serialize());
 
-        var result = await _service.AdjustAsync(id, request, cancellationToken);
+        var result = await _service.AdjustAsync(idCard, request, cancellationToken);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("id-card/{idCard}")]
     [SwaggerOperation(Summary = "Xóa định nghĩa lập trình viên")]
     [ProducesResponseType(Status204NoContent)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] Guid id, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Delete([FromRoute] string idCard, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Delete-DeveloperTypeController: {Id} - {UpdatedBy}", id, updatedBy);
+        _logger.LogInformation("Delete-DeveloperTypeController: {IdCard} - {UpdatedBy}", idCard, updatedBy);
 
-        var result = await _service.DeleteAsync(id, updatedBy, cancellationToken);
+        var result = await _service.DeleteAsync(idCard, updatedBy, cancellationToken);
 
         return result ? NoContent() : NotFound();
     }
