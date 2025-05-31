@@ -49,17 +49,17 @@ public class DeveloperRepository(
         }
     }
 
-    public async Task<Developer?> AdjustAsync(Guid id, Developer entity, CancellationToken cancellationToken = default)
+    public async Task<(bool HasDeveloperProject, Guid OldId, Developer? Developer)> AdjustAsync(string idCard, Developer entity, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.Id == id && x.IsDeleted == false, cancellationToken);
+            var latestEntity = await _dbContext.Developers.SingleOrDefaultAsync(x => x.IdCard == idCard && x.IsDeleted == false, cancellationToken);
 
             if (latestEntity.IsNull())
             {
-                throw new EntityNotFoundException(typeof(Developer), id);
+                throw new EntityNotFoundException(typeof(Developer), idCard);
             }
 
             latestEntity.UpdatedBy = entity.UpdatedBy;
@@ -88,11 +88,20 @@ public class DeveloperRepository(
                 IsDeleted = entity.IsDeleted,
             }, cancellationToken);
 
-            return result.State is not Added ? throw new Exception("Failed to add the new entity.") : await _dbContext.SaveChangesAsync(cancellationToken) <= 0 ? throw new Exception("Failed to save changes.") : result.Entity;
+            if (result.State is Added)
+            {
+                var updatedDevProjCount = await _dbContext.DeveloperProjects.Where(x => x.DeveloperId == latestEntity.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.DeveloperId, result.Entity.Id), cancellationToken);
+
+                return (updatedDevProjCount > 0, latestEntity.Id, await _dbContext.SaveChangesAsync(cancellationToken) <= 0 ? throw new Exception("Failed to save changes.") : result.Entity);
+            }
+            else
+            {
+                throw new Exception("Failed to add the new entity.");
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustAsync-DeveloperRepository-Exception: {Entity}", entity.Serialize());
+            _logger.LogError(ex, "AdjustAsync-DeveloperRepository-Exception: {IdCard} - {Entity}", idCard, entity.Serialize());
 
             throw;
         }

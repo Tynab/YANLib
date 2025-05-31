@@ -14,7 +14,6 @@ using YANLib.RedisDtos;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Responses;
-using static System.DateTime;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
@@ -35,7 +34,7 @@ public class DeveloperProjectService(
     private readonly IDeveloperService _developerService = developerService;
     private readonly IProjectService _projectService = projectService;
 
-    public async Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloperAsync(PagedAndSortedResultRequestDto input, Guid developerId, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<DeveloperProjectResponse>?> GetByDeveloper(PagedAndSortedResultRequestDto input, Guid developerId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -59,13 +58,13 @@ public class DeveloperProjectService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByDeveloperAsync-DeveloperProjectService-Exception: {DeveloperId}", developerId);
+            _logger.LogError(ex, "GetByDeveloper-DeveloperProjectService-Exception: {DeveloperId}", developerId);
 
             throw;
         }
     }
 
-    public async Task<DeveloperProjectResponse?> GetByDeveloperAndProjectAsync(Guid developerId, string projectId, CancellationToken cancellationToken = default)
+    public async Task<DeveloperProjectResponse?> GetByDeveloperAndProject(Guid developerId, string projectId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -79,62 +78,63 @@ public class DeveloperProjectService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByDeveloperAndProjectAsync-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId}", developerId, projectId);
+            _logger.LogError(ex, "GetByDeveloperAndProject-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId}", developerId, projectId);
 
             throw;
         }
     }
 
-    public async Task<DeveloperProjectResponse?> AssignAsync(DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default)
+    public async Task<DeveloperProjectResponse?> Assign(DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var devTask = _developerService.GetAsync(request.DeveloperId, cancellationToken);
-            var projTask = _projectService.GetAsync(request.ProjectId, cancellationToken);
+            return default;
+            //var devTask = _developerService.GetAsync(request.DeveloperId, cancellationToken);
+            //var projTask = _projectService.GetAsync(request.ProjectId, cancellationToken);
 
-            _ = await WhenAny(devTask, projTask);
+            //_ = await WhenAny(devTask, projTask);
 
-            var dev = await devTask;
+            //var dev = await devTask;
 
-            if (dev.IsNull())
-            {
-                throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
-            }
+            //if (dev.IsNull())
+            //{
+            //    throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
+            //}
 
-            var proj = await projTask;
+            //var proj = await projTask;
 
-            if (proj.IsNull())
-            {
-                throw new EntityNotFoundException(typeof(Project), request.ProjectId);
-            }
+            //if (proj.IsNull())
+            //{
+            //    throw new EntityNotFoundException(typeof(Project), request.ProjectId);
+            //}
 
-            var entity = await _repository.InsertAsync(new DeveloperProject
-            {
-                DeveloperId = request.DeveloperId,
-                ProjectId = request.ProjectId,
-                CreatedBy = request.CreatedBy,
-                CreatedAt = UtcNow,
-                IsActive = true,
-                IsDeleted = false
-            }, true, cancellationToken);
+            //var entity = await _repository.InsertAsync(new DeveloperProject
+            //{
+            //    DeveloperId = request.DeveloperId,
+            //    ProjectId = request.ProjectId,
+            //    CreatedBy = request.CreatedBy,
+            //    CreatedAt = UtcNow,
+            //    IsActive = true,
+            //    IsDeleted = false
+            //}, true, cancellationToken);
 
-            return entity.IsNull()
-                ? throw new BusinessException(SQL_SERVER_ERROR)
-                : await _redisService.SetAsync($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity), cancellationToken)
-                ? ObjectMapper.Map<DeveloperProject, DeveloperProjectResponse>(entity)
-                : throw new BusinessException(REDIS_SERVER_ERROR);
+            //return entity.IsNull()
+            //    ? throw new BusinessException(SQL_SERVER_ERROR)
+            //    : await _redisService.SetAsync($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity), cancellationToken)
+            //    ? ObjectMapper.Map<DeveloperProject, DeveloperProjectResponse>(entity)
+            //    : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AssignAsync-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId} - {CreatedBy}", request.DeveloperId, request.ProjectId, request.CreatedBy);
+            _logger.LogError(ex, "Assign-DeveloperProjectService-Exception: {Request}", request.Serialize());
 
             throw;
         }
     }
 
-    public async Task<bool> UnassignAsync(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken = default)
+    public async Task<bool> Unassign(Guid developerId, string projectId, Guid updatedBy, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -151,7 +151,7 @@ public class DeveloperProjectService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "UnassignAsync-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
+            _logger.LogError(ex, "Unassign-DeveloperProjectService-Exception: {DeveloperId} - {ProjectId} - {UpdatedBy}", developerId, projectId, updatedBy);
 
             throw;
         }

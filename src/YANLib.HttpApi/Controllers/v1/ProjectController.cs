@@ -61,11 +61,11 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
     [ProducesResponseType(typeof(DeveloperResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody][Required] ProjectCreateRequest input)
+    public async Task<IActionResult> Create([FromBody][Required] ProjectCreateRequest request)
     {
-        _logger.LogInformation("Create-ProjectController: {Input}", input.Serialize());
+        _logger.LogInformation("Create-ProjectController: {Request}", request.Serialize());
 
-        var result = await _service.CreateAsync(input);
+        var result = await _service.CreateAsync(request);
 
         return CreatedAtAction(nameof(Get), new
         {
@@ -79,11 +79,11 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<ProjectResponse>> Update([FromRoute] string id, [FromBody][Required] ProjectUpdateRequest input)
+    public async Task<ActionResult<ProjectResponse>> Update([FromRoute] string id, [FromBody][Required] ProjectUpdateRequest request)
     {
-        _logger.LogInformation("Update-ProjectController: {Id} - {Input}", id, input.Serialize());
+        _logger.LogInformation("Update-ProjectController: {Id} - {Request}", id, request.Serialize());
 
-        var result = await _service.UpdateAsync(id, input);
+        var result = await _service.UpdateAsync(id, request);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }

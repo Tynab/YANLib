@@ -44,7 +44,7 @@ using Volo.Abp.Http.Client;
 using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using YANLib;
-using YANLib.ElasticsearchIndices;
+using YANLib.EsIndices;
 using YANLib.Filters;
 using YANLib.Options;
 using static Amazon.RegionEndpoint;
@@ -199,8 +199,8 @@ public class YANLibHttpApiHostModule : AbpModule
     {
         var indexMappings = new Dictionary<Type, string?>
         {
-            { typeof(DeveloperElasticsearchIndex), configuration["Elasticsearch:Indices:Developer"] },
-            { typeof(ProjectElasticsearchIndex), configuration["Elasticsearch:Indices:Project"] }
+            { typeof(DeveloperEsIndex), configuration["Elasticsearch:Indices:Developer"] },
+            { typeof(ProjectEsIndex), configuration["Elasticsearch:Indices:Project"] }
         };
 
         _ = context.Services.AddElasticsearch(configuration, indexMappings: indexMappings);

@@ -8,8 +8,8 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Dtos;
-using YANLib.ElasticsearchIndices;
 using YANLib.Entities;
+using YANLib.EsIndices;
 using YANLib.RedisDtos;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
@@ -28,7 +28,8 @@ public class DeveloperService(
     IDeveloperElasticsearchService elasticsearchService,
     IRedisService<DeveloperTypeRedisDto> developerTypeRedisService,
     IRedisService<DeveloperProjectRedisDto> developerProjectRedisService,
-    IProjectRepository projectRepository
+    IProjectRepository projectRepository,
+    IDeveloperProjectRepository developerProjectRepository
 ) : YANLibAppService, IDeveloperService
 {
     private readonly ILogger<DeveloperService> _logger = logger;
@@ -37,6 +38,7 @@ public class DeveloperService(
     private readonly IRedisService<DeveloperTypeRedisDto> _developerTypeRedisService = developerTypeRedisService;
     private readonly IRedisService<DeveloperProjectRedisDto> _developerProjectRedisService = developerProjectRedisService;
     private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly IDeveloperProjectRepository _developerProjectRepository = developerProjectRepository;
 
     public async Task<PagedResultDto<DeveloperResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
     {
@@ -44,7 +46,7 @@ public class DeveloperService(
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<DeveloperElasticsearchIndex>, PagedResultDto<DeveloperResponse>>(await _elasticsearchService.GetAllAsync(input, cancellationToken));
+            return ObjectMapper.Map<PagedResultDto<DeveloperEsIndex>, PagedResultDto<DeveloperResponse>>(await _elasticsearchService.GetAllAsync(input, cancellationToken));
         }
         catch (Exception ex)
         {
@@ -60,9 +62,9 @@ public class DeveloperService(
 
         try
         {
-            var dto = await _elasticsearchService.GetAsync(id, cancellationToken);
+            var dto = (await _elasticsearchService.GetById(id, cancellationToken)).FirstOrDefault();
 
-            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex), id) : ObjectMapper.Map<DeveloperElasticsearchIndex, DeveloperResponse>(dto);
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperEsIndex), id) : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
         }
         catch (Exception ex)
         {
@@ -72,19 +74,19 @@ public class DeveloperService(
         }
     }
 
-    public async Task<DeveloperResponse?> GetByIdCardAsync(string idCard, CancellationToken cancellationToken = default)
+    public async Task<DeveloperResponse?> GetByIdCard(string idCard, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var dto = (await _elasticsearchService.GetByIdCardAsync(idCard, cancellationToken)).FirstOrDefault();
+            var dto = await _elasticsearchService.GetAsync(idCard, cancellationToken);
 
-            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex), idCard) : ObjectMapper.Map<DeveloperElasticsearchIndex, DeveloperResponse>(dto);
+            return dto.IsNull() ? throw new EntityNotFoundException(typeof(DeveloperEsIndex), idCard) : ObjectMapper.Map<DeveloperEsIndex, DeveloperResponse>(dto);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetByIdCardAsync-DeveloperService-Exception: {IdCard}", idCard);
+            _logger.LogError(ex, "GetByIdCard-DeveloperService-Exception: {IdCard}", idCard);
 
             throw;
         }
@@ -96,7 +98,7 @@ public class DeveloperService(
 
         try
         {
-            if ((await _elasticsearchService.GetByIdCardAsync(request.IdCard, cancellationToken)).IsNotNull())
+            if ((await _elasticsearchService.GetAsync(request.IdCard, cancellationToken)).IsNotNull())
             {
                 throw new BusinessException(EXIST_ID_CARD).WithData(nameof(Developer.IdCard), request.IdCard);
             }
@@ -114,10 +116,11 @@ public class DeveloperService(
             }
 
             var result = ObjectMapper.Map<Developer, DeveloperResponse>(entity);
+            var devType = await devTypeTask;
 
-            result.DeveloperType = ObjectMapper.Map<(long Id, DeveloperTypeRedisDto? Dto), DeveloperTypeResponse?>((request.DeveloperTypeCode, await devTypeTask));
+            result.DeveloperType = devType.IsNull() ? null : ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((request.DeveloperTypeCode, devType));
 
-            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
+            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -127,56 +130,75 @@ public class DeveloperService(
         }
     }
 
-    public async Task<DeveloperResponse?> AdjustAsync(Guid id, DeveloperUpdateRequest request, CancellationToken cancellationToken = default)
+    public async Task<DeveloperResponse?> AdjustAsync(string idCard, DeveloperUpdateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var entity = await _repository.AdjustAsync(id, ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request), cancellationToken);
+            var tuple = await _repository.AdjustAsync(idCard, ObjectMapper.Map<DeveloperUpdateRequest, Developer>(request), cancellationToken);
 
-            if (entity.IsNull())
+            if (tuple.Developer.IsNull())
             {
                 throw new BusinessException(SQL_SERVER_ERROR);
             }
 
-            var result = ObjectMapper.Map<Developer, DeveloperResponse>(entity);
+            var result = ObjectMapper.Map<Developer, DeveloperResponse>(tuple.Developer);
+            var devType = await _developerTypeRedisService.GetAsync(DeveloperTypeGroup, tuple.Developer.DeveloperTypeCode.ToString(), cancellationToken);
 
-            if (request.DeveloperTypeCode.HasValue)
+            result.DeveloperType = devType.IsNull() ? null : ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((tuple.Developer.DeveloperTypeCode, devType));
+
+            if (tuple.HasDeveloperProject)
             {
-                result.DeveloperType = ObjectMapper.Map<(long? Id, DeveloperTypeRedisDto? Dto), DeveloperTypeResponse?>(
-                    (request.DeveloperTypeCode, await _developerTypeRedisService.GetAsync(DeveloperTypeGroup, request.DeveloperTypeCode.Value.ToString(), cancellationToken))
-                );
+                var cleanTask = _developerProjectRedisService.DeleteAllAsync($"{DeveloperProjectGroupPrefix}:{tuple.OldId}", cancellationToken);
+                var entitiesTask = _developerProjectRepository.GetListAsync(x => x.DeveloperId == tuple.Developer.Id && !x.IsDeleted, cancellationToken: cancellationToken);
+
+                _ = await WhenAny(cleanTask, entitiesTask);
+
+                var clean = await cleanTask;
+                var entities = await entitiesTask;
+
+                if (entities.IsNullEmpty()
+                    ? clean
+                    : (clean &= await _developerProjectRedisService.SetBulkAsync($"{DeveloperProjectGroupPrefix}:{tuple.Developer.Id}", entities.ToDictionary(
+                        x => x.ProjectId,
+                        ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>
+                    ), cancellationToken)))
+                {
+                    var projIds = entities.Select(x => x.ProjectId).ToList();
+
+                    result.Projects = [.. (await _projectRepository.GetListAsync(x => projIds.Contains(x.Id), cancellationToken: cancellationToken)).Select(ObjectMapper.Map<Project, ProjectResponse>)];
+                }
             }
 
-            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperElasticsearchIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
+            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "AdjustAsync-DeveloperService-Exception: {Id} - {Request}", id, request.Serialize());
+            _logger.LogError(ex, "AdjustAsync-DeveloperService-Exception: {IdCard} - {Request}", idCard, request.Serialize());
 
             throw;
         }
     }
 
-    public async Task<bool> DeleteAsync(Guid id, Guid updatedBy, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(string idCard, Guid updatedBy, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var dto = await _elasticsearchService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperElasticsearchIndex));
+            var dto = await _elasticsearchService.GetAsync(idCard, cancellationToken) ?? throw new EntityNotFoundException(typeof(DeveloperEsIndex));
 
             return (await _repository.ModifyAsync(new DeveloperDto
             {
                 Id = dto.Id.Parse<Guid>(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
-            }, cancellationToken)).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _elasticsearchService.DeleteAsync(id, cancellationToken);
+            }, cancellationToken)).IsNull() ? throw new BusinessException(SQL_SERVER_ERROR) : await _elasticsearchService.DeleteAsync(idCard, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "DeleteAsync-DeveloperService-Exception: {Id} - {UpdatedBy}", id, updatedBy);
+            _logger.LogError(ex, "DeleteAsync-DeveloperService-Exception: {IdCard} - {UpdatedBy}", idCard, updatedBy);
 
             throw;
         }
@@ -201,27 +223,34 @@ public class DeveloperService(
                 return result;
             }
 
-            var datas = new List<DeveloperElasticsearchIndex>();
+            var datas = new List<DeveloperEsIndex>();
             var slim = new SemaphoreSlim(1);
 
             await WhenAll(entities.Select(async x =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var dto = ObjectMapper.Map<Developer, DeveloperElasticsearchIndex>(x);
-                //var devProjDict = await _developerProjectRedisService.GetAllAsync($"{DeveloperProjectGroupPrefix}:{x.Id}", cancellationToken);
+                var dto = ObjectMapper.Map<Developer, DeveloperEsIndex>(x);
+                var devTypeDto = await _developerTypeRedisService.GetAsync(DeveloperTypeGroup, x.DeveloperTypeCode.ToString(), cancellationToken);
 
-                //if (devProjDict.IsNotNull())
-                //{
-                //    var projIds = devProjDict.Select(y => ObjectMapper.Map<(Guid DeveloperId, KeyValuePair<string, DeveloperProjectRedisDto?> Pair), DeveloperProjectResponse>((x.Id, y))).Select(y => y.ProjectId);
+                if (devTypeDto.IsNotNull())
+                {
+                    dto.DeveloperType = ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((x.DeveloperTypeCode, devTypeDto));
+                }
 
-                //    dto.Projects = [.. (await _projectRepository.GetListAsync(y => projIds.Contains(y.Id), cancellationToken: cancellationToken)).Select(y => ObjectMapper.Map<Project, ProjectResponse>(y))];
-                //}
+                var devProjDict = await _developerProjectRedisService.GetAllAsync($"{DeveloperProjectGroupPrefix}:{x.Id}", cancellationToken);
 
                 await slim.WaitAsync(cancellationToken);
 
                 try
                 {
+                    if (devProjDict.IsNotNull())
+                    {
+                        var projIds = devProjDict.Select(y => ObjectMapper.Map<(Guid DeveloperId, KeyValuePair<string, DeveloperProjectRedisDto?> Pair), DeveloperProjectResponse>((x.Id, y))).Select(y => y.ProjectId).ToArray();
+
+                        dto.Projects = [.. (await _projectRepository.GetListAsync(y => projIds.Contains(y.Id), cancellationToken: cancellationToken)).Select(ObjectMapper.Map<Project, ProjectResponse>)];
+                    }
+
                     datas.Add(dto);
                 }
                 finally

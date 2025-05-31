@@ -78,16 +78,16 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
             }, result);
     }
 
-    [HttpPatch("{id:long}")]
+    [HttpPatch("{code:long}")]
     [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<DeveloperTypeResponse>> Modify([FromRoute] long id, [FromBody][Required] DeveloperTypeUpdateRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<DeveloperTypeResponse>> Modify([FromRoute] long code, [FromBody][Required] DeveloperTypeUpdateRequest request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Modify-DeveloperTypeController: {Id} - {Request}", id, request.Serialize());
+        _logger.LogInformation("Modify-DeveloperTypeController: {Code} - {Request}", code, request.Serialize());
 
-        var result = await _service.ModifyAsync(id, request, cancellationToken);
+        var result = await _service.ModifyAsync(code, request, cancellationToken);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }

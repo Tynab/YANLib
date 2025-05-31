@@ -25,6 +25,7 @@ public class NotificationJob(ILogger<NotificationJob> logger, IDistributedEventB
             var eto = new NotificationEto(args.Message, args.SentBy);
 
             _logger.LogInformation("ExecuteAsync-NotificationJob: {ETO}", eto.Serialize());
+
             await _distributedEventBus.PublishAsync(eto);
         }
         catch (Exception ex)

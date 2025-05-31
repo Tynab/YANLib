@@ -3,7 +3,6 @@ using System;
 
 namespace YANLib;
 
-[ElasticsearchType(IdProperty = nameof(Id))]
 public class YANLibApplicationEsIndex<TId>
 {
     public required TId Id { get; set; }

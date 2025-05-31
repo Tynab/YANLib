@@ -23,35 +23,35 @@ public class DeveloperProjectService(
     private readonly IRepository<Developer, Guid> _developerRepository = developerRepository;
     private readonly IRepository<Project, string> _projectRepository = projectRepository;
 
-    public override async Task<DeveloperProjectResponse> CreateAsync(DeveloperProjectCreateRequest input)
+    public override async Task<DeveloperProjectResponse> CreateAsync(DeveloperProjectCreateRequest request)
     {
         try
         {
-            _ = await _developerRepository.FindAsync(x => x.Id == input.DeveloperId) ?? throw new EntityNotFoundException(typeof(Developer), input.DeveloperId);
-            _ = await _projectRepository.FindAsync(x => x.Id == input.ProjectId) ?? throw new EntityNotFoundException(typeof(Project), input.ProjectId);
+            _ = await _developerRepository.FindAsync(x => x.Id == request.DeveloperId) ?? throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
+            _ = await _projectRepository.FindAsync(x => x.Id == request.ProjectId) ?? throw new EntityNotFoundException(typeof(Project), request.ProjectId);
 
-            return await base.CreateAsync(input);
+            return await base.CreateAsync(request);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Create-DeveloperProjectService: {Input}", input.Serialize());
+            _logger.LogError(ex, "CreateAsync-DeveloperProjectService: {Request}", request.Serialize());
 
             throw;
         }
     }
 
-    public override async Task<DeveloperProjectResponse> UpdateAsync(Guid id, DeveloperProjectUpdateRequest input)
+    public override async Task<DeveloperProjectResponse> UpdateAsync(Guid id, DeveloperProjectUpdateRequest request)
     {
         try
         {
-            _ = await _developerRepository.FindAsync(x => x.Id == input.DeveloperId) ?? throw new EntityNotFoundException(typeof(Developer), input.DeveloperId);
-            _ = await _projectRepository.FindAsync(x => x.Id == input.ProjectId) ?? throw new EntityNotFoundException(typeof(Project), input.ProjectId);
+            _ = await _developerRepository.FindAsync(x => x.Id == request.DeveloperId) ?? throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
+            _ = await _projectRepository.FindAsync(x => x.Id == request.ProjectId) ?? throw new EntityNotFoundException(typeof(Project), request.ProjectId);
 
-            return await base.UpdateAsync(id, input);
+            return await base.UpdateAsync(id, request);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Update-DeveloperProjectService: {Id} - {Input}", id, input.Serialize());
+            _logger.LogError(ex, "UpdateAsync-DeveloperProjectService: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }

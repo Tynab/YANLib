@@ -43,6 +43,8 @@ public class YANLibDbMigrationService(
     {
         var createdBy = NewGuid();
 
+        #region DeveloperType
+
         if (await _developerTypeRepository.GetCountAsync() > 0)
         {
             await _developerTypeRepository.DeleteManyAsync(await _developerTypeRepository.GetListAsync());
@@ -83,6 +85,10 @@ public class YANLibDbMigrationService(
 
         Logger.LogInformation("Developer type {DeveloperType} created", fsType.Name);
 
+        #endregion
+
+        #region Developer
+
         if (await _developerRepository.GetCountAsync() > 0)
         {
             await _developerRepository.DeleteManyAsync(await _developerRepository.GetListAsync());
@@ -93,7 +99,10 @@ public class YANLibDbMigrationService(
         var fe = await _developerRepository.InsertAsync(new()
         {
             Name = "Nguyễn Văn A",
+            Phone = "0123456789",
+            IdCard = "123456789012",
             DeveloperTypeCode = feType.Id,
+            RawVersion = 1,
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
@@ -105,7 +114,10 @@ public class YANLibDbMigrationService(
         var be = await _developerRepository.InsertAsync(new()
         {
             Name = "Trần Thị B",
+            Phone = "0987654321",
+            IdCard = "987654321098",
             DeveloperTypeCode = beType.Id,
+            RawVersion = 1,
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
@@ -117,7 +129,10 @@ public class YANLibDbMigrationService(
         var fs = await _developerRepository.InsertAsync(new()
         {
             Name = "Lê Văn C",
+            Phone = "1234567890",
+            IdCard = "012345678901",
             DeveloperTypeCode = fsType.Id,
+            RawVersion = 1,
             CreatedBy = createdBy,
             CreatedAt = Now,
             IsActive = true,
@@ -125,6 +140,10 @@ public class YANLibDbMigrationService(
         });
 
         Logger.LogInformation("Developer {Developer} created", fs.Name);
+
+        #endregion
+
+        #region Project
 
         if (await _projectRepository.GetCountAsync() > 0)
         {
@@ -181,6 +200,10 @@ public class YANLibDbMigrationService(
 
         Logger.LogInformation("Project {Project} created", blockchain.Name);
 
+        #endregion
+
+        #region DeveloperProject
+
         if (await _developerProjectRepository.GetCountAsync() > 0)
         {
             await _developerProjectRepository.DeleteManyAsync(await _developerProjectRepository.GetListAsync());
@@ -220,5 +243,7 @@ public class YANLibDbMigrationService(
         ]);
 
         Logger.LogInformation("Developer projects created");
+
+        #endregion
     }
 }

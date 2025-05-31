@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using YANLib.Dtos;
-using YANLib.ElasticsearchIndices;
 using YANLib.Entities;
+using YANLib.EsIndices;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
@@ -21,11 +21,11 @@ using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Services.v2;
 
-public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IElasticsearchService<ProjectElasticsearchIndex> esService) : YANLibAppService, IProjectService
+public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IElasticsearchService<ProjectEsIndex, string> esService) : YANLibAppService, IProjectService
 {
     private readonly ILogger<ProjectService> _logger = logger;
     private readonly IProjectRepository _repository = repository;
-    private readonly IElasticsearchService<ProjectElasticsearchIndex> _esService = esService;
+    private readonly IElasticsearchService<ProjectEsIndex, string> _esService = esService;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
     public async Task<PagedResultDto<ProjectResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
@@ -34,7 +34,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectElasticsearchIndex>, PagedResultDto<ProjectResponse>>(await _esService.GetAllAsync(input, cancellationToken));
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.GetAllAsync(input, cancellationToken));
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         {
             var dto = await _esService.GetAsync(id, cancellationToken);
 
-            return dto.IsNull() ? default : ObjectMapper.Map<ProjectElasticsearchIndex, ProjectResponse>(dto);
+            return dto.IsNull() ? default : ObjectMapper.Map<ProjectEsIndex, ProjectResponse>(dto);
         }
         catch (Exception ex)
         {
@@ -70,7 +70,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         {
             var entity = await _repository.InsertAsync(ObjectMapper.Map<(string Id, ProjectCreateRequest Request), Project>((_idGenerator.NextIdAlphabetic(), request)), cancellationToken: cancellationToken);
 
-            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectElasticsearchIndex>(entity), cancellationToken)
+            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity), cancellationToken)
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
                 : throw new EntityNotFoundException(typeof(Project));
         }
@@ -88,16 +88,16 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
         try
         {
-            var dto = await _esService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(ProjectElasticsearchIndex), id);
+            var dto = await _esService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id);
             var entity = await _repository.ModifyAsync(ObjectMapper.Map<(string Id, ProjectUpdateRequest Request), ProjectDto>((id, request)), cancellationToken);
 
-            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectElasticsearchIndex>(entity), cancellationToken)
+            return entity.IsNotNull() && await _esService.SetAsync(ObjectMapper.Map<Project, ProjectEsIndex>(entity), cancellationToken)
                 ? ObjectMapper.Map<Project, ProjectResponse>(entity)
                 : throw new EntityNotFoundException(typeof(Project), id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ModifyAsync-ProjectService-Exception: {Id} - {Dto}", id, request.Serialize());
+            _logger.LogError(ex, "ModifyAsync-ProjectService-Exception: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }
@@ -111,7 +111,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         {
             return (await _repository.ModifyAsync(new ProjectDto
             {
-                Id = (await _esService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(ProjectElasticsearchIndex), id)).Id.ToString(),
+                Id = (await _esService.GetAsync(id, cancellationToken) ?? throw new EntityNotFoundException(typeof(ProjectEsIndex), id)).Id.ToString(),
                 UpdatedBy = updatedBy,
                 IsDeleted = true,
             }, cancellationToken)).IsNotNull() && await _esService.DeleteAsync(id, cancellationToken);
@@ -143,14 +143,14 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
                 return result;
             }
 
-            var datas = new List<ProjectElasticsearchIndex>();
+            var datas = new List<ProjectEsIndex>();
             var slim = new SemaphoreSlim(1);
 
             await WhenAll(entities.Select(async x =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var dto = ObjectMapper.Map<Project, ProjectElasticsearchIndex>(x);
+                var dto = ObjectMapper.Map<Project, ProjectEsIndex>(x);
 
                 await slim.WaitAsync(cancellationToken);
 
@@ -180,10 +180,10 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectElasticsearchIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithWildcardAsync(
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithWildcardAsync(
                 input,
                 searchText,
-                [nameof(ProjectElasticsearchIndex.Name), nameof(ProjectElasticsearchIndex.Description)],
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
                 cancellationToken
             ));
         }
@@ -201,10 +201,10 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectElasticsearchIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithPhrasePrefixAsync(
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithPhrasePrefixAsync(
                 input,
                 searchText,
-                [nameof(ProjectElasticsearchIndex.Name), nameof(ProjectElasticsearchIndex.Description)],
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
                 cancellationToken
             ));
         }
@@ -222,10 +222,10 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectElasticsearchIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithExactPhraseAsync(
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithExactPhraseAsync(
                 input,
                 searchText,
-                [nameof(ProjectElasticsearchIndex.Name), nameof(ProjectElasticsearchIndex.Description)],
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
                 cancellationToken
             ));
         }
@@ -243,10 +243,10 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
         try
         {
-            return ObjectMapper.Map<PagedResultDto<ProjectElasticsearchIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithKeywordsAsync(
+            return ObjectMapper.Map<PagedResultDto<ProjectEsIndex>, PagedResultDto<ProjectResponse>>(await _esService.SearchWithKeywordsAsync(
                 input,
                 searchText,
-                [nameof(ProjectElasticsearchIndex.Name), nameof(ProjectElasticsearchIndex.Description)],
+                [nameof(ProjectEsIndex.Name), nameof(ProjectEsIndex.Description)],
                 cancellationToken
             ));
         }

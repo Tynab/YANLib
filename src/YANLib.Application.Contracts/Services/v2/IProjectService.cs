@@ -16,7 +16,7 @@ public interface IProjectService
 
     public Task<ProjectResponse?> InsertAsync(ProjectCreateRequest request, CancellationToken cancellationToken = default);
 
-    public Task<ProjectResponse?> ModifyAsync(string id, ProjectUpdateRequest dto, CancellationToken cancellationToken = default);
+    public Task<ProjectResponse?> ModifyAsync(string id, ProjectUpdateRequest request, CancellationToken cancellationToken = default);
 
     public Task<bool> DeleteAsync(string id, Guid updatedBy, CancellationToken cancellationToken = default);
 

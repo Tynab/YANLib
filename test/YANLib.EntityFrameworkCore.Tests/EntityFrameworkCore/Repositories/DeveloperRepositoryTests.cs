@@ -212,7 +212,7 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
         };
 
         // Act
-        var adjusted = await _repository.AdjustAsync(adjustedEntity);
+        var adjusted = await _repository.AdjustAsync(inserted.Id, adjustedEntity);
         var result = await _repository.FindAsync(x => x.IdCard == inserted.IdCard && !x.IsDeleted);
 
         // Assert

@@ -23,6 +23,7 @@ public class NotificationService(ILogger<NotificationService> logger, IDistribut
             var eto = ObjectMapper.Map<NotificationRequest, NotificationEto>(request);
 
             _logger.LogInformation("Send-NotificationService: {ETO}", eto.Serialize());
+
             await _distributedEventBus.PublishAsync(eto);
         }
         catch (Exception ex)
@@ -40,6 +41,7 @@ public class NotificationService(ILogger<NotificationService> logger, IDistribut
             var args = new NotificationArgs(request.Message, request.SentBy);
 
             _logger.LogInformation("Schedule-NotificationService: {Args}", args.Serialize());
+
             _ = await _backgroundJobManager.EnqueueAsync(args, delay: FromSeconds(10));
         }
         catch (Exception ex)

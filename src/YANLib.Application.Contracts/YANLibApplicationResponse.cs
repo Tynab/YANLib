@@ -2,9 +2,9 @@
 
 namespace YANLib;
 
-public class YANLibApplicationResponse<T>
+public class YANLibApplicationResponse<TKey>
 {
-    public required T Id { get; set; }
+    public required TKey Id { get; set; }
 
     public Guid CreatedBy { get; set; }
 

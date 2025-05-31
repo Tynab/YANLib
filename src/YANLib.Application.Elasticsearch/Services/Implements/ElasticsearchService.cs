@@ -5,10 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.Attributes;
 using static Nest.SortOrder;
+using static System.Guid;
 using static System.Linq.Expressions.Expression;
 using static System.Math;
 using static System.Reflection.BindingFlags;
@@ -23,6 +26,39 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
     private readonly ILogger<ElasticsearchService<TEsIndex, TId>> _logger = logger;
     private readonly IConfiguration _configuration = configuration;
     private readonly IElasticClient _elasticClient = elasticClient;
+
+    protected virtual string GetDocumentIdAsync(TEsIndex data)
+    {
+        try
+        {
+            var idField = typeof(TEsIndex).GetCustomAttribute<ElasticsearchIdFieldAttribute>();
+
+            if (idField.IsNotNull())
+            {
+                var property = typeof(TEsIndex).GetProperty(idField.FieldName, Public | Instance);
+
+                if (property.IsNotNull())
+                {
+                    var value = property.GetValue(data);
+
+                    if (value.IsNotNull())
+                    {
+                        return value.ToString()!;
+                    }
+                }
+
+                _logger.LogWarning("ElasticsearchIdField '{FieldName}' not found or is null, falling back to Id", idField.FieldName);
+            }
+
+            return data.Id?.ToString() ?? NewGuid().ToString();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetDocumentIdAsync-ElasticsearchService-Exception: {Data}", data.Serialize());
+
+            return data.Id?.ToString() ?? NewGuid().ToString();
+        }
+    }
 
     public async Task<PagedResultDto<TEsIndex>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
     {
@@ -96,13 +132,13 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
 
         try
         {
-            return (await _elasticClient.IndexAsync(data, i => i.Id(data.Id?.ToString()), cancellationToken)).IsNotNull();
+            return (await _elasticClient.IndexAsync(data, i => i.Id(GetDocumentIdAsync(data)), cancellationToken)).IsNotNull();
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Operation was canceled: {Method} - {Id}", nameof(SetAsync), data.Id);
+            _logger.LogWarning("Operation was canceled: {Method} - {Data}", nameof(SetAsync), data.Serialize());
 
-            throw new OperationCanceledException($"Elasticsearch SetAsync operation canceled for {data.Id}", ex, cancellationToken);
+            throw new OperationCanceledException($"Elasticsearch SetAsync operation canceled for {data.Serialize()}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -130,16 +166,16 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
             foreach (var data in datas.OrderBy(x => x.CreatedAt))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                _ = requests.Index<TEsIndex>(x => x.Document(data).Index(index).Id(data.Id?.ToString()));
+                _ = requests.Index<TEsIndex>(x => x.Document(data).Index(index).Id(GetDocumentIdAsync(data)));
             }
 
             return (await _elasticClient.BulkAsync(requests, cancellationToken)).IsNotNull();
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Operation was canceled: {Method} - {IndexPath}", nameof(SetBulkAsync), indexPath);
+            _logger.LogWarning("Operation was canceled: {Method} - {Datas} - {IndexPath}", nameof(SetBulkAsync), datas.Serialize(), indexPath);
 
-            throw new OperationCanceledException($"Elasticsearch SetBulkAsync operation canceled for {indexPath}", ex, cancellationToken);
+            throw new OperationCanceledException($"Elasticsearch SetBulkAsync operation canceled for {datas.Serialize()} - {indexPath}", ex, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -363,7 +399,7 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SearchWithKeywordsAsync-ElasticsearchService-Exception: {Input} - {Keyword} - {FieldNames}", input.Serialize(), searchText, fieldNames);
+            _logger.LogError(ex, "SearchWithKeywordsAsync-ElasticsearchService-Exception: {Input} - {SearchWords} - {FieldNames}", input.Serialize(), searchText, fieldNames);
 
             throw;
         }

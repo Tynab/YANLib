@@ -27,11 +27,11 @@ public class DeveloperService(
     private readonly IRepository<DeveloperProject, Guid> _developerProjectRepository = developerProjectRepository;
     private readonly IRepository<Project, string> _projectRepository = projectRepository;
 
-    public override async Task<PagedResultDto<DeveloperResponse>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public override async Task<PagedResultDto<DeveloperResponse>> GetListAsync(PagedAndSortedResultRequestDto request)
     {
         try
         {
-            var result = await base.GetListAsync(input);
+            var result = await base.GetListAsync(request);
             var developerTypeIds = result.Items.Where(x => x.DeveloperType.IsNotNull()).Select(x => x.DeveloperType!.Id).Distinct();
             var developerTypes = await _developerTypeRepository.GetListAsync(x => developerTypeIds.Contains(x.Id));
             var developerIds = result.Items.Select(x => x.Id).Distinct();
@@ -49,7 +49,7 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetList-DeveloperService: {Input}", input.Serialize());
+            _logger.LogError(ex, "GetListAsync-DeveloperService: {Request}", request.Serialize());
 
             throw;
         }
@@ -70,18 +70,18 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Get-DeveloperService: {Id}", id);
+            _logger.LogError(ex, "GetAsync-DeveloperService: {Id}", id);
 
             throw;
         }
     }
 
-    public override async Task<DeveloperResponse> CreateAsync(DeveloperCreateRequest input)
+    public override async Task<DeveloperResponse> CreateAsync(DeveloperCreateRequest request)
     {
         try
         {
-            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeCode) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeCode);
-            var result = await base.CreateAsync(input);
+            var developerType = await _developerTypeRepository.FindAsync(request.DeveloperTypeCode) ?? throw new EntityNotFoundException(typeof(DeveloperType), request.DeveloperTypeCode);
+            var result = await base.CreateAsync(request);
 
             if (developerType.IsNotNull())
             {
@@ -92,18 +92,18 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Create-DeveloperService: {Input}", input.Serialize());
+            _logger.LogError(ex, "CreateAsync-DeveloperService: {Request}", request.Serialize());
 
             throw;
         }
     }
 
-    public override async Task<DeveloperResponse> UpdateAsync(Guid id, DeveloperUpdateRequest input)
+    public override async Task<DeveloperResponse> UpdateAsync(Guid id, DeveloperUpdateRequest request)
     {
         try
         {
-            var developerType = await _developerTypeRepository.FindAsync(input.DeveloperTypeCode) ?? throw new EntityNotFoundException(typeof(DeveloperType), input.DeveloperTypeCode);
-            var result = await base.UpdateAsync(id, input);
+            var developerType = await _developerTypeRepository.FindAsync(request.DeveloperTypeCode) ?? throw new EntityNotFoundException(typeof(DeveloperType), request.DeveloperTypeCode);
+            var result = await base.UpdateAsync(id, request);
 
             if (developerType.IsNotNull())
             {
@@ -114,7 +114,7 @@ public class DeveloperService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Update-DeveloperService: {Id} - {Input}", id, input.Serialize());
+            _logger.LogError(ex, "UpdateAsync-DeveloperService: {Id} - {Request}", id, request.Serialize());
 
             throw;
         }
