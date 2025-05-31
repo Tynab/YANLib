@@ -9,10 +9,10 @@ using YANLib.ElasticsearchIndices;
 
 namespace YANLib.Services.Implements;
 
-public class DeveloperElasticsearchService(ILogger<ElasticsearchService<DeveloperElasticsearchIndex>> logger, IConfiguration configuration, IElasticClient elasticClient)
-    : ElasticsearchService<DeveloperElasticsearchIndex>(logger, configuration, elasticClient), IDeveloperElasticsearchService
+public class DeveloperElasticsearchService(ILogger<ElasticsearchService<DeveloperElasticsearchIndex, Guid>> logger, IConfiguration configuration, IElasticClient elasticClient)
+    : ElasticsearchService<DeveloperElasticsearchIndex, Guid>(logger, configuration, elasticClient), IDeveloperElasticsearchService
 {
-    private readonly ILogger<ElasticsearchService<DeveloperElasticsearchIndex>> _logger = logger;
+    private readonly ILogger<ElasticsearchService<DeveloperElasticsearchIndex, Guid>> _logger = logger;
     private readonly IElasticClient _elasticClient = elasticClient;
 
     public async Task<IReadOnlyCollection<DeveloperElasticsearchIndex?>> GetByIdCardAsync(string idCard, CancellationToken cancellationToken = default)

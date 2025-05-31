@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace YANLib.ElasticsearchIndices;
 
-public sealed class ProjectElasticsearchIndex : YANLibApplicationEsIndex<DocumentPath<ProjectElasticsearchIndex>>
+public sealed class ProjectElasticsearchIndex : YANLibApplicationEsIndex<string>
 {
     [Keyword]
     public string? Name { get; set; }

@@ -17,10 +17,10 @@ using static YANLib.YANExpression;
 
 namespace YANLib.Services.Implements;
 
-public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsIndex>> logger, IConfiguration configuration, IElasticClient elasticClient)
-    : IElasticsearchService<TEsIndex> where TEsIndex : YANLibApplicationEsIndex<DocumentPath<TEsIndex>>
+public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TEsIndex, TId>> logger, IConfiguration configuration, IElasticClient elasticClient)
+    : IElasticsearchService<TEsIndex, TId> where TEsIndex : YANLibApplicationEsIndex<TId>
 {
-    private readonly ILogger<ElasticsearchService<TEsIndex>> _logger = logger;
+    private readonly ILogger<ElasticsearchService<TEsIndex, TId>> _logger = logger;
     private readonly IConfiguration _configuration = configuration;
     private readonly IElasticClient _elasticClient = elasticClient;
 
@@ -31,6 +31,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
+
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
@@ -67,13 +68,13 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
     }
 
-    public async Task<TEsIndex?> GetAsync(DocumentPath<TEsIndex> id, CancellationToken cancellationToken = default)
+    public async Task<TEsIndex?> GetAsync(TId id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            return (await _elasticClient.GetAsync(id, ct: cancellationToken)).Source ?? default;
+            return (await _elasticClient.GetAsync<TEsIndex>(id?.ToString(), ct: cancellationToken)).Source ?? default;
         }
         catch (OperationCanceledException ex)
         {
@@ -95,7 +96,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
 
         try
         {
-            return (await _elasticClient.IndexDocumentAsync(data, cancellationToken)).IsNotNull();
+            return (await _elasticClient.IndexAsync(data, i => i.Id(data.Id?.ToString()), cancellationToken)).IsNotNull();
         }
         catch (OperationCanceledException ex)
         {
@@ -129,7 +130,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
             foreach (var data in datas.OrderBy(x => x.CreatedAt))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                _ = requests.Index<TEsIndex>(x => x.Document(data).Index(index));
+                _ = requests.Index<TEsIndex>(x => x.Document(data).Index(index).Id(data.Id?.ToString()));
             }
 
             return (await _elasticClient.BulkAsync(requests, cancellationToken)).IsNotNull();
@@ -148,13 +149,13 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         }
     }
 
-    public async Task<bool> DeleteAsync(DocumentPath<TEsIndex> id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(TId id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            return (await _elasticClient.DeleteAsync(id, ct: cancellationToken)).IsNotNull();
+            return (await _elasticClient.DeleteAsync<TEsIndex>(id?.ToString(), ct: cancellationToken)).IsNotNull();
         }
         catch (OperationCanceledException ex)
         {
@@ -199,6 +200,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
+
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
@@ -242,6 +244,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
+
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
@@ -285,6 +288,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
+
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)
@@ -328,6 +332,7 @@ public class ElasticsearchService<TEsIndex>(ILogger<ElasticsearchService<TEsInde
         try
         {
             var fieldSelectors = ToFieldSelectorDictionary();
+
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
                 .From(input.SkipCount)
                 .Size(input.MaxResultCount)

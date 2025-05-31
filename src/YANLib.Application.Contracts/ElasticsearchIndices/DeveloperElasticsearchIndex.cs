@@ -1,10 +1,11 @@
 ﻿using Nest;
+using System;
 using System.Collections.Generic;
 using YANLib.Responses;
 
 namespace YANLib.ElasticsearchIndices;
 
-public sealed class DeveloperElasticsearchIndex : YANLibApplicationEsIndex<DocumentPath<DeveloperElasticsearchIndex>>
+public sealed class DeveloperElasticsearchIndex : YANLibApplicationEsIndex<Guid>
 {
     public string? Name { get; set; }
 
