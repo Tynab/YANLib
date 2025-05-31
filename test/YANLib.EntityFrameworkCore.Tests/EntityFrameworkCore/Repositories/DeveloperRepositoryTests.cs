@@ -212,13 +212,13 @@ public class DeveloperRepositoryTests : YANLibEntityFrameworkCoreTestBase
         };
 
         // Act
-        var adjusted = await _repository.AdjustAsync(inserted.Id, adjustedEntity);
+        var adjusted = await _repository.AdjustAsync(entity.IdCard, adjustedEntity);
         var result = await _repository.FindAsync(x => x.IdCard == inserted.IdCard && !x.IsDeleted);
 
         // Assert
         _ = result.ShouldNotBeNull();
         result.Id.ShouldNotBe(Guid.Empty);
-        result.Name.ShouldBe(adjusted!.Name);
+        result.Name.ShouldBe(adjusted.Developer!.Name);
         result.Phone.ShouldBe(inserted.Phone);
         result.DeveloperTypeCode.ShouldBe(inserted.DeveloperTypeCode);
         result.RawVersion.ShouldBe(2);
