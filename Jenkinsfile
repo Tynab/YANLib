@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         // Telegram configre
-        TOKEN = credentials('telegram_token')
-        CHAT_ID = credentials('telegram_chatid')
+        // TOKEN = credentials('telegram_token')
+        // CHAT_ID = credentials('telegram_chatid')
 
         // AWS credentials
         AWS_ACCESS_KEY_ID = credentials('aws_access')
@@ -12,7 +12,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'ap-southeast-1'
         AWS_PROFILE = 'Tynab'
 
-        // Telegram message
+        // Message
         GIT_MESSAGE = sh(returnStdout: true, script: "git log -n 1 --format=%s ${GIT_COMMIT}").trim()
         GIT_AUTHOR = sh(returnStdout: true, script: "git log -n 1 --format=%ae ${GIT_COMMIT}").trim()
         GIT_COMMIT_SHORT = sh(returnStdout: true, script: "git rev-parse --short ${GIT_COMMIT}").trim()
@@ -25,16 +25,19 @@ pipeline {
         TEXT_CLEAN = "${JOB_NAME} is Cleaning"
         TEXT_RUN = "${JOB_NAME} is Running"
 
-        // Telegram parameters
+        // Parameters
         TEXT_SUCCESS_BUILD = "${JOB_NAME} is Success"
         TEXT_FAILURE_BUILD = "${JOB_NAME} is Failure"
         TEXT_TEST_RESULTS = "${JOB_NAME} Test Results"
+
+        // Recipients
+        RECIPIENTS = 'yamiannephilim@gmail.com'
     }
 
     stages {
         stage('Run Unit Tests') {
             steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST}' --form chat_id='${CHAT_ID}'"
                 sh 'curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0'
 
                 script {
@@ -65,9 +68,32 @@ pipeline {
 
                         def testSummary = readFile('test-summary.txt').trim()
 
-                        sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST_RESULTS}\n${testSummary}' --form chat_id='${CHAT_ID}'"
+                        // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST_RESULTS}\n${testSummary}' --form chat_id='${CHAT_ID}'"
+                        emailext(
+                            subject: "${TEXT_TEST_RESULTS}",
+                            body: """\
+========================================
+${GIT_INFO}
+
+${testSummary}
+========================================
+""",
+                            to: "${RECIPIENTS}"
+                        )
                     } catch (Exception e) {
-                        sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST_RESULTS}\nTests failed: ${e.getMessage()}' --form chat_id='${CHAT_ID}'"
+                        // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_TEST_RESULTS}\nTests failed: ${e.getMessage()}' --form chat_id='${CHAT_ID}'"
+                        emailext(
+                            subject: "${TEXT_TEST_RESULTS} - Lỗi",
+                            body: """\
+========================================
+${GIT_INFO}
+
+Tests failed: ${e.getMessage()}
+========================================
+""",
+                            to: "${RECIPIENTS}"
+                        )
+
                         error "Unit tests failed: ${e.getMessage()}"
                     }
                 }
@@ -76,15 +102,38 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PRE}' --form chat_id='${CHAT_ID}'"
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_BUILD}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PRE}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_BUILD}' --form chat_id='${CHAT_ID}'"
+                emailext(
+                    subject: "${TEXT_BUILD}",
+                    body: """\
+========================================
+${GIT_INFO}
+
+${TEXT_BUILD}
+========================================
+""",
+                    to: "${RECIPIENTS}"
+                )
+
                 sh 'docker build -t yamiannephilim/yanlib:latest .'
             }
         }
 
         stage('Push') {
             steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PUSH}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_PUSH}' --form chat_id='${CHAT_ID}'"
+                emailext(
+                    subject: "${TEXT_PUSH}",
+                    body: """\
+========================================
+${GIT_INFO}
+
+${TEXT_PUSH}
+========================================
+""",
+                    to: "${RECIPIENTS}"
+                )
 
                 withDockerRegistry(credentialsId: 'docker_hub', url: 'https://index.docker.io/v1/') {
                     sh 'docker push yamiannephilim/yanlib'
@@ -94,7 +143,18 @@ pipeline {
 
         stage('Clean') {
             steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_CLEAN}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_CLEAN}' --form chat_id='${CHAT_ID}'"
+                emailext(
+                    subject: "${TEXT_CLEAN}",
+                    body: """\
+========================================
+${GIT_INFO}
+
+${TEXT_CLEAN}
+========================================
+""",
+                    to: "${RECIPIENTS}"
+                )
 
                 script {
                     def containerId = sh(returnStdout: true, script: 'docker ps -aqf "name=yanlib"').trim()
@@ -109,11 +169,23 @@ pipeline {
 
         stage('Run') {
             steps {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_RUN}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_RUN}' --form chat_id='${CHAT_ID}'"
+                emailext(
+                    subject: "${TEXT_RUN}",
+                    body: """\
+========================================
+${GIT_INFO}
+
+${TEXT_RUN}
+========================================
+""",
+                    to: "${RECIPIENTS}"
+                )
+
                 sh 'docker container stop yanlib || echo "this container does not exist"'
                 sh 'docker network create yan || echo "this network exist"'
                 sh 'echo y | docker container prune'
-                
+
                 sh '''
                     docker run --name yanlib --network yan \
                     -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
@@ -135,13 +207,35 @@ pipeline {
 
         success {
             script {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_SUCCESS_BUILD}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_SUCCESS_BUILD}' --form chat_id='${CHAT_ID}'"
+                emailext(
+                subject: "${TEXT_SUCCESS_BUILD}",
+                body: """\
+========================================
+${GIT_INFO}
+
+Build SUCCESS!
+========================================
+""",
+                to: "${RECIPIENTS}"
+                )
             }
         }
 
         failure {
             script {
-                sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_FAILURE_BUILD}' --form chat_id='${CHAT_ID}'"
+                // sh "curl --location --request POST 'https://api.telegram.org/bot${TOKEN}/sendMessage' --form text='${TEXT_FAILURE_BUILD}' --form chat_id='${CHAT_ID}'"
+                emailext(
+                subject: "${TEXT_FAILURE_BUILD}",
+                body: """\
+========================================
+${GIT_INFO}
+
+Build FAILED!
+========================================
+""",
+                to: "${RECIPIENTS}"
+                )
             }
         }
     }

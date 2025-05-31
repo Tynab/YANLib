@@ -25,7 +25,7 @@ namespace YANLib.Services.v2;
 public class DeveloperService(
     ILogger<DeveloperService> logger,
     IDeveloperRepository repository,
-    IDeveloperElasticsearchService elasticsearchService,
+    IDeveloperEsService elasticsearchService,
     IRedisService<DeveloperTypeRedisDto> developerTypeRedisService,
     IRedisService<DeveloperProjectRedisDto> developerProjectRedisService,
     IProjectRepository projectRepository,
@@ -34,7 +34,7 @@ public class DeveloperService(
 {
     private readonly ILogger<DeveloperService> _logger = logger;
     private readonly IDeveloperRepository _repository = repository;
-    private readonly IDeveloperElasticsearchService _elasticsearchService = elasticsearchService;
+    private readonly IDeveloperEsService _elasticsearchService = elasticsearchService;
     private readonly IRedisService<DeveloperTypeRedisDto> _developerTypeRedisService = developerTypeRedisService;
     private readonly IRedisService<DeveloperProjectRedisDto> _developerProjectRedisService = developerProjectRedisService;
     private readonly IProjectRepository _projectRepository = projectRepository;

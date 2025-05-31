@@ -6,7 +6,7 @@ using YANLib.EsIndices;
 
 namespace YANLib.Services;
 
-public interface IDeveloperElasticsearchService : IElasticsearchService<DeveloperEsIndex, string>
+public interface IDeveloperEsService : IElasticsearchService<DeveloperEsIndex, string>
 {
     public Task<IReadOnlyCollection<DeveloperEsIndex?>> GetById(Guid id, CancellationToken cancellationToken = default);
 }
