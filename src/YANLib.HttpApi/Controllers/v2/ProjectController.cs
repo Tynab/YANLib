@@ -116,7 +116,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [HttpGet("search-with-wild-card")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo ký tự đại diện trong tên hoặc mô tả")]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
-    public async Task<IActionResult> SearchWithWildcard([Required] string searchText = "pro*", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SearchWithWildcard([Required] string searchText = "trend*", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithWildcard-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -130,7 +130,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [HttpGet("search-with-phrase-prefix")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ đầu tiên trong tên hoặc mô tả")]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
-    public async Task<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "proficien", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "customer ins", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithPhrasePrefix-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -144,7 +144,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [HttpGet("search-with-exact-phrase")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ chính xác trong tên hoặc mô tả")]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
-    public async Task<IActionResult> SearchWithExactPhrase([Required] string searchText = "data analysis", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SearchWithExactPhrase([Required] string searchText = "trends in", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithExactPhrase-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -158,7 +158,7 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [HttpGet("search-with-keywords")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo từ khóa trong tên hoặc mô tả")]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
-    public async Task<IActionResult> SearchWithKeywords([Required] string searchText = "programming web", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SearchWithKeywords([Required] string searchText = "trends analytics", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithKeywords-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
