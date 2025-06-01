@@ -22,11 +22,11 @@ public interface IProjectService
 
     public Task<bool> SyncDataToElasticsearchAsync(CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<ProjectResponse>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<ProjectResponse>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default);
 }

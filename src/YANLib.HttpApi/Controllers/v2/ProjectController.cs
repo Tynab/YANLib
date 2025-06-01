@@ -7,12 +7,15 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using YANLib.ListQueries.v2;
 using YANLib.Requests.v2.Create;
 using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using YANLib.Services.v2;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 using static Nest.SortOrder;
 
 namespace YANLib.Controllers.v2;
@@ -30,63 +33,90 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ")]
-    public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll(byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll([FromQuery] ProjectListQuery query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("GetAll-ProjectController: {PageNumber} - {PageSize}", pageNumber, pageSize);
+        _logger.LogInformation("GetAll-ProjectController: {Query}", query.Serialize());
 
         return Ok(await _service.GetAllAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            pageNumber,
-            pageSize,
+            query.PageNumber,
+            query.PageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
-        ))));
+        )), cancellationToken));
     }
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
-    public async Task<IActionResult> Get(string id)
+    [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<ActionResult<DeveloperResponse>> Get([FromRoute] string id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Get-ProjectController: {Id}", id);
 
-        return Ok(await _service.GetAsync(id));
+        var result = await _service.GetAsync(id, cancellationToken);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
-    public async Task<IActionResult> Insert([Required] ProjectCreateRequest request)
+    [ProducesResponseType(typeof(ProjectResponse), Status201Created)]
+    [ProducesResponseType(Status400BadRequest)]
+    public async Task<IActionResult> Insert([FromBody][Required] ProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Insert-ProjectController: {Request}", request.Serialize());
 
-        return Ok(await _service.InsertAsync(request));
+        var result = await _service.InsertAsync(request, cancellationToken);
+
+        return result.IsNull()
+            ? Conflict()
+            : CreatedAtAction(nameof(Get), new
+            {
+                id = result.Id,
+                version = "2.0"
+            }, result);
     }
 
     [HttpPatch("{id}")]
     [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
-    public async Task<IActionResult> Modify(string id, [Required] ProjectUpdateRequest request)
+    [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<ActionResult<DeveloperResponse>> Modify([FromRoute] string id, [FromBody][Required] ProjectUpdateRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Modify-ProjectController: {Id} - {Request}", id, request.Serialize());
 
-        return Ok(await _service.ModifyAsync(id, request));
+        var result = await _service.ModifyAsync(id, request, cancellationToken);
+
+        return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Xóa chứng chỉ")]
-    public async Task<IActionResult> Delete(string id, [Required] Guid updatedBy)
+    [ProducesResponseType(Status204NoContent)]
+    [ProducesResponseType(Status404NotFound)]
+    public async Task<IActionResult> Delete([FromRoute] string id, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Delete-ProjectController: {Id} - {UpdatedBy}", id, updatedBy);
 
-        return Ok(await _service.DeleteAsync(id, updatedBy));
+        var result = await _service.DeleteAsync(id, updatedBy, cancellationToken);
+
+        return result ? NoContent() : NotFound();
     }
 
 #if RELEASE
     [Authorize(Roles = "GlobalRole")]
 #endif
-    [HttpPost("sync-db-to-es")]
+    [HttpPost("sync-data-to-elasticsearch")]
     [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ từ Database sang Elasticsearch")]
-    public async Task<IActionResult> SyncDbToEs() => Ok(await _service.SyncDataToElasticsearchAsync());
+    [ProducesResponseType(typeof(bool), Status200OK)]
+    public async Task<IActionResult> SyncDataToElasticsearch(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToElasticsearchAsync(cancellationToken));
 
     [HttpGet("search-with-wild-card")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo ký tự đại diện trong tên hoặc mô tả")]
-    public async Task<IActionResult> SearchWithWildcard([Required] string searchText = "pro*", byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
+    public async Task<IActionResult> SearchWithWildcard([Required] string searchText = "pro*", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithWildcard-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -94,12 +124,13 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
             pageNumber,
             pageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
-        )), searchText));
+        )), searchText, cancellationToken));
     }
 
     [HttpGet("search-with-phrase-prefix")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ đầu tiên trong tên hoặc mô tả")]
-    public async Task<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "proficien", byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
+    public async Task<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "proficien", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithPhrasePrefix-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -107,12 +138,13 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
             pageNumber,
             pageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
-        )), searchText));
+        )), searchText, cancellationToken));
     }
 
     [HttpGet("search-with-exact-phrase")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ chính xác trong tên hoặc mô tả")]
-    public async Task<IActionResult> SearchWithExactPhrase([Required] string searchText = "data analysis", byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
+    public async Task<IActionResult> SearchWithExactPhrase([Required] string searchText = "data analysis", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithExactPhrase-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -120,12 +152,13 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
             pageNumber,
             pageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
-        )), searchText));
+        )), searchText, cancellationToken));
     }
 
     [HttpGet("search-with-keywords")]
     [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo từ khóa trong tên hoặc mô tả")]
-    public async Task<IActionResult> SearchWithKeywords([Required] string searchText = "programming web", byte pageNumber = 1, byte pageSize = 10)
+    [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
+    public async Task<IActionResult> SearchWithKeywords([Required] string searchText = "programming web", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("SearchWithKeywords-ProjectController: {SearchText} - {PageNumber} - {PageSize}", searchText, pageNumber, pageSize);
 
@@ -133,6 +166,6 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
             pageNumber,
             pageSize,
             $"{nameof(ProjectResponse.Name)} {Ascending},{nameof(ProjectResponse.CreatedAt)} {Descending}"
-        )), searchText));
+        )), searchText, cancellationToken));
     }
 }

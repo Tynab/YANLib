@@ -18,11 +18,11 @@ public interface IElasticsearchService<TEsIndex, TId> where TEsIndex : YANLibApp
 
     public Task<bool> DeleteAllAsync(string indexPath, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<TEsIndex>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<TEsIndex>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<TEsIndex>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<TEsIndex>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
 
-    public Task<PagedResultDto<TEsIndex>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
+    public Task<PagedResultDto<TEsIndex>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default);
 }

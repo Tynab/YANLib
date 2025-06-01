@@ -229,12 +229,17 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
         }
     }
 
-    public async Task<PagedResultDto<TEsIndex>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
+            if (searchText.IsNullWhiteSpace())
+            {
+                return new PagedResultDto<TEsIndex>(0, []);
+            }
+
             var fieldSelectors = ToFieldSelectorDictionary();
 
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
@@ -273,12 +278,17 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
         }
     }
 
-    public async Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
+            if (searchText.IsNullWhiteSpace())
+            {
+                return new PagedResultDto<TEsIndex>(0, []);
+            }
+
             var fieldSelectors = ToFieldSelectorDictionary();
 
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
@@ -317,12 +327,17 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
         }
     }
 
-    public async Task<PagedResultDto<TEsIndex>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
+            if (searchText.IsNullWhiteSpace())
+            {
+                return new PagedResultDto<TEsIndex>(0, []);
+            }
+
             var fieldSelectors = ToFieldSelectorDictionary();
 
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s
@@ -361,12 +376,17 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
         }
     }
 
-    public async Task<PagedResultDto<TEsIndex>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<TEsIndex>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string? searchText, IEnumerable<string> fieldNames, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
+            if (searchText.IsNullWhiteSpace())
+            {
+                return new PagedResultDto<TEsIndex>(0, []);
+            }
+
             var fieldSelectors = ToFieldSelectorDictionary();
 
             var response = await _elasticClient.SearchAsync<TEsIndex>(s => s

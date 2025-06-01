@@ -158,14 +158,11 @@ public class DeveloperService(
                 var clean = await cleanTask;
                 var entities = await entitiesTask;
 
-                if (entities.IsNullEmpty()
-                    ? clean
-                    : (clean &= await _developerProjectRedisService.SetBulkAsync($"{DeveloperProjectGroupPrefix}:{tuple.Developer.Id}", entities.ToDictionary(
-                        x => x.ProjectId,
-                        ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>
-                    ), cancellationToken)))
+                if (entities.IsNullEmpty() ? clean : (clean &= await _developerProjectRedisService.SetBulkAsync($"{DeveloperProjectGroupPrefix}:{tuple.Developer.Id}", entities.ToDictionary(
+                    x => x.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>
+                ), cancellationToken)))
                 {
-                    var projIds = entities.Select(x => x.ProjectId).ToList();
+                    var projIds = entities.Select(x => x.ProjectId).ToArray();
 
                     result.Projects = [.. (await _projectRepository.GetListAsync(x => projIds.Contains(x.Id), cancellationToken: cancellationToken)).Select(ObjectMapper.Map<Project, ProjectResponse>)];
                 }

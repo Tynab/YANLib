@@ -1,10 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using YANLib.Attributes;
 
 namespace YANLib.ListQueries.v2;
 
 public sealed class DeveloperProjectListQuery : YANLibApplicationListQuery
 {
-    [Required]
+    [RequiredAttributeWithPropertyName]
     public Guid DeveloperId { get; set; }
 }
