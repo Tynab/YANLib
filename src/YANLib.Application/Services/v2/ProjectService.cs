@@ -21,11 +21,19 @@ using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Services.v2;
 
-public class ProjectService(ILogger<ProjectService> logger, IProjectRepository repository, IElasticsearchService<ProjectEsIndex, string> esService) : YANLibAppService, IProjectService
+public class ProjectService(
+    ILogger<ProjectService> logger,
+    IProjectRepository repository,
+    IElasticsearchService<ProjectEsIndex, string> esService,
+    IDeveloperRepository developerRepository,
+    IDeveloperProjectRepository developerProjectRepository
+) : YANLibAppService, IProjectService
 {
     private readonly ILogger<ProjectService> _logger = logger;
     private readonly IProjectRepository _repository = repository;
     private readonly IElasticsearchService<ProjectEsIndex, string> _esService = esService;
+    private readonly IDeveloperRepository _developerRepository = developerRepository;
+    private readonly IDeveloperProjectRepository _developerProjectRepository = developerProjectRepository;
     private readonly IdGenerator _idGenerator = new(DeveloperId, YanlibId);
 
     public async Task<PagedResultDto<ProjectResponse>> GetAllAsync(PagedAndSortedResultRequestDto input, CancellationToken cancellationToken = default)
@@ -156,6 +164,9 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
 
                 try
                 {
+                    var devIds = (await _developerProjectRepository.GetListAsync(y => y.ProjectId == x.Id && !y.IsDeleted, cancellationToken: cancellationToken)).Select(y => y.DeveloperId).ToArray();
+
+                    dto.Developers = [.. (await _developerRepository.GetListAsync(y => devIds.Contains(y.Id) && !y.IsDeleted, cancellationToken: cancellationToken)).Select(y => ObjectMapper.Map<Developer, DeveloperEsIndex>(y))];
                     datas.Add(dto);
                 }
                 finally
@@ -174,7 +185,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async Task<PagedResultDto<ProjectResponse>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithWildcardAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -195,7 +206,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithPhrasePrefixAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -216,7 +227,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async Task<PagedResultDto<ProjectResponse>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithExactPhraseAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -237,7 +248,7 @@ public class ProjectService(ILogger<ProjectService> logger, IProjectRepository r
         }
     }
 
-    public async Task<PagedResultDto<ProjectResponse>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string searchText, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<ProjectResponse>> SearchWithKeywordsAsync(PagedAndSortedResultRequestDto input, string? searchText, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

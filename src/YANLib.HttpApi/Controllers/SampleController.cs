@@ -35,12 +35,12 @@ public sealed class SampleController(ILogger<SampleController> logger, ISampleSe
     [MapToApiVersion(2)]
     [HttpGet("test")]
     [SwaggerOperation(Summary = "Trả về dữ liệu linh hoạt")]
-    public async Task<IActionResult> TestV2() => (GenerateRandom<byte>(1, byte.MaxValue) % 7) switch
+    public async Task<IActionResult> TestV2() => GenerateRandom<byte>(min: 1, max: 8) switch
     {
         1 => await FromResult(Ok(GenerateRandom<bool>())),
         2 => await FromResult(Ok(GenerateRandom<char>())),
         3 => await FromResult(Ok(GenerateRandom<string>())),
-        4 => await FromResult(Ok(GenerateRandom<byte>())),
+        4 => await FromResult(Ok(GenerateRandom<short>())),
         5 => await FromResult(Ok(GenerateRandom<float>())),
         6 => await FromResult(Ok(new List<NotificationRequest>
         {

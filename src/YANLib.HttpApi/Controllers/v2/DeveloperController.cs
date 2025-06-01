@@ -50,9 +50,9 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Lấy lập trình viên theo mã")]
     [ProducesResponseType(typeof(DeveloperResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<DeveloperResponse>> GetAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<DeveloperResponse>> Get([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("GetAsync-DeveloperController: {Id}", id);
+        _logger.LogInformation("Get-DeveloperController: {Id}", id);
 
         var result = await _service.GetAsync(id, cancellationToken);
 
@@ -84,7 +84,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
 
         return result.IsNull()
             ? Conflict()
-            : CreatedAtAction(nameof(GetAsync), new
+            : CreatedAtAction(nameof(Get), new
             {
                 id = result.Id,
                 version = "2.0"

@@ -14,6 +14,7 @@ using YANLib.RedisDtos;
 using YANLib.Repositories;
 using YANLib.Requests.v2.Create;
 using YANLib.Responses;
+using static System.DateTime;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANLibConsts.RedisConstant;
 using static YANLib.YANLibDomainErrorCodes;
@@ -90,41 +91,40 @@ public class DeveloperProjectService(
 
         try
         {
-            return default;
-            //var devTask = _developerService.GetAsync(request.DeveloperId, cancellationToken);
-            //var projTask = _projectService.GetAsync(request.ProjectId, cancellationToken);
+            var devTask = _developerService.GetAsync(request.DeveloperId, cancellationToken);
+            var projTask = _projectService.GetAsync(request.ProjectId, cancellationToken);
 
-            //_ = await WhenAny(devTask, projTask);
+            _ = await WhenAny(devTask, projTask);
 
-            //var dev = await devTask;
+            var dev = await devTask;
 
-            //if (dev.IsNull())
-            //{
-            //    throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
-            //}
+            if (dev.IsNull())
+            {
+                throw new EntityNotFoundException(typeof(Developer), request.DeveloperId);
+            }
 
-            //var proj = await projTask;
+            var proj = await projTask;
 
-            //if (proj.IsNull())
-            //{
-            //    throw new EntityNotFoundException(typeof(Project), request.ProjectId);
-            //}
+            if (proj.IsNull())
+            {
+                throw new EntityNotFoundException(typeof(Project), request.ProjectId);
+            }
 
-            //var entity = await _repository.InsertAsync(new DeveloperProject
-            //{
-            //    DeveloperId = request.DeveloperId,
-            //    ProjectId = request.ProjectId,
-            //    CreatedBy = request.CreatedBy,
-            //    CreatedAt = UtcNow,
-            //    IsActive = true,
-            //    IsDeleted = false
-            //}, true, cancellationToken);
+            var entity = await _repository.InsertAsync(new DeveloperProject
+            {
+                DeveloperId = request.DeveloperId,
+                ProjectId = request.ProjectId,
+                CreatedBy = request.CreatedBy,
+                CreatedAt = UtcNow,
+                IsActive = true,
+                IsDeleted = false
+            }, true, cancellationToken);
 
-            //return entity.IsNull()
-            //    ? throw new BusinessException(SQL_SERVER_ERROR)
-            //    : await _redisService.SetAsync($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity), cancellationToken)
-            //    ? ObjectMapper.Map<DeveloperProject, DeveloperProjectResponse>(entity)
-            //    : throw new BusinessException(REDIS_SERVER_ERROR);
+            return entity.IsNull()
+                ? throw new BusinessException(SQL_SERVER_ERROR)
+                : await _redisService.SetAsync($"{DeveloperProjectGroupPrefix}:{request.DeveloperId}", request.ProjectId, ObjectMapper.Map<DeveloperProject, DeveloperProjectRedisDto>(entity), cancellationToken)
+                ? ObjectMapper.Map<DeveloperProject, DeveloperProjectResponse>(entity)
+                : throw new BusinessException(REDIS_SERVER_ERROR);
         }
         catch (Exception ex)
         {

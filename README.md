@@ -450,7 +450,7 @@ To address case sensitivity issues, standard approaches include:
 However, using these options can affect performance. YANJson provides optimized methods that maintain high performance while handling case sensitivity appropriately.
 
 For the most recent performance benchmarks, visit:
-[https://yanlib.yamiannephilim.com/api/json/yan-vs-standards?quantity=10000&hideSystem=true](https://yanlib.yamiannephilim.com/api/json/yan-vs-standards?quantity=10000&hideSystem=true)
+[https://yanlib.yamiannephilim.com/api/v1/Sample/test?quantity=10000&hideSystem=true](https://yanlib.yamiannephilim.com/api/v1/Sample/test?quantity=10000&hideSystem=true)
 
 <div align="center">
   <img src='https://raw.githubusercontent.com/Tynab/YANLib/refs/heads/main/pic/0.jpg' alt="YAN vs Standards Performance">
