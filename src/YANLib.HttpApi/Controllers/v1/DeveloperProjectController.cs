@@ -23,7 +23,7 @@ namespace YANLib.Controllers.v1;
 #endif
 [ApiVersion(1, Deprecated = true)]
 [ApiController]
-[Route("api/developer-projects")]
+[Route("api/[controller]")]
 public sealed class DeveloperProjectController(ILogger<DeveloperProjectController> logger, IDeveloperProjectService service) : YANLibController
 {
     private readonly ILogger<DeveloperProjectController> _logger = logger;

@@ -19,7 +19,7 @@ public class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IW
     {
         var info = new OpenApiInfo()
         {
-            Title = $"YANLib API - {_environment.EnvironmentName}",
+            Title = $"{typeof(ConfigureSwaggerOptions).Namespace?.Split('.')[0]} API - {_environment.EnvironmentName}",
             Version = description.ApiVersion.ToString(),
         };
 

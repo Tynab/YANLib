@@ -1,13 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Volo.Abp.DependencyInjection;
-using Volo.Abp.Domain.Repositories;
-using YANLib.Dtos;
+﻿using YANLib.Dtos;
 using YANLib.Entities;
 
 namespace YANLib.Repositories;
 
-public interface IDeveloperTypeRepository : IRepository<DeveloperType, long>, ITransientDependency
+public interface IDeveloperTypeRepository : IYANLibRepository<DeveloperTypeDto, DeveloperType, long>
 {
-    public Task<DeveloperType?> ModifyAsync(DeveloperTypeDto dto, CancellationToken cancellationToken = default);
 }

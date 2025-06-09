@@ -92,7 +92,7 @@ public class DeveloperService(
         }
     }
 
-    public async Task<DeveloperResponse?> InsertAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default)
+    public async Task<DeveloperResponse?> AddAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -120,7 +120,7 @@ public class DeveloperService(
 
             result.DeveloperType = devType.IsNull() ? null : ObjectMapper.Map<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>((request.DeveloperTypeCode, devType));
 
-            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
+            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
         catch (Exception ex)
         {
@@ -168,7 +168,7 @@ public class DeveloperService(
                 }
             }
 
-            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ELASTICSEARCH_SERVER_ERROR);
+            return await _elasticsearchService.SetAsync(ObjectMapper.Map<DeveloperResponse, DeveloperEsIndex>(result), cancellationToken) ? result : throw new BusinessException(ES_SERVER_ERROR);
         }
         catch (Exception ex)
         {

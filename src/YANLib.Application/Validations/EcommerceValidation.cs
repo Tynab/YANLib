@@ -11,7 +11,7 @@ public sealed class EcommerceValidator : AbstractValidator<EcommerceLoginRequest
     public EcommerceValidator()
     {
         _ = RuleFor(static x => x.Username).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_USER_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_USER_NAME);
-        _ = RuleFor(static x => x.Password).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_PWD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_PWD);
+        _ = RuleFor(static x => x.Password).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_PASSWORD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_PASSWORD);
     }
 }
 
@@ -23,7 +23,7 @@ public sealed class EcommerceValidators : AbstractValidator<List<EcommerceLoginR
         _ = RuleForEach(static s => s).SetValidator(new EcommerceValidator());
         _ = RuleFor(static x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
         _ = RuleFor(static x => x).Must(UsernameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_USER_NAME).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_USER_NAME);
-        _ = RuleFor(static x => x).Must(PasswordIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_PWD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_PWD);
+        _ = RuleFor(static x => x).Must(PasswordIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_PASSWORD).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_PASSWORD);
     }
 
     private bool IsNotEmptyAndNull(List<EcommerceLoginRequest> requests) => requests.IsNotNullEmpty();

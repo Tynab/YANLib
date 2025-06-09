@@ -4,7 +4,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace YANLib;
 
-public class YANLibDomainEntity<T> : Entity<T>
+public class YANLibDomainEntity<TKey> : Entity<TKey> where TKey : notnull, IEquatable<TKey>
 {
     public Guid CreatedBy { get; set; }
 

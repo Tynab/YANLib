@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace YANLib;
 
-public class YANLibDomainDto<TKey>
+public class YANLibDomainDto<TKey> where TKey : notnull, IEquatable<TKey>
 {
     public required TKey Id { get; set; }
 

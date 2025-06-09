@@ -27,8 +27,5 @@ public class ConsoleTestAppHostedService(IConfiguration configuration) : IHosted
         await application.ShutdownAsync();
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

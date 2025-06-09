@@ -5,6 +5,8 @@ using Volo.Abp.AutoMapper;
 using YANLib.Dtos;
 using YANLib.Entities;
 using YANLib.EsIndices;
+using YANLib.Requests.v2.Create;
+using YANLib.Requests.v2.Update;
 using YANLib.Responses;
 using static System.DateTime;
 
@@ -14,23 +16,23 @@ public sealed class ProjectAutoMapperProfile : Profile
 {
     public ProjectAutoMapperProfile()
     {
-        _ = CreateMap<(string Id, Requests.v2.Create.ProjectCreateRequest Request), Project>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
-            .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
-            .ForMember(d => d.Description, o => o.MapFrom(static s => s.Request.Description))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Request.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => UtcNow))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => true))
-            .ForMember(d => d.IsDeleted, o => o.MapFrom(static s => false))
+        _ = CreateMap<(string Id, ProjectCreateRequest Request), Project>()
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => s.Id))
+            .ForMember(static d => d.Name, static o => o.MapFrom(static s => s.Request.Name))
+            .ForMember(static d => d.Description, static o => o.MapFrom(static s => s.Request.Description))
+            .ForMember(static d => d.CreatedBy, static o => o.MapFrom(static s => s.Request.CreatedBy))
+            .ForMember(static d => d.CreatedAt, static o => o.MapFrom(static s => UtcNow))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => true))
+            .ForMember(static d => d.IsDeleted, static o => o.MapFrom(static s => false))
             .Ignore(static d => d.UpdatedBy)
             .Ignore(static d => d.UpdatedAt);
 
-        _ = CreateMap<(string Id, Requests.v2.Update.ProjectUpdateRequest Request), ProjectDto>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
-            .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
-            .ForMember(d => d.Description, o => o.MapFrom(static s => s.Request.Description))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Request.UpdatedBy))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Request.IsActive))
+        _ = CreateMap<(string Id, ProjectUpdateRequest Request), ProjectDto>()
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => s.Id))
+            .ForMember(static d => d.Name, static o => o.MapFrom(static s => s.Request.Name))
+            .ForMember(static d => d.Description, static o => o.MapFrom(static s => s.Request.Description))
+            .ForMember(static d => d.UpdatedBy, static o => o.MapFrom(static s => s.Request.UpdatedBy))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => s.Request.IsActive))
             .Ignore(static d => d.IsDeleted);
 
         _ = CreateMap<Project, ProjectEsIndex>();

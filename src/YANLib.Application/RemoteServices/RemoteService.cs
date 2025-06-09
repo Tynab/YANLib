@@ -23,36 +23,36 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
     {
         try
         {
-            var req = new RestRequest(path, method);
+            var request = new RestRequest(path, method);
 
             if (headers.IsNullEmpty())
             {
-                _ = req.AddHeader("Accept", "*/*");
-                _ = req.AddHeader("Content-Type", "application/json");
+                _ = request.AddHeader("Accept", "*/*");
+                _ = request.AddHeader("Content-Type", "application/json");
 
                 if (jsonInput.IsNotNullWhiteSpace())
                 {
-                    _ = req.AddParameter("application/json", jsonInput, RequestBody);
+                    _ = request.AddParameter("application/json", jsonInput, RequestBody);
                 }
             }
             else
             {
-                headers.ForEach(x => req.AddHeader(x.Key, x.Value));
+                headers.ForEach(x => request.AddHeader(x.Key, x.Value));
 
                 if (jsonInput.IsNotNullWhiteSpace())
                 {
-                    _ = req.AddParameter(headers["Content-Type"], jsonInput, RequestBody);
+                    _ = request.AddParameter(headers["Content-Type"], jsonInput, RequestBody);
                 }
             }
 
             if (queryParams.IsNotNullEmpty())
             {
-                queryParams.ForEach(x => req.AddParameter(x.Key, x.Value, QueryString));
+                queryParams.ForEach(x => request.AddParameter(x.Key, x.Value, QueryString));
             }
 
-            var remSvcConfig = _remoteServiceOptions.RemoteServices.GetConfigurationOrDefaultOrNull(remoteRoot)?.BaseUrl;
+            var config = _remoteServiceOptions.RemoteServices.GetConfigurationOrDefaultOrNull(remoteRoot)?.BaseUrl;
 
-            if (remSvcConfig.IsNullWhiteSpace())
+            if (config.IsNullWhiteSpace())
             {
                 throw new AbpRemoteCallException(new RemoteServiceErrorInfo
                 {
@@ -61,37 +61,37 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
                 });
             }
 
-            var res = await new RestClient(remSvcConfig).ExecuteAsync(req);
+            var response = await new RestClient(config).ExecuteAsync(request);
 
-            if (res.StatusCode is OK)
+            if (response.StatusCode is OK)
             {
-                return res.Content.Deserialize<T>();
+                return response.Content.Deserialize<T>();
             }
             else
             {
-                _logger.LogError("Invoke API: {PathRoot} - {Code} - {Error} - {Content}", $"{remoteRoot}{path}", res.StatusCode, res.ErrorMessage, res.Content);
+                _logger.LogError("Invoke API: {PathRoot} - {Code} - {Error} - {Content}", $"{remoteRoot}{path}", response.StatusCode, response.ErrorMessage, response.Content);
 
-                if (res.Content.IsNullWhiteSpace())
+                if (response.Content.IsNullWhiteSpace())
                 {
                     throw new AbpRemoteCallException(new RemoteServiceErrorInfo
                     {
                         Code = NOT_FOUND,
-                        Message = res.ErrorException?.Message
+                        Message = response.ErrorException?.Message
                     })
                     {
-                        HttpStatusCode = res.StatusCode.Parse<int>()
+                        HttpStatusCode = response.StatusCode.Parse<int>()
                     };
                 }
                 else
                 {
-                    var jtoken = Parse(res.Content)["error"]?.ToString();
+                    var token = Parse(response.Content)["error"]?.ToString();
 
-                    throw new AbpRemoteCallException(jtoken?.Deserialize<RemoteServiceErrorInfo>() ?? new RemoteServiceErrorInfo
+                    throw new AbpRemoteCallException(token?.Deserialize<RemoteServiceErrorInfo>() ?? new RemoteServiceErrorInfo
                     {
-                        Message = jtoken
+                        Message = token
                     })
                     {
-                        HttpStatusCode = res.StatusCode.Parse<int>()
+                        HttpStatusCode = response.StatusCode.Parse<int>()
                     };
                 }
             }

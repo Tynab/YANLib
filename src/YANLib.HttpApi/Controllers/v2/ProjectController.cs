@@ -25,7 +25,7 @@ namespace YANLib.Controllers.v2;
 #endif
 [ApiVersion(2)]
 [ApiController]
-[Route("api/projects")]
+[Route("api/[controller]")]
 public sealed class ProjectController(ILogger<ProjectController> logger, IProjectService service) : YANLibController
 {
     private readonly ILogger<ProjectController> _logger = logger;
@@ -63,11 +63,11 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
     [ProducesResponseType(typeof(ProjectResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
-    public async Task<IActionResult> Insert([FromBody][Required] ProjectCreateRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Add([FromBody][Required] ProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Insert-ProjectController: {Request}", request.Serialize());
+        _logger.LogInformation("Add-ProjectController: {Request}", request.Serialize());
 
-        var result = await _service.InsertAsync(request, cancellationToken);
+        var result = await _service.AddAsync(request, cancellationToken);
 
         return result.IsNull()
             ? Conflict()

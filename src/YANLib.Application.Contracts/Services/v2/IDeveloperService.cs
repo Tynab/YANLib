@@ -17,7 +17,7 @@ public interface IDeveloperService : IApplicationService
 
     public Task<DeveloperResponse?> GetByIdCard(string idCard, CancellationToken cancellationToken = default);
 
-    public Task<DeveloperResponse?> InsertAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default);
+    public Task<DeveloperResponse?> AddAsync(DeveloperCreateRequest request, CancellationToken cancellationToken = default);
 
     public Task<DeveloperResponse?> AdjustAsync(string id, DeveloperUpdateRequest request, CancellationToken cancellationToken = default);
 

@@ -13,24 +13,28 @@ public sealed class DeveloperProjectAutoMapperProfile : Profile
     {
         _ = CreateMap<DeveloperProject, DeveloperProjectRedisDto>();
 
-        _ = CreateMap<(Guid DeveloperId, KeyValuePair<string, DeveloperProjectRedisDto?> Pair), DeveloperProjectResponse>()
-            .ForMember(d => d.DeveloperId, o => o.MapFrom(static s => s.DeveloperId))
-            .ForMember(d => d.ProjectId, o => o.MapFrom(static s => s.Pair.Key))
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Pair.Value.IsNull() ? default : s.Pair.Value.Id))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Pair.Value.IsNull() ? default : s.Pair.Value.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => s.Pair.Value.IsNull() ? default : s.Pair.Value.CreatedAt))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Pair.Value.IsNull() ? default : s.Pair.Value.UpdatedBy))
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(static s => s.Pair.Value.IsNull() ? default : s.Pair.Value.UpdatedAt))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Pair.Value.IsNotNull() && s.Pair.Value.IsActive));
+        CreateMap<(Guid DeveloperId, KeyValuePair<string, DeveloperProjectRedisDto?> Pair), DeveloperProjectResponse?>().ConvertUsing(static (s, _) => s.Pair.Value.IsNull()
+            ? null
+            : new DeveloperProjectResponse
+            {
+                Id = s.Pair.Value.Id,
+                DeveloperId = s.DeveloperId,
+                ProjectId = s.Pair.Key,
+                CreatedBy = s.Pair.Value.CreatedBy,
+                CreatedAt = s.Pair.Value.CreatedAt,
+                UpdatedBy = s.Pair.Value.UpdatedBy,
+                UpdatedAt = s.Pair.Value.UpdatedAt,
+                IsActive = s.Pair.Value.IsActive
+            });
 
         _ = CreateMap<(Guid DeveloperId, string ProjectId, DeveloperProjectRedisDto Dto), DeveloperProjectResponse>()
-            .ForMember(d => d.DeveloperId, o => o.MapFrom(static s => s.DeveloperId))
-            .ForMember(d => d.ProjectId, o => o.MapFrom(static s => s.ProjectId))
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Dto.Id))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Dto.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => s.Dto.CreatedAt))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Dto.UpdatedBy))
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(static s => s.Dto.UpdatedAt))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Dto.IsActive));
+            .ForMember(static d => d.DeveloperId, static o => o.MapFrom(static s => s.DeveloperId))
+            .ForMember(static d => d.ProjectId, static o => o.MapFrom(static s => s.ProjectId))
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => s.Dto.Id))
+            .ForMember(static d => d.CreatedBy, static o => o.MapFrom(static s => s.Dto.CreatedBy))
+            .ForMember(static d => d.CreatedAt, static o => o.MapFrom(static s => s.Dto.CreatedAt))
+            .ForMember(static d => d.UpdatedBy, static o => o.MapFrom(static s => s.Dto.UpdatedBy))
+            .ForMember(static d => d.UpdatedAt, static o => o.MapFrom(static s => s.Dto.UpdatedAt))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => s.Dto.IsActive));
     }
 }

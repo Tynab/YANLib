@@ -16,40 +16,44 @@ public sealed class DeveloperTypeAutoMapperProfile : Profile
     public DeveloperTypeAutoMapperProfile()
     {
         _ = CreateMap<(long Id, DeveloperTypeCreateRequest Request), DeveloperType>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
-            .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Request.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => UtcNow))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => true))
-            .ForMember(d => d.IsDeleted, o => o.MapFrom(static s => false))
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => s.Id))
+            .ForMember(static d => d.Name, static o => o.MapFrom(static s => s.Request.Name))
+            .ForMember(static d => d.CreatedBy, static o => o.MapFrom(static s => s.Request.CreatedBy))
+            .ForMember(static d => d.CreatedAt, static o => o.MapFrom(static s => UtcNow))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => true))
+            .ForMember(static d => d.IsDeleted, static o => o.MapFrom(static s => false))
             .Ignore(static d => d.UpdatedBy)
             .Ignore(static d => d.UpdatedAt);
 
         _ = CreateMap<(long Id, DeveloperTypeUpdateRequest Request), DeveloperTypeDto>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
-            .ForMember(d => d.Name, o => o.MapFrom(static s => s.Request.Name))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Request.UpdatedBy))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Request.IsActive))
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => s.Id))
+            .ForMember(static d => d.Name, static o => o.MapFrom(static s => s.Request.Name))
+            .ForMember(static d => d.UpdatedBy, static o => o.MapFrom(static s => s.Request.UpdatedBy))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => s.Request.IsActive))
             .Ignore(static d => d.IsDeleted);
 
         _ = CreateMap<DeveloperType, DeveloperTypeRedisDto>();
 
         _ = CreateMap<(long Id, DeveloperTypeRedisDto Dto), DeveloperTypeResponse>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Id))
-            .ForMember(d => d.Name, o => o.MapFrom(static s => s.Dto.Name))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Dto.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => s.Dto.CreatedAt))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Dto.UpdatedBy))
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(static s => s.Dto.UpdatedAt))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Dto.IsActive));
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => s.Id))
+            .ForMember(static d => d.Name, static o => o.MapFrom(static s => s.Dto.Name))
+            .ForMember(static d => d.CreatedBy, static o => o.MapFrom(static s => s.Dto.CreatedBy))
+            .ForMember(static d => d.CreatedAt, static o => o.MapFrom(static s => s.Dto.CreatedAt))
+            .ForMember(static d => d.UpdatedBy, static o => o.MapFrom(static s => s.Dto.UpdatedBy))
+            .ForMember(static d => d.UpdatedAt, static o => o.MapFrom(static s => s.Dto.UpdatedAt))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => s.Dto.IsActive));
 
-        _ = CreateMap<KeyValuePair<string, DeveloperTypeRedisDto?>, DeveloperTypeResponse>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => s.Key.Parse<long>()))
-            .ForMember(d => d.Name, o => o.MapFrom(static s => s.Value.IsNull() ? default : s.Value.Name))
-            .ForMember(d => d.CreatedBy, o => o.MapFrom(static s => s.Value.IsNull() ? default : s.Value.CreatedBy))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => s.Value.IsNull() ? default : s.Value.CreatedAt))
-            .ForMember(d => d.UpdatedBy, o => o.MapFrom(static s => s.Value.IsNull() ? default : s.Value.UpdatedBy))
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(static s => s.Value.IsNull() ? default : s.Value.UpdatedAt))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => s.Value.IsNotNull() && s.Value.IsActive));
+        CreateMap<KeyValuePair<string, DeveloperTypeRedisDto?>, DeveloperTypeResponse?>().ConvertUsing(static (s, _) => s.Value.IsNull()
+            ? null
+            : new DeveloperTypeResponse
+            {
+                Id = s.Key.Parse<long>(),
+                Name = s.Value.Name,
+                CreatedBy = s.Value.CreatedBy,
+                CreatedAt = s.Value.CreatedAt,
+                UpdatedBy = s.Value.UpdatedBy,
+                UpdatedAt = s.Value.UpdatedAt,
+                IsActive = s.Value.IsActive
+            });
     }
 }
