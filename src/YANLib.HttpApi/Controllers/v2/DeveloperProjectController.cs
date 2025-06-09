@@ -30,7 +30,10 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     private readonly IDeveloperProjectService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả dự án của lập trình viên theo mã lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Lấy tất cả dự án của lập trình viên theo mã lập trình viên",
+        Description = "Lấy danh sách dự án của lập trình viên với phân trang và sắp xếp"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<DeveloperProjectResponse>), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ActionResult<PagedResultDto<DeveloperProjectResponse>>> GetByDeveloper([FromQuery][Required] DeveloperProjectListQuery query, CancellationToken cancellationToken = default)
@@ -41,7 +44,10 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     }
 
     [HttpGet("{developerId:guid}/{projectId}")]
-    [SwaggerOperation(Summary = "Lấy dự án của lập trình viên theo mã lập trình viên và mã dự án")]
+    [SwaggerOperation(
+        Summary = "Lấy dự án của lập trình viên theo mã lập trình viên và mã dự án",
+        Description = "Lấy thông tin dự án của lập trình viên theo mã lập trình viên và mã dự án"
+    )]
     [ProducesResponseType(typeof(DeveloperProjectResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperProjectResponse>> GetByDeveloperAndProject([FromRoute] Guid developerId, [FromRoute] string projectId, CancellationToken cancellationToken = default)
@@ -54,7 +60,10 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Gán dự án cho lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Gán dự án cho lập trình viên",
+        Description = "Tạo mới một dự án của lập trình viên với thông tin được cung cấp"
+    )]
     [ProducesResponseType(typeof(DeveloperProjectResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Assign([FromBody][Required] DeveloperProjectCreateRequest request, CancellationToken cancellationToken = default)
@@ -74,7 +83,10 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     }
 
     [HttpDelete("{developerId:guid}/{projectId}")]
-    [SwaggerOperation(Summary = "Gỡ gán dự án cho lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Gỡ gán dự án cho lập trình viên",
+        Description = "Gỡ gán một dự án của lập trình viên theo mã lập trình viên và mã dự án"
+    )]
     [ProducesResponseType(Status204NoContent)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Unassign([FromRoute] Guid developerId, [FromRoute] string projectId, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
@@ -88,7 +100,10 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-data-to-redis")]
-    [SwaggerOperation(Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis")]
+    [SwaggerOperation(
+        Summary = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis",
+        Description = "Đồng bộ tất cả dự án của lập trình viên từ Database sang Redis"
+    )]
     [ProducesResponseType(typeof(bool), Status200OK)]
     public async Task<IActionResult> SyncDataToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 
@@ -96,7 +111,10 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-data-to-redis-by-developer")]
-    [SwaggerOperation(Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã")]
+    [SwaggerOperation(
+        Summary = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã",
+        Description = "Đồng bộ dự án của lập trình viên từ Database sang Redis theo mã lập trình viên"
+    )]
     [ProducesResponseType(typeof(bool), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> SyncDataToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)

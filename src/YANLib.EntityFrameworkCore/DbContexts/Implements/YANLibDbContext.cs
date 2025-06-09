@@ -3,7 +3,6 @@ using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using YANLib.Entities;
 using static YANLib.YANLibConsts.ConnectionStringName;
-using static YANLib.YANLibConsts.DbSchema;
 
 namespace YANLib.DbContexts.Implements;
 
@@ -22,7 +21,6 @@ public class YANLibDbContext(DbContextOptions<YANLibDbContext> options) : AbpDbC
     {
         base.OnModelCreating(builder);
 
-        _ = builder.HasDefaultSchema(Sample);
         builder.ConfigureYANLib();
     }
 }

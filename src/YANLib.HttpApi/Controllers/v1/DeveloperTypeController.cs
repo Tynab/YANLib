@@ -28,18 +28,24 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     private readonly IDeveloperTypeService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Lấy tất cả định nghĩa loại lập trình viên",
+        Description = "Lấy danh sách định nghĩa loại lập trình viên"
+    )]
     [ProducesResponseType(typeof(List<DeveloperTypeResponse>), Status200OK)]
     [ProducesResponseType(Status204NoContent)]
     public async Task<ActionResult<List<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetAllAsync());
 
     [HttpGet("{code:long}")]
-    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
+    [SwaggerOperation(
+        Summary = "Lấy định nghĩa loại lập trình viên theo mã",
+        Description = "Lấy thông tin định nghĩa loại lập trình viên theo mã"
+    )]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long code)
     {
-        _logger.LogInformation("Get-DeveloperTypeCrudController: {Code}", code);
+        _logger.LogInformation("Get-DeveloperTypeController: {Code}", code);
 
         var result = await _service.GetAsync(code);
 
@@ -47,12 +53,15 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Thêm mới định nghĩa loại lập trình viên",
+        Description = "Tạo mới một định nghĩa loại lập trình viên với thông tin được cung cấp"
+    )]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody][Required] DeveloperTypeCreateRequest request)
     {
-        _logger.LogInformation("Create-DeveloperTypeCrudController: {Request}", request.Serialize());
+        _logger.LogInformation("Create-DeveloperTypeController: {Request}", request.Serialize());
 
         var result = await _service.CreateAsync(request);
 
@@ -64,13 +73,16 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPut("{code:long}")]
-    [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Cập nhật định nghĩa loại lập trình viên",
+        Description = "Cập nhật thông tin định nghĩa loại lập trình viên theo mã"
+    )]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperTypeResponse>> Update([FromRoute] long code, [FromBody][Required] DeveloperTypeUpdateRequest request)
     {
-        _logger.LogInformation("Update-DeveloperTypeCrudController: {Code} - {Request}", code, request.Serialize());
+        _logger.LogInformation("Update-DeveloperTypeController: {Code} - {Request}", code, request.Serialize());
 
         var result = await _service.UpdateAsync(code, request);
 
@@ -78,12 +90,16 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpDelete("{code:long}")]
-    [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Xóa định nghĩa loại lập trình viên",
+        Description = "Xóa định nghĩa loại lập trình viên theo mã"
+    )]
     [ProducesResponseType(Status204NoContent)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] long code)
     {
-        _logger.LogInformation("Delete-DeveloperTypeCrudController: {Code}", code);
+        _logger.LogInformation("Delete-DeveloperTypeController: {Code}", code);
+
         await _service.DeleteAsync(code);
 
         return NoContent();

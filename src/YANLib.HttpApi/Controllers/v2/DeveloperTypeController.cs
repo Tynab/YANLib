@@ -30,26 +30,35 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     private readonly IDeveloperTypeService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy danh sách định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Lấy danh sách định nghĩa loại lập trình viên",
+        Description = "Lấy tất cả định nghĩa loại lập trình viên"
+    )]
     [ProducesResponseType(typeof(List<DeveloperTypeResponse?>), Status200OK)]
     [ProducesResponseType(Status204NoContent)]
     public async Task<ActionResult<List<DeveloperTypeResponse?>?>> GetAll(CancellationToken cancellationToken = default) => Ok(await _service.GetAllAsync(cancellationToken));
 
-    [HttpGet("{id:long}")]
-    [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]
+    [HttpGet("{code:long}")]
+    [SwaggerOperation(
+        Summary = "Lấy định nghĩa loại lập trình viên theo mã",
+        Description = "Lấy thông tin định nghĩa loại lập trình viên theo mã"
+    )]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
-    public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<DeveloperTypeResponse>> Get([FromRoute] long code, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Get-DeveloperTypeController: {Id}", id);
+        _logger.LogInformation("Get-DeveloperTypeController: {Code}", code);
 
-        var result = await _service.GetOrAddAsync(id, cancellationToken);
+        var result = await _service.GetOrAddAsync(code, cancellationToken);
 
         return result.IsNull() ? NotFound() : Ok(result);
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Thêm mới định nghĩa loại lập trình viên",
+        Description = "Tạo mới một định nghĩa loại lập trình viên với thông tin được cung cấp"
+    )]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Add([FromBody][Required] DeveloperTypeCreateRequest request, CancellationToken cancellationToken = default)
@@ -68,7 +77,10 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpPatch("{code:long}")]
-    [SwaggerOperation(Summary = "Cập nhật định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Cập nhật định nghĩa loại lập trình viên",
+        Description = "Cập nhật thông tin định nghĩa loại lập trình viên theo mã"
+    )]
     [ProducesResponseType(typeof(DeveloperTypeResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
@@ -82,7 +94,10 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     }
 
     [HttpDelete("{code:long}")]
-    [SwaggerOperation(Summary = "Xóa định nghĩa loại lập trình viên")]
+    [SwaggerOperation(
+        Summary = "Xóa định nghĩa loại lập trình viên",
+        Description = "Xóa định nghĩa loại lập trình viên theo mã"
+    )]
     [ProducesResponseType(Status204NoContent)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] long code, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
@@ -98,7 +113,10 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
     [Authorize(Roles = "GlobalRole, OtherRole")]
 #endif
     [HttpPost("sync-data-to-redis")]
-    [SwaggerOperation(Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis")]
+    [SwaggerOperation(
+        Summary = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis",
+        Description = "Đồng bộ tất cả định nghĩa loại lập trình viên từ Database sang Redis để cải thiện hiệu suất truy xuất dữ liệu"
+    )]
     [ProducesResponseType(typeof(bool), Status200OK)]
     public async Task<IActionResult> SyncDataToRedis(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToRedisAsync(cancellationToken));
 }

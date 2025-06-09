@@ -3,16 +3,16 @@
 public static class YANLibDomainErrorMessages
 {
     public const string BAD_REQUEST = "Dữ liệu truyền vào không hợp lệ!";
-    public const string BAD_REQUEST_ID = "Mã truyền vào không hợp lệ!";
+    public const string BAD_REQUEST_ID = "Khóa truyền vào không hợp lệ!";
     public const string BAD_REQUEST_NAME = "Tên truyền vào không hợp lệ!";
     public const string BAD_REQUEST_ID_CARD = "Mã định danh truyền vào không hợp lệ!";
     public const string BAD_REQUEST_GPA = "Điểm truyền vào không hợp lệ!";
-    public const string BAD_REQUEST_DEV_ID = "Mã hồ sơ lập trình viên truyền vào không hợp lệ!";
-    public const string BAD_REQUEST_USER_NAME = "Tên người dùng truyền vào không hợp lệ!";
+    public const string BAD_REQUEST_DEV_ID = "Khóa hồ sơ lập trình viên truyền vào không hợp lệ!";
+    public const string BAD_REQUEST_USERNAME = "Tên người dùng truyền vào không hợp lệ!";
     public const string BAD_REQUEST_PASSWORD = "Mật khẩu truyền vào không hợp lệ!";
 
     public const string BUSINESS_ERROR = "Lỗi quy tắc!";
-    public const string EXIST_ID = "Mã đã tồn tại!";
+    public const string EXIST_ID = "Khóa đã tồn tại!";
     public const string EXIST_ID_CARD = "Mã định danh đã tồn tại!";
 
     public const string NOT_FOUND = "Không tìm thấy dữ liệu!";

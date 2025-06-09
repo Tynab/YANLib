@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using YANLib.Snowflake;
 using static System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption;
+using static YANLib.YANLibConsts.DbSchema;
 using static YANLib.YANLibConsts.SnowflakeId.DatacenterId;
 using static YANLib.YANLibConsts.SnowflakeId.WorkerId;
 
 namespace YANLib.Entities;
 
+[Table(nameof(DeveloperType), Schema = Sample)]
 public sealed class DeveloperType : YANLibDomainEntity<long>
 {
     public DeveloperType()

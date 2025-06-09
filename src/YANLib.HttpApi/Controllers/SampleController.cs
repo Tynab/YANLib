@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Requests;
 using YANLib.Services;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 using static System.Guid;
 using static System.Threading.Tasks.Task;
 using static YANLib.YANRandom;
@@ -24,8 +25,13 @@ public sealed class SampleController(ILogger<SampleController> logger, ISampleSe
 
     [MapToApiVersion(1)]
     [HttpGet("test")]
-    [SwaggerOperation(Summary = "Đo tốc độ xử lý JSON của thư viện YANLib và các chuẩn khác")]
-    public async Task<IActionResult> Test([Required] uint quantity = 10000, [Required] bool hideSystem = true)
+    [SwaggerOperation(
+        Summary = "Đo tốc độ xử lý JSON của thư viện YANLib và các chuẩn khác",
+        Description = "API phiên bản 1 (deprecated) - Thực hiện benchmark hiệu suất xử lý JSON với số lượng và tùy chọn hiển thị được chỉ định"
+    )]
+    [ProducesResponseType(typeof(object), Status200OK)]
+    [ProducesResponseType(Status400BadRequest)]
+    public async Task<IActionResult> Test([FromQuery][Required] uint quantity = 10000, [FromQuery][Required] bool hideSystem = true)
     {
         _logger.LogInformation("JsonTest-SampleController: {Quantity} - {HideSystem}", quantity, hideSystem);
 
@@ -34,7 +40,17 @@ public sealed class SampleController(ILogger<SampleController> logger, ISampleSe
 
     [MapToApiVersion(2)]
     [HttpGet("test")]
-    [SwaggerOperation(Summary = "Trả về dữ liệu linh hoạt")]
+    [SwaggerOperation(
+        Summary = "Trả về dữ liệu linh hoạt",
+        Description = "API phiên bản 2 - Trả về các loại dữ liệu ngẫu nhiên khác nhau (bool, char, string, short, float, NotificationRequest, hoặc List<NotificationRequest>)"
+    )]
+    [ProducesResponseType(typeof(bool), Status200OK)]
+    [ProducesResponseType(typeof(char), Status200OK)]
+    [ProducesResponseType(typeof(string), Status200OK)]
+    [ProducesResponseType(typeof(short), Status200OK)]
+    [ProducesResponseType(typeof(float), Status200OK)]
+    [ProducesResponseType(typeof(NotificationRequest), Status200OK)]
+    [ProducesResponseType(typeof(List<NotificationRequest>), Status200OK)]
     public async Task<IActionResult> TestV2() => GenerateRandom<byte>(min: 1, max: 8) switch
     {
         1 => await FromResult(Ok(GenerateRandom<bool>())),

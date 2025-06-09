@@ -32,7 +32,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     private readonly IProjectService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy danh sách chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Lấy danh sách chứng chỉ",
+        Description = "Lấy danh sách chứng chỉ với phân trang và sắp xếp"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll([FromQuery] ProjectListQuery query, CancellationToken cancellationToken = default)
@@ -47,7 +50,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
+    [SwaggerOperation(
+        Summary = "Lấy chứng chỉ theo khóa",
+        Description = "Lấy thông tin chứng chỉ theo khóa"
+    )]
     [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<DeveloperResponse>> Get([FromRoute] string id, CancellationToken cancellationToken = default)
@@ -60,7 +66,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Thêm mới chứng chỉ",
+        Description = "Tạo mới một chứng chỉ với thông tin được cung cấp"
+    )]
     [ProducesResponseType(typeof(ProjectResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Add([FromBody][Required] ProjectCreateRequest request, CancellationToken cancellationToken = default)
@@ -79,7 +88,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpPatch("{id}")]
-    [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Cập nhật chứng chỉ",
+        Description = "Cập nhật thông tin chứng chỉ theo khóa"
+    )]
     [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
@@ -93,7 +105,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpDelete("{id}")]
-    [SwaggerOperation(Summary = "Xóa chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Xóa chứng chỉ",
+        Description = "Xóa chứng chỉ theo khóa"
+    )]
     [ProducesResponseType(Status204NoContent)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] string id, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
@@ -109,12 +124,18 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     [Authorize(Roles = "GlobalRole")]
 #endif
     [HttpPost("sync-data-to-elasticsearch")]
-    [SwaggerOperation(Summary = "Đồng bộ tất cả chứng chỉ từ Database sang Elasticsearch")]
+    [SwaggerOperation(
+        Summary = "Đồng bộ tất cả chứng chỉ từ Database sang Elasticsearch",
+        Description = "Đồng bộ dữ liệu chứng chỉ từ cơ sở dữ liệu sang Elasticsearch để cải thiện hiệu suất tìm kiếm"
+    )]
     [ProducesResponseType(typeof(bool), Status200OK)]
     public async Task<IActionResult> SyncDataToElasticsearch(CancellationToken cancellationToken = default) => Ok(await _service.SyncDataToElasticsearchAsync(cancellationToken));
 
     [HttpGet("search-with-wild-card")]
-    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo ký tự đại diện trong tên hoặc mô tả")]
+    [SwaggerOperation(
+        Summary = "Tìm kiếm chứng chỉ theo ký tự đại diện trong tên hoặc mô tả",
+        Description = "Sử dụng ký tự đại diện (*) để tìm kiếm các chứng chỉ có tên hoặc mô tả phù hợp với mẫu tìm kiếm"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
     public async Task<IActionResult> SearchWithWildcard([Required] string searchText = "trend*", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
@@ -128,7 +149,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpGet("search-with-phrase-prefix")]
-    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ đầu tiên trong tên hoặc mô tả")]
+    [SwaggerOperation(
+        Summary = "Tìm kiếm chứng chỉ theo cụm từ đầu tiên trong tên hoặc mô tả",
+        Description = "Tìm kiếm các chứng chỉ có tên hoặc mô tả bắt đầu bằng cụm từ đã cho"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
     public async Task<IActionResult> SearchWithPhrasePrefix([Required] string searchText = "customer ins", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
@@ -142,7 +166,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpGet("search-with-exact-phrase")]
-    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo cụm từ chính xác trong tên hoặc mô tả")]
+    [SwaggerOperation(
+        Summary = "Tìm kiếm chứng chỉ theo cụm từ chính xác trong tên hoặc mô tả",
+        Description = "Tìm kiếm các chứng chỉ có tên hoặc mô tả chứa cụm từ chính xác đã cho"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
     public async Task<IActionResult> SearchWithExactPhrase([Required] string searchText = "trends in", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
@@ -156,7 +183,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpGet("search-with-keywords")]
-    [SwaggerOperation(Summary = "Tìm kiếm chứng chỉ theo từ khóa trong tên hoặc mô tả")]
+    [SwaggerOperation(
+        Summary = "Tìm kiếm chứng chỉ theo từ khóa trong tên hoặc mô tả",
+        Description = "Tìm kiếm các chứng chỉ có tên hoặc mô tả chứa từ khóa đã cho, hỗ trợ phân trang và sắp xếp"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
     public async Task<IActionResult> SearchWithKeywords([Required] string searchText = "trends analytics", byte pageNumber = 1, byte pageSize = 10, CancellationToken cancellationToken = default)
     {
