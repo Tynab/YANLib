@@ -69,6 +69,7 @@ public static class ElasticsearchConfiguration
                     var indexName = (mapping.Value ?? $"{indexType.Namespace?.Split('.')[0]}_{indexType.Name
                         .Replace("elasticsearchindex", string.Empty, OrdinalIgnoreCase)
                         .Replace("elasticsearch", string.Empty, OrdinalIgnoreCase)
+                        .Replace("esindex", string.Empty, OrdinalIgnoreCase)
                         .Replace("index", string.Empty, OrdinalIgnoreCase)}_index_{services.GetAbpHostEnvironment().EnvironmentName ?? "dev"}").ToLowerInvariant();
 
                     _ = typeof(ElasticsearchConfiguration).GetMethod(nameof(ConfigureDefaultMappingGeneric), NonPublic | Static)?.MakeGenericMethod(indexType)?.Invoke(null, [settings, indexName]);

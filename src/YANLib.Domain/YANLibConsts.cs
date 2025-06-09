@@ -12,7 +12,7 @@ public static class YANLibConsts
 
     public readonly struct DbSchema
     {
-        public const string Sample = "sample";
+        public const string Sample = "smp";
     }
 
     public readonly struct ConnectionStringName
@@ -43,9 +43,9 @@ public static class YANLibConsts
         public const string DeveloperPrefix = "developer";
         public const string ProjectPrefix = "project";
 
-        public static readonly string DeveloperProjectGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperPrefix}{ProjectPrefix}";
+        public const string DeveloperProjectGroupPrefix = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperPrefix}{ProjectPrefix}";
 
-        public static readonly string DeveloperTypeGroup = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}";
+        public const string DeveloperTypeGroup = $"{YanlibPrefix}:{SamplePrefix}:{DeveloperTypePrefix}";
     }
 
     public readonly struct RemoteService

@@ -2,7 +2,7 @@
 
 namespace YANLib;
 
-public class YANLibApplicationResponse<TKey>
+public class YANLibApplicationResponse<TKey> where TKey : notnull, IEquatable<TKey>
 {
     public required TKey Id { get; set; }
 

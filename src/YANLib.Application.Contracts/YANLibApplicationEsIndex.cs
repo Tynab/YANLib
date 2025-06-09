@@ -1,5 +1,4 @@
-﻿using Nest;
-using System;
+﻿using System;
 
 namespace YANLib;
 
@@ -15,6 +14,5 @@ public class YANLibApplicationEsIndex<TId>
 
     public DateTime? UpdatedAt { get; set; }
 
-    [Keyword]
     public bool IsActive { get; set; }
 }

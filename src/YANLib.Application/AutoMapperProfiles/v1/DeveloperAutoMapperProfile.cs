@@ -18,7 +18,7 @@ public sealed class DeveloperAutoMapperProfile : Profile
         _ = CreateMap<DeveloperUpdateRequest, Developer>();
 
         _ = CreateMap<Developer, DeveloperResponse>()
-            .AfterMap((s, d) =>
+            .AfterMap(static (s, d) =>
             {
                 if (d.DeveloperType.IsNull())
                 {

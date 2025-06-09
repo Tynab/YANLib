@@ -70,7 +70,7 @@ public class ProjectService(
         }
     }
 
-    public async Task<ProjectResponse?> InsertAsync(ProjectCreateRequest request, CancellationToken cancellationToken = default)
+    public async Task<ProjectResponse?> AddAsync(ProjectCreateRequest request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

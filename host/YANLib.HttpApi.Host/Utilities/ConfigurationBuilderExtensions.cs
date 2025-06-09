@@ -16,7 +16,7 @@ public static class ConfigurationBuilderExtensions
     public static async Task<IConfigurationBuilder> AddConfigFromAws(this IConfigurationBuilder configurationBuilder, string environment)
     {
         var profileName = "Tynab";
-        var secretId = $"{environment}/YANLib/appsettings";
+        var secretId = $"{environment}/{typeof(ConfigurationBuilderExtensions).Namespace?.Split('.')[0]}/appsettings";
         var profileSource = new SharedCredentialsFile();
 
         if (profileSource.TryGetProfile(profileName, out var profile) && TryGetAWSCredentials(profile, profileSource, out var credentials))

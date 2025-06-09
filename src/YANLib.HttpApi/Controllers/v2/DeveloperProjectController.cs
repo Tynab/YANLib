@@ -23,7 +23,7 @@ namespace YANLib.Controllers.v2;
 #endif
 [ApiVersion(2)]
 [ApiController]
-[Route("api/developer-projects")]
+[Route("api/[controller]")]
 public sealed class DeveloperProjectController(ILogger<DeveloperProjectController> logger, IDeveloperProjectService service) : YANLibController
 {
     private readonly ILogger<DeveloperProjectController> _logger = logger;
@@ -101,7 +101,7 @@ public sealed class DeveloperProjectController(ILogger<DeveloperProjectControlle
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> SyncDataToRedisByDeveloper([FromQuery][Required] Guid developerId, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("SyncDbToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
+        _logger.LogInformation("SyncDataToRedisByDeveloper-DeveloperProjectController: {DeveloperId}", developerId);
 
         return Ok(await _service.SyncDataToRedisByDeveloperAsync(developerId, cancellationToken));
     }

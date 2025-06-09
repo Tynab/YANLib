@@ -425,7 +425,7 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
         }
     }
 
-    private static Dictionary<string, Expression<Func<TEsIndex, object?>>> ToFieldSelectorDictionary()
+    protected static Dictionary<string, Expression<Func<TEsIndex, object?>>> ToFieldSelectorDictionary()
     {
         var fieldSelectors = new Dictionary<string, Expression<Func<TEsIndex, object?>>>();
 

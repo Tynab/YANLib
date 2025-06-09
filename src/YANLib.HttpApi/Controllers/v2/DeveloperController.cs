@@ -25,7 +25,7 @@ namespace YANLib.Controllers.v2;
 #endif
 [ApiVersion(2)]
 [ApiController]
-[Route("api/developers")]
+[Route("api/[controller]")]
 public sealed class DeveloperController(ILogger<DeveloperController> logger, IDeveloperService service) : YANLibController
 {
     private readonly ILogger<DeveloperController> _logger = logger;
@@ -76,11 +76,11 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [SwaggerOperation(Summary = "Thêm mới lập trình viên")]
     [ProducesResponseType(typeof(DeveloperResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
-    public async Task<IActionResult> Insert([FromBody][Required] DeveloperCreateRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Add([FromBody][Required] DeveloperCreateRequest request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Insert-DeveloperController: {Request}", request.Serialize());
+        _logger.LogInformation("Add-DeveloperController: {Request}", request.Serialize());
 
-        var result = await _service.InsertAsync(request, cancellationToken);
+        var result = await _service.AddAsync(request, cancellationToken);
 
         return result.IsNull()
             ? Conflict()
@@ -111,7 +111,7 @@ public sealed class DeveloperController(ILogger<DeveloperController> logger, IDe
     [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] string idCard, [FromQuery][Required] Guid updatedBy, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Delete-DeveloperTypeController: {IdCard} - {UpdatedBy}", idCard, updatedBy);
+        _logger.LogInformation("Delete-DeveloperController: {IdCard} - {UpdatedBy}", idCard, updatedBy);
 
         var result = await _service.DeleteAsync(idCard, updatedBy, cancellationToken);
 

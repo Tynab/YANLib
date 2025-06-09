@@ -5,16 +5,14 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
-using YANLib.ListQueries.v1;
 using YANLib.Requests.v1.Create;
 using YANLib.Requests.v1.Update;
 using YANLib.Responses;
 using YANLib.Services.v1;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using static Nest.SortOrder;
 
 namespace YANLib.Controllers.v1;
 
@@ -23,7 +21,7 @@ namespace YANLib.Controllers.v1;
 #endif
 [ApiVersion(1, Deprecated = true)]
 [ApiController]
-[Route("api/developer-types")]
+[Route("api/[controller]")]
 public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> logger, IDeveloperTypeService service) : YANLibController
 {
     private readonly ILogger<DeveloperTypeController> _logger = logger;
@@ -31,18 +29,9 @@ public sealed class DeveloperTypeController(ILogger<DeveloperTypeController> log
 
     [HttpGet]
     [SwaggerOperation(Summary = "Lấy tất cả định nghĩa loại lập trình viên")]
-    [ProducesResponseType(typeof(PagedResultDto<DeveloperTypeResponse>), Status200OK)]
-    [ProducesResponseType(Status400BadRequest)]
-    public async Task<ActionResult<PagedResultDto<DeveloperTypeResponse>>> GetAll([FromQuery] DeveloperTypeListQuery query)
-    {
-        _logger.LogInformation("GetAll-DeveloperTypeController: {Query}", query.Serialize());
-
-        return Ok(await _service.GetListAsync(ObjectMapper.Map<(byte PageNumber, byte PageSize, string Sorting), PagedAndSortedResultRequestDto>((
-            query.PageNumber,
-            query.PageSize,
-            $"{nameof(DeveloperTypeResponse.Name)} {Ascending},{nameof(DeveloperTypeResponse.CreatedAt)} {Descending}"
-        ))));
-    }
+    [ProducesResponseType(typeof(List<DeveloperTypeResponse>), Status200OK)]
+    [ProducesResponseType(Status204NoContent)]
+    public async Task<ActionResult<List<DeveloperTypeResponse>>> GetAll() => Ok(await _service.GetAllAsync());
 
     [HttpGet("{code:long}")]
     [SwaggerOperation(Summary = "Lấy định nghĩa loại lập trình viên theo mã")]

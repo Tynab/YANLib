@@ -17,17 +17,17 @@ public sealed class DeveloperAutoMapperProfile : Profile
         _ = CreateMap<DeveloperEsIndex, DeveloperResponse>().ReverseMap();
 
         _ = CreateMap<DeveloperCreateRequest, Developer>()
-            .ForMember(d => d.Id, o => o.MapFrom(static s => NewGuid()))
-            .ForMember(d => d.RawVersion, o => o.MapFrom(static s => 1))
-            .ForMember(d => d.CreatedAt, o => o.MapFrom(static s => UtcNow))
-            .ForMember(d => d.IsActive, o => o.MapFrom(static s => true))
-            .ForMember(d => d.IsDeleted, o => o.MapFrom(static s => false))
+            .ForMember(static d => d.Id, static o => o.MapFrom(static s => NewGuid()))
+            .ForMember(static d => d.RawVersion, static o => o.MapFrom(static s => 1))
+            .ForMember(static d => d.CreatedAt, static o => o.MapFrom(static s => UtcNow))
+            .ForMember(static d => d.IsActive, static o => o.MapFrom(static s => true))
+            .ForMember(static d => d.IsDeleted, static o => o.MapFrom(static s => false))
             .Ignore(static d => d.UpdatedBy)
             .Ignore(static d => d.UpdatedAt);
 
         _ = CreateMap<DeveloperUpdateRequest, Developer>()
-            .ForMember(d => d.UpdatedAt, o => o.MapFrom(static s => UtcNow))
-            .ForMember(d => d.IsDeleted, o => o.MapFrom(static s => false))
+            .ForMember(static d => d.UpdatedAt, static o => o.MapFrom(static s => UtcNow))
+            .ForMember(static d => d.IsDeleted, static o => o.MapFrom(static s => false))
             .Ignore(static d => d.Id)
             .Ignore(static d => d.RawVersion)
             .Ignore(static d => d.CreatedBy)

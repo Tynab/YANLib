@@ -1,7 +1,6 @@
 #if RELEASE
 using YANLib.Middlewares;
 #endif
-
 using Amazon.CloudWatch;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
@@ -157,9 +156,11 @@ public class YANLibHttpApiHostModule : AbpModule
             return;
         }
 
+        var namesapce = typeof(YANLibHttpApiHostModule).Namespace?.Split('.')[0] ?? string.Empty;
+
         _ = context.Services.AddAbpSwaggerGenWithOAuth(authority, new Dictionary<string, string>
         {
-            {"YANLib", "YANLib API"}
+            {namesapce, $"{namesapce} API"}
         }, o =>
         {
             o.OperationFilter<SwaggerDefaultValues>();
@@ -258,24 +259,24 @@ public class YANLibHttpApiHostModule : AbpModule
 
             //_ = c.UseRabbitMQ(o =>
             //{
-            //    var host = configuration["CAP:RabbitMQ:Connections:Default:HostName"];
+            //    var host = configuration["CAP:RabbitMQ:Connections:Default:HostName"] ?? string.Empty;
 
             //    o.HostName = host;
-            //    o.Port = configuration["CAP:RabbitMQ:Connections:Default:Port"].ToInt(5672);
-            //    o.VirtualHost = configuration["CAP:RabbitMQ:Connections:Default:VirtualHost"];
-            //    o.UserName = configuration["CAP:RabbitMQ:Connections:Default:Username"];
-            //    o.Password = configuration["CAP:RabbitMQ:Connections:Default:Password"];
+            //    o.Port = configuration["CAP:RabbitMQ:Connections:Default:Port"].Parse<int>(5672);
+            //    o.VirtualHost = configuration["CAP:RabbitMQ:Connections:Default:VirtualHost"] ?? string.Empty;
+            //    o.UserName = configuration["CAP:RabbitMQ:Connections:Default:Username"] ?? string.Empty;
+            //    o.Password = configuration["CAP:RabbitMQ:Connections:Default:Password"] ?? string.Empty;
 
-            //    if (configuration["CAP:RabbitMQ:Connections:Default:Ssl"].IsNotWhiteSpaceAndNull())
+            //    if (configuration["CAP:RabbitMQ:Connections:Default:Ssl"].IsNotNullWhiteSpace())
             //    {
             //        o.ConnectionFactoryOptions = f =>
             //        {
-            //            f.Ssl.Enabled = configuration["CAP:RabbitMQ:Connections:Default:Ssl:Enabled"].ToBool(true);
+            //            f.Ssl.Enabled = configuration["CAP:RabbitMQ:Connections:Default:Ssl:Enabled"].Parse<bool>(true);
             //            f.Ssl.ServerName = configuration["CAP:RabbitMQ:Connections:Default:Ssl:ServerName"] ?? host;
             //        };
             //    }
 
-            //    o.ExchangeName = configuration["CAP:RabbitMQ:EventBus:ExchangeName"];
+            //    o.ExchangeName = configuration["CAP:RabbitMQ:EventBus:ExchangeName"] ?? string.Empty;
             //});
 
             c.DefaultGroupName = configuration["Cap:DefaultGroupName"] ?? c.DefaultGroupName;
@@ -456,11 +457,8 @@ public class YANLibHttpApiHostModule : AbpModule
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.UseSwagger();
-
 #if RELEASE
-
         _ = app.UseMiddleware<SwaggerBasicAuthMiddleware>();
-
 #endif
 
         _ = app.UseAbpSwaggerUI(c =>
