@@ -1,8 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using static System.Guid;
+using static YANLib.YANLibConsts.DbSchema;
 
 namespace YANLib.Entities;
 
+[Table(nameof(Developer), Schema = Sample)]
 public sealed class Developer : YANLibDomainEntity<Guid>
 {
     public Developer() => Id = NewGuid();

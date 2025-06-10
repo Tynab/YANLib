@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using YANLib.Requests;
@@ -20,7 +18,10 @@ public sealed class AuthController(ILogger<AuthController> logger, IAuthService 
 
     [IgnoreAntiforgeryToken]
     [HttpPost("generate-token")]
-    [SwaggerOperation(Summary = "Tạo token", Description = "Tạo JWT token cho người dùng sau khi xác thực thành công")]
+    [SwaggerOperation(
+        Summary = "Tạo token",
+        Description = "Tạo JWT token cho người dùng sau khi xác thực thành công"
+    )]
     [ProducesResponseType(typeof(object), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status401Unauthorized)]

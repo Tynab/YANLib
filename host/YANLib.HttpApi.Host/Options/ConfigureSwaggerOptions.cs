@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using NUglify.Helpers;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using static System.DateTime;
 
 namespace YANLib.Options;
 
@@ -26,6 +27,10 @@ public class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IW
         if (description.IsDeprecated)
         {
             info.Description += " This API version has been deprecated.";
+        }
+        else
+        {
+            info.Description += $" Deployed At: {UtcNow:yyyy-MM-dd HH:mm:ss}";
         }
 
         return info;

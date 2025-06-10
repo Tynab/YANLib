@@ -30,7 +30,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     private readonly IProjectService _service = service;
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Lấy tất cả chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Lấy tất cả chứng chỉ",
+        Description = "Lấy danh sách chứng chỉ với phân trang và sắp xếp"
+    )]
     [ProducesResponseType(typeof(PagedResultDto<ProjectResponse>), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<ActionResult<PagedResultDto<ProjectResponse>>> GetAll([FromQuery] ProjectListQuery query)
@@ -45,7 +48,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Lấy chứng chỉ theo mã")]
+    [SwaggerOperation(
+        Summary = "Lấy chứng chỉ theo khóa",
+        Description = "Lấy thông tin chứng chỉ theo khóa"
+    )]
     [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<ActionResult<ProjectResponse>> Get([FromRoute] string id)
@@ -58,7 +64,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Thêm mới chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Thêm mới chứng chỉ",
+        Description = "Tạo mới một chứng chỉ với thông tin được cung cấp"
+    )]
     [ProducesResponseType(typeof(DeveloperResponse), Status201Created)]
     [ProducesResponseType(Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody][Required] ProjectCreateRequest request)
@@ -75,7 +84,10 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpPut("{id}")]
-    [SwaggerOperation(Summary = "Cập nhật chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Cập nhật chứng chỉ",
+        Description = "Cập nhật thông tin chứng chỉ theo khóa"
+    )]
     [ProducesResponseType(typeof(ProjectResponse), Status200OK)]
     [ProducesResponseType(Status400BadRequest)]
     [ProducesResponseType(Status404NotFound)]
@@ -89,12 +101,16 @@ public sealed class ProjectController(ILogger<ProjectController> logger, IProjec
     }
 
     [HttpDelete("{id}")]
-    [SwaggerOperation(Summary = "Xóa chứng chỉ")]
+    [SwaggerOperation(
+        Summary = "Xóa chứng chỉ",
+        Description = "Xóa chứng chỉ theo khóa"
+    )]
     [ProducesResponseType(Status204NoContent)]
     [ProducesResponseType(Status404NotFound)]
     public async Task<IActionResult> Delete(string id)
     {
         _logger.LogInformation("Delete-ProjectController: {Id}", id);
+
         await _service.DeleteAsync(id);
 
         return NoContent();
