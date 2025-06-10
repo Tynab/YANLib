@@ -1,0 +1,51 @@
+# name: PR Reviewer Assignment and Auto-Merge Setup
+
+# on:
+#   pull_request:
+#     types: [opened]
+
+# jobs:
+#   manage_pull_request:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       pull-requests: write
+#       contents: write
+#     steps:
+#       - uses: actions/github-script@v6
+#         with:
+#           script: |
+#             const reviewers = ['keannguyen1996', 'tl-haile', 'yami-nguyen'];
+#             const prAuthor = context.payload.pull_request.user.login;
+#             const filteredReviewers = reviewers.filter(reviewer => reviewer !== prAuthor);
+
+#             // Assign the PR creator as assignee
+#             await github.rest.issues.addAssignees({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               issue_number: context.payload.pull_request.number,
+#               assignees: [prAuthor]
+#             });
+
+#             // Assign reviewers if available
+#             if (filteredReviewers.length > 0) {
+#               await github.rest.pulls.requestReviewers({
+#                 owner: context.repo.owner,
+#                 repo: context.repo.repo,
+#                 pull_number: context.payload.pull_request.number,
+#                 reviewers: filteredReviewers
+#               });
+              
+#               // Enable auto-merge
+#               try {
+#                 await github.rest.pulls.enableAutomerge({
+#                   owner: context.repo.owner,
+#                   repo: context.repo.repo,
+#                   pull_number: context.payload.pull_request.number
+#                 });
+#                 console.log('Auto-merge enabled successfully');
+#               } catch (error) {
+#                 console.log('Auto-merge enablement failed:', error.message);
+#               }
+#             } else {
+#               console.log('No available reviewers after excluding PR author');
+#             }
