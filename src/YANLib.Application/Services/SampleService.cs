@@ -1,205 +1,101 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Volo.Abp.Json;
+﻿using DotNetCore.CAP;
+using EOE.CCSBE.BackgroundArgs;
+using Microsoft.Extensions.Logging;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.BackgroundJobs;
+using Volo.Abp.Security.Claims;
+using YANLib;
+using YANLib.Etos;
+using static YANLib.BaseConsts.RabbitMQTopic;
+using static YANLib.Enums.SampleType;
+using static System.TimeSpan;
+using YANLib.Entities;
 using YANLib.Responses;
-using static Newtonsoft.Json.JsonConvert;
-using static System.Guid;
-using static System.Text.Json.JsonSerializer;
-using static System.Threading.Tasks.Task;
+using YANLib.Requests;
 
 namespace YANLib.Services;
 
-public class SampleService(IJsonSerializer jsonSerializer) : YANLibAppService, ISampleService
+public class SampleService(
+    ILogger<SampleService> logger,
+    IBaseRepository<Sample> repository,
+    ICapPublisher capPublisher,
+    IBackgroundJobManager backgroundJobManager,
+    ICurrentPrincipalAccessor currentPrincipalAccessor
+) : BaseAccessorService(currentPrincipalAccessor), ISampleService
 {
-    private readonly IJsonSerializer _jsonSerializer = jsonSerializer;
-
-    public async Task<string> Test(uint quantity, bool hideSystem)
+    public async Task Send(SampleRequest request, CancellationToken cancellationToken = default)
     {
-        var json = new JsonResponse
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
         {
-            Id = NewGuid()
-        }.Serialize();
+            var eto = ObjectMapper.Map<SampleRequest, SampleEto>(request);
 
-        var jsonCamel = new JsonResponse
-        {
-            Id = NewGuid()
-        }.Serialize();
+            logger.LogInformation("Send-SampleService: {ETO}", eto.Serialize());
 
-        var newtonsoftTask = Run(() =>
-        {
-            var sw = new Stopwatch();
-
-            sw.Start();
-
-            var first = string.Empty;
-            var last = string.Empty;
-
-            for (var i = 0; i < quantity; i++)
-            {
-                var curJson = i.IsDefault() ? json : jsonCamel;
-
-                if (curJson.IsNullWhiteSpace())
-                {
-                    return default;
-                }
-
-                var dto = DeserializeObject<JsonResponse>(curJson);
-
-                if (dto.IsNull())
-                {
-                    return default;
-                }
-
-                first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
-                last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
-            }
-
-            sw.Stop();
-
-            return $"[{first} - {last}] {sw.Elapsed.TotalMilliseconds} ms";
-        });
-
-        var voloTask = Run(() =>
-        {
-            var sw = new Stopwatch();
-
-            sw.Start();
-
-            var first = string.Empty;
-            var last = string.Empty;
-
-            for (var i = 0; i < quantity; i++)
-            {
-                var curJson = i.IsDefault() ? json : jsonCamel;
-
-                if (curJson.IsNullWhiteSpace())
-                {
-                    return default;
-                }
-
-                var dto = (JsonResponse)_jsonSerializer.Deserialize(typeof(JsonResponse), curJson);
-
-                first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
-                last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
-            }
-
-            sw.Stop();
-
-            return $"[{first} - {last}] {sw.Elapsed.TotalMilliseconds} ms";
-        });
-
-        var yanTask = Run(() =>
-        {
-            var sw = new Stopwatch();
-
-            sw.Start();
-
-            var first = string.Empty;
-            var last = string.Empty;
-
-            for (var i = 0; i < quantity; i++)
-            {
-                var dto = (i.IsDefault() ? json : jsonCamel).Deserialize<JsonResponse>();
-
-                if (dto.IsNull())
-                {
-                    return default;
-                }
-
-                first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
-                last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
-            }
-
-            sw.Stop();
-
-            return $"[{first} - {last}] {sw.Elapsed.TotalMilliseconds} ms";
-        });
-
-        if (!hideSystem)
-        {
-            var textTask = Run(() =>
-            {
-                var sw = new Stopwatch();
-
-                sw.Start();
-
-                var first = string.Empty;
-                var last = string.Empty;
-
-                for (var i = 0; i < quantity; i++)
-                {
-                    var curJson = i.IsDefault() ? json : jsonCamel;
-
-                    if (curJson.IsNullWhiteSpace())
-                    {
-                        return default;
-                    }
-
-                    var dto = Deserialize<JsonResponse>(curJson);
-
-                    if (dto.IsNull())
-                    {
-                        return default;
-                    }
-
-                    first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
-                    last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
-                }
-
-                sw.Stop();
-
-                return $"[{first} - {last}] {sw.Elapsed.TotalMilliseconds} ms";
-            });
-
-            var textOptTask = Run(() =>
-            {
-                var sw = new Stopwatch();
-
-                sw.Start();
-
-                var first = string.Empty;
-                var last = string.Empty;
-
-                for (var i = 0; i < quantity; i++)
-                {
-                    var curJson = i.IsDefault() ? json : jsonCamel;
-
-                    if (curJson.IsNullWhiteSpace())
-                    {
-                        return default;
-                    }
-
-                    var jsonOpt = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var dto = Deserialize<JsonResponse>(curJson, jsonOpt);
-
-                    if (dto.IsNull())
-                    {
-                        return default;
-                    }
-
-                    first = i.IsDefault() ? dto.Id.ToString().Replace("-", string.Empty) : first;
-                    last = i == quantity - 1 ? dto.Id.ToString().Replace("-", string.Empty) : last;
-                }
-
-                sw.Stop();
-
-                return $"[{first} - {last}] {sw.Elapsed.TotalMilliseconds} ms";
-            });
-
-            _ = await WhenAll(newtonsoftTask, voloTask, textTask, textOptTask, yanTask);
-
-            return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 8.2.1:\t\t{voloTask.Result}\nSystem.Text:\t\t{textTask.Result}\nSystem.Text (option):\t{textOptTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
+            await capPublisher.PublishAsync(EOE_YANLIB_SAMPLE, eto, cancellationToken: cancellationToken);
         }
-        else
+        catch (Exception ex)
         {
-            _ = await WhenAll(newtonsoftTask, voloTask, yanTask);
+            logger.LogError(ex, "Send-SampleService-Exception: {Request}", request.Serialize());
 
-            return $"Newtonsoft 13.0.3:\t{newtonsoftTask.Result}\nVolo.Abp 8.2.1:\t\t{voloTask.Result}\nYANLib:\t\t\t{yanTask.Result}";
+            throw;
+        }
+    }
+
+    public async Task Schedule(SampleRequest request, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            var args = new SampleArgs(request.Message);
+
+            logger.LogInformation("Schedule-SampleService: {Args}", args.Serialize());
+
+            _ = await backgroundJobManager.EnqueueAsync(args, delay: FromSeconds(10));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Schedule-SampleService-Exception: {Request}", request.Serialize());
+
+            throw;
+        }
+    }
+
+    public async Task<PagedResultDto<SampleResponse>> GetList(BaseListQuery listQuery, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            var query = (await repository.GetQueryableAsync()).WhereIf(listQuery.Search.IsNullWhiteSpace(), x => x.Type == Retail);
+
+            return await CreatePagedResultAsync<Sample, SampleResponse>(query, listQuery.PagedAndSortedDto(), cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "GetList-SampleService-Exception: {ListQuery}", listQuery.Serialize());
+
+            throw;
+        }
+    }
+
+    public async Task<SampleResponse?> Get(BaseListQuery listQuery, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            var query = (await repository.GetQueryableAsync()).WhereIf(listQuery.Search.IsNullWhiteSpace(), x => x.Type == Banking);
+
+            return ObjectMapper.Map<Sample?, SampleResponse?>(await AsyncExecuter.FirstOrDefaultAsync(query, cancellationToken));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "GetList-SampleService-Exception: {ListQuery}", listQuery.Serialize());
+
+            throw;
         }
     }
 }

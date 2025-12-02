@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
+﻿using YANLib;
+using YANLib.Options;
 using static System.Convert;
-using static System.DateTime;
 using static System.Net.HttpStatusCode;
 using static System.StringSplitOptions;
 using static System.Text.Encoding;
@@ -11,9 +9,6 @@ namespace YANLib.Middlewares;
 
 public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration configuration)
 {
-    private readonly RequestDelegate _next = next;
-    private readonly IConfiguration _configuration = configuration;
-
     public async Task Invoke(HttpContext context)
     {
         if (context.Request.Path.StartsWithSegments("/swagger"))
@@ -33,7 +28,7 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
 
                 if (decoded.IsNotNullEmpty() && IsAuthorized(decoded[0], decoded[1]))
                 {
-                    await _next.Invoke(context);
+                    await next.Invoke(context);
 
                     return;
                 }
@@ -44,9 +39,14 @@ public class SwaggerBasicAuthMiddleware(RequestDelegate next, IConfiguration con
         }
         else
         {
-            await _next.Invoke(context);
+            await next.Invoke(context);
         }
     }
 
-    private bool IsAuthorized(string username, string password) => username.Equals($"{_configuration["Auth:Username"]}{Today.Day}") && password.Equals($"{_configuration["Auth:Password"]}{UtcNow.Minute}");
+    private bool IsAuthorized(string username, string password)
+    {
+        var auth = configuration.GetSection("Auth").Get<AuthOption>() ?? new();
+
+        return username.Equals(auth.Username) && password.Equals(auth.Password);
+    }
 }

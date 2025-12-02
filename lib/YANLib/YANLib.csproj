@@ -34,48 +34,25 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.3.1 - Snowflake ID Refinements &amp; Property Encapsulation Improvements
+		<PackageReleaseNotes>### YANLib 8.3.2 – Valid Field &amp; Property Validation Improvements
 
-## Snowflake ID Generator Enhancements
+* **Valid Field Utilities**
 
-- **Improved Property Encapsulation**
+  * Refined property/field-name validation helpers for sorting, filtering, and dynamic queries
+  * More predictable behavior with `null`, empty, or loosely formatted input values
 
-  - Refactored `IdGenerator` class to use auto-implemented properties for better encapsulation
-  - Changed `Sequence` property access modifier from `internal set` to `private set` for improved security
-  - Removed redundant private backing fields in favor of direct property initialization
+* **Architecture &amp; Developer Experience**
 
-- **Code Structure Optimization**
+  * Centralized validation logic for consistent behavior across the library
+  * Cleaner naming and structure to improve readability and maintainability
 
-  - Streamlined internal implementation of bit allocation properties
-  - Enhanced memory efficiency by eliminating unnecessary field duplication
-  - Improved code readability and maintainability through consistent property patterns
-
-- **Constructor Refinements**
-
-  - Optimized constructor implementation for better performance
-  - Enhanced initialization flow for predefined bit allocation strategies
-  - Maintained full backward compatibility with existing code
-
-## Architecture Improvements
-
-- Strengthened encapsulation of internal state management
-- Reduced memory footprint through elimination of redundant fields
-- Improved overall code quality and maintainability
-- Enhanced consistency across the Snowflake ID implementation
-
-## Bug Fixes
-
-- Fixed potential thread safety issues with sequence property access
-- Addressed edge cases in property initialization patterns
-- Ensured consistent behavior across all constructor overloads
-
-This maintenance release focuses on internal improvements to the Snowflake ID implementation, enhancing code quality while maintaining full compatibility with existing applications.
+This maintenance release focuses on internal improvements to property-based validation while keeping existing behavior fully compatible.
 
 See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.3.1</Version>
+		<Version>8.3.2</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>

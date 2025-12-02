@@ -1,10 +1,28 @@
 ﻿using System.Diagnostics;
 using static System.Activator;
+using static System.Reflection.BindingFlags;
+using static System.StringSplitOptions;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANObject
 {
+    #region Valid Field
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetProperty(input.Split(' ', RemoveEmptyEntries)[0], Instance | Public | IgnoreCase).IsNotNullImplement();
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AllValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.All(static x => x.IsValidFieldImplement<T>());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AnyValidFieldImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsValidFieldImplement<T>());
+
+    #endregion
+
     #region AllPropertiesDefault
 
     [DebuggerHidden]

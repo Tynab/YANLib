@@ -1,21 +1,17 @@
 ﻿using Elastic.Apm.StackExchange.Redis;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Volo.Abp;
-using YANLib.ConnectionFactories;
+using static YANLib.BaseConsts.RedisConstant;
+using static YANLib.BaseErrorCodes;
 using static System.Text.Encoding;
 using static System.Threading.Tasks.Task;
-using static YANLib.YANLibConsts.RedisConstant;
-using static YANLib.YANLibDomainErrorCodes;
+using YANLib.Services;
+using YANLib.ConnectionFactories;
 
 namespace YANLib.Services.Implements;
 
-public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto : YANLibApplicationRedisDto
+public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto : BaseRedisDto
 {
     private readonly ILogger<RedisService<TRedisDto>> _logger;
     private readonly IRedisConnectionFactory _connectionFactory;
@@ -202,7 +198,7 @@ public class RedisService<TRedisDto> : IRedisService<TRedisDto> where TRedisDto 
 
         try
         {
-            if (group.IsNullWhiteSpace() || fields.IsNullEmpty())
+            if (group.IsNullWhiteSpace() || fields.Count is 0)
             {
                 throw new BusinessException(BAD_REQUEST);
             }

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
 using System.Reflection;
-using Volo.Abp;
+using YANLib;
 using static System.AttributeTargets;
-using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.Attributes;
 
@@ -14,18 +13,14 @@ public class RedisGroupAttribute(string groupName) : Attribute
 
 public static class RedisGroupAttributeHelper
 {
-    public static string GetRedisGroup<T>() where T : class
+    private static readonly ConcurrentDictionary<Type, string> _cache = new();
+
+    public static string GetRedisGroup<T>() where T : class => GetRedisGroup(typeof(T));
+
+    public static string GetRedisGroup(Type type) => _cache.GetOrAdd(type, t =>
     {
-        var type = typeof(T);
-        var attribute = type.GetCustomAttribute<RedisGroupAttribute>();
+        var attribute = t.GetCustomAttribute<RedisGroupAttribute>();
 
-        return attribute.IsNull() ? throw new BusinessException(BUSINESS_ERROR).WithData("Error", $"Class {type.Name} must be decorated with [RedisGroup] attribute") : attribute.GroupName;
-    }
-
-    public static string GetRedisGroup(Type type)
-    {
-        var attribute = type.GetCustomAttribute<RedisGroupAttribute>();
-
-        return attribute.IsNull() ? throw new BusinessException(BUSINESS_ERROR).WithData("Error", $"Class {type.Name} must be decorated with [RedisGroup] attribute") : attribute.GroupName;
-    }
+        return attribute.IsNull() ? throw new ArgumentException($"Class {t.Name} must be decorated with [RedisGroup] attribute") : attribute.GroupName;
+    });
 }

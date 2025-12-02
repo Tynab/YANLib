@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Services;
+﻿using Volo.Abp.Application.Services;
 
 namespace YANLib.Services;
 
-public interface IRedisService<TRedisDto> : IApplicationService where TRedisDto : YANLibApplicationRedisDto
+public interface IRedisService<TRedisDto> : IApplicationService where TRedisDto : BaseRedisDto
 {
     public Task<TRedisDto?> GetAsync(string group, string key, CancellationToken cancellationToken = default);
 

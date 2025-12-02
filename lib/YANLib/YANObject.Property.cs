@@ -13,6 +13,40 @@ namespace YANLib;
 /// </remarks>
 public static partial class YANObject
 {
+    #region Valid Field
+
+    /// <summary>
+    /// Determines whether the specified string represents a valid field (property) name for type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The target type to validate the field against.</typeparam>
+    /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
+    /// <returns><c>true</c> if the string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsValidField<T>(this string? input) where T : class => input.IsValidFieldImplement<T>();
+
+    /// <summary>
+    /// Determines whether all strings in the specified sequence represent valid field (property) names for type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The target type to validate the fields against.</typeparam>
+    /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <returns><c>true</c> if every string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AllValidFields<T>(this IEnumerable<string?>? input) where T : class => input.AllValidFieldsImplement<T>();
+
+    /// <summary>
+    /// Determines whether any string in the specified sequence represents a valid field (property) name for type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The target type to validate the fields against.</typeparam>
+    /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <returns><c>true</c> if at least one string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AnyValidField<T>(this IEnumerable<string?>? input) where T : class => input.AnyValidFieldImplement<T>();
+
+    #endregion
+
     #region AllPropertiesDefault
 
     /// <summary>

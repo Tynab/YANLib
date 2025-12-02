@@ -1,7 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using NUglify.Helpers;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
 using static System.StringComparison;
 
 namespace YANLib.Filters;
