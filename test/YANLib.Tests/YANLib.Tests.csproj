@@ -29,6 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+  	<PackageReference Include="KubernetesClient" Version="17.0.14" />
 		<Using Include="Aspire.Hosting.Testing" />
 		<Using Include="Xunit" />
 	</ItemGroup>
