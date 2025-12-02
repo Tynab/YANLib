@@ -2,6 +2,175 @@
 
 public partial class YANObjectTest
 {
+    #region Valid Field
+
+    [Fact]
+    public void IsValidField_NullOrWhiteSpace_ReturnsFalse_Field()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var resultNull = input.IsValidField<TestClass>();
+
+        // Assert
+        Assert.False(resultNull);
+
+        // Arrange
+        input = "";
+        var resultEmpty = input.IsValidField<TestClass>();
+
+        // Assert
+        Assert.False(resultEmpty);
+
+        // Arrange
+        input = "   ";
+        var resultWhite = input.IsValidField<TestClass>();
+
+        // Assert
+        Assert.False(resultWhite);
+    }
+
+    [Fact]
+    public void IsValidField_ExactName_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "StringProperty";
+
+        // Act
+        var result = input.IsValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsValidField_IgnoresCaseAndUsesFirstToken_ReturnsTrue_Field()
+    {
+        // Arrange
+        var inputLower = "stringproperty";
+        var inputWithToken = "StringProperty someDescription";
+
+        // Act
+        var resultLower = inputLower.IsValidField<TestClass>();
+        var resultWithToken = inputWithToken.IsValidField<TestClass>();
+
+        // Assert
+        Assert.True(resultLower);
+        Assert.True(resultWithToken);
+    }
+
+    [Fact]
+    public void IsValidField_InvalidName_ReturnsFalse_Field()
+    {
+        // Arrange
+        var input = "NonExistingProperty";
+
+        // Act
+        var result = input.IsValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllValidFields_NullOrEmpty_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?>? inputNull = null;
+
+        // Act
+        var resultNull = inputNull.AllValidFields<TestClass>();
+
+        // Assert
+        Assert.False(resultNull);
+
+        // Arrange
+        IEnumerable<string?> inputEmpty = [];
+
+        // Act
+        var resultEmpty = inputEmpty.AllValidFields<TestClass>();
+
+        // Assert
+        Assert.False(resultEmpty);
+    }
+
+    [Fact]
+    public void AllValidFields_AllValid_ReturnsTrue_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["StringProperty", "IntProperty", "DateProperty"];
+
+        // Act
+        var result = input.AllValidFields<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllValidFields_SomeInvalid_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["StringProperty", "DoesNotExist"];
+
+        // Act
+        var result = input.AllValidFields<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyValidField_NullOrEmpty_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?>? inputNull = null;
+
+        // Act
+        var resultNull = inputNull.AnyValidField<TestClass>();
+
+        // Assert
+        Assert.False(resultNull);
+
+        // Arrange
+        IEnumerable<string?> inputEmpty = [];
+
+        // Act
+        var resultEmpty = inputEmpty.AnyValidField<TestClass>();
+
+        // Assert
+        Assert.False(resultEmpty);
+    }
+
+    [Fact]
+    public void AnyValidField_AtLeastOneValid_ReturnsTrue_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["NotExist", "StringProperty", "AlsoInvalid"];
+
+        // Act
+        var result = input.AnyValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyValidField_NoneValid_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["Foo", "Bar", "Baz"];
+
+        // Act
+        var result = input.AnyValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
     #region AllPropertiesDefault
 
     [Fact]
@@ -271,8 +440,8 @@ public partial class YANObjectTest
         // Arrange
         IEnumerable<TestClass?> input =
         [
-            new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
-            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+          new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
+      new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
         ];
 
         // Act
@@ -427,8 +596,8 @@ public partial class YANObjectTest
         // Arrange
         IEnumerable<TestClass?> input =
         [
-            new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
-            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+          new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
+      new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
         ];
 
         // Act
@@ -608,8 +777,8 @@ public partial class YANObjectTest
         // Arrange
         IEnumerable<TestClass?> input =
         [
-            new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
-            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+          new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
+      new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
         ];
 
         // Act

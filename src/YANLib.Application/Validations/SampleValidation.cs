@@ -1,23 +1,30 @@
 ﻿using FluentValidation;
-using System.Collections.Generic;
-using YANLib.Responses;
-using static YANLib.YANLibDomainErrorCodes;
+using YANLib;
+using YANLib.Requests.CreateOrUpdateRequest;
+using static YANLib.BaseErrorCodes;
 
 namespace YANLib.Validations;
 
-public sealed class SampleValidator : AbstractValidator<JsonResponse>
+public sealed class SampleValidator : AbstractValidator<SampleCreateOrUpdateRequest>
 {
-    public SampleValidator() => RuleFor(static x => x.Id).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_ID).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST_ID);
+    public SampleValidator()
+    {
+        _ = RuleFor(static x => x.Name).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST_NAME).WithMessage(BaseErrorMessages.BAD_REQUEST_NAME);
+        _ = RuleFor(static x => x.Type).IsInEnum().WithErrorCode(BAD_REQUEST_TYPE).WithMessage(BaseErrorMessages.BAD_REQUEST_TYPE).When(x => x.Type.HasValue);
+    }
 }
 
-public sealed class SampleValidators : AbstractValidator<List<JsonResponse>>
+public sealed class SampleValidators : AbstractValidator<List<SampleCreateOrUpdateRequest>>
 {
     public SampleValidators()
     {
-        _ = RuleFor(static x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
+        _ = RuleFor(static x => x).NotNull().NotEmpty().WithErrorCode(BAD_REQUEST).WithMessage(BaseErrorMessages.BAD_REQUEST);
         _ = RuleForEach(static s => s).SetValidator(new SampleValidator());
-        _ = RuleFor(static x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(YANLibDomainErrorMessages.BAD_REQUEST);
+        _ = RuleFor(static x => x).Must(IsNotEmptyAndNull).WithErrorCode(BAD_REQUEST).WithMessage(BaseErrorMessages.BAD_REQUEST);
+        _ = RuleFor(static x => x).Must(NameIsNotWhiteSpace).WithErrorCode(BAD_REQUEST_NAME).WithMessage(BaseErrorMessages.BAD_REQUEST_NAME);
     }
 
-    private bool IsNotEmptyAndNull(List<JsonResponse> requests) => requests.IsNotNullEmpty();
+    private bool IsNotEmptyAndNull(List<SampleCreateOrUpdateRequest> requests) => requests.Count is not 0;
+
+    private bool NameIsNotWhiteSpace(List<SampleCreateOrUpdateRequest> requests) => requests.Select(static x => x.Name).AllNotNullWhiteSpace();
 }

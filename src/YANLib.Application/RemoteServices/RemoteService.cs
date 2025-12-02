@@ -2,21 +2,18 @@
 using Microsoft.Extensions.Options;
 using NUglify.Helpers;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Volo.Abp.Http;
 using Volo.Abp.Http.Client;
+using YANLib;
+using static YANLib.BaseErrorCodes;
 using static Newtonsoft.Json.Linq.JObject;
 using static RestSharp.ParameterType;
 using static System.Net.HttpStatusCode;
-using static YANLib.YANLibDomainErrorCodes;
 
 namespace YANLib.RemoteServices;
 
-public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRemoteServiceOptions> remoteServiceOptions) : YANLibAppService, IRemoteService
+public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRemoteServiceOptions> remoteServiceOptions) : BaseAppService, IRemoteService
 {
-    private readonly ILogger<RemoteService> _logger = logger;
     private readonly AbpRemoteServiceOptions _remoteServiceOptions = remoteServiceOptions.Value;
 
     public async Task<T?> InvokeApi<T>(string remoteRoot, string path, Method method, Dictionary<string, string>? headers = null, string? jsonInput = null, Dictionary<string, object>? queryParams = null)
@@ -69,7 +66,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
             }
             else
             {
-                _logger.LogError("Invoke API: {PathRoot} - {Code} - {Error} - {Content}", $"{remoteRoot}{path}", response.StatusCode, response.ErrorMessage, response.Content);
+                logger.LogError("Invoke API: {PathRoot} - {Code} - {Error} - {Content}", $"{remoteRoot}{path}", response.StatusCode, response.ErrorMessage, response.Content);
 
                 if (response.Content.IsNullWhiteSpace())
                 {
@@ -98,7 +95,7 @@ public class RemoteService(ILogger<RemoteService> logger, IOptionsSnapshot<AbpRe
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "InvokeApi-RemoteService-Exception: {PathRoot} - {Method} - {JsonInput} - {QueryParams}", $"{remoteRoot}{path}", method.ToString(), jsonInput, queryParams.Serialize());
+            logger.LogError(ex, "InvokeApi-RemoteService-Exception: {PathRoot} - {Method} - {JsonInput} - {QueryParams}", $"{remoteRoot}{path}", method.ToString(), jsonInput, queryParams.Serialize());
 
             throw;
         }

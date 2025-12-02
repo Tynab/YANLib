@@ -1,23 +1,20 @@
 {
   "culture": "vi",
   "texts": {
-    "YANLib:400": "Dữ liệu truyền vào không hợp lệ!",
-    "YANLib:410": "Khóa truyền vào không hợp lệ!",
-    "YANLib:420": "Tên truyền vào không hợp lệ!",
-    "YANLib:430": "Mã định danh truyền vào không hợp lệ!",
-    "YANLib:440": "Điểm truyền vào không hợp lệ!",
-    "YANLib:450": "Khóa hồ sơ lập trình viên truyền vào không hợp lệ!",
-    "YANLib:460": "Tên người dùng truyền vào không hợp lệ!",
-    "YANLib:470": "Mật khẩu truyền vào không hợp lệ!",
-    "YANLib:403": "Lỗi quy tắc!",
-    "YANLib:413": "Khóa đã tồn tại!",
-    "YANLib:423": "Mã định danh đã tồn tại!",
-    "YANLib:404": "Không tìm thấy dữ liệu!",
-    "YANLib:434": "Không tìm thấy chứng chỉ!",
-    "YANLib:444": "Không tìm thấy chứng chỉ của lập trình viên!",
-    "YANLib:500": "Lỗi trong quá trình xử lý!",
-    "YANLib:510": "Lỗi trong quá trình xử lý SQL!",
-    "YANLib:520": "Lỗi trong quá trình xử lý Elasticsearch!",
-    "YANLib:530": "Lỗi trong quá trình xử lý Redis!"
+    "YANLib:00400": "Yêu cầu không hợp lệ!",
+    "YANLib:00410": "Id không hợp lệ!",
+    "YANLib:00420": "Tên không hợp lệ!",
+    "YANLib:00430": "Loại không hợp lệ!",
+    "YANLib:00403": "Lỗi nghiệp vụ!",
+    "YANLib:00413": "Id đã tồn tại!",
+    "YANLib:00423": "Tên đã tồn tại!",
+    "YANLib:00404": "Không tìm thấy!",
+    "YANLib:00414": "Không tìm thấy Id!",
+    "YANLib:00424": "Không tìm thấy Tên!",
+    "YANLib:00500": "Lỗi trong quá trình xử lý!",
+    "YANLib:00510": "Lỗi trong quá trình xử lý SQL!",
+    "YANLib:00520": "Lỗi trong quá trình xử lý Elasticsearch!",
+    "YANLib:00530": "Lỗi trong quá trình xử lý Redis!",
+    "YANLib:00540": "Lỗi trong quá trình xử lý Message Queue!"
   }
 }

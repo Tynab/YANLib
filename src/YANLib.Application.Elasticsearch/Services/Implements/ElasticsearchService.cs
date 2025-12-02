@@ -35,7 +35,7 @@ public class ElasticsearchService<TEsIndex, TId>(ILogger<ElasticsearchService<TE
 
             if (idField.IsNotNull())
             {
-                var property = typeof(TEsIndex).GetProperty(idField.FieldName, Public | Instance);
+                var property = typeof(TEsIndex).GetProperty(idField.FieldName, Instance | Public | IgnoreCase);
 
                 if (property.IsNotNull())
                 {

@@ -34,7 +34,7 @@ internal static partial class YANExpression
 
         Expression body;
         var parameter = Parameter(typeof(T), parameterName);
-        var propInfo = typeof(T).GetProperty(propertyName, Public | Instance);
+        var propInfo = typeof(T).GetProperty(propertyName, Instance | Public | IgnoreCase);
 
         if (propInfo.IsNotNullImplement())
         {
@@ -42,7 +42,7 @@ internal static partial class YANExpression
         }
         else
         {
-            var methodInfo = typeof(T).GetMethod(propertyName, Public | Instance, null, EmptyTypes, null);
+            var methodInfo = typeof(T).GetMethod(propertyName, Instance | Public | IgnoreCase, null, EmptyTypes, null);
 
             body = methodInfo.IsNotNullImplement() ? Constant(methodInfo.GetType(), typeof(object)) : throw new ArgumentException($"Type {typeof(T).Name} does not contain a property named '{propertyName}'.", nameof(propertyName));
         }
