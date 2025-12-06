@@ -12,7 +12,7 @@ internal static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? ParsesImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().ParsesImplement<T>();
+    internal static IEnumerable<T?>? ParsesImplement<T>(this System.Collections.IEnumerable? input) => input is null ? default : input.Cast<object?>().ParsesImplement<T>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

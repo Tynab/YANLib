@@ -2,33 +2,45 @@
 
 public partial class YANObjectTest
 {
-    #region Valid Field
+    #region ValidField
 
     [Fact]
-    public void IsValidField_NullOrWhiteSpace_ReturnsFalse_Field()
+    public void IsValidField_Null_ReturnsFalse_Field()
     {
         // Arrange
         string? input = null;
 
         // Act
-        var resultNull = input.IsValidField<TestClass>();
+        var result = input.IsValidField<TestClass>();
 
         // Assert
-        Assert.False(resultNull);
+        Assert.False(result);
+    }
 
+    [Fact]
+    public void IsValidField_Empty_ReturnsFalse_Field()
+    {
         // Arrange
-        input = "";
-        var resultEmpty = input.IsValidField<TestClass>();
+        var input = string.Empty;
+
+        // Act
+        var result = input.IsValidField<TestClass>();
 
         // Assert
-        Assert.False(resultEmpty);
+        Assert.False(result);
+    }
 
+    [Fact]
+    public void IsValidField_WhiteSpace_ReturnsFalse_Field()
+    {
         // Arrange
-        input = "   ";
-        var resultWhite = input.IsValidField<TestClass>();
+        var input = "   ";
+
+        // Act
+        var result = input.IsValidField<TestClass>();
 
         // Assert
-        Assert.False(resultWhite);
+        Assert.False(result);
     }
 
     [Fact]
@@ -45,19 +57,29 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void IsValidField_IgnoresCaseAndUsesFirstToken_ReturnsTrue_Field()
+    public void IsValidField_IgnoresCase_ReturnsTrue_Field()
     {
         // Arrange
-        var inputLower = "stringproperty";
-        var inputWithToken = "StringProperty someDescription";
+        var input = "stringproperty";
 
         // Act
-        var resultLower = inputLower.IsValidField<TestClass>();
-        var resultWithToken = inputWithToken.IsValidField<TestClass>();
+        var result = input.IsValidField<TestClass>();
 
         // Assert
-        Assert.True(resultLower);
-        Assert.True(resultWithToken);
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsValidField_UsesFirstToken_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "StringProperty someDescription";
+
+        // Act
+        var result = input.IsValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
     }
 
     [Fact]
@@ -74,25 +96,29 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AllValidFields_NullOrEmpty_ReturnsFalse_Field()
+    public void AllValidFields_Null_ReturnsFalse_Field()
     {
         // Arrange
-        IEnumerable<string?>? inputNull = null;
+        IEnumerable<string?>? input = null;
 
         // Act
-        var resultNull = inputNull.AllValidFields<TestClass>();
+        var result = input.AllValidFields<TestClass>();
 
         // Assert
-        Assert.False(resultNull);
+        Assert.False(result);
+    }
 
+    [Fact]
+    public void AllValidFields_Empty_ReturnsFalse_Field()
+    {
         // Arrange
-        IEnumerable<string?> inputEmpty = [];
+        IEnumerable<string?> input = [];
 
         // Act
-        var resultEmpty = inputEmpty.AllValidFields<TestClass>();
+        var result = input.AllValidFields<TestClass>();
 
         // Assert
-        Assert.False(resultEmpty);
+        Assert.False(result);
     }
 
     [Fact]
@@ -122,25 +148,29 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void AnyValidField_NullOrEmpty_ReturnsFalse_Field()
+    public void AnyValidField_Null_ReturnsFalse_Field()
     {
         // Arrange
-        IEnumerable<string?>? inputNull = null;
+        IEnumerable<string?>? input = null;
 
         // Act
-        var resultNull = inputNull.AnyValidField<TestClass>();
+        var result = input.AnyValidField<TestClass>();
 
         // Assert
-        Assert.False(resultNull);
+        Assert.False(result);
+    }
 
+    [Fact]
+    public void AnyValidField_Empty_ReturnsFalse_Field()
+    {
         // Arrange
-        IEnumerable<string?> inputEmpty = [];
+        IEnumerable<string?> input = [];
 
         // Act
-        var resultEmpty = inputEmpty.AnyValidField<TestClass>();
+        var result = input.AnyValidField<TestClass>();
 
         // Assert
-        Assert.False(resultEmpty);
+        Assert.False(result);
     }
 
     [Fact]
@@ -164,6 +194,205 @@ public partial class YANObjectTest
 
         // Act
         var result = input.AnyValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
+    #region NotValidField
+
+    [Fact]
+    public void IsNotValidField_Null_ReturnsFalse_Field()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotValidField_Empty_ReturnsFalse_Field()
+    {
+        // Arrange
+        var input = string.Empty;
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotValidField_WhiteSpace_ReturnsFalse_Field()
+    {
+        // Arrange
+        var input = "   ";
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotValidField_ExactName_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "StringProperties";
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotValidField_IgnoresCase_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "stringproperties";
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotValidField_UsesFirstToken_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "StringProperties someDescription";
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotValidField_ValidName_ReturnsFalse_Field()
+    {
+        // Arrange
+        var input = "StringProperty";
+
+        // Act
+        var result = input.IsNotValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotValidFields_Null_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AllNotValidFields<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotValidFields_Empty_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = [];
+
+        // Act
+        var result = input.AllNotValidFields<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotValidFields_AllNotValid_ReturnsTrue_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["StringProperties", "IntProperties", "DateProperties"];
+
+        // Act
+        var result = input.AllNotValidFields<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotValidFields_SomeInvalid_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["StringProperty", "DoesNotExist"];
+
+        // Act
+        var result = input.AllNotValidFields<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotValidField_Null_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?>? input = null;
+
+        // Act
+        var result = input.AnyNotValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotValidField_Empty_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = [];
+
+        // Act
+        var result = input.AnyNotValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyNotValidField_AtLeastOneValid_ReturnsTrue_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["NotExist", "StringProperty", "AlsoInvalid"];
+
+        // Act
+        var result = input.AnyNotValidField<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyNotValidField_NoneNotValid_ReturnsFalse_Field()
+    {
+        // Arrange
+        IEnumerable<string?> input = ["DateProperty", "StringProperty", "IntProperty"];
+
+        // Act
+        var result = input.AnyNotValidField<TestClass>();
 
         // Assert
         Assert.False(result);

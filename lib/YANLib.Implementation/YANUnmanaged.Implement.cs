@@ -79,9 +79,9 @@ internal static partial class YANUnmanaged
             return (input?.ToString() ?? default).ParseEnum((defaultValue?.ToString() ?? default).ParseEnum<T>(default));
         }
 
-        if (input.IsNullImplement())
+        if (input is null)
         {
-            if (defaultValue.IsNullImplement())
+            if (defaultValue is null)
             {
                 return default;
             }
@@ -102,7 +102,7 @@ internal static partial class YANUnmanaged
         }
         catch
         {
-            if (defaultValue.IsNullImplement())
+            if (defaultValue is null)
             {
                 return default;
             }

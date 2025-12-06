@@ -2,66 +2,6 @@
 
 public partial class YANObjectTest
 {
-    #region IsNull
-
-    [Fact]
-    public void IsNull_NullObject_ReturnsTrue_Object()
-    {
-        // Arrange
-        object? input = null;
-
-        // Act
-        var result = input.IsNull();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsNull_NonNullObject_ReturnsFalse_Object()
-    {
-        // Arrange
-        var input = new object();
-
-        // Act
-        var result = input.IsNull();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    #endregion
-
-    #region IsNotNull
-
-    [Fact]
-    public void IsNotNull_NullObject_ReturnsFalse_Object()
-    {
-        // Arrange
-        object? input = null;
-
-        // Act
-        var result = input.IsNotNull();
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsNotNull_NonNullObject_ReturnsTrue_Object()
-    {
-        // Arrange
-        var input = new object();
-
-        // Act
-        var result = input.IsNotNull();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    #endregion
-
     #region IsDefault
 
     [Fact]

@@ -12,28 +12,6 @@ namespace YANLib;
 /// </remarks>
 public static partial class YANObject
 {
-    #region Null
-
-    /// <summary>
-    /// Determines whether the specified object is <c>null</c>.
-    /// </summary>
-    /// <param name="input">The object to check.</param>
-    /// <returns><c>true</c> if the object is <c>null</c>; otherwise, <c>false</c>.</returns>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    public static bool IsNull([NotNullWhen(false)] this object? input) => input.IsNullImplement();
-
-    /// <summary>
-    /// Determines whether the specified object is not <c>null</c>.
-    /// </summary>
-    /// <param name="input">The object to check.</param>
-    /// <returns><c>true</c> if the object is not <c>null</c>; otherwise, <c>false</c>.</returns>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    public static bool IsNotNull([NotNullWhen(true)] this object? input) => input.IsNotNullImplement();
-
-    #endregion
-
     #region Default
 
     /// <summary>

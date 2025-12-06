@@ -65,5 +65,5 @@ internal static partial class YANRandom
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T> GenerateRandomsImplement<T>(this System.Collections.IEnumerable? input, object? size = null, bool allowDuplicates = true) where T : unmanaged
-        => input.IsNullImplement() ? [] : input.Cast<object?>().GenerateRandomsImplement<T>(size, allowDuplicates);
+        => input is null ? [] : input.Cast<object?>().GenerateRandomsImplement<T>(size, allowDuplicates);
 }
