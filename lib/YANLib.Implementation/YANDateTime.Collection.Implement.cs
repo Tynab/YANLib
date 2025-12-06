@@ -13,7 +13,7 @@ internal static partial class YANDateTime
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<T?>? GetWeekOfYearsImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? default : input.Cast<object?>().GetWeekOfYearsImplement<T>();
+    internal static IEnumerable<T?>? GetWeekOfYearsImplement<T>(this System.Collections.IEnumerable? input) => input is null ? default : input.Cast<object?>().GetWeekOfYearsImplement<T>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

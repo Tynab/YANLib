@@ -13,7 +13,7 @@ namespace YANLib;
 /// </remarks>
 public static partial class YANObject
 {
-    #region Valid Field
+    #region ValidField
 
     /// <summary>
     /// Determines whether the specified string represents a valid field (property) name for type <typeparamref name="T"/>.
@@ -44,6 +44,40 @@ public static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyValidField<T>(this IEnumerable<string?>? input) where T : class => input.AnyValidFieldImplement<T>();
+
+    #endregion
+
+    #region NotValidField
+
+    /// <summary>
+    /// Determines whether the specified string does not represent a valid field (property) name for type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The target type to validate the field against.</typeparam>
+    /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
+    /// <returns><c>true</c> if the string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNotValidField<T>(this string? input) where T : class => input.IsNotValidFieldImplement<T>();
+
+    /// <summary>
+    /// Determines whether all strings in the specified sequence do not represent valid field (property) names for type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The target type to validate the fields against.</typeparam>
+    /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <returns><c>true</c> if every string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AllNotValidFields<T>(this IEnumerable<string?>? input) where T : class => input.AllNotValidFieldsImplement<T>();
+
+    /// <summary>
+    /// Determines whether any string in the specified sequence does not represent a valid field (property) name for type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The target type to validate the fields against.</typeparam>
+    /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <returns><c>true</c> if at least one string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AnyNotValidField<T>(this IEnumerable<string?>? input) where T : class => input.AnyNotValidFieldImplement<T>();
 
     #endregion
 

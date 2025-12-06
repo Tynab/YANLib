@@ -7,19 +7,35 @@ namespace YANLib.Implementation;
 
 internal static partial class YANObject
 {
-    #region Valid Field
+    #region ValidField
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool IsValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetProperty(input.Split(' ', RemoveEmptyEntries)[0], Instance | Public | IgnoreCase).IsNotNullImplement();
+    public static bool IsValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetProperty(input.Split(' ', RemoveEmptyEntries)[0], Instance | Public | IgnoreCase) is not null;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.All(static x => x.IsValidFieldImplement<T>());
+    public static bool AllValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNotValidFieldImplement<T>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyValidFieldImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsValidFieldImplement<T>());
+
+    #endregion
+
+    #region NotValidField
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNotValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetProperty(input.Split(' ', RemoveEmptyEntries)[0], Instance | Public | IgnoreCase) is null;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AllNotValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsValidFieldImplement<T>());
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool AnyNotValidFieldImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.Any(static x => x.IsNotValidFieldImplement<T>());
 
     #endregion
 
@@ -29,7 +45,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AllPropertiesDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNullImplement())
+        if (input is null)
         {
             return default;
         }
@@ -57,7 +73,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AllPropertiesDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
+        if (input is null || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -90,7 +106,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AllPropertiesNotDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNullImplement())
+        if (input is null)
         {
             return default;
         }
@@ -118,7 +134,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AllPropertiesNotDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
+        if (input is null || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -156,7 +172,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AnyPropertiesDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNullImplement())
+        if (input is null)
         {
             return default;
         }
@@ -184,7 +200,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AnyPropertiesDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
+        if (input is null || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }
@@ -216,7 +232,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AnyPropertiesNotDefaultImplement<T>(this T? input) where T : class
     {
-        if (input.IsNullImplement())
+        if (input is null)
         {
             return default;
         }
@@ -244,7 +260,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static bool AnyPropertiesNotDefaultImplement<T>(this T? input, IEnumerable<string?>? names) where T : class
     {
-        if (input.IsNullImplement() || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
+        if (input is null || names.IsNullEmptyImplement() || names.AllNullWhiteSpaceImplement())
         {
             return false;
         }

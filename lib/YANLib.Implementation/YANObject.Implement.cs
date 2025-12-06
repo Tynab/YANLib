@@ -35,18 +35,6 @@ internal static partial class YANObject
 
     #endregion
 
-    #region Null
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNullImplement([NotNullWhen(false)] this object? input) => input is null;
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static bool IsNotNullImplement([NotNullWhen(true)] this object? input) => input is not null;
-
-    #endregion
-
     #region Default
 
     [DebuggerHidden]
@@ -63,11 +51,11 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNullDefaultImplement<T>(this T? input) where T : class => input.IsNullImplement() || input.AllPropertiesDefaultImplement();
+    internal static bool IsNullDefaultImplement<T>(this T? input) where T : class => input is null || input.AllPropertiesDefaultImplement();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullDefaultImplement<T>(this T? input) where T : class => input.IsNotNullImplement() && input.AnyPropertiesNotDefaultImplement();
+    internal static bool IsNotNullDefaultImplement<T>(this T? input) where T : class => input is not null && input.AnyPropertiesNotDefaultImplement();
 
     #endregion
 
@@ -75,11 +63,11 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNullEmptyImplement<T>([NotNullWhen(false)] this IEnumerable<T>? input) => input.IsNullImplement() || !input.Any();
+    internal static bool IsNullEmptyImplement<T>([NotNullWhen(false)] this IEnumerable<T>? input) => input is null || !input.Any();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input.IsNotNullImplement() && input.Any();
+    internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input is not null && input.Any();
 
     #endregion
 
@@ -87,7 +75,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static T? ChangeTimeZoneAllPropertyImplement<T>(this T? input, object? tzSrc = null, object? tzDst = null) where T : class
     {
-        if (input.IsNullImplement())
+        if (input is null)
         {
             return input;
         }
@@ -106,11 +94,11 @@ internal static partial class YANObject
         {
             for (var i = 0; i < list.Count; i++)
             {
-                if (list[i].IsNotNullImplement())
+                if (list[i] is not null)
                 {
                     var updated = list[i].ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
 
-                    if (updated.IsNotNullImplement())
+                    if (updated is not null)
                     {
                         list[i] = updated;
                     }
@@ -124,14 +112,14 @@ internal static partial class YANObject
 
         foreach (var prop in props)
         {
-            if (prop.IsNullImplement())
+            if (prop is null)
             {
                 continue;
             }
 
             var val = prop.GetValue(input);
 
-            if (val.IsNullImplement())
+            if (val is null)
             {
                 continue;
             }
@@ -144,7 +132,7 @@ internal static partial class YANObject
             {
                 var updated = val.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
 
-                if (updated.IsNotNullImplement())
+                if (updated is not null)
                 {
                     prop.SetValue(input, updated);
                 }
@@ -158,7 +146,7 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static T CopyImplement<T>(this T input) where T : new()
     {
-        if (input.IsNullImplement())
+        if (input is null)
         {
             return input;
         }

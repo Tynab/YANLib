@@ -10,7 +10,7 @@ internal static partial class YANUnmanaged
     [DebuggerStepThrough]
     internal static T? ParseImplement<T>(this object? input)
     {
-        return input.IsNullImplement()
+        return input is null
             ? default
             : typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>) && GetUnderlyingType(typeof(T)) is Type enumUnderlying && enumUnderlying.IsEnum
             ? Enum.TryParse(enumUnderlying, input.ToString(), true, out var enumResult) ? (T?)enumResult : default

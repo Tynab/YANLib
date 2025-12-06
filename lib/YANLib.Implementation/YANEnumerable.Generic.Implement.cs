@@ -7,27 +7,27 @@ internal static partial class YANEnumerable
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T[] ToArrayImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input is Array x ? x : input.ToArray()).ParsesImplement<T>()!];
+    internal static T?[] ToArrayImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input is Array x ? x : input.ToArray()).ParsesImplement<T?>() ?? Enumerable.Empty<T?>()];
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T[] ToArrayImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? [] : [.. (input is Array x ? x : input.Cast<object?>().ToArray()).ParsesImplement<T>()!];
+    internal static T?[] ToArrayImplement<T>(this System.Collections.IEnumerable? input) => input is null ? [] : [.. (input is Array x ? x : input.Cast<object?>().ToArray()).ParsesImplement<T?>() ?? Enumerable.Empty<T?>()];
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static List<T> ToListImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input as List<object?> ?? [.. input]).ParsesImplement<T>()!];
+    internal static List<T?> ToListImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input as List<object?> ?? [.. input]).ParsesImplement<T?>() ?? Enumerable.Empty<T?>()];
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static List<T> ToListImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? [] : [.. (input as List<object?> ?? [.. input.Cast<object?>()]).ParsesImplement<T>()!];
+    internal static List<T?> ToListImplement<T>(this System.Collections.IEnumerable? input) => input is null ? [] : [.. (input as List<object?> ?? [.. input.Cast<object?>()]).ParsesImplement<T?>() ?? Enumerable.Empty<T?>()];
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static HashSet<T> ToHashSetImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input as HashSet<object?> ?? [.. input]).ParsesImplement<T>()!];
+    internal static HashSet<T?> ToHashSetImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input as HashSet<object?> ?? [.. input]).ParsesImplement<T?>() ?? Enumerable.Empty<T?>()];
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static HashSet<T> ToHashSetImplement<T>(this System.Collections.IEnumerable? input) => input.IsNullImplement() ? [] : [.. (input as HashSet<object?> ?? [.. input.Cast<object?>()]).ParsesImplement<T>()!];
+    internal static HashSet<T?> ToHashSetImplement<T>(this System.Collections.IEnumerable? input) => input is null ? [] : [.. (input as HashSet<object?> ?? [.. input.Cast<object?>()]).ParsesImplement<T?>() ?? Enumerable.Empty<T?>()];
 
     [DebuggerHidden]
     [DebuggerStepThrough]

@@ -34,9 +34,9 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.3.2 – Valid Field &amp; Property Validation Improvements
+		<PackageReleaseNotes>### YANLib 8.3.3 – Not Valid Field &amp; Property Validation Improvements
 
-* **Valid Field Utilities**
+* **Not Valid Field Utilities**
 
   * Refined property/field-name validation helpers for sorting, filtering, and dynamic queries
   * More predictable behavior with `null`, empty, or loosely formatted input values
@@ -52,7 +52,7 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.3.2</Version>
+		<Version>8.3.3</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>

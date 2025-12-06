@@ -12,7 +12,7 @@ internal static class YANTaskTestExtensions
 
     private static async IAsyncEnumerable<T> ConvertToAsyncEnumerable<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        if (tasks.IsNull())
+        if (tasks is null)
         {
             yield break;
         }

@@ -31,8 +31,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static byte NextByteImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? byte.MinValue : min.ParseImplement<byte>();
-        var maxValue = max.IsNullImplement() ? byte.MaxValue : max.ParseImplement<byte>();
+        var minValue = min is null ? byte.MinValue : min.ParseImplement<byte>();
+        var maxValue = max is null ? byte.MaxValue : max.ParseImplement<byte>();
 
         return minValue > maxValue ? default : random.Next(minValue, maxValue).ParseImplement<byte>();
     }
@@ -41,8 +41,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static sbyte NextSbyteImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? sbyte.MinValue : min.ParseImplement<sbyte>();
-        var maxValue = max.IsNullImplement() ? sbyte.MaxValue : max.ParseImplement<sbyte>();
+        var minValue = min is null ? sbyte.MinValue : min.ParseImplement<sbyte>();
+        var maxValue = max is null ? sbyte.MaxValue : max.ParseImplement<sbyte>();
 
         return minValue > maxValue ? default : random.Next(minValue, maxValue).ParseImplement<sbyte>();
     }
@@ -51,8 +51,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static short NextShortImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? short.MinValue : min.ParseImplement<short>();
-        var maxValue = max.IsNullImplement() ? short.MaxValue : max.ParseImplement<short>();
+        var minValue = min is null ? short.MinValue : min.ParseImplement<short>();
+        var maxValue = max is null ? short.MaxValue : max.ParseImplement<short>();
 
         return minValue > maxValue ? default : random.Next(minValue, maxValue).ParseImplement<short>();
     }
@@ -61,8 +61,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static ushort NextUshortImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? ushort.MinValue : min.ParseImplement<ushort>();
-        var maxValue = max.IsNullImplement() ? ushort.MaxValue : max.ParseImplement<ushort>();
+        var minValue = min is null ? ushort.MinValue : min.ParseImplement<ushort>();
+        var maxValue = max is null ? ushort.MaxValue : max.ParseImplement<ushort>();
 
         return minValue > maxValue ? default : random.Next(minValue, maxValue).ParseImplement<ushort>();
     }
@@ -71,8 +71,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static int NextIntImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? int.MinValue : min.ParseImplement<int>();
-        var maxValue = max.IsNullImplement() ? int.MaxValue : max.ParseImplement<int>();
+        var minValue = min is null ? int.MinValue : min.ParseImplement<int>();
+        var maxValue = max is null ? int.MaxValue : max.ParseImplement<int>();
 
         return minValue > maxValue ? default : random.Next(minValue, maxValue);
     }
@@ -81,8 +81,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static uint NextUintImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? uint.MinValue : min.ParseImplement<uint>();
-        var maxValue = max.IsNullImplement() ? uint.MaxValue : max.ParseImplement<uint>();
+        var minValue = min is null ? uint.MinValue : min.ParseImplement<uint>();
+        var maxValue = max is null ? uint.MaxValue : max.ParseImplement<uint>();
 
         return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).ParseImplement<uint>();
     }
@@ -91,8 +91,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static long NextLongImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? long.MinValue : min.ParseImplement<long>();
-        var maxValue = max.IsNullImplement() ? long.MaxValue : max.ParseImplement<long>();
+        var minValue = min is null ? long.MinValue : min.ParseImplement<long>();
+        var maxValue = max is null ? long.MaxValue : max.ParseImplement<long>();
 
         return minValue > maxValue ? default : random.NextInt64(minValue, maxValue);
     }
@@ -101,8 +101,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static ulong NextUlongImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? ulong.MinValue : min.ParseImplement<ulong>();
-        var maxValue = max.IsNullImplement() ? ulong.MaxValue : max.ParseImplement<ulong>();
+        var minValue = min is null ? ulong.MinValue : min.ParseImplement<ulong>();
+        var maxValue = max is null ? ulong.MaxValue : max.ParseImplement<ulong>();
 
         if (minValue > maxValue)
         {
@@ -125,8 +125,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static nint NextNintImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? nint.MinValue : min.ParseImplement<nint>();
-        var maxValue = max.IsNullImplement() ? nint.MaxValue : max.ParseImplement<nint>();
+        var minValue = min is null ? nint.MinValue : min.ParseImplement<nint>();
+        var maxValue = max is null ? nint.MaxValue : max.ParseImplement<nint>();
 
         return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).ParseImplement<nint>();
     }
@@ -135,8 +135,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static nuint NextNuintImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? nuint.MinValue : min.ParseImplement<nuint>();
-        var maxValue = max.IsNullImplement() ? nuint.MaxValue : max.ParseImplement<nuint>();
+        var minValue = min is null ? nuint.MinValue : min.ParseImplement<nuint>();
+        var maxValue = max is null ? nuint.MaxValue : max.ParseImplement<nuint>();
 
         return minValue > maxValue ? default : (random.NextInt64(nint.MinValue, (long)(maxValue - (minValue - (BigInteger)nint.MinValue))) - nint.MinValue).ParseImplement<nuint>() + minValue;
     }
@@ -145,8 +145,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static float NextSingleImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? float.MinValue / 100 : min.ParseImplement<float>();
-        var maxValue = max.IsNullImplement() ? float.MaxValue / 100 : max.ParseImplement<float>();
+        var minValue = min is null ? float.MinValue / 100 : min.ParseImplement<float>();
+        var maxValue = max is null ? float.MaxValue / 100 : max.ParseImplement<float>();
 
         return minValue < maxValue ? random.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
@@ -155,8 +155,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static double NextDoubleImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? double.MinValue / 100 : min.ParseImplement<double>();
-        var maxValue = max.IsNullImplement() ? double.MaxValue / 100 : max.ParseImplement<double>();
+        var minValue = min is null ? double.MinValue / 100 : min.ParseImplement<double>();
+        var maxValue = max is null ? double.MaxValue / 100 : max.ParseImplement<double>();
 
         return minValue < maxValue ? random.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
@@ -165,8 +165,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static decimal NextDecimalImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? decimal.MinValue / 100 : min.ParseImplement<decimal>();
-        var maxValue = max.IsNullImplement() ? decimal.MaxValue / 100 : max.ParseImplement<decimal>();
+        var minValue = min is null ? decimal.MinValue / 100 : min.ParseImplement<decimal>();
+        var maxValue = max is null ? decimal.MaxValue / 100 : max.ParseImplement<decimal>();
 
         return minValue < maxValue ? random.NextDecimalImplement() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
     }
@@ -175,8 +175,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static DateTime NextDateTimeImplement(this Random random, object? min = null, object? max = null)
     {
-        var minValue = min.IsNullImplement() ? DateTime.MinValue : min.ParseImplement<DateTime>();
-        var maxValue = max.IsNullImplement() ? DateTime.MaxValue : max.ParseImplement<DateTime>();
+        var minValue = min is null ? DateTime.MinValue : min.ParseImplement<DateTime>();
+        var maxValue = max is null ? DateTime.MaxValue : max.ParseImplement<DateTime>();
 
         return minValue > maxValue ? default : minValue.AddTicks(random.NextUlongImplement(max: (maxValue - minValue).Ticks).ParseImplement<long>());
     }
