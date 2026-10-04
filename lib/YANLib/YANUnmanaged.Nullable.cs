@@ -22,6 +22,7 @@ public static partial class YANUnmanaged
     /// <remarks>
     /// This method supports parsing to various types including strings, numeric types, <see cref="DateTime"/>, <see cref="Guid"/>, and enums.
     /// Unlike the non-nullable version, this method returns <c>null</c> instead of a default value when parsing fails.
+    /// For non-nullable integral types (including <c>nint</c> and <c>nuint</c>), fractional numeric strings are rounded down, other fractional numbers are rounded to the nearest integer (ties to even), and input outside the range of <typeparamref name="T"/> returns the default value.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

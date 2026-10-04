@@ -265,5 +265,99 @@ public partial class YANUnmanagedTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public void Parse_OverflowingIntString_ReturnsDefault_Nullable()
+    {
+        // Arrange
+        object input = "3000000000";
+
+        // Act
+        var result = input.Parse<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Parse_NegativeStringToUint_ReturnsDefault_Nullable()
+    {
+        // Arrange
+        object input = "-1";
+
+        // Act
+        var result = input.Parse<uint>();
+
+        // Assert
+        Assert.Equal(0u, result);
+    }
+
+    [Fact]
+    public void Parse_FractionalStringToInt_ReturnsFloor_Nullable()
+    {
+        // Arrange
+        object positiveInput = "3.7";
+        object negativeInput = "-3.5";
+
+        // Act
+        var positiveResult = positiveInput.Parse<int>();
+        var negativeResult = negativeInput.Parse<int>();
+
+        // Assert
+        Assert.Equal(3, positiveResult);
+        Assert.Equal(-4, negativeResult);
+    }
+
+    [Fact]
+    public void Parse_LargeFractionalStringToLong_ReturnsExactFloor_Nullable()
+    {
+        // Arrange
+        object input = "9007199254740993.5";
+
+        // Act
+        var result = input.Parse<long>();
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
+    }
+
+    [Fact]
+    public void Parse_StringToNint_ReturnsValue_Nullable()
+    {
+        // Arrange
+        object input = "123";
+
+        // Act
+        var result = input.Parse<nint>();
+
+        // Assert
+        Assert.Equal((nint)123, result);
+    }
+
+    [Fact]
+    public void Parse_StringToNuint_ReturnsValue_Nullable()
+    {
+        // Arrange
+        object input = "123";
+
+        // Act
+        var result = input.Parse<nuint>();
+
+        // Assert
+        Assert.Equal((nuint)123, result);
+    }
+
+    [Fact]
+    public void Parse_NintToLong_ReturnsValue_Nullable()
+    {
+        // Arrange
+        object input = (nint)42;
+
+        // Act
+        var result = input.Parse<long>();
+
+        // Assert
+        Assert.Equal(42L, result);
+    }
+
     #endregion
 }

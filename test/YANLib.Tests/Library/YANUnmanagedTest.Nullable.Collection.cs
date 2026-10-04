@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace YANLib.Tests.Library;
 
@@ -603,6 +605,41 @@ public partial class YANUnmanagedTest
                 Assert.Contains($"Value{i}-{j}", group);
             }
         }
+    }
+
+    [Fact]
+    public void UnderlyingTypeCache_IsConcurrentDictionary_NullableCollection()
+    {
+        // Arrange
+        var type = Type.GetType("YANLib.Implementation.YANUnmanaged, YANLib.Implementation");
+
+        // Act
+        var field = type?.GetField("UnderlyingTypeCache", BindingFlags.NonPublic | BindingFlags.Static);
+
+        // Assert
+        Assert.NotNull(field);
+        Assert.Equal(typeof(ConcurrentDictionary<,>), field.FieldType.GetGenericTypeDefinition());
+    }
+
+    [Fact]
+    public void Parses_ManyNullableTypesInParallel_ReturnsCorrectValues_NullableCollection()
+    {
+        // Arrange
+        var size = 10_000;
+
+        // Act
+        var exception = Record.Exception(() => Parallel.For(0, size, static i =>
+        {
+            var input = i.ToString();
+
+            Assert.Equal(i, input.Parse<int?>());
+            Assert.Equal(i, input.Parse<long?>());
+            Assert.Equal(i, input.Parse<double?>());
+            Assert.Equal((ushort)(i % 1_000), (i % 1_000).ToString().Parse<ushort?>());
+        }));
+
+        // Assert
+        Assert.Null(exception);
     }
 
     #endregion

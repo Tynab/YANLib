@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using static System.Convert;
 using static System.DateTime;
 using static System.Globalization.CultureInfo;
@@ -9,7 +10,7 @@ namespace YANLib.Implementation;
 
 internal static partial class YANUnmanaged
 {
-    private static readonly Dictionary<Type, Type?> UnderlyingTypeCache = [];
+    private static readonly ConcurrentDictionary<Type, Type?> UnderlyingTypeCache = new();
 
     #region Private
 
@@ -88,7 +89,7 @@ internal static partial class YANUnmanaged
 
             try
             {
-                return ChangeType(defaultValue, typeof(T)).ParseImplement<T>();
+                return ChangeTypeCore(defaultValue, typeof(T)).ParseImplement<T>();
             }
             catch
             {
@@ -98,7 +99,7 @@ internal static partial class YANUnmanaged
 
         try
         {
-            return ChangeType(input, typeof(T)).ParseImplement<T>();
+            return ChangeTypeCore(input, typeof(T)).ParseImplement<T>();
         }
         catch
         {
@@ -109,7 +110,7 @@ internal static partial class YANUnmanaged
 
             try
             {
-                return ChangeType(defaultValue, typeof(T)).ParseImplement<T>();
+                return ChangeTypeCore(defaultValue, typeof(T)).ParseImplement<T>();
             }
             catch
             {
@@ -120,15 +121,24 @@ internal static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Type? GetUnderlyingTypeCached(Type type)
-    {
-        if (!UnderlyingTypeCache.TryGetValue(type, out var underlyingType))
-        {
-            underlyingType = GetUnderlyingType(type);
-            UnderlyingTypeCache[type] = underlyingType;
-        }
+    private static Type? GetUnderlyingTypeCached(Type type) => UnderlyingTypeCache.GetOrAdd(type, static t => GetUnderlyingType(t));
 
-        return underlyingType;
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static object? ChangeTypeCore(object input, Type targetType)
+    {
+        input = input switch
+        {
+            nint n => (long)n,
+            nuint n => (ulong)n,
+            _ => input
+        };
+
+        return targetType == typeof(nint)
+            ? checked((nint)ToInt64(input))
+            : targetType == typeof(nuint)
+            ? checked((nuint)ToUInt64(input))
+            : ChangeType(input, targetType);
     }
 
     #endregion

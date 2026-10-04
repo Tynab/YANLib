@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.Convert;
 using static System.Nullable;
 
 namespace YANLib.Implementation;
@@ -27,7 +26,7 @@ internal static partial class YANUnmanaged
                 _ => GetUnderlyingTypeCached(typeof(T)) is Type underlyingType ? ChangeTypeOrDefault(input, underlyingType) : ChangeTypeOrDefault(input, typeof(T))
             };
 
-        static T? ChangeTypeOrDefault(object input, Type targetType)
+        static T? ChangeTypeOrDefault(object input, Type targetType, bool retry = true)
         {
             try
             {
@@ -36,11 +35,11 @@ internal static partial class YANUnmanaged
                     input = input.ToString()!;
                 }
 
-                return (T?)ChangeType(input, targetType);
+                return (T?)ChangeTypeCore(input, targetType);
             }
             catch
             {
-                return typeof(T) == typeof(byte)
+                return retry && (typeof(T) == typeof(byte)
                     || typeof(T) == typeof(sbyte)
                     || typeof(T) == typeof(short)
                     || typeof(T) == typeof(ushort)
@@ -49,8 +48,8 @@ internal static partial class YANUnmanaged
                     || typeof(T) == typeof(long)
                     || typeof(T) == typeof(ulong)
                     || typeof(T) == typeof(nint)
-                    || typeof(T) == typeof(nuint)
-                    ? input.ParseImplement<decimal>(default).FloorImplement().ParseImplement<T>()
+                    || typeof(T) == typeof(nuint))
+                    ? ChangeTypeOrDefault(decimal.Floor(input.ParseImplement<decimal>(default)), targetType, false)
                     : default;
             }
         }

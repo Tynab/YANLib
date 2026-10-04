@@ -22,7 +22,7 @@ public static partial class YANUnmanaged
     /// <param name="format">The format strings to use for parsing. Used primarily for <see cref="DateTime"/> parsing.</param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
     /// <remarks>
-    /// This method supports parsing to various unmanaged types including numeric types, <see cref="DateTime"/>, <see cref="Guid"/>, and enums.
+    /// This method supports parsing to various unmanaged types including numeric types (also <c>nint</c> and <c>nuint</c>), <see cref="DateTime"/>, <see cref="Guid"/>, and enums.
     /// If the input cannot be parsed to the specified type, the method will return the provided default value or the type's default value.
     /// </remarks>
     [DebuggerHidden]

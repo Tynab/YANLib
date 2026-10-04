@@ -48,6 +48,18 @@ int result = input.Parse<int>(); // Returns 123
 object invalidInput = "not a number";
 int resultWithDefault = invalidInput.Parse<int>(42); // Returns 42
 
+// Without a default value, fractional numeric strings are rounded down for integral types
+object fractionalInput = "-3.5";
+int flooredResult = fractionalInput.Parse<int>(); // Returns -4
+
+// Out-of-range input returns the default value
+object outOfRangeInput = "3000000000";
+int outOfRangeResult = outOfRangeInput.Parse<int>(); // Returns 0
+
+// Parse to native-sized integers
+object nativeInput = "123";
+nint nativeResult = nativeInput.Parse<nint>(); // Returns 123
+
 // Parse to DateTime
 object dateInput = "2023-06-15";
 DateTime dateResult = dateInput.Parse<DateTime>(); // Returns DateTime(2023, 6, 15)
@@ -161,7 +173,7 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 
 ## Performance Considerations
 
-- The library uses caching for type reflection to improve performance
+- The library uses a thread-safe cache for type reflection to improve performance
 - For large collections (>1000 items), parallel processing is automatically used
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 - Type conversion is optimized for common scenarios
@@ -182,7 +194,7 @@ The library provides comprehensive coverage of type conversion operations:
 
 | Category | Functions |
 |----------|-----------|
-| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<float>, Parse<double>, Parse<decimal> |
+| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<nint>, Parse<nuint>, Parse<float>, Parse<double>, Parse<decimal> |
 | **Other Value Types** | Parse<bool>, Parse<char>, Parse<DateTime>, Parse<DateTimeOffset>, Parse<TimeSpan>, Parse<Guid> |
 | **Enum Types** | Parse<TEnum> where TEnum : struct, Enum |
 | **Nullable Types** | Parse<T?> where T : struct |

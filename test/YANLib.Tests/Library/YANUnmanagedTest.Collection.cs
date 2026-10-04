@@ -362,7 +362,7 @@ public partial class YANUnmanagedTest
         Assert.Equal(3, result.Count);
         Assert.Equal("Value1", result[1]);
         Assert.Equal("Value2", result[2]);
-        Assert.Equal("Value3", result[4]);
+        Assert.Equal("Value3", result[3]);
     }
 
     [Fact]

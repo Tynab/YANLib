@@ -691,6 +691,19 @@ public partial class YANMathTest
         Assert.Equal(8.0, result);
     }
 
+    [Fact]
+    public void Pow_IntOverflow_DoesNotCrash_Math()
+    {
+        // Arrange
+        var input = 2;
+
+        // Act
+        var exception = Record.Exception(() => input.Pow(31));
+
+        // Assert
+        Assert.Null(exception);
+    }
+
     #endregion
 
     #region Abs
@@ -758,6 +771,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(5.0, result);
+    }
+
+    [Fact]
+    public void Abs_LongMaxValue_DoesNotCrash_Math()
+    {
+        // Arrange
+        var input = long.MaxValue;
+
+        // Act
+        var exception = Record.Exception(() => input.Abs());
+
+        // Assert
+        Assert.Null(exception);
     }
 
     #endregion

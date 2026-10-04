@@ -237,5 +237,18 @@ public partial class YANUnmanagedTest
         Assert.Equal(defaultValue, result);
     }
 
+    [Fact]
+    public void Parse_StringToNintWithDefault_ReturnsValue()
+    {
+        // Arrange
+        object input = "123";
+
+        // Act
+        var result = input.Parse<nint>(0);
+
+        // Assert
+        Assert.Equal((nint)123, result);
+    }
+
     #endregion
 }

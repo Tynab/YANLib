@@ -64,6 +64,19 @@ public partial class YANRandomTest
     }
 
     [Fact]
+    public void GenerateRandoms_NegativeSize_ReturnsEmptyCollection_RandomCollection()
+    {
+        // Arrange
+        var size = -1;
+
+        // Act
+        var result = YANRandom.GenerateRandoms<int>(size: size).ToList();
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
     public void GenerateRandoms_LargeSize_UsesParallelProcessing_RandomCollection()
     {
         // Arrange
