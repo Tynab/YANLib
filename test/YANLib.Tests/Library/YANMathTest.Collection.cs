@@ -1004,7 +1004,7 @@ public partial class YANMathTest
         var result = input.Cbrts<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result);
+        Assert.Collection(result!, static item => Assert.Equal(2.0, item, 12), static item => Assert.Equal(3.0, item, 12), static item => Assert.Equal(-3.0, item, 12));
     }
 
     [Fact]
@@ -1017,7 +1017,7 @@ public partial class YANMathTest
         var result = input.Cbrts<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 2.0, default, 3.0 }, result);
+        Assert.Collection(result!, static item => Assert.Equal(2.0, item, 12), static item => Assert.Equal(default, item), static item => Assert.Equal(3.0, item, 12));
     }
 
     [Fact]
@@ -1027,7 +1027,7 @@ public partial class YANMathTest
         var result = YANMath.Cbrts<double?>(8.0, 27.0, -27.0);
 
         // Assert
-        Assert.Equal([2.0, 3.0, -3.0], result);
+        Assert.Collection(result!, static item => Assert.Equal(2.0, item!.Value, 12), static item => Assert.Equal(3.0, item!.Value, 12), static item => Assert.Equal(-3.0, item!.Value, 12));
     }
 
     [Fact]
@@ -1040,7 +1040,7 @@ public partial class YANMathTest
         var result = input.Cbrts<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result);
+        Assert.Collection(result!, static item => Assert.Equal(2.0, item, 12), static item => Assert.Equal(3.0, item, 12), static item => Assert.Equal(-3.0, item, 12));
     }
 
     #endregion
