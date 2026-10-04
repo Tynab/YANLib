@@ -60,9 +60,14 @@ internal static partial class YANUnmanaged
     [DebuggerStepThrough]
     private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
     {
+        if (input is T value)
+        {
+            return value;
+        }
+
         if (typeof(T) == typeof(DateTime))
         {
-            return (input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format).ParseImplement<T>();
+            return (input?.ToString() ?? default).ParseDateTime(defaultValue is DateTime dt ? dt : (defaultValue?.ToString() ?? default).ParseDateTime(default, format), format).ParseImplement<T>();
         }
 
         if (typeof(T) == typeof(Guid))

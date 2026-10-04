@@ -24,6 +24,7 @@ public static partial class YANUnmanaged
     /// <remarks>
     /// This method supports parsing to various unmanaged types including numeric types (also <c>nint</c> and <c>nuint</c>), <see cref="DateTime"/>, <see cref="Guid"/>, and enums.
     /// If the input cannot be parsed to the specified type, the method will return the provided default value or the type's default value.
+    /// An input that already is a <typeparamref name="T"/> is returned unchanged, so a <see cref="DateTime"/> keeps its ticks and <see cref="DateTime.Kind"/>; a <see cref="DateTime"/> default value is used as-is, also when <paramref name="format"/> is given.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -39,6 +40,7 @@ public static partial class YANUnmanaged
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
     /// <remarks>
     /// This overload accepts format strings as params array for convenience.
+    /// An input that already is a <typeparamref name="T"/> is returned unchanged, so a <see cref="DateTime"/> keeps its ticks and <see cref="DateTime.Kind"/>; a <see cref="DateTime"/> default value is used as-is, also when <paramref name="format"/> is given.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

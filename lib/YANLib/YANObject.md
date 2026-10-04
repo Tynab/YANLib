@@ -171,10 +171,10 @@ The library provides comprehensive coverage of object operations:
 
 - **Reflection Usage**: Uses reflection to access and evaluate object properties; property checks and time zone conversion use public, readable, non-indexed instance properties, including inherited ones (indexers, write-only and ref-like properties are skipped)
 - **Property Caching**: Implements caching of property information to improve performance
-- **Default Value Comparison**: Uses `EqualityComparer<T>.Default` for type-safe default value comparison
+- **Default Value Comparison**: Uses `EqualityComparer<T>.Default` to compare the value itself with `default(T)`, so a non-null reference is never default, even when typed as `object`, an interface or a base class
 - **Null Propagation**: Implements null-safe property access throughout the API
 - **Collection Processing**: Processes collections of objects with property evaluation
 - **DateTime Handling**: Includes specialized handling for DateTime properties
-- **Object Copying**: Implements shallow copying of objects using reflection
+- **Object Copying**: Implements shallow copying of objects using reflection; the copy keeps the input's runtime type when it has a public parameterless constructor (otherwise it falls back to `T`), copies public readable and writable, non-indexed properties, copies value types as a whole and does not copy collection elements
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code
 - **Memory Efficiency**: Optimizes reflection operations to minimize memory allocations

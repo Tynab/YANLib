@@ -359,5 +359,39 @@ public partial class YANUnmanagedTest
         Assert.Equal(42L, result);
     }
 
+    [Fact]
+    public void Parse_DateTimeInput_PreservesTicksAndKind_Nullable()
+    {
+        // Arrange
+        var expected = new DateTime(2023, 6, 15, 10, 20, 30, 123, DateTimeKind.Utc).AddTicks(4567);
+        object input = expected;
+
+        // Act
+        var result = input.Parse<DateTime>();
+        var nullableResult = input.Parse<DateTime?>();
+
+        // Assert
+        Assert.Equal(expected.Ticks, result.Ticks);
+        Assert.Equal(DateTimeKind.Utc, result.Kind);
+        _ = Assert.NotNull(nullableResult);
+        Assert.Equal(expected.Ticks, nullableResult.Value.Ticks);
+        Assert.Equal(DateTimeKind.Utc, nullableResult.Value.Kind);
+    }
+
+    [Fact]
+    public void Parse_DerivedInstanceToObject_ReturnsSameInstance_Nullable()
+    {
+        // Arrange
+        var input = new List<int> { 1, 2, 3 };
+
+        // Act
+        var result = input.Parse<object>();
+        var baseResult = input.Parse<IEnumerable<int>>();
+
+        // Assert
+        Assert.Same(input, result);
+        Assert.Same(input, baseResult);
+    }
+
     #endregion
 }

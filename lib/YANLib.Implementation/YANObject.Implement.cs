@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib.Implementation;
@@ -135,11 +136,11 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsDefaultImplement<T>(this T input) => EqualityComparer<T>.Default.Equals(input.ParseImplement<T>(), default);
+    internal static bool IsDefaultImplement<T>(this T input) => EqualityComparer<T>.Default.Equals(input, default);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool IsNotDefaultImplement<T>(this T input) => !EqualityComparer<T>.Default.Equals(input.ParseImplement<T>(), default);
+    internal static bool IsNotDefaultImplement<T>(this T input) => !EqualityComparer<T>.Default.Equals(input, default);
 
     #endregion
 
@@ -187,21 +188,32 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     internal static T CopyImplement<T>(this T input) where T : new()
     {
-        if (input is null)
+        if (input is null || typeof(T).IsValueType)
         {
             return input;
         }
 
-        var result = new T();
-        var props = input.GetType().GetProperties(Public | Instance);
+        var type = input.GetType();
 
-        foreach (var prop in props)
+        // a boxed struct seen through object is copied as a whole, like an unboxed one
+        if (type.IsValueType)
         {
-            if (prop.CanRead && prop.CanWrite)
-            {
-                var val = prop.GetValue(input);
+            return (T)RuntimeHelpers.GetObjectValue(input)!;
+        }
 
-                prop.SetValue(result, val);
+        // keep the runtime type when it can be constructed, otherwise fall back to T and copy only the properties T declares or inherits
+        if (type != typeof(T) && type.GetConstructor(Type.EmptyTypes) is null)
+        {
+            type = typeof(T);
+        }
+
+        var result = type == typeof(T) ? new T() : (T)Activator.CreateInstance(type)!;
+
+        foreach (var prop in GetCachedProperties(type))
+        {
+            if (prop.CanWrite)
+            {
+                prop.SetValue(result, prop.GetValue(input));
             }
         }
 

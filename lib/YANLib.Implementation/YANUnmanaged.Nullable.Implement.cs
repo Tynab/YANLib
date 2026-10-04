@@ -11,6 +11,8 @@ internal static partial class YANUnmanaged
     {
         return input is null
             ? default
+            : input is T value
+            ? value
             : typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>) && GetUnderlyingType(typeof(T)) is Type enumUnderlying && enumUnderlying.IsEnum
             ? Enum.TryParse(enumUnderlying, input.ToString(), true, out var enumResult) ? (T?)enumResult : default
             : typeof(T) switch

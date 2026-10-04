@@ -351,6 +351,19 @@ public partial class YANObjectTest
         Assert.False(result);
     }
 
+    [Fact]
+    public void AnyDefault_ObjectCollectionWithCustomInstances_ReturnsFalse_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<object?> input = [new TestClass(), new TestClass()];
+
+        // Act
+        var result = input.AnyDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region AllNotDefault
@@ -405,6 +418,19 @@ public partial class YANObjectTest
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotDefault_ObjectCollectionWithCustomInstances_ReturnsTrue_ObjectCollection()
+    {
+        // Arrange
+        IEnumerable<object?> input = [new TestClass(), new TestClass()];
+
+        // Act
+        var result = input.AllNotDefault();
+
+        // Assert
+        Assert.True(result);
     }
 
     #endregion

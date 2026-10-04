@@ -250,5 +250,33 @@ public partial class YANUnmanagedTest
         Assert.Equal((nint)123, result);
     }
 
+    [Fact]
+    public void Parse_DateTimeInputWithFormat_ReturnsInput()
+    {
+        // Arrange
+        object input = new DateTime(2023, 6, 15, 10, 20, 30, 123, DateTimeKind.Utc);
+
+        // Act
+        var result = input.Parse<DateTime>(null, "dd/MM/yyyy");
+
+        // Assert
+        Assert.Equal((DateTime)input, result);
+        Assert.Equal(DateTimeKind.Utc, result.Kind);
+    }
+
+    [Fact]
+    public void Parse_InvalidInputWithDateTimeDefaultAndFormat_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = "not a date";
+        var defaultValue = new DateTime(2023, 6, 15, 10, 20, 30, 123);
+
+        // Act
+        var result = input.Parse<DateTime>(defaultValue, "dd/MM/yyyy");
+
+        // Assert
+        Assert.Equal(defaultValue, result);
+    }
+
     #endregion
 }

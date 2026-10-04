@@ -20,6 +20,10 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="input">The value to check.</param>
     /// <returns><c>true</c> if the value is the default value for its type; otherwise, <c>false</c>.</returns>
+    /// <remarks>
+    /// The value itself is compared to <c>default(T)</c> with <see cref="EqualityComparer{T}.Default"/>, so a non-null reference is never default, even when typed as <see cref="object"/>, an interface or a base class,
+    /// and a nullable value type holding a value (including <c>0</c>) is not default.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsDefault<T>(this T input) => input.IsDefaultImplement();
@@ -30,6 +34,10 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="input">The value to check.</param>
     /// <returns><c>true</c> if the value is not the default value for its type; otherwise, <c>false</c>.</returns>
+    /// <remarks>
+    /// The value itself is compared to <c>default(T)</c> with <see cref="EqualityComparer{T}.Default"/>, so a non-null reference is never default, even when typed as <see cref="object"/>, an interface or a base class,
+    /// and a nullable value type holding a value (including <c>0</c>) is not default.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsNotDefault<T>(this T input) => input.IsNotDefaultImplement();
@@ -119,7 +127,12 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to copy. If <c>null</c>, returns <c>null</c>.</param>
-    /// <returns>A new object with the same property values as the input object.</returns>
+    /// <returns>A new instance of the input's runtime type when it has a public parameterless constructor, otherwise of <typeparamref name="T"/>, whose public readable and writable, non-indexed instance properties (declared or inherited) are assigned the input's values.</returns>
+    /// <remarks>
+    /// The copy is shallow: reference-type values are shared with the input, not cloned. When the copy falls back to <typeparamref name="T"/>, only the properties of <typeparamref name="T"/> are copied.
+    /// Value types, including a struct boxed as <see cref="object"/>, are copied as a whole value (an immutable boxed primitive or enum may be returned as-is).
+    /// Collection elements are not copied, so a collection such as <see cref="List{T}"/> is copied as an empty collection.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T Copy<T>(this T input) where T : new() => input.CopyImplement();

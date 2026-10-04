@@ -15,7 +15,7 @@
 			Key features:
 			• YANJson: High-performance JSON serialization with robust error handling
 			• YANText: String manipulation, validation, and transformation with null safety
-			• YANObject: Object validation, property analysis, and deep copying
+			• YANObject: Object validation, property analysis, and shallow copying
 			• YANTask: Enhanced task coordination with conditional waiting and error handling
 			• YANUnmanaged: Type parsing and conversion with built-in error handling
 			• YANRandom: Random value generation for various types and collections

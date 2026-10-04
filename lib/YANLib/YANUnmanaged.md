@@ -206,7 +206,8 @@ The library provides comprehensive coverage of type conversion operations:
 ## Technical Details
 
 - **Type Parsing**: Implements specialized parsing methods for each unmanaged type
-- **Default Value Handling**: Provides configurable default values when parsing fails
+- **Same-Type Input**: An input that already is the target type is returned unchanged, so a `DateTime` keeps its ticks and `Kind`, and an instance parsed to its base type or `object` is the same instance
+- **Default Value Handling**: Provides configurable default values when parsing fails; a `DateTime` default value is used as-is, also when a format is given
 - **Format Support**: Supports custom format strings for parsing formatted values like dates
 - **Enum Parsing**: Implements case-insensitive enum parsing with name and value support
 - **Type Conversion**: Uses `Convert.ChangeType()` and specialized conversion methods for type conversion

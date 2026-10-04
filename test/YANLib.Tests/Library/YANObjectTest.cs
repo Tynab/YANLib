@@ -58,6 +58,123 @@ public partial class YANObjectTest
         Assert.False(result);
     }
 
+    [Fact]
+    public void IsDefault_ObjectTypedCustomInstance_ReturnsFalse_Object()
+    {
+        // Arrange
+        object input = new TestClass();
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_InterfaceTypedList_ReturnsFalse_Object()
+    {
+        // Arrange
+        IEnumerable<int> input = new List<int>();
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_BaseTypedDerivedInstance_ReturnsFalse_Object()
+    {
+        // Arrange
+        TestClass input = new DerivedTestClass();
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_BoxedDateTimeOffset_ReturnsFalse_Object()
+    {
+        // Arrange
+        object input = DateTimeOffset.UtcNow;
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_DateTimeWithSubSecondTicks_ReturnsFalse_Object()
+    {
+        // Arrange
+        var input = new DateTime(500);
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_DateTimeWithOneTick_ReturnsFalse_Object()
+    {
+        // Arrange
+        var input = new DateTime(1);
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_DefaultDateTime_ReturnsTrue_Object()
+    {
+        // Arrange
+        DateTime input = default;
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsDefault_NullObjectReference_ReturnsTrue_Object()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsDefault_NullableIntZero_ReturnsFalse_Object()
+    {
+        // Arrange
+        int? input = 0;
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region IsNotDefault
@@ -106,6 +223,32 @@ public partial class YANObjectTest
     {
         // Arrange
         var input = "test";
+
+        // Act
+        var result = input.IsNotDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotDefault_ObjectTypedCustomInstance_ReturnsTrue_Object()
+    {
+        // Arrange
+        object input = new TestClass();
+
+        // Act
+        var result = input.IsNotDefault();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotDefault_DateTimeWithSubSecondTicks_ReturnsTrue_Object()
+    {
+        // Arrange
+        var input = new DateTime(500);
 
         // Act
         var result = input.IsNotDefault();
@@ -824,6 +967,165 @@ public partial class YANObjectTest
         Assert.NotSame(input, result);
     }
 
+    [Fact]
+    public void Copy_BaseTypedDerivedInstance_PreservesRuntimeType_Object()
+    {
+        // Arrange
+        TestClass input = new DerivedTestClass
+        {
+            StringProperty = "a",
+            IntProperty = 1,
+            Extra = "x"
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        var derived = Assert.IsType<DerivedTestClass>(result);
+        Assert.Equal("a", derived.StringProperty);
+        Assert.Equal(1, derived.IntProperty);
+        Assert.Equal("x", derived.Extra);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_ObjectTypedInstance_PreservesRuntimeType_Object()
+    {
+        // Arrange
+        object input = new TestClass
+        {
+            IntProperty = 3
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        var copy = Assert.IsType<TestClass>(result);
+        Assert.Equal(3, copy.IntProperty);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_BaseTypedDerivedWithoutDefaultConstructor_FallsBackToBase_Object()
+    {
+        // Arrange
+        TestClass input = new NoDefaultConstructorTestClass("x")
+        {
+            IntProperty = 2
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        _ = Assert.IsType<TestClass>(result);
+        Assert.Equal(2, result.IntProperty);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_ObjectWithIndexer_DoesNotThrow_Object()
+    {
+        // Arrange
+        var input = new IndexerTestClass
+        {
+            DateProperty = new DateTime(2023, 1, 1),
+            IntProperty = 5
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Equal(input.DateProperty, result.DateProperty);
+        Assert.Equal(5, result.IntProperty);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_Struct_CopiesValues_Object()
+    {
+        // Arrange
+        var input = new DateTimeStruct
+        {
+            DateProperty = new DateTime(2023, 1, 1)
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Equal(input.DateProperty, result.DateProperty);
+    }
+
+    [Fact]
+    public void Copy_BoxedStruct_CopiesValue_Object()
+    {
+        // Arrange
+        object input = new DateTime(2023, 1, 1, 10, 20, 30, DateTimeKind.Utc);
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        var copy = Assert.IsType<DateTime>(result);
+        Assert.Equal((DateTime)input, copy);
+        Assert.Equal(DateTimeKind.Utc, copy.Kind);
+    }
+
+    [Fact]
+    public void Copy_ObjectWithReferenceProperty_IsShallow_Object()
+    {
+        // Arrange
+        var input = new ParentTestClass
+        {
+            DateProperty = new DateTime(2023, 1, 1),
+            First = new DateTimeTestClass()
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Equal(input.DateProperty, result.DateProperty);
+        Assert.Same(input.First, result.First);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_InheritedProperties_AreCopied_Object()
+    {
+        // Arrange
+        var input = new DerivedTestClass
+        {
+            IntProperty = 7,
+            Extra = "x"
+        };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Equal(7, result.IntProperty);
+        Assert.Equal("x", result.Extra);
+    }
+
+    [Fact]
+    public void Copy_List_ReturnsEmptyListWithoutThrowing_Object()
+    {
+        // Arrange
+        var input = new List<int> { 1, 2, 3 };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.Empty(result);
+        Assert.NotSame(input, result);
+    }
+
     #endregion
 
     private class TestClass
@@ -847,6 +1149,11 @@ public partial class YANObjectTest
     private class DerivedTestClass : TestClass
     {
         public string? Extra { get; set; }
+    }
+
+    private class NoDefaultConstructorTestClass(string? extra) : TestClass
+    {
+        public string? Extra { get; set; } = extra;
     }
 
     private class IndexerTestClass
