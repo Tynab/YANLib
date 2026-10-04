@@ -7,15 +7,15 @@ internal static partial class YANMath
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MinImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Min(x => x.ParseImplement<T?>());
+    internal static T? MinImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Select(static x => x.ParseImplement<T?>()).DefaultIfEmpty().Min();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? MaxImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Max(x => x.ParseImplement<T?>());
+    internal static T? MaxImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Select(static x => x.ParseImplement<T?>()).DefaultIfEmpty().Max();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AverageImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AverageImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Average(static x => (double?)x.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

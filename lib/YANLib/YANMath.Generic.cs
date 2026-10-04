@@ -19,7 +19,7 @@ public static partial class YANMath
     /// </summary>
     /// <typeparam name="T">The type to convert the result to.</typeparam>
     /// <param name="input">The collection of objects to find the minimum value in. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
-    /// <returns>The minimum value in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c> or empty.</returns>
+    /// <returns>The minimum value in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c>, empty, or contains only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method ignores <c>null</c> elements in the collection when determining the minimum value.
     /// Each element is converted to type <typeparamref name="T"/> before comparison.
@@ -34,7 +34,7 @@ public static partial class YANMath
     /// </summary>
     /// <typeparam name="T">The type to convert the result to.</typeparam>
     /// <param name="input">The array of objects to find the minimum value in. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
-    /// <returns>The minimum value in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c> or empty.</returns>
+    /// <returns>The minimum value in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c>, empty, or contains only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method provides a convenient way to find the minimum value in an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method ignores <c>null</c> elements in the array when determining the minimum value.
@@ -50,7 +50,7 @@ public static partial class YANMath
     /// </summary>
     /// <typeparam name="T">The type to convert the result to.</typeparam>
     /// <param name="input">The collection of objects to find the maximum value in. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
-    /// <returns>The maximum value in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c> or empty.</returns>
+    /// <returns>The maximum value in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c>, empty, or contains only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method ignores <c>null</c> elements in the collection when determining the maximum value.
     /// Each element is converted to type <typeparamref name="T"/> before comparison.
@@ -65,7 +65,7 @@ public static partial class YANMath
     /// </summary>
     /// <typeparam name="T">The type to convert the result to.</typeparam>
     /// <param name="input">The array of objects to find the maximum value in. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
-    /// <returns>The maximum value in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c> or empty.</returns>
+    /// <returns>The maximum value in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c>, empty, or contains only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method provides a convenient way to find the maximum value in an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method ignores <c>null</c> elements in the array when determining the maximum value.
@@ -81,7 +81,7 @@ public static partial class YANMath
     /// </summary>
     /// <typeparam name="T">The type to convert the result to.</typeparam>
     /// <param name="input">The collection of objects to calculate the average of. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
-    /// <returns>The average of all values in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c> or empty.</returns>
+    /// <returns>The average of all values in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c>, empty, or contains only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method ignores <c>null</c> elements in the collection when calculating the average.
     /// Each element is converted to <c>double</c> for the calculation, and the result is converted to type <typeparamref name="T"/>.
@@ -95,7 +95,7 @@ public static partial class YANMath
     /// </summary>
     /// <typeparam name="T">The type to convert the result to.</typeparam>
     /// <param name="input">The array of objects to calculate the average of. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
-    /// <returns>The average of all values in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c> or empty.</returns>
+    /// <returns>The average of all values in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c>, empty, or contains only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method provides a convenient way to calculate the average of an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method ignores <c>null</c> elements in the array when calculating the average.

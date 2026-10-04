@@ -79,6 +79,45 @@ public partial class YANMathTest
         Assert.Equal(1, result);
     }
 
+    [Fact]
+    public void Min_CollectionWithAllNullValues_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Min<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Min_InferredCollectionWithAllNullValues_ReturnsNull_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Min();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Min_ReferenceCollectionWithAllNullValues_ReturnsNull_Math()
+    {
+        // Arrange
+        var input = new List<string?> { null, null };
+
+        // Act
+        var result = input.Min();
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 
     #region Max
@@ -158,6 +197,32 @@ public partial class YANMathTest
         Assert.Equal(9, result);
     }
 
+    [Fact]
+    public void Max_CollectionWithAllNullValues_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Max<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Max_InferredCollectionWithAllNullValues_ReturnsNull_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Max();
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 
     #region Average
@@ -235,6 +300,45 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(6.0, result);
+    }
+
+    [Fact]
+    public void Average_CollectionWithAllNullValues_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Average<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Average_InferredCollectionWithAllNullValues_ReturnsNull_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Average();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Average_NonGenericCollectionWithAllNullValues_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new System.Collections.ArrayList { null, null };
+
+        // Act
+        var result = input.Average<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
     }
 
     #endregion

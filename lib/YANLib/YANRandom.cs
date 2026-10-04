@@ -23,10 +23,10 @@ public static partial class YANRandom
     public static int NextInt32(this Random random) => random.NextInt32Implement();
 
     /// <summary>
-    /// Generates a random decimal value.
+    /// Generates a random decimal value that is greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <param name="random">The random number generator.</param>
-    /// <returns>A random decimal value.</returns>
+    /// <returns>A random decimal value uniformly distributed over the range [0, 1).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static decimal NextDecimal(this Random random) => random.NextDecimalImplement();

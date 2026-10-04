@@ -79,6 +79,29 @@ public partial class YANMathTest
         Assert.Equal(1, result);
     }
 
+    [Fact]
+    public void Min_CollectionWithAllNullValues_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        var input = new List<object?> { null, null };
+
+        // Act
+        var result = input.Min<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Min_ParamsOverloadWithAllNullValues_ReturnsDefault_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Min<int>(null, null);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region Max
@@ -158,6 +181,29 @@ public partial class YANMathTest
         Assert.Equal(9, result);
     }
 
+    [Fact]
+    public void Max_CollectionWithAllNullValues_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        var input = new List<object?> { null, null };
+
+        // Act
+        var result = input.Max<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Max_ParamsOverloadWithAllNullValues_ReturnsDefault_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Max<int>(null, null);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region Average
@@ -235,6 +281,42 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(6.0, result);
+    }
+
+    [Fact]
+    public void Average_CollectionWithAllNullValues_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        var input = new List<object?> { null, null };
+
+        // Act
+        var result = input.Average<double>();
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Average_CollectionWithAllNullValues_NullableTarget_ReturnsNull_MathGeneric()
+    {
+        // Arrange
+        var input = new List<object?> { null, null };
+
+        // Act
+        var result = input.Average<double?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Average_ParamsOverloadWithAllNullValues_ReturnsDefault_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Average<double>(null, null);
+
+        // Assert
+        Assert.Equal(0.0, result);
     }
 
     #endregion

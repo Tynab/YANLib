@@ -1,11 +1,36 @@
 ﻿using System.Diagnostics;
-using System.Numerics;
 using static System.BitConverter;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANRandom
 {
+    #region Private
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static ulong NextUlongExclusive(this Random random, ulong maxExclusive)
+    {
+        if (maxExclusive <= long.MaxValue)
+        {
+            return (ulong)random.NextInt64((long)maxExclusive);
+        }
+
+        var buffer = new byte[8];
+        ulong rand;
+
+        do
+        {
+            random.NextBytes(buffer);
+            rand = ToUInt64(buffer, 0);
+        }
+        while (rand >= maxExclusive);
+
+        return rand;
+    }
+
+    #endregion
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static int NextInt32Implement(this Random random) => random.Next(0, 1 << 4) << 28 | random.Next(0, 1 << 28);
@@ -14,13 +39,18 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static decimal NextDecimalImplement(this Random random)
     {
-        var bytes = new byte[16];
+        var bytes = new byte[12];
+        decimal dec;
 
-        random.NextBytes(bytes);
+        // 94 random bits at scale 28 cover [0, ~1.98); rejecting values >= 1 keeps the result uniform over [0, 1)
+        do
+        {
+            random.NextBytes(bytes);
+            dec = new decimal(ToInt32(bytes, 0), ToInt32(bytes, 4), ToInt32(bytes, 8) & 0x3FFFFFFF, false, 28);
+        }
+        while (dec >= 1);
 
-        var dec = new decimal(ToInt32(bytes, 0), ToInt32(bytes, 4), ToInt32(bytes, 8), false, 28);
-
-        return dec > 1 ? dec / 10 : dec;
+        return dec;
     }
 
     [DebuggerHidden]
@@ -104,21 +134,7 @@ internal static partial class YANRandom
         var minValue = min is null ? ulong.MinValue : min.ParseImplement<ulong>();
         var maxValue = max is null ? ulong.MaxValue : max.ParseImplement<ulong>();
 
-        if (minValue > maxValue)
-        {
-            return default;
-        }
-        else
-        {
-            var buffer = new byte[8];
-
-            random.NextBytes(buffer);
-
-            var rand = ToUInt64(buffer, 0);
-            var r = maxValue - minValue;
-
-            return r == ulong.MaxValue ? rand : rand % (r + 1) + minValue;
-        }
+        return minValue > maxValue ? default : minValue + random.NextUlongExclusive(maxValue - minValue);
     }
 
     [DebuggerHidden]
@@ -128,7 +144,7 @@ internal static partial class YANRandom
         var minValue = min is null ? nint.MinValue : min.ParseImplement<nint>();
         var maxValue = max is null ? nint.MaxValue : max.ParseImplement<nint>();
 
-        return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).ParseImplement<nint>();
+        return minValue > maxValue ? default : (nint)random.NextInt64(minValue, maxValue);
     }
 
     [DebuggerHidden]
@@ -138,7 +154,7 @@ internal static partial class YANRandom
         var minValue = min is null ? nuint.MinValue : min.ParseImplement<nuint>();
         var maxValue = max is null ? nuint.MaxValue : max.ParseImplement<nuint>();
 
-        return minValue > maxValue ? default : (random.NextInt64(nint.MinValue, (long)(maxValue - (minValue - (BigInteger)nint.MinValue))) - nint.MinValue).ParseImplement<nuint>() + minValue;
+        return minValue > maxValue ? default : minValue + (nuint)random.NextUlongExclusive(maxValue - minValue);
     }
 
     [DebuggerHidden]
@@ -178,7 +194,7 @@ internal static partial class YANRandom
         var minValue = min is null ? DateTime.MinValue : min.ParseImplement<DateTime>();
         var maxValue = max is null ? DateTime.MaxValue : max.ParseImplement<DateTime>();
 
-        return minValue > maxValue ? default : minValue.AddTicks(random.NextUlongImplement(max: (maxValue - minValue).Ticks).ParseImplement<long>());
+        return minValue > maxValue ? default : minValue.AddTicks(random.NextInt64((maxValue - minValue).Ticks));
     }
 
     [DebuggerHidden]
@@ -198,7 +214,7 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static T GenerateRandomImplement<T>(object? min = null, object? max = null) where T : unmanaged
     {
-        var random = new Random();
+        var random = Random.Shared;
 
         return typeof(T) switch
         {

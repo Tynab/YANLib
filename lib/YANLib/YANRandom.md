@@ -51,7 +51,7 @@ int randomInt = random.NextInt(); // Random int (full range)
 int boundedInt = random.NextInt(1, 100); // Random int between 1 (inclusive) and 100 (exclusive)
 double randomDouble = random.NextDouble(); // Random double between 0.0 and 1.0
 double boundedDouble = random.NextDouble(-10.5, 10.5); // Random double in range
-decimal randomDecimal = random.NextDecimal(); // Random decimal value
+decimal randomDecimal = random.NextDecimal(); // Random decimal between 0 (inclusive) and 1 (exclusive)
 bool randomBool = random.NextBool(); // Random boolean (true or false)
 byte randomByte = random.NextByte(0, 255); // Random byte in range
 DateTime randomDate = random.NextDateTime(); // Random DateTime
@@ -196,11 +196,12 @@ The library provides comprehensive coverage of random value generation:
 
 - **Random Number Generation**: Extends `System.Random` with additional methods for various data types
 - **Range Validation**: Implements boundary checking to ensure generated values stay within specified ranges
+- **Exclusive Upper Bound**: For integer types and DateTime, `max` is exclusive like `Random.Next` (e.g. `NextDateTime(min, max)` never returns `max`); when `min` equals `max`, `min` is returned
 - **Type-Specific Generation**: Uses specialized methods for each primitive type to ensure proper range and distribution
 - **DateTime Generation**: Generates random DateTime values within the supported DateTime range
 - **String Generation**: Implements character-based random string generation with configurable length
 - **Collection Sampling**: Uses reservoir sampling algorithm for selecting random elements from collections
 - **Duplicate Control**: Implements tracking mechanism to prevent duplicates when requested
-- **Thread Safety**: Uses thread-local Random instances to prevent contention in multi-threaded scenarios
+- **Thread Safety**: `GenerateRandom` and `GenerateRandoms` use the thread-safe `Random.Shared` instance instead of allocating a new `Random` per value
 - **Parallel Processing**: Implements parallel processing for generating large collections of random values
 - **Generic Implementation**: Uses generic type parameters with constraints to support various types

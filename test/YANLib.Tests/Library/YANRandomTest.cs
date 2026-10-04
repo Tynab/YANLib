@@ -79,6 +79,20 @@ public partial class YANRandomTest
         Assert.Equal(0m, result);
     }
 
+    [Fact]
+    public void NextDecimal_NoParameters_IsUniformOverUnitInterval_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(42);
+
+        // Act
+        var results = Enumerable.Range(0, 10_000).Select(_ => random.NextDecimal()).ToList();
+
+        // Assert
+        Assert.All(results, static x => Assert.True(x is >= 0m and < 1m));
+        Assert.InRange(results.Count(static x => x >= 0.8m), 1_500, 2_500);
+    }
+
     #endregion
 
     #region NextBool
@@ -490,6 +504,46 @@ public partial class YANRandomTest
         Assert.Equal(0UL, result);
     }
 
+    [Fact]
+    public void NextUlong_MaxIsExclusive_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var results = Enumerable.Range(0, 1_000).Select(_ => random.NextUlong(5UL, 6UL)).ToList();
+
+        // Assert
+        Assert.All(results, static x => Assert.Equal(5UL, x));
+    }
+
+    [Fact]
+    public void NextUlong_MinEqualsMax_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var result = random.NextUlong(7UL, 7UL);
+
+        // Assert
+        Assert.Equal(7UL, result);
+    }
+
+    [Fact]
+    public void NextUlong_RangeAboveLongMax_ReturnsValueBelowMax_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+        var max = ulong.MaxValue - 1;
+
+        // Act
+        var results = Enumerable.Range(0, 1_000).Select(_ => random.NextUlong(0UL, max)).ToList();
+
+        // Assert
+        Assert.All(results, x => Assert.True(x < max));
+    }
+
     #endregion
 
     #region NextNint
@@ -537,6 +591,19 @@ public partial class YANRandomTest
         Assert.Equal(0, result);
     }
 
+    [Fact]
+    public void NextNint_MaxIsExclusive_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var results = Enumerable.Range(0, 100).Select(_ => random.NextNint((nint)5, (nint)6)).ToList();
+
+        // Assert
+        Assert.All(results, static x => Assert.Equal((nint)5, x));
+    }
+
     #endregion
 
     #region NextNuint
@@ -582,6 +649,32 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal((nuint)0, result);
+    }
+
+    [Fact]
+    public void NextNuint_NoParameters_ReturnsSpreadValues_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(42);
+
+        // Act
+        var results = Enumerable.Range(0, 100).Select(_ => random.NextNuint()).ToList();
+
+        // Assert
+        Assert.True(results.Count(static x => x is 0) < 5);
+    }
+
+    [Fact]
+    public void NextNuint_MaxIsExclusive_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var results = Enumerable.Range(0, 100).Select(_ => random.NextNuint((nuint)10, (nuint)11)).ToList();
+
+        // Assert
+        Assert.All(results, static x => Assert.Equal((nuint)10, x));
     }
 
     #endregion
@@ -723,6 +816,21 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public void NextDateTime_MaxIsExclusive_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+        var min = new DateTime(2000, 1, 1);
+        var max = min.AddTicks(1);
+
+        // Act
+        var results = Enumerable.Range(0, 1_000).Select(_ => random.NextDateTime(min, max)).ToList();
+
+        // Assert
+        Assert.All(results, x => Assert.Equal(min, x));
     }
 
     #endregion

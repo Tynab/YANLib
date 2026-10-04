@@ -23,7 +23,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? AverageImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AverageImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Average(static x => (double?)x.ParseImplement<double>()).ParseImplement<T?>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]

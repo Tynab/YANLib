@@ -147,6 +147,9 @@ IEnumerable<double?>? powers = exponents.Pows(2); // Returns [4.0, 9.0, 16.0]
 // Handling null values in collections
 var withNulls = new List<double?> { 4.0, null, 16.0 };
 IEnumerable<double?>? sqrtsWithNull = withNulls.Sqrts(); // Returns [2.0, null, 4.0]
+
+var allNulls = new List<int?> { null, null };
+double avgOfNulls = allNulls.Average<double>(); // Returns 0.0 instead of throwing
 ```
 
 ### Generic Type Support
@@ -173,6 +176,11 @@ int minValue = objectNumbers.Min<int>(); // Returns 1
 int maxValue = objectNumbers.Max<int>(); // Returns 9
 double avgValue = objectNumbers.Average<double>(); // Returns 5.1
 int sumValue = objectNumbers.Sum<int>(); // Returns 25
+
+// Collections that contain only nulls return default(T)
+var onlyNulls = new List<object?> { null, null };
+int minOfNulls = onlyNulls.Min<int>(); // Returns 0
+double avgOfNullObjects = onlyNulls.Average<double>(); // Returns 0.0
 ```
 
 ### Advanced Usage Examples
@@ -257,6 +265,7 @@ The library provides comprehensive coverage of mathematical functions:
 - **Numeric Type Support**: Implements operations for all numeric types (int, double, decimal, etc.)
 - **Overflow Protection**: Includes safeguards against numeric overflow in mathematical operations
 - **NaN Handling**: Properly handles NaN (Not a Number) values in floating-point operations
+- **Null Handling**: Min, Max and Average ignore `null` elements and return `default(T)` (`null` for nullable types) when the input is `null`, empty or contains only `null` elements
 - **Infinity Handling**: Includes special handling for positive and negative infinity values
 - **Rounding Precision**: Supports configurable decimal precision in rounding operations
 - **Generic Implementation**: Uses generic type parameters with constraints to support various numeric types
