@@ -34,25 +34,71 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.3.3 – Not Valid Field &amp; Property Validation Improvements
+		<PackageReleaseNotes>### YANLib 8.4.0 – Correctness Fixes, Ordered Collections &amp; Safer Snowflake IDs
 
-* **Not Valid Field Utilities**
+* **Parsing &amp; Conversion**
 
-  * Refined property/field-name validation helpers for sorting, filtering, and dynamic queries
-  * More predictable behavior with `null`, empty, or loosely formatted input values
+  * Overflowing or out-of-range integer conversions no longer crash the process with a `StackOverflowException`
+  * `Parse` now supports `nint` and `nuint`, and `NextNint` / `NextNuint` work instead of crashing
+  * `Parse` returns the input unchanged when it is already a `T`, so `DateTime` keeps its ticks and `Kind`
+  * The internal underlying-type cache is now thread-safe
 
-* **Architecture &amp; Developer Experience**
+* **Object &amp; Time Zone Utilities**
 
-  * Centralized validation logic for consistent behavior across the library
-  * Cleaner naming and structure to improve readability and maintainability
+  * `ChangeTimeZoneAllProperty` / `ChangeTimeZoneAllProperties` handle cyclic graphs, shared references, indexers and read-only lists, and convert each instance exactly once
+  * `IsNullDefault`, `AllProperties*` and `AnyProperties*` include inherited properties and no longer throw on indexers or write-only properties
+  * `IsDefault` / `IsNotDefault` compare values directly, which is faster and correct for references typed as a base class or interface
+  * `Copy` keeps the runtime type and struct values instead of throwing or returning `default`
 
-This maintenance release focuses on internal improvements to property-based validation while keeping existing behavior fully compatible.
+* **Collections**
+
+  * Projections such as `Parses`, `Serializes`, `Deserializes`, `Titles`, `Lowers`, `Uppers`, `Filter*` and `ChangeTimeZones` always preserve input order
+  * Sources are no longer enumerated an extra time just to count them
+
+* **Snowflake ID Generator**
+
+  * The timestamp epoch is validated, so IDs are never negative or duplicated
+  * The sequence passed to the constructor is validated and used for the first ID
+  * Constructors share a single bit-allocation validation path
+
+* **Task Utilities**
+
+  * `WaitAny*` / `WhenAny*` and their `IAsyncEnumerable` variants stop waiting as soon as the token is cancelled
+  * Lazy task sequences are enumerated once, so no task is started twice
+
+* **Random &amp; Math**
+
+  * `NextUlong` no longer has modulo bias and `NextDecimal` is uniformly distributed
+  * `Min`, `Max` and `Average` return `default` instead of throwing when every element is `null`
+
+* **Validation, Expressions &amp; Processes**
+
+  * `AllValidFields` returns `false` again when an entry is `null`, empty or whitespace (a regression in 8.3.3), and `AllNotValidFields` now does the same
+  * `PropertyExpression` no longer returns and caches a useless lambda when given a method name
+  * `KillAllProcessesByName(s)` keeps killing and disposing the remaining processes when one fails, and `KillAllProcessesByNames` no longer skips the whole list because of a single blank name
+
+* **Behavior Changes**
+
+  * `ChangeTimeZoneAllProperties` now runs eagerly and sequentially, even if the result is never enumerated
+  * Collection projections no longer run in parallel and always preserve input order; use `AsParallel().AsOrdered()` to opt in to parallelism
+  * `PropertyExpression` throws `ArgumentException` when the name matches a method (for example `ToString`) instead of a property
+  * Snowflake `NextId`, `NextIdAlphabetic` and `NextIdAlphanumeric` throw `ArgumentOutOfRangeException` for an epoch in the future or more than 2^40 - 1 ms in the past, instead of producing negative or duplicate IDs
+  * Using a later epoch than a previous call on the same `IdGenerator` throws instead of risking duplicate IDs
+  * `IdGenerator` rejects a sequence outside [0, MaxSequence] with `ArgumentException` (previously accepted and ignored), and the constructor sequence is now used for the first ID
+  * `NextUlong`, `NextNuint` and `NextDateTime` treat `max` as exclusive: `NextUlong()` never returns `ulong.MaxValue` and `NextDateTime(min, max)` never returns `max`
+  * `IsDefault` / `IsNotDefault` and `IsNullDefault` results change: values are compared directly (non-null values typed as `object` and sub-second `DateTime`s are no longer default), and inherited properties are counted
+  * New public `YANTask` APIs: `WaitAnyWithConditions`, `WhenAnyWithConditions` and `AsyncEnumerableEmpty`
+  * Overflowing integer parses (for example `"3000000000".Parse&lt;int&gt;()`) return `default` instead of crashing
+  * `Copy` is a shallow copy that keeps the runtime type of the input
+  * `Copy` on a collection such as `List&lt;T&gt;` returns a new empty collection instead of throwing; elements are not copied
+
+This minor release fixes long-standing correctness issues so the library behaves as documented. Please review the behavior changes above before upgrading.
 
 See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.3.3</Version>
+		<Version>8.4.0</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<IsPackable>true</IsPackable>
