@@ -9,12 +9,12 @@ internal static partial class YANProcess
     [DebuggerStepThrough]
     internal static async Task KillAllProcessesByNamesImplement(this IEnumerable<string?>? names)
     {
-        if (names.IsNullEmptyImplement() || names.AnyNullWhiteSpaceImplement())
+        if (names is null)
         {
             return;
         }
 
-        await WhenAll(names.Select(KillAndDisposeAsync));
+        await WhenAll(names.Select(KillAndDisposeAsync)).ConfigureAwait(false);
     }
 
     [DebuggerHidden]

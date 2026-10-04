@@ -65,5 +65,68 @@ public partial class YANProcessTest
         catch { }
     }
 
+    [Fact]
+    public async Task KillAllProcessesByName_MultipleInstances_KillsAllInstances_Process()
+    {
+        // Arrange
+        if (CreateSleepCopy() is not string path)
+        {
+            return;
+        }
+
+        var processes = new List<Process>();
+
+        try
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                processes.Add(Process.Start(path, "60"));
+            }
+
+            // Act
+            await Path.GetFileName(path).KillAllProcessesByName().WaitAsync(TimeSpan.FromSeconds(30));
+
+            // Assert
+            Assert.All(processes, static p => Assert.True(p.WaitForExit(5_000)));
+        }
+        finally
+        {
+            CleanUp(path, processes);
+        }
+    }
+
     #endregion
+
+    private static string? CreateSleepCopy()
+    {
+        const string sleep = "/bin/sleep";
+
+        // Multi-call binaries such as busybox dispatch on argv[0], so a renamed copy would not behave as sleep
+        if (OperatingSystem.IsWindows() || !File.Exists(sleep) || new FileInfo(sleep).ResolveLinkTarget(true) is { Name: not "sleep" })
+        {
+            return null;
+        }
+
+        var path = Path.Combine(Path.GetTempPath(), $"yan{Guid.NewGuid():N}"[..12]);
+
+        File.Copy(sleep, path);
+
+        return path;
+    }
+
+    private static void CleanUp(string path, IEnumerable<Process> processes)
+    {
+        foreach (var process in processes)
+        {
+            try
+            {
+                process.Kill();
+            }
+            catch { }
+
+            process.Dispose();
+        }
+
+        File.Delete(path);
+    }
 }

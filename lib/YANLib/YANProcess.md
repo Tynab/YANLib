@@ -19,8 +19,8 @@ The library is organized into several functional categories:
 
 ### Error Handling
 
-- **Null Safety**: Graceful handling of null or empty process names
-- **Exception Safety**: Robust error handling during process termination
+- **Null Safety**: Graceful handling of null or empty process names; no action is taken when the name extracted from a path is empty (for example `".exe"` or a path ending in a directory separator)
+- **Exception Safety**: A failure to terminate one process does not stop the other matching processes from being terminated and disposed
 - **Whitespace Handling**: Proper handling of whitespace in process names
 
 ### Collection Support
@@ -155,22 +155,33 @@ private async Task SaveApplicationState()
 // Manual implementation (for illustration only - YANProcess does this automatically)
 public async Task ManualProcessKill(string processName)
 {
-    var processes = Process.GetProcessesByName(
-        Path.GetFileNameWithoutExtension(Path.GetFileName(processName)));
-    
-    foreach (var process in processes)
+    var name = Path.GetFileNameWithoutExtension(Path.GetFileName(processName));
+
+    // On Unix an empty name (for example from ".exe") matches every process
+    if (string.IsNullOrWhiteSpace(name))
     {
-        try
-        {
-            // Kill the process and wait for it to exit
-            process.Kill(true);
-            await process.WaitForExitAsync();
-        }
-        finally
-        {
-            // Always dispose of the process resources
-            process.Dispose();
-        }
+        return;
+    }
+
+    var processes = Process.GetProcessesByName(name);
+    
+    // Every process is attempted, even if killing another one fails;
+    // the first failure is rethrown once every attempt has completed
+    await Task.WhenAll(processes.Select(KillAndDisposeProcessAsync));
+}
+
+private static async Task KillAndDisposeProcessAsync(Process process)
+{
+    try
+    {
+        // Kill the process and wait for it to exit
+        process.Kill(true);
+        await process.WaitForExitAsync();
+    }
+    finally
+    {
+        // Always dispose of the process resources
+        process.Dispose();
     }
 }
 ```
@@ -182,7 +193,7 @@ public async Task ManualProcessKill(string processName)
 - **Parallel Processing**: When killing multiple processes, operations are performed in parallel
 - **Resource Management**: Processes are properly disposed after termination to prevent resource leaks
 - **Null Handling**: All methods handle null inputs gracefully, avoiding unnecessary operations
-- **Exception Safety**: Operations are designed to be robust, handling exceptions during process termination
+- **Exception Safety**: A failure to terminate one process does not stop the other matching processes from being terminated and disposed; the first failure is rethrown
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -217,5 +228,5 @@ The library provides focused coverage of process termination operations:
 - **Path Handling**: Uses `Path.GetFileNameWithoutExtension()` and `Path.GetFileName()` to extract process names from paths
 - **Case Insensitivity**: Implements case-insensitive process name matching for Windows compatibility
 - **Parallel Termination**: Implements parallel processing for terminating multiple processes efficiently
-- **Exception Handling**: Catches and suppresses exceptions during process termination to ensure robustness
+- **Exception Handling**: Attempts every matching process even if one fails to terminate, then rethrows the first failure (for example `Win32Exception` when access is denied)
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code
