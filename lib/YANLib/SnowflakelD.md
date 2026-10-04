@@ -251,8 +251,29 @@ catch (ArgumentException ex)
     Console.WriteLine(ex.Message); // "Worker ID must be between 0 and 1023, but got 1500."
 }
 
+// Handle invalid initial sequence
+try
+{
+    var generator = new IdGenerator(1, 1, 8192); // Sequence must be between 0 and 8191
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine(ex.Message); // "Sequence must be between 0 and 8191, but got 8192."
+}
+
+// Handle an epoch that is in the future or more than 2^40 - 1 ms (~34.8 years) in the past
+try
+{
+    var id = new IdGenerator(1, 1).NextId(0); // The Unix epoch is too far in the past
+}
+catch (ArgumentOutOfRangeException ex)
+{
+    Console.WriteLine(ex.ParamName); // "timestampEpoch"
+}
+
 // Handle clock moving backwards
-// This would occur if the system clock is adjusted backwards while the application is running
+// This would occur if the system clock is adjusted backwards while the application is running,
+// or if a later timestampEpoch than a previous call is used on the same instance
 // The generator will throw an exception to prevent duplicate IDs
 ```
 
@@ -271,8 +292,10 @@ catch (ArgumentException ex)
 
 ## Implementation Details
 
-- **ID Structure**: 64-bit IDs composed of timestamp (41 bits) and configurable bits for datacenter ID, worker ID, and sequence (total 23 bits)
+- **ID Structure**: 64-bit IDs composed of a sign bit (always 0, so IDs are never negative), timestamp (40 bits) and configurable bits for datacenter ID, worker ID, and sequence (total 23 bits)
 - **Epoch**: Default epoch is January 1, 2023 00:00:00 UTC (1,672,531,200,000 milliseconds since Unix epoch)
+- **Epoch Range**: `timestampEpoch` must not be in the future nor more than 2^40 - 1 ms (~34.8 years) in the past, otherwise an `ArgumentOutOfRangeException` is thrown; it also must not move later between calls on the same instance faster than the clock advances
+- **Initial Sequence**: The `sequence` passed to the constructor must be between 0 and `MaxSequence` and is used for the first generated ID
 - **Sequence Overflow**: When sequence exceeds maximum value within the same millisecond, the generator waits for the next millisecond
 - **Clock Drift**: Throws an exception if the system clock moves backwards to prevent duplicate IDs
 - **Base Conversion**: Implements custom base-26 (alphabetic) and base-36 (alphanumeric) conversion for string representations
@@ -286,7 +309,8 @@ The Snowflake algorithm generates 64-bit IDs with the following default structur
 
 | Component | Bits | Description | Range
 |-----|-----|-----|-----
-| **Timestamp** | 41 bits | Milliseconds since epoch | ~69 years
+| **Sign** | 1 bit | Always 0, so IDs are never negative | 0
+| **Timestamp** | 40 bits | Milliseconds since epoch | ~34.8 years (until 2057-11-03 with the default epoch)
 | **Datacenter ID** | 5 bits | Identifier for the datacenter | 0-31
 | **Worker ID** | 5 bits | Identifier for the worker/process | 0-31
 | **Sequence** | 13 bits | Sequence number within the same millisecond | 0-8,191
@@ -311,7 +335,7 @@ You can also create custom bit allocations to suit your specific needs, as long 
 - **Clock Handling**: Includes logic to handle clock drift and sequence overflow
 - **Base Conversion**: Implements custom algorithms for converting between numeric and string representations
 - **Component Extraction**: Uses bit manipulation to extract the original components from an ID
-- **Error Handling**: Includes validation for worker ID, datacenter ID, and bit allocation ranges
-- **Bit Allocation Validation**: Ensures the total bits allocated equals 23 (41 bits for timestamp + 23 bits = 64 bits total)
+- **Error Handling**: Includes validation for worker ID, datacenter ID, sequence, timestamp epoch, and bit allocation ranges
+- **Bit Allocation Validation**: Ensures the total bits allocated equals 23 (1 sign bit + 40 timestamp bits + 23 bits = 64 bits total)
 - **Strategy Implementation**: Encapsulates bit allocation patterns in an enum for simplified configuration
 - **Debugging Support**: Includes attributes to improve debugging experience

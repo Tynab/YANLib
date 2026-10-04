@@ -19,6 +19,10 @@ public partial class IdGenerator
 
     private const int TOTAL_BITS = 23;
 
+    // Bit 63 is the sign bit and must stay 0, so only 63 - TOTAL_BITS = 40 bits hold the timestamp
+    // (~34.8 years after the epoch; until 2057-11-03 19:53:47 UTC with TIMESTAMP_EPOCH).
+    private const long MAX_TIMESTAMP = -1L ^ (-1L << (63 - TOTAL_BITS));
+
     // Default bit allocation (5-5-13)
     private const int DEFAULT_WORKER_ID_BITS = 5;
     private const int DEFAULT_DATACENTER_ID_BITS = 5;

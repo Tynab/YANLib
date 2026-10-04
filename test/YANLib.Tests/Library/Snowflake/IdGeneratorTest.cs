@@ -52,6 +52,18 @@ public partial class IdGeneratorTest
         Assert.Contains("Datacenter ID must be between 0 and 31", exception.Message);
     }
 
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(8192)]
+    public void Constructor_SequenceOutOfRange_ThrowsArgumentException(long sequence)
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => new IdGenerator(1, 1, sequence));
+
+        Assert.Contains("Sequence must be between 0 and 8191", exception.Message);
+        Assert.Equal("sequence", exception.ParamName);
+    }
+
     #endregion
 
     #region NextId Tests
@@ -103,6 +115,138 @@ public partial class IdGeneratorTest
         // Assert
         Assert.True(id1 < id2);
         Assert.True(id2 < id3);
+    }
+
+    [Fact]
+    public void NextId_ZeroEpoch_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(0));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextId_FutureEpoch_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        var futureEpoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(futureEpoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextId_EpochNearTimestampLimit_GeneratesPositiveId()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - (1L << 40) + 60_000;
+
+        // Act
+        var id = idGenerator.NextId(epoch);
+        var (Timestamp, WorkerId, DatacenterId) = IdGenerator.ExtractIdComponents(id, epoch);
+
+        // Assert
+        Assert.True(id > 0);
+        Assert.Equal(1, WorkerId);
+        Assert.Equal(1, DatacenterId);
+        Assert.True(Timestamp > DateTime.UtcNow.AddMinutes(-1) && Timestamp <= DateTime.UtcNow);
+    }
+
+    [Fact]
+    public void NextId_EpochBeyondTimestampLimit_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - (1L << 40) - 60_000;
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextId_DefaultEpoch_GeneratesPositiveIds()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        var ids = new long[1000];
+
+        // Act
+        for (var i = 0; i < ids.Length; i++)
+        {
+            ids[i] = idGenerator.NextId();
+        }
+
+        // Assert
+        Assert.All(ids, static id => Assert.True(id > 0));
+        Assert.Equal(ids.Length, ids.Distinct().Count());
+    }
+
+    [Fact]
+    public void NextId_InvalidEpoch_DoesNotCorruptState()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        var id0 = idGenerator.NextId();
+
+        // Act
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(0));
+        var id1 = idGenerator.NextId();
+        var id2 = idGenerator.NextId();
+
+        // Assert
+        Assert.True(id0 < id1);
+        Assert.True(id1 < id2);
+    }
+
+    [Fact]
+    public void NextId_EpochIncreasedBetweenCalls_ThrowsException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        _ = idGenerator.NextId(IdGenerator.TIMESTAMP_EPOCH - 86_400_000);
+
+        // Act & Assert
+        var exception = Assert.Throws<Exception>(() => idGenerator.NextId(IdGenerator.TIMESTAMP_EPOCH));
+
+        Assert.Contains("Clock moved backwards", exception.Message);
+    }
+
+    [Fact]
+    public void NextId_EpochDecreasedBetweenCalls_GeneratesIncreasingIds()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+
+        // Act
+        var id1 = idGenerator.NextId(IdGenerator.TIMESTAMP_EPOCH);
+        var id2 = idGenerator.NextId(IdGenerator.TIMESTAMP_EPOCH - 86_400_000);
+
+        // Assert
+        Assert.True(id1 < id2);
+    }
+
+    [Fact]
+    public void NextId_WithInitialSequence_UsesSequenceForFirstId()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1, 100);
+
+        // Act
+        var id = idGenerator.NextId();
+
+        // Assert
+        Assert.Equal(100, id & idGenerator.MaxSequence);
+        Assert.Equal(100, idGenerator.Sequence);
     }
 
     #endregion
@@ -157,6 +301,18 @@ public partial class IdGeneratorTest
         Assert.Equal(ids.Length, ids.Distinct().Count());
     }
 
+    [Fact]
+    public void NextIdAlphabetic_ZeroEpoch_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(0));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
     #endregion
 
     #region NextIdAlphanumeric Tests
@@ -207,6 +363,18 @@ public partial class IdGeneratorTest
 
         // Assert
         Assert.Equal(ids.Length, ids.Distinct().Count());
+    }
+
+    [Fact]
+    public void NextIdAlphanumeric_ZeroEpoch_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphanumeric(0));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
     }
 
     #endregion
@@ -546,6 +714,15 @@ public partial class IdGeneratorTest
         }
     }
 
+    [Fact]
+    public void Constructor_SequenceOutOfRangeForCustomBits_ThrowsArgumentException()
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => new IdGenerator(1, 1, 8, 10, 10, 3));
+
+        Assert.Contains("Sequence must be between 0 and 7", exception.Message);
+    }
+
     #endregion
 
     #region Custom Bit Allocation NextId Tests
@@ -865,6 +1042,15 @@ public partial class IdGeneratorTest
         Assert.Equal(5, idGenerator.DatacenterIdBits);
         Assert.Equal(13, idGenerator.SequenceBits);
         Assert.Equal(8191, idGenerator.MaxSequence);
+    }
+
+    [Fact]
+    public void Constructor_SequenceOutOfRangeForStrategy_ThrowsArgumentException()
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => new IdGenerator(1, 1, 8, BitAllocationStrategy.MoreDistributed));
+
+        Assert.Contains("Sequence must be between 0 and 7", exception.Message);
     }
 
     #endregion
