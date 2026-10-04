@@ -189,6 +189,21 @@ public partial class YANJsonTest
         Assert.Contains("\"name\":\"Nested2\"", result[1]);
     }
 
+    [Fact]
+    public void Serializes_LargeCollection_PreservesOrder_GenericCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static i => (TestClass?)new TestClass { Id = i, Name = $"Test{i}" }).ToArray();
+
+        // Act
+        var result = input.Serializes();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(input.Select(static x => x.Serialize()), result);
+    }
+
     #endregion
 
     #region SerializesToBytes
@@ -307,6 +322,21 @@ public partial class YANJsonTest
         Assert.Equal("2", Encoding.UTF8.GetString(result[1]!));
         Assert.Null(result[2]);
         Assert.Equal("4", Encoding.UTF8.GetString(result[3]!));
+    }
+
+    [Fact]
+    public void SerializesToBytes_LargeCollection_PreservesOrder_GenericCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static i => (TestClass?)new TestClass { Id = i, Name = $"Test{i}" }).ToArray();
+
+        // Act
+        var result = input.SerializesToBytes();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(input.Select(static x => x.SerializeToBytes()), result);
     }
 
     #endregion

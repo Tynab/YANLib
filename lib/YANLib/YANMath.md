@@ -31,7 +31,7 @@ The library is organized into several functional categories:
 ### Collection Operations
 
 - **Collection Processing**: Apply math operations to collections of values
-- **Parallel Processing**: Automatic parallel processing for large collections
+- **Order-Preserving Projections**: Collection methods are lazy, sequential and keep input order
 - **Null Handling**: Graceful handling of null values in collections
 
 ### Generic Type Support
@@ -198,9 +198,9 @@ var results = values
     .Sqrts()   // Take square root: [3.14, 2.72, 1.41]
     .ToList();
 
-// Parallel processing for large collections (happens automatically)
+// Large collections (results keep input order)
 var largeCollection = Enumerable.Range(1, 10000).Select(x => (double)x).ToList();
-var squareRoots = largeCollection.Sqrts(); // Uses parallel processing internally
+var squareRoots = largeCollection.Sqrts(); // Lazy, sequential, order-preserving
 
 // Handling null values gracefully
 double? nullValue = null;
@@ -218,7 +218,7 @@ decimal decimalResult = intValue.Sqrt<decimal>(); // Returns 4.0m
 
 ## Performance Considerations
 
-- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Sequential Projections**: Collection methods are lazy and sequential and preserve input order; use `AsParallel().AsOrdered()` yourself if you need parallelism
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning null rather than throwing exceptions
 - **Caching**: Some operations use internal caching to improve performance for repeated calculations
@@ -259,6 +259,5 @@ The library provides comprehensive coverage of mathematical functions:
 - **NaN Handling**: Properly handles NaN (Not a Number) values in floating-point operations
 - **Infinity Handling**: Includes special handling for positive and negative infinity values
 - **Rounding Precision**: Supports configurable decimal precision in rounding operations
-- **Parallel Processing**: Implements parallel processing using `Parallel.ForEach` for collections with more than 1000 elements
 - **Generic Implementation**: Uses generic type parameters with constraints to support various numeric types
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code

@@ -8,8 +8,7 @@ namespace YANLib;
 /// </summary>
 /// <remarks>
 /// This partial class contains methods specifically for working with collections, supporting both
-/// generic and non-generic collections. For large collections, these methods utilize parallel processing
-/// for improved performance.
+/// generic and non-generic collections. Element-wise projections are evaluated sequentially and preserve input order.
 /// </remarks>
 public static partial class YANUnmanaged
 {
@@ -21,9 +20,6 @@ public static partial class YANUnmanaged
     /// <param name="defaultValue">The default value to use for elements that cannot be parsed. If <c>null</c>, uses the default value of <typeparamref name="T"/>.</param>
     /// <param name="format">The format strings to use for parsing. Used primarily for <see cref="DateTime"/> parsing.</param>
     /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
-    /// <remarks>
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
-    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<T>? Parses<T>(this IEnumerable<object?>? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
@@ -38,7 +34,6 @@ public static partial class YANUnmanaged
     /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This overload accepts format strings as params array for convenience.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -54,7 +49,6 @@ public static partial class YANUnmanaged
     /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before parsing.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -71,7 +65,6 @@ public static partial class YANUnmanaged
     /// <remarks>
     /// This overload accepts format strings as params array for convenience.
     /// This method first casts the non-generic collection to a generic collection of objects before parsing.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

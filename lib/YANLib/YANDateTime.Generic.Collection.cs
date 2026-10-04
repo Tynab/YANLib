@@ -20,7 +20,6 @@ public static partial class YANDateTime
     /// <returns>A collection of week numbers converted to type <typeparamref name="T"/> corresponding to each input object, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method attempts to convert each object in the collection to a DateTime before calculating its week number.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -35,7 +34,6 @@ public static partial class YANDateTime
     /// <remarks>
     /// This method provides a convenient way to process an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method attempts to convert each object in the array to a DateTime before calculating its week number.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

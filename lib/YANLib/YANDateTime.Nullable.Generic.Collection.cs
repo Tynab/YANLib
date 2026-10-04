@@ -23,7 +23,6 @@ public static partial class YANDateTime
     /// <remarks>
     /// This generic version allows for type-specific processing of collections.
     /// Objects that cannot be converted to DateTime will result in <c>null</c> elements in the returned collection.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

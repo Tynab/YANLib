@@ -7,17 +7,11 @@ internal static partial class YANJson
 {
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<string?>? SerializesImplement<T>(this IEnumerable<T?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
-        ? default
-        : input.GetCountImplement() < 1_000
-        ? options is null ? input.Select(x => x.SerializeImplement()) : input.Select(x => x.SerializeImplement(options))
-        : options is null ? input.AsParallel().Select(x => x.SerializeImplement()) : input.AsParallel().Select(x => x.SerializeImplement(options));
+    internal static IEnumerable<string?>? SerializesImplement<T>(this IEnumerable<T?>? input, JsonSerializerOptions? options = null)
+        => input.IsNullEmptyImplement() ? default : input.Select(x => x.SerializeImplement(options));
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IEnumerable<byte[]?>? SerializesToBytesImplement<T>(this IEnumerable<T?>? input, JsonSerializerOptions? options = null) => input.IsNullEmptyImplement()
-        ? default
-        : input.GetCountImplement() < 1_000
-        ? options is null ? input.Select(x => x.SerializeToBytesImplement()) : input.Select(x => x.SerializeToBytesImplement(options))
-        : options is null ? input.AsParallel().Select(x => x.SerializeToBytesImplement()) : input.AsParallel().Select(x => x.SerializeToBytesImplement(options));
+    internal static IEnumerable<byte[]?>? SerializesToBytesImplement<T>(this IEnumerable<T?>? input, JsonSerializerOptions? options = null)
+        => input.IsNullEmptyImplement() ? default : input.Select(x => x.SerializeToBytesImplement(options));
 }

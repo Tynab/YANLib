@@ -168,6 +168,24 @@ public partial class YANEnumerableTest
         Assert.Empty(result);
     }
 
+    [Fact]
+    public void ToArray_LargeInput_PreservesOrder_Enumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToList();
+
+        // Act
+        var result = input.ToArray<int>();
+
+        // Assert
+        Assert.Equal(10_000, result.Length);
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            Assert.Equal(i, result[i]);
+        }
+    }
+
     #endregion
 
     #region ToList
@@ -334,6 +352,24 @@ public partial class YANEnumerableTest
         // Assert
         Assert.NotNull(result);
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public void ToList_LargeInput_PreservesOrder_Enumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToList();
+
+        // Act
+        var result = input.ToList<int>();
+
+        // Assert
+        Assert.Equal(10_000, result.Count);
+
+        for (var i = 0; i < result.Count; i++)
+        {
+            Assert.Equal(i, result[i]);
+        }
     }
 
     #endregion

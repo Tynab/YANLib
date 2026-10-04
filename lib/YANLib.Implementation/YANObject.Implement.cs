@@ -109,15 +109,25 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static int GetCountImplement(this IEnumerable? input) => input switch
+    internal static bool? AllDistinctImplement<T>(this IEnumerable<T>? input, Func<T, T> selector)
     {
-        null => 0,
-        ILookup<object, object?> lookup => lookup.Count,
-        ICollection nonGenericCollection => nonGenericCollection.Count,
-        ICollection<object?> genericCollection => genericCollection.Count,
-        IReadOnlyCollection<object?> readOnlyCollection => readOnlyCollection.Count,
-        _ => input.Cast<object?>().Count()
-    };
+        if (input is null)
+        {
+            return default;
+        }
+
+        var seen = new HashSet<T>();
+
+        foreach (var item in input)
+        {
+            if (!seen.Add(selector(item)))
+            {
+                return false;
+            }
+        }
+
+        return seen.Count is 0 ? null : true;
+    }
 
     #endregion
 

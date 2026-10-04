@@ -19,7 +19,7 @@ The library is organized into several functional categories:
 ### Collection Conversion
 
 - **Collection Parsing**: Convert collections of objects to collections of unmanaged types
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
+- **Order-Preserving Parsing**: Collection parsing is lazy, sequential and keeps input order
 - **Dictionary/Lookup Conversion**: Parse dictionaries with object keys/values to typed dictionaries
 
 ### Nullable Type Support
@@ -174,7 +174,7 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 ## Performance Considerations
 
 - The library uses a thread-safe cache for type reflection to improve performance
-- For large collections (>1000 items), parallel processing is automatically used
+- Collection parsing is lazy and sequential, and results keep input order
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 - Type conversion is optimized for common scenarios
 

@@ -18,9 +18,6 @@ public static partial class YANDateTime
     /// <typeparam name="T">The type of the input objects that can be converted to DateTime.</typeparam>
     /// <param name="input">The collection of objects to get the week numbers from. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection of week numbers corresponding to each input object, or <c>null</c> if the input is <c>null</c> or empty.</returns>
-    /// <remarks>
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
-    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<int>? GetWeekOfYears<T>(this IEnumerable<T?>? input) => input.GetWeekOfYearsImplement();
@@ -33,7 +30,6 @@ public static partial class YANDateTime
     /// <returns>A collection of week numbers corresponding to each input object, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to process an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -47,7 +43,6 @@ public static partial class YANDateTime
     /// <returns>A collection of week numbers of type <typeparamref name="T"/> corresponding to each input object, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before processing.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -70,12 +65,12 @@ public static partial class YANDateTime
     /// <summary>
     /// Changes the time zone of all DateTime objects in the specified list.
     /// </summary>
-    /// <param name="input">The list of DateTime objects to change the time zone of. If <c>null</c> or empty, no action is taken.</param>
+    /// <param name="input">The collection of DateTime values to convert. If <c>null</c> or empty, it is returned unchanged.</param>
     /// <param name="tzSrc">The source time zone offset in hours. If <c>null</c>, defaults to <c>0</c>.</param>
     /// <param name="tzDst">The destination time zone offset in hours. If <c>null</c>, defaults to <c>0</c>.</param>
+    /// <returns>A sequence of the converted DateTime values in input order, or <paramref name="input"/> if it is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method modifies the list in-place, changing each DateTime to the destination time zone.
-    /// For large lists (1000+ elements), this method will use parallel processing for better performance.
+    /// This method does not modify <paramref name="input"/>; it returns a lazily evaluated sequence of converted values in input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

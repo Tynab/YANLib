@@ -36,7 +36,7 @@ The library is organized into several functional categories:
 - **Bulk Processing**: Apply text operations to collections of strings or characters
 - **Validation**: Check if all or any elements in a collection meet specific criteria
 - **Case Conversion**: Convert all strings or characters in a collection to a specific case
-- **Parallel Processing**: Automatic parallel processing for large collections
+- **Parallel Processing**: In-place `List<T>` overloads use parallel processing for large lists; projections (`Titles`, `Lowers`, ...) are sequential and order-preserving
 
 
 ## Usage Examples
@@ -217,7 +217,7 @@ string formattedName = rawName
 ## Performance Considerations
 
 - The library uses optimized implementations for different text operations
-- For large collections (>1000 items), parallel processing is automatically used
+- In-place `List<T>` overloads use parallel processing for large lists (1000+ items); projections are sequential and preserve input order
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 - String operations are designed to minimize memory allocations where possible
 

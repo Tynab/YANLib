@@ -173,5 +173,22 @@ public partial class YANDateTimeTest
         Assert.Equal("24", result[1]);
     }
 
+    [Fact]
+    public void GetWeekOfYears_LargeCollection_PreservesOrder_GenericCollection()
+    {
+        // Arrange
+        var baseDate = new DateTime(2023, 1, 1);
+        var input = Enumerable.Range(0, 10_000).Select(i => (object?)baseDate.AddDays(i % 365)).ToArray();
+        var expected = input.Select(static x => x.GetWeekOfYear<int>()).ToArray();
+
+        // Act
+        var result = input.GetWeekOfYears<int>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(expected, result);
+    }
+
     #endregion
 }

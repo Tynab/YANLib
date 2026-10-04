@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using YANLib.Tests.Extensions;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANTextTest
 {
@@ -754,6 +756,99 @@ public partial class YANTextTest
         Assert.False(result);
     }
 
+    [Fact]
+    public void AnyEqualsIgnoreCase_LazySource_EnumeratesOnce_Collection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<char>(['a', 'b', 'A']);
+
+        // Act
+        var result = source.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(1, source.EnumerationCount);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_LazySource_EnumeratesOnce_Collection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<char>(['a', 'b', 'c']);
+
+        // Act
+        var result = source.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(1, source.EnumerationCount);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_StringInput_ReturnsTrue_Collection()
+    {
+        // Arrange
+        IEnumerable<char> input = "abc";
+
+        // Act
+        var result = input.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_StringInputWithMixedCaseDuplicate_ReturnsTrue_Collection()
+    {
+        // Arrange
+        IEnumerable<char> input = "abcA";
+
+        // Act
+        var result = input.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_EmptyLazySource_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<char>(Enumerable.Empty<char>());
+
+        // Act
+        var result = source.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_EmptyLazySource_ReturnsFalse_Collection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<char>(Enumerable.Empty<char>());
+
+        // Act
+        var result = source.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AnyEqualsIgnoreCase_HugeKnownCountSource_StopsAtFirstDuplicate_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Repeat('a', int.MaxValue);
+
+        // Act
+        var result = input.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
     #endregion
 
     #region Lower
@@ -1072,6 +1167,21 @@ public partial class YANTextTest
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void UpperInvariants_LongString_PreservesCharacterOrder_Collection()
+    {
+        // Arrange
+        IEnumerable<char> input = string.Concat(Enumerable.Repeat("abcdefgh", 1_000));
+
+        // Act
+        var result = input.UpperInvariants();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(string.Concat(Enumerable.Repeat("ABCDEFGH", 1_000)), new string([.. result]));
     }
 
     #endregion

@@ -642,5 +642,20 @@ public partial class YANUnmanagedTest
         Assert.Null(exception);
     }
 
+    [Fact]
+    public void Parses_LargeCollection_PreservesOrder_NullableCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToArray();
+
+        // Act
+        var result = input.Parses<int?>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000).Select(static i => (int?)i), result);
+    }
+
     #endregion
 }

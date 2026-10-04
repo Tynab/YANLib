@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using YANLib.Tests.Extensions;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANTextTest
 {
@@ -776,6 +778,33 @@ public partial class YANTextTest
         Assert.False(result);
     }
 
+    [Fact]
+    public void AnyEqualsIgnoreCase_LazySource_EnumeratesOnce_NullableCollection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<char?>(['a', null, 'A']);
+
+        // Act
+        var result = source.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(1, source.EnumerationCount);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_DuplicateNulls_ReturnsFalse_NullableCollection()
+    {
+        // Arrange
+        var collection = new char?[] { null, 'a', null };
+
+        // Act
+        var result = collection.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.False(result);
+    }
+
     #endregion
 
     #region Lower
@@ -960,6 +989,21 @@ public partial class YANTextTest
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void LowerInvariants_LargeCollection_PreservesOrder_NullableCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 10_000).Select(static i => i % 7 is 0 ? null : (char?)(char)('A' + i % 26)).ToArray();
+
+        // Act
+        var result = input.LowerInvariants();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000).Select(static i => i % 7 is 0 ? null : (char?)(char)('a' + i % 26)), result);
     }
 
     #endregion

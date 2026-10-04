@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using YANLib.Tests.Extensions;
 
 namespace YANLib.Tests.Library;
 
@@ -510,6 +511,51 @@ public partial class YANUnmanagedTest
         Assert.Equal(2, result.Count);
         Assert.Equal(guid1, result[new DateTime(2023, 1, 1)]);
         Assert.Equal(guid2, result[new DateTime(2023, 2, 1)]);
+    }
+
+    [Fact]
+    public void Parses_LargeCollection_PreservesOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToArray();
+
+        // Act
+        var result = input.Parses<int>(0);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000), result);
+    }
+
+    [Fact]
+    public void Parses_LargeNonGenericCollection_PreservesOrder_Collection()
+    {
+        // Arrange
+        var input = new ArrayList(Enumerable.Range(0, 10_000).Select(static i => i.ToString()).ToArray());
+
+        // Act
+        var result = input.Parses<int>(0);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000), result);
+    }
+
+    [Fact]
+    public void Parses_LazySource_DoesNotEnumerateToCount_Collection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<object?>(Enumerable.Range(0, 2_000).Select(static i => (object?)i.ToString()));
+
+        // Act
+        var result = source.Parses<int>(0)?.ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(Enumerable.Range(0, 2_000), result);
+        Assert.True(source.EnumerationCount <= 2);
     }
 
     #endregion

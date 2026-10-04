@@ -165,6 +165,19 @@ public partial class YANEnumerableTest
         Assert.Empty(result);
     }
 
+    [Fact]
+    public void ToImmutableArray_LargeInput_PreservesOrder_ImmutableEnumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToList();
+
+        // Act
+        var result = input.ToImmutableArray<int>();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 10_000), result);
+    }
+
     #endregion
 
     #region ToImmutableList
@@ -331,6 +344,19 @@ public partial class YANEnumerableTest
         // Assert
         Assert.NotNull(result);
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public void ToImmutableList_LargeInput_PreservesOrder_ImmutableEnumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToList();
+
+        // Act
+        var result = input.ToImmutableList<int>();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 10_000), result);
     }
 
     #endregion
@@ -983,6 +1009,19 @@ public partial class YANEnumerableTest
         // Assert
         Assert.NotNull(result);
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public void ToImmutableQueue_LargeInput_PreservesOrder_ImmutableEnumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 10_000).Select(static i => (object?)i.ToString()).ToList();
+
+        // Act
+        var result = input.ToImmutableQueue<int>();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 10_000), result);
     }
 
     #endregion

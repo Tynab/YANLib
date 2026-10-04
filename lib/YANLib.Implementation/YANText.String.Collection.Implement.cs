@@ -74,11 +74,11 @@ internal static partial class YANText
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AnyEqualsIgnoreCaseImplement(this IEnumerable<string?>? input) => input.IsNotNullEmptyImplement() && input.GetCountImplement() != input.Select(static x => x.LowerInvariantImplement()).Distinct().Count();
+    internal static bool AnyEqualsIgnoreCaseImplement(this IEnumerable<string?>? input) => input.AllDistinctImplement(static x => x.LowerInvariantImplement()) is false;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllNotEqualsIgnoreCaseImplement(this IEnumerable<string?>? input) => input.IsNotNullEmptyImplement() && input.GetCountImplement() == input.Select(static x => x.LowerInvariantImplement()).Distinct().Count();
+    internal static bool AllNotEqualsIgnoreCaseImplement(this IEnumerable<string?>? input) => input.AllDistinctImplement(static x => x.LowerInvariantImplement()) is true;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -113,7 +113,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? LowersImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.LowerImplement()) : input.AsParallel().Select(static x => x.LowerImplement());
+        => input.IsNullEmptyImplement() ? input : input.Select(static x => x.LowerImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -140,7 +140,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? LowerInvariantsImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.LowerInvariantImplement()) : input.AsParallel().Select(static x => x.LowerInvariantImplement());
+        => input.IsNullEmptyImplement() ? input : input.Select(static x => x.LowerInvariantImplement());
 
     #endregion
 
@@ -171,7 +171,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? UppersImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.UpperImplement()) : input.AsParallel().Select(static x => x.UpperImplement());
+        => input.IsNullEmptyImplement() ? input : input.Select(static x => x.UpperImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -198,7 +198,7 @@ internal static partial class YANText
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<string?>? UpperInvariantsImplement(this IEnumerable<string?>? input)
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(static x => x.UpperInvariantImplement()) : input.AsParallel().Select(static x => x.UpperInvariantImplement());
+        => input.IsNullEmptyImplement() ? input : input.Select(static x => x.UpperInvariantImplement());
 
     #endregion
 }

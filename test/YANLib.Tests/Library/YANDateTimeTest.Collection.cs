@@ -160,6 +160,22 @@ public partial class YANDateTimeTest
         Assert.Equal(24.0, result[1]);
     }
 
+    [Fact]
+    public void GetWeekOfYears_LargeCollection_PreservesOrder_Collection()
+    {
+        // Arrange
+        var baseDate = new DateTime(2023, 1, 1);
+        var input = Enumerable.Range(0, 10_000).Select(i => baseDate.AddDays(i % 365)).ToArray();
+
+        // Act
+        var result = input.GetWeekOfYears();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(input.Select(static x => x.GetWeekOfYear()), result);
+    }
+
     #endregion
 
     #region ChangeTimeZone
@@ -503,6 +519,22 @@ public partial class YANDateTimeTest
         Assert.Equal(new DateTime(2023, 3, 27, 5, 0, 0), result[1]);
         Assert.Equal(new DateTime(2023, 10, 28, 5, 0, 0), result[2]);
         Assert.Equal(new DateTime(2023, 10, 30, 5, 0, 0), result[3]);
+    }
+
+    [Fact]
+    public void ChangeTimeZones_LargeCollection_PreservesOrder_Collection()
+    {
+        // Arrange
+        var baseDate = new DateTime(2023, 1, 1);
+        var input = Enumerable.Range(0, 10_000).Select(i => baseDate.AddMinutes(i)).ToArray();
+
+        // Act
+        var result = input.ChangeTimeZones(0, 7);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000).Select(i => baseDate.AddMinutes(i).AddHours(7)), result);
     }
 
     #endregion

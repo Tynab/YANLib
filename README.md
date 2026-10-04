@@ -67,7 +67,7 @@ YANLib offers a collection of specialized components, each focusing on a specifi
 - **Generic Type Support**: Flexible type parameters for input and output types
 - **Consistent API**: Similar method naming and behavior across components
 - **Performance Optimization**: Efficient implementations with caching where appropriate
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
+- **Order-Preserving Projections**: Collection projections (`Parses`, `Serializes`, `Lowers`, `ChangeTimeZones`, ...) are lazy, sequential and keep input order; in-place `List<T>` overloads and random generation still use parallelism for large inputs (1000+ elements)
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -419,7 +419,7 @@ YANLib is designed with performance in mind. The library uses various optimizati
 
 - Caching of expressions and reflection results
 - Efficient memory usage with custom pooling
-- Parallel processing for large collections where appropriate
+- Parallel processing for in-place updates of large lists where appropriate
 - Optimized algorithms for common operations
 
 ### JSON Performance

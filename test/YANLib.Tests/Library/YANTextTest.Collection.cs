@@ -86,6 +86,21 @@ public partial class YANTextTest
         Assert.Equal(["Hello World", "Good Morning", "Test String"], result);
     }
 
+    [Fact]
+    public void Titles_LargeCollection_PreservesOrder_TextCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 10_000).Select(static i => (string?)$"name {i}").ToArray();
+
+        // Act
+        var result = input.Titles();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(input.Select(static x => x.Title()), result);
+    }
+
     #endregion
 
     #region Capitalize

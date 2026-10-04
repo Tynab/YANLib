@@ -346,5 +346,21 @@ public partial class YANDateTimeTest
         Assert.Equal(new DateTime(2023, 12, 25, 17, 45, 0), result[2]);
     }
 
+    [Fact]
+    public void ChangeTimeZones_LargeCollection_PreservesOrder_NullableCollection()
+    {
+        // Arrange
+        var baseDate = new DateTime(2023, 1, 1);
+        var input = Enumerable.Range(0, 10_000).Select(i => (object?)baseDate.AddMinutes(i)).ToArray();
+
+        // Act
+        var result = input.ChangeTimeZones(0, 7);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000).Select(i => (DateTime?)baseDate.AddMinutes(i).AddHours(7)), result);
+    }
+
     #endregion
 }

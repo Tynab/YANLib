@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using YANLib.Tests.Extensions;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANTextTest
 {
@@ -616,6 +618,33 @@ public partial class YANTextTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void AnyEqualsIgnoreCase_DuplicateNulls_ReturnsTrue_StringCollection()
+    {
+        // Arrange
+        var collection = new string?[] { null, "a", null };
+
+        // Act
+        var result = collection.AnyEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void AllNotEqualsIgnoreCase_LazySource_EnumeratesOnce_StringCollection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<string?>(["hello", "world", "test"]);
+
+        // Act
+        var result = source.AllNotEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(1, source.EnumerationCount);
+    }
+
     #endregion
 
     #region Lower
@@ -782,6 +811,36 @@ public partial class YANTextTest
 
         // Assert
         Assert.Equal(["hello", "world", "test"], result);
+    }
+
+    [Fact]
+    public void LowerInvariants_LargeCollection_PreservesOrder_StringCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 10_000).Select(static i => (string?)$"ITEM {i}").ToArray();
+
+        // Act
+        var result = input.LowerInvariants();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 10_000).Select(static i => (string?)$"item {i}"), result);
+    }
+
+    [Fact]
+    public void Lowers_LazySource_DoesNotEnumerateToCount_StringCollection()
+    {
+        // Arrange
+        var source = new CountingEnumerable<string?>(Enumerable.Range(0, 2_000).Select(static i => (string?)$"ITEM {i}"));
+
+        // Act
+        var result = source.Lowers()?.ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(Enumerable.Range(0, 2_000).Select(static i => (string?)$"item {i}"), result);
+        Assert.True(source.EnumerationCount <= 2);
     }
 
     #endregion

@@ -155,6 +155,38 @@ public partial class YANJsonTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public void Serializes_LargeCollection_PreservesOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static i => (object?)new TestClass { Id = i, Name = $"Test{i}" }).ToArray();
+
+        // Act
+        var result = input.Serializes();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(input.Select(static x => x.Serialize()), result);
+    }
+
+    [Fact]
+    public void Serializes_LargeCollectionWithCycle_ThrowsJsonException_Collection()
+    {
+        // Arrange
+        var node = new SelfReferencingNode { Id = 500 };
+        node.Next = node;
+
+        var input = Enumerable.Range(0, 1_000).Select(static i => (object?)new TestClass { Id = i }).ToArray();
+        input[500] = node;
+
+        // Act
+        var exception = Assert.Throws<JsonException>(() => input.Serializes()!.ToList());
+
+        // Assert
+        Assert.Contains("cycle", exception.Message);
+    }
+
     #endregion
 
     #region SerializesToBytes
@@ -374,6 +406,21 @@ public partial class YANJsonTest
         Assert.Equal("Test2", result[1]!.Name);
     }
 
+    [Fact]
+    public void Deserializes_LargeCollection_PreservesOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static i => (string?)$"{{\"id\":{i},\"name\":\"Test{i}\"}}").ToArray();
+
+        // Act
+        var result = input.Deserializes<TestClass>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 5_000), result.Select(static x => x!.Id));
+    }
+
     #endregion
 
     #region DeserializesFromBytes
@@ -469,5 +516,30 @@ public partial class YANJsonTest
         Assert.Equal("Test2", result[1]!.Name);
     }
 
+    [Fact]
+    public void SerializesToBytes_DeserializesFromBytes_LargeCollection_RoundTripsInOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static i => (object?)new TestClass { Id = i, Name = $"Test{i}" }).ToArray();
+
+        // Act
+        var bytes = input.SerializesToBytes();
+        var result = bytes.DeserializesFromBytes<TestClass>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsNotAssignableFrom<ParallelQuery>(bytes);
+        Assert.IsNotAssignableFrom<ParallelQuery>(result);
+        Assert.Equal(Enumerable.Range(0, 5_000), result.Select(static x => x!.Id));
+        Assert.Equal(Enumerable.Range(0, 5_000).Select(static i => $"Test{i}"), result.Select(static x => x!.Name));
+    }
+
     #endregion
+
+    private class SelfReferencingNode
+    {
+        public int Id { get; set; }
+
+        public SelfReferencingNode? Next { get; set; }
+    }
 }

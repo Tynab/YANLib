@@ -37,7 +37,6 @@ public static partial class YANDateTime
     /// <remarks>
     /// Unlike <see cref="ChangeTimeZone(List{object}, object, object)"/>, this method does not modify the original collection but returns a new one.
     /// Objects that cannot be converted to DateTime will result in <c>null</c> elements in the returned collection.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -53,7 +52,6 @@ public static partial class YANDateTime
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before processing.
     /// Objects that cannot be converted to DateTime will result in <c>null</c> elements in the returned collection.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
