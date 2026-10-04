@@ -31,9 +31,8 @@ void DisplayMenu()
     WriteLine("5. Run Concurrent Benchmark");
     WriteLine("6. Run Concurrent Collection Benchmark");
     WriteLine("7. Run HTTP Benchmark");
-    WriteLine("8. Run Count Benchmark");
-    WriteLine("9. Run JSON Serialize Benchmark");
-    WriteLine("10. Run JSON Deserialize Benchmark");
+    WriteLine("8. Run JSON Serialize Benchmark");
+    WriteLine("9. Run JSON Deserialize Benchmark");
     WriteLine("0. Exit");
     WriteLine("=============================");
 }
@@ -45,7 +44,7 @@ int GetValidChoice()
 
     do
     {
-        Write("Enter your choice (0-10): ");
+        Write("Enter your choice (0-9): ");
         var input = ReadLine();
 
         isValid = int.TryParse(input, out choice);
@@ -57,9 +56,9 @@ int GetValidChoice()
             continue;
         }
 
-        if (choice is < 0 or > 10)
+        if (choice is < 0 or > 9)
         {
-            WriteLine("Invalid choice. Please enter a number between 0 and 10.");
+            WriteLine("Invalid choice. Please enter a number between 0 and 9.");
             isValid = false;
         }
     } while (!isValid);
@@ -124,6 +123,12 @@ void RunBenchmark(int choice)
         case 9:
         {
             _ = Run<JsonDeserializeBenchmark>();
+
+            break;
+        }
+        default:
+        {
+            WriteLine($"No benchmark is mapped to choice {choice}.");
 
             break;
         }

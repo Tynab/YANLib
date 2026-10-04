@@ -3,4 +3,5 @@
 *.png filter=lfs diff=lfs merge=lfs -text
 *.svg filter=lfs diff=lfs merge=lfs -text
 *.ico filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
+# README images in pic/ are served from raw.githubusercontent.com (GitHub + nuget.org), which returns LFS pointers, so JPGs stay out of LFS
+*.jpg binary

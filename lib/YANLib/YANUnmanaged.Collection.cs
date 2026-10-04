@@ -71,16 +71,18 @@ public static partial class YANUnmanaged
     public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable? input, object? defaultValue = null, params string?[]? format) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
 
     /// <summary>
-    /// Parses a lookup of objects to a lookup of the specified nullable key and element types.
+    /// Parses a dictionary of objects to a dictionary with keys of the specified unmanaged type and values of the specified type.
     /// </summary>
-    /// <typeparam name="TKey">The key type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
-    /// <typeparam name="TElement">The element type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
-    /// <param name="input">The lookup of objects to parse. If <c>null</c> or empty, returns an empty lookup.</param>
-    /// <returns>A lookup with keys of type <typeparamref name="TKey"/> and elements of type <typeparamref name="TElement"/>, or an empty lookup if the input is <c>null</c> or empty.</returns>
+    /// <typeparam name="TKey">The unmanaged key type to parse to.</typeparam>
+    /// <typeparam name="TValue">The value type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The dictionary of objects to parse. If <c>null</c> or empty, returns an empty dictionary.</param>
+    /// <returns>A dictionary with keys of type <typeparamref name="TKey"/> and values of type <typeparamref name="TValue"/>, or an empty dictionary if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method parses both the keys and elements of the input lookup to the specified types.
-    /// Keys and elements that cannot be parsed will be <c>null</c> in the resulting lookup.
+    /// This method parses both the keys and values of the input dictionary to the specified types.
+    /// Keys that cannot be parsed will use the default value of <typeparamref name="TKey"/>.
+    /// Values that cannot be parsed will be <c>default</c> (<c>null</c> for reference types and nullable value types).
     /// </remarks>
+    /// <exception cref="ArgumentException">Two or more input keys parse to the same <typeparamref name="TKey"/> value (for example <c>"1"</c> and <c>1</c>, or two unparsable keys that both become <c>default</c>).</exception>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static Dictionary<TKey, TValue?> Parses<TKey, TValue>(this IDictionary<object, object?>? input) where TKey : unmanaged => input.ParsesImplement<TKey, TValue>();
