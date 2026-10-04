@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+    - develop
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # res/icon.png and favicon.ico are LFS objects needed by the build (package icon, application icon)
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup .NET
+        id: setup-dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # The runner image has newer SDKs preinstalled; pin SDK 8 so LangVersion preview compiles at the same level as local builds
+      - name: Pin .NET SDK
+        run: dotnet new globaljson --sdk-version "$SDK_VERSION"
+        env:
+          SDK_VERSION: ${{ steps.setup-dotnet.outputs.dotnet-version }}
+
+      # lib/YANLib/nuget.config adds the GitHub Packages feed, which requires auth, so restore from nuget.org only
+      - name: Write NuGet config
+        run: |
+          cat > "$RUNNER_TEMP/nuget.config" <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+            </packageSources>
+          </configuration>
+          EOF
+
+      - name: Restore
+        run: dotnet restore YANLib.sln --configfile "$RUNNER_TEMP/nuget.config"
+
+      - name: Build
+        run: dotnet build YANLib.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test test/YANLib.Tests/YANLib.Tests.csproj --configuration Release --no-build --verbosity normal
