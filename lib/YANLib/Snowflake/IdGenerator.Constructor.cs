@@ -69,26 +69,7 @@ public partial class IdGenerator
     /// </remarks>
     public IdGenerator(long workerId, long datacenterId, long sequence, int workerIdBits, int datacenterIdBits, int sequenceBits)
     {
-        // Validate bit allocations
-        if (workerIdBits < 0)
-        {
-            throw new ArgumentException("Worker ID bits must be non-negative.", nameof(workerIdBits));
-        }
-
-        if (datacenterIdBits < 0)
-        {
-            throw new ArgumentException("Datacenter ID bits must be non-negative.", nameof(datacenterIdBits));
-        }
-
-        if (sequenceBits < 0)
-        {
-            throw new ArgumentException("Sequence bits must be non-negative.", nameof(sequenceBits));
-        }
-
-        if (workerIdBits + datacenterIdBits + sequenceBits != TOTAL_BITS)
-        {
-            throw new ArgumentException($"The total bits allocated for worker ID, datacenter ID, and sequence must equal {TOTAL_BITS}.");
-        }
+        ValidateBitAllocation(workerIdBits, datacenterIdBits, sequenceBits);
 
         // Set bit allocations
         WorkerIdBits = workerIdBits;
@@ -160,70 +141,9 @@ public partial class IdGenerator
     /// - HighVolume: Optimized for generating many IDs per millisecond on few nodes
     /// - Balanced: Middle ground between distribution and sequence capacity
     /// </remarks>
-    public IdGenerator(long workerId, long datacenterId, long sequence, BitAllocationStrategy strategy)
-    {
-        switch (strategy)
-        {
-            case BitAllocationStrategy.MoreDistributed:
-            {
-                WorkerIdBits = MORE_DISTRIBUTED_WORKER_ID_BITS;
-                DatacenterIdBits = MORE_DISTRIBUTED_DATACENTER_ID_BITS;
-                SequenceBits = MORE_DISTRIBUTED_SEQUENCE_BITS;
+    public IdGenerator(long workerId, long datacenterId, long sequence, BitAllocationStrategy strategy) : this(workerId, datacenterId, sequence, GetBitAllocationForStrategy(strategy)) { }
 
-                break;
-            }
-            case BitAllocationStrategy.HighVolume:
-            {
-                WorkerIdBits = HIGH_VOLUME_WORKER_ID_BITS;
-                DatacenterIdBits = HIGH_VOLUME_DATACENTER_ID_BITS;
-                SequenceBits = HIGH_VOLUME_SEQUENCE_BITS;
-
-                break;
-            }
-            case BitAllocationStrategy.Balanced:
-            {
-                WorkerIdBits = BALANCED_WORKER_ID_BITS;
-                DatacenterIdBits = BALANCED_DATACENTER_ID_BITS;
-                SequenceBits = BALANCED_SEQUENCE_BITS;
-
-                break;
-            }
-            case BitAllocationStrategy.Default:
-            default:
-            {
-                WorkerIdBits = DEFAULT_WORKER_ID_BITS;
-                DatacenterIdBits = DEFAULT_DATACENTER_ID_BITS;
-                SequenceBits = DEFAULT_SEQUENCE_BITS;
-
-                break;
-            }
-        }
-
-        // Calculate maximum values
-        MaxWorkerId = -1L ^ (-1L << WorkerIdBits);
-        MaxDatacenterId = -1L ^ (-1L << DatacenterIdBits);
-        MaxSequence = -1L ^ (-1L << SequenceBits);
-
-        // Calculate shifts
-        _workerIdShift = SequenceBits;
-        _datacenterIdShift = SequenceBits + WorkerIdBits;
-        _timestampLeftShift = SequenceBits + WorkerIdBits + DatacenterIdBits;
-
-        // Validate IDs
-        if (workerId < 0 || workerId > MaxWorkerId)
-        {
-            throw new ArgumentException($"Worker ID must be between 0 and {MaxWorkerId}, but got {workerId}.", nameof(workerId));
-        }
-
-        if (datacenterId < 0 || datacenterId > MaxDatacenterId)
-        {
-            throw new ArgumentException($"Datacenter ID must be between 0 and {MaxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
-        }
-
-        WorkerId = workerId;
-        DatacenterId = datacenterId;
-        Sequence = sequence;
-    }
+    private IdGenerator(long workerId, long datacenterId, long sequence, (int WorkerIdBits, int DatacenterIdBits, int SequenceBits) bits) : this(workerId, datacenterId, sequence, bits.WorkerIdBits, bits.DatacenterIdBits, bits.SequenceBits) { }
 
     #endregion
 

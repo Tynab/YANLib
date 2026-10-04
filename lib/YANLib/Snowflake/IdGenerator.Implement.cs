@@ -108,6 +108,31 @@ public partial class IdGenerator
         _ => (DEFAULT_WORKER_ID_BITS, DEFAULT_DATACENTER_ID_BITS, DEFAULT_SEQUENCE_BITS)
     };
 
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static void ValidateBitAllocation(int workerIdBits, int datacenterIdBits, int sequenceBits)
+    {
+        if (workerIdBits < 0)
+        {
+            throw new ArgumentException("Worker ID bits must be non-negative.", nameof(workerIdBits));
+        }
+
+        if (datacenterIdBits < 0)
+        {
+            throw new ArgumentException("Datacenter ID bits must be non-negative.", nameof(datacenterIdBits));
+        }
+
+        if (sequenceBits < 0)
+        {
+            throw new ArgumentException("Sequence bits must be non-negative.", nameof(sequenceBits));
+        }
+
+        if (workerIdBits + datacenterIdBits + sequenceBits != TOTAL_BITS)
+        {
+            throw new ArgumentException($"The total bits allocated for worker ID, datacenter ID, and sequence must equal {TOTAL_BITS}.");
+        }
+    }
+
     #endregion
 
     /// <summary>
@@ -210,26 +235,7 @@ public partial class IdGenerator
         int sequenceBits = DEFAULT_SEQUENCE_BITS
     )
     {
-        // Validate bit allocations
-        if (workerIdBits < 0)
-        {
-            throw new ArgumentException("Worker ID bits must be non-negative.", nameof(workerIdBits));
-        }
-
-        if (datacenterIdBits < 0)
-        {
-            throw new ArgumentException("Datacenter ID bits must be non-negative.", nameof(datacenterIdBits));
-        }
-
-        if (sequenceBits < 0)
-        {
-            throw new ArgumentException("Sequence bits must be non-negative.", nameof(sequenceBits));
-        }
-
-        if (workerIdBits + datacenterIdBits + sequenceBits != TOTAL_BITS)
-        {
-            throw new ArgumentException($"The total bits allocated for worker ID, datacenter ID, and sequence must equal {TOTAL_BITS}.");
-        }
+        ValidateBitAllocation(workerIdBits, datacenterIdBits, sequenceBits);
 
         // Calculate shifts
         var workerIdShift = sequenceBits;

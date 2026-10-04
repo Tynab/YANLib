@@ -635,6 +635,26 @@ public partial class IdGeneratorTest
         Assert.NotEqual(200, DatacenterId);
     }
 
+    [Theory]
+    [InlineData(10, 10, 4)]
+    [InlineData(24, 0, -1)]
+    public void ExtractIdComponents_InvalidBitAllocation_ThrowsArgumentException(int workerIdBits, int datacenterIdBits, int sequenceBits)
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => IdGenerator.ExtractIdComponents(1, IdGenerator.TIMESTAMP_EPOCH, 0, workerIdBits, datacenterIdBits, sequenceBits));
+
+        if (sequenceBits < 0)
+        {
+            Assert.Contains("Sequence bits must be non-negative", exception.Message);
+            Assert.Equal("sequenceBits", exception.ParamName);
+        }
+        else
+        {
+            Assert.Contains("The total bits allocated for worker ID, datacenter ID, and sequence must equal 23", exception.Message);
+            Assert.Null(exception.ParamName);
+        }
+    }
+
     [Fact]
     public void ExtractIdAlphabeticComponents_WithCustomBitAllocation_ReturnsCorrectComponents()
     {
@@ -812,6 +832,39 @@ public partial class IdGeneratorTest
         {
             Assert.Contains("Datacenter ID must be between 0 and 3", exception.Message);
         }
+    }
+
+    [Theory]
+    [InlineData(BitAllocationStrategy.Default, 5, 5, 13)]
+    [InlineData(BitAllocationStrategy.MoreDistributed, 10, 10, 3)]
+    [InlineData(BitAllocationStrategy.HighVolume, 2, 2, 19)]
+    [InlineData(BitAllocationStrategy.Balanced, 8, 8, 7)]
+    public void Constructor_StrategyMatchesExplicitBits_CreatesEquivalentInstance(BitAllocationStrategy strategy, int workerIdBits, int datacenterIdBits, int sequenceBits)
+    {
+        // Arrange & Act
+        var strategyGenerator = new IdGenerator(1, 1, 0, strategy);
+        var explicitGenerator = new IdGenerator(1, 1, 0, workerIdBits, datacenterIdBits, sequenceBits);
+
+        // Assert
+        Assert.Equal(explicitGenerator.WorkerIdBits, strategyGenerator.WorkerIdBits);
+        Assert.Equal(explicitGenerator.DatacenterIdBits, strategyGenerator.DatacenterIdBits);
+        Assert.Equal(explicitGenerator.SequenceBits, strategyGenerator.SequenceBits);
+        Assert.Equal(explicitGenerator.MaxWorkerId, strategyGenerator.MaxWorkerId);
+        Assert.Equal(explicitGenerator.MaxDatacenterId, strategyGenerator.MaxDatacenterId);
+        Assert.Equal(explicitGenerator.MaxSequence, strategyGenerator.MaxSequence);
+    }
+
+    [Fact]
+    public void Constructor_UndefinedStrategy_FallsBackToDefault()
+    {
+        // Arrange & Act
+        var idGenerator = new IdGenerator(1, 1, 0, (BitAllocationStrategy)99);
+
+        // Assert
+        Assert.Equal(5, idGenerator.WorkerIdBits);
+        Assert.Equal(5, idGenerator.DatacenterIdBits);
+        Assert.Equal(13, idGenerator.SequenceBits);
+        Assert.Equal(8191, idGenerator.MaxSequence);
     }
 
     #endregion
