@@ -15,7 +15,6 @@ The library offers several key capabilities:
 - **Property Access**: Create strongly-typed expressions for accessing properties on objects
 - **Type Safety**: Generate expressions with proper type information
 - **Value Type Handling**: Automatic boxing of value types to object
-- **Method Access**: Support for accessing methods on objects
 
 ### Performance Optimization
 

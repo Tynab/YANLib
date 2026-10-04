@@ -15,7 +15,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsNotValidFieldImplement<T>());
+    public static bool AllValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.All(static x => x.IsValidFieldImplement<T>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -31,7 +31,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool AllNotValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.IsValidFieldImplement<T>());
+    public static bool AllNotValidFieldsImplement<T>(this IEnumerable<string?>? input) where T : class => input.IsNotNullEmptyImplement() && input.All(static x => x.IsNotValidFieldImplement<T>());
 
     [DebuggerHidden]
     [DebuggerStepThrough]

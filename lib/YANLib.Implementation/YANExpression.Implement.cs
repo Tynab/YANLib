@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using static System.Linq.Expressions.Expression;
 using static System.Reflection.BindingFlags;
-using static System.Type;
 
 namespace YANLib.Implementation;
 
@@ -32,20 +31,9 @@ internal static partial class YANExpression
             return (Expression<Func<T, object>>)existing;
         }
 
-        Expression body;
+        var propInfo = typeof(T).GetProperty(propertyName, Instance | Public | IgnoreCase) ?? throw new ArgumentException($"Type {typeof(T).Name} does not contain a property named '{propertyName}'.", nameof(propertyName));
         var parameter = Parameter(typeof(T), parameterName);
-        var propInfo = typeof(T).GetProperty(propertyName, Instance | Public | IgnoreCase);
-
-        if (propInfo is not null)
-        {
-            body = Property(parameter, propInfo);
-        }
-        else
-        {
-            var methodInfo = typeof(T).GetMethod(propertyName, Instance | Public | IgnoreCase, null, EmptyTypes, null);
-
-            body = methodInfo is not null ? Constant(methodInfo.GetType(), typeof(object)) : throw new ArgumentException($"Type {typeof(T).Name} does not contain a property named '{propertyName}'.", nameof(propertyName));
-        }
+        Expression body = Property(parameter, propInfo);
 
         if (body.Type.IsValueType)
         {

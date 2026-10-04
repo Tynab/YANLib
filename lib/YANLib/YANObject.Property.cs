@@ -20,7 +20,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the field against.</typeparam>
     /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
-    /// <returns><c>true</c> if the string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the first space-separated token of <paramref name="input"/> matches (case-insensitively) a public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>, including when <paramref name="input"/> is <c>null</c>, empty, or whitespace.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsValidField<T>(this string? input) where T : class => input.IsValidFieldImplement<T>();
@@ -30,7 +30,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if every string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if every string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. A <c>null</c>, empty, or whitespace entry is not a valid field name, so the result is <c>false</c> when the sequence contains one.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllValidFields<T>(this IEnumerable<string?>? input) where T : class => input.AllValidFieldsImplement<T>();
@@ -40,7 +40,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if at least one string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if at least one string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. <c>null</c>, empty, or whitespace entries are ignored.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyValidField<T>(this IEnumerable<string?>? input) where T : class => input.AnyValidFieldImplement<T>();
@@ -54,7 +54,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the field against.</typeparam>
     /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
-    /// <returns><c>true</c> if the string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if <paramref name="input"/> is not <c>null</c>, empty, or whitespace and its first space-separated token does not match (case-insensitively) any public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. A <c>null</c>, empty, or whitespace input is not a field name at all, so both <see cref="IsValidField{T}"/> and this method return <c>false</c> for it.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsNotValidField<T>(this string? input) where T : class => input.IsNotValidFieldImplement<T>();
@@ -64,7 +64,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if every string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if every string is non-blank and does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. A <c>null</c>, empty, or whitespace entry is not an invalid field name either, so the result is <c>false</c> when the sequence contains one.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllNotValidFields<T>(this IEnumerable<string?>? input) where T : class => input.AllNotValidFieldsImplement<T>();
@@ -74,7 +74,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if at least one string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if at least one non-blank string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. <c>null</c>, empty, or whitespace entries are ignored.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyNotValidField<T>(this IEnumerable<string?>? input) where T : class => input.AnyNotValidFieldImplement<T>();

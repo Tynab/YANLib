@@ -228,6 +228,77 @@ public partial class YANExpressionTest
         Assert.NotSame(result1, result2);
     }
 
+    [Fact]
+    public void PropertyExpression_ParameterlessMethodName_ThrowsArgumentException_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "GetDisplayName";
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
+
+        // Assert
+        Assert.Contains("does not contain a property named", exception.Message);
+        Assert.Equal("propertyName", exception.ParamName);
+    }
+
+    [Fact]
+    public void PropertyExpression_InheritedObjectMethodName_ThrowsArgumentException_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "ToString";
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
+
+        // Assert
+        Assert.Contains("does not contain a property named", exception.Message);
+        Assert.Equal("propertyName", exception.ParamName);
+    }
+
+    [Fact]
+    public void PropertyExpression_MethodNameIgnoresCase_ThrowsArgumentException_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "gethashcode";
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
+
+        // Assert
+        Assert.Contains("does not contain a property named", exception.Message);
+        Assert.Equal("propertyName", exception.ParamName);
+    }
+
+    [Fact]
+    public void PropertyExpression_MethodName_IsNotCached_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "GetDisplayName";
+
+        // Act & Assert
+        _ = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
+        _ = Assert.Throws<ArgumentException>(() => YANExpression.PropertyExpression<TestClass>(parameterName, propertyName));
+    }
+
+    [Fact]
+    public void PropertyExpression_PropertyNameIgnoresCase_ReturnsExpression_Expression()
+    {
+        // Arrange
+        var parameterName = "p";
+        var propertyName = "name";
+
+        // Act
+        var result = YANExpression.PropertyExpression<TestClass>(parameterName, propertyName);
+
+        // Assert
+        Assert.Equal("Test", result.Compile()(new TestClass { Name = "Test" }));
+    }
+
     #endregion
 
     private class TestClass
@@ -239,6 +310,8 @@ public partial class YANExpressionTest
         public bool IsActive { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        public string GetDisplayName() => $"{Name} ({Age})";
     }
 
     private class AnotherTestClass
