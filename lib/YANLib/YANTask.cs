@@ -21,8 +21,9 @@ public static partial class YANTask
     /// <param name="cancellation">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the result of the first task that completes and satisfies the condition, or <c>default(T)</c> if no task satisfies the condition.</returns>
     /// <remarks>
-    /// This method will stop waiting as soon as it finds a task that satisfies the condition.
-    /// If the cancellation token is canceled, the returned task will be canceled.
+    /// Tasks are observed in completion order; faulted or canceled tasks are skipped. The method stops waiting as soon as a result satisfies the condition,
+    /// and returns <c>default(T)</c> once every task has completed without a match.
+    /// If <paramref name="cancellation"/> is canceled before a match is found, the returned task is canceled, even while tasks are still pending.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -37,8 +38,8 @@ public static partial class YANTask
     /// <param name="cancellation">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the result of the first task that completes and satisfies the condition, or <c>default(T)</c> if no task satisfies the condition.</returns>
     /// <remarks>
-    /// Unlike <see cref="WaitAnyWithCondition{T}"/>, this method will continue to wait for tasks to complete until it finds one that satisfies the condition or all tasks have completed.
-    /// If the cancellation token is canceled, the returned task will be canceled.
+    /// Alias of <see cref="WaitAnyWithCondition{T}"/> with identical semantics (provided for naming symmetry with <see cref="Task.WhenAny(Task[])"/>).
+    /// If <paramref name="cancellation"/> is canceled before a match is found, the returned task is canceled, even while tasks are still pending.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

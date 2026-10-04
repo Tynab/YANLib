@@ -1,20 +1,18 @@
-﻿using YANLib.Tests.Extensions;
-
-namespace YANLib.Tests.Library;
+﻿namespace YANLib.Tests.Library;
 
 public partial class YANTaskTest
 {
-    #region WaitAnyWithConditionsTest
+    #region WaitAnyWithConditions
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_NullTasks_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_NullTasks_ReturnsEmptyEnumerable()
     {
         // Arrange
         IEnumerable<Task<int>>? tasks = null;
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -22,14 +20,14 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_EmptyTasks_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_EmptyTasks_ReturnsEmptyEnumerable()
     {
         // Arrange
         var tasks = Array.Empty<Task<int>>();
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -37,7 +35,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_TasksWithMatchingCondition_ReturnsMatchingResults()
+    public async Task WaitAnyWithConditions_TasksWithMatchingCondition_ReturnsMatchingResults()
     {
         // Arrange
         var tasks = new[]
@@ -50,7 +48,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -60,7 +58,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable()
     {
         // Arrange
         var tasks = new[]
@@ -73,7 +71,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 10;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -81,7 +79,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_TasksWithException_HandlesExceptionGracefully()
+    public async Task WaitAnyWithConditions_TasksWithException_HandlesExceptionGracefully()
     {
         // Arrange
         var tasks = new[]
@@ -94,7 +92,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -104,7 +102,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_WithCancellationToken_RespectsToken()
+    public async Task WaitAnyWithConditions_WithCancellationToken_RespectsToken()
     {
         // Arrange
         var cts = new CancellationTokenSource();
@@ -121,7 +119,7 @@ public partial class YANTaskTest
         // Act
         cts.Cancel();
 
-        var result = tasks.WaitAnyWithConditionsTest(predicate, cancellationToken: cts.Token);
+        var result = tasks.WaitAnyWithConditions(predicate, cancellationToken: cts.Token);
 
         // Assert
         var items = await result.ToListAsync();
@@ -130,7 +128,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_DelayedTasks_WaitsForAllTasks()
+    public async Task WaitAnyWithConditions_DelayedTasks_WaitsForAllTasks()
     {
         // Arrange
         var tasks = new[]
@@ -143,7 +141,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -153,7 +151,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_WithTakenParameter_LimitsResults()
+    public async Task WaitAnyWithConditions_WithTakenParameter_LimitsResults()
     {
         // Arrange
         var tasks = new[]
@@ -169,26 +167,100 @@ public partial class YANTaskTest
         uint taken = 2;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate, taken);
+        var result = tasks.WaitAnyWithConditions(predicate, taken);
         var items = await result.ToListAsync();
 
         // Assert
         Assert.Equal(2, items.Count);
     }
 
-    #endregion
+    [Fact]
+    public async Task WaitAnyWithConditions_YieldsInCompletionOrder()
+    {
+        // Arrange
+        var first = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var second = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var third = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timeout = TimeSpan.FromSeconds(5);
+        static bool predicate(int x) => x > 0;
 
-    #region WhenAnyWithConditionsTest
+        await using var enumerator = new[] { first.Task, second.Task, third.Task }.WaitAnyWithConditions(predicate).GetAsyncEnumerator();
+
+        // Act & Assert
+        var moveNext = enumerator.MoveNextAsync().AsTask();
+        third.SetResult(3);
+        Assert.True(await moveNext.WaitAsync(timeout));
+        Assert.Equal(3, enumerator.Current);
+
+        moveNext = enumerator.MoveNextAsync().AsTask();
+        first.SetResult(1);
+        Assert.True(await moveNext.WaitAsync(timeout));
+        Assert.Equal(1, enumerator.Current);
+
+        moveNext = enumerator.MoveNextAsync().AsTask();
+        second.SetResult(2);
+        Assert.True(await moveNext.WaitAsync(timeout));
+        Assert.Equal(2, enumerator.Current);
+
+        Assert.False(await enumerator.MoveNextAsync().AsTask().WaitAsync(timeout));
+    }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_NullTasks_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_CanceledWhilePending_ThrowsOperationCanceled()
+    {
+        // Arrange
+        var pending = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cts = new CancellationTokenSource();
+        static bool predicate(int x) => x > 0;
+
+        var enumeration = new[] { pending.Task }.WaitAnyWithConditions(predicate, cancellationToken: cts.Token).ToListAsync().AsTask();
+
+        // Act
+        cts.CancelAfter(TimeSpan.FromMilliseconds(50));
+
+        var finished = await Task.WhenAny(enumeration, Task.Delay(TimeSpan.FromSeconds(5)));
+
+        // Assert
+        Assert.Same(enumeration, finished);
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => enumeration);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_LazySequence_EnumeratesSourceOnce()
+    {
+        // Arrange
+        var calls = 0;
+
+        var tasks = new[] { 1, 2, 3 }.Where(static _ => true).Select(x =>
+        {
+            calls++;
+
+            return Task.FromResult(x);
+        });
+
+        static bool predicate(int x) => x > 2;
+
+        // Act
+        var items = await tasks.WaitAnyWithConditions(predicate).ToListAsync();
+
+        // Assert
+        Assert.Equal(3, Assert.Single(items));
+        Assert.Equal(3, calls);
+    }
+
+    #endregion
+
+    #region WhenAnyWithConditions
+
+    [Fact]
+    public async Task WhenAnyWithConditions_NullTasks_ReturnsEmptyEnumerable()
     {
         // Arrange
         IEnumerable<Task<int>>? tasks = null;
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -196,14 +268,14 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_EmptyTasks_ReturnsEmptyEnumerable()
+    public async Task WhenAnyWithConditions_EmptyTasks_ReturnsEmptyEnumerable()
     {
         // Arrange
         var tasks = Array.Empty<Task<int>>();
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -211,7 +283,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_TasksWithMatchingCondition_ReturnsMatchingResults()
+    public async Task WhenAnyWithConditions_TasksWithMatchingCondition_ReturnsMatchingResults()
     {
         // Arrange
         var tasks = new[]
@@ -224,7 +296,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -234,7 +306,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable()
+    public async Task WhenAnyWithConditions_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable()
     {
         // Arrange
         var tasks = new[]
@@ -247,7 +319,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 10;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -255,7 +327,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_TasksWithException_HandlesExceptionGracefully()
+    public async Task WhenAnyWithConditions_TasksWithException_HandlesExceptionGracefully()
     {
         // Arrange
         var tasks = new[]
@@ -268,7 +340,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -278,7 +350,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_WithCancellationToken_RespectsToken()
+    public async Task WhenAnyWithConditions_WithCancellationToken_RespectsToken()
     {
         // Arrange
         var cts = new CancellationTokenSource();
@@ -294,7 +366,7 @@ public partial class YANTaskTest
 
         // Act
         cts.Cancel();
-        var result = tasks.WhenAnyWithConditionsTest(predicate, cancellationToken: cts.Token);
+        var result = tasks.WhenAnyWithConditions(predicate, cancellationToken: cts.Token);
 
         // Assert
         var items = await result.ToListAsync();
@@ -302,7 +374,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_DelayedTasks_WaitsForAllTasks()
+    public async Task WhenAnyWithConditions_DelayedTasks_WaitsForAllTasks()
     {
         // Arrange
         var tasks = new[]
@@ -315,7 +387,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -325,7 +397,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_WithTakenParameter_LimitsResults()
+    public async Task WhenAnyWithConditions_WithTakenParameter_LimitsResults()
     {
         // Arrange
         var tasks = new[]
@@ -341,22 +413,57 @@ public partial class YANTaskTest
         uint taken = 2;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate, taken);
+        var result = tasks.WhenAnyWithConditions(predicate, taken);
         var items = await result.ToListAsync();
 
         // Assert
         Assert.Equal(2, items.Count);
     }
 
+    [Fact]
+    public async Task WhenAnyWithConditions_TakenReached_DoesNotWaitForPendingTasks()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        var tasks = new[] { never.Task, Task.FromResult(2) };
+        static bool predicate(int x) => x > 1;
+
+        // Act
+        var items = await tasks.WhenAnyWithConditions(predicate, taken: 1).ToListAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+
+        // Assert
+        Assert.Equal(2, Assert.Single(items));
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_CanceledViaEnumeratorToken_ThrowsOperationCanceled()
+    {
+        // Arrange
+        var pending = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cts = new CancellationTokenSource();
+        static bool predicate(int x) => x > 0;
+
+        var enumeration = new[] { pending.Task }.WhenAnyWithConditions(predicate).ToListAsync(cts.Token).AsTask();
+
+        // Act
+        cts.CancelAfter(TimeSpan.FromMilliseconds(50));
+
+        var finished = await Task.WhenAny(enumeration, Task.Delay(TimeSpan.FromSeconds(5)));
+
+        // Assert
+        Assert.Same(enumeration, finished);
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => enumeration);
+    }
+
     #endregion
 
-    #region AsyncEnumerableEmptyTest
+    #region AsyncEnumerableEmpty
 
     [Fact]
-    public async Task AsyncEnumerableEmptyTest_ReturnsEmptyEnumerable()
+    public async Task AsyncEnumerableEmpty_ReturnsEmptyEnumerable()
     {
         // Arrange
-        var result = YANTaskTestExtensions.AsyncEnumerableEmptyTest<int>();
+        var result = YANTask.AsyncEnumerableEmpty<int>();
 
         // Act
         var items = await result.ToListAsync();
@@ -366,10 +473,10 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task AsyncEnumerableEmptyTest_WithDifferentType_ReturnsEmptyEnumerable()
+    public async Task AsyncEnumerableEmpty_WithDifferentType_ReturnsEmptyEnumerable()
     {
         // Arrange
-        var result = YANTaskTestExtensions.AsyncEnumerableEmptyTest<string>();
+        var result = YANTask.AsyncEnumerableEmpty<string>();
 
         // Act
         var items = await result.ToListAsync();
@@ -379,10 +486,10 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task AsyncEnumerableEmptyTest_EnumerationCompletes_WithoutExceptions()
+    public async Task AsyncEnumerableEmpty_EnumerationCompletes_WithoutExceptions()
     {
         // Arrange
-        var result = YANTaskTestExtensions.AsyncEnumerableEmptyTest<int>();
+        var result = YANTask.AsyncEnumerableEmpty<int>();
 
         // Act
         var exception = await Record.ExceptionAsync(async () =>

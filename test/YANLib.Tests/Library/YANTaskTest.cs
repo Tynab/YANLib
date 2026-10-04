@@ -154,6 +154,69 @@ public partial class YANTaskTest
         Assert.Equal(default, result);
     }
 
+    [Fact]
+    public async Task WaitAnyWithCondition_CanceledWhilePending_CancelsReturnedTask_Task()
+    {
+        // Arrange
+        var pending = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cts = new CancellationTokenSource();
+        static bool predicate(int x) => x > 0;
+
+        var task = new[] { pending.Task }.WaitAnyWithCondition(predicate, cts.Token);
+
+        // Act
+        cts.CancelAfter(TimeSpan.FromMilliseconds(50));
+
+        var finished = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5)));
+
+        // Assert
+        Assert.Same(task, finished);
+        Assert.True(task.IsCanceled);
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_FirstCompletionDoesNotMatch_KeepsWaiting_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            Task.Delay(50).ContinueWith(_ => 5)
+        };
+
+        static bool predicate(int x) => x > 1;
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(predicate);
+
+        // Assert
+        Assert.Equal(5, result);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_LazySequence_EnumeratesSourceOnce_Task()
+    {
+        // Arrange
+        var calls = 0;
+
+        var tasks = new[] { 1, 2, 3 }.Where(static _ => true).Select(x =>
+        {
+            calls++;
+
+            return Task.FromResult(x);
+        });
+
+        static bool predicate(int x) => x > 2;
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(predicate);
+
+        // Assert
+        Assert.Equal(3, result);
+        Assert.Equal(3, calls);
+    }
+
     #endregion
 
     #region WhenAnyWithCondition
@@ -306,6 +369,69 @@ public partial class YANTaskTest
 
         // Assert
         Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithCondition_CanceledWhilePending_CancelsReturnedTask_Task()
+    {
+        // Arrange
+        var pending = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cts = new CancellationTokenSource();
+        static bool predicate(int x) => x > 0;
+
+        var task = new[] { pending.Task }.WhenAnyWithCondition(predicate, cts.Token);
+
+        // Act
+        cts.CancelAfter(TimeSpan.FromMilliseconds(50));
+
+        var finished = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5)));
+
+        // Assert
+        Assert.Same(task, finished);
+        Assert.True(task.IsCanceled);
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithCondition_FirstCompletionDoesNotMatch_KeepsWaiting_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            Task.Delay(50).ContinueWith(_ => 5)
+        };
+
+        static bool predicate(int x) => x > 1;
+
+        // Act
+        var result = await tasks.WhenAnyWithCondition(predicate);
+
+        // Assert
+        Assert.Equal(5, result);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithCondition_LazySequence_EnumeratesSourceOnce_Task()
+    {
+        // Arrange
+        var calls = 0;
+
+        var tasks = new[] { 1, 2, 3 }.Where(static _ => true).Select(x =>
+        {
+            calls++;
+
+            return Task.FromResult(x);
+        });
+
+        static bool predicate(int x) => x > 2;
+
+        // Act
+        var result = await tasks.WhenAnyWithCondition(predicate);
+
+        // Assert
+        Assert.Equal(3, result);
+        Assert.Equal(3, calls);
     }
 
     #endregion

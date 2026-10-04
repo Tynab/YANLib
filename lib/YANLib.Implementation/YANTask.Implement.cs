@@ -9,41 +9,19 @@ internal static partial class YANTask
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, bool firstOnly, CancellationToken cancellationToken = default)
+    private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
     {
         await Yield();
 
-        if (tasks.IsNullEmptyImplement())
+        if (tasks is null)
         {
             return default;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         var pending = new HashSet<Task<T>>(tasks);
 
-        if (firstOnly)
+        if (pending.Count is 0)
         {
-            while (pending.Count > 0)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var completed = await WhenAny(pending).ConfigureAwait(false);
-
-                _ = pending.Remove(completed);
-
-                try
-                {
-                    var result = await completed.ConfigureAwait(false);
-
-                    if (predicate(result))
-                    {
-                        return result;
-                    }
-                }
-                catch { }
-            }
-
             return default;
         }
 
@@ -51,7 +29,7 @@ internal static partial class YANTask
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var completed = await WhenAny(pending).ConfigureAwait(false);
+            var completed = await WhenAny(pending).WaitAsync(cancellationToken).ConfigureAwait(false);
 
             _ = pending.Remove(completed);
 
@@ -75,10 +53,10 @@ internal static partial class YANTask
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static Task<T?> WaitAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
-        => cancellationToken.IsCancellationRequested ? FromCanceled<T?>(cancellationToken) : AnyWithCondition(tasks, predicate, firstOnly: true, cancellationToken);
+        => cancellationToken.IsCancellationRequested ? FromCanceled<T?>(cancellationToken) : AnyWithCondition(tasks, predicate, cancellationToken);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static Task<T?> WhenAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
-        => cancellationToken.IsCancellationRequested ? FromCanceled<T?>(cancellationToken) : AnyWithCondition(tasks, predicate, firstOnly: false, cancellationToken);
+        => tasks.WaitAnyWithConditionImplement(predicate, cancellationToken);
 }

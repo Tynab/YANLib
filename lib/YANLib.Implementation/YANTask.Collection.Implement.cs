@@ -14,14 +14,18 @@ internal static partial class YANTask
     {
         await Yield();
 
-        if (tasks.IsNullEmptyImplement())
+        if (tasks is null)
         {
             yield break;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         var pending = new HashSet<Task<T>>(tasks);
+
+        if (pending.Count is 0)
+        {
+            yield break;
+        }
+
         var emitted = 0;
         var maxToEmit = taken.IsDefaultImplement() ? pending.Count.ParseImplement<uint>() : taken;
 
@@ -29,7 +33,7 @@ internal static partial class YANTask
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var completed = await WhenAny(pending).ConfigureAwait(false);
+            var completed = await WhenAny(pending).WaitAsync(cancellationToken).ConfigureAwait(false);
 
             _ = pending.Remove(completed);
 
@@ -72,5 +76,5 @@ internal static partial class YANTask
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IAsyncEnumerable<T> WhenAnyWithConditionsImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
-        => cancellationToken.IsCancellationRequested ? AsyncEnumerableEmptyImplement<T>() : AnyWithConditions(tasks, predicate, taken, cancellationToken);
+        => tasks.WaitAnyWithConditionsImplement(predicate, taken, cancellationToken);
 }

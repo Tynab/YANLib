@@ -175,7 +175,7 @@ var tasks = new[]
 int? result = await tasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 
-// Using WhenAnyWithCondition - waits for tasks to complete until it finds a match
+// WhenAnyWithCondition is an alias of WaitAnyWithCondition (same semantics)
 int? anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
 Console.WriteLine(anotherResult); // Output: 10
 ```

@@ -25,7 +25,7 @@ public static partial class YANTask
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IAsyncEnumerable<T> AsyncEnumerableEmpty<T>() => AsyncEnumerableEmptyImplement<T>();
+    public static IAsyncEnumerable<T> AsyncEnumerableEmpty<T>() => AsyncEnumerableEmptyImplement<T>();
 
     /// <summary>
     /// Asynchronously enumerates tasks that complete and meet the specified condition, stopping after finding the specified number of matching tasks.
@@ -37,13 +37,15 @@ public static partial class YANTask
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>An asynchronous enumerable that yields the results of tasks that satisfy the condition, up to the specified limit.</returns>
     /// <remarks>
-    /// This method will stop waiting as soon as it finds the specified number of tasks that satisfy the condition.
-    /// If the cancellation token is canceled, the enumeration will stop immediately.
+    /// Results are yielded in completion order. This method will stop waiting as soon as it finds the specified number of tasks that satisfy the condition.
+    /// If <paramref name="cancellationToken"/> is already canceled when the method is called, an empty sequence is returned; if it is canceled during
+    /// enumeration (including a token supplied through <see cref="TaskAsyncEnumerableExtensions.WithCancellation{T}(IAsyncEnumerable{T}, CancellationToken)"/>),
+    /// the pending <see cref="IAsyncEnumerator{T}.MoveNextAsync"/> throws <see cref="OperationCanceledException"/> without waiting for further completions.
     /// Tasks that throw exceptions are skipped and do not count toward the taken limit.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IAsyncEnumerable<T> WaitAnyWithConditions<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<T> WaitAnyWithConditions<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
         => tasks.WaitAnyWithConditionsImplement(predicate, taken, cancellationToken);
 
     /// <summary>
@@ -56,12 +58,14 @@ public static partial class YANTask
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>An asynchronous enumerable that yields the results of tasks that satisfy the condition, up to the specified limit.</returns>
     /// <remarks>
-    /// Unlike <see cref="WaitAnyWithConditions{T}"/>, this method will continue to wait for tasks to complete until it finds the specified number of tasks that satisfy the condition or all tasks have completed.
-    /// If the cancellation token is canceled, the enumeration will stop immediately.
+    /// Alias of <see cref="WaitAnyWithConditions{T}"/> with identical semantics.
+    /// If <paramref name="cancellationToken"/> is already canceled when the method is called, an empty sequence is returned; if it is canceled during
+    /// enumeration (including a token supplied through <see cref="TaskAsyncEnumerableExtensions.WithCancellation{T}(IAsyncEnumerable{T}, CancellationToken)"/>),
+    /// the pending <see cref="IAsyncEnumerator{T}.MoveNextAsync"/> throws <see cref="OperationCanceledException"/> without waiting for further completions.
     /// Tasks that throw exceptions are skipped and do not count toward the taken limit.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static IAsyncEnumerable<T> WhenAnyWithConditions<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<T> WhenAnyWithConditions<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
         => tasks.WhenAnyWithConditionsImplement(predicate, taken, cancellationToken);
 }
