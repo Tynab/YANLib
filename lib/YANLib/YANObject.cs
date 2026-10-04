@@ -45,10 +45,10 @@ public static partial class YANObject
     /// <param name="input">The object to check.</param>
     /// <returns><c>true</c> if the object is <c>null</c> or has all properties set to their default values; otherwise, <c>false</c>.</returns>
     /// <remarks>
-    /// This method checks if the object is <c>null</c> or if all of its properties have their default values.
-    /// For string properties, this means they are <c>null</c> or empty.
-    /// For reference type properties, this means they are <c>null</c>.
+    /// This method checks if the object is <c>null</c> or if all of its public, readable, non-indexed instance properties (declared or inherited) have their default values.
+    /// For reference type properties, including <see cref="string"/> properties, this means they are <c>null</c>; a property holding an empty string is not default.
     /// For value type properties, this means they have their default value (e.g., 0 for numeric types, false for bool).
+    /// Indexers, write-only and ref-like properties are ignored, so for a string or collection input only its other public properties are compared, such as <c>Length</c>, <c>Count</c> or <c>Capacity</c>, but also an array's <c>Rank</c> or a dictionary's <c>Comparer</c>, so an empty array or dictionary is not default.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -61,10 +61,10 @@ public static partial class YANObject
     /// <param name="input">The object to check.</param>
     /// <returns><c>true</c> if the object is not <c>null</c> and has at least one property not set to its default value; otherwise, <c>false</c>.</returns>
     /// <remarks>
-    /// This method checks if the object is not <c>null</c> and if at least one of its properties does not have its default value.
-    /// For string properties, this means they are not <c>null</c> and not empty.
-    /// For reference type properties, this means they are not <c>null</c>.
+    /// This method checks if the object is not <c>null</c> and if at least one of its public, readable, non-indexed instance properties (declared or inherited) does not have its default value.
+    /// For reference type properties, including <see cref="string"/> properties, this means they are not <c>null</c>; a property holding an empty string counts as non-default.
     /// For value type properties, this means they do not have their default value (e.g., not 0 for numeric types, not false for bool).
+    /// Indexers, write-only and ref-like properties are ignored, so for a string or collection input only its other public properties are compared, such as <c>Length</c>, <c>Count</c> or <c>Capacity</c>, but also an array's <c>Rank</c> or a dictionary's <c>Comparer</c>, so an empty array or dictionary counts as non-default.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -104,6 +104,12 @@ public static partial class YANObject
     /// <param name="tzSrc">The source time zone offset. If <c>null</c>, no conversion is performed.</param>
     /// <param name="tzDst">The destination time zone offset. If <c>null</c>, no conversion is performed.</param>
     /// <returns>The object with all <see cref="DateTime"/> properties converted to the destination time zone.</returns>
+    /// <remarks>
+    /// The object graph is converted in place. Every distinct reference-type object is converted at most once, so shared and cyclic references are safe.
+    /// Only readable and writable, non-indexed properties are visited, and a property is assigned only when it holds a <see cref="DateTime"/> or struct whose value actually changes.
+    /// Reference-type values are converted in place and never assigned back, so a property whose getter returns a copy is not updated.
+    /// Read-only lists are never written to, but their reference-type elements are still converted in place.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T? ChangeTimeZoneAllProperty<T>(this T? input, object? tzSrc = null, object? tzDst = null) where T : class => input.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);

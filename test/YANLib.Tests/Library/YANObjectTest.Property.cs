@@ -481,6 +481,24 @@ public partial class YANObjectTest
         Assert.False(result);
     }
 
+    [Fact]
+    public void AllPropertiesDefault_InheritedPropertyByName_ChecksBaseProperty_ObjectProperty()
+    {
+        // Arrange
+        var input = new DerivedTestClass
+        {
+            IntProperty = 1
+        };
+
+        // Act
+        var allDefault = input.AllPropertiesDefault(["IntProperty"]);
+        var anyNotDefault = input.AnyPropertiesNotDefault(["IntProperty"]);
+
+        // Assert
+        Assert.False(allDefault);
+        Assert.True(anyNotDefault);
+    }
+
     #endregion
 
     #region AllPropertiesDefaults

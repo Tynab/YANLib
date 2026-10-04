@@ -71,5 +71,34 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T?>? ChangeTimeZoneAllPropertiesImplement<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class
-        => input.IsNullEmptyImplement() ? input : input.GetCountImplement() < 1_000 ? input.Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst));
+    {
+        if (input is null)
+        {
+            return input;
+        }
+
+        var list = input as IList<T?> ?? [.. input];
+
+        // One identity set for the whole call, seeded with the list so an item pointing back at it neither recurses into it nor writes into it
+        var visited = new HashSet<object>(ReferenceEqualityComparer.Instance) { list };
+        var isReadOnly = IsReadOnlyList(list);
+
+        for (var i = 0; i < list.Count; i++)
+        {
+            if (list[i] is not { } item || (isReadOnly && item is ValueType))
+            {
+                continue;
+            }
+
+            object value = item;
+
+            // only a boxed DateTime or struct item needs to be written back
+            if (ChangeTimeZoneAllPropertyHelper(ref value, tzSrc, tzDst, visited) && !isReadOnly)
+            {
+                list[i] = (T)value;
+            }
+        }
+
+        return list;
+    }
 }

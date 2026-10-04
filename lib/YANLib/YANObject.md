@@ -137,7 +137,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 ## Performance Considerations
 
 - The library uses caching for property reflection to improve performance
-- For large collections (>1000 items), parallel processing is automatically used for time zone conversion
+- Time zone conversion on collections runs immediately, sequentially and in place; each distinct reference-type object is converted at most once per call, so shared and cyclic references are safe
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -169,7 +169,7 @@ The library provides comprehensive coverage of object operations:
 
 ## Technical Details
 
-- **Reflection Usage**: Uses reflection to access and evaluate object properties
+- **Reflection Usage**: Uses reflection to access and evaluate object properties; property checks and time zone conversion use public, readable, non-indexed instance properties, including inherited ones (indexers, write-only and ref-like properties are skipped)
 - **Property Caching**: Implements caching of property information to improve performance
 - **Default Value Comparison**: Uses `EqualityComparer<T>.Default` for type-safe default value comparison
 - **Null Propagation**: Implements null-safe property access throughout the API

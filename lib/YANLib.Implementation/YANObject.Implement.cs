@@ -15,7 +15,93 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, static t => t.GetProperties(Public | Instance | DeclaredOnly));
+    private static PropertyInfo[] GetCachedProperties(Type type)
+        => PropertyCache.GetOrAdd(type, static t => t.GetProperties(Public | Instance).Where(static x => x.CanRead && x.GetIndexParameters().Length is 0 && !x.PropertyType.IsByRefLike).ToArray());
+
+    // Arrays and ArraySegment<T> report ICollection<T>.IsReadOnly as true although their indexer writes
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsReadOnlyList<T>(ICollection<T> list) => list is IList nonGenericList ? nonGenericList.IsReadOnly : list is not ArraySegment<T> && list.IsReadOnly;
+
+    // Returns true only when the caller must write value back: a DateTime that actually changed or a mutated struct box.
+    // Reference types are mutated in place, so unchanged properties and elements are never re-assigned.
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool ChangeTimeZoneAllPropertyHelper(ref object value, object? tzSrc, object? tzDst, HashSet<object> visited)
+    {
+        if (value is DateTime dt)
+        {
+            var shifted = dt.ChangeTimeZoneImplement(tzSrc, tzDst);
+
+            if (shifted == dt)
+            {
+                return false;
+            }
+
+            value = shifted;
+
+            return true;
+        }
+
+        var type = value.GetType();
+
+        if (value is string || type.IsPrimitive || type.IsEnum || (!type.IsValueType && !visited.Add(value)))
+        {
+            return false;
+        }
+
+        var mutated = false;
+
+        if (value is IList<DateTime> dateList)
+        {
+            if (!IsReadOnlyList(dateList))
+            {
+                for (var i = 0; i < dateList.Count; i++)
+                {
+                    var current = dateList[i];
+                    var next = current.ChangeTimeZoneImplement(tzSrc, tzDst);
+
+                    if (next != current)
+                    {
+                        dateList[i] = next;
+                        mutated = true;
+                    }
+                }
+            }
+        }
+        else if (value is IList list)
+        {
+            // read-only lists are still walked so reference-type elements are converted in place
+            var isReadOnly = list.IsReadOnly;
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                if (list[i] is not { } item || (isReadOnly && item is ValueType))
+                {
+                    continue;
+                }
+
+                if (ChangeTimeZoneAllPropertyHelper(ref item, tzSrc, tzDst, visited) && !isReadOnly)
+                {
+                    list[i] = item;
+                    mutated = true;
+                }
+            }
+        }
+        else
+        {
+            foreach (var prop in GetCachedProperties(type))
+            {
+                if (prop.CanWrite && prop.GetValue(value) is { } propValue && ChangeTimeZoneAllPropertyHelper(ref propValue, tzSrc, tzDst, visited))
+                {
+                    prop.SetValue(value, propValue);
+                    mutated = true;
+                }
+            }
+        }
+
+        return mutated && type.IsValueType;
+    }
 
     #endregion
 
@@ -80,66 +166,11 @@ internal static partial class YANObject
             return input;
         }
 
-        if (input is IList<DateTime> dateList)
-        {
-            for (var i = 0; i < dateList.Count; i++)
-            {
-                dateList[i] = dateList[i].ChangeTimeZoneImplement(tzSrc, tzDst);
-            }
+        object value = input;
 
-            return input;
-        }
+        _ = ChangeTimeZoneAllPropertyHelper(ref value, tzSrc, tzDst, new HashSet<object>(ReferenceEqualityComparer.Instance));
 
-        if (input is IList list)
-        {
-            for (var i = 0; i < list.Count; i++)
-            {
-                if (list[i] is not null)
-                {
-                    var updated = list[i].ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
-
-                    if (updated is not null)
-                    {
-                        list[i] = updated;
-                    }
-                }
-            }
-
-            return input;
-        }
-
-        var props = input.GetType().GetProperties(Public | Instance).Where(static x => x.CanRead && x.CanWrite);
-
-        foreach (var prop in props)
-        {
-            if (prop is null)
-            {
-                continue;
-            }
-
-            var val = prop.GetValue(input);
-
-            if (val is null)
-            {
-                continue;
-            }
-
-            if (val is DateTime dt)
-            {
-                prop.SetValue(input, dt.ChangeTimeZoneImplement(tzSrc, tzDst));
-            }
-            else
-            {
-                var updated = val.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
-
-                if (updated is not null)
-                {
-                    prop.SetValue(input, updated);
-                }
-            }
-        }
-
-        return input;
+        return (T)value;
     }
 
     [DebuggerHidden]

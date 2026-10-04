@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using YANLib.Tests.Extensions;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANObjectTest
 {
@@ -738,6 +740,208 @@ public partial class YANObjectTest
         Assert.Equal("test1", result[0]!.StringProperty);
         Assert.Equal(new DateTime(2023, 1, 2, 19, 0, 0), result[1]!.DateProperty);
         Assert.Equal("test2", result[1]!.StringProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_EnumeratedTwice_ConvertsOnlyOnce_ObjectCollection()
+    {
+        // Arrange
+        List<DateTimeTestClass?> input =
+        [
+            new() { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) },
+            new() { DateProperty = new DateTime(2023, 1, 2, 12, 0, 0) }
+        ];
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(0, 7);
+        _ = result!.ToList();
+        var second = result!.ToList();
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), second[0]!.DateProperty);
+        Assert.Equal(new DateTime(2023, 1, 2, 19, 0, 0), second[1]!.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_ResultNotEnumerated_StillConvertsInPlace_ObjectCollection()
+    {
+        // Arrange
+        List<DateTimeTestClass?> input = [new() { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) }];
+
+        // Act
+        _ = input.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), input[0]!.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_ListInput_ReturnsSameInstance_ObjectCollection()
+    {
+        // Arrange
+        List<DateTimeTestClass?> input = [new() { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) }];
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Same(input, result);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_LargeCollection_ConvertsEachItemOnceInOrder_ObjectCollection()
+    {
+        // Arrange
+        var baseDate = new DateTime(2023, 1, 1, 12, 0, 0);
+        List<DateTimeTestClass?> input = [.. Enumerable.Range(0, 5_000).Select(i => new DateTimeTestClass { DateProperty = baseDate.AddMinutes(i), StringProperty = i.ToString() })];
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(0, 7)?.ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5_000, result.Count);
+
+        for (var i = 0; i < result.Count; i++)
+        {
+            Assert.Equal(baseDate.AddMinutes(i).AddHours(7), result[i]!.DateProperty);
+            Assert.Equal(i.ToString(), result[i]!.StringProperty);
+        }
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_LazySource_EnumeratesSourceOnce_ObjectCollection()
+    {
+        // Arrange
+        List<DateTimeTestClass?> items =
+        [
+            new() { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) },
+            new() { DateProperty = new DateTime(2023, 1, 2, 12, 0, 0) },
+            new() { DateProperty = new DateTime(2023, 1, 3, 12, 0, 0) }
+        ];
+
+        var source = new CountingEnumerable<DateTimeTestClass?>(items);
+
+        // Act
+        var result = source.ChangeTimeZoneAllProperties(0, 7);
+        _ = result!.ToList();
+        _ = result!.ToList();
+
+        // Assert
+        Assert.Equal(1, source.EnumerationCount);
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), items[0]!.DateProperty);
+        Assert.Equal(new DateTime(2023, 1, 2, 19, 0, 0), items[1]!.DateProperty);
+        Assert.Equal(new DateTime(2023, 1, 3, 19, 0, 0), items[2]!.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_SharedChildObject_ConvertsChildOnce_ObjectCollection()
+    {
+        // Arrange
+        var child = new DateTimeTestClass { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) };
+        List<ParentTestClass?> input = [new() { First = child }, new() { First = child }];
+
+        // Act
+        _ = input.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), child.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_LargeCollectionSharingChild_ConvertsChildOnce_ObjectCollection()
+    {
+        // Arrange
+        var child = new DateTimeTestClass { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) };
+        List<ParentTestClass?> input = [.. Enumerable.Range(0, 2_000).Select(_ => new ParentTestClass { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0), First = child })];
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(0, 7)?.ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), child.DateProperty);
+        Assert.All(result, static x => Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), x!.DateProperty));
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_DuplicateItemReference_ConvertsOnce_ObjectCollection()
+    {
+        // Arrange
+        var item = new DateTimeTestClass { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) };
+        List<DateTimeTestClass?> input = [item, item];
+
+        // Act
+        _ = input.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), item.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_ItemReferencesInputList_ConvertsOnceWithoutThrowing_ObjectCollection()
+    {
+        // Arrange
+        var owner = new OwnerTestClass { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0) };
+        var a = new ItemTestClass { DateProperty = new DateTime(2023, 1, 1, 12, 0, 0), Owner = owner };
+        var b = new ItemTestClass { DateProperty = new DateTime(2023, 1, 2, 12, 0, 0), Owner = owner };
+
+        owner.Items = [a, b];
+
+        // Act
+        var result = owner.Items.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Same(owner.Items, result);
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), a.DateProperty);
+        Assert.Equal(new DateTime(2023, 1, 2, 19, 0, 0), b.DateProperty);
+        Assert.Equal(new DateTime(2023, 1, 1, 19, 0, 0), owner.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_BoxedDateTimeItems_ChangesTimeZone_ObjectCollection()
+    {
+        // Arrange
+        List<object?> list = [new DateTime(2023, 1, 1, 12, 0, 0), "x", 1, null];
+        object?[] array = [new DateTime(2023, 1, 1, 12, 0, 0), "x", 1, null];
+
+        // Act
+        var listResult = list.ChangeTimeZoneAllProperties(0, 7);
+        var arrayResult = array.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Same(list, listResult);
+        Assert.Same(array, arrayResult);
+        Assert.Equal([new DateTime(2023, 1, 1, 19, 0, 0), "x", 1, null], list);
+        Assert.Equal([new DateTime(2023, 1, 1, 19, 0, 0), "x", 1, null], array);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_BoxedDateTimeItemsInLazySource_ReturnsConvertedList_ObjectCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(1, 2).Select(static x => (object?)new DateTime(2023, 1, x, 12, 0, 0));
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal([new DateTime(2023, 1, 1, 19, 0, 0), new DateTime(2023, 1, 2, 19, 0, 0)], result);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperties_BoxedDateTimeItemsInReadOnlyList_LeavesThemUnchanged_ObjectCollection()
+    {
+        // Arrange
+        var input = new List<object?> { new DateTime(2023, 1, 1, 12, 0, 0) }.AsReadOnly();
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert
+        Assert.Same(input, result);
+        Assert.Equal(new DateTime(2023, 1, 1, 12, 0, 0), input[0]);
     }
 
     #endregion
