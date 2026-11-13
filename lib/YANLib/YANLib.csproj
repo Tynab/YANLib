@@ -57,6 +57,13 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<IsPackable>true</IsPackable>
 		<IncludeBuildOutput>true</IncludeBuildOutput>
+		<!--
+			Pack fails if the public API is not compatible with the baseline package downloaded from nuget.org
+			during restore. Validation is incremental: after changing only the baseline version, delete obj/
+			so that it runs again.
+		-->
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<PackageValidationBaselineVersion>8.3.3</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
