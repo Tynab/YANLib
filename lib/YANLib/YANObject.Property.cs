@@ -21,6 +21,10 @@ public static partial class YANObject
     /// <summary>
     /// Determines whether the specified string represents a valid field (property) name for type <typeparamref name="T"/>.
     /// </summary>
+    /// <remarks>
+    /// The name is looked up among the readable, non-indexer public instance properties of <typeparamref name="T"/>, inherited ones included,
+    /// case-insensitively (an exact match is preferred), with the same lookup as <see cref="YANExpression.PropertyExpression{T}(string, string)"/>.
+    /// </remarks>
     /// <typeparam name="T">The target type to validate the field against.</typeparam>
     /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
     /// <returns><c>true</c> if the string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c> (always for a <c>null</c>, empty or whitespace string).</returns>

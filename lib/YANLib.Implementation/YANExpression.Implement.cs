@@ -9,7 +9,7 @@ namespace YANLib.Implementation;
 
 internal static partial class YANExpression
 {
-    private static readonly ConcurrentDictionary<(Type Type, string PropertyName), LambdaExpression> Cache = new();
+    private static readonly ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression> Cache = new();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -25,26 +25,27 @@ internal static partial class YANExpression
             throw new ArgumentException("Property name cannot be null or whitespace.", nameof(propertyName));
         }
 
-        var key = (typeof(T), propertyName);
+        return (Expression<Func<T, object>>)Cache.GetOrAdd((typeof(T), parameterName, propertyName), static key => CreatePropertyExpression<T>(key.ParameterName, key.PropertyName));
+    }
 
-        if (Cache.TryGetValue(key, out var existing))
-        {
-            return (Expression<Func<T, object>>)existing;
-        }
-
-        Expression body;
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static Expression<Func<T, object>> CreatePropertyExpression<T>(string parameterName, string propertyName)
+    {
         var parameter = Parameter(typeof(T), parameterName);
-        var propInfo = typeof(T).GetProperty(propertyName, Instance | Public | IgnoreCase);
+        Expression body;
 
-        if (propInfo is not null)
+        if (typeof(T).GetPropertyImplement(propertyName) is { } propInfo)
         {
             body = Property(parameter, propInfo);
         }
         else
         {
-            var methodInfo = typeof(T).GetMethod(propertyName, Instance | Public | IgnoreCase, null, EmptyTypes, null);
+            var methodInfo = typeof(T).GetMethod(propertyName, Instance | Public, null, EmptyTypes, null) ?? typeof(T).GetMethod(propertyName, Instance | Public | IgnoreCase, null, EmptyTypes, null);
 
-            body = methodInfo is not null ? Constant(methodInfo.GetType(), typeof(object)) : throw new ArgumentException($"Type {typeof(T).Name} does not contain a property named '{propertyName}'.", nameof(propertyName));
+            body = methodInfo is { IsGenericMethodDefinition: false, ReturnType: { IsByRef: false, IsByRefLike: false, IsPointer: false } returnType } && returnType != typeof(void)
+                ? Call(parameter, methodInfo)
+                : throw new ArgumentException($"Type {typeof(T).Name} does not contain a property named '{propertyName}'.", nameof(propertyName));
         }
 
         if (body.Type.IsValueType)
@@ -52,10 +53,6 @@ internal static partial class YANExpression
             body = Convert(body, typeof(object));
         }
 
-        var lambda = Lambda<Func<T, object>>(body, parameter);
-
-        Cache[key] = lambda;
-
-        return lambda;
+        return Lambda<Func<T, object>>(body, parameter);
     }
 }

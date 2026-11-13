@@ -69,6 +69,35 @@ internal static partial class YANObject
 
     #region Internal
 
+    /// <summary>
+    /// Finds the readable, non-indexer public instance property named <paramref name="name"/>: an exact (ordinal) match wins over a
+    /// case-insensitive one, and within each group the most-derived declaration wins (so <c>new</c>-hidden properties are not ambiguous).
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static PropertyInfo? GetPropertyImplement(this Type type, string name)
+    {
+        PropertyInfo? exact = null;
+        PropertyInfo? ignoreCase = null;
+
+        foreach (var prop in GetCachedProperties(type))
+        {
+            if (prop.Name.Equals(name, StringComparison.Ordinal))
+            {
+                if (exact is null || prop.DeclaringType!.IsSubclassOf(exact.DeclaringType!))
+                {
+                    exact = prop;
+                }
+            }
+            else if (prop.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && (ignoreCase is null || prop.DeclaringType!.IsSubclassOf(ignoreCase.DeclaringType!)))
+            {
+                ignoreCase = prop;
+            }
+        }
+
+        return exact ?? ignoreCase;
+    }
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static int GetCountImplement<T>(this IEnumerable<T>? input) => input switch

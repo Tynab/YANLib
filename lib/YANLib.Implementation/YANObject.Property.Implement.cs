@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.Reflection.BindingFlags;
 using static System.StringSplitOptions;
 
 namespace YANLib.Implementation;
@@ -10,7 +9,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool IsValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetProperty(input.Split(' ', RemoveEmptyEntries)[0], Instance | Public | IgnoreCase) is not null;
+    public static bool IsValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetPropertyImplement(input.Split(' ', RemoveEmptyEntries)[0]) is not null;
 
     [DebuggerHidden]
     [DebuggerStepThrough]

@@ -352,7 +352,7 @@ A specialized utility library for creating and manipulating strongly-typed expre
 - Property access expression building
 - Type safety with proper type information
 - Value type handling with automatic boxing
-- Expression caching for better performance
+- Expression-tree caching per type, parameter name and property name (compile once and keep the delegate)
 
 ```csharp
 // Create a property expression for accessing the Name property on a Person object

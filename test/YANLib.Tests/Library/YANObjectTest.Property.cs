@@ -402,6 +402,49 @@ public partial class YANObjectTest
 
     #endregion
 
+    #region Field name lookup
+
+    [Fact]
+    public void IsValidField_HiddenProperty_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "Name";
+
+        // Act
+        var result = input.IsValidField<HidingPropertyClass>();
+
+        // Assert (8.3.3 threw AmbiguousMatchException)
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsValidField_InheritedProperty_ReturnsTrue_Field()
+    {
+        // Arrange
+        var input = "basename";
+
+        // Act
+        var result = input.IsValidField<DerivedPropertyClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsValidField_IndexerAndWriteOnlyProperty_ReturnFalse_Field()
+    {
+        // Act
+        var indexer = "Item".IsValidField<IndexerPropertyClass>();
+        var writeOnly = "Secret".IsValidField<WriteOnlyPropertyClass>();
+
+        // Assert (8.3.3 accepted both, although neither can be read or sorted by)
+        Assert.False(indexer);
+        Assert.False(writeOnly);
+        Assert.True("Item".IsNotValidField<IndexerPropertyClass>());
+    }
+
+    #endregion
+
     #region Blank field names (8.3.3 regression)
 
     [Theory]

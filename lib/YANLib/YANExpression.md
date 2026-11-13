@@ -15,13 +15,14 @@ The library offers several key capabilities:
 - **Property Access**: Create strongly-typed expressions for accessing properties on objects
 - **Type Safety**: Generate expressions with proper type information
 - **Value Type Handling**: Automatic boxing of value types to object
-- **Method Access**: Support for accessing methods on objects
+- **Parameterless Methods**: A name that matches no property but a public parameterless instance method with a return value builds a call (`p => p.GetFullName()`)
+- **Name Lookup**: Readable, non-indexer public instance properties, inherited ones included; an exact (case-sensitive) match wins over a case-insensitive one, and for a property hidden with `new` the most-derived one is used
 
 ### Performance Optimization
 
-- **Expression Caching**: Automatically cache generated expressions for better performance
+- **Expression Caching**: Automatically cache the generated expression trees (per type, parameter name and property name)
 - **Reuse**: Efficiently reuse expressions for the same property across multiple calls
-- **Minimal Overhead**: Reduce the cost of reflection-based property access
+- **Minimal Overhead**: Reflection runs once per cached expression; compile the expression once and keep the delegate
 
 ### Error Handling
 
@@ -205,21 +206,28 @@ bool areDifferentTypes = object.ReferenceEquals(expr1, customerExpr); // Returns
 ```
 
 
+### Changes since 8.3.3
+
+- A name that matches a parameterless method now builds a call: `PropertyExpression<Person>("p", "GetFullName")` is `p => p.GetFullName()` (it was a constant `System.Reflection.RuntimeMethodInfo` type). Methods returning `void`, by-ref or by-ref-like values and generic methods throw `ArgumentException`.
+- The cache key includes the parameter name: `("x", "Name")` followed by `("u", "Name")` returns `u => u.Name` (it returned the cached `x => x.Name`). Concurrent first calls for the same key return the same instance.
+- Properties hidden with `new` and properties whose names differ only in case no longer throw `AmbiguousMatchException`: the most-derived property and the exact-case match win. The indexer `Item` is not treated as a property.
+
+
 ## Performance Considerations
 
-- **Expression Caching**: The library automatically caches expressions based on the type and property name, significantly improving performance for repeated access to the same property
-- **Compilation Cost**: Expression compilation is relatively expensive, but the caching mechanism ensures this cost is paid only once per type/property combination
-- **Memory Usage**: Cached expressions are stored in a `ConcurrentDictionary`, which uses memory proportional to the number of unique type/property combinations
-- **Thread Safety**: The caching mechanism is thread-safe, using `ConcurrentDictionary` for concurrent access
+- **Expression Caching**: The library caches expression trees by type, parameter name and property name, so repeated calls skip the reflection and return the same instance
+- **Compilation Cost**: The cache holds expression trees, not compiled delegates; `Compile()` is relatively expensive and runs on every call to it, so compile once and keep the delegate
+- **Memory Usage**: Cached expressions are stored in a `ConcurrentDictionary` that is never trimmed, so it grows with every distinct type/parameter/property combination; validate untrusted names (e.g. with `IsValidField<T>()`) before passing them
+- **Thread Safety**: The caching mechanism is thread-safe (`ConcurrentDictionary.GetOrAdd`): concurrent first calls for the same key all receive the same instance
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
 ## Implementation Details
 
 - **Expression Trees**: Uses the Expression API from `System.Linq.Expressions` to build property access expressions
-- **Caching Strategy**: Uses a `ConcurrentDictionary<(Type Type, string PropertyName), LambdaExpression>` for thread-safe caching
+- **Caching Strategy**: Uses a `ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression>` for thread-safe caching
 - **Value Type Handling**: Automatically converts value types to `object` using `Expression.Convert`
-- **Reflection**: Uses reflection to verify property existence and access property information
+- **Reflection**: Uses reflection to find the property (or parameterless method) when an expression is first built
 - **Error Handling**: Provides detailed error messages for common issues like null/empty names or non-existent properties
 
 
@@ -230,7 +238,7 @@ The library provides focused coverage of expression operations:
 | Category | Functions |
 |----------|-----------|
 | **Property Access** | PropertyExpression<T> |
-| **Expression Caching** | Internal caching mechanism for compiled expressions |
+| **Expression Caching** | Internal caching of expression trees (not compiled delegates) |
 | **Type Conversion** | Automatic boxing/unboxing for value types |
 | **Error Handling** | Validation for parameter and property names |
 
@@ -238,11 +246,11 @@ The library provides focused coverage of expression operations:
 ## Technical Details
 
 - **Expression Building**: Uses `System.Linq.Expressions` to dynamically build property access expressions at runtime
-- **Expression Caching**: Implements a thread-safe caching mechanism using `ConcurrentDictionary<(Type Type, string PropertyName), LambdaExpression>` to store and reuse compiled expressions
-- **Cache Key Structure**: Uses a tuple of `(Type, string)` combining the object type and property name as the cache key
+- **Expression Caching**: Implements a thread-safe caching mechanism using `ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression>` to store and reuse expression trees
+- **Cache Key Structure**: Uses a tuple of `(Type, string, string)` combining the object type, parameter name and property name as the cache key
 - **Parameter Naming**: Supports custom parameter names in expressions (e.g., `p => p.PropertyName` vs `x => x.PropertyName`)
 - **Type Handling**: Automatically handles boxing/unboxing for value types when converting to/from `object`
 - **Property Validation**: Performs validation to ensure properties exist on the target type before building expressions
-- **Reflection Usage**: Uses reflection only for initial property discovery, then relies on compiled expressions for performance
+- **Reflection Usage**: Uses reflection only when an expression is first built; callers compile the expression tree into a delegate
 - **Thread Safety**: All operations are thread-safe, allowing concurrent access from multiple threads
-- **Memory Management**: Efficiently manages memory by sharing compiled expressions across multiple calls
+- **Memory Management**: Shares one expression tree per type/parameter/property combination; entries are never evicted

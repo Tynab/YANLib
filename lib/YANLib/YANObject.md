@@ -142,7 +142,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - **Getters**: every selected getter is called; an exception thrown by a getter propagates (wrapped in `TargetInvocationException`).
 - **Names**: the `names` overloads match property names case-sensitively. When none of the names matches a property, `AllPropertiesDefault`, `AllPropertiesNotDefault` and their collection versions return `false`.
 - **Collections**: `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` when the collection contains a `null` element.
-- **Field names**: `IsValidField<T>` checks the first space-separated token of the string against the public instance properties of `T`. A `null`, empty or whitespace string is never a valid field, so `IsNotValidField<T>` is always the opposite of `IsValidField<T>`, `AllValidFields` is `!AnyNotValidField` and `AnyValidField` is `!AllNotValidFields` for a non-empty sequence.
+- **Field names**: `IsValidField<T>` checks the first space-separated token of the string against the readable, non-indexer public instance properties of `T` (inherited ones included), case-insensitively with an exact match preferred, the same lookup as `YANExpression.PropertyExpression`. A `null`, empty or whitespace string is never a valid field, so `IsNotValidField<T>` is always the opposite of `IsValidField<T>`, `AllValidFields` is `!AnyNotValidField` and `AnyValidField` is `!AllNotValidFields` for a non-empty sequence.
 
 ## Time Zone Conversion Rules
 
@@ -175,6 +175,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - `ChangeTimeZoneAllProperty` no longer throws for classes with an indexer (`TargetParameterCountException`), `Dictionary<TKey, DateTime>` properties (now converted), read-only lists such as `ReadOnlyCollection<DateTime>` (`NotSupportedException`, now left unchanged) or `Stream` properties (`MemoryStream.ReadTimeout`), and no longer crashes the process with a stack overflow on parent/child back-references.
 - `ChangeTimeZoneAllProperty` converts an object reached through several references once (it was shifted once per reference), converts getter-only lists, arrays and dictionaries and `DateTime` items of `object` lists, skips throwing getters, and no longer calls the setters of properties it does not change.
 - `Copy()`: `Base b = new Derived(); b.Copy()` returns a `Derived` copy (threw `TargetException`), classes with an indexer are copied (threw `TargetParameterCountException`), and a struct is copied by value (returned `default(T)`, e.g. `5.Copy()` was `0`).
+- `IsValidField` no longer throws `AmbiguousMatchException` for a property hidden with `new`, and the indexer `Item` and write-only properties are no longer valid fields.
 - Blank field names are never valid again (as in 8.3.2): `["Name", null].AllValidFields<User>()` and `["Name", "  "].AllValidFields<User>()` are `false` (were `true`), `IsNotValidField` of `null` / `""` / whitespace is `true` (was `false`) and `["Name", null].AnyNotValidField<User>()` is `true` (was `false`).
 
 
