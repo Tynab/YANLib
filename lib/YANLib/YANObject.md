@@ -144,6 +144,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - **Collections**: `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` when the collection contains a `null` element.
 - **Field names**: `IsValidField<T>` checks the first space-separated token of the string against the readable, non-indexer public instance properties of `T` (inherited ones included), case-insensitively with an exact match preferred, the same lookup as `YANExpression.PropertyExpression`. A `null`, empty or whitespace string is never a valid field, so `IsNotValidField<T>` is always the opposite of `IsValidField<T>`, `AllValidFields` is `!AnyNotValidField` and `AnyValidField` is `!AllNotValidFields` for a non-empty sequence.
 
+
 ## Time Zone Conversion Rules
 
 `ChangeTimeZoneAllProperty` (and `ChangeTimeZoneAllProperties` for each element) changes the object graph in place:
@@ -156,12 +157,14 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - Strings, primitives, enums, date/time/number types and non-data types (`Type` and other reflection objects, delegates, streams, tasks, threads, wait handles, cancellation tokens, safe handles, pointers) are not walked into.
 - A property whose getter throws is skipped; an exception thrown by a setter propagates.
 
+
 ## Copy Rules
 
 - For a class, `Copy()` creates an instance of the input's runtime type when it differs from `T` and has a public parameterless constructor (`Base b = new Derived(); b.Copy()` is a `Derived`), otherwise a new `T`. The readable and writable public instance properties of that type, inherited ones included and indexers excluded, are copied; reference values are shared (shallow copy).
 - For a value type, `Copy()` returns the value itself (assigning a struct already copies all of its fields).
 
-### Changes since 8.3.3
+
+## Changes since 8.3.3
 
 - Inherited properties are checked again: `new Derived { BaseName = "x" }.IsNullDefault()` is `false` (was `true`).
 - Indexers and write-only properties are skipped: `new List<int>().IsNullDefault()` is `true` (threw `TargetParameterCountException`), a class with a write-only property no longer throws `ArgumentException`.
