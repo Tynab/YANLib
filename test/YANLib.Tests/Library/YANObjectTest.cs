@@ -649,6 +649,22 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_EnumerableOfStringsWithDateTimeProperty_ConvertsProperty_Object()
+    {
+        // Arrange
+        var input = new TzStringSequence { Created = Hour(1), Items = ["a"] };
+        var holder = new TzSequenceHolder { Sequence = new TzStringSequence { Created = Hour(2) } };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+        holder.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (a type that enumerates strings but is not a list is not a leaf; its own properties are walked as in 8.3.3)
+        Assert.Equal(Hour(8), input.Created);
+        Assert.Equal(Hour(9), holder.Sequence.Created);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_ThrowingGetter_IsSkipped_Object()
     {
         // Arrange
@@ -748,6 +764,22 @@ public partial class YANObjectTest
         Assert.Equal(input.At, result.At);
         Assert.Equal(date, dateResult);
         Assert.Equal(5, intResult);
+    }
+
+    [Fact]
+    public void Copy_BoxedStructTypedAsObject_ReturnsBoxedCopy_Object()
+    {
+        // Arrange
+        object input = new TzStruct { At = new DateTime(2023, 1, 1) };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert (8.3.3 threw TargetException: the struct's properties were written into a new object)
+        var copy = Assert.IsType<TzStruct>(result);
+
+        Assert.Equal(new DateTime(2023, 1, 1), copy.At);
+        Assert.NotSame(input, result);
     }
 
     #endregion
@@ -884,6 +916,22 @@ public partial class YANObjectTest
         public DateTime[,] Grid { get; set; } = new DateTime[0, 0];
 
         public DateTime At { get; set; }
+    }
+
+    private sealed class TzStringSequence : IEnumerable<string>
+    {
+        public DateTime Created { get; set; }
+
+        public List<string> Items { get; set; } = [];
+
+        public IEnumerator<string> GetEnumerator() => Items.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class TzSequenceHolder
+    {
+        public TzStringSequence Sequence { get; set; } = new();
     }
 
     private sealed class TzThrowingHolder

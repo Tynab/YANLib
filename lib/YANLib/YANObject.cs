@@ -167,7 +167,8 @@ public static partial class YANObject
     /// <remarks>
     /// For a class, the copy is an instance of the input's runtime type when that type differs from <typeparamref name="T"/> and has a public parameterless constructor,
     /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded)
-    /// are copied; reference values are shared, not cloned. For a value type, the value itself is returned, since assigning a struct already copies all of its fields.
+    /// are copied; reference values are shared, not cloned. For a value type, the value itself is returned, since assigning a struct already copies all of its fields;
+    /// a boxed struct passed as <see cref="object"/> is returned in a new box.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

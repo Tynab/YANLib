@@ -325,7 +325,7 @@ internal static partial class YANObject
 
     /// <summary>
     /// Whether a value of <paramref name="type"/> is not walked into: primitives, enums, strings, date / time / number value types and other
-    /// non-data types (reflection, delegates, streams, tasks, threads, handles, pointers), or a sequence whose elements are all such values.
+    /// non-data types (reflection, delegates, streams, tasks, threads, handles, pointers), or an array / list whose elements are all such values.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -337,6 +337,13 @@ internal static partial class YANObject
             || Array.Exists(TimeZoneLeafBaseTypes, x => x.IsAssignableFrom(t)) || Nullable.GetUnderlyingType(t) is { } underlying && underlying.IsTimeZoneLeaf())
         {
             return true;
+        }
+
+        // Only lists, which the walk would otherwise enumerate instead of walking their properties, are skipped by element type;
+        // any other type implementing IEnumerable<string> (say) still has its own DateTime properties converted.
+        if (!t.IsArray && !typeof(IList).IsAssignableFrom(t))
+        {
+            return false;
         }
 
         var elementType = t.IsArray ? t.GetElementType() : GetSequenceElementType(t);
@@ -468,6 +475,13 @@ internal static partial class YANObject
         }
 
         var runtimeType = input.GetType();
+
+        if (runtimeType.IsValueType)
+        {
+            // A boxed struct typed as object: return a new box holding a copy of the value.
+            return (T)RuntimeHelpers.GetObjectValue(input);
+        }
+
         T result;
 
         if (runtimeType != typeof(T) && runtimeType.GetConstructor(Type.EmptyTypes) is not null)
