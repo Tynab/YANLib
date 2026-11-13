@@ -185,8 +185,8 @@ internal static partial class YANObject
         {
             case IList<DateTime> dates:
             {
-                // Arrays report IList<T>.IsReadOnly == true but their elements can be replaced.
-                if (dates.IsReadOnly && input is not Array)
+                // Arrays and array segments report IList<T>.IsReadOnly == true but their elements can be replaced.
+                if (dates.IsReadOnly && input is not (Array or ArraySegment<DateTime>))
                 {
                     return false;
                 }
@@ -200,7 +200,7 @@ internal static partial class YANObject
             }
             case IList<DateTime?> dates:
             {
-                if (dates.IsReadOnly && input is not Array)
+                if (dates.IsReadOnly && input is not (Array or ArraySegment<DateTime?>))
                 {
                     return false;
                 }

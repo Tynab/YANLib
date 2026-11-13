@@ -146,7 +146,8 @@ public static partial class YANObject
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
     /// a struct is walked and written back when something in it changed. No other property is written.</description></item>
     /// <item><description>A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.</description></item>
-    /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
+    /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable
+    /// (an <c>ArraySegment&lt;T&gt;</c> of them counts as writable: its items are converted in the underlying array);
     /// read-only ones (<c>ReadOnlyCollection&lt;T&gt;</c>, <c>ImmutableArray&lt;T&gt;</c>, <c>ReadOnlyDictionary&lt;TKey, TValue&gt;</c>, ...) are left unchanged.
     /// The elements of other lists (<see cref="System.Collections.IList"/>) are walked.</description></item>
     /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>

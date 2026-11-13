@@ -534,6 +534,25 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_ArraySegments_ConvertsSegmentItems_Object()
+    {
+        // Arrange
+        DateTime[] dates = [Hour(1), Hour(2)];
+        DateTime?[] nullableDates = [Hour(3), null, Hour(4)];
+        var input = new TzSegmentHolder { Segment = new(dates, 0, 1), NullableSegment = new(nullableDates, 0, 2), At = Hour(5) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (ArraySegment<T> reports IsReadOnly == true but writes through to its array: 8.3.3 converted ArraySegment<DateTime>
+        // and threw TargetParameterCountException for ArraySegment<DateTime?>; items outside the segment and the default segment are left alone)
+        Assert.Equal([Hour(8), Hour(2)], dates);
+        Assert.Equal([Hour(10), null, Hour(4)], nullableDates);
+        Assert.Null(input.Empty.Array);
+        Assert.Equal(Hour(12), input.At);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_ImmutableArrayOfObjects_ConvertsItemsInPlace_Object()
     {
         // Arrange
@@ -947,6 +966,17 @@ public partial class YANObjectTest
         public ImmutableArray<DateTime> Immutable { get; set; }
 
         public ReadOnlyDictionary<string, DateTime> ReadOnlyDictionary { get; set; } = new(new Dictionary<string, DateTime>());
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzSegmentHolder
+    {
+        public ArraySegment<DateTime> Segment { get; set; }
+
+        public ArraySegment<DateTime?> NullableSegment { get; set; }
+
+        public ArraySegment<DateTime> Empty { get; set; }
 
         public DateTime At { get; set; }
     }
