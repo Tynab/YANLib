@@ -9,7 +9,7 @@
 		<Authors>Yami An</Authors>
 		<Company>YAN</Company>
 		<Description>
-			YANLib (YAMI AN NEPHILIM LIBRARY) is a comprehensive .NET utility library providing powerful extension methods that enhance developer productivity. Built on .NET 6.0 LTS, it offers high-performance utilities for JSON serialization, text manipulation, object validation, task coordination, mathematical operations, DateTime handling, and more.
+			YANLib (YAMI AN NEPHILIM LIBRARY) is a comprehensive .NET utility library providing powerful extension methods that enhance developer productivity. Built on .NET 8 (LTS), it offers high-performance utilities for JSON serialization, text manipulation, object validation, task coordination, mathematical operations, DateTime handling, and more.
 
 			Key features:
 			• YANJson: High-performance JSON serialization with robust error handling
@@ -27,9 +27,9 @@
 		</Description>
 		<Copyright>Copyright ©  2023</Copyright>
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/Tynab/YANLib</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Tynab/YANLib</RepositoryUrl>
-		<PackageTags>C#, .NET, Library</PackageTags>
+		<PackageTags>C# .NET Library</PackageTags>
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
@@ -52,21 +52,11 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
 		<Version>8.3.3</Version>
-		<LangVersion>preview</LangVersion>
+		<LangVersion>12</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<IsPackable>true</IsPackable>
 		<IncludeBuildOutput>true</IncludeBuildOutput>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<Optimize>False</Optimize>
-		<DebugType>portable</DebugType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<Optimize>True</Optimize>
-		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>

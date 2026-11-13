@@ -1,0 +1,13 @@
+<Project>
+
+	<PropertyGroup>
+		<!--
+			NuGet audit warnings (NU1900: the vulnerability data could not be fetched, NU1901-NU1904: a package
+			has a known vulnerability, NU1905: the audit source has no vulnerability data) stay warnings even
+			when warnings are treated as errors (-warnaserror or TreatWarningsAsErrors=true), so that a transient
+			nuget.org outage or a newly published advisory does not break the build. They are still reported.
+		-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);NU1900;NU1901;NU1902;NU1903;NU1904;NU1905</WarningsNotAsErrors>
+	</PropertyGroup>
+
+</Project>
