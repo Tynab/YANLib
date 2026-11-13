@@ -680,6 +680,49 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_LazySubclass_ConvertsOwnPropertiesOnly_Object()
+    {
+        // Arrange
+        var calls = 0;
+        var input = new TzLazySubclass(() =>
+        {
+            calls++;
+
+            return [Hour(1)];
+        })
+        { At = Hour(2) };
+
+        input.Own.Add(Hour(3));
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, the subclass's own properties are converted and the inherited Lazy<T>.Value is not read)
+        Assert.Equal(0, calls);
+        Assert.Equal(Hour(9), input.At);
+        Assert.Equal([Hour(10)], input.Own);
+        Assert.Equal([Hour(1)], input.Value);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ReferencedObjects_AreWalkedInPropertyOrder_Object()
+    {
+        // Arrange
+        var log = new List<string>();
+        var input = new TzOrderNode(log, "root")
+        {
+            First = new(log, "first") { First = new(log, "first.first") },
+            Second = new(log, "second")
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (each object's own properties first, then the objects it references in property order, depth first)
+        Assert.Equal(["root", "first", "first.first", "second"], log);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_ImmutableArrayOfObjects_ConvertsItemsInPlace_Object()
     {
         // Arrange
@@ -1157,6 +1200,33 @@ public partial class YANObjectTest
         public ArraySegment<object> Objects { get; set; }
 
         public ArraySegment<int> Ints { get; set; }
+    }
+
+    private sealed class TzLazySubclass(Func<List<DateTime>> factory) : Lazy<List<DateTime>>(factory)
+    {
+        public DateTime At { get; set; }
+
+        public List<DateTime> Own { get; } = [];
+    }
+
+    private sealed class TzOrderNode(List<string> log, string name)
+    {
+        private DateTime at = Hour(1);
+
+        public DateTime At
+        {
+            get
+            {
+                log.Add(name);
+
+                return at;
+            }
+            set => at = value;
+        }
+
+        public TzOrderNode? First { get; set; }
+
+        public TzOrderNode? Second { get; set; }
     }
 
     private sealed class TzLazyHolder

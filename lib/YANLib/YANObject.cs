@@ -157,10 +157,10 @@ public static partial class YANObject
     /// in the underlying array, and the items outside the segment are left alone.</description></item>
     /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>
     /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams, tasks, threads,
-    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. Neither is a <see cref="Lazy{T}"/>: the walk never creates its value.</description></item>
+    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. The <see cref="Lazy{T}.Value"/> of a lazy value is never read, so the walk never creates it.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
     /// <item><description>Class instances are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack; each object's own
-    /// properties are converted before the objects it references. A graph that never ends (a getter that returns a new object on every call whose type leads back
+    /// properties are converted first, then the objects it references, in property / item order, depth first. A graph that never ends (a getter that returns a new object on every call whose type leads back
     /// to itself) is walked until memory runs out.</description></item>
     /// </list>
     /// </remarks>

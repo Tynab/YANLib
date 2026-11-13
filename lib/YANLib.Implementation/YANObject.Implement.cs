@@ -160,7 +160,7 @@ internal static partial class YANObject
     {
         if (input is not null)
         {
-            ChangeTimeZoneRoot(input, tzSrc, tzDst, new HashSet<object>(ReferenceEqualityComparer.Instance), new Stack<object>());
+            ChangeTimeZoneRoot(input, tzSrc, tzDst, new HashSet<object>(ReferenceEqualityComparer.Instance), []);
         }
 
         return input;
@@ -169,28 +169,42 @@ internal static partial class YANObject
     /// <summary>
     /// Converts, in place, the <see cref="DateTime"/> values reachable from <paramref name="root"/>, skipping the objects in <paramref name="visited"/>.
     /// Class instances are walked from the work stack <paramref name="pending"/> (empty on entry and on return) instead of recursively, so the depth
-    /// of the graph (a long linked list, a deep tree) is not limited by the call stack.
+    /// of the graph (a long linked list, a deep tree) is not limited by the call stack. Each object's own properties are converted first, then the
+    /// objects it references, in property / item order, depth first.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
+    private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending)
     {
-        _ = ChangeTimeZoneGraph(root, tzSrc, tzDst, visited, pending);
+        var next = root;
 
-        while (pending.TryPop(out var next))
+        while (true)
         {
+            var start = pending.Count;
+
             _ = ChangeTimeZoneGraph(next, tzSrc, tzDst, visited, pending);
+
+            // The objects referenced by `next` were pushed in property / item order; reverse them so that the first one is walked first.
+            pending.Reverse(start, pending.Count - start);
+
+            if (pending.Count is 0)
+            {
+                return;
+            }
+
+            next = pending[^1];
+            pending.RemoveAt(pending.Count - 1);
         }
     }
 
     /// <summary>
     /// Walks a value found in the graph: a boxed struct right away, so that its owner can write it back, and a class instance (changed in place,
-    /// never written back) later, by pushing it on <paramref name="pending"/>.
+    /// never written back) later, by adding it to <paramref name="pending"/>.
     /// </summary>
     /// <returns><c>true</c> if <paramref name="value"/> is a boxed struct that changed and must be written back by its owner.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneValue(object value, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
+    private static bool ChangeTimeZoneValue(object value, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending)
     {
         var type = value.GetType();
 
@@ -201,7 +215,7 @@ internal static partial class YANObject
 
         if (!type.IsTimeZoneLeaf() && !visited.Contains(value))
         {
-            pending.Push(value);
+            pending.Add(value);
         }
 
         return false;
@@ -209,12 +223,12 @@ internal static partial class YANObject
 
     /// <summary>
     /// Converts, in place, the <see cref="DateTime"/> values of <paramref name="input"/>; every object is visited once. Boxed structs inside it
-    /// are walked recursively, class instances are pushed on <paramref name="pending"/>.
+    /// are walked recursively, class instances are added to <paramref name="pending"/>.
     /// </summary>
     /// <returns><c>true</c> if a value was written into <paramref name="input"/> itself (a boxed struct must then be written back by its owner).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneGraph(object input, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
+    private static bool ChangeTimeZoneGraph(object input, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending)
     {
         var type = input.GetType();
 
@@ -318,7 +332,7 @@ internal static partial class YANObject
 
         foreach (var prop in GetCachedReadableProperties(type))
         {
-            if (!prop.CanWrite && !prop.PropertyType.IsTimeZoneCollection())
+            if (!prop.CanWrite && (!prop.PropertyType.IsTimeZoneCollection() || IsLazy(prop.DeclaringType)))
             {
                 continue;
             }
@@ -369,7 +383,7 @@ internal static partial class YANObject
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneLeafCache = new();
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneCollectionCache = new();
     private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
-    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, HashSet<object>, Stack<object>, bool>?> ArraySegmentConverterCache = new();
+    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, HashSet<object>, List<object>, bool>?> ArraySegmentConverterCache = new();
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
@@ -450,22 +464,12 @@ internal static partial class YANObject
     private static bool IsArraySegment(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ArraySegment<>);
 
     /// <summary>
-    /// Whether <paramref name="type"/> is <see cref="Lazy{T}"/> or derives from it (<see cref="Lazy{T, TMetadata}"/>).
+    /// Whether <paramref name="type"/> is a <see cref="Lazy{T}"/>. A class deriving from it (<see cref="Lazy{T, TMetadata}"/> included) is walked,
+    /// but the properties that <see cref="Lazy{T}"/> declares (<see cref="Lazy{T}.Value"/>) are never read, so the walk never creates a lazy value.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool IsLazy(Type type)
-    {
-        for (var current = type; current is not null; current = current.BaseType)
-        {
-            if (current.IsGenericType && current.GetGenericTypeDefinition() == typeof(Lazy<>))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    private static bool IsLazy(Type? type) => type is { IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Lazy<>);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -522,14 +526,14 @@ internal static partial class YANObject
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Func<object, object?, object?, HashSet<object>, Stack<object>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
+    private static Func<object, object?, object?, HashSet<object>, List<object>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
         IsArraySegment(t)
-            ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments()).CreateDelegate<Func<object, object?, object?, HashSet<object>, Stack<object>, bool>>()
+            ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments()).CreateDelegate<Func<object, object?, object?, HashSet<object>, List<object>, bool>>()
             : null);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneArraySegment<T>(object input, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
+    private static bool ChangeTimeZoneArraySegment<T>(object input, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending)
     {
         // Like an array, a segment's items can be replaced (the writes go to the underlying array).
         var segment = (ArraySegment<T>)input;
