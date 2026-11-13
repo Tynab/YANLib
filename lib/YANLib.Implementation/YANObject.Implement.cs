@@ -23,14 +23,12 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static int GetCountImplement(this IEnumerable? input) => input switch
+    internal static int GetCountImplement<T>(this IEnumerable<T>? input) => input switch
     {
         null => 0,
-        ILookup<object, object?> lookup => lookup.Count,
-        ICollection nonGenericCollection => nonGenericCollection.Count,
-        ICollection<object?> genericCollection => genericCollection.Count,
-        IReadOnlyCollection<object?> readOnlyCollection => readOnlyCollection.Count,
-        _ => input.Cast<object?>().Count()
+        _ when input.TryGetNonEnumeratedCount(out var count) => count,
+        IReadOnlyCollection<T> readOnlyCollection => readOnlyCollection.Count,
+        _ => input.Count()
     };
 
     #endregion
