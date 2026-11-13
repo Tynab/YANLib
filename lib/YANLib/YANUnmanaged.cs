@@ -27,7 +27,9 @@ public static partial class YANUnmanaged
     /// If the input cannot be parsed to the specified type, the method will return the provided default value or the type's default value.
     /// This also applies to numbers outside the range of <typeparamref name="T"/> (for example <c>1e10</c> or <c>"99999999999"</c> for <see cref="int"/>)
     /// and to fractional strings for integer types (<c>"3.5"</c>); boxed fractional numbers are rounded half to even like <see cref="Convert.ToInt32(double)"/>.
-    /// The method never throws.
+    /// An <paramref name="input"/> that already is a <typeparamref name="T"/> is returned unchanged (a <see cref="DateTime"/> keeps its
+    /// milliseconds and <see cref="DateTime.Kind"/>), and so is a <paramref name="defaultValue"/> of type <typeparamref name="T"/>, also when
+    /// <paramref name="format"/> is given. The method never throws, even when <see cref="object.ToString"/> of the input throws.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

@@ -393,6 +393,93 @@ public partial class YANUnmanagedTest
 
     #endregion
 
+    #region Parse - input already of the target type, ToString failures
+
+    [Fact]
+    public void Parse_DateTimeInput_KeepsMillisecondsAndKind()
+    {
+        // Arrange
+        object input = new DateTime(2025, 1, 2, 3, 4, 5, 678, DateTimeKind.Utc);
+
+        // Act
+        var result = input.Parse<DateTime>(DateTime.MaxValue);
+
+        // Assert (8.3.3 round-tripped the value through ToString() and lost .678 and Kind)
+        Assert.Equal(input, result);
+        Assert.Equal(DateTimeKind.Utc, result.Kind);
+    }
+
+    [Fact]
+    public void Parse_DateTimeDefaultValueWithFormat_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = "not a date";
+        var defaultValue = new DateTime(1999, 9, 9, 9, 9, 9, 999, DateTimeKind.Utc);
+
+        // Act
+        var result = input.Parse<DateTime>(defaultValue, "dd/MM/yyyy");
+        var withoutFormat = input.Parse<DateTime>(defaultValue);
+
+        // Assert (8.3.3 re-parsed defaultValue.ToString() with the format and returned DateTime.MinValue)
+        Assert.Equal(defaultValue, result);
+        Assert.Equal(DateTimeKind.Utc, result.Kind);
+        Assert.Equal(defaultValue, withoutFormat);
+    }
+
+    [Fact]
+    public void Parse_DateTimeStringWithMilliseconds_KeepsMilliseconds()
+    {
+        // Act
+        var result = WithCulture(CultureInfo.InvariantCulture, static () => "2025-01-02 03:04:05.678".Parse<DateTime>(DateTime.MaxValue));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 1, 2, 3, 4, 5, 678), result);
+    }
+
+    [Fact]
+    public void Parse_UndefinedEnumValue_ReturnsSameValue()
+    {
+        // Arrange
+        object input = (DayOfWeek)99;
+
+        // Act
+        var result = input.Parse<DayOfWeek>(DayOfWeek.Monday);
+
+        // Assert
+        Assert.Equal((DayOfWeek)99, result);
+    }
+
+    [Fact]
+    public void Parse_InputWhoseToStringThrows_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = new ThrowingToString();
+        var date = new DateTime(2000, 1, 1);
+        var guid = Guid.NewGuid();
+
+        // Act & Assert (8.3.3 let the exception escape for DateTime, Guid, TimeSpan and enum targets)
+        Assert.Equal(date, input.Parse<DateTime>(date));
+        Assert.Equal(guid, input.Parse<Guid>(guid));
+        Assert.Equal(TimeSpan.FromSeconds(1), input.Parse<TimeSpan>(TimeSpan.FromSeconds(1)));
+        Assert.Equal(DayOfWeek.Friday, input.Parse<DayOfWeek>(DayOfWeek.Friday));
+        Assert.Equal(42, input.Parse<int>(42));
+    }
+
+    #endregion
+
+    private class Animal
+    {
+    }
+
+    private sealed class Dog : Animal
+    {
+    }
+
+    private sealed class ThrowingToString
+    {
+        public override string ToString() => throw new InvalidOperationException("ToString failed");
+    }
+
     private static T WithCulture<T>(CultureInfo culture, Func<T> action)
     {
         var previous = CultureInfo.CurrentCulture;

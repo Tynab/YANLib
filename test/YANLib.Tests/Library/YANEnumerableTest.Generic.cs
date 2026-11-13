@@ -218,6 +218,20 @@ public partial class YANEnumerableTest
     }
 
     [Fact]
+    public void ToList_DerivedInstancesToBaseType_KeepsInstances_Enumerable()
+    {
+        // Arrange
+        var dog = new Dog();
+        IEnumerable<object?> input = [dog];
+
+        // Act
+        var result = input.ToList<Animal>();
+
+        // Assert (8.3.3 returned [null])
+        Assert.Same(dog, Assert.Single(result));
+    }
+
+    [Fact]
     public void ToList_MixedTypes_ParsesCorrectly_Enumerable()
     {
         // Arrange
@@ -724,5 +738,13 @@ public partial class YANEnumerableTest
         public int Id { get; set; }
 
         public string? Name { get; set; }
+    }
+
+    private class Animal
+    {
+    }
+
+    private sealed class Dog : Animal
+    {
     }
 }

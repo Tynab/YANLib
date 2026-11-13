@@ -29,11 +29,7 @@ internal static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static T ParseEnum<T>(this string? input, T defaultValue = default) where T : unmanaged
-        => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var e) ? e.ParseImplement<T>() : defaultValue;
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static DateTime ParseDateTime(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default;
+        => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var e) && e is T value ? value : defaultValue;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -41,15 +37,7 @@ internal static partial class YANUnmanaged
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Guid ParseGuid(this string? input) => input.IsNullWhiteSpaceImplement() ? default : Guid.TryParse(input, out var guid) ? guid : default;
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Guid? ParseGuidNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : Guid.TryParse(input, out var guid) ? guid : default(Guid?);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static TimeSpan ParseTimeSpan(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TimeSpan.TryParse(input, out var ts) ? ts : default;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -59,32 +47,46 @@ internal static partial class YANUnmanaged
     [DebuggerStepThrough]
     private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
     {
-        if (typeof(T) == typeof(DateTime))
-        {
-            return (input?.ToString() ?? default).ParseDateTime((defaultValue?.ToString() ?? default).ParseDateTime(default, format), format).ParseImplement<T>();
-        }
-
-        if (typeof(T) == typeof(Guid))
-        {
-            return (input?.ToString() ?? default).ParseGuid((defaultValue?.ToString() ?? default).ParseGuid(default)).ParseImplement<T>();
-        }
-
-        if (typeof(T) == typeof(TimeSpan))
-        {
-            return (input?.ToString() ?? default).ParseTimeSpan((defaultValue?.ToString() ?? default).ParseTimeSpan(default)).ParseImplement<T>();
-        }
-
-        if (typeof(T).IsEnum)
-        {
-            return (input?.ToString() ?? default).ParseEnum((defaultValue?.ToString() ?? default).ParseEnum<T>(default));
-        }
-
-        if (input is not null && TryChangeType(input, typeof(T), ParseCache<T>.Kind, false, out var result) && result is T value)
+        // already the requested type: return it unchanged (8.3.3 round-tripped DateTime through ToString(), losing milliseconds and Kind)
+        if (input is T value)
         {
             return value;
         }
 
-        return defaultValue is not null && TryChangeType(defaultValue, typeof(T), ParseCache<T>.Kind, false, out var fallback) && fallback is T fallbackValue ? fallbackValue : default;
+        if (typeof(T) == typeof(DateTime))
+        {
+            // a DateTime default is used as is; 8.3.3 re-parsed its ToString() with the format and so ignored it when a format was given
+            var fallback = defaultValue is DateTime dateTime ? dateTime : defaultValue.SafeToString().ParseDateTime(default, format);
+
+            return (T)(object)input.SafeToString().ParseDateTime(fallback, format);
+        }
+
+        if (typeof(T) == typeof(Guid))
+        {
+            return (T)(object)input.SafeToString().ParseGuid(defaultValue is Guid guid ? guid : defaultValue.SafeToString().ParseGuid(default));
+        }
+
+        if (typeof(T) == typeof(TimeSpan))
+        {
+            return (T)(object)input.SafeToString().ParseTimeSpan(defaultValue is TimeSpan timeSpan ? timeSpan : defaultValue.SafeToString().ParseTimeSpan(default));
+        }
+
+        if (typeof(T).IsEnum)
+        {
+            return input.SafeToString().ParseEnum(defaultValue is T enumValue ? enumValue : defaultValue.SafeToString().ParseEnum<T>(default));
+        }
+
+        if (input is not null && TryChangeType(input, typeof(T), ParseCache<T>.Kind, false, out var result) && result is T parsed)
+        {
+            return parsed;
+        }
+
+        return defaultValue switch
+        {
+            null => default,
+            T typedDefault => typedDefault,
+            _ => TryChangeType(defaultValue, typeof(T), ParseCache<T>.Kind, false, out var converted) && converted is T convertedDefault ? convertedDefault : default
+        };
     }
 
     /// <summary>

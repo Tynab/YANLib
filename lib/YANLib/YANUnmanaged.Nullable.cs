@@ -27,7 +27,12 @@ public static partial class YANUnmanaged
     /// When <typeparamref name="T"/> is a non-nullable integer type, a fractional or out-of-range string is floored using its exact
     /// decimal value (<c>"3.7"</c> → 3, <c>"-3.5"</c> → -4); if the floored value is still outside the range of <typeparamref name="T"/>,
     /// the result is 0. Boxed fractional numbers are rounded half to even (<c>2.5</c> → 2, <c>3.5</c> → 4). For a nullable
-    /// <typeparamref name="T"/> such as <c>int?</c>, invalid, fractional or out-of-range input returns <c>null</c>. The method never throws.
+    /// <typeparamref name="T"/> such as <c>int?</c>, invalid, fractional or out-of-range input returns <c>null</c>.
+    /// </para>
+    /// <para>
+    /// An <paramref name="input"/> that already is a <typeparamref name="T"/> is returned unchanged: a derived instance typed as its base
+    /// class or interface stays the same instance, and a <see cref="DateTime"/> keeps its milliseconds and <see cref="DateTime.Kind"/>.
+    /// The method never throws, even when <see cref="object.ToString"/> of the input throws.
     /// </para>
     /// </remarks>
     [DebuggerHidden]

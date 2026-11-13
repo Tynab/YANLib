@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.Nullable;
 
 namespace YANLib.Implementation;
 
@@ -9,22 +8,24 @@ internal static partial class YANUnmanaged
     [DebuggerStepThrough]
     internal static T? ParseImplement<T>(this object? input)
     {
-        return input is null
-            ? default
-            : typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>) && GetUnderlyingType(typeof(T)) is Type enumUnderlying && enumUnderlying.IsEnum
-            ? Enum.TryParse(enumUnderlying, input.ToString(), true, out var enumResult) ? (T?)enumResult : default
-            : typeof(T) switch
-            {
-                Type stringType when stringType == typeof(string) => (T?)(object?)input.ToString(),
-                Type dateTimeType when dateTimeType == typeof(DateTime) => (T)(object)input.ToString().ParseDateTime(),
-                Type nullableDateTimeType when nullableDateTimeType == typeof(DateTime?) => (T?)(object?)input.ToString().ParseDateTimeNullable(),
-                Type guidType when guidType == typeof(Guid) => (T)(object)input.ToString().ParseGuid(),
-                Type nullableGuidType when nullableGuidType == typeof(Guid?) => (T?)(object?)input.ToString().ParseGuidNullable(),
-                Type timeSpanType when timeSpanType == typeof(TimeSpan) => (T)(object)input.ToString().ParseTimeSpan(),
-                Type nullableTimeSpanType when nullableTimeSpanType == typeof(TimeSpan?) => (T?)(object?)input.ToString().ParseTimeSpanNullable(),
-                Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var e) => (T)e,
-                _ => ConvertOrDefault(input)
-            };
+        if (input is null)
+        {
+            return default;
+        }
+
+        // already the requested type: return it unchanged. 8.3.3 sent it through Convert.ChangeType or ToString(), which
+        // turned reference types typed as a base class or interface into null and dropped DateTime milliseconds and Kind.
+        if (input is T value)
+        {
+            return value;
+        }
+
+        return typeof(T) == typeof(string) ? (T?)(object?)input.SafeToString()
+            : typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?) ? input.SafeToString().ParseDateTimeNullable() is T dateTime ? dateTime : default
+            : typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?) ? input.SafeToString().ParseGuidNullable() is T guid ? guid : default
+            : typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(TimeSpan?) ? input.SafeToString().ParseTimeSpanNullable() is T timeSpan ? timeSpan : default
+            : ParseCache<T>.Kind == ParseKind.Enum ? Enum.TryParse(ParseCache<T>.Target, input.SafeToString(), true, out var enumValue) && enumValue is T parsedEnum ? parsedEnum : default
+            : ConvertOrDefault(input);
 
         static T? ConvertOrDefault(object input)
         {

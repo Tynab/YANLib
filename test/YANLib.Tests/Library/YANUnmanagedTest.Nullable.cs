@@ -317,6 +317,70 @@ public partial class YANUnmanagedTest
         Assert.Null(input.Parse<List<int>>());
     }
 
+    [Fact]
+    public void Parse_InputAlreadyOfTargetType_ReturnsSameInstance_Nullable()
+    {
+        // Arrange
+        Animal animal = new Dog();
+        object input = animal;
+
+        // Act
+        var asAnimal = input.Parse<Animal>();
+        var asObject = input.Parse<object>();
+
+        // Assert (8.3.3 returned null: Convert.ChangeType cannot convert a non-IConvertible object to a base type)
+        Assert.Same(animal, asAnimal);
+        Assert.Same(animal, asObject);
+    }
+
+    [Fact]
+    public void Parse_DateTimeInput_KeepsMillisecondsAndKind_Nullable()
+    {
+        // Arrange
+        object input = new DateTime(2025, 1, 2, 3, 4, 5, 678, DateTimeKind.Utc);
+
+        // Act
+        var result = input.Parse<DateTime>();
+        var nullableResult = input.Parse<DateTime?>();
+
+        // Assert
+        Assert.Equal(input, result);
+        Assert.Equal(DateTimeKind.Utc, result.Kind);
+        Assert.Equal(input, nullableResult);
+    }
+
+    [Fact]
+    public void Parse_UndefinedEnumValue_ReturnsSameValue_Nullable()
+    {
+        // Arrange
+        object input = (DayOfWeek)99;
+
+        // Act
+        var result = input.Parse<DayOfWeek>();
+        var nullableResult = input.Parse<DayOfWeek?>();
+
+        // Assert
+        Assert.Equal((DayOfWeek)99, result);
+        Assert.Equal((DayOfWeek)99, nullableResult);
+    }
+
+    [Fact]
+    public void Parse_InputWhoseToStringThrows_ReturnsDefault_Nullable()
+    {
+        // Arrange
+        object input = new ThrowingToString();
+
+        // Act & Assert (8.3.3 let the exception escape)
+        Assert.Null(input.Parse<string>());
+        Assert.Equal(default, input.Parse<DateTime>());
+        Assert.Null(input.Parse<DateTime?>());
+        Assert.Null(input.Parse<Guid?>());
+        Assert.Null(input.Parse<TimeSpan?>());
+        Assert.Null(input.Parse<DayOfWeek?>());
+        Assert.Null(input.Parse<char?>());
+        Assert.Equal(0, input.Parse<int>());
+    }
+
     #endregion
 
     #region Concurrency

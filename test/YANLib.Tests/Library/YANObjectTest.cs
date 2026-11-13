@@ -56,6 +56,32 @@ public partial class YANObjectTest
         Assert.False(result);
     }
 
+    [Fact]
+    public void IsDefault_DerivedInstanceTypedAsBase_ReturnsFalse_Object()
+    {
+        // Arrange
+        Animal input = new Dog();
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert (8.3.3 returned true: the value was sent through Convert.ChangeType and became null)
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsDefault_DateTimeWithOnlyMilliseconds_ReturnsFalse_Object()
+    {
+        // Arrange
+        var input = new DateTime(1, 1, 1, 0, 0, 0, 1);
+
+        // Act
+        var result = input.IsDefault();
+
+        // Assert (8.3.3 returned true: the value was round-tripped through ToString() and lost its millisecond)
+        Assert.False(result);
+    }
+
     #endregion
 
     #region IsNotDefault
@@ -377,5 +403,13 @@ public partial class YANObjectTest
         public DateTime DateProperty { get; set; }
 
         public string? StringProperty { get; set; }
+    }
+
+    private class Animal
+    {
+    }
+
+    private sealed class Dog : Animal
+    {
     }
 }
