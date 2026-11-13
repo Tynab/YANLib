@@ -4,8 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<ApplicationIcon>favicon.ico</ApplicationIcon>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>YANLib</Title>
 		<Authors>Yami An</Authors>
 		<Company>YAN</Company>
@@ -70,10 +69,6 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="favicon.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
@@ -90,8 +85,23 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 		</ProjectReference>
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="..\YANLib.Implementation\bin\$(Configuration)\$(TargetFramework)\YANLib.Implementation.dll" Pack="true" PackagePath="lib\$(TargetFramework)" Visible="false" />
-	</ItemGroup>
+	<!--
+		YANLib.Implementation is not published as its own package (PrivateAssets="all"), so its assembly is
+		shipped inside this package. Asking the referenced project for its output path keeps the packed file in
+		sync with the build (it honours the configuration, OutputPath and an output directory given on the
+		command line) and also works when packing an already built tree without building it again.
+	-->
+	<PropertyGroup>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeImplementationAssembly</TargetsForTfmSpecificBuildOutput>
+	</PropertyGroup>
+
+	<Target Name="IncludeImplementationAssembly">
+		<MSBuild Projects="@(ProjectReference)" Condition="'%(ProjectReference.PrivateAssets)' == 'all'" Targets="GetTargetPath">
+			<Output TaskParameter="TargetOutputs" ItemName="_YanPrivateReferenceAssembly" />
+		</MSBuild>
+		<ItemGroup>
+			<BuildOutputInPackage Include="@(_YanPrivateReferenceAssembly)" />
+		</ItemGroup>
+	</Target>
 
 </Project>
