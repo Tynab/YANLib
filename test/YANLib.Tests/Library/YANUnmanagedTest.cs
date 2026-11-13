@@ -371,6 +371,21 @@ public partial class YANUnmanagedTest
         Assert.Equal(long.MaxValue, ((object)9223372036854775807.5m).Parse<long>());
     }
 
+    [Fact]
+    public void Parse_FloatingPointNearDecimalLimit_ConvertsLikeConvertToDecimal()
+    {
+        // Arrange (every double/float below 2^96 converts to decimal; 2^96 and above overflow)
+        var twoPow96 = 79228162514264337593543950336.0;
+        object[] inRange = [7.91e28, -7.91e28, Math.BitDecrement(twoPow96), 7.91e28f];
+        object outOfRange = twoPow96;
+
+        // Act & Assert
+        Assert.All(inRange, static x => Assert.Equal(Convert.ToDecimal(x), x.Parse<decimal>()));
+        Assert.Equal(0m, outOfRange.Parse<decimal>());
+        Assert.Equal(-1m, outOfRange.Parse<decimal>(-1m));
+        Assert.Null(outOfRange.Parse<decimal?>());
+    }
+
     // Integer targets floor the exact decimal value; 8.3.3 floored through double and lost digits past ~15
     [Theory]
     [InlineData("2.9999999999999999", "int", 2)]

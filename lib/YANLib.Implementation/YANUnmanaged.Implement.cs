@@ -236,10 +236,14 @@ internal static partial class YANUnmanaged
     private static bool TryFromDecimal<TInteger>(decimal value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
         => value >= decimal.CreateTruncating(TInteger.MinValue) && value <= decimal.CreateTruncating(TInteger.MaxValue) ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
 
-    /// <remarks>Doubles beyond about ±7.9e28 (and NaN/infinity) make <see cref="Convert.ToDecimal(double)"/> throw.</remarks>
+    /// <remarks>
+    /// <see cref="Convert.ToDecimal(double)"/> and <see cref="Convert.ToDecimal(float)"/> throw for NaN, infinity and every value
+    /// whose magnitude is at least 2^96 (binary exponent above 96); every smaller value converts (rounded to 15 or 7 significant
+    /// digits), so only the certain failures are rejected here and the rest is left to the guarded conversion.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool IsDecimalRange(double value) => Math.Abs(value) < 7.9e28;
+    private static bool IsDecimalRange(double value) => Math.Abs(value) < 79228162514264337593543950336.0;
 
     /// <summary>
     /// The only place that still calls <see cref="Convert.ChangeType(object, Type)"/>; kept for conversions that have no
