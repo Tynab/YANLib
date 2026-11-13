@@ -150,7 +150,8 @@ public static partial class YANObject
     /// (an object or a struct) is written back with the property's setter when a <see cref="DateTime"/> was converted somewhere inside it, once everything reachable
     /// from it has been walked, so a property whose getter returns a copy (a defensive copy, a computed wrapper, a JSON-backed object) receives the converted copy.
     /// No other setter is called: not for values that are not walked (strings, numbers, ...), not for a value in which nothing was converted, and not for a second
-    /// reference to an object already converted.</description></item>
+    /// reference to an object already converted. (A struct item of a read-only list is converted in a copy that is then discarded, but still counts as converted,
+    /// so the setter of a property holding that list is called with the unchanged list.)</description></item>
     /// <item><description>A getter-only property is walked only when its declared type is an array, list or dictionary type, either a class (an array, <see cref="List{T}"/>,
     /// <see cref="Dictionary{TKey, TValue}"/>, ...) or an interface (<see cref="IList{T}"/>, <see cref="IDictionary{TKey, TValue}"/>, ...), and its value is not a struct;
     /// the collection is converted in place. A getter-only struct value (<see cref="ArraySegment{T}"/>, <c>ImmutableArray&lt;T&gt;</c>, ...) and a getter-only property declared

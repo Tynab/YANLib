@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Globalization;
 
 namespace YANLib.Tests.Library;
@@ -1033,6 +1034,25 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_ListItemsWithAConvertedValue_AreWrittenBack_Object()
+    {
+        // Arrange
+        var item = new DateTimeTestClass { DateProperty = Hour(1) };
+        var input = new TzObservableHolder { Items = [item, new TzPlain { Name = "x" }] };
+        var events = new List<(NotifyCollectionChangedAction Action, int Index, DateTime? Date)>();
+
+        input.Items.CollectionChanged += (_, e) => events.Add((e.Action, e.NewStartingIndex, (e.NewItems?[0] as DateTimeTestClass)?.DateProperty));
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the item with a converted DateTime is written back once it is converted (list[0] = item, one Replace event), as in 8.3.3;
+        // the item with nothing converted is not (8.3.3 wrote back every non-null item); 011812f wrote back no item)
+        Assert.Equal([(NotifyCollectionChangedAction.Replace, 0, Hour(8))], events);
+        Assert.Equal(Hour(8), item.DateProperty);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_ObjectsWithNothingConverted_AreNotWrittenBack_Object()
     {
         // Arrange
@@ -1729,6 +1749,11 @@ public partial class YANObjectTest
     private sealed class TzPlain
     {
         public string? Name { get; set; }
+    }
+
+    private sealed class TzObservableHolder
+    {
+        public ObservableCollection<object> Items { get; set; } = [];
     }
 
     private sealed class TzFrozenHolder
