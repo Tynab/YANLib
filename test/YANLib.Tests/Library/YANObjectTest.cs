@@ -853,6 +853,100 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_NestedStructs_AreWrittenBackFromTheInside_Object()
+    {
+        // Arrange
+        var item = new DateTimeTestClass { DateProperty = Hour(1) };
+        var stored = (object)new TzOuterStruct { At = Hour(2), Inner = new TzStruct { At = Hour(3) } };
+        var segment = new[] { new TzOuterStruct { At = Hour(9) }, new TzOuterStruct { At = Hour(10), Inner = new TzStruct { At = Hour(11) } } };
+
+        var input = new TzNestedStructHolder
+        {
+            Value = new TzOuterStruct { At = Hour(4), Inner = new TzStruct { At = Hour(5) }, Item = item },
+            List = [new TzOuterStruct { At = Hour(6), Inner = new TzStruct { At = Hour(7) } }],
+            ReadOnly = new([stored]),
+            FreshBox = new TzOuterStruct { At = Hour(8), Inner = new TzStruct { At = Hour(12) } },
+            Segment = new(segment, 1, 1)
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (a struct inside a struct is written back into it before the outer struct is written back into its owner; the boxed struct
+        // stored in a read-only list is converted in place, and a box made afresh by each call of an object-typed getter is written back)
+        Assert.Equal(Hour(11), input.Value.At);
+        Assert.Equal(Hour(12), input.Value.Inner.At);
+        Assert.Equal(Hour(8), item.DateProperty);
+        Assert.Equal(Hour(13), input.List[0].At);
+        Assert.Equal(Hour(14), input.List[0].Inner.At);
+        Assert.Equal(Hour(9), ((TzOuterStruct)input.ReadOnly[0]).At);
+        Assert.Equal(Hour(10), ((TzOuterStruct)input.ReadOnly[0]).Inner.At);
+        Assert.Equal(Hour(15), ((TzOuterStruct)input.FreshBox!).At);
+        Assert.Equal(Hour(19), ((TzOuterStruct)input.FreshBox!).Inner.At);
+        Assert.Equal(Hour(9), segment[0].At);
+        Assert.Equal(Hour(17), segment[1].At);
+        Assert.Equal(Hour(18), segment[1].Inner.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_DeepStructChains_DoNotOverflowTheStack_Object()
+    {
+        // Arrange (chains of boxed structs linked through object- and interface-typed properties)
+        const int depth = 20_000;
+        object? chain = null;
+        ITzLink? interfaceChain = null;
+
+        for (var i = 0; i < depth; i++)
+        {
+            chain = new TzStructLink { At = Hour(1), Next = chain };
+            interfaceChain = new TzInterfaceLink { At = Hour(2), Next = interfaceChain };
+        }
+
+        var input = new TzStructChainHolder { Chain = (TzStructLink)chain!, InterfaceChain = interfaceChain };
+        Exception? error = null;
+
+        // A stack overflow cannot be caught: it ends the test run. The walk runs on a 1 MB thread so the stack budget does not depend on the runner.
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                input.ChangeTimeZoneAllProperty(0, 7);
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+            }
+        }, 1 << 20);
+
+        // Act
+        thread.Start();
+        thread.Join();
+
+        // Assert (011812f walked boxed structs recursively, two calls per level, and crashed the process at about 1 320 levels on a 1 MB stack;
+        // 8.3.3 at about 2 150)
+        Assert.Null(error);
+
+        var count = 0;
+
+        for (object? link = input.Chain; link is TzStructLink current; link = current.Next)
+        {
+            Assert.Equal(Hour(8), current.At);
+            count++;
+        }
+
+        Assert.Equal(depth, count);
+        count = 0;
+
+        for (var link = input.InterfaceChain; link is not null; link = link.Next)
+        {
+            Assert.Equal(Hour(9), link.At);
+            count++;
+        }
+
+        Assert.Equal(depth, count);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_NonDataProperties_AreNotWalked_Object()
     {
         // Arrange
@@ -1332,6 +1426,62 @@ public partial class YANObjectTest
     private struct TzStruct
     {
         public DateTime At { get; set; }
+    }
+
+    private struct TzOuterStruct
+    {
+        public DateTime At { get; set; }
+
+        public TzStruct Inner { get; set; }
+
+        public DateTimeTestClass? Item { get; set; }
+    }
+
+    private sealed class TzNestedStructHolder
+    {
+        private TzOuterStruct fresh;
+
+        public TzOuterStruct Value { get; set; }
+
+        public List<TzOuterStruct> List { get; set; } = [];
+
+        public ReadOnlyCollection<object> ReadOnly { get; set; } = new([]);
+
+        public object? FreshBox
+        {
+            get => fresh;
+            set => fresh = (TzOuterStruct)value!;
+        }
+
+        public ArraySegment<TzOuterStruct> Segment { get; set; }
+    }
+
+    private struct TzStructLink
+    {
+        public DateTime At { get; set; }
+
+        public object? Next { get; set; }
+    }
+
+    private interface ITzLink
+    {
+        DateTime At { get; }
+
+        ITzLink? Next { get; }
+    }
+
+    private struct TzInterfaceLink : ITzLink
+    {
+        public DateTime At { get; set; }
+
+        public ITzLink? Next { get; set; }
+    }
+
+    private sealed class TzStructChainHolder
+    {
+        public TzStructLink Chain { get; set; }
+
+        public ITzLink? InterfaceChain { get; set; }
     }
 
     private sealed class TzStructHolder
