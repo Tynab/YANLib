@@ -17,8 +17,9 @@ A comprehensive utility library for object operations and validations, offering 
 ```csharp
 // Null checking
 object? obj = null;
-bool isNull = obj.IsNull();      // Returns true
-bool isNotNull = obj.IsNotNull(); // Returns false
+bool isNull = obj is null;          // Returns true
+bool isNotNull = obj is not null;   // Returns false
+// IsNull()/IsNotNull() were removed in 8.3.3 by mistake and are restored as obsolete shims in the next release; use `is null` / `is not null`
 
 // Check if all properties have default values
 var obj = new TestClass();
@@ -301,7 +302,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
 public bool IsValidCustomer(Customer customer)
 {
     // Customer must not be null and must have all required properties set
-    return customer.IsNotNull() && 
+    return customer is not null && 
            !customer.AnyPropertiesDefault(["Name", "Email", "PhoneNumber"]);
 }
 

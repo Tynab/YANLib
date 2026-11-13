@@ -12,6 +12,38 @@ namespace YANLib;
 /// </remarks>
 public static partial class YANObject
 {
+    #region Null
+
+    /// <summary>
+    /// Determines whether the specified object is <c>null</c>.
+    /// </summary>
+    /// <param name="input">The object to check.</param>
+    /// <returns><c>true</c> if the object is <c>null</c>; otherwise, <c>false</c>.</returns>
+    /// <remarks>
+    /// This method was removed in 8.3.3 by mistake and is restored as an obsolete shim so that code written for 8.3.2 keeps compiling.
+    /// Use the <c>is null</c> pattern instead.
+    /// </remarks>
+    [Obsolete("Use the 'is null' pattern instead. IsNull() was removed in 8.3.3 by mistake and is kept only for compatibility.")]
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNull([NotNullWhen(false)] this object? input) => input is null;
+
+    /// <summary>
+    /// Determines whether the specified object is not <c>null</c>.
+    /// </summary>
+    /// <param name="input">The object to check.</param>
+    /// <returns><c>true</c> if the object is not <c>null</c>; otherwise, <c>false</c>.</returns>
+    /// <remarks>
+    /// This method was removed in 8.3.3 by mistake and is restored as an obsolete shim so that code written for 8.3.2 keeps compiling.
+    /// Use the <c>is not null</c> pattern instead.
+    /// </remarks>
+    [Obsolete("Use the 'is not null' pattern instead. IsNotNull() was removed in 8.3.3 by mistake and is kept only for compatibility.")]
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static bool IsNotNull([NotNullWhen(true)] this object? input) => input is not null;
+
+    #endregion
+
     #region Default
 
     /// <summary>

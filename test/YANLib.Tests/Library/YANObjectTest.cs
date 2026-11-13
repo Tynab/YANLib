@@ -2,6 +2,88 @@
 
 public partial class YANObjectTest
 {
+    #region IsNull (obsolete shims restored after 8.3.3)
+
+#pragma warning disable CS0618 // The shims are obsolete on purpose; these tests pin their 8.3.2 behaviour.
+    [Fact]
+    public void IsNull_NullObject_ReturnsTrue_Object()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act
+        var result = input.IsNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNull_NonNullObject_ReturnsFalse_Object()
+    {
+        // Arrange
+        var input = new TestClass();
+
+        // Act
+        var result = input.IsNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNull_NullNullableValue_ReturnsTrue_Object()
+    {
+        // Arrange
+        int? input = null;
+
+        // Act
+        var result = input.IsNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNotNull_NullString_ReturnsFalse_Object()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.IsNotNull();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsNotNull_NonNullObject_ReturnsTrue_Object()
+    {
+        // Arrange
+        var input = new TestClass();
+
+        // Act
+        var result = input.IsNotNull();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsNull_Shims_AreObsolete_Object()
+    {
+        // Arrange
+        var methods = typeof(YANObject).GetMethods().Where(static x => x.Name is nameof(YANObject.IsNull) or nameof(YANObject.IsNotNull)).ToArray();
+
+        // Assert
+        Assert.Equal(2, methods.Length);
+        Assert.All(methods, static x => Assert.NotNull(x.GetCustomAttributes(typeof(ObsoleteAttribute), false).SingleOrDefault()));
+    }
+#pragma warning restore CS0618
+
+    #endregion
+
     #region IsDefault
 
     [Fact]
