@@ -160,19 +160,61 @@ internal static partial class YANObject
     {
         if (input is not null)
         {
-            _ = ChangeTimeZoneGraph(input, tzSrc, tzDst, new HashSet<object>(ReferenceEqualityComparer.Instance));
+            ChangeTimeZoneRoot(input, tzSrc, tzDst, new HashSet<object>(ReferenceEqualityComparer.Instance), new Stack<object>());
         }
 
         return input;
     }
 
     /// <summary>
-    /// Converts, in place, the <see cref="DateTime"/> values reachable from <paramref name="input"/>; every object is visited once.
+    /// Converts, in place, the <see cref="DateTime"/> values reachable from <paramref name="root"/>, skipping the objects in <paramref name="visited"/>.
+    /// Class instances are walked from the work stack <paramref name="pending"/> (empty on entry and on return) instead of recursively, so the depth
+    /// of the graph (a long linked list, a deep tree) is not limited by the call stack.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
+    {
+        _ = ChangeTimeZoneGraph(root, tzSrc, tzDst, visited, pending);
+
+        while (pending.TryPop(out var next))
+        {
+            _ = ChangeTimeZoneGraph(next, tzSrc, tzDst, visited, pending);
+        }
+    }
+
+    /// <summary>
+    /// Walks a value found in the graph: a boxed struct right away, so that its owner can write it back, and a class instance (changed in place,
+    /// never written back) later, by pushing it on <paramref name="pending"/>.
+    /// </summary>
+    /// <returns><c>true</c> if <paramref name="value"/> is a boxed struct that changed and must be written back by its owner.</returns>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool ChangeTimeZoneValue(object value, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
+    {
+        var type = value.GetType();
+
+        if (type.IsValueType)
+        {
+            return ChangeTimeZoneGraph(value, tzSrc, tzDst, visited, pending);
+        }
+
+        if (!type.IsTimeZoneLeaf() && !visited.Contains(value))
+        {
+            pending.Push(value);
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Converts, in place, the <see cref="DateTime"/> values of <paramref name="input"/>; every object is visited once. Boxed structs inside it
+    /// are walked recursively, class instances are pushed on <paramref name="pending"/>.
     /// </summary>
     /// <returns><c>true</c> if a value was written into <paramref name="input"/> itself (a boxed struct must then be written back by its owner).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneGraph(object input, object? tzSrc, object? tzDst, HashSet<object> visited)
+    private static bool ChangeTimeZoneGraph(object input, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
     {
         var type = input.GetType();
 
@@ -251,7 +293,7 @@ internal static partial class YANObject
                             changed = true;
                         }
                     }
-                    else if (item is not null && ChangeTimeZoneGraph(item, tzSrc, tzDst, visited) && writable && item.GetType().IsValueType)
+                    else if (item is not null && ChangeTimeZoneValue(item, tzSrc, tzDst, visited, pending) && writable)
                     {
                         list[i] = item;
                         changed = true;
@@ -264,7 +306,7 @@ internal static partial class YANObject
 
         if (GetArraySegmentConverter(type) is { } segmentConverter)
         {
-            return segmentConverter(input, tzSrc, tzDst, visited);
+            return segmentConverter(input, tzSrc, tzDst, visited, pending);
         }
 
         if (GetDateTimeDictionaryConverter(type) is { } converter)
@@ -303,7 +345,7 @@ internal static partial class YANObject
                 // A getter-only collection can still be converted in place; nothing is written back.
                 if (!value.GetType().IsValueType)
                 {
-                    _ = ChangeTimeZoneGraph(value, tzSrc, tzDst, visited);
+                    _ = ChangeTimeZoneValue(value, tzSrc, tzDst, visited, pending);
                 }
 
                 continue;
@@ -314,7 +356,7 @@ internal static partial class YANObject
                 prop.SetValue(input, dt.ChangeTimeZoneImplement(tzSrc, tzDst));
                 written = true;
             }
-            else if (ChangeTimeZoneGraph(value, tzSrc, tzDst, visited) && value.GetType().IsValueType)
+            else if (ChangeTimeZoneValue(value, tzSrc, tzDst, visited, pending))
             {
                 prop.SetValue(input, value);
                 written = true;
@@ -327,7 +369,7 @@ internal static partial class YANObject
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneLeafCache = new();
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneCollectionCache = new();
     private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
-    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, HashSet<object>, bool>?> ArraySegmentConverterCache = new();
+    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, HashSet<object>, Stack<object>, bool>?> ArraySegmentConverterCache = new();
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
@@ -480,14 +522,14 @@ internal static partial class YANObject
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Func<object, object?, object?, HashSet<object>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
+    private static Func<object, object?, object?, HashSet<object>, Stack<object>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
         IsArraySegment(t)
-            ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments()).CreateDelegate<Func<object, object?, object?, HashSet<object>, bool>>()
+            ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments()).CreateDelegate<Func<object, object?, object?, HashSet<object>, Stack<object>, bool>>()
             : null);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneArraySegment<T>(object input, object? tzSrc, object? tzDst, HashSet<object> visited)
+    private static bool ChangeTimeZoneArraySegment<T>(object input, object? tzSrc, object? tzDst, HashSet<object> visited, Stack<object> pending)
     {
         // Like an array, a segment's items can be replaced (the writes go to the underlying array).
         var segment = (ArraySegment<T>)input;
@@ -502,7 +544,7 @@ internal static partial class YANObject
                 segment[i] = (T)(object)dt.ChangeTimeZoneImplement(tzSrc, tzDst);
                 changed = true;
             }
-            else if (item is not null && ChangeTimeZoneGraph(item, tzSrc, tzDst, visited) && item.GetType().IsValueType)
+            else if (item is not null && ChangeTimeZoneValue(item, tzSrc, tzDst, visited, pending))
             {
                 segment[i] = (T)item;
                 changed = true;

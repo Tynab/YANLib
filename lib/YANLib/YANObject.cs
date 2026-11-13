@@ -155,6 +155,9 @@ public static partial class YANObject
     /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams, tasks, threads,
     /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. Neither is a <see cref="Lazy{T}"/>: the walk never creates its value.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
+    /// <item><description>Class instances are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack; each object's own
+    /// properties are converted before the objects it references. A graph that never ends (a getter that returns a new object on every call whose type leads back
+    /// to itself) is walked until memory runs out.</description></item>
     /// </list>
     /// </remarks>
     [DebuggerHidden]

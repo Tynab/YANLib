@@ -80,13 +80,15 @@ internal static partial class YANObject
         }
 
         // One visited set for the whole call: an object shared by several elements (or listed twice) is converted once.
+        // Each element's graph is finished before the next element starts, so the elements are converted in input order.
         var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+        var pending = new Stack<object>();
 
         foreach (var item in items)
         {
             if (item is not null)
             {
-                _ = ChangeTimeZoneGraph(item, tzSrc, tzDst, visited);
+                ChangeTimeZoneRoot(item, tzSrc, tzDst, visited, pending);
             }
         }
 

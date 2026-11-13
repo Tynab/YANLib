@@ -476,6 +476,62 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_DeepGraphs_DoNotOverflowTheStack_Object()
+    {
+        // Arrange (a 100 000-node chain, a 20 000-level tree with back-references and a chain passed to ChangeTimeZoneAllProperties)
+        var chain = new TzLinkedNode { At = Hour(1) };
+        var chainTail = chain;
+        var tree = new TzNode { At = Hour(2) };
+        var treeLeaf = tree;
+        var listed = new TzLinkedNode { At = Hour(3) };
+        var listedTail = listed;
+
+        for (var i = 0; i < 100_000; i++)
+        {
+            chainTail = chainTail.Next = new TzLinkedNode { At = Hour(1) };
+            listedTail = listedTail.Next = new TzLinkedNode { At = Hour(3) };
+        }
+
+        for (var i = 0; i < 20_000; i++)
+        {
+            var child = new TzNode { At = Hour(2), Parent = treeLeaf };
+
+            treeLeaf.Children.Add(child);
+            treeLeaf = child;
+        }
+
+        Exception? error = null;
+
+        // A stack overflow cannot be caught: it ends the test run. The walk runs on a 1 MB thread so the stack budget does not depend on the runner.
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                chain.ChangeTimeZoneAllProperty(0, 7);
+                tree.ChangeTimeZoneAllProperty(0, 7);
+                _ = new[] { listed }.ChangeTimeZoneAllProperties(0, 7);
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+            }
+        }, 1 << 20);
+
+        // Act
+        thread.Start();
+        thread.Join();
+
+        // Assert (the recursive walk overflowed the stack and crashed the process; 8.3.3 did too, at a somewhat greater depth)
+        Assert.Null(error);
+        Assert.Equal(Hour(8), chain.At);
+        Assert.Equal(Hour(8), chainTail.At);
+        Assert.Equal(Hour(9), tree.At);
+        Assert.Equal(Hour(9), treeLeaf.At);
+        Assert.Equal(Hour(10), listed.At);
+        Assert.Equal(Hour(10), listedTail.At);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_SharedReference_ConvertsOnce_Object()
     {
         // Arrange
@@ -1010,6 +1066,13 @@ public partial class YANObjectTest
         public TzNode? Parent { get; set; }
 
         public List<TzNode> Children { get; set; } = [];
+    }
+
+    private sealed class TzLinkedNode
+    {
+        public DateTime At { get; set; }
+
+        public TzLinkedNode? Next { get; set; }
     }
 
     private sealed class TzTwoReferences
