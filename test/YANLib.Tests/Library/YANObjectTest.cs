@@ -1367,6 +1367,29 @@ public partial class YANObjectTest
         Assert.Equal([Hour(15)], copyFirst.View);
     }
 
+    [Fact]
+    public void ChangeTimeZoneAllProperty_SubclassesOfNonDataFrameworkTypes_AreNotWalked_Object()
+    {
+        // Arrange
+        using var writer = new TzLogWriter { Started = Hour(1) };
+        using var job = new TzJob { Due = Hour(2) };
+        var work = new TzWork { Due = Hour(3) }; // never started, so not disposed (Task.Dispose throws for a task that has not completed)
+        using var rootWriter = new TzLogWriter { Started = Hour(4) };
+        var holder = new TzFrameworkSubclassHolder { Writer = writer, Job = job, Work = work, At = Hour(5) };
+
+        // Act
+        holder.ChangeTimeZoneAllProperty(0, 7);
+        rootWriter.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (pinned: classes deriving from TextWriter, CancellationTokenSource, Task, ... are leaves, so their own DateTime properties are left
+        // unchanged; 8.3.3 converted them)
+        Assert.Equal(Hour(1), writer.Started);
+        Assert.Equal(Hour(2), job.Due);
+        Assert.Equal(Hour(3), work.Due);
+        Assert.Equal(Hour(4), rootWriter.Started);
+        Assert.Equal(Hour(12), holder.At);
+    }
+
     #endregion
 
     #region Copy
@@ -2259,6 +2282,32 @@ public partial class YANObjectTest
         }
 
         public IList<DateTime> View => dates;
+    }
+
+    private sealed class TzLogWriter : StringWriter
+    {
+        public DateTime Started { get; set; }
+    }
+
+    private sealed class TzJob : CancellationTokenSource
+    {
+        public DateTime Due { get; set; }
+    }
+
+    private sealed class TzWork() : Task(static () => { })
+    {
+        public DateTime Due { get; set; }
+    }
+
+    private sealed class TzFrameworkSubclassHolder
+    {
+        public TzLogWriter? Writer { get; set; }
+
+        public TzJob? Job { get; set; }
+
+        public TzWork? Work { get; set; }
+
+        public DateTime At { get; set; }
     }
 
     private class CopyHiddenNameBase

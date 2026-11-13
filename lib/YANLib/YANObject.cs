@@ -169,8 +169,9 @@ public static partial class YANObject
     /// <item><description>An <see cref="ArraySegment{T}"/> is handled like an array holding only the segment's items: they are converted or walked in the underlying
     /// array (a struct item is written back into it), and the items outside the segment are left alone.</description></item>
     /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>
-    /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams, tasks, threads,
-    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. A <see cref="Lazy{T}"/> value is not walked and its
+    /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams,
+    /// <see cref="TextReader"/> / <see cref="TextWriter"/>, tasks, threads, wait handles, cancellation tokens and their sources, safe handles, pointers) are not walked into,
+    /// nor is a class deriving from one of these types, whose own <see cref="DateTime"/> properties are therefore left unchanged. A <see cref="Lazy{T}"/> value is not walked and its
     /// <see cref="Lazy{T}.Value"/> is never read by the walk; a getter-only list property whose own getter reads a lazy value (<c>Dates =&gt; _lazy.Value</c>) is still called,
     /// which creates that value.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
