@@ -1,4 +1,8 @@
-﻿namespace YANLib.Tests.Library;
+﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Globalization;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANObjectTest
 {
@@ -441,6 +445,222 @@ public partial class YANObjectTest
         Assert.Equal(42, result.IntProperty);
     }
 
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ClassWithIndexer_ConvertsWithoutThrowing_Object()
+    {
+        // Arrange
+        var input = new TzIndexerClass { At = Hour(12) };
+
+        // Act
+        var result = input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (8.3.3 threw TargetParameterCountException)
+        Assert.Equal(Hour(19), result!.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ParentChildCycle_ConvertsEachObjectOnce_Object()
+    {
+        // Arrange (8.3.3 recursed forever and crashed the process with a stack overflow)
+        var parent = new TzNode { At = Hour(12) };
+        var child = new TzNode { At = Hour(13), Parent = parent };
+
+        parent.Children = [child];
+
+        // Act
+        parent.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert
+        Assert.Equal(Hour(19), parent.At);
+        Assert.Equal(Hour(20), child.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_SharedReference_ConvertsOnce_Object()
+    {
+        // Arrange
+        var shared = new DateTimeTestClass { DateProperty = Hour(12) };
+        var input = new TzTwoReferences { First = shared, Second = shared };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (8.3.3 shifted the shared object twice: 02:00 the next day)
+        Assert.Equal(Hour(19), shared.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WritableDateTimeLists_Converts_Object()
+    {
+        // Arrange
+        var input = new TzListHolder
+        {
+            Array = [Hour(1), Hour(2)],
+            List = [Hour(3)],
+            NullableList = [Hour(4), null],
+            Objects = [Hour(5), "text", null]
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert
+        Assert.Equal([Hour(8), Hour(9)], input.Array);
+        Assert.Equal([Hour(10)], input.List);
+        Assert.Equal([Hour(11), null], input.NullableList);
+        Assert.Equal([Hour(12), "text", null], input.Objects);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ReadOnlyDateTimeCollections_AreLeftUnchanged_Object()
+    {
+        // Arrange
+        var input = new TzReadOnlyHolder
+        {
+            ReadOnly = new ReadOnlyCollection<DateTime>([Hour(1)]),
+            Immutable = [Hour(2)],
+            ReadOnlyDictionary = new ReadOnlyDictionary<string, DateTime>(new Dictionary<string, DateTime> { ["a"] = Hour(3) }),
+            At = Hour(4)
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (8.3.3 threw NotSupportedException for the ReadOnlyCollection)
+        Assert.Equal(Hour(1), input.ReadOnly[0]);
+        Assert.Equal(Hour(2), input.Immutable[0]);
+        Assert.Equal(Hour(3), input.ReadOnlyDictionary["a"]);
+        Assert.Equal(Hour(11), input.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ImmutableArrayOfObjects_ConvertsItemsInPlace_Object()
+    {
+        // Arrange
+        var item = new DateTimeTestClass { DateProperty = Hour(1) };
+        var input = new TzImmutableHolder { Items = [item], Empty = default };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the default ImmutableArray, whose Count throws, is skipped)
+        Assert.Equal(Hour(8), item.DateProperty);
+        Assert.True(input.Empty.IsDefault);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WritableDictionaries_ConvertsValues_Object()
+    {
+        // Arrange
+        var input = new TzDictionaryHolder
+        {
+            Dates = new() { ["a"] = Hour(1), ["b"] = Hour(2) },
+            NullableDates = new SortedDictionary<int, DateTime?> { [1] = Hour(3), [2] = null }
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (8.3.3 threw TargetParameterCountException on the Dictionary indexer)
+        Assert.Equal(Hour(8), input.Dates["a"]);
+        Assert.Equal(Hour(9), input.Dates["b"]);
+        Assert.Equal(Hour(10), input.NullableDates[1]);
+        Assert.Null(input.NullableDates[2]);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_HashSetOfDateTime_IsLeftUnchanged_Object()
+    {
+        // Arrange
+        var input = new TzHashSetHolder { Dates = [Hour(1)] };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (documented limitation: only lists, arrays and dictionaries are converted)
+        Assert.Equal([Hour(1)], input.Dates);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_GetterOnlyCollections_ConvertsInPlace_Object()
+    {
+        // Arrange
+        var input = new TzGetterOnlyHolder();
+
+        input.Dates.Add(Hour(1));
+        input.Items.Add(new DateTimeTestClass { DateProperty = Hour(2) });
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (8.3.3 skipped properties without a setter)
+        Assert.Equal(Hour(8), input.Dates[0]);
+        Assert.Equal(Hour(9), input.Items[0].DateProperty);
+        Assert.Equal(Hour(5), input.Computed);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_StructValues_AreWrittenBack_Object()
+    {
+        // Arrange
+        var input = new TzStructHolder
+        {
+            Value = new TzStruct { At = Hour(1) },
+            NullableValue = new TzStruct { At = Hour(2) },
+            List = [new TzStruct { At = Hour(3) }],
+            Array = [new TzStruct { At = Hour(4) }],
+            Nullable = Hour(5)
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert
+        Assert.Equal(Hour(8), input.Value.At);
+        Assert.Equal(Hour(9), input.NullableValue!.Value.At);
+        Assert.Equal(Hour(10), input.List[0].At);
+        Assert.Equal(Hour(11), input.Array[0].At);
+        Assert.Equal(Hour(12), input.Nullable);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_NonDataProperties_AreNotWalked_Object()
+    {
+        // Arrange
+        using var stream = new MemoryStream();
+
+        var input = new TzNonDataHolder
+        {
+            Stream = stream,
+            Type = typeof(string),
+            Task = Task.CompletedTask,
+            Action = static () => { },
+            Culture = CultureInfo.InvariantCulture,
+            Grid = new DateTime[1, 1],
+            At = Hour(1)
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (8.3.3 threw TargetInvocationException from MemoryStream.ReadTimeout)
+        Assert.Equal(Hour(8), input.At);
+        Assert.Equal(default, input.Grid[0, 0]);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ThrowingGetter_IsSkipped_Object()
+    {
+        // Arrange
+        var input = new TzThrowingHolder { At = Hour(1) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert
+        Assert.Equal(Hour(8), input.At);
+    }
+
     #endregion
 
     #region Copy
@@ -467,6 +687,69 @@ public partial class YANObjectTest
         Assert.NotSame(input, result);
     }
 
+    [Fact]
+    public void Copy_DerivedInstanceTypedAsBase_CopiesRuntimeType_Object()
+    {
+        // Arrange
+        CopyBase input = new CopyDerived { BaseValue = 1, DerivedValue = 2 };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert (8.3.3 threw TargetException: Derived properties were written into a new Base)
+        var derived = Assert.IsType<CopyDerived>(result);
+
+        Assert.Equal(1, derived.BaseValue);
+        Assert.Equal(2, derived.DerivedValue);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_RuntimeTypeWithoutParameterlessConstructor_CopiesDeclaredType_Object()
+    {
+        // Arrange
+        CopyBase input = new CopyNoDefaultConstructor(5) { BaseValue = 1 };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert
+        Assert.IsType<CopyBase>(result);
+        Assert.Equal(1, result.BaseValue);
+    }
+
+    [Fact]
+    public void Copy_ClassWithIndexerAndGetterOnlyProperty_CopiesWritableProperties_Object()
+    {
+        // Arrange
+        var input = new TzIndexerClass { At = new DateTime(2023, 1, 1) };
+
+        // Act
+        var result = input.Copy();
+
+        // Assert (8.3.3 threw TargetParameterCountException)
+        Assert.Equal(input.At, result.At);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_Struct_CopiesValue_Object()
+    {
+        // Arrange
+        var input = new TzStruct { At = new DateTime(2023, 1, 1) };
+        var date = new DateTime(2023, 6, 15, 10, 30, 0);
+
+        // Act
+        var result = input.Copy();
+        var dateResult = date.Copy();
+        var intResult = 5.Copy();
+
+        // Assert (8.3.3 returned default values: the properties were set on a boxed copy)
+        Assert.Equal(input.At, result.At);
+        Assert.Equal(date, dateResult);
+        Assert.Equal(5, intResult);
+    }
+
     #endregion
 
     private class TestClass
@@ -485,6 +768,148 @@ public partial class YANObjectTest
         public DateTime DateProperty { get; set; }
 
         public string? StringProperty { get; set; }
+    }
+
+    private static DateTime Hour(int hour) => new(2023, 1, 1, hour, 0, 0, DateTimeKind.Utc);
+
+    private sealed class TzIndexerClass
+    {
+        public DateTime At { get; set; }
+
+        public int ReadOnlyValue => 1;
+
+        public int this[int index]
+        {
+            get => index;
+            set { }
+        }
+    }
+
+    private sealed class TzNode
+    {
+        public DateTime At { get; set; }
+
+        public TzNode? Parent { get; set; }
+
+        public List<TzNode> Children { get; set; } = [];
+    }
+
+    private sealed class TzTwoReferences
+    {
+        public DateTimeTestClass? First { get; set; }
+
+        public DateTimeTestClass? Second { get; set; }
+    }
+
+    private sealed class TzListHolder
+    {
+        public DateTime[] Array { get; set; } = [];
+
+        public List<DateTime> List { get; set; } = [];
+
+        public List<DateTime?> NullableList { get; set; } = [];
+
+        public object?[] Objects { get; set; } = [];
+    }
+
+    private sealed class TzReadOnlyHolder
+    {
+        public ReadOnlyCollection<DateTime> ReadOnly { get; set; } = new([]);
+
+        public ImmutableArray<DateTime> Immutable { get; set; }
+
+        public ReadOnlyDictionary<string, DateTime> ReadOnlyDictionary { get; set; } = new(new Dictionary<string, DateTime>());
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzImmutableHolder
+    {
+        public ImmutableArray<DateTimeTestClass> Items { get; set; }
+
+        public ImmutableArray<DateTimeTestClass> Empty { get; set; }
+    }
+
+    private sealed class TzDictionaryHolder
+    {
+        public Dictionary<string, DateTime> Dates { get; set; } = [];
+
+        public SortedDictionary<int, DateTime?> NullableDates { get; set; } = [];
+    }
+
+    private sealed class TzHashSetHolder
+    {
+        public HashSet<DateTime> Dates { get; set; } = [];
+    }
+
+    private sealed class TzGetterOnlyHolder
+    {
+        public List<DateTime> Dates { get; } = [];
+
+        public List<DateTimeTestClass> Items { get; } = [];
+
+        public DateTime Computed => Hour(5);
+    }
+
+    private struct TzStruct
+    {
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzStructHolder
+    {
+        public TzStruct Value { get; set; }
+
+        public TzStruct? NullableValue { get; set; }
+
+        public List<TzStruct> List { get; set; } = [];
+
+        public TzStruct[] Array { get; set; } = [];
+
+        public DateTime? Nullable { get; set; }
+    }
+
+    private sealed class TzNonDataHolder
+    {
+        public Stream? Stream { get; set; }
+
+        public Type? Type { get; set; }
+
+        public Task? Task { get; set; }
+
+        public Action? Action { get; set; }
+
+        public CultureInfo? Culture { get; set; }
+
+        public DateTime[,] Grid { get; set; } = new DateTime[0, 0];
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzThrowingHolder
+    {
+        public DateTime At { get; set; }
+
+        public DateTime Broken
+        {
+            get => throw new InvalidOperationException();
+            set { }
+        }
+    }
+
+    private class CopyBase
+    {
+        public int BaseValue { get; set; }
+    }
+
+    private sealed class CopyDerived : CopyBase
+    {
+        public int DerivedValue { get; set; }
+    }
+
+    private sealed class CopyNoDefaultConstructor(int value) : CopyBase
+    {
+        public int Value { get; set; } = value;
     }
 
     private class Animal

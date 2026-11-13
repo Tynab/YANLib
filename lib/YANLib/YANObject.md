@@ -144,6 +144,23 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - **Collections**: `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` when the collection contains a `null` element.
 - **Field names**: `IsValidField<T>` checks the first space-separated token of the string against the public instance properties of `T`. A `null`, empty or whitespace string is never a valid field, so `IsNotValidField<T>` is always the opposite of `IsValidField<T>`, `AllValidFields` is `!AnyNotValidField` and `AnyValidField` is `!AllNotValidFields` for a non-empty sequence.
 
+## Time Zone Conversion Rules
+
+`ChangeTimeZoneAllProperty` (and `ChangeTimeZoneAllProperties` for each element) changes the object graph in place:
+
+- Every object is converted at most once, so parent/child back-references and shared references are safe.
+- Readable and writable properties are walked. `DateTime` and `DateTime?` values are converted and written back; a struct is walked and written back when something in it changed. No other property is written.
+- A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.
+- Lists and arrays of `DateTime` / `DateTime?`, and dictionaries with `DateTime` / `DateTime?` values (`IDictionary<TKey, DateTime>`), are converted when they are writable. Read-only ones (`ReadOnlyCollection<T>`, `ImmutableArray<T>`, `ReadOnlyDictionary<TKey, TValue>`, ...) are left unchanged. The elements of other lists (`IList`, e.g. `List<Order>`, `object[]`) are walked.
+- Limitations: other collections (`HashSet<DateTime>`, `Queue<T>`, ...), multi-dimensional arrays and dictionary values that are not `DateTime` are left unchanged.
+- Strings, primitives, enums, date/time/number types and non-data types (`Type` and other reflection objects, delegates, streams, tasks, threads, wait handles, cancellation tokens, safe handles, pointers) are not walked into.
+- A property whose getter throws is skipped; an exception thrown by a setter propagates.
+
+## Copy Rules
+
+- For a class, `Copy()` creates an instance of the input's runtime type when it differs from `T` and has a public parameterless constructor (`Base b = new Derived(); b.Copy()` is a `Derived`), otherwise a new `T`. The readable and writable public instance properties of that type, inherited ones included and indexers excluded, are copied; reference values are shared (shallow copy).
+- For a value type, `Copy()` returns the value itself (assigning a struct already copies all of its fields).
+
 ### Changes since 8.3.3
 
 - Inherited properties are checked again: `new Derived { BaseName = "x" }.IsNullDefault()` is `false` (was `true`).
@@ -154,6 +171,9 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - A struct property is compared with `default(T)`, not with an instance built by its parameterless constructor.
 - `AllPropertiesDefault(names)` (and `AllPropertiesDefaults(names)`, `AllPropertiesNotDefaults(names)`) return `false` when no name matches a property (were `true`).
 - `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` for a collection that contains `null` (a `null` element satisfied both).
+- `ChangeTimeZoneAllProperty` no longer throws for classes with an indexer (`TargetParameterCountException`), `Dictionary<TKey, DateTime>` properties (now converted), read-only lists such as `ReadOnlyCollection<DateTime>` (`NotSupportedException`, now left unchanged) or `Stream` properties (`MemoryStream.ReadTimeout`), and no longer crashes the process with a stack overflow on parent/child back-references.
+- `ChangeTimeZoneAllProperty` converts an object reached through several references once (it was shifted once per reference), converts getter-only lists, arrays and dictionaries and `DateTime` items of `object` lists, skips throwing getters, and no longer calls the setters of properties it does not change.
+- `Copy()`: `Base b = new Derived(); b.Copy()` returns a `Derived` copy (threw `TargetException`), classes with an indexer are copied (threw `TargetParameterCountException`), and a struct is copied by value (returned `default(T)`, e.g. `5.Copy()` was `0`).
 - Blank field names are never valid again (as in 8.3.2): `["Name", null].AllValidFields<User>()` and `["Name", "  "].AllValidFields<User>()` are `false` (were `true`), `IsNotValidField` of `null` / `""` / whitespace is `true` (was `false`) and `["Name", null].AnyNotValidField<User>()` is `true` (was `false`).
 
 

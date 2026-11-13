@@ -132,13 +132,28 @@ public static partial class YANObject
     #endregion
 
     /// <summary>
-    /// Changes the time zone of all <see cref="DateTime"/> properties in the specified object.
+    /// Changes the time zone of all <see cref="DateTime"/> properties in the specified object, in place, including those of nested objects, lists, arrays and dictionaries.
     /// </summary>
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to process. If <c>null</c>, returns <c>null</c>.</param>
     /// <param name="tzSrc">The source time zone offset. If <c>null</c>, no conversion is performed.</param>
     /// <param name="tzDst">The destination time zone offset. If <c>null</c>, no conversion is performed.</param>
-    /// <returns>The object with all <see cref="DateTime"/> properties converted to the destination time zone.</returns>
+    /// <returns>The same object, with all reachable <see cref="DateTime"/> values converted to the destination time zone.</returns>
+    /// <remarks>
+    /// The object graph is changed in place and every object is converted at most once, so cycles (parent/child back-references) and shared references are safe.
+    /// <list type="bullet">
+    /// <item><description>Readable and writable public instance properties are walked. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
+    /// a struct is walked and written back when something in it changed. No other property is written.</description></item>
+    /// <item><description>A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.</description></item>
+    /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
+    /// read-only ones (<c>ReadOnlyCollection&lt;T&gt;</c>, <c>ImmutableArray&lt;T&gt;</c>, <c>ReadOnlyDictionary&lt;TKey, TValue&gt;</c>, ...) are left unchanged.
+    /// The elements of other lists (<see cref="System.Collections.IList"/>) are walked.</description></item>
+    /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>
+    /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams, tasks, threads,
+    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into.</description></item>
+    /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
+    /// </list>
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T? ChangeTimeZoneAllProperty<T>(this T? input, object? tzSrc = null, object? tzDst = null) where T : class => input.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst);
@@ -149,6 +164,11 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to copy. If <c>null</c>, returns <c>null</c>.</param>
     /// <returns>A new object with the same property values as the input object.</returns>
+    /// <remarks>
+    /// For a class, the copy is an instance of the input's runtime type when that type differs from <typeparamref name="T"/> and has a public parameterless constructor,
+    /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded)
+    /// are copied; reference values are shared, not cloned. For a value type, the value itself is returned, since assigning a struct already copies all of its fields.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T Copy<T>(this T input) where T : new() => input.CopyImplement();
