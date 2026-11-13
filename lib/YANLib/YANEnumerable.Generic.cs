@@ -24,7 +24,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static T[] ToArray<T>(this IEnumerable<object?>? input) => input.ToArrayImplement<T>();
+    public static T[] ToArray<T>(this IEnumerable<object?>? input) => input.ToArrayImplement<T>()!;
 
     /// <summary>
     /// Converts an array of objects to an array of the specified type.
@@ -38,7 +38,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static T[] ToArray<T>(params object?[]? input) => input.ToArrayImplement<T>();
+    public static T[] ToArray<T>(params object?[]? input) => input.ToArrayImplement<T>()!;
 
     /// <summary>
     /// Converts a non-generic collection to an array of the specified type.
@@ -52,7 +52,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static T[] ToArray<T>(this System.Collections.IEnumerable? input) => input.ToArrayImplement<T>();
+    public static T[] ToArray<T>(this System.Collections.IEnumerable? input) => input.ToArrayImplement<T>()!;
 
     /// <summary>
     /// Converts a collection of objects to a list of the specified type.
@@ -66,7 +66,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static List<T> ToList<T>(this IEnumerable<object?>? input) => input.ToListImplement<T>();
+    public static List<T> ToList<T>(this IEnumerable<object?>? input) => input.ToListImplement<T>()!;
 
     /// <summary>
     /// Converts an array of objects to a list of the specified type.
@@ -80,7 +80,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static List<T> ToList<T>(params object?[]? input) => input.ToListImplement<T>();
+    public static List<T> ToList<T>(params object?[]? input) => input.ToListImplement<T>()!;
 
     /// <summary>
     /// Converts a non-generic collection to a list of the specified type.
@@ -94,7 +94,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static List<T> ToList<T>(this System.Collections.IEnumerable? input) => input.ToListImplement<T>();
+    public static List<T> ToList<T>(this System.Collections.IEnumerable? input) => input.ToListImplement<T>()!;
 
     /// <summary>
     /// Converts a collection of objects to a hash set of the specified type.
@@ -109,7 +109,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static HashSet<T> ToHashSet<T>(this IEnumerable<object?>? input) => input.ToHashSetImplement<T>();
+    public static HashSet<T> ToHashSet<T>(this IEnumerable<object?>? input) => input.ToHashSetImplement<T>()!;
 
     /// <summary>
     /// Converts an array of objects to a hash set of the specified type.
@@ -124,7 +124,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static HashSet<T> ToHashSet<T>(params object?[]? input) => input.ToHashSetImplement<T>();
+    public static HashSet<T> ToHashSet<T>(params object?[]? input) => input.ToHashSetImplement<T>()!;
 
     /// <summary>
     /// Converts a non-generic collection to a hash set of the specified type.
@@ -139,7 +139,7 @@ public static partial class YANEnumerable
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static HashSet<T> ToHashSet<T>(this System.Collections.IEnumerable? input) => input.ToHashSetImplement<T>();
+    public static HashSet<T> ToHashSet<T>(this System.Collections.IEnumerable? input) => input.ToHashSetImplement<T>()!;
 
     /// <summary>
     /// Converts a collection of objects to a dictionary with keys and values of the specified types.
