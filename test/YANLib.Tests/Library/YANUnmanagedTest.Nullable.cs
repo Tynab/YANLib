@@ -299,6 +299,24 @@ public partial class YANUnmanagedTest
         Assert.Null(invalidResult);
     }
 
+    [Fact]
+    public void Parse_InvalidStringToVariousTargets_ReturnsDefault_Nullable()
+    {
+        // Arrange (these used to throw and catch one or two exceptions each inside Parse)
+        object input = "not a value";
+
+        // Act & Assert
+        Assert.Equal(0, input.Parse<int>());
+        Assert.Null(input.Parse<int?>());
+        Assert.Null(input.Parse<double?>());
+        Assert.Null(input.Parse<decimal?>());
+        Assert.Null(input.Parse<bool?>());
+        Assert.Null(input.Parse<char?>());
+        Assert.Null(input.Parse<DayOfWeek?>());
+        Assert.Null(input.Parse<Uri>());
+        Assert.Null(input.Parse<List<int>>());
+    }
+
     #endregion
 
     #region Concurrency

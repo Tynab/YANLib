@@ -123,10 +123,43 @@ internal static partial class YANUnmanaged
             ParseKind.UInt64 => TryConvertInteger<ulong>(input, floorFractions, out result),
             ParseKind.NInt => TryConvertInteger<nint>(input, floorFractions, out result),
             ParseKind.NUInt => TryConvertInteger<nuint>(input, floorFractions, out result),
+            ParseKind.Boolean when input is string text => TryParseValue<bool>(text, out result),
+            ParseKind.Char when input is string text => TryParseValue<char>(text, out result),
+            ParseKind.Single when input is string text => TryParseValue<float>(text, out result),
+            ParseKind.Double when input is string text => TryParseValue<double>(text, out result),
+            ParseKind.Decimal when input is string text => TryParseValue<decimal>(text, out result),
             ParseKind.Decimal when input is double or float && !IsDecimalRange(input is double d ? d : (float)input) => Fail(out result),
             ParseKind.Enum => Fail(out result),
-            _ => TryChangeTypeCore(input, targetType, out result)
+            _ => TryChangeTypeFallback(input, targetType, out result)
         };
+    }
+
+    /// <summary>
+    /// Parses <paramref name="text"/> with <see cref="IParsable{TSelf}.TryParse(string?, IFormatProvider?, out TSelf)"/> and the current
+    /// culture, which uses the same <see cref="NumberStyles"/> as <see cref="Convert.ChangeType(object, Type)"/> did, without exceptions.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryParseValue<TValue>(string text, out object? result) where TValue : IParsable<TValue>
+        => TValue.TryParse(text, CurrentCulture, out var value) ? Succeed(value, out result) : Fail(out result);
+
+    /// <summary>
+    /// Mirrors <see cref="Convert.ChangeType(object, Type)"/> for the remaining targets, rejecting up front the cases in which it
+    /// always throws.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryChangeTypeFallback(object input, Type targetType, out object? result)
+    {
+        if (input is not IConvertible)
+        {
+            return input.GetType() == targetType ? Succeed(input, out result) : Fail(out result);
+        }
+
+        // the BCL IConvertible types (string, primitives, DateTime, enums...) convert to no TypeCode.Object type except object itself
+        return targetType != typeof(object) && Type.GetTypeCode(targetType) == TypeCode.Object && Type.GetTypeCode(input.GetType()) != TypeCode.Object
+            ? Fail(out result)
+            : TryChangeTypeCore(input, targetType, out result);
     }
 
     [DebuggerHidden]
@@ -144,8 +177,8 @@ internal static partial class YANUnmanaged
             case decimal value:
                 return TryFromDecimal<TInteger>(decimal.Round(value), out result) || floorFractions && TryFromDecimal<TInteger>(decimal.Floor(value), out result);
             case string text:
-                return TryChangeTypeCore(text, IntegerConversionType<TInteger>(), out var parsed) && TryGetInt128(parsed, out var integer) && TryFromInt128<TInteger>(integer, out result)
-                    || floorFractions && decimal.TryParse(text, NumberStyles.Number, CurrentCulture, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
+                return TInteger.TryParse(text, CurrentCulture, out var parsed) ? Succeed(parsed, out result)
+                    : floorFractions && decimal.TryParse(text, NumberStyles.Number, CurrentCulture, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
                     || Fail(out result);
             default:
                 if (TryGetInt128(input, out var number))
@@ -208,7 +241,8 @@ internal static partial class YANUnmanaged
 
     /// <summary>
     /// The only place that still calls <see cref="Convert.ChangeType(object, Type)"/>; kept for conversions that have no
-    /// exception-free equivalent (bool/char/DateTime sources, custom <see cref="IConvertible"/> implementations).
+    /// exception-free equivalent (bool/char/DateTime sources, custom <see cref="IConvertible"/> implementations). Strings never
+    /// get here for numeric, <see cref="bool"/>, <see cref="char"/>, enum or <see cref="TypeCode.Object"/> targets.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
