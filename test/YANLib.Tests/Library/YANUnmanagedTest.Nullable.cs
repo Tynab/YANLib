@@ -401,17 +401,55 @@ public partial class YANUnmanagedTest
         // Arrange
         Type[] elementTypes =
         [
-            typeof(int), typeof(long), typeof(short), typeof(byte), typeof(sbyte), typeof(uint), typeof(ulong), typeof(ushort), typeof(float), typeof(double),
-            typeof(decimal), typeof(char), typeof(bool), typeof(string), typeof(object), typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan), typeof(Guid), typeof(Uri),
-            typeof(Version), typeof(System.Text.StringBuilder), typeof(DayOfWeek), typeof(ConsoleColor), typeof(Half), typeof(Int128), typeof(UInt128), typeof(Exception), typeof(Random), typeof(TimeZoneInfo)
+            typeof(int),
+            typeof(long),
+            typeof(short),
+            typeof(byte),
+            typeof(sbyte),
+            typeof(uint),
+            typeof(ulong),
+            typeof(ushort),
+            typeof(float),
+            typeof(double),
+            typeof(decimal),
+            typeof(char),
+            typeof(bool),
+            typeof(string),
+            typeof(object),
+            typeof(DateTime),
+            typeof(DateTimeOffset),
+            typeof(TimeSpan),
+            typeof(Guid),
+            typeof(Uri),
+            typeof(Version),
+            typeof(System.Text.StringBuilder),
+            typeof(DayOfWeek),
+            typeof(ConsoleColor),
+            typeof(Half),
+            typeof(Int128),
+            typeof(UInt128),
+            typeof(Exception),
+            typeof(Random),
+            typeof(TimeZoneInfo)
         ];
 
         Type[] definitions =
         [
-            typeof(List<>), typeof(HashSet<>), typeof(Queue<>), typeof(Stack<>), typeof(LinkedList<>), typeof(SortedSet<>), typeof(System.Collections.ObjectModel.Collection<>),
-            typeof(System.Collections.ObjectModel.ObservableCollection<>), typeof(System.Collections.Concurrent.ConcurrentBag<>), typeof(System.Collections.Concurrent.ConcurrentQueue<>),
-            typeof(System.Collections.Concurrent.ConcurrentStack<>), typeof(System.Collections.Concurrent.BlockingCollection<>), typeof(System.Runtime.CompilerServices.StrongBox<>),
-            typeof(TaskCompletionSource<>), typeof(Lazy<>)
+            typeof(List<>),
+            typeof(HashSet<>),
+            typeof(Queue<>),
+            typeof(Stack<>),
+            typeof(LinkedList<>),
+            typeof(SortedSet<>),
+            typeof(System.Collections.ObjectModel.Collection<>),
+            typeof(System.Collections.ObjectModel.ObservableCollection<>),
+            typeof(System.Collections.Concurrent.ConcurrentBag<>),
+            typeof(System.Collections.Concurrent.ConcurrentQueue<>),
+            typeof(System.Collections.Concurrent.ConcurrentStack<>),
+            typeof(System.Collections.Concurrent.BlockingCollection<>),
+            typeof(System.Runtime.CompilerServices.StrongBox<>),
+            typeof(TaskCompletionSource<>),
+            typeof(Lazy<>)
         ];
 
         Type[] keyedDefinitions = [typeof(Dictionary<int, int>), typeof(Dictionary<string, int>), typeof(SortedDictionary<long, int>), typeof(SortedList<short, int>), typeof(System.Collections.Concurrent.ConcurrentDictionary<byte, int>)];

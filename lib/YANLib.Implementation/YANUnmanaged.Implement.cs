@@ -171,11 +171,11 @@ internal static partial class YANUnmanaged
         switch (input)
         {
             case double or float:
-                {
-                    var value = input is double d ? d : (float)input;
+            {
+                var value = input is double d ? d : (float)input;
 
-                    return TryFromDouble<TInteger>(Math.Round(value), out result) || floorFractions && TryFromDouble<TInteger>(Math.Floor(value), out result);
-                }
+                return TryFromDouble<TInteger>(Math.Round(value), out result) || floorFractions && TryFromDouble<TInteger>(Math.Floor(value), out result);
+            }
             case decimal value:
                 return TryFromDecimal<TInteger>(decimal.Round(value), out result) || floorFractions && TryFromDecimal<TInteger>(decimal.Floor(value), out result);
             case string text:
