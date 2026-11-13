@@ -173,7 +173,7 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 | `1e10` (boxed, out of range) | 0 | -1 | `null` |
 | `2147483647.6` (boxed) | 2147483647 (the floor fits) | -1 | `null` |
 
-- **Fractions**: only the one-argument `Parse<T>()` with a non-nullable integer `T` floors fractional or out-of-range numbers, using the exact `decimal` value; the `defaultValue` overload and nullable targets return the default / `null` instead.
+- **Fractions**: a fractional string is floored, using the exact `decimal` value, only by the one-argument `Parse<T>()` with a non-nullable integer `T`; the `defaultValue` overload and nullable targets return the default / `null` instead. A boxed fractional number is rounded half to even by every overload; when only the rounded value is out of range (`2147483647.6`), `Parse<T>()` floors it if the floor fits.
 - **Out of range**: never throws and never wraps around: the result is `0` / `null` / the converted `defaultValue`.
 - **`nint` / `nuint`**: supported as targets and as inputs (converted through `long` / `ulong`).
 - **Already the target type**: an input that already is a `T` is returned unchanged (a derived instance typed as its base class stays the same instance; a `DateTime` keeps its milliseconds and `Kind`). A `defaultValue` of type `T` is returned unchanged as well, also when a `format` is given.

@@ -74,7 +74,7 @@ public static partial class YANDateTime
     /// <param name="tzSrc">The source time zone offset in hours. If <c>null</c>, defaults to <c>0</c>.</param>
     /// <param name="tzDst">The destination time zone offset in hours. If <c>null</c>, defaults to <c>0</c>.</param>
     /// <remarks>
-    /// This method modifies the list in-place, changing each DateTime to the destination time zone.
+    /// Unlike <see cref="ChangeTimeZone(List{DateTime}, object, object)"/>, this method does not modify the original collection but returns a new one.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
