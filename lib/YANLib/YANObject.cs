@@ -149,9 +149,10 @@ public static partial class YANObject
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back. Any other value that is walked
     /// (an object or a struct) is written back with the property's setter when a <see cref="DateTime"/> was converted somewhere inside it, once everything reachable
     /// from it has been walked and before the next property is read, as in 8.3.3. So a property whose getter returns a copy (a defensive copy, a computed wrapper,
-    /// a JSON-backed object) receives the converted copy, and a later property that this setter writes is read, and converted, after the setter has run; state that
-    /// a copy getter exposes is converted once per path to it (a copy getter over an object or field also reachable directly or through another copy getter, a wrapper
-    /// over the owner's own <see cref="DateTime"/> properties).
+    /// a JSON-backed object) receives the converted copy, and a later property that this setter writes is read, and converted, after the setter has run; state
+    /// reachable through two paths is converted once per path (a copy getter over an object or field also reachable directly or through another copy getter;
+    /// a wrapper over the owner's own <see cref="DateTime"/> properties; a dictionary or <c>IList&lt;DateTime?&gt;</c>
+    /// type whose own writable property holds the collection behind its interface).
     /// No other setter is called: not for values that are not walked (strings, numbers, ...), not for a value in which nothing was converted, and not for a second
     /// reference to an object already converted. (A struct item of a read-only list is converted in a copy that is then discarded, but still counts as converted,
     /// so the setter of a property holding that list is called with the unchanged list.)</description></item>
@@ -162,7 +163,9 @@ public static partial class YANObject
     /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
     /// read-only ones (<c>ReadOnlyCollection&lt;T&gt;</c>, <c>ImmutableArray&lt;T&gt;</c>, <c>ReadOnlyDictionary&lt;TKey, TValue&gt;</c>, ...) are left unchanged.
     /// The elements of other lists (<see cref="System.Collections.IList"/>) are walked, and an element in which a <see cref="DateTime"/> was converted is written back
-    /// into a writable list (<c>list[i] = element</c>).</description></item>
+    /// into a writable list (<c>list[i] = element</c>). A type that implements <see cref="IDictionary{TKey, TValue}"/> with <see cref="DateTime"/> / <c>DateTime?</c> values,
+    /// or <c>IList&lt;DateTime?&gt;</c> without <see cref="System.Collections.IList"/>, then has its own readable and writable properties walked (not its getter-only ones);
+    /// a type that implements <c>IList&lt;DateTime&gt;</c> without <see cref="System.Collections.IList"/> has only its items converted.</description></item>
     /// <item><description>An <see cref="ArraySegment{T}"/> is handled like an array holding only the segment's items: they are converted or walked in the underlying
     /// array (a struct item is written back into it), and the items outside the segment are left alone.</description></item>
     /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>

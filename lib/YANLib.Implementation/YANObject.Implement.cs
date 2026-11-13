@@ -13,6 +13,7 @@ internal static partial class YANObject
 {
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ReadablePropertyCache = new();
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ReadWritePropertyCache = new();
     private static readonly ConcurrentDictionary<Type, object> DefaultValueCache = new();
 
     #region Private
@@ -27,6 +28,15 @@ internal static partial class YANObject
     [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedReadableProperties(Type type) => ReadablePropertyCache.GetOrAdd(type, static t =>
         [.. t.GetProperties(Public | Instance).Where(static x => x.CanRead && !x.PropertyType.IsByRefLike && x.GetIndexParameters().Length is 0)]);
+
+    /// <summary>
+    /// Gets the properties of <see cref="GetCachedReadableProperties(Type)"/> that are also writable: the properties that <c>Copy</c> copies and, as in
+    /// 8.3.3, that <c>ChangeTimeZoneAllProperty</c> walks in a dictionary type or a type implementing only <c>IList&lt;DateTime?&gt;</c>.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static PropertyInfo[] GetCachedReadWriteProperties(Type type)
+        => ReadWritePropertyCache.GetOrAdd(type, static t => [.. GetCachedReadableProperties(t).Where(static x => x.CanWrite)]);
 
     /// <summary>
     /// Gets the properties of <see cref="GetCachedReadableProperties(Type)"/>, keeping for a name hidden with <c>new</c> only the most-derived property.
@@ -399,7 +409,9 @@ internal static partial class YANObject
 
     /// <summary>
     /// Starts the walk of <paramref name="node"/>'s value: converts a list of <see cref="DateTime"/> / <c>DateTime?</c> or a dictionary with such values
-    /// in one go, or sets the items (of a list or an <see cref="ArraySegment{T}"/>) or the properties that <see cref="ChangeTimeZoneNext"/> reads.
+    /// in one go, or sets the items (of a list or an <see cref="ArraySegment{T}"/>) or the properties that <see cref="ChangeTimeZoneNext"/> reads. After
+    /// the values of a dictionary, or the items of a type that implements <c>IList&lt;DateTime?&gt;</c> but not <see cref="IList"/>, are converted, the
+    /// readable and writable properties of its type are read as well (as in 8.3.3, which walked them for these types).
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -436,6 +448,12 @@ internal static partial class YANObject
                             node.Changed = true;
                         }
                     }
+                }
+
+                if (input is not IList and not ArraySegment<DateTime?>)
+                {
+                    // A type that implements IList<DateTime?> but not IList also has its own readable and writable properties walked, as in 8.3.3.
+                    node.Properties = GetCachedReadWriteProperties(input.GetType());
                 }
 
                 return;
@@ -484,6 +502,10 @@ internal static partial class YANObject
         if (GetDateTimeDictionaryConverter(type) is { } converter)
         {
             node.Changed = converter(input, tzSrc, tzDst);
+
+            // The type's own readable and writable properties are walked too, as in 8.3.3, but not its getter-only ones, which can be views of the
+            // values just converted.
+            node.Properties = GetCachedReadWriteProperties(type);
 
             return;
         }
@@ -701,8 +723,6 @@ internal static partial class YANObject
 
     #region Copy
 
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> CopyPropertyCache = new();
-
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static T CopyImplement<T>(this T input) where T : new()
@@ -734,7 +754,7 @@ internal static partial class YANObject
             runtimeType = typeof(T);
         }
 
-        foreach (var prop in CopyPropertyCache.GetOrAdd(runtimeType, static t => [.. GetCachedReadableProperties(t).Where(static x => x.CanWrite)]))
+        foreach (var prop in GetCachedReadWriteProperties(runtimeType))
         {
             prop.SetValue(result, prop.GetValue(input));
         }

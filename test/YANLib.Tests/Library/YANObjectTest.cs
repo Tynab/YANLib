@@ -1258,6 +1258,98 @@ public partial class YANObjectTest
         Assert.Equal(Hour(9), ((TzHiddenDateBase)input).When);
     }
 
+    [Fact]
+    public void ChangeTimeZoneAllProperty_DictionaryTypesWithOwnProperties_ConvertsValuesAndProperties_Object()
+    {
+        // Arrange
+        var writable = new TzExplicitDictionary(false) { At = Hour(1), Child = new() { DateProperty = Hour(2) } };
+        var readOnly = new TzExplicitDictionary(true) { At = Hour(1) };
+        var agenda = new TzReadOnlyAgenda { At = Hour(3), Child = new() { DateProperty = Hour(4) } };
+        var nullableAgenda = new TzReadOnlyNullableAgenda { At = Hour(5) };
+        var holder = new TzDictionaryTypeHolder { Writable = new(false) { At = Hour(1) }, Agenda = new() { At = Hour(3) } };
+        var items = new List<object> { new TzExplicitDictionary(false) { At = Hour(1) }, new TzReadOnlyAgenda { At = Hour(3) } };
+
+        // Act
+        writable.ChangeTimeZoneAllProperty(0, 7);
+        readOnly.ChangeTimeZoneAllProperty(0, 7);
+        agenda.ChangeTimeZoneAllProperty(0, 7);
+        nullableAgenda.ChangeTimeZoneAllProperty(0, 7);
+        holder.ChangeTimeZoneAllProperty(0, 7);
+        items.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, the readable and writable properties of a type implementing IDictionary<TKey, DateTime> / IDictionary<TKey, DateTime?>
+        // without a public indexer are walked; 1bb38c4 converted only the values; the values of a writable one are converted once, a read-only one's are left)
+        Assert.Equal(Hour(8), writable.At);
+        Assert.Equal(Hour(9), writable.Child.DateProperty);
+        Assert.Equal(Hour(17), writable.View["a"]);
+        Assert.Equal(Hour(8), readOnly.At);
+        Assert.Equal(Hour(10), readOnly.View["a"]);
+        Assert.Equal(Hour(10), agenda.At);
+        Assert.Equal(Hour(11), agenda.Child.DateProperty);
+        Assert.Equal(Hour(10), agenda["a"]);
+        Assert.Equal(Hour(12), nullableAgenda.At);
+        Assert.Equal(Hour(10), nullableAgenda["a"]);
+        Assert.Equal(Hour(8), holder.Writable.At);
+        Assert.Equal(Hour(17), holder.Writable.View["a"]);
+        Assert.Equal(Hour(10), holder.Agenda.At);
+        Assert.Equal(Hour(8), ((TzExplicitDictionary)items[0]).At);
+        Assert.Equal(Hour(17), ((TzExplicitDictionary)items[0]).View["a"]);
+        Assert.Equal(Hour(10), ((TzReadOnlyAgenda)items[1]).At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_NullableDateListTypeWithOwnProperties_ConvertsItemsAndProperties_Object()
+    {
+        // Arrange
+        var input = new TzNullableDates { At = Hour(1) };
+        var holder = new TzNullableDatesHolder { Dates = new() { At = Hour(2) } };
+        var items = new List<object> { new TzNullableDates { At = Hour(3) } };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+        holder.ChangeTimeZoneAllProperty(0, 7);
+        items.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, the readable and writable properties of a type implementing only IList<DateTime?> are walked; 1bb38c4 converted only the
+        // items, which 8.3.3 left unchanged)
+        Assert.Equal(Hour(8), input.At);
+        Assert.Equal([Hour(17), null], input.Items);
+        Assert.Equal(Hour(9), holder.Dates.At);
+        Assert.Equal([Hour(17), null], holder.Dates.Items);
+        Assert.Equal(Hour(10), ((TzNullableDates)items[0]).At);
+        Assert.Equal([Hour(17), null], ((TzNullableDates)items[0]).Items);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_DictionaryTypeWithGetterOnlyViewOfItsValues_ConvertsThemOnce_Object()
+    {
+        // Arrange
+        var input = new TzExplicitDictionary(false) { At = Hour(1) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (only the readable and writable properties of a dictionary type are walked, as in 8.3.3, so its getter-only Values view of the
+        // backing dictionary is not converted a second time)
+        Assert.Equal(Hour(8), input.At);
+        Assert.Equal(Hour(17), input.View["a"]);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_NullableDateListTypeExposingItsBackingList_ShiftsItTwice_Object()
+    {
+        // Arrange
+        var input = new TzNullableDatesWrapper { Backing = [Hour(1), null], At = Hour(2) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (pinned: the items are converted through IList<DateTime?> and again through the writable Backing property that holds the same list,
+        // once per path; 8.3.3 converted neither, 1bb38c4 converted the items once and skipped the properties)
+        Assert.Equal(Hour(9), input.At);
+        Assert.Equal([Hour(15), null], input.Backing);
+    }
+
     #endregion
 
     #region Copy
@@ -2006,6 +2098,124 @@ public partial class YANObjectTest
     private sealed class TzHiddenDate : TzHiddenDateBase
     {
         public new DateTime? When { get; set; }
+    }
+
+    private sealed class TzExplicitDictionary(bool readOnly) : IDictionary<string, DateTime>
+    {
+        private readonly Dictionary<string, DateTime> values = new() { ["a"] = Hour(10) };
+
+        public DateTime At { get; set; }
+
+        public DateTimeTestClass? Child { get; set; }
+
+        public Dictionary<string, DateTime> View => values;
+
+        DateTime IDictionary<string, DateTime>.this[string key] { get => values[key]; set => values[key] = value; }
+
+        ICollection<string> IDictionary<string, DateTime>.Keys => values.Keys;
+
+        ICollection<DateTime> IDictionary<string, DateTime>.Values => values.Values;
+
+        int ICollection<KeyValuePair<string, DateTime>>.Count => values.Count;
+
+        bool ICollection<KeyValuePair<string, DateTime>>.IsReadOnly => readOnly;
+
+        void IDictionary<string, DateTime>.Add(string key, DateTime value) => values.Add(key, value);
+
+        void ICollection<KeyValuePair<string, DateTime>>.Add(KeyValuePair<string, DateTime> item) => values.Add(item.Key, item.Value);
+
+        void ICollection<KeyValuePair<string, DateTime>>.Clear() => values.Clear();
+
+        bool ICollection<KeyValuePair<string, DateTime>>.Contains(KeyValuePair<string, DateTime> item) => values.Contains(item);
+
+        bool IDictionary<string, DateTime>.ContainsKey(string key) => values.ContainsKey(key);
+
+        void ICollection<KeyValuePair<string, DateTime>>.CopyTo(KeyValuePair<string, DateTime>[] array, int arrayIndex) => ((ICollection<KeyValuePair<string, DateTime>>)values).CopyTo(array, arrayIndex);
+
+        bool IDictionary<string, DateTime>.Remove(string key) => values.Remove(key);
+
+        bool ICollection<KeyValuePair<string, DateTime>>.Remove(KeyValuePair<string, DateTime> item) => ((ICollection<KeyValuePair<string, DateTime>>)values).Remove(item);
+
+        bool IDictionary<string, DateTime>.TryGetValue(string key, out DateTime value) => values.TryGetValue(key, out value);
+
+        IEnumerator<KeyValuePair<string, DateTime>> IEnumerable<KeyValuePair<string, DateTime>>.GetEnumerator() => values.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => values.GetEnumerator();
+    }
+
+    private sealed class TzReadOnlyAgenda() : ReadOnlyDictionary<string, DateTime>(new Dictionary<string, DateTime> { ["a"] = Hour(10) })
+    {
+        public DateTime At { get; set; }
+
+        public DateTimeTestClass Child { get; set; } = new();
+    }
+
+    private sealed class TzReadOnlyNullableAgenda() : ReadOnlyDictionary<string, DateTime?>(new Dictionary<string, DateTime?> { ["a"] = Hour(10) })
+    {
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzDictionaryTypeHolder
+    {
+        public TzExplicitDictionary Writable { get; set; } = new(false);
+
+        public TzReadOnlyAgenda Agenda { get; set; } = new();
+    }
+
+    private abstract class TzNullableDateList : IList<DateTime?>
+    {
+        protected abstract List<DateTime?> Store { get; }
+
+        DateTime? IList<DateTime?>.this[int index] { get => Store[index]; set => Store[index] = value; }
+
+        int ICollection<DateTime?>.Count => Store.Count;
+
+        bool ICollection<DateTime?>.IsReadOnly => false;
+
+        void ICollection<DateTime?>.Add(DateTime? item) => Store.Add(item);
+
+        void ICollection<DateTime?>.Clear() => Store.Clear();
+
+        bool ICollection<DateTime?>.Contains(DateTime? item) => Store.Contains(item);
+
+        void ICollection<DateTime?>.CopyTo(DateTime?[] array, int arrayIndex) => Store.CopyTo(array, arrayIndex);
+
+        int IList<DateTime?>.IndexOf(DateTime? item) => Store.IndexOf(item);
+
+        void IList<DateTime?>.Insert(int index, DateTime? item) => Store.Insert(index, item);
+
+        bool ICollection<DateTime?>.Remove(DateTime? item) => Store.Remove(item);
+
+        void IList<DateTime?>.RemoveAt(int index) => Store.RemoveAt(index);
+
+        IEnumerator<DateTime?> IEnumerable<DateTime?>.GetEnumerator() => Store.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => Store.GetEnumerator();
+    }
+
+    private sealed class TzNullableDates : TzNullableDateList
+    {
+        private readonly List<DateTime?> items = [Hour(10), null];
+
+        public DateTime At { get; set; }
+
+        public IReadOnlyList<DateTime?> Items => items;
+
+        protected override List<DateTime?> Store => items;
+    }
+
+    private sealed class TzNullableDatesWrapper : TzNullableDateList
+    {
+        public DateTime At { get; set; }
+
+        public List<DateTime?> Backing { get; set; } = [];
+
+        protected override List<DateTime?> Store => Backing;
+    }
+
+    private sealed class TzNullableDatesHolder
+    {
+        public TzNullableDates Dates { get; set; } = new();
     }
 
     private class CopyHiddenNameBase
