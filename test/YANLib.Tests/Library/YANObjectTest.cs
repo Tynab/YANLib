@@ -1350,6 +1350,23 @@ public partial class YANObjectTest
         Assert.Equal([Hour(15), null], input.Backing);
     }
 
+    [Fact]
+    public void ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object()
+    {
+        // Arrange
+        var viewFirst = new TzViewAndCopy([Hour(1)]);
+        var copyFirst = new TzCopyAndView([Hour(1)]);
+
+        // Act
+        viewFirst.ChangeTimeZoneAllProperty(0, 7);
+        copyFirst.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, in either
+        // declaration order; 8.3.3 did not read the getter-only property and shifted the field once, to Hour(8))
+        Assert.Equal([Hour(15)], viewFirst.View);
+        Assert.Equal([Hour(15)], copyFirst.View);
+    }
+
     #endregion
 
     #region Copy
@@ -2216,6 +2233,32 @@ public partial class YANObjectTest
     private sealed class TzNullableDatesHolder
     {
         public TzNullableDates Dates { get; set; } = new();
+    }
+
+    private sealed class TzViewAndCopy(List<DateTime> initial)
+    {
+        private List<DateTime> dates = initial;
+
+        public List<DateTime> View => dates;
+
+        public List<DateTime> Copy
+        {
+            get => [.. dates];
+            set => dates = value;
+        }
+    }
+
+    private sealed class TzCopyAndView(DateTime[] initial)
+    {
+        private DateTime[] dates = initial;
+
+        public List<DateTime> Days
+        {
+            get => [.. dates];
+            set => dates = [.. value];
+        }
+
+        public IList<DateTime> View => dates;
     }
 
     private class CopyHiddenNameBase
