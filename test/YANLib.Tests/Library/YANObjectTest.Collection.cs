@@ -741,6 +741,25 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperties_SelfReferentialListTypes_DoNotOverflow_ObjectCollection()
+    {
+        // Arrange
+        var list = new TzSelfList { At = Hour(1) };
+        var holder = new TzSelfListHolder { List = new TzSelfList { At = Hour(2) }, At = Hour(3) };
+
+        // Act
+        var lists = new[] { list }.ChangeTimeZoneAllProperties(0, 7)!.ToList();
+        var holders = new[] { holder }.ChangeTimeZoneAllProperties(0, 7)!.ToList();
+
+        // Assert (a list type whose element type is itself crashed the process with a stack overflow)
+        Assert.Same(list, lists[0]);
+        Assert.Equal(Hour(1), list.At);
+        Assert.Same(holder, holders[0]);
+        Assert.Equal(Hour(10), holder.At);
+        Assert.Equal(Hour(2), holder.List!.At);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperties_ResultIgnored_StillConverts_ObjectCollection()
     {
         // Arrange

@@ -329,27 +329,52 @@ internal static partial class YANObject
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool IsTimeZoneLeaf(this Type type) => TimeZoneLeafCache.GetOrAdd(type, static t =>
+    private static bool IsTimeZoneLeaf(this Type type) => TimeZoneLeafCache.GetOrAdd(type, static t => IsTimeZoneLeaf(t, []));
+
+    /// <summary>
+    /// Computes <see cref="IsTimeZoneLeaf(Type)"/>. <paramref name="listTypes"/> holds the list types whose element type is being checked, so a list type
+    /// whose element type leads back to it (<c>class Node : List&lt;Node&gt;</c>, or <c>class A : List&lt;B&gt;</c> with <c>class B : List&lt;A&gt;</c>)
+    /// ends the recursion instead of overflowing the stack.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsTimeZoneLeaf(Type type, HashSet<Type> listTypes)
     {
-        if (t.IsPrimitive || t.IsEnum || t.IsPointer || t.IsByRefLike || t == typeof(string) || t == typeof(decimal) || t == typeof(DateTime) || t == typeof(DateTimeOffset)
-            || t == typeof(TimeSpan) || t == typeof(DateOnly) || t == typeof(TimeOnly) || t == typeof(Guid) || t == typeof(Uri) || t == typeof(Version) || t == typeof(object)
-            || t == typeof(CancellationToken) || t == typeof(ValueTask) || t.IsGenericType && t.GetGenericTypeDefinition() == typeof(ValueTask<>)
-            || Array.Exists(TimeZoneLeafBaseTypes, x => x.IsAssignableFrom(t)) || Nullable.GetUnderlyingType(t) is { } underlying && underlying.IsTimeZoneLeaf())
+        if (TimeZoneLeafCache.TryGetValue(type, out var cached))
+        {
+            return cached;
+        }
+
+        if (type.IsPrimitive || type.IsEnum || type.IsPointer || type.IsByRefLike || type == typeof(string) || type == typeof(decimal) || type == typeof(DateTime)
+            || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(DateOnly) || type == typeof(TimeOnly) || type == typeof(Guid) || type == typeof(Uri)
+            || type == typeof(Version) || type == typeof(object) || type == typeof(CancellationToken) || type == typeof(ValueTask)
+            || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ValueTask<>) || Array.Exists(TimeZoneLeafBaseTypes, x => x.IsAssignableFrom(type)))
         {
             return true;
         }
 
+        if (Nullable.GetUnderlyingType(type) is { } underlying)
+        {
+            return IsTimeZoneLeaf(underlying, listTypes);
+        }
+
         // Only lists, which the walk would otherwise enumerate instead of walking their properties, are skipped by element type;
         // any other type implementing IEnumerable<string> (say) still has its own DateTime properties converted.
-        if (!t.IsArray && !typeof(IList).IsAssignableFrom(t))
+        if (!type.IsArray && !typeof(IList).IsAssignableFrom(type))
         {
             return false;
         }
 
-        var elementType = t.IsArray ? t.GetElementType() : GetSequenceElementType(t);
+        // A list type reached again through its own element type is not a leaf; the walk's visited set ends the walk of such data.
+        if (!listTypes.Add(type))
+        {
+            return false;
+        }
 
-        return elementType is not null && elementType != typeof(DateTime) && elementType != typeof(DateTime?) && elementType != typeof(object) && elementType.IsTimeZoneLeaf();
-    });
+        var elementType = type.IsArray ? type.GetElementType() : GetSequenceElementType(type);
+
+        return elementType is not null && elementType != typeof(DateTime) && elementType != typeof(DateTime?) && elementType != typeof(object) && IsTimeZoneLeaf(elementType, listTypes);
+    }
 
     /// <summary>
     /// Whether <paramref name="type"/> is a collection that the walk converts in place (an array, a list or a dictionary), so a getter-only property

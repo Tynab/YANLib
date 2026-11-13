@@ -677,6 +677,60 @@ public partial class YANObjectTest
         Assert.Equal(Hour(8), input.At);
     }
 
+    [Fact]
+    public void ChangeTimeZoneAllProperty_SelfReferentialListType_DoesNotOverflow_Object()
+    {
+        // Arrange
+        var empty = new TzSelfList { At = Hour(1) };
+        var tree = new TzSelfList { At = Hour(2) };
+
+        tree.Add(new TzSelfList { At = Hour(3) });
+
+        // Act
+        empty.ChangeTimeZoneAllProperty(0, 7);
+        tree.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (a list type whose element type is itself crashed the process with a stack overflow; as in 8.3.3, a list's items are walked, not its own properties)
+        Assert.Equal(Hour(1), empty.At);
+        Assert.Equal(Hour(2), tree.At);
+        Assert.Equal(Hour(3), tree[0].At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_SelfReferentialListProperties_ConvertsOwner_Object()
+    {
+        // Arrange
+        var list = new TzSelfList { At = Hour(1) };
+        var input = new TzSelfListHolder { List = list, At = Hour(2) };
+        var empty = new TzSelfListHolder { At = Hour(3) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+        empty.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the writable property and the null getter-only property of the self-referential list type are walked without a stack overflow)
+        Assert.Equal(Hour(9), input.At);
+        Assert.Equal(Hour(1), list.At);
+        Assert.Equal(Hour(10), empty.At);
+        Assert.Null(empty.GetterOnly);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_MutuallyRecursiveListTypes_DoesNotOverflow_Object()
+    {
+        // Arrange
+        var pair = new TzListA { new TzListB() };
+        var input = new TzListPairHolder { Pair = new TzListA(), At = Hour(1) };
+
+        // Act
+        pair.ChangeTimeZoneAllProperty(0, 7);
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (class A : List<B> with class B : List<A> crashed the process with a stack overflow)
+        Assert.Single(pair);
+        Assert.Equal(Hour(8), input.At);
+    }
+
     #endregion
 
     #region Copy
@@ -943,6 +997,35 @@ public partial class YANObjectTest
             get => throw new InvalidOperationException();
             set { }
         }
+    }
+
+    private sealed class TzSelfList : List<TzSelfList>
+    {
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzSelfListHolder
+    {
+        public TzSelfList? List { get; set; }
+
+        public TzSelfList? GetterOnly { get; }
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzListA : List<TzListB>
+    {
+    }
+
+    private sealed class TzListB : List<TzListA>
+    {
+    }
+
+    private sealed class TzListPairHolder
+    {
+        public TzListA? Pair { get; set; }
+
+        public DateTime At { get; set; }
     }
 
     private class CopyBase
