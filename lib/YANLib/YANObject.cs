@@ -148,8 +148,10 @@ public static partial class YANObject
     /// <item><description>Readable and writable public instance properties are walked, inherited ones included and indexers excluded; a base property hidden with <c>new</c>
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
     /// a struct is walked and written back when something in it changed. No other property is written.</description></item>
-    /// <item><description>A getter-only property is walked only when its declared type is a class that is an array, a list or a dictionary; the collection is converted in place.
-    /// A getter-only struct (<see cref="ArraySegment{T}"/>, <c>ImmutableArray&lt;T&gt;</c>, ...) is not walked.</description></item>
+    /// <item><description>A getter-only property is walked only when its declared type is an array, list or dictionary type, either a class (an array, <see cref="List{T}"/>,
+    /// <see cref="Dictionary{TKey, TValue}"/>, ...) or an interface (<see cref="IList{T}"/>, <see cref="IDictionary{TKey, TValue}"/>, ...), and its value is not a struct;
+    /// the collection is converted in place. A getter-only struct value (<see cref="ArraySegment{T}"/>, <c>ImmutableArray&lt;T&gt;</c>, ...) and a getter-only property declared
+    /// as another interface (<see cref="IReadOnlyList{T}"/>, <see cref="ICollection{T}"/>, <see cref="IEnumerable{T}"/>, ...) are not walked.</description></item>
     /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
     /// read-only ones (<c>ReadOnlyCollection&lt;T&gt;</c>, <c>ImmutableArray&lt;T&gt;</c>, <c>ReadOnlyDictionary&lt;TKey, TValue&gt;</c>, ...) are left unchanged.
     /// The elements of other lists (<see cref="System.Collections.IList"/>) are walked.</description></item>
@@ -157,7 +159,9 @@ public static partial class YANObject
     /// in the underlying array, and the items outside the segment are left alone.</description></item>
     /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>
     /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams, tasks, threads,
-    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. The <see cref="Lazy{T}.Value"/> of a lazy value is never read, so the walk never creates it.</description></item>
+    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. A <see cref="Lazy{T}"/> value is not walked and its
+    /// <see cref="Lazy{T}.Value"/> is never read by the walk; a getter-only list property whose own getter reads a lazy value (<c>Dates =&gt; _lazy.Value</c>) is still called,
+    /// which creates that value.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
     /// <item><description>Class instances are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack; each object's own
     /// properties are converted first, then the objects it references, in property / item order, depth first. A graph that never ends (a getter that returns a new object on every call whose type leads back

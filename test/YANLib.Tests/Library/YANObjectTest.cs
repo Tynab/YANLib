@@ -697,7 +697,8 @@ public partial class YANObjectTest
         // Act
         input.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (as in 8.3.3, the subclass's own properties are converted and the inherited Lazy<T>.Value is not read)
+        // Assert (the subclass's own properties are converted: At as in 8.3.3, and Own, a getter-only list that 8.3.3 skipped, in place;
+        // the inherited Lazy<T>.Value is not read)
         Assert.Equal(0, calls);
         Assert.Equal(Hour(9), input.At);
         Assert.Equal([Hour(10)], input.Own);
@@ -718,7 +719,8 @@ public partial class YANObjectTest
         // Act
         input.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (each object's own properties first, then the objects it references in property order, depth first)
+        // Assert (each object's own properties first, then the objects it references in property order, depth first;
+        // 8.3.3 walked a referenced object as soon as it read the property: first.first, first, second, root)
         Assert.Equal(["root", "first", "first.first", "second"], log);
     }
 
@@ -786,6 +788,44 @@ public partial class YANObjectTest
         Assert.Equal(Hour(8), input.Dates[0]);
         Assert.Equal(Hour(9), input.Items[0].DateProperty);
         Assert.Equal(Hour(5), input.Computed);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_GetterOnlyInterfaceCollections_ConvertsListsAndDictionaries_Object()
+    {
+        // Arrange
+        var input = new TzGetterOnlyInterfaceHolder();
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (a getter-only property declared as an IList<T> / IDictionary<TKey, TValue> interface is walked; IReadOnlyList<T>, ICollection<T>
+        // and a struct value (ArraySegment<T>) are not; 8.3.3 skipped them all)
+        Assert.Equal(Hour(8), input.Dates[0]);
+        Assert.Equal(Hour(9), input.Map["a"]);
+        Assert.Equal(Hour(3), input.ReadOnlyDates[0]);
+        Assert.Equal([Hour(4)], input.Collection);
+        Assert.Equal(Hour(5), input.Segment[0]);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_GetterOnlyListReadingALazyValue_CreatesTheValue_Object()
+    {
+        // Arrange
+        var calls = 0;
+        var input = new TzLazyForwardingHolder(() =>
+        {
+            calls++;
+
+            return [Hour(1)];
+        });
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (only a Lazy<T> value is never read: the getter-only list property itself is called, and its getter creates the lazy value; 8.3.3 did not call it)
+        Assert.Equal(1, calls);
+        Assert.Equal([Hour(8)], input.Dates);
     }
 
     [Fact]
@@ -1213,6 +1253,11 @@ public partial class YANObjectTest
     {
         private DateTime at = Hour(1);
 
+        // Declared before At: 8.3.3 walked each referenced object as soon as it read First / Second, before reaching At.
+        public TzOrderNode? First { get; set; }
+
+        public TzOrderNode? Second { get; set; }
+
         public DateTime At
         {
             get
@@ -1223,10 +1268,6 @@ public partial class YANObjectTest
             }
             set => at = value;
         }
-
-        public TzOrderNode? First { get; set; }
-
-        public TzOrderNode? Second { get; set; }
     }
 
     private sealed class TzLazyHolder
@@ -1266,6 +1307,26 @@ public partial class YANObjectTest
         public List<DateTimeTestClass> Items { get; } = [];
 
         public DateTime Computed => Hour(5);
+    }
+
+    private sealed class TzGetterOnlyInterfaceHolder
+    {
+        public IList<DateTime> Dates { get; } = new List<DateTime> { Hour(1) };
+
+        public IDictionary<string, DateTime> Map { get; } = new Dictionary<string, DateTime> { ["a"] = Hour(2) };
+
+        public IReadOnlyList<DateTime> ReadOnlyDates { get; } = new List<DateTime> { Hour(3) };
+
+        public ICollection<DateTime> Collection { get; } = new List<DateTime> { Hour(4) };
+
+        public IList<DateTime> Segment { get; } = new ArraySegment<DateTime>([Hour(5)]);
+    }
+
+    private sealed class TzLazyForwardingHolder(Func<List<DateTime>> factory)
+    {
+        private readonly Lazy<List<DateTime>> dates = new(factory);
+
+        public List<DateTime> Dates => dates.Value;
     }
 
     private struct TzStruct
