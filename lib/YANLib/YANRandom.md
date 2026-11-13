@@ -28,7 +28,7 @@ The library is organized into several functional categories:
 - **Random Value Collections**: Generate collections of random values of specified types
 - **Random Sampling**: Select random values from existing collections
 - **Duplicate Control**: Option to allow or prevent duplicates in generated collections
-- **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
+- **Parallel Generation**: Collections of 1,000+ random values are generated in parallel (the values are random, so their order carries no meaning)
 
 ### Type Flexibility
 
@@ -153,7 +153,7 @@ float randomFloat = customObjects.GenerateRandom<float>(); // Random float from 
 
 ## Performance Considerations
 
-- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Parallel Generation**: For collections with more than 1000 elements, the random generators use parallel processing for better performance; other YANLib collection methods are sequential and order-preserving
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
 - **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges

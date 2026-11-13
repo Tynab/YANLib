@@ -27,7 +27,7 @@ The library is organized into several functional categories:
 ### Performance Optimizations
 
 - **Byte Array Support**: Direct serialization to/from UTF-8 encoded byte arrays for better performance
-- **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
+- **Order Preservation**: Collection results are lazily evaluated and keep the input order
 - **Default Options Caching**: Reuse of common serialization/deserialization options
 
 
@@ -187,12 +187,12 @@ var company = new Company
 
 string companyJson = company.Serialize(options);
 
-// Process large collections efficiently (automatic parallel processing)
+// Large collections are processed lazily and in input order
 var largePeopleList = Enumerable.Range(1, 10000)
     .Select(i => new Person { Id = i, Name = $"Person {i}" })
     .ToList();
 
-// This will automatically use parallel processing
+// Lazily evaluated; the strings come back in the order of largePeopleList
 IEnumerable<string?>? largeJsonCollection = largePeopleList.Serializes();
 
 // Combining with LINQ for advanced scenarios
@@ -209,7 +209,7 @@ var processedData = people
 ## Performance Considerations
 
 - **Byte Array Operations**: Using `SerializeToBytes` and `DeserializeFromBytes` is more efficient when working with APIs that accept byte arrays
-- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Collection Processing**: Collection methods are lazily evaluated on the enumerating thread and preserve input order; an exception thrown for one element surfaces directly (not wrapped in an `AggregateException`)
 - **Default Options Caching**: The library caches commonly used serialization options to avoid recreating them for each operation
 - **Error Handling**: Deserialization methods catch exceptions internally and return null/default instead of throwing, which can improve application resilience
 - **Memory Efficiency**: The implementation is designed to minimize unnecessary memory allocations
@@ -249,6 +249,6 @@ The library provides comprehensive coverage of JSON serialization operations:
 - **UTF-8 Encoding**: Implements direct byte array serialization/deserialization for better performance
 - **Options Caching**: Caches commonly used serialization/deserialization options to avoid recreation
 - **Exception Handling**: Implements try-catch patterns to prevent exceptions from propagating to calling code
-- **Parallel Processing**: Uses parallel processing for serializing/deserializing large collections
+- **Sequential Collections**: Serializes/deserializes collections lazily and in input order (8.3.3 used unordered PLINQ for 1,000+ elements)
 - **Memory Efficiency**: Minimizes memory allocations during serialization/deserialization operations
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code

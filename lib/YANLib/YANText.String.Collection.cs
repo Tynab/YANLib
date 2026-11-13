@@ -9,7 +9,8 @@ namespace YANLib;
 /// <remarks>
 /// This class contains methods for working with collections of strings, including checking if all or any strings
 /// meet certain conditions (null, empty, whitespace), comparing strings within collections, and performing case
-/// conversions on all strings in a collection. Methods are optimized to use parallel processing for large collections.
+/// conversions on all strings in a collection. Methods that return <see cref="IEnumerable{T}"/> are lazily evaluated
+/// and preserve the input order.
 /// </remarks>
 public static partial class YANText
 {

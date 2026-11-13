@@ -36,7 +36,7 @@ The library is organized into several functional categories:
 - **Bulk Processing**: Apply text operations to collections of strings or characters
 - **Validation**: Check if all or any elements in a collection meet specific criteria
 - **Case Conversion**: Convert all strings or characters in a collection to a specific case
-- **Parallel Processing**: Automatic parallel processing for large collections
+- **Order Preservation**: Collection results are lazily evaluated and keep the input order
 
 
 ## Usage Examples
@@ -217,7 +217,7 @@ string formattedName = rawName
 ## Performance Considerations
 
 - The library uses optimized implementations for different text operations
-- For large collections (>1000 items), parallel processing is automatically used
+- Collection methods that return `IEnumerable<T>` are lazily evaluated and preserve the input order
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 - String operations are designed to minimize memory allocations where possible
 

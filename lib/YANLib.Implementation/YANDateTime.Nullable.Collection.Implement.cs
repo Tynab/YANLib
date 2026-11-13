@@ -31,7 +31,7 @@ internal static partial class YANDateTime
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<DateTime?>? ChangeTimeZonesImplement(this IEnumerable<object?>? input, object? tzSrc = null, object? tzDst = null)
-        => input.IsNullEmptyImplement() ? default : input.GetCountImplement() < 1_000 ? input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst)) : input.AsParallel().Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
+        => input.IsNullEmptyImplement() ? default : input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
 
     [DebuggerHidden]
     [DebuggerStepThrough]

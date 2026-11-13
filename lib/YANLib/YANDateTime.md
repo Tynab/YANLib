@@ -20,7 +20,7 @@ The library is organized into several functional categories:
 ### Collection Operations
 
 - **Batch Processing**: Apply date operations to collections of DateTime objects
-- **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
+- **Order Preservation**: Collection results are lazily evaluated and keep the input order; the in-place `ChangeTimeZone(List<...>)` overloads update lists with 1,000+ elements in parallel
 - **Null Handling**: Graceful handling of null values in collections
 
 ### Type Flexibility
@@ -191,11 +191,11 @@ var mixedObjects = new List<object?>
 
 mixedObjects.ChangeTimeZone(0, 2); // Modifies list with converted DateTime objects
 
-// Process large collections with automatic parallel processing
+// Large collections are processed lazily and in input order
 var largeDateCollection = Enumerable.Range(0, 10000)
     .Select(i => new DateTime(2023, 1, 1).AddDays(i))
     .ToList();
-var largeWeekCollection = largeDateCollection.GetWeekOfYears<int>(); // Uses parallel processing
+var largeWeekCollection = largeDateCollection.GetWeekOfYears<int>(); // Same order as largeDateCollection
 
 // Handle invalid objects gracefully
 var mixedValidInvalid = new object?[]
@@ -211,7 +211,7 @@ var safeResults = mixedValidInvalid.GetWeekOfYears<int?>()?.ToArray(); // Return
 
 ## Performance Considerations
 
-- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Collection Processing**: Methods that return `IEnumerable<T>` are lazily evaluated on the enumerating thread and preserve input order; only the in-place `ChangeTimeZone(List<...>)` overloads use `Parallel.For` for lists with 1,000+ elements
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
 - **Edge Case Protection**: Time zone conversions include protection against DateTime overflow/underflow
@@ -255,7 +255,7 @@ The library provides focused coverage of date and time operations:
 - **Time Zone Conversion**: Implements time zone conversion using hour offsets rather than time zone identifiers
 - **DateTime Overflow Protection**: Includes safeguards against DateTime overflow/underflow during time zone conversions
 - **String Parsing**: Uses `DateTime.TryParse` with InvariantCulture for consistent string-to-DateTime conversion
-- **Parallel Processing**: Implements parallel processing using `Parallel.ForEach` for collections with more than 1000 elements
+- **Parallel Processing**: Only the in-place `ChangeTimeZone(List<...>)` overloads use `Parallel.For` (writing by index, so the order is kept) for lists with 1,000+ elements
 - **Generic Implementation**: Uses generic type parameters with constraints to support various return types
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code
 - **Thread Safety**: All operations are thread-safe, with no shared mutable state

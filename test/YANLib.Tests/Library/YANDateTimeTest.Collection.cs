@@ -506,4 +506,24 @@ public partial class YANDateTimeTest
     }
 
     #endregion
+
+    #region Order
+
+    // 8.3.3 switched to PLINQ without AsOrdered for 1,000+ items, so large results came back scrambled. Against that code this
+    // regression test fails only statistically (PLINQ does not guarantee a different order), on the current code it is exact.
+    [Fact]
+    public void GetWeekOfYears_LargeCollection_PreservesInputOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static x => (DateTime?)new DateTime(2000, 1, 1).AddDays(x)).ToArray();
+        var expected = input.Select(static x => new[] { x }.GetWeekOfYears<int>()!.Single()).ToList();
+
+        // Act
+        var result = input.GetWeekOfYears<int>()?.ToList();
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    #endregion
 }

@@ -223,7 +223,7 @@ All YANLib components share these common characteristics:
 - **Generic Type Support**: Flexible type parameters for input and output types
 - **Consistent API**: Similar method naming and behavior across components
 - **Performance Optimization**: Efficient implementations with caching where appropriate
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
+- **Ordered, Lazy Collections**: Collection methods that return `IEnumerable<T>` are lazily evaluated and keep the input order; only the in-place `List<T>` overloads of `ChangeTimeZone` and the `YANRandom` generators work in parallel (1,000+ elements)
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 

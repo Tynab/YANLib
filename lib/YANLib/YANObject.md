@@ -137,7 +137,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 ## Performance Considerations
 
 - The library uses caching for property reflection to improve performance
-- For large collections (>1000 items), parallel processing is automatically used for time zone conversion
+- Collection methods such as `ChangeTimeZoneAllProperties` are lazily evaluated and preserve the input order
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 

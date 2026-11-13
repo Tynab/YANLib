@@ -19,7 +19,7 @@ public static partial class YANDateTime
     /// <param name="input">The collection of objects to get the week numbers from. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection of week numbers corresponding to each input object, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -33,7 +33,7 @@ public static partial class YANDateTime
     /// <returns>A collection of week numbers corresponding to each input object, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to process an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -47,7 +47,7 @@ public static partial class YANDateTime
     /// <returns>A collection of week numbers of type <typeparamref name="T"/> corresponding to each input object, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before processing.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -75,7 +75,7 @@ public static partial class YANDateTime
     /// <param name="tzDst">The destination time zone offset in hours. If <c>null</c>, defaults to <c>0</c>.</param>
     /// <remarks>
     /// This method modifies the list in-place, changing each DateTime to the destination time zone.
-    /// For large lists (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

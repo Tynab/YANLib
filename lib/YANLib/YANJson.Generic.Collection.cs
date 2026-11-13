@@ -23,7 +23,7 @@ public static partial class YANJson
     /// <remarks>
     /// This generic version allows for type-specific processing of collections.
     /// When no options are provided, this method uses a default configuration with camel case property naming.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -40,7 +40,7 @@ public static partial class YANJson
     /// This generic version allows for type-specific processing of collections.
     /// When no options are provided, this method uses a default configuration with camel case property naming.
     /// This method is more efficient than serializing to strings when the results will be used with APIs that accept byte arrays.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

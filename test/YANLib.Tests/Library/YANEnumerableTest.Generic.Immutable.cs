@@ -1267,4 +1267,23 @@ public partial class YANEnumerableTest
     }
 
     #endregion
+
+    #region Order
+
+    // 8.3.3 switched to PLINQ without AsOrdered for 1,000+ items, so large results came back scrambled. Against that code this
+    // regression test fails only statistically (PLINQ does not guarantee a different order), on the current code it is exact.
+    [Fact]
+    public void ToImmutableArray_LargeCollection_PreservesInputOrder_ImmutableEnumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 5_000).Select(static x => (object?)x).ToList();
+
+        // Act
+        var result = input.ToImmutableArray<int>();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 5_000), result);
+    }
+
+    #endregion
 }

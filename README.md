@@ -67,7 +67,7 @@ YANLib offers a collection of specialized components, each focusing on a specifi
 - **Generic Type Support**: Flexible type parameters for input and output types
 - **Consistent API**: Similar method naming and behavior across components
 - **Performance Optimization**: Efficient implementations with caching where appropriate
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
+- **Ordered, Lazy Collections**: Collection methods that return `IEnumerable<T>` are lazily evaluated and keep the input order; only the in-place `List<T>` overloads of `ChangeTimeZone` and the `YANRandom` generators work in parallel (1,000+ elements)
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -419,7 +419,7 @@ YANLib is designed with performance in mind. The library uses various optimizati
 
 - Caching of expressions and reflection results
 - Efficient memory usage with custom pooling
-- Parallel processing for large collections where appropriate
+- Lazy, order-preserving collection methods (parallel work only for in-place `List<T>` updates and random generation)
 - Optimized algorithms for common operations
 
 ### JSON Performance

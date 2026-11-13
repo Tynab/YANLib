@@ -23,7 +23,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -39,7 +39,7 @@ public static partial class YANMath
     /// This method provides a convenient way to truncate an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -55,7 +55,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before truncating each value.
     /// This method uses <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -70,7 +70,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -86,7 +86,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the ceiling of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     public static IEnumerable<T?>? Ceilings<T>(params T?[]? input) => input.CeilingsImplement();
 
@@ -100,7 +100,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the ceiling of each value.
     /// This method uses <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -115,7 +115,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Floor(double)"/> to find the floor of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -131,7 +131,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the floor of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Floor(double)"/> to find the floor of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -147,7 +147,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the floor of each value.
     /// This method uses <see cref="Math.Floor(double)"/> to find the floor of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -164,7 +164,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -180,7 +180,7 @@ public static partial class YANMath
     /// This method provides a convenient way to round an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Round(double, MidpointRounding)"/> to round each number to the nearest integer.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -198,7 +198,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before rounding each value.
     /// This method uses <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -213,7 +213,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Sqrt(double)"/> to calculate the square root of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -229,7 +229,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the square root of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Sqrt(double)"/> to calculate the square root of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -245,7 +245,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the square root of each value.
     /// This method uses <see cref="Math.Sqrt(double)"/> to calculate the square root of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -261,7 +261,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Pow(double, double)"/> to calculate the power of each number.
     /// Each element and the power are converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -278,7 +278,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before raising each value to the power.
     /// This method uses <see cref="Math.Pow(double, double)"/> to calculate the power of each number.
     /// Each element and the power are converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -293,7 +293,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -309,7 +309,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the absolute value of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -325,7 +325,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the absolute value of each value.
     /// This method uses <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -340,7 +340,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Sin(double)"/> to calculate the sine of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -356,7 +356,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the sine of an array of angles without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Sin(double)"/> to calculate the sine of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -372,7 +372,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the sine of each angle.
     /// This method uses <see cref="Math.Sin(double)"/> to calculate the sine of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -387,7 +387,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Cos(double)"/> to calculate the cosine of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -403,7 +403,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the cosine of an array of angles without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Cos(double)"/> to calculate the cosine of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -419,7 +419,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the cosine of each angle.
     /// This method uses <see cref="Math.Cos(double)"/> to calculate the cosine of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -434,7 +434,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Tan(double)"/> to calculate the tangent of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -450,7 +450,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the tangent of an array of angles without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Tan(double)"/> to calculate the tangent of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -466,7 +466,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the tangent of each angle.
     /// This method uses <see cref="Math.Tan(double)"/> to calculate the tangent of each angle.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -481,7 +481,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Asin(double)"/> to calculate the arcsine of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -497,7 +497,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the arcsine of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Asin(double)"/> to calculate the arcsine of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -513,7 +513,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the arcsine of each value.
     /// This method uses <see cref="Math.Asin(double)"/> to calculate the arcsine of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -528,7 +528,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Acos(double)"/> to calculate the arccosine of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -544,7 +544,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the arccosine of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Acos(double)"/> to calculate the arccosine of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -560,7 +560,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the arccosine of each value.
     /// This method uses <see cref="Math.Acos(double)"/> to calculate the arccosine of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -575,7 +575,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Atan(double)"/> to calculate the arctangent of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -591,7 +591,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the arctangent of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Atan(double)"/> to calculate the arctangent of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -607,7 +607,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the arctangent of each value.
     /// This method uses <see cref="Math.Atan(double)"/> to calculate the arctangent of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -622,7 +622,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Cbrt(double)"/> to calculate the cube root of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -638,7 +638,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the cube root of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Cbrt(double)"/> to calculate the cube root of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -654,7 +654,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the cube root of each value.
     /// This method uses <see cref="Math.Cbrt(double)"/> to calculate the cube root of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -669,7 +669,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Exp(double)"/> to calculate the exponential of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -685,7 +685,7 @@ public static partial class YANMath
     /// This method provides a convenient way to calculate the exponential of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Exp(double)"/> to calculate the exponential of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -701,7 +701,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before calculating the exponential of each value.
     /// This method uses <see cref="Math.Exp(double)"/> to calculate the exponential of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -716,7 +716,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Pow(double, double)"/> with a base of 2 to calculate the exponential of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -732,7 +732,7 @@ public static partial class YANMath
     /// This method provides a convenient way to calculate the exponential of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Pow(double, double)"/> with a base of 2 to calculate the exponential of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -748,7 +748,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before calculating the exponential of each value.
     /// This method uses <see cref="Math.Pow(double, double)"/> with a base of 2 to calculate the exponential of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -764,7 +764,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Log(double, double)"/> or <see cref="Math.Log(double)"/> to calculate the logarithm of each number.
     /// Each element and the base are converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -780,7 +780,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the logarithm of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Log(double)"/> to calculate the natural logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -796,7 +796,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the logarithm of each value.
     /// This method uses <see cref="Math.Log(double)"/> to calculate the natural logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -811,7 +811,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Log10(double)"/> to calculate the base 10 logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -827,7 +827,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the base 10 logarithm of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Log10(double)"/> to calculate the base 10 logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -843,7 +843,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the base 10 logarithm of each value.
     /// This method uses <see cref="Math.Log10(double)"/> to calculate the base 10 logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -858,7 +858,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.Log(double, double)"/> with a base of 2 to calculate the base 2 logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -874,7 +874,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the base 2 logarithm of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.Log(double, double)"/> with a base of 2 to calculate the base 2 logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -890,7 +890,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the base 2 logarithm of each value.
     /// This method uses <see cref="Math.Log(double, double)"/> with a base of 2 to calculate the base 2 logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -905,7 +905,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method uses <see cref="Math.ILogB(double)"/> to calculate the integer logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -921,7 +921,7 @@ public static partial class YANMath
     /// This method provides a convenient way to find the integer logarithm of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses <see cref="Math.ILogB(double)"/> to calculate the integer logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large arrays (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -937,7 +937,7 @@ public static partial class YANMath
     /// This method first casts the non-generic collection to a generic collection of objects before finding the integer logarithm of each value.
     /// This method uses <see cref="Math.ILogB(double)"/> to calculate the integer logarithm of each number.
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
