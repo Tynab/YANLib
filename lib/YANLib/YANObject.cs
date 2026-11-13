@@ -79,7 +79,8 @@ public static partial class YANObject
     /// <remarks>
     /// This method checks if the object is <c>null</c> or if all of its properties have their default values.
     /// The public instance properties of the runtime type are checked, inherited ones included; indexers and write-only properties are skipped,
-    /// and for a property hidden with <c>new</c> only the most-derived one is checked. An exception thrown by a getter propagates.
+    /// and for a property hidden with <c>new</c> only the most-derived one is checked. The getters are called until the result is known (the first property that is not
+    /// default decides); an exception thrown by a getter that is called propagates.
     /// For string properties, this means they are <c>null</c> (an empty string is not a default value).
     /// For reference type properties, this means they are <c>null</c>.
     /// For value type properties, this means they have their default value (e.g., 0 for numeric types, false for bool), compared with <c>default(T)</c>.
@@ -140,12 +141,15 @@ public static partial class YANObject
     /// <param name="tzDst">The destination time zone offset. If <c>null</c>, no conversion is performed.</param>
     /// <returns>The same object, with all reachable <see cref="DateTime"/> values converted to the destination time zone.</returns>
     /// <remarks>
-    /// The object graph is changed in place and every object is converted at most once, so cycles (parent/child back-references) and shared references are safe.
+    /// The object graph is changed in place and every object (class instance) is converted at most once, so cycles (parent/child back-references) and shared references are safe.
+    /// The exception is items reached through <see cref="ArraySegment{T}"/> values: an array reachable both directly and through a segment over it, or through overlapping
+    /// segments, has its <see cref="DateTime"/>, boxed <see cref="DateTime"/> and struct items converted once per path.
     /// <list type="bullet">
     /// <item><description>Readable and writable public instance properties are walked, inherited ones included and indexers excluded; a base property hidden with <c>new</c>
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
     /// a struct is walked and written back when something in it changed. No other property is written.</description></item>
-    /// <item><description>A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.</description></item>
+    /// <item><description>A getter-only property is walked only when its declared type is a class that is an array, a list or a dictionary; the collection is converted in place.
+    /// A getter-only struct (<see cref="ArraySegment{T}"/>, <c>ImmutableArray&lt;T&gt;</c>, ...) is not walked.</description></item>
     /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
     /// read-only ones (<c>ReadOnlyCollection&lt;T&gt;</c>, <c>ImmutableArray&lt;T&gt;</c>, <c>ReadOnlyDictionary&lt;TKey, TValue&gt;</c>, ...) are left unchanged.
     /// The elements of other lists (<see cref="System.Collections.IList"/>) are walked.</description></item>
@@ -174,6 +178,8 @@ public static partial class YANObject
     /// For a class, the copy is an instance of the input's runtime type when that type differs from <typeparamref name="T"/> and has a public parameterless constructor,
     /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded,
     /// and a base property hidden with <c>new</c> by a property of another type included) are copied; reference values are shared, not cloned.
+    /// Only properties are copied: the items of a collection type (<see cref="List{T}"/>, <see cref="Dictionary{TKey, TValue}"/>, ...) are not.
+    /// When the copy is an instance of the runtime type, its constructor runs, and an exception thrown by it surfaces as <see cref="System.Reflection.TargetInvocationException"/>.
     /// For a value type, the value itself is returned, since assigning a struct already copies all of its fields; a boxed struct passed as <see cref="object"/>
     /// is returned in a new box.
     /// </remarks>

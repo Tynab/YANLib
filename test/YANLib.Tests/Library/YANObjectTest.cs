@@ -937,6 +937,39 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void Copy_DerivedTypeWithoutExtraProperties_CopiesRuntimeType_Object()
+    {
+        // Arrange
+        CopyBase input = new CopyDerivedNoExtra { BaseValue = 1 };
+        var constructed = CopyDerivedNoExtra.Constructed;
+
+        // Act
+        var result = input.Copy();
+
+        // Assert (documented change: 8.3.3 returned a CopyBase without running the derived constructor)
+        Assert.IsType<CopyDerivedNoExtra>(result);
+        Assert.Equal(1, result.BaseValue);
+        Assert.Equal(constructed + 1, CopyDerivedNoExtra.Constructed);
+    }
+
+    [Fact]
+    public void Copy_CollectionType_CopiesPropertiesButNotItems_Object()
+    {
+        // Arrange
+        var input = new CopyNamedList { 1, 2 };
+
+        input.Name = "n";
+
+        // Act
+        var result = input.Copy();
+
+        // Assert (documented: only settable properties are copied; 8.3.3 threw TargetParameterCountException on the indexer)
+        Assert.Equal("n", result.Name);
+        Assert.Empty(result);
+        Assert.NotSame(input, result);
+    }
+
+    [Fact]
     public void Copy_RuntimeTypeWithoutParameterlessConstructor_CopiesDeclaredType_Object()
     {
         // Arrange
@@ -1284,6 +1317,20 @@ public partial class YANObjectTest
     private sealed class CopyDerived : CopyBase
     {
         public int DerivedValue { get; set; }
+    }
+
+    private sealed class CopyDerivedNoExtra : CopyBase
+    {
+        private static int constructed;
+
+        public CopyDerivedNoExtra() => Interlocked.Increment(ref constructed);
+
+        public static int Constructed => Volatile.Read(ref constructed);
+    }
+
+    private sealed class CopyNamedList : List<int>
+    {
+        public string? Name { get; set; }
     }
 
     private sealed class CopyNoDefaultConstructor(int value) : CopyBase
