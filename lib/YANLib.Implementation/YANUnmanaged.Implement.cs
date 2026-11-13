@@ -9,8 +9,6 @@ namespace YANLib.Implementation;
 
 internal static partial class YANUnmanaged
 {
-    private static readonly Dictionary<Type, Type?> UnderlyingTypeCache = [];
-
     #region Private
 
     [DebuggerHidden]
@@ -118,17 +116,13 @@ internal static partial class YANUnmanaged
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static Type? GetUnderlyingTypeCached(Type type)
+    /// <summary>
+    /// Per-type parse metadata. The CLR initialises each closed generic instantiation exactly once and
+    /// thread-safely, so concurrent first-time parses of many distinct types need no lock and no shared dictionary.
+    /// </summary>
+    private static class ParseCache<T>
     {
-        if (!UnderlyingTypeCache.TryGetValue(type, out var underlyingType))
-        {
-            underlyingType = GetUnderlyingType(type);
-            UnderlyingTypeCache[type] = underlyingType;
-        }
-
-        return underlyingType;
+        internal static readonly Type? Underlying = GetUnderlyingType(typeof(T));
     }
 
     #endregion

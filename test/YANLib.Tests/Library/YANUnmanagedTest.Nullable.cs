@@ -266,4 +266,100 @@ public partial class YANUnmanagedTest
     }
 
     #endregion
+
+    #region Concurrency
+
+    // Regression test for the per-type cache used by Parse<T>. In 8.3.3 it was a plain static Dictionary written without
+    // a lock, so concurrent first-time Parse<T>() calls for many distinct T corrupted it (InvalidOperationException, wrong
+    // results or a hang). Every closed type below (about 3,600) is new to the process; ProcessorCount (>= 4) dedicated
+    // threads meet at a Barrier before each first-time call, so they all insert the same new key at the same moment.
+    // Against the 8.3.3 implementation this failed in 6 of 6 runs (8 of 10 with only the first ~660 types); a race can
+    // never fail deterministically, so a pass on buggy code remains possible in principle.
+    [Fact]
+    public void Parse_ConcurrentFirstUseOfManyDistinctTypes_ReturnsInputWithoutThrowing_Nullable()
+    {
+        // Arrange
+        Type[] elementTypes =
+        [
+            typeof(int), typeof(long), typeof(short), typeof(byte), typeof(sbyte), typeof(uint), typeof(ulong), typeof(ushort), typeof(float), typeof(double),
+            typeof(decimal), typeof(char), typeof(bool), typeof(string), typeof(object), typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan), typeof(Guid), typeof(Uri),
+            typeof(Version), typeof(System.Text.StringBuilder), typeof(DayOfWeek), typeof(ConsoleColor), typeof(Half), typeof(Int128), typeof(UInt128), typeof(Exception), typeof(Random), typeof(TimeZoneInfo)
+        ];
+
+        Type[] definitions =
+        [
+            typeof(List<>), typeof(HashSet<>), typeof(Queue<>), typeof(Stack<>), typeof(LinkedList<>), typeof(SortedSet<>), typeof(System.Collections.ObjectModel.Collection<>),
+            typeof(System.Collections.ObjectModel.ObservableCollection<>), typeof(System.Collections.Concurrent.ConcurrentBag<>), typeof(System.Collections.Concurrent.ConcurrentQueue<>),
+            typeof(System.Collections.Concurrent.ConcurrentStack<>), typeof(System.Collections.Concurrent.BlockingCollection<>), typeof(System.Runtime.CompilerServices.StrongBox<>),
+            typeof(TaskCompletionSource<>), typeof(Lazy<>)
+        ];
+
+        Type[] keyedDefinitions = [typeof(Dictionary<int, int>), typeof(Dictionary<string, int>), typeof(SortedDictionary<long, int>), typeof(SortedList<short, int>), typeof(System.Collections.Concurrent.ConcurrentDictionary<byte, int>)];
+
+        var types = new List<Type>();
+
+        foreach (var element in elementTypes)
+        {
+            types.AddRange(definitions.Select(d => d.MakeGenericType(element)));
+            types.AddRange(keyedDefinitions.Select(d => d.GetGenericTypeDefinition().MakeGenericType(d.GenericTypeArguments[0], element)));
+            types.Add(element.MakeArrayType());
+            types.Add(element.MakeArrayType(2));
+        }
+
+        // a second layer (List<HashSet<int>>, Queue<int[]>, ...) makes the cache grow through several large resizes
+        types.AddRange(types.SelectMany(static t => new[] { typeof(List<>), typeof(Queue<>), typeof(Stack<>), typeof(LinkedList<>) }.Select(d => d.MakeGenericType(t))).ToList());
+
+        var parse = typeof(YANUnmanaged).GetMethods().Single(static m => m.Name == nameof(YANUnmanaged.Parse) && m.IsGenericMethodDefinition && m.GetParameters().Length == 1);
+
+        var calls = types.Select(t => (
+            Input: t.IsArray ? Array.CreateInstance(t.GetElementType()!, new int[t.GetArrayRank()]) : Activator.CreateInstance(t)!,
+            Parse: (Func<object?, object?>)parse.MakeGenericMethod(t).CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(object), t)))).ToArray();
+
+        var threadCount = Math.Max(4, Environment.ProcessorCount);
+        var barrier = new Barrier(threadCount);
+        var failures = new System.Collections.Concurrent.ConcurrentQueue<string>();
+
+        var threads = Enumerable.Range(0, threadCount).Select(_ => new Thread(() =>
+        {
+            // round 0: all threads meet at the barrier before every call, so they hit the same never-seen type together;
+            // round 1: free-running repeat calls that only read the cache
+            for (var round = 0; round < 2; round++)
+            {
+                foreach (var (input, parseCall) in calls)
+                {
+                    if (round == 0)
+                    {
+                        barrier.SignalAndWait();
+                    }
+
+                    try
+                    {
+                        if (!ReferenceEquals(parseCall(input), input))
+                        {
+                            failures.Enqueue($"wrong result for {input.GetType()}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        failures.Enqueue($"{ex.GetType().Name} for {input.GetType()}: {ex.Message}");
+                    }
+                }
+            }
+        })
+        {
+            IsBackground = true
+        }).ToList();
+
+        // Act
+        threads.ForEach(static t => t.Start());
+
+        var finished = threads.All(static t => t.Join(TimeSpan.FromMinutes(2)));
+
+        // Assert
+        Assert.True(finished, "Parse<T> did not finish (a corrupted cache can make lookups spin forever).");
+        Assert.True(types.Count >= 600, $"only {types.Count} distinct types");
+        Assert.Empty(failures);
+    }
+
+    #endregion
 }
