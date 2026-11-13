@@ -142,6 +142,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - **Getters**: every selected getter is called; an exception thrown by a getter propagates (wrapped in `TargetInvocationException`).
 - **Names**: the `names` overloads match property names case-sensitively. When none of the names matches a property, `AllPropertiesDefault`, `AllPropertiesNotDefault` and their collection versions return `false`.
 - **Collections**: `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` when the collection contains a `null` element.
+- **Field names**: `IsValidField<T>` checks the first space-separated token of the string against the public instance properties of `T`. A `null`, empty or whitespace string is never a valid field, so `IsNotValidField<T>` is always the opposite of `IsValidField<T>`, `AllValidFields` is `!AnyNotValidField` and `AnyValidField` is `!AllNotValidFields` for a non-empty sequence.
 
 ### Changes since 8.3.3
 
@@ -153,6 +154,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - A struct property is compared with `default(T)`, not with an instance built by its parameterless constructor.
 - `AllPropertiesDefault(names)` (and `AllPropertiesDefaults(names)`, `AllPropertiesNotDefaults(names)`) return `false` when no name matches a property (were `true`).
 - `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` for a collection that contains `null` (a `null` element satisfied both).
+- Blank field names are never valid again (as in 8.3.2): `["Name", null].AllValidFields<User>()` and `["Name", "  "].AllValidFields<User>()` are `false` (were `true`), `IsNotValidField` of `null` / `""` / whitespace is `true` (was `false`) and `["Name", null].AnyNotValidField<User>()` is `true` (was `false`).
 
 
 ## Performance Considerations
@@ -183,6 +185,7 @@ The library provides comprehensive coverage of object operations:
 | **Collection Null Operations** | AllNull, AnyNull, AllNotNull, AnyNotNull |
 | **Collection Default Operations** | AllDefault, AnyDefault, AllNotDefault, AnyNotDefault |
 | **Collection Combined Operations** | AllNullDefault, AnyNullDefault, AllNotNullDefault, AnyNotNullDefault |
+| **Field Validation** | IsValidField, AllValidFields, AnyValidField, IsNotValidField, AllNotValidFields, AnyNotValidField |
 | **Property Operations** | AllPropertiesDefault, AnyPropertiesDefault, AllPropertiesNotDefault, AnyPropertiesNotDefault |
 | **Collection Property Operations** | AllPropertiesDefaults, AnyPropertiesDefaults, AllPropertiesNotDefaults, AnyPropertiesNotDefaults |
 | **Object Manipulation** | ChangeTimeZoneAllProperty, Copy |

@@ -206,7 +206,7 @@ public partial class YANObjectTest
     #region NotValidField
 
     [Fact]
-    public void IsNotValidField_Null_ReturnsFalse_Field()
+    public void IsNotValidField_Null_ReturnsTrue_Field()
     {
         // Arrange
         string? input = null;
@@ -214,12 +214,12 @@ public partial class YANObjectTest
         // Act
         var result = input.IsNotValidField<TestClass>();
 
-        // Assert
-        Assert.False(result);
+        // Assert (8.3.3 returned false, so blank names counted as valid in AllValidFields; a blank name is never a valid field)
+        Assert.True(result);
     }
 
     [Fact]
-    public void IsNotValidField_Empty_ReturnsFalse_Field()
+    public void IsNotValidField_Empty_ReturnsTrue_Field()
     {
         // Arrange
         var input = string.Empty;
@@ -227,12 +227,12 @@ public partial class YANObjectTest
         // Act
         var result = input.IsNotValidField<TestClass>();
 
-        // Assert
-        Assert.False(result);
+        // Assert (8.3.3 returned false, so blank names counted as valid in AllValidFields; a blank name is never a valid field)
+        Assert.True(result);
     }
 
     [Fact]
-    public void IsNotValidField_WhiteSpace_ReturnsFalse_Field()
+    public void IsNotValidField_WhiteSpace_ReturnsTrue_Field()
     {
         // Arrange
         var input = "   ";
@@ -240,8 +240,8 @@ public partial class YANObjectTest
         // Act
         var result = input.IsNotValidField<TestClass>();
 
-        // Assert
-        Assert.False(result);
+        // Assert (8.3.3 returned false, so blank names counted as valid in AllValidFields; a blank name is never a valid field)
+        Assert.True(result);
     }
 
     [Fact]
@@ -398,6 +398,99 @@ public partial class YANObjectTest
 
         // Assert
         Assert.False(result);
+    }
+
+    #endregion
+
+    #region Blank field names (8.3.3 regression)
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void AllValidFields_ValidAndBlankName_ReturnsFalse_Field(string? blank)
+    {
+        // Arrange
+        IEnumerable<string?> input = ["StringProperty", blank];
+
+        // Act
+        var result = input.AllValidFields<TestClass>();
+
+        // Assert (8.3.3 returned true; 8.3.2 returned false)
+        Assert.False(result);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void AnyValidField_OnlyBlankNames_ReturnsFalse_Field(string? blank)
+    {
+        // Arrange
+        IEnumerable<string?> input = [blank, blank];
+
+        // Act
+        var result = input.AnyValidField<TestClass>();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void AllNotValidFields_InvalidAndBlankName_ReturnsTrue_Field(string? blank)
+    {
+        // Arrange
+        IEnumerable<string?> input = ["DoesNotExist", blank];
+
+        // Act
+        var result = input.AllNotValidFields<TestClass>();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void AnyNotValidField_ValidAndBlankName_ReturnsTrue_Field(string? blank)
+    {
+        // Arrange
+        IEnumerable<string?> input = ["StringProperty", blank];
+
+        // Act
+        var result = input.AnyNotValidField<TestClass>();
+
+        // Assert (8.3.3 returned false)
+        Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void ValidFieldMethods_BlankName_AreConsistent_Field(string? blank)
+    {
+        // Arrange
+        IEnumerable<string?>[] inputs = [[blank], ["StringProperty", blank], ["DoesNotExist", blank], ["StringProperty"], ["DoesNotExist"]];
+
+        foreach (var input in inputs)
+        {
+            // Act
+            var allValid = input.AllValidFields<TestClass>();
+            var anyValid = input.AnyValidField<TestClass>();
+            var allNotValid = input.AllNotValidFields<TestClass>();
+            var anyNotValid = input.AnyNotValidField<TestClass>();
+
+            // Assert (8.3.3: [blank] was both AllValidFields and AllNotValidFields)
+            Assert.Equal(allValid, !anyNotValid);
+            Assert.Equal(anyValid, !allNotValid);
+            Assert.Equal(input.All(static x => x.IsValidField<TestClass>()), allValid);
+            Assert.Equal(input.All(static x => x.IsNotValidField<TestClass>()), allNotValid);
+        }
     }
 
     #endregion

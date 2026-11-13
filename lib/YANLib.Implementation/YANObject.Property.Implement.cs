@@ -26,7 +26,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static bool IsNotValidFieldImplement<T>(this string? input) where T : class => input.IsNotNullWhiteSpaceImplement() && typeof(T).GetProperty(input.Split(' ', RemoveEmptyEntries)[0], Instance | Public | IgnoreCase) is null;
+    public static bool IsNotValidFieldImplement<T>(this string? input) where T : class => !input.IsValidFieldImplement<T>();
 
     [DebuggerHidden]
     [DebuggerStepThrough]
