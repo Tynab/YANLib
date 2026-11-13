@@ -54,6 +54,7 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 		<Version>8.3.3</Version>
 		<LangVersion>preview</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<IsPackable>true</IsPackable>
 		<IncludeBuildOutput>true</IncludeBuildOutput>
 	</PropertyGroup>

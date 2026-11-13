@@ -150,8 +150,8 @@ public static partial class YANText
     /// <summary>
     /// Determines whether the specified nullable character is equal to another character, ignoring case.
     /// </summary>
-    /// <param name="input">The character to check.</param>
-    /// <param name="other">The character to compare with.</param>
+    /// <param name="input1">The character to check.</param>
+    /// <param name="input2">The character to compare with.</param>
     /// <returns><c>true</c> if the characters are equal, ignoring case; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -160,8 +160,8 @@ public static partial class YANText
     /// <summary>
     /// Determines whether the specified nullable character is not equal to another character, ignoring case.
     /// </summary>
-    /// <param name="input">The character to check.</param>
-    /// <param name="other">The character to compare with.</param>
+    /// <param name="input1">The character to check.</param>
+    /// <param name="input2">The character to compare with.</param>
     /// <returns><c>true</c> if the characters are not equal, ignoring case; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]

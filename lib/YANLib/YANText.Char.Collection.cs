@@ -596,7 +596,6 @@ public static partial class YANText
     /// Determines whether all characters in the specified array are not equal, ignoring case.
     /// </summary>
     /// <param name="input">The array to check. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all characters are not equal, ignoring  returns <c>false</c>.</param>
     /// <returns><c>true</c> if all characters are not equal, ignoring case; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
