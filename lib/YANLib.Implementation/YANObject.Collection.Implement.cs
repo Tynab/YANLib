@@ -71,5 +71,25 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static IEnumerable<T?>? ChangeTimeZoneAllPropertiesImplement<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class
-        => input.IsNullEmptyImplement() ? input : input.Select(x => x.ChangeTimeZoneAllPropertyImplement(tzSrc, tzDst));
+    {
+        var items = input?.ToArray();
+
+        if (items is null || items.Length is 0)
+        {
+            return input;
+        }
+
+        // One visited set for the whole call: an object shared by several elements (or listed twice) is converted once.
+        var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+
+        foreach (var item in items)
+        {
+            if (item is not null)
+            {
+                _ = ChangeTimeZoneGraph(item, tzSrc, tzDst, visited);
+            }
+        }
+
+        return items;
+    }
 }

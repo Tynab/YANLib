@@ -265,13 +265,19 @@ public static partial class YANObject
     #endregion
 
     /// <summary>
-    /// Changes the time zone of all <see cref="DateTime"/> properties in all objects in the specified collection.
+    /// Changes the time zone of all <see cref="DateTime"/> properties in all objects in the specified collection, in place.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
     /// <param name="input">The collection of objects to process. If <c>null</c> or empty, returns the input collection.</param>
     /// <param name="tzSrc">The source time zone offset. If <c>null</c>, no conversion is performed.</param>
     /// <param name="tzDst">The destination time zone offset. If <c>null</c>, no conversion is performed.</param>
-    /// <returns>A new collection containing the objects with all <see cref="DateTime"/> properties converted to the destination time zone.</returns>
+    /// <returns>A new array holding the same (converted) objects in input order.</returns>
+    /// <remarks>
+    /// The conversion runs eagerly, sequentially and in input order before this method returns, so it takes effect even when the result is ignored,
+    /// and enumerating the result again does not convert the objects again. The input is enumerated once.
+    /// Each object is converted as by <see cref="ChangeTimeZoneAllProperty{T}(T, object?, object?)"/>; an object that is reached several times
+    /// (listed twice, or shared by several elements) is converted once.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<T?>? ChangeTimeZoneAllProperties<T>(this IEnumerable<T?>? input, object? tzSrc = null, object? tzDst = null) where T : class => input.ChangeTimeZoneAllPropertiesImplement(tzSrc, tzDst);

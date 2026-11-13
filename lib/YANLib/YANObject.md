@@ -171,6 +171,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - A struct property is compared with `default(T)`, not with an instance built by its parameterless constructor.
 - `AllPropertiesDefault(names)` (and `AllPropertiesDefaults(names)`, `AllPropertiesNotDefaults(names)`) return `false` when no name matches a property (were `true`).
 - `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` for a collection that contains `null` (a `null` element satisfied both).
+- `ChangeTimeZoneAllProperties` is eager: `people.ChangeTimeZoneAllProperties(0, 7);` with the result ignored converted nothing, and enumerating the lazy result twice (`r.Count(); r.ToList();`) shifted the objects twice (+14 h). It now converts once, in input order, before returning an array, and an object listed twice or shared by several elements is converted once.
 - `ChangeTimeZoneAllProperty` no longer throws for classes with an indexer (`TargetParameterCountException`), `Dictionary<TKey, DateTime>` properties (now converted), read-only lists such as `ReadOnlyCollection<DateTime>` (`NotSupportedException`, now left unchanged) or `Stream` properties (`MemoryStream.ReadTimeout`), and no longer crashes the process with a stack overflow on parent/child back-references.
 - `ChangeTimeZoneAllProperty` converts an object reached through several references once (it was shifted once per reference), converts getter-only lists, arrays and dictionaries and `DateTime` items of `object` lists, skips throwing getters, and no longer calls the setters of properties it does not change.
 - `Copy()`: `Base b = new Derived(); b.Copy()` returns a `Derived` copy (threw `TargetException`), classes with an indexer are copied (threw `TargetParameterCountException`), and a struct is copied by value (returned `default(T)`, e.g. `5.Copy()` was `0`).
@@ -180,7 +181,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 ## Performance Considerations
 
 - The library caches the property list and the `default(T)` value of each type (thread-safe `ConcurrentDictionary`); property values are read through reflection on every call
-- Collection methods such as `ChangeTimeZoneAllProperties` are lazily evaluated and preserve the input order
+- `ChangeTimeZoneAllProperties` runs eagerly and sequentially: it enumerates the input once, converts every element in input order before returning, and returns the elements as a new array (enumerating the result again does not convert anything again)
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 

@@ -67,7 +67,7 @@ YANLib offers a collection of specialized components, each focusing on a specifi
 - **Generic Type Support**: Flexible type parameters for input and output types
 - **Consistent API**: Similar method naming and behavior across components
 - **Performance Optimization**: Efficient implementations with caching where appropriate
-- **Ordered, Lazy Collections**: Collection methods that return `IEnumerable<T>` are lazily evaluated and keep the input order; only the in-place `List<T>` overloads (`ChangeTimeZone`, `Title`, `Lower`, `Upper`, ...), which update the list by index, and the `YANRandom` generators work in parallel (1,000+ elements)
+- **Ordered, Lazy Collections**: Collection methods that return `IEnumerable<T>` are lazily evaluated and keep the input order (except `YANObject.ChangeTimeZoneAllProperties`, which changes the objects in place and therefore runs eagerly); only the in-place `List<T>` overloads (`ChangeTimeZone`, `Title`, `Lower`, `Upper`, ...), which update the list by index, and the `YANRandom` generators work in parallel (1,000+ elements)
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
