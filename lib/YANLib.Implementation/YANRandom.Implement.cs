@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Numerics;
 using static System.BitConverter;
 
 namespace YANLib.Implementation;
@@ -128,7 +127,7 @@ internal static partial class YANRandom
         var minValue = min is null ? nint.MinValue : min.ParseImplement<nint>();
         var maxValue = max is null ? nint.MaxValue : max.ParseImplement<nint>();
 
-        return minValue > maxValue ? default : random.NextInt64(minValue, maxValue).ParseImplement<nint>();
+        return minValue > maxValue ? default : (nint)random.NextInt64(minValue, maxValue);
     }
 
     [DebuggerHidden]
@@ -138,7 +137,17 @@ internal static partial class YANRandom
         var minValue = min is null ? nuint.MinValue : min.ParseImplement<nuint>();
         var maxValue = max is null ? nuint.MaxValue : max.ParseImplement<nuint>();
 
-        return minValue > maxValue ? default : (random.NextInt64(nint.MinValue, (long)(maxValue - (minValue - (BigInteger)nint.MinValue))) - nint.MinValue).ParseImplement<nuint>() + minValue;
+        if (minValue > maxValue)
+        {
+            return default;
+        }
+
+        // draw the offset in [0, max - min) as a signed 64-bit value shifted down by 2^63, so that Random.NextInt64 covers the whole
+        // unsigned range (8.3.3 produced a negative value about half of the time, which then became 0)
+        var range = (ulong)(maxValue - minValue);
+        var offset = unchecked((ulong)(random.NextInt64(long.MinValue, long.MinValue + (long)range) - long.MinValue));
+
+        return minValue + (nuint)offset;
     }
 
     [DebuggerHidden]

@@ -537,6 +537,20 @@ public partial class YANRandomTest
         Assert.Equal(0, result);
     }
 
+    [Fact]
+    public void NextNint_NoParameters_CoversNegativeAndPositiveValues_RandomExtension()
+    {
+        // Arrange (fixed seed: deterministic; 8.3.3 crashed the process here with a stack overflow)
+        var random = new Random(20251113);
+
+        // Act
+        var results = Enumerable.Range(0, 10_000).Select(_ => random.NextNint()).ToList();
+
+        // Assert (each half of the range is expected about 5,000 times)
+        Assert.True(results.Count(static x => x < 0) > 4_000);
+        Assert.True(results.Count(static x => x > 0) > 4_000);
+    }
+
     #endregion
 
     #region NextNuint
@@ -582,6 +596,36 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal((nuint)0, result);
+    }
+
+    [Fact]
+    public void NextNuint_NoParameters_CoversWholeRange_RandomExtension()
+    {
+        // Arrange (fixed seed: deterministic)
+        var random = new Random(20251113);
+        var upperHalf = nuint.MaxValue / 2;
+
+        // Act
+        var results = Enumerable.Range(0, 10_000).Select(_ => random.NextNuint()).ToList();
+
+        // Assert (8.3.3 returned 0 for about half of the calls and never a value in the upper half)
+        Assert.True(results.Count(x => x > upperHalf) > 4_000);
+        Assert.True(results.Count(static x => x == 0) < 10);
+    }
+
+    [Fact]
+    public void NextNuint_WithMinMax_CoversWholeInterval_RandomExtension()
+    {
+        // Arrange (fixed seed: deterministic)
+        var random = new Random(20251113);
+        nuint min = 10;
+        nuint max = 20;
+
+        // Act
+        var results = Enumerable.Range(0, 1_000).Select(_ => random.NextNuint(min, max)).ToHashSet();
+
+        // Assert (max is exclusive, as for the other NextXxx methods)
+        Assert.Equal(Enumerable.Range(10, 10).Select(static x => (nuint)x).ToHashSet(), results);
     }
 
     #endregion
