@@ -731,6 +731,22 @@ public partial class YANObjectTest
         Assert.Equal(Hour(8), input.At);
     }
 
+    [Fact]
+    public void ChangeTimeZoneAllProperty_BasePropertyHiddenByAnotherType_ConvertsBoth_Object()
+    {
+        // Arrange
+        var input = new TzHiddenDate { When = Hour(1) };
+
+        ((TzHiddenDateBase)input).When = Hour(2);
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, the base DateTime hidden by `new DateTime? When` is converted too)
+        Assert.Equal(Hour(8), input.When);
+        Assert.Equal(Hour(9), ((TzHiddenDateBase)input).When);
+    }
+
     #endregion
 
     #region Copy
@@ -834,6 +850,32 @@ public partial class YANObjectTest
 
         Assert.Equal(new DateTime(2023, 1, 1), copy.At);
         Assert.NotSame(input, result);
+    }
+
+    [Fact]
+    public void Copy_BasePropertyHiddenByAnotherType_CopiesBoth_Object()
+    {
+        // Arrange
+        var name = new CopyHiddenName { Name = 7 };
+        var date = new TzHiddenDate { When = Hour(1) };
+        CopyHiddenNameBase asBase = new CopyHiddenName { Name = 8 };
+
+        ((CopyHiddenNameBase)name).Name = "base";
+        ((TzHiddenDateBase)date).When = Hour(2);
+        asBase.Name = "base typed";
+
+        // Act
+        var nameResult = name.Copy();
+        var dateResult = date.Copy();
+        var asBaseResult = asBase.Copy();
+
+        // Assert (as in 8.3.3, the base property hidden by a `new` property of another type is copied too)
+        Assert.Equal(7, nameResult.Name);
+        Assert.Equal("base", ((CopyHiddenNameBase)nameResult).Name);
+        Assert.Equal(Hour(1), dateResult.When);
+        Assert.Equal(Hour(2), ((TzHiddenDateBase)dateResult).When);
+        Assert.Equal(8, Assert.IsType<CopyHiddenName>(asBaseResult).Name);
+        Assert.Equal("base typed", asBaseResult.Name);
     }
 
     #endregion
@@ -1026,6 +1068,26 @@ public partial class YANObjectTest
         public TzListA? Pair { get; set; }
 
         public DateTime At { get; set; }
+    }
+
+    private class TzHiddenDateBase
+    {
+        public DateTime When { get; set; }
+    }
+
+    private sealed class TzHiddenDate : TzHiddenDateBase
+    {
+        public new DateTime? When { get; set; }
+    }
+
+    private class CopyHiddenNameBase
+    {
+        public string? Name { get; set; }
+    }
+
+    private sealed class CopyHiddenName : CopyHiddenNameBase
+    {
+        public new int Name { get; set; }
     }
 
     private class CopyBase

@@ -142,7 +142,8 @@ public static partial class YANObject
     /// <remarks>
     /// The object graph is changed in place and every object is converted at most once, so cycles (parent/child back-references) and shared references are safe.
     /// <list type="bullet">
-    /// <item><description>Readable and writable public instance properties are walked. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
+    /// <item><description>Readable and writable public instance properties are walked, inherited ones included and indexers excluded; a base property hidden with <c>new</c>
+    /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
     /// a struct is walked and written back when something in it changed. No other property is written.</description></item>
     /// <item><description>A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.</description></item>
     /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
@@ -166,9 +167,10 @@ public static partial class YANObject
     /// <returns>A new object with the same property values as the input object.</returns>
     /// <remarks>
     /// For a class, the copy is an instance of the input's runtime type when that type differs from <typeparamref name="T"/> and has a public parameterless constructor,
-    /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded)
-    /// are copied; reference values are shared, not cloned. For a value type, the value itself is returned, since assigning a struct already copies all of its fields;
-    /// a boxed struct passed as <see cref="object"/> is returned in a new box.
+    /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded,
+    /// and a base property hidden with <c>new</c> by a property of another type included) are copied; reference values are shared, not cloned.
+    /// For a value type, the value itself is returned, since assigning a struct already copies all of its fields; a boxed struct passed as <see cref="object"/>
+    /// is returned in a new box.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

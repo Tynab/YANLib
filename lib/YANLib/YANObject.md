@@ -150,7 +150,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 `ChangeTimeZoneAllProperty` (and `ChangeTimeZoneAllProperties` for each element) changes the object graph in place:
 
 - Every object is converted at most once, so parent/child back-references and shared references are safe.
-- Readable and writable properties are walked. `DateTime` and `DateTime?` values are converted and written back; a struct is walked and written back when something in it changed. No other property is written.
+- Readable and writable public instance properties are walked, inherited ones included and indexers excluded; a base property hidden with `new` by a property of another type is walked too (as in 8.3.3). `DateTime` and `DateTime?` values are converted and written back; a struct is walked and written back when something in it changed. No other property is written.
 - A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.
 - Lists and arrays of `DateTime` / `DateTime?`, and dictionaries with `DateTime` / `DateTime?` values (`IDictionary<TKey, DateTime>`), are converted when they are writable. Read-only ones (`ReadOnlyCollection<T>`, `ImmutableArray<T>`, `ReadOnlyDictionary<TKey, TValue>`, ...) are left unchanged. The elements of other lists (`IList`, e.g. `List<Order>`, `object[]`) are walked.
 - Limitations: other collections (`HashSet<DateTime>`, `Queue<T>`, ...), multi-dimensional arrays and dictionary values that are not `DateTime` are left unchanged.
@@ -160,7 +160,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 
 ## Copy Rules
 
-- For a class, `Copy()` creates an instance of the input's runtime type when it differs from `T` and has a public parameterless constructor (`Base b = new Derived(); b.Copy()` is a `Derived`), otherwise a new `T`. The readable and writable public instance properties of that type, inherited ones included and indexers excluded, are copied; reference values are shared (shallow copy).
+- For a class, `Copy()` creates an instance of the input's runtime type when it differs from `T` and has a public parameterless constructor (`Base b = new Derived(); b.Copy()` is a `Derived`), otherwise a new `T`. The readable and writable public instance properties of that type, inherited ones included and indexers excluded, are copied; a base property hidden with `new` by a property of another type is copied too (as in 8.3.3). Reference values are shared (shallow copy).
 - For a value type, `Copy()` returns the value itself (assigning a struct already copies all of its fields); a boxed struct passed as `object` is returned in a new box.
 
 

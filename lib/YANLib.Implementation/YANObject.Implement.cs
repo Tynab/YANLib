@@ -11,14 +11,25 @@ namespace YANLib.Implementation;
 
 internal static partial class YANObject
 {
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ReadablePropertyCache = new();
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
     private static readonly ConcurrentDictionary<Type, object> DefaultValueCache = new();
 
     #region Private
 
     /// <summary>
-    /// Gets the public instance properties of <paramref name="type"/> that can be read through reflection: inherited ones included, indexers,
-    /// write-only and by-ref-like (<c>Span&lt;T&gt;</c>) properties excluded, and for a name hidden with <c>new</c> only the most-derived property.
+    /// Gets the public instance properties of <paramref name="type"/> that can be read through reflection, in the order <see cref="Type.GetProperties(BindingFlags)"/>
+    /// returns them: inherited ones included, indexers, write-only and by-ref-like (<c>Span&lt;T&gt;</c>) properties excluded. A base property hidden with <c>new</c>
+    /// by a property of another type is kept (reflection already leaves out one hidden by a property of the same type), so <c>Copy</c> and
+    /// <c>ChangeTimeZoneAllProperty</c> handle both, as 8.3.3 did.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static PropertyInfo[] GetCachedReadableProperties(Type type) => ReadablePropertyCache.GetOrAdd(type, static t =>
+        [.. t.GetProperties(Public | Instance).Where(static x => x.CanRead && !x.PropertyType.IsByRefLike && x.GetIndexParameters().Length is 0)]);
+
+    /// <summary>
+    /// Gets the properties of <see cref="GetCachedReadableProperties(Type)"/>, keeping for a name hidden with <c>new</c> only the most-derived property.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -26,13 +37,8 @@ internal static partial class YANObject
     {
         var result = new List<PropertyInfo>();
 
-        foreach (var prop in t.GetProperties(Public | Instance))
+        foreach (var prop in GetCachedReadableProperties(t))
         {
-            if (!prop.CanRead || prop.PropertyType.IsByRefLike || prop.GetIndexParameters().Length > 0)
-            {
-                continue;
-            }
-
             var index = result.FindIndex(x => x.Name.Equals(prop.Name, StringComparison.Ordinal));
 
             if (index < 0)
@@ -263,7 +269,7 @@ internal static partial class YANObject
 
         var written = false;
 
-        foreach (var prop in GetCachedProperties(type))
+        foreach (var prop in GetCachedReadableProperties(type))
         {
             if (!prop.CanWrite && !prop.PropertyType.IsTimeZoneCollection())
             {
@@ -519,7 +525,7 @@ internal static partial class YANObject
             runtimeType = typeof(T);
         }
 
-        foreach (var prop in CopyPropertyCache.GetOrAdd(runtimeType, static t => [.. GetCachedProperties(t).Where(static x => x.CanWrite)]))
+        foreach (var prop in CopyPropertyCache.GetOrAdd(runtimeType, static t => [.. GetCachedReadableProperties(t).Where(static x => x.CanWrite)]))
         {
             prop.SetValue(result, prop.GetValue(input));
         }
