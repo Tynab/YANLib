@@ -387,13 +387,16 @@ public partial class YANUnmanagedTest
 
     // Regression test for the per-type cache used by Parse<T>. In 8.3.3 it was a plain static Dictionary written without
     // a lock, so concurrent first-time Parse<T>() calls for many distinct T corrupted it (InvalidOperationException, wrong
-    // results or a hang). Every closed type below (about 3,600) is new to the process; ProcessorCount (>= 4) dedicated
-    // threads meet at a Barrier before each first-time call, so they all insert the same new key at the same moment.
-    // Run on its own against the 8.3.3 implementation it failed in 12 of 12 runs (8 of 10 with only the first ~660 types).
-    // It is best-effort: a race never fails deterministically, and it passed once on 8.3.3 while other tests were competing
-    // for the CPU.
+    // results or a hang). Every closed type below (3,300) is new to the process; ProcessorCount (>= 4) dedicated threads
+    // meet at a Barrier before each first-time call, so they all insert the same new key at the same moment.
+    // The synchronised call passes the string "x", which is never one of these T: an input that already is a T returns
+    // before the cache is read, so a same-instance call alone would not touch the cache at all. The same-instance call
+    // that follows checks that early return.
+    // Run on its own it failed in 6 of 6 runs against the 8.3.3 implementation, and in 6 of 6 runs against the current
+    // code with an unlocked Dictionary cache put back after the early return (the same-instance call alone passed 6 of 6
+    // there). It is best-effort: a race never fails deterministically, and it can pass while other tests compete for the CPU.
     [Fact]
-    public void Parse_ConcurrentFirstUseOfManyDistinctTypes_ReturnsInputWithoutThrowing_Nullable()
+    public void Parse_ConcurrentFirstUseOfManyDistinctTypes_ReturnsNullOrInputWithoutThrowing_Nullable()
     {
         // Arrange
         Type[] elementTypes =
@@ -451,6 +454,12 @@ public partial class YANUnmanagedTest
 
                     try
                     {
+                        // "x" is never a T, so this call cannot take the early return and has to read the per-type cache
+                        if (parseCall("x") is not null)
+                        {
+                            failures.Enqueue($"non-null result for \"x\" as {input.GetType()}");
+                        }
+
                         if (!ReferenceEquals(parseCall(input), input))
                         {
                             failures.Enqueue($"wrong result for {input.GetType()}");
