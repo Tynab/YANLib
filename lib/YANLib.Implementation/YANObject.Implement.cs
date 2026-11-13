@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using static System.Reflection.BindingFlags;
 
 namespace YANLib.Implementation;
@@ -10,12 +11,58 @@ namespace YANLib.Implementation;
 internal static partial class YANObject
 {
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
+    private static readonly ConcurrentDictionary<Type, object> DefaultValueCache = new();
 
     #region Private
 
+    /// <summary>
+    /// Gets the public instance properties of <paramref name="type"/> that can be read through reflection: inherited ones included, indexers,
+    /// write-only and by-ref-like (<c>Span&lt;T&gt;</c>) properties excluded, and for a name hidden with <c>new</c> only the most-derived property.
+    /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, static t => t.GetProperties(Public | Instance | DeclaredOnly));
+    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, static t =>
+    {
+        var result = new List<PropertyInfo>();
+
+        foreach (var prop in t.GetProperties(Public | Instance))
+        {
+            if (!prop.CanRead || prop.PropertyType.IsByRefLike || prop.GetIndexParameters().Length > 0)
+            {
+                continue;
+            }
+
+            var index = result.FindIndex(x => x.Name.Equals(prop.Name, StringComparison.Ordinal));
+
+            if (index < 0)
+            {
+                result.Add(prop);
+            }
+            else if (prop.DeclaringType!.IsSubclassOf(result[index].DeclaringType!))
+            {
+                result[index] = prop;
+            }
+        }
+
+        return [.. result];
+    });
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static PropertyInfo[] GetCachedProperties(Type type, IEnumerable<string?> names) => [.. GetCachedProperties(type).Where(x => names.Contains(x.Name))];
+
+    /// <summary>
+    /// Gets <c>default(T)</c> for <paramref name="type"/> as an object: <c>null</c> for reference and nullable types, otherwise a cached
+    /// zero-initialised box (a struct's explicit parameterless constructor is not run, unlike <see cref="Activator.CreateInstance(Type)"/>).
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static object? GetDefaultValue(Type type)
+        => type.IsValueType && Nullable.GetUnderlyingType(type) is null ? DefaultValueCache.GetOrAdd(type, static t => RuntimeHelpers.GetUninitializedObject(t)) : null;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsDefaultValue(this PropertyInfo prop, object input) => EqualityComparer<object>.Default.Equals(prop.GetValue(input), GetDefaultValue(prop.PropertyType));
 
     #endregion
 

@@ -135,9 +135,29 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 ```
 
 
+## Property Rules
+
+- **Which properties**: the property checks (`IsNullDefault`, `AllPropertiesDefault`, `AnyPropertiesNotDefault`, ...) use the public instance properties of the object's runtime type, inherited ones included. Indexers, write-only properties and by-ref-like (`Span<T>`) properties are skipped, and for a property hidden with `new` only the most-derived one is used.
+- **Default values**: reference types (strings included) are default when `null`; value types are compared with `default(T)` (a struct's explicit parameterless constructor is not run).
+- **Getters**: every selected getter is called; an exception thrown by a getter propagates (wrapped in `TargetInvocationException`).
+- **Names**: the `names` overloads match property names case-sensitively. When none of the names matches a property, `AllPropertiesDefault`, `AllPropertiesNotDefault` and their collection versions return `false`.
+- **Collections**: `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` when the collection contains a `null` element.
+
+### Changes since 8.3.3
+
+- Inherited properties are checked again: `new Derived { BaseName = "x" }.IsNullDefault()` is `false` (was `true`).
+- Indexers and write-only properties are skipped: `new List<int>().IsNullDefault()` is `true` (threw `TargetParameterCountException`), a class with a write-only property no longer throws `ArgumentException`.
+- Arrays expose the inherited `Rank` and `IsFixedSize`, so every array, even an empty one, is no longer null-default: `Array.Empty<int>().IsNullDefault()` is `false` (was `true`).
+- Exception types expose the inherited `Message`: `new InvalidOperationException().IsNullDefault()` is `false` (was `true`).
+- Inherited getters are called, so an inherited getter that throws now surfaces as a `TargetInvocationException`.
+- A struct property is compared with `default(T)`, not with an instance built by its parameterless constructor.
+- `AllPropertiesDefault(names)` (and `AllPropertiesDefaults(names)`, `AllPropertiesNotDefaults(names)`) return `false` when no name matches a property (were `true`).
+- `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` for a collection that contains `null` (a `null` element satisfied both).
+
+
 ## Performance Considerations
 
-- The library uses caching for property reflection to improve performance
+- The library caches the property list and the `default(T)` value of each type (thread-safe `ConcurrentDictionary`); property values are read through reflection on every call
 - Collection methods such as `ChangeTimeZoneAllProperties` are lazily evaluated and preserve the input order
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 

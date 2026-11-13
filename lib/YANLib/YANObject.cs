@@ -78,9 +78,11 @@ public static partial class YANObject
     /// <returns><c>true</c> if the object is <c>null</c> or has all properties set to their default values; otherwise, <c>false</c>.</returns>
     /// <remarks>
     /// This method checks if the object is <c>null</c> or if all of its properties have their default values.
-    /// For string properties, this means they are <c>null</c> or empty.
+    /// The public instance properties of the runtime type are checked, inherited ones included; indexers and write-only properties are skipped,
+    /// and for a property hidden with <c>new</c> only the most-derived one is checked. An exception thrown by a getter propagates.
+    /// For string properties, this means they are <c>null</c> (an empty string is not a default value).
     /// For reference type properties, this means they are <c>null</c>.
-    /// For value type properties, this means they have their default value (e.g., 0 for numeric types, false for bool).
+    /// For value type properties, this means they have their default value (e.g., 0 for numeric types, false for bool), compared with <c>default(T)</c>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -94,7 +96,8 @@ public static partial class YANObject
     /// <returns><c>true</c> if the object is not <c>null</c> and has at least one property not set to its default value; otherwise, <c>false</c>.</returns>
     /// <remarks>
     /// This method checks if the object is not <c>null</c> and if at least one of its properties does not have its default value.
-    /// For string properties, this means they are not <c>null</c> and not empty.
+    /// The properties are selected as in <see cref="IsNullDefault{T}(T)"/>.
+    /// For string properties, this means they are not <c>null</c> (an empty string counts as not default).
     /// For reference type properties, this means they are not <c>null</c>.
     /// For value type properties, this means they do not have their default value (e.g., not 0 for numeric types, not false for bool).
     /// </remarks>

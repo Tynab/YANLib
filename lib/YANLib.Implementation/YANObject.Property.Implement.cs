@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.Activator;
 using static System.Reflection.BindingFlags;
 using static System.StringSplitOptions;
 
@@ -50,13 +49,9 @@ internal static partial class YANObject
             return default;
         }
 
-        var props = GetCachedProperties(input.GetType());
-
-        foreach (var prop in props)
+        foreach (var prop in GetCachedProperties(input.GetType()))
         {
-            var type = prop.PropertyType;
-
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (!prop.IsDefaultValue(input))
             {
                 return false;
             }
@@ -67,7 +62,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.AnyPropertiesNotDefaultImplement());
+    internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.All(static x => x.AllPropertiesDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -78,13 +73,16 @@ internal static partial class YANObject
             return false;
         }
 
-        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+        var props = GetCachedProperties(input.GetType(), names);
+
+        if (props.Length is 0)
+        {
+            return false;
+        }
 
         foreach (var prop in props)
         {
-            var type = prop.PropertyType;
-
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (!prop.IsDefaultValue(input))
             {
                 return false;
             }
@@ -96,7 +94,7 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllPropertiesDefaultsImplement<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class
-        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && !input.Any(x => x.AnyPropertiesNotDefaultImplement(names));
+        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && input.All(x => x.AllPropertiesDefaultImplement(names));
 
     #endregion
 
@@ -111,13 +109,9 @@ internal static partial class YANObject
             return default;
         }
 
-        var props = GetCachedProperties(input.GetType());
-
-        foreach (var prop in props)
+        foreach (var prop in GetCachedProperties(input.GetType()))
         {
-            var type = prop.PropertyType;
-
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (prop.IsDefaultValue(input))
             {
                 return false;
             }
@@ -128,7 +122,7 @@ internal static partial class YANObject
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && !input.Any(static x => x.AnyPropertiesDefaultImplement());
+    internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input) where T : class => input.IsNotNullEmptyImplement() && input.All(static x => x.AllPropertiesNotDefaultImplement());
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -139,18 +133,16 @@ internal static partial class YANObject
             return false;
         }
 
-        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
+        var props = GetCachedProperties(input.GetType(), names);
 
-        if (props.IsNullEmptyImplement())
+        if (props.Length is 0)
         {
             return false;
         }
 
         foreach (var prop in props)
         {
-            var type = prop.PropertyType;
-
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (prop.IsDefaultValue(input))
             {
                 return false;
             }
@@ -162,7 +154,7 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AllPropertiesNotDefaultsImplement<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class
-        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && !input.Any(x => x.AnyPropertiesDefaultImplement(names));
+        => input.IsNotNullEmptyImplement() && names.IsNotNullEmptyImplement() && names.AllNotNullWhiteSpaceImplement() && input.All(x => x.AllPropertiesNotDefaultImplement(names));
 
     #endregion
 
@@ -177,13 +169,9 @@ internal static partial class YANObject
             return default;
         }
 
-        var props = GetCachedProperties(input.GetType());
-
-        foreach (var prop in props)
+        foreach (var prop in GetCachedProperties(input.GetType()))
         {
-            var type = prop.PropertyType;
-
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (prop.IsDefaultValue(input))
             {
                 return true;
             }
@@ -205,13 +193,9 @@ internal static partial class YANObject
             return false;
         }
 
-        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
-
-        foreach (var prop in props)
+        foreach (var prop in GetCachedProperties(input.GetType(), names))
         {
-            var type = prop.PropertyType;
-
-            if (EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (prop.IsDefaultValue(input))
             {
                 return true;
             }
@@ -228,6 +212,7 @@ internal static partial class YANObject
     #endregion
 
     #region AnyPropertiesNotDefault
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static bool AnyPropertiesNotDefaultImplement<T>(this T? input) where T : class
@@ -237,13 +222,9 @@ internal static partial class YANObject
             return default;
         }
 
-        var props = GetCachedProperties(input.GetType());
-
-        foreach (var prop in props)
+        foreach (var prop in GetCachedProperties(input.GetType()))
         {
-            var type = prop.PropertyType;
-
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (!prop.IsDefaultValue(input))
             {
                 return true;
             }
@@ -265,18 +246,9 @@ internal static partial class YANObject
             return false;
         }
 
-        var props = GetCachedProperties(input.GetType()).Where(x => names.Contains(x.Name));
-
-        if (props.IsNullEmptyImplement())
+        foreach (var prop in GetCachedProperties(input.GetType(), names))
         {
-            return false;
-        }
-
-        foreach (var prop in props)
-        {
-            var type = prop.PropertyType;
-
-            if (!EqualityComparer<object>.Default.Equals(prop.GetValue(input), type.IsValueType ? CreateInstance(type) : default))
+            if (!prop.IsDefaultValue(input))
             {
                 return true;
             }
