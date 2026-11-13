@@ -153,6 +153,29 @@ public partial class YANEnumerableTest
     }
 
     [Fact]
+    public void ToImmutable_EmptyNonGenericCollection_ReturnsEmptyCollections_ImmutableEnumerable()
+    {
+        // Arrange
+        var input = new ArrayList();
+
+        // Act (8.3.3 threw NullReferenceException for every one of these)
+        var array = input.ToImmutableArray<int>();
+        var list = input.ToImmutableList<int>();
+        var hashSet = input.ToImmutableHashSet<int>();
+        var stack = input.ToImmutableStack<int>();
+        var queue = input.ToImmutableQueue<int>();
+        var sortedSet = input.ToImmutableSortedSet<int>();
+
+        // Assert
+        Assert.Empty(array);
+        Assert.Empty(list);
+        Assert.Empty(hashSet);
+        Assert.Empty(stack);
+        Assert.Empty(queue);
+        Assert.Empty(sortedSet);
+    }
+
+    [Fact]
     public void ToImmutableArray_NullNonGenericCollection_ReturnsEmptyImmutableArray_ImmutableEnumerable()
     {
         // Arrange
