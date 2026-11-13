@@ -265,6 +265,40 @@ public partial class YANUnmanagedTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public void Parse_OutOfRangeInput_ReturnsNull_Nullable()
+    {
+        // Arrange
+        object text = "99999999999";
+        object number = 1e10;
+
+        // Act
+        var textResult = text.Parse<int?>();
+        var numberResult = number.Parse<int?>();
+
+        // Assert
+        Assert.Null(textResult);
+        Assert.Null(numberResult);
+    }
+
+    [Fact]
+    public void Parse_NativeIntegerTarget_Converts_Nullable()
+    {
+        // Arrange
+        object text = "5";
+        object invalid = "x";
+
+        // Act
+        var result = text.Parse<nint?>();
+        var unsignedResult = text.Parse<nuint?>();
+        var invalidResult = invalid.Parse<nint?>();
+
+        // Assert
+        Assert.Equal((nint)5, result);
+        Assert.Equal((nuint)5, unsignedResult);
+        Assert.Null(invalidResult);
+    }
+
     #endregion
 
     #region Concurrency

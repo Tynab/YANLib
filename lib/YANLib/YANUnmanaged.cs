@@ -22,8 +22,12 @@ public static partial class YANUnmanaged
     /// <param name="format">The format strings to use for parsing. Used primarily for <see cref="DateTime"/> parsing.</param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
     /// <remarks>
-    /// This method supports parsing to various unmanaged types including numeric types, <see cref="DateTime"/>, <see cref="Guid"/>, and enums.
+    /// This method supports parsing to various unmanaged types including numeric types (also <see cref="nint"/> and <see cref="nuint"/>),
+    /// <see cref="DateTime"/>, <see cref="Guid"/>, and enums.
     /// If the input cannot be parsed to the specified type, the method will return the provided default value or the type's default value.
+    /// This also applies to numbers outside the range of <typeparamref name="T"/> (for example <c>1e10</c> or <c>"99999999999"</c> for <see cref="int"/>)
+    /// and to fractional strings for integer types (<c>"3.5"</c>); boxed fractional numbers are rounded half to even like <see cref="Convert.ToInt32(double)"/>.
+    /// The method never throws.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -39,6 +43,7 @@ public static partial class YANUnmanaged
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
     /// <remarks>
     /// This overload accepts format strings as params array for convenience.
+    /// Conversion rules are the same as for <see cref="Parse{T}(object, object, IEnumerable{string})"/>; the method never throws.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

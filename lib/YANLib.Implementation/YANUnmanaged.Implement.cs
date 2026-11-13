@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
+using System.Numerics;
 using static System.Convert;
 using static System.DateTime;
 using static System.Globalization.CultureInfo;
@@ -77,43 +79,224 @@ internal static partial class YANUnmanaged
             return (input?.ToString() ?? default).ParseEnum((defaultValue?.ToString() ?? default).ParseEnum<T>(default));
         }
 
-        if (input is null)
+        if (input is not null && TryChangeType(input, typeof(T), ParseCache<T>.Kind, false, out var result) && result is T value)
         {
-            if (defaultValue is null)
-            {
-                return default;
-            }
-
-            try
-            {
-                return ChangeType(defaultValue, typeof(T)).ParseImplement<T>();
-            }
-            catch
-            {
-                return default;
-            }
+            return value;
         }
 
+        return defaultValue is not null && TryChangeType(defaultValue, typeof(T), ParseCache<T>.Kind, false, out var fallback) && fallback is T fallbackValue ? fallbackValue : default;
+    }
+
+    /// <summary>
+    /// Converts <paramref name="input"/> to <paramref name="targetType"/> without throwing and without recursion.
+    /// </summary>
+    /// <remarks>
+    /// Keeps the <see cref="Convert.ChangeType(object, Type)"/> semantics of 8.3.3 (current culture, round-half-to-even for
+    /// boxed fractional numbers) but range-checks numbers first instead of catching <see cref="OverflowException"/>.
+    /// <see cref="nint"/>/<see cref="nuint"/>, which <see cref="IConvertible"/> does not support, are converted through
+    /// <see cref="long"/>/<see cref="ulong"/>. When <paramref name="floorFractions"/> is set and an integer target cannot
+    /// take the value directly, the exact floor of the value is used if it is in range.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryChangeType(object input, Type targetType, ParseKind kind, bool floorFractions, out object? result)
+    {
+        if (kind is not ParseKind.Other)
+        {
+            input = input switch
+            {
+                nint n => (long)n,
+                nuint n => (ulong)n,
+                _ => input
+            };
+        }
+
+        return kind switch
+        {
+            ParseKind.SByte => TryConvertInteger<sbyte>(input, floorFractions, out result),
+            ParseKind.Byte => TryConvertInteger<byte>(input, floorFractions, out result),
+            ParseKind.Int16 => TryConvertInteger<short>(input, floorFractions, out result),
+            ParseKind.UInt16 => TryConvertInteger<ushort>(input, floorFractions, out result),
+            ParseKind.Int32 => TryConvertInteger<int>(input, floorFractions, out result),
+            ParseKind.UInt32 => TryConvertInteger<uint>(input, floorFractions, out result),
+            ParseKind.Int64 => TryConvertInteger<long>(input, floorFractions, out result),
+            ParseKind.UInt64 => TryConvertInteger<ulong>(input, floorFractions, out result),
+            ParseKind.NInt => TryConvertInteger<nint>(input, floorFractions, out result),
+            ParseKind.NUInt => TryConvertInteger<nuint>(input, floorFractions, out result),
+            ParseKind.Decimal when input is double or float && !IsDecimalRange(input is double d ? d : (float)input) => Fail(out result),
+            ParseKind.Enum => Fail(out result),
+            _ => TryChangeTypeCore(input, targetType, out result)
+        };
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryConvertInteger<TInteger>(object input, bool floorFractions, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+    {
+        switch (input)
+        {
+            case double or float:
+                {
+                    var value = input is double d ? d : (float)input;
+
+                    return TryFromDouble<TInteger>(Math.Round(value), out result) || floorFractions && TryFromDouble<TInteger>(Math.Floor(value), out result);
+                }
+            case decimal value:
+                return TryFromDecimal<TInteger>(decimal.Round(value), out result) || floorFractions && TryFromDecimal<TInteger>(decimal.Floor(value), out result);
+            case string text:
+                return TryChangeTypeCore(text, IntegerConversionType<TInteger>(), out var parsed) && TryGetInt128(parsed, out var integer) && TryFromInt128<TInteger>(integer, out result)
+                    || floorFractions && decimal.TryParse(text, NumberStyles.Number, CurrentCulture, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
+                    || Fail(out result);
+            default:
+                if (TryGetInt128(input, out var number))
+                {
+                    return TryFromInt128<TInteger>(number, out result);
+                }
+
+                return input is IConvertible && TryChangeTypeCore(input, IntegerConversionType<TInteger>(), out var converted) && TryGetInt128(converted, out number) && TryFromInt128<TInteger>(number, out result)
+                    || floorFractions && input is IConvertible && TryChangeTypeCore(input, typeof(decimal), out var boxed) && boxed is decimal m && TryFromDecimal<TInteger>(decimal.Floor(m), out result)
+                    || Fail(out result);
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static Type IntegerConversionType<TInteger>() => typeof(TInteger) == typeof(nint) ? typeof(long) : typeof(TInteger) == typeof(nuint) ? typeof(ulong) : typeof(TInteger);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryGetInt128(object? input, out Int128 value)
+    {
+        (var isInteger, value) = input switch
+        {
+            int x => (true, (Int128)x),
+            long x => (true, x),
+            uint x => (true, x),
+            ulong x => (true, x),
+            short x => (true, x),
+            ushort x => (true, x),
+            byte x => (true, x),
+            sbyte x => (true, x),
+            char x => (true, x),
+            _ => (false, Int128.Zero)
+        };
+
+        return isInteger;
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryFromInt128<TInteger>(Int128 value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+        => value >= Int128.CreateTruncating(TInteger.MinValue) && value <= Int128.CreateTruncating(TInteger.MaxValue) ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
+
+    /// <remarks><paramref name="value"/> must already be integral. The upper bound is exclusive (MaxValue + 1 is a power of two and exact as a double).</remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryFromDouble<TInteger>(double value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+        => value >= double.CreateTruncating(TInteger.MinValue) && value < double.CreateTruncating(TInteger.MaxValue) + 1 ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
+
+    /// <remarks><paramref name="value"/> must already be integral.</remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryFromDecimal<TInteger>(decimal value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+        => value >= decimal.CreateTruncating(TInteger.MinValue) && value <= decimal.CreateTruncating(TInteger.MaxValue) ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
+
+    /// <remarks>Doubles beyond about ±7.9e28 (and NaN/infinity) make <see cref="Convert.ToDecimal(double)"/> throw.</remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsDecimalRange(double value) => Math.Abs(value) < 7.9e28;
+
+    /// <summary>
+    /// The only place that still calls <see cref="Convert.ChangeType(object, Type)"/>; kept for conversions that have no
+    /// exception-free equivalent (bool/char/DateTime sources, custom <see cref="IConvertible"/> implementations).
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryChangeTypeCore(object input, Type targetType, out object? result)
+    {
         try
         {
-            return ChangeType(input, typeof(T)).ParseImplement<T>();
+            result = ChangeType(input, targetType);
+
+            return true;
         }
         catch
         {
-            if (defaultValue is null)
-            {
-                return default;
-            }
-
-            try
-            {
-                return ChangeType(defaultValue, typeof(T)).ParseImplement<T>();
-            }
-            catch
-            {
-                return default;
-            }
+            return Fail(out result);
         }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool Succeed<TValue>(TValue value, out object? result)
+    {
+        result = value;
+
+        return true;
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool Fail(out object? result)
+    {
+        result = null;
+
+        return false;
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static string? SafeToString(this object? input)
+    {
+        try
+        {
+            return input?.ToString();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static ParseKind GetParseKind(Type type) => type.IsEnum ? ParseKind.Enum : type == typeof(nint) ? ParseKind.NInt : type == typeof(nuint) ? ParseKind.NUInt : Type.GetTypeCode(type) switch
+    {
+        TypeCode.Boolean => ParseKind.Boolean,
+        TypeCode.Char => ParseKind.Char,
+        TypeCode.SByte => ParseKind.SByte,
+        TypeCode.Byte => ParseKind.Byte,
+        TypeCode.Int16 => ParseKind.Int16,
+        TypeCode.UInt16 => ParseKind.UInt16,
+        TypeCode.Int32 => ParseKind.Int32,
+        TypeCode.UInt32 => ParseKind.UInt32,
+        TypeCode.Int64 => ParseKind.Int64,
+        TypeCode.UInt64 => ParseKind.UInt64,
+        TypeCode.Single => ParseKind.Single,
+        TypeCode.Double => ParseKind.Double,
+        TypeCode.Decimal => ParseKind.Decimal,
+        _ => ParseKind.Other
+    };
+
+    private enum ParseKind : byte
+    {
+        Other,
+        Enum,
+        Boolean,
+        Char,
+        SByte,
+        Byte,
+        Int16,
+        UInt16,
+        Int32,
+        UInt32,
+        Int64,
+        UInt64,
+        NInt,
+        NUInt,
+        Single,
+        Double,
+        Decimal
     }
 
     /// <summary>
@@ -123,6 +306,17 @@ internal static partial class YANUnmanaged
     private static class ParseCache<T>
     {
         internal static readonly Type? Underlying = GetUnderlyingType(typeof(T));
+
+        /// <summary>The conversion target: the underlying type for <see cref="Nullable{T}"/>, otherwise <typeparamref name="T"/>.</summary>
+        internal static readonly Type Target = Underlying ?? typeof(T);
+
+        internal static readonly ParseKind Kind = GetParseKind(Target);
+
+        /// <summary>
+        /// Whether the one-argument overload floors fractional and out-of-range input: only when <typeparamref name="T"/>
+        /// itself is a non-nullable integer type (8.3.3 behaviour).
+        /// </summary>
+        internal static readonly bool FloorFractions = Underlying is null && Kind is >= ParseKind.SByte and <= ParseKind.NUInt;
     }
 
     #endregion

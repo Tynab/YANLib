@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.Convert;
 using static System.Nullable;
 
 namespace YANLib.Implementation;
@@ -24,35 +23,23 @@ internal static partial class YANUnmanaged
                 Type timeSpanType when timeSpanType == typeof(TimeSpan) => (T)(object)input.ToString().ParseTimeSpan(),
                 Type nullableTimeSpanType when nullableTimeSpanType == typeof(TimeSpan?) => (T?)(object?)input.ToString().ParseTimeSpanNullable(),
                 Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var e) => (T)e,
-                _ => ParseCache<T>.Underlying is Type underlyingType ? ChangeTypeOrDefault(input, underlyingType) : ChangeTypeOrDefault(input, typeof(T))
+                _ => ConvertOrDefault(input)
             };
 
-        static T? ChangeTypeOrDefault(object input, Type targetType)
+        static T? ConvertOrDefault(object input)
         {
-            try
+            // the one-argument overload turns non-string input into text for char targets (5 -> '5', not '\u0005')
+            if (ParseCache<T>.Kind == ParseKind.Char && input is not string)
             {
-                if (targetType == typeof(char) && input is not string)
+                if (input.SafeToString() is not string text)
                 {
-                    input = input.ToString()!;
+                    return default;
                 }
 
-                return (T?)ChangeType(input, targetType);
+                input = text;
             }
-            catch
-            {
-                return typeof(T) == typeof(byte)
-                    || typeof(T) == typeof(sbyte)
-                    || typeof(T) == typeof(short)
-                    || typeof(T) == typeof(ushort)
-                    || typeof(T) == typeof(int)
-                    || typeof(T) == typeof(uint)
-                    || typeof(T) == typeof(long)
-                    || typeof(T) == typeof(ulong)
-                    || typeof(T) == typeof(nint)
-                    || typeof(T) == typeof(nuint)
-                    ? input.ParseImplement<decimal>(default).FloorImplement().ParseImplement<T>()
-                    : default;
-            }
+
+            return TryChangeType(input, ParseCache<T>.Target, ParseCache<T>.Kind, ParseCache<T>.FloorFractions, out var result) && result is T value ? value : default;
         }
     }
 }

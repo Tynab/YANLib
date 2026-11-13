@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using System.Globalization;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANUnmanagedTest
 {
@@ -238,4 +240,172 @@ public partial class YANUnmanagedTest
     }
 
     #endregion
+
+    #region Parse - overflow, native integers, rounding
+
+    // 8.3.3 recursed forever (stack overflow, process crash) whenever an integer conversion overflowed in the
+    // one-argument overload, and could not convert to or from nint/nuint at all.
+
+    [Theory]
+    [InlineData("99999999999")]
+    [InlineData("-99999999999")]
+    [InlineData("2147483648")]
+    [InlineData("18446744073709551616")]
+    public void Parse_OutOfRangeString_ReturnsZero(string input)
+    {
+        // Act
+        var result = WithCulture(CultureInfo.InvariantCulture, () => input.Parse<int>());
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Parse_OutOfRangeBoxedNumber_ReturnsZero()
+    {
+        // Arrange
+        object?[] inputs = [1e10, -1e10, 3_000_000_000u, long.MaxValue, ulong.MaxValue, 100_000_000_000_000_000_000m, 1e20f, double.NaN, double.PositiveInfinity];
+
+        // Act
+        var results = inputs.Select(static x => x.Parse<int>()).ToList();
+
+        // Assert
+        Assert.All(results, static x => Assert.Equal(0, x));
+    }
+
+    [Fact]
+    public void Parse_OutOfRangeWithDefaultValue_ReturnsDefaultValue()
+    {
+        // Arrange
+        object input = 1e10;
+        object text = "99999999999";
+
+        // Act
+        var result = input.Parse<int>(-1);
+        var textResult = text.Parse<int>(-1);
+
+        // Assert
+        Assert.Equal(-1, result);
+        Assert.Equal(-1, textResult);
+    }
+
+    [Fact]
+    public void Parse_NegativeToUnsigned_ReturnsZero()
+    {
+        // Arrange
+        object text = "-5";
+        object number = -1L;
+
+        // Act
+        var byteResult = text.Parse<byte>();
+        var ulongResult = number.Parse<ulong>();
+
+        // Assert
+        Assert.Equal(0, byteResult);
+        Assert.Equal(0UL, ulongResult);
+    }
+
+    [Fact]
+    public void Parse_ToNativeInteger_Converts()
+    {
+        // Arrange
+        object boxed = 5;
+        object text = "5";
+        object negative = "-5";
+        object big = (ulong)uint.MaxValue;
+
+        // Act & Assert
+        Assert.Equal(5, boxed.Parse<nint>());
+        Assert.Equal(5, boxed.Parse<nint>(0));
+        Assert.Equal(5, text.Parse<nint>(0));
+        Assert.Equal(-5, negative.Parse<nint>());
+        Assert.Equal(5U, text.Parse<nuint>());
+        Assert.Equal(0U, negative.Parse<nuint>());
+        Assert.Equal(uint.MaxValue, big.Parse<nuint>());
+    }
+
+    [Fact]
+    public void Parse_FromNativeInteger_Converts()
+    {
+        // Arrange
+        object signed = (nint)(-7);
+        object unsigned = (nuint)7;
+
+        // Act & Assert
+        Assert.Equal(-7, signed.Parse<int>());
+        Assert.Equal(-7L, signed.Parse<long>(0));
+        Assert.Equal(7L, unsigned.Parse<long>());
+        Assert.Equal(7.0, unsigned.Parse<double>());
+        Assert.Equal(0U, signed.Parse<uint>());
+    }
+
+    [Fact]
+    public void Parse_BoxedFraction_RoundsHalfToEvenLikeConvert()
+    {
+        // Act & Assert (unchanged 8.3.3 behaviour: boxed numbers go through Convert semantics)
+        Assert.Equal(4, ((object)3.7).Parse<int>());
+        Assert.Equal(2, ((object)2.5).Parse<int>());
+        Assert.Equal(4, ((object)3.5).Parse<int>());
+        Assert.Equal(-2, ((object)(-2.5)).Parse<int>());
+        Assert.Equal(2, ((object)2.5m).Parse<int>(-77));
+    }
+
+    [Fact]
+    public void Parse_FractionalString_FloorsOnlyWithoutDefaultValue()
+    {
+        // Act
+        var (floored, negative, withDefault) = WithCulture(CultureInfo.InvariantCulture, static () => ("3.7".Parse<int>(), "-3.5".Parse<int>(), "3.5".Parse<int>(-77)));
+
+        // Assert (unchanged 8.3.3 behaviour; the overload asymmetry is an open decision)
+        Assert.Equal(3, floored);
+        Assert.Equal(-4, negative);
+        Assert.Equal(-77, withDefault);
+    }
+
+    [Fact]
+    public void Parse_RoundedValueOverflowsButFloorFits_ReturnsFloor()
+    {
+        // Act & Assert
+        Assert.Equal(int.MaxValue, ((object)2147483647.6).Parse<int>());
+        Assert.Equal(byte.MaxValue, ((object)255.5).Parse<byte>());
+        Assert.Equal(long.MaxValue, ((object)9223372036854775807.5m).Parse<long>());
+    }
+
+    // Integer targets floor the exact decimal value; 8.3.3 floored through double and lost digits past ~15
+    [Theory]
+    [InlineData("2.9999999999999999", "int", 2)]
+    [InlineData("0.99999999999999999999", "byte", 0)]
+    [InlineData("12345678901234567.9", "long", 12345678901234567)]
+    [InlineData("-0.5", "long", -1)]
+    public void Parse_FractionalStringBeyondDoublePrecision_FloorsExactDecimal(string input, string target, long expected)
+    {
+        // Act
+        var result = WithCulture(CultureInfo.InvariantCulture, () => target switch
+        {
+            "int" => input.Parse<int>(),
+            "byte" => input.Parse<byte>(),
+            _ => input.Parse<long>()
+        });
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    #endregion
+
+    private static T WithCulture<T>(CultureInfo culture, Func<T> action)
+    {
+        var previous = CultureInfo.CurrentCulture;
+
+        CultureInfo.CurrentCulture = culture;
+
+        try
+        {
+            return action();
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previous;
+        }
+    }
 }

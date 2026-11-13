@@ -691,6 +691,19 @@ public partial class YANMathTest
         Assert.Equal(8.0, result);
     }
 
+    [Fact]
+    public void Pow_IntResultOutOfRange_ReturnsZero_Math()
+    {
+        // Arrange
+        var input = 100_000;
+
+        // Act (8.3.3 crashed the process with a stack overflow; overflow semantics are an open decision)
+        var result = input.Pow(2);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region Abs
@@ -732,6 +745,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(5.0, result);
+    }
+
+    [Fact]
+    public void Abs_IntMinValue_ReturnsZero_Math()
+    {
+        // Arrange
+        var input = int.MinValue;
+
+        // Act (8.3.3 crashed the process with a stack overflow; overflow semantics are an open decision)
+        var result = input.Abs();
+
+        // Assert
+        Assert.Equal(0, result);
     }
 
     [Fact]
