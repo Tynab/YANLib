@@ -153,7 +153,7 @@ float randomFloat = customObjects.GenerateRandom<float>(); // Random float from 
 
 ## Performance Considerations
 
-- **Parallel Generation**: For collections with more than 1000 elements, the random generators use parallel processing for better performance; other YANLib collection methods are sequential and order-preserving
+- **Parallel Generation**: For collections with more than 1000 elements, the random generators use parallel processing for better performance; other YANLib collection methods preserve the input order
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
 - **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges

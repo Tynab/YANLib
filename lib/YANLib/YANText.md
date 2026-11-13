@@ -217,7 +217,7 @@ string formattedName = rawName
 ## Performance Considerations
 
 - The library uses optimized implementations for different text operations
-- Collection methods that return `IEnumerable<T>` are lazily evaluated and preserve the input order
+- Collection methods that return `IEnumerable<T>` are lazily evaluated and preserve the input order; the in-place `List<string?>` / `List<char>` / `List<char?>` overloads (`Title`, `Lower`, `Upper`, ...) update lists with 1,000+ elements in parallel by index, so the order is kept as well
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 - String operations are designed to minimize memory allocations where possible
 
