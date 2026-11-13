@@ -553,6 +553,77 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_ArraySegmentsOfOtherItems_ConvertsOnlySegmentItems_Object()
+    {
+        // Arrange
+        DateTimeTestClass[] items = [new() { DateProperty = Hour(1) }, new() { DateProperty = Hour(2) }, new() { DateProperty = Hour(3) }];
+        TzStruct[] structs = [new() { At = Hour(4) }, new() { At = Hour(5) }];
+        object[] objects = [Hour(6), Hour(7), Hour(8)];
+        var input = new TzOtherSegmentHolder { Items = new(items, 1, 1), Structs = new(structs, 1, 1), Objects = new(objects, 0, 2), Ints = new(new[] { 1, 2 }) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the whole underlying array was converted through the getter-only ArraySegment<T>.Array; 8.3.3 threw TargetParameterCountException)
+        Assert.Equal([Hour(1), Hour(9), Hour(3)], items.Select(static x => x.DateProperty));
+        Assert.Equal([Hour(4), Hour(12)], structs.Select(static x => x.At));
+        Assert.Equal([Hour(13), Hour(14), Hour(8)], objects);
+        Assert.Equal(new[] { 1, 2 }, input.Ints.ToArray());
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ArraySegmentSlicesOfOneBuffer_ConvertsEachItemOnce_Object()
+    {
+        // Arrange
+        DateTimeTestClass[] buffer = [new() { DateProperty = Hour(1) }, new() { DateProperty = Hour(2) }, new() { DateProperty = Hour(3) }, new() { DateProperty = Hour(4) }];
+        object first = new ArraySegment<DateTimeTestClass>(buffer, 0, 2);
+        object second = new ArraySegment<DateTimeTestClass>(buffer, 2, 2);
+
+        // Act
+        first.ChangeTimeZoneAllProperty(0, 7);
+        second.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (each slice converted the whole buffer: +14 h)
+        Assert.Equal([Hour(8), Hour(9), Hour(10), Hour(11)], buffer.Select(static x => x.DateProperty));
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_LazyValues_AreNotCreatedOrWalked_Object()
+    {
+        // Arrange
+        var ready = false;
+        var calls = 0;
+        var created = new Lazy<List<DateTime>>(() => [Hour(3)]);
+
+        _ = created.Value;
+
+        var input = new TzLazyHolder
+        {
+            Dates = new(() =>
+            {
+                calls++;
+
+                return ready ? [Hour(1)] : throw new InvalidOperationException("not ready");
+            }),
+            Items = [new(() => [Hour(2)])],
+            Created = created,
+            At = Hour(4)
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+        ready = true;
+
+        // Assert (the walk ran the factory through the getter-only Lazy<T>.Value and Lazy<T> cached its exception; 8.3.3 never walked into a Lazy<T>)
+        Assert.Equal(0, calls);
+        Assert.False(input.Dates.IsValueCreated);
+        Assert.False(input.Items[0].IsValueCreated);
+        Assert.Equal([Hour(1)], input.Dates.Value);
+        Assert.Equal([Hour(3)], created.Value);
+        Assert.Equal(Hour(11), input.At);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_ImmutableArrayOfObjects_ConvertsItemsInPlace_Object()
     {
         // Arrange
@@ -977,6 +1048,28 @@ public partial class YANObjectTest
         public ArraySegment<DateTime?> NullableSegment { get; set; }
 
         public ArraySegment<DateTime> Empty { get; set; }
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzOtherSegmentHolder
+    {
+        public ArraySegment<DateTimeTestClass> Items { get; set; }
+
+        public ArraySegment<TzStruct> Structs { get; set; }
+
+        public ArraySegment<object> Objects { get; set; }
+
+        public ArraySegment<int> Ints { get; set; }
+    }
+
+    private sealed class TzLazyHolder
+    {
+        public Lazy<List<DateTime>> Dates { get; set; } = new(() => []);
+
+        public List<Lazy<List<DateTime>>> Items { get; set; } = [];
+
+        public Lazy<List<DateTime>> Created { get; set; } = new(() => []);
 
         public DateTime At { get; set; }
     }

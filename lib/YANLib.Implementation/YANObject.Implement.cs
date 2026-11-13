@@ -262,6 +262,11 @@ internal static partial class YANObject
             }
         }
 
+        if (GetArraySegmentConverter(type) is { } segmentConverter)
+        {
+            return segmentConverter(input, tzSrc, tzDst, visited);
+        }
+
         if (GetDateTimeDictionaryConverter(type) is { } converter)
         {
             return converter(input, tzSrc, tzDst);
@@ -322,6 +327,7 @@ internal static partial class YANObject
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneLeafCache = new();
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneCollectionCache = new();
     private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
+    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, HashSet<object>, bool>?> ArraySegmentConverterCache = new();
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
@@ -331,7 +337,8 @@ internal static partial class YANObject
 
     /// <summary>
     /// Whether a value of <paramref name="type"/> is not walked into: primitives, enums, strings, date / time / number value types and other
-    /// non-data types (reflection, delegates, streams, tasks, threads, handles, pointers), or an array / list whose elements are all such values.
+    /// non-data types (reflection, delegates, streams, tasks, threads, handles, pointers, <see cref="Lazy{T}"/>, whose value the walk must not create),
+    /// or an array / list / <see cref="ArraySegment{T}"/> whose elements are all such values.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -354,7 +361,7 @@ internal static partial class YANObject
         if (type.IsPrimitive || type.IsEnum || type.IsPointer || type.IsByRefLike || type == typeof(string) || type == typeof(decimal) || type == typeof(DateTime)
             || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(DateOnly) || type == typeof(TimeOnly) || type == typeof(Guid) || type == typeof(Uri)
             || type == typeof(Version) || type == typeof(object) || type == typeof(CancellationToken) || type == typeof(ValueTask)
-            || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ValueTask<>) || Array.Exists(TimeZoneLeafBaseTypes, x => x.IsAssignableFrom(type)))
+            || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ValueTask<>) || Array.Exists(TimeZoneLeafBaseTypes, x => x.IsAssignableFrom(type)) || IsLazy(type))
         {
             return true;
         }
@@ -364,9 +371,9 @@ internal static partial class YANObject
             return IsTimeZoneLeaf(underlying, listTypes);
         }
 
-        // Only lists, which the walk would otherwise enumerate instead of walking their properties, are skipped by element type;
+        // Only lists and array segments, whose items the walk visits instead of their properties, are skipped by element type;
         // any other type implementing IEnumerable<string> (say) still has its own DateTime properties converted.
-        if (!type.IsArray && !typeof(IList).IsAssignableFrom(type))
+        if (!type.IsArray && !typeof(IList).IsAssignableFrom(type) && !IsArraySegment(type))
         {
             return false;
         }
@@ -395,6 +402,28 @@ internal static partial class YANObject
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static bool IsGenericInterface(Type type, Type definition) => type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == definition;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsArraySegment(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ArraySegment<>);
+
+    /// <summary>
+    /// Whether <paramref name="type"/> is <see cref="Lazy{T}"/> or derives from it (<see cref="Lazy{T, TMetadata}"/>).
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsLazy(Type type)
+    {
+        for (var current = type; current is not null; current = current.BaseType)
+        {
+            if (current.IsGenericType && current.GetGenericTypeDefinition() == typeof(Lazy<>))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -443,6 +472,45 @@ internal static partial class YANObject
 
         return null;
     });
+
+    /// <summary>
+    /// Gets a converter that walks only the items of an <see cref="ArraySegment{T}"/>, or <c>null</c> for other types. A segment is not an
+    /// <see cref="IList"/>, and its getter-only <see cref="ArraySegment{T}.Array"/> property is the whole underlying array, so walking the segment's
+    /// properties would convert the items outside the segment too. (Segments of <see cref="DateTime"/> / <c>DateTime?</c> are converted as lists.)
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static Func<object, object?, object?, HashSet<object>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
+        IsArraySegment(t)
+            ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments()).CreateDelegate<Func<object, object?, object?, HashSet<object>, bool>>()
+            : null);
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool ChangeTimeZoneArraySegment<T>(object input, object? tzSrc, object? tzDst, HashSet<object> visited)
+    {
+        // Like an array, a segment's items can be replaced (the writes go to the underlying array).
+        var segment = (ArraySegment<T>)input;
+        var changed = false;
+
+        for (var i = 0; i < segment.Count; i++)
+        {
+            object? item = segment[i];
+
+            if (item is DateTime dt)
+            {
+                segment[i] = (T)(object)dt.ChangeTimeZoneImplement(tzSrc, tzDst);
+                changed = true;
+            }
+            else if (item is not null && ChangeTimeZoneGraph(item, tzSrc, tzDst, visited) && item.GetType().IsValueType)
+            {
+                segment[i] = (T)item;
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
 
     [DebuggerHidden]
     [DebuggerStepThrough]

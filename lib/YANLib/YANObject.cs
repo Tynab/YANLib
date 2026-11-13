@@ -146,13 +146,14 @@ public static partial class YANObject
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back;
     /// a struct is walked and written back when something in it changed. No other property is written.</description></item>
     /// <item><description>A getter-only property is walked only when its declared type is an array, a list or a dictionary; the collection is converted in place.</description></item>
-    /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable
-    /// (an <c>ArraySegment&lt;T&gt;</c> of them counts as writable: its items are converted in the underlying array);
+    /// <item><description>Lists and arrays of <see cref="DateTime"/> / <c>DateTime?</c> and dictionaries with <see cref="DateTime"/> / <c>DateTime?</c> values are converted when they are writable;
     /// read-only ones (<c>ReadOnlyCollection&lt;T&gt;</c>, <c>ImmutableArray&lt;T&gt;</c>, <c>ReadOnlyDictionary&lt;TKey, TValue&gt;</c>, ...) are left unchanged.
     /// The elements of other lists (<see cref="System.Collections.IList"/>) are walked.</description></item>
+    /// <item><description>An <see cref="ArraySegment{T}"/> is handled like an array holding only the segment's items: they are converted or walked (and written back)
+    /// in the underlying array, and the items outside the segment are left alone.</description></item>
     /// <item><description>Other collections (<c>HashSet&lt;T&gt;</c>, <c>Queue&lt;T&gt;</c>, ...), multi-dimensional arrays and dictionary values that are not <see cref="DateTime"/> are left unchanged.</description></item>
     /// <item><description>Strings, primitives, enums, date, time and number types and non-data types (reflection objects such as <see cref="Type"/>, delegates, streams, tasks, threads,
-    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into.</description></item>
+    /// wait handles, cancellation tokens, safe handles, pointers) are not walked into. Neither is a <see cref="Lazy{T}"/>: the walk never creates its value.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
     /// </list>
     /// </remarks>
