@@ -242,10 +242,10 @@ YANLib is built with several technical considerations in mind:
 
 ## Getting Started
 
-To use YANLib in your project, simply add a reference to the YANLib NuGet package:
+To use YANLib in your project, add a reference to the [Tynab.YANLib](https://www.nuget.org/packages/Tynab.YANLib) NuGet package (the `YANLib` id on nuget.org is an unrelated package):
 
 ```plaintext
-dotnet add package YANLib
+dotnet add package Tynab.YANLib
 ```
 
 Then add the appropriate using directive to your code:

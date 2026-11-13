@@ -646,58 +646,18 @@ YANLib is based on .NET 8.0 (LTS) and consists of the following main components:
 
 ```plaintext
 YANLib/
-├── Core/
-│   ├── Object/
-│   │   ├── YANObject.cs
-│   │   ├── YANObject.Property.cs
-│   │   └── ...
-│   ├── Unmanaged/
-│   │   ├── YANUnmanaged.cs
-│   │   ├── YANUnmanaged.Collection.cs
-│   │   └── ...
-│   ├── Enumerable/
-│   │   ├── YANEnumerable.Generic.cs
-│   │   ├── YANEnumerable.Generic.Immutable.cs
-│   │   └── ...
-│   └── Text/
-│       ├── YANText.cs
-│       ├── YANText.Char.cs
-│       └── ...
-├── Data & Serialization/
-│   ├── Json/
-│   │   ├── YANJson.cs
-│   │   ├── YANJson.Collection.cs
-│   │   └── ...
-│   ├── Math/
-│   │   ├── YANMath.cs
-│   │   ├── YANMath.Collection.cs
-│   │   └── ...
-│   ├── DateTime/
-│   │   ├── YANDateTime.cs
-│   │   ├── YANDateTime.Generic.cs
-│   │   └── ...
-│   └── Random/
-│       ├── YANRandom.cs
-│       ├── YANRandom.Nullable.cs
-│       └── ...
-├── Concurrency & Process/
-│   ├── Task/
-│   │   ├── YANTask.cs
-│   │   ├── YANTask.Collection.cs
-│   │   └── ...
-│   └── Process/
-│       ├── YANProcess.cs
-│       ├── YANProcess.Collection.cs
-│       └── ...
-└── Advanced/
-    ├── Expression/
-    │   ├── YANExpression.cs
-    │   ├── YANExpression.Implement.cs
-    │   └── ...
-    └── Snowflake/
-        ├── IdGenerator.Constant.cs
-        ├── IdGenerator.Constructor.cs
-        └── ...
+├── lib/
+│   ├── YANLib/                    # public API, packed as Tynab.YANLib
+│   │   ├── YANObject.cs           # one static partial class per area (YANObject, YANUnmanaged,
+│   │   ├── YANObject.*.cs         # YANEnumerable, YANText, YANJson, YANMath, YANDateTime,
+│   │   ├── ...                    # YANRandom, YANTask, YANProcess, YANExpression), split by file
+│   │   ├── Snowflake/             # IdGenerator (namespace YANLib.Snowflake)
+│   │   └── *.md                   # wiki pages
+│   └── YANLib.Implementation/     # internal implementations (*.Implement.cs), shipped in the same package
+├── test/
+│   └── YANLib.Tests/              # xUnit tests
+└── console/
+    └── YANLib.Benchmarks/         # BenchmarkDotNet benchmarks
 ```
 
 ### Technical Details
