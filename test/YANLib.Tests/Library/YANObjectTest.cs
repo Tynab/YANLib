@@ -720,9 +720,9 @@ public partial class YANObjectTest
         // Act
         input.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (each object's own properties first, then the objects it references in property order, depth first;
-        // 8.3.3 walked a referenced object as soon as it read the property: first.first, first, second, root)
-        Assert.Equal(["root", "first", "first.first", "second"], log);
+        // Assert (as in 8.3.3, a referenced object is walked as soon as its property is read, before the next property of its owner, so At (declared
+        // last) is read after First and Second have been walked; 011812f..252cee7 converted each object's own properties first: root, first, first.first, second)
+        Assert.Equal(["first.first", "first", "second", "root"], log);
     }
 
     [Fact]
@@ -1066,6 +1066,72 @@ public partial class YANObjectTest
         Assert.Equal(Hour(8), input.At);
         Assert.Equal("x", input.Frozen.Name);
         Assert.Same(CultureInfo.InvariantCulture, input.Culture);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_CopySetterWritingALaterProperty_RunsBeforeThatPropertyIsRead_Object()
+    {
+        // Arrange
+        var input = new TzSlotHolder(Hour(1), Hour(2));
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, the copy returned by Slot (declared first) is converted and passed to its setter, which writes Start back, before Start
+        // is read and converted; 252cee7 converted Start first and then let the setter of Slot overwrite it with the unconverted Start it had copied)
+        Assert.Equal(Hour(8), input.Start);
+        Assert.Equal(Hour(9), input.SlotAt);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_WrapperDeclaredBetweenItsDateTimes_ShiftsThemTogether_Object()
+    {
+        // Arrange
+        var input = new TzPeriodHolder { Start = Hour(1), End = Hour(3) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3: Start is converted, then the copy returned by Period (Start converted, End not yet) is converted and written back, then End
+        // is read and converted again, so both are shifted twice by this wrapper, which exposes Start and End a second time; 252cee7 shifted Start twice and
+        // End once, putting End before Start)
+        Assert.Equal(Hour(15), input.Start);
+        Assert.Equal(Hour(17), input.End);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_SetterThrows_LeavesTheLaterPropertiesUnconverted_Object()
+    {
+        // Arrange
+        var input = new TzThrowingCopyHolder { At = Hour(1), Next = new DateTimeTestClass { DateProperty = Hour(2) } };
+
+        // Act
+        var exception = Record.Exception(() => input.ChangeTimeZoneAllProperty(0, 7));
+
+        // Assert (as in 8.3.3, the walk stops at the setter of Child, declared first, before At and Next are read; 252cee7 had already converted At)
+        Assert.IsType<System.Reflection.TargetInvocationException>(exception);
+        Assert.Equal(Hour(1), input.At);
+        Assert.Equal(Hour(2), input.Next!.DateProperty);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ListItems_AreWalkedAndWrittenBackOneAtATime_Object()
+    {
+        // Arrange
+        var item = new DateTimeTestClass { DateProperty = Hour(1) };
+        var input = new TzObservableHolder { Items = [item, Hour(2)] };
+        var events = new List<(NotifyCollectionChangedAction Action, int Index)>();
+
+        input.Items.CollectionChanged += (_, e) => events.Add((e.Action, e.NewStartingIndex));
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, an item is walked and written back before the next item is read, so the work list holds one item of a list at a time;
+        // 252cee7 converted the DateTime item first and wrote the object item back last)
+        Assert.Equal([(NotifyCollectionChangedAction.Replace, 0), (NotifyCollectionChangedAction.Replace, 1)], events);
+        Assert.Equal(Hour(8), item.DateProperty);
+        Assert.Equal(Hour(9), input.Items[1]);
     }
 
     [Fact]
@@ -1773,6 +1839,77 @@ public partial class YANObjectTest
         }
 
         public DateTime At { get; set; }
+    }
+
+    private sealed class TzSlot
+    {
+        public TzSlot()
+        {
+        }
+
+        public TzSlot(DateTime ownerStart) => OwnerStart = ownerStart;
+
+        public DateTime OwnerStart { get; }
+
+        public DateTime At { get; set; }
+    }
+
+    // A DTO-style wrapper declared before the owner's own DateTime: its getter copies Start into the DTO and its setter writes it back.
+    private sealed class TzSlotHolder(DateTime start, DateTime slotAt)
+    {
+        private DateTime slotAt = slotAt;
+
+        public TzSlot Slot
+        {
+            get => new(Start) { At = slotAt };
+            set
+            {
+                slotAt = value.At;
+                Start = value.OwnerStart;
+            }
+        }
+
+        public DateTime Start { get; set; } = start;
+
+        public DateTime SlotAt => slotAt;
+    }
+
+    private sealed class TzPeriod
+    {
+        public DateTime Start { get; set; }
+
+        public DateTime End { get; set; }
+    }
+
+    // A computed wrapper over the owner's own DateTime properties, declared between them.
+    private sealed class TzPeriodHolder
+    {
+        public DateTime Start { get; set; }
+
+        public TzPeriod Period
+        {
+            get => new() { Start = Start, End = End };
+            set
+            {
+                Start = value.Start;
+                End = value.End;
+            }
+        }
+
+        public DateTime End { get; set; }
+    }
+
+    private sealed class TzThrowingCopyHolder
+    {
+        public DateTimeTestClass Child
+        {
+            get => new() { DateProperty = Hour(3) };
+            set => throw new InvalidOperationException("Rejected.");
+        }
+
+        public DateTime At { get; set; }
+
+        public DateTimeTestClass? Next { get; set; }
     }
 
     private sealed class TzStructHolder

@@ -148,7 +148,9 @@ public static partial class YANObject
     /// <item><description>Readable and writable public instance properties are walked, inherited ones included and indexers excluded; a base property hidden with <c>new</c>
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back. Any other value that is walked
     /// (an object or a struct) is written back with the property's setter when a <see cref="DateTime"/> was converted somewhere inside it, once everything reachable
-    /// from it has been walked, so a property whose getter returns a copy (a defensive copy, a computed wrapper, a JSON-backed object) receives the converted copy.
+    /// from it has been walked and before the next property is read, as in 8.3.3. So a property whose getter returns a copy (a defensive copy, a computed wrapper,
+    /// a JSON-backed object) receives the converted copy, and a later property that this setter writes is read, and converted, after the setter has run; state
+    /// reachable through several copies (two copy getters over the same field, a wrapper over the owner's own <see cref="DateTime"/> properties) is converted once per copy.
     /// No other setter is called: not for values that are not walked (strings, numbers, ...), not for a value in which nothing was converted, and not for a second
     /// reference to an object already converted. (A struct item of a read-only list is converted in a copy that is then discarded, but still counts as converted,
     /// so the setter of a property holding that list is called with the unchanged list.)</description></item>
@@ -168,8 +170,9 @@ public static partial class YANObject
     /// <see cref="Lazy{T}.Value"/> is never read by the walk; a getter-only list property whose own getter reads a lazy value (<c>Dates =&gt; _lazy.Value</c>) is still called,
     /// which creates that value.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
-    /// <item><description>Objects and structs are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack; each object's own
-    /// properties are converted first, then the values it references, in property / item order, depth first, and a value is written back after everything reachable from it. A graph that never ends (a getter that returns a new object on every call whose type leads back
+    /// <item><description>Objects and structs are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack. The order is that
+    /// of 8.3.3: depth first, in property / item order, a value found in a property or an item being walked, and written back, before the next property or item of
+    /// its owner is read. Every object and struct walked is kept until the method returns. A graph that never ends (a getter that returns a new object on every call whose type leads back
     /// to itself) is walked until memory runs out.</description></item>
     /// </list>
     /// </remarks>

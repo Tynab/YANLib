@@ -168,57 +168,44 @@ internal static partial class YANObject
 
     /// <summary>
     /// Converts, in place, the <see cref="DateTime"/> values reachable from <paramref name="root"/>, skipping the objects in <paramref name="visited"/>.
-    /// The values (class instances and boxed structs) are walked from the work stack <paramref name="pending"/> (empty on entry and on return) instead of
-    /// recursively, so the depth of the graph (a long linked list, a deep tree, a chain of structs) is not limited by the call stack. Each value's own
-    /// properties are converted first, then the values it references, in property / item order, depth first. A value stays on the stack below the
-    /// values it references and is completed (<see cref="TimeZoneNode.Complete"/>, which writes it back) once they have all been walked.
+    /// The walk is depth first in property / item order, as the recursive walk of 8.3.3: a value found in a property or an item (a class instance or a
+    /// boxed struct) is walked, and written back (<see cref="TimeZoneNode.Complete"/>), before the next property or item of its owner is read.
+    /// The values being walked are kept on the work stack <paramref name="pending"/> (empty on entry and on return), one per level of the path from
+    /// <paramref name="root"/>, each with the position where its walk resumes, instead of on the call stack, so the depth of the graph (a long linked
+    /// list, a deep tree, a chain of structs) is not limited by the call stack.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
     {
-        if (root.GetType().IsTimeZoneLeaf())
+        if (!TryVisitTimeZoneValue(root, visited))
         {
             return;
         }
 
-        var node = new TimeZoneNode(root, null, null, null, 0);
+        pending.Add(new TimeZoneNode(root, null, null, null, 0));
 
-        while (true)
+        while (pending.Count > 0)
         {
-            if (node.Walked)
+            var node = pending[^1];
+
+            if (ChangeTimeZoneNext(node, tzSrc, tzDst, visited) is { } child)
             {
+                pending.Add(child);
+            }
+            else
+            {
+                pending.RemoveAt(pending.Count - 1);
                 node.Complete();
             }
-            else if (visited.Add(node.Value))
-            {
-                // Pushed again below the values it references, so that it is completed after them.
-                node.Walked = true;
-                pending.Add(node);
-
-                var start = pending.Count;
-
-                node.Changed = ChangeTimeZoneGraph(node, tzSrc, tzDst, visited, pending);
-
-                // The values referenced by `node` were pushed in property / item order; reverse them so that the first one is walked first.
-                pending.Reverse(start, pending.Count - start);
-            }
-
-            if (pending.Count is 0)
-            {
-                return;
-            }
-
-            node = pending[^1];
-            pending.RemoveAt(pending.Count - 1);
         }
     }
 
     /// <summary>
-    /// A value found in the graph (a class instance or a boxed struct) and where it is held: the property <paramref name="property"/> of
-    /// <paramref name="target"/>, the item <paramref name="index"/> of the list <paramref name="target"/> (no <paramref name="property"/>), or nowhere
-    /// that is written back (no <paramref name="target"/>: the root, a getter-only property, an item of a read-only list, a class item of an
-    /// <see cref="ArraySegment{T}"/>).
+    /// A value being walked (a class instance or a boxed struct), where it is held, and where its walk resumes. The value is held in the property
+    /// <paramref name="property"/> of <paramref name="target"/>, in the item <paramref name="index"/> of the list <paramref name="target"/> (no
+    /// <paramref name="property"/>), or nowhere that is written back (no <paramref name="target"/>: the root, a getter-only property, an item of a
+    /// read-only list).
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="owner">The node of the value that holds <paramref name="value"/>, or <c>null</c> for the root.</param>
@@ -230,14 +217,40 @@ internal static partial class YANObject
         public object Value { get; } = value;
 
         /// <summary>
-        /// Whether the values that <see cref="Value"/> references have been pushed on the work stack.
-        /// </summary>
-        public bool Walked { get; set; }
-
-        /// <summary>
         /// Whether a <see cref="DateTime"/> was converted in <see cref="Value"/> or in a value walked from it.
         /// </summary>
         public bool Changed { get; set; }
+
+        /// <summary>
+        /// Whether the walk of <see cref="Value"/> has started (<see cref="Properties"/> or <see cref="Items"/> and <see cref="Position"/> are set).
+        /// </summary>
+        public bool Started { get; set; }
+
+        /// <summary>
+        /// The properties of <see cref="Value"/> that are read, or <c>null</c> when its items are walked or it has nothing else to walk.
+        /// </summary>
+        public PropertyInfo[]? Properties { get; set; }
+
+        /// <summary>
+        /// The list whose items are walked: <see cref="Value"/> itself, or the array under the <see cref="ArraySegment{T}"/> <see cref="Value"/>.
+        /// </summary>
+        public IList? Items { get; set; }
+
+        /// <summary>
+        /// Whether the <see cref="DateTime"/> items of <see cref="Items"/> are converted and its items in which something changed are written back.
+        /// </summary>
+        public bool ItemsWritable { get; set; }
+
+        /// <summary>
+        /// The index of the next property of <see cref="Properties"/>, or of the next item of <see cref="Items"/>, to read.
+        /// </summary>
+        public int Position { get; set; }
+
+        /// <summary>
+        /// The end (exclusive) of the items of an <see cref="ArraySegment{T}"/> in <see cref="Items"/>, or -1 to read up to the list's count, which is
+        /// read again before each item (as in 8.3.3), since the values walked in between can run setters.
+        /// </summary>
+        public int End { get; set; } = -1;
 
         /// <summary>
         /// Called once every value walked from <see cref="Value"/> is done. If something in it changed, writes it back where it is held (the
@@ -273,137 +286,68 @@ internal static partial class YANObject
     }
 
     /// <summary>
-    /// Adds a value found in the graph to <paramref name="pending"/>, unless it is a leaf or was already walked.
+    /// Whether <paramref name="value"/> is to be walked: it is not a leaf and was not walked before. It is then added to <paramref name="visited"/>.
     /// </summary>
-    /// <param name="value">The value.</param>
-    /// <param name="visited">The objects already walked.</param>
-    /// <param name="pending">The work stack.</param>
-    /// <param name="owner">The node of the value that holds <paramref name="value"/>.</param>
-    /// <param name="target">Where <paramref name="value"/> is written back (see <see cref="TimeZoneNode"/>), or <c>null</c>.</param>
-    /// <param name="property">The property of <paramref name="target"/> that holds <paramref name="value"/>, or <c>null</c> for a list item.</param>
-    /// <param name="index">The index of <paramref name="value"/> in the list <paramref name="target"/>.</param>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static void ChangeTimeZoneValue(object value, HashSet<object> visited, List<TimeZoneNode> pending, TimeZoneNode owner, object? target, PropertyInfo? property = null, int index = 0)
-    {
-        if (!value.GetType().IsTimeZoneLeaf() && !visited.Contains(value))
-        {
-            pending.Add(new TimeZoneNode(value, owner, target, property, index));
-        }
-    }
+    private static bool TryVisitTimeZoneValue(object value, HashSet<object> visited) => !value.GetType().IsTimeZoneLeaf() && visited.Add(value);
 
     /// <summary>
-    /// Converts, in place, the <see cref="DateTime"/> values of <paramref name="node"/>'s value, and adds the class instances and boxed structs inside it
-    /// to <paramref name="pending"/>.
+    /// Continues the walk of <paramref name="node"/>'s value where it stopped: converts its <see cref="DateTime"/> values in place, in property / item
+    /// order, up to the next value to walk.
     /// </summary>
-    /// <param name="node">The node of the value to convert.</param>
+    /// <param name="node">The node of the value to walk.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
     /// <param name="visited">The objects already walked.</param>
-    /// <param name="pending">The work stack.</param>
-    /// <returns><c>true</c> if a <see cref="DateTime"/> value was written into the value itself.</returns>
+    /// <returns>The node of the next value to walk (already added to <paramref name="visited"/>), or <c>null</c> when <paramref name="node"/>'s value is done.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneGraph(TimeZoneNode node, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
+    private static TimeZoneNode? ChangeTimeZoneNext(TimeZoneNode node, object? tzSrc, object? tzDst, HashSet<object> visited)
     {
+        if (!node.Started)
+        {
+            node.Started = true;
+            ChangeTimeZoneStart(node, tzSrc, tzDst);
+        }
+
+        if (node.Items is { } items)
+        {
+            for (; node.Position < (node.End < 0 ? items.Count : node.End); node.Position++)
+            {
+                var item = items[node.Position];
+
+                if (item is DateTime dt)
+                {
+                    if (node.ItemsWritable)
+                    {
+                        items[node.Position] = dt.ChangeTimeZoneImplement(tzSrc, tzDst);
+                        node.Changed = true;
+                    }
+                }
+                else if (item is not null && TryVisitTimeZoneValue(item, visited))
+                {
+                    // Walked now; written back (list[i] = item) once it is done if something in it changed, as in 8.3.3, unless the list is read-only.
+                    var index = node.Position++;
+
+                    return new TimeZoneNode(item, node, node.ItemsWritable ? items : null, null, index);
+                }
+            }
+
+            return null;
+        }
+
+        if (node.Properties is not { } props)
+        {
+            return null;
+        }
+
         var input = node.Value;
-        var type = input.GetType();
 
-        switch (input)
+        for (; node.Position < props.Length; node.Position++)
         {
-            case IList<DateTime> dates:
-            {
-                // Arrays and array segments report IList<T>.IsReadOnly == true but their elements can be replaced.
-                if (dates.IsReadOnly && input is not (Array or ArraySegment<DateTime>))
-                {
-                    return false;
-                }
+            var prop = props[node.Position];
 
-                for (var i = 0; i < dates.Count; i++)
-                {
-                    dates[i] = dates[i].ChangeTimeZoneImplement(tzSrc, tzDst);
-                }
-
-                return dates.Count > 0;
-            }
-            case IList<DateTime?> dates:
-            {
-                if (dates.IsReadOnly && input is not (Array or ArraySegment<DateTime?>))
-                {
-                    return false;
-                }
-
-                var changed = false;
-
-                for (var i = 0; i < dates.Count; i++)
-                {
-                    if (dates[i] is DateTime dt)
-                    {
-                        dates[i] = dt.ChangeTimeZoneImplement(tzSrc, tzDst);
-                        changed = true;
-                    }
-                }
-
-                return changed;
-            }
-            case Array { Rank: > 1 }:
-            {
-                return false;
-            }
-            case IList list:
-            {
-                int count;
-
-                try
-                {
-                    count = list.Count;
-                }
-                catch (InvalidOperationException)
-                {
-                    // e.g. a default (uninitialised) ImmutableArray<T>
-                    return false;
-                }
-
-                var writable = !list.IsReadOnly;
-                var changed = false;
-
-                for (var i = 0; i < count; i++)
-                {
-                    var item = list[i];
-
-                    if (item is DateTime dt)
-                    {
-                        if (writable)
-                        {
-                            list[i] = dt.ChangeTimeZoneImplement(tzSrc, tzDst);
-                            changed = true;
-                        }
-                    }
-                    else if (item is not null)
-                    {
-                        // An item in which something changes is written back (list[i] = item), as in 8.3.3, unless the list is read-only.
-                        ChangeTimeZoneValue(item, visited, pending, node, writable ? list : null, null, i);
-                    }
-                }
-
-                return changed;
-            }
-        }
-
-        if (GetArraySegmentConverter(type) is { } segmentConverter)
-        {
-            return segmentConverter(node, tzSrc, tzDst, visited, pending);
-        }
-
-        if (GetDateTimeDictionaryConverter(type) is { } converter)
-        {
-            return converter(input, tzSrc, tzDst);
-        }
-
-        var written = false;
-
-        foreach (var prop in GetCachedReadableProperties(type))
-        {
             if (!prop.CanWrite && (!prop.PropertyType.IsTimeZoneCollection() || IsLazy(prop.DeclaringType)))
             {
                 continue;
@@ -429,33 +373,128 @@ internal static partial class YANObject
             if (!prop.CanWrite)
             {
                 // A getter-only collection can still be converted in place; it is not written back.
-                if (!value.GetType().IsValueType)
+                if (!value.GetType().IsValueType && TryVisitTimeZoneValue(value, visited))
                 {
-                    ChangeTimeZoneValue(value, visited, pending, node, null);
+                    node.Position++;
+
+                    return new TimeZoneNode(value, node, null, null, 0);
                 }
-
-                continue;
             }
-
-            if (value is DateTime dt)
+            else if (value is DateTime dt)
             {
                 prop.SetValue(input, dt.ChangeTimeZoneImplement(tzSrc, tzDst));
-                written = true;
+                node.Changed = true;
             }
-            else
+            else if (TryVisitTimeZoneValue(value, visited))
             {
-                // Written back with the setter once everything reachable from it has been walked, if something in it changed.
-                ChangeTimeZoneValue(value, visited, pending, node, input, prop);
+                // Walked now; written back with the setter once it is done if something in it changed, before the next property is read (as in 8.3.3).
+                node.Position++;
+
+                return new TimeZoneNode(value, node, input, prop, 0);
             }
         }
 
-        return written;
+        return null;
+    }
+
+    /// <summary>
+    /// Starts the walk of <paramref name="node"/>'s value: converts a list of <see cref="DateTime"/> / <c>DateTime?</c> or a dictionary with such values
+    /// in one go, or sets the items (of a list or an <see cref="ArraySegment{T}"/>) or the properties that <see cref="ChangeTimeZoneNext"/> reads.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static void ChangeTimeZoneStart(TimeZoneNode node, object? tzSrc, object? tzDst)
+    {
+        var input = node.Value;
+
+        switch (input)
+        {
+            case IList<DateTime> dates:
+            {
+                // Arrays and array segments report IList<T>.IsReadOnly == true but their elements can be replaced.
+                if (!dates.IsReadOnly || input is Array or ArraySegment<DateTime>)
+                {
+                    for (var i = 0; i < dates.Count; i++)
+                    {
+                        dates[i] = dates[i].ChangeTimeZoneImplement(tzSrc, tzDst);
+                    }
+
+                    node.Changed = dates.Count > 0;
+                }
+
+                return;
+            }
+            case IList<DateTime?> dates:
+            {
+                if (!dates.IsReadOnly || input is Array or ArraySegment<DateTime?>)
+                {
+                    for (var i = 0; i < dates.Count; i++)
+                    {
+                        if (dates[i] is DateTime dt)
+                        {
+                            dates[i] = dt.ChangeTimeZoneImplement(tzSrc, tzDst);
+                            node.Changed = true;
+                        }
+                    }
+                }
+
+                return;
+            }
+            case Array { Rank: > 1 }:
+            {
+                return;
+            }
+            case IList list:
+            {
+                try
+                {
+                    _ = list.Count;
+                }
+                catch (InvalidOperationException)
+                {
+                    // e.g. a default (uninitialised) ImmutableArray<T>
+                    return;
+                }
+
+                node.Items = list;
+                node.ItemsWritable = !list.IsReadOnly;
+
+                return;
+            }
+        }
+
+        var type = input.GetType();
+
+        if (GetArraySegmentBounds(type) is { } getBounds)
+        {
+            // Like an array, a segment's items can be replaced (the writes go to the underlying array); the items outside the segment are not read.
+            var (array, offset, count) = getBounds(input);
+
+            if (array is not null)
+            {
+                node.Items = array;
+                node.ItemsWritable = true;
+                node.Position = offset;
+                node.End = offset + count;
+            }
+
+            return;
+        }
+
+        if (GetDateTimeDictionaryConverter(type) is { } converter)
+        {
+            node.Changed = converter(input, tzSrc, tzDst);
+
+            return;
+        }
+
+        node.Properties = GetCachedReadableProperties(type);
     }
 
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneLeafCache = new();
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneCollectionCache = new();
     private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
-    private static readonly ConcurrentDictionary<Type, Func<TimeZoneNode, object?, object?, HashSet<object>, List<TimeZoneNode>, bool>?> ArraySegmentConverterCache = new();
+    private static readonly ConcurrentDictionary<Type, Func<object, (IList? Array, int Offset, int Count)>?> ArraySegmentBoundsCache = new();
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
@@ -592,43 +631,26 @@ internal static partial class YANObject
     });
 
     /// <summary>
-    /// Gets a converter that walks only the items of an <see cref="ArraySegment{T}"/>, or <c>null</c> for other types. A segment is not an
-    /// <see cref="IList"/>, and its getter-only <see cref="ArraySegment{T}.Array"/> property is the whole underlying array, so walking the segment's
-    /// properties would convert the items outside the segment too. (Segments of <see cref="DateTime"/> / <c>DateTime?</c> are converted as lists.)
+    /// Gets a function that returns the underlying array, offset and count of an <see cref="ArraySegment{T}"/>, or <c>null</c> for other types. A segment
+    /// is not an <see cref="IList"/>, and its getter-only <see cref="ArraySegment{T}.Array"/> property is the whole underlying array, so the walk reads
+    /// the segment's items in that array instead of walking the segment's properties, which would convert the items outside the segment too.
+    /// (Segments of <see cref="DateTime"/> / <c>DateTime?</c> are converted as lists.)
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Func<TimeZoneNode, object?, object?, HashSet<object>, List<TimeZoneNode>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
+    private static Func<object, (IList? Array, int Offset, int Count)>? GetArraySegmentBounds(Type type) => ArraySegmentBoundsCache.GetOrAdd(type, static t =>
         IsArraySegment(t)
-            ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments())
-                .CreateDelegate<Func<TimeZoneNode, object?, object?, HashSet<object>, List<TimeZoneNode>, bool>>()
+            ? typeof(YANObject).GetMethod(nameof(ArraySegmentBounds), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments())
+                .CreateDelegate<Func<object, (IList? Array, int Offset, int Count)>>()
             : null);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneArraySegment<T>(TimeZoneNode node, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
+    private static (IList? Array, int Offset, int Count) ArraySegmentBounds<T>(object input)
     {
-        // Like an array, a segment's items can be replaced (the writes go to the underlying array).
-        var segment = (ArraySegment<T>)node.Value;
-        var changed = false;
+        var segment = (ArraySegment<T>)input;
 
-        for (var i = 0; i < segment.Count; i++)
-        {
-            object? item = segment[i];
-
-            if (item is DateTime dt)
-            {
-                segment[i] = (T)(object)dt.ChangeTimeZoneImplement(tzSrc, tzDst);
-                changed = true;
-            }
-            else if (item is not null)
-            {
-                // A struct item is written back into the underlying array; a class item is changed in place (8.3.3 did not walk segment items).
-                ChangeTimeZoneValue(item, visited, pending, node, item.GetType().IsValueType ? segment.Array : null, null, segment.Offset + i);
-            }
-        }
-
-        return changed;
+        return (segment.Array, segment.Offset, segment.Count);
     }
 
     [DebuggerHidden]
