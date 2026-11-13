@@ -168,51 +168,39 @@ internal static partial class YANObject
 
     /// <summary>
     /// Converts, in place, the <see cref="DateTime"/> values reachable from <paramref name="root"/>, skipping the objects in <paramref name="visited"/>.
-    /// Class instances and boxed structs are walked from the work stack <paramref name="pending"/> (empty on entry and on return) instead of recursively,
-    /// so the depth of the graph (a long linked list, a deep tree, a chain of structs) is not limited by the call stack. Each object's own properties are
-    /// converted first, then the values it references, in property / item order, depth first. A boxed struct stays on the stack below the values it
-    /// references and is written back into its owner once they have all been walked.
+    /// The values (class instances and boxed structs) are walked from the work stack <paramref name="pending"/> (empty on entry and on return) instead of
+    /// recursively, so the depth of the graph (a long linked list, a deep tree, a chain of structs) is not limited by the call stack. Each value's own
+    /// properties are converted first, then the values it references, in property / item order, depth first. A value stays on the stack below the
+    /// values it references and is completed (<see cref="TimeZoneNode.Complete"/>, which writes it back) once they have all been walked.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending)
+    private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
     {
-        var next = root;
+        if (root.GetType().IsTimeZoneLeaf())
+        {
+            return;
+        }
+
+        var node = new TimeZoneNode(root, null, null, null, 0);
 
         while (true)
         {
-            if (next is TimeZoneBox { Walked: true } done)
+            if (node.Walked)
             {
-                // Everything inside the struct has been walked: write it back if something in it changed.
-                if (done.Changed && done.WriteBack is not null)
-                {
-                    done.WriteBack(done.Value);
-
-                    if (done.Owner is not null)
-                    {
-                        done.Owner.Changed = true;
-                    }
-                }
+                node.Complete();
             }
-            else
+            else if (visited.Add(node.Value))
             {
-                var box = next as TimeZoneBox;
-
-                if (box is not null)
-                {
-                    // Pushed again below the values it references, so that it is written back after them.
-                    box.Walked = true;
-                    pending.Add(box);
-                }
+                // Pushed again below the values it references, so that it is completed after them.
+                node.Walked = true;
+                pending.Add(node);
 
                 var start = pending.Count;
 
-                if (ChangeTimeZoneGraph(box?.Value ?? next, tzSrc, tzDst, visited, pending, box) && box is not null)
-                {
-                    box.Changed = true;
-                }
+                node.Changed = ChangeTimeZoneGraph(node, tzSrc, tzDst, visited, pending);
 
-                // The values referenced by `next` were pushed in property / item order; reverse them so that the first one is walked first.
+                // The values referenced by `node` were pushed in property / item order; reverse them so that the first one is walked first.
                 pending.Reverse(start, pending.Count - start);
             }
 
@@ -221,100 +209,105 @@ internal static partial class YANObject
                 return;
             }
 
-            next = pending[^1];
+            node = pending[^1];
             pending.RemoveAt(pending.Count - 1);
         }
     }
 
     /// <summary>
-    /// A boxed struct found in the graph. The walk changes the box, so it must be written back into its owner (a property, a list item or an
-    /// <see cref="ArraySegment{T}"/> item) once everything inside it has been walked, if something in it changed.
+    /// A value found in the graph (a class instance or a boxed struct) and where it is held: the property <paramref name="property"/> of
+    /// <paramref name="target"/>, the item <paramref name="index"/> of the list <paramref name="target"/> (no <paramref name="property"/>), or nowhere
+    /// that is written back (no <paramref name="target"/>: the root, a getter-only property, an item of a read-only list, a class item of an
+    /// <see cref="ArraySegment{T}"/>).
     /// </summary>
-    /// <param name="value">The boxed struct.</param>
-    /// <param name="owner">The boxed struct that holds <paramref name="value"/> and must be written back in turn, or <c>null</c> (a class instance, or the root).</param>
-    private sealed class TimeZoneBox(object value, TimeZoneBox? owner)
+    /// <param name="value">The value.</param>
+    /// <param name="owner">The node of the value that holds <paramref name="value"/>, or <c>null</c> for the root.</param>
+    /// <param name="target">The object whose property, or the list whose item, holds <paramref name="value"/>, or <c>null</c>.</param>
+    /// <param name="property">The writable property of <paramref name="target"/> that holds <paramref name="value"/>, or <c>null</c> for a list item.</param>
+    /// <param name="index">The index of <paramref name="value"/> in the list <paramref name="target"/>.</param>
+    private sealed class TimeZoneNode(object value, TimeZoneNode? owner, object? target, PropertyInfo? property, int index)
     {
         public object Value { get; } = value;
 
-        public TimeZoneBox? Owner { get; } = owner;
-
         /// <summary>
-        /// Writes <see cref="Value"/> back into its owner; <c>null</c> when the owner cannot be written (a read-only list).
+        /// Whether the values that <see cref="Value"/> references have been pushed on the work stack.
         /// </summary>
-        public Action<object>? WriteBack { get; set; }
-
         public bool Walked { get; set; }
 
+        /// <summary>
+        /// Whether a <see cref="DateTime"/> was converted in <see cref="Value"/> or in a value walked from it.
+        /// </summary>
         public bool Changed { get; set; }
+
+        /// <summary>
+        /// Called once every value walked from <see cref="Value"/> is done. If something in it changed, writes it back where it is held (the
+        /// property's setter or the list's indexer), so that a struct, or a property whose getter returns a copy (a defensive copy, a computed or a
+        /// JSON-backed object), gets the converted value, and marks the owner as changed so that it is written back in turn.
+        /// </summary>
+        [DebuggerHidden]
+        [DebuggerStepThrough]
+        public void Complete()
+        {
+            if (!Changed)
+            {
+                return;
+            }
+
+            if (target is not null)
+            {
+                if (property is not null)
+                {
+                    property.SetValue(target, Value);
+                }
+                else
+                {
+                    ((IList)target)[index] = Value;
+                }
+            }
+
+            if (owner is not null)
+            {
+                owner.Changed = true;
+            }
+        }
     }
 
     /// <summary>
-    /// Adds a value found in the graph to <paramref name="pending"/>, unless it is a leaf or was already walked. A class instance is changed in place
-    /// and never written back; a boxed struct is added as a <see cref="TimeZoneBox"/>, whose <see cref="TimeZoneBox.WriteBack"/> the caller sets.
+    /// Adds a value found in the graph to <paramref name="pending"/>, unless it is a leaf or was already walked.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="visited">The objects already walked.</param>
     /// <param name="pending">The work stack.</param>
-    /// <param name="owner">The boxed struct being walked that holds <paramref name="value"/>, or <c>null</c>.</param>
-    /// <returns>The <see cref="TimeZoneBox"/> added for a boxed struct, otherwise <c>null</c>.</returns>
+    /// <param name="owner">The node of the value that holds <paramref name="value"/>.</param>
+    /// <param name="target">Where <paramref name="value"/> is written back (see <see cref="TimeZoneNode"/>), or <c>null</c>.</param>
+    /// <param name="property">The property of <paramref name="target"/> that holds <paramref name="value"/>, or <c>null</c> for a list item.</param>
+    /// <param name="index">The index of <paramref name="value"/> in the list <paramref name="target"/>.</param>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static TimeZoneBox? ChangeTimeZoneValue(object value, HashSet<object> visited, List<object> pending, TimeZoneBox? owner)
+    private static void ChangeTimeZoneValue(object value, HashSet<object> visited, List<TimeZoneNode> pending, TimeZoneNode owner, object? target, PropertyInfo? property = null, int index = 0)
     {
-        var type = value.GetType();
-
-        if (type.IsTimeZoneLeaf() || visited.Contains(value))
+        if (!value.GetType().IsTimeZoneLeaf() && !visited.Contains(value))
         {
-            return null;
+            pending.Add(new TimeZoneNode(value, owner, target, property, index));
         }
-
-        if (type.IsValueType)
-        {
-            var box = new TimeZoneBox(value, owner);
-
-            pending.Add(box);
-
-            return box;
-        }
-
-        pending.Add(value);
-
-        return null;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static Action<object> PropertyWriteBack(PropertyInfo prop, object target) => value => prop.SetValue(target, value);
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static Action<object> ListWriteBack(IList list, int index) => value => list[index] = value;
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    private static Action<object> ArraySegmentWriteBack<T>(ArraySegment<T> segment, int index) => value => segment[index] = (T)value;
-
     /// <summary>
-    /// Converts, in place, the <see cref="DateTime"/> values of <paramref name="input"/>; every object is visited once. The class instances and
-    /// boxed structs inside it are added to <paramref name="pending"/>.
+    /// Converts, in place, the <see cref="DateTime"/> values of <paramref name="node"/>'s value, and adds the class instances and boxed structs inside it
+    /// to <paramref name="pending"/>.
     /// </summary>
-    /// <param name="input">The object to convert.</param>
+    /// <param name="node">The node of the value to convert.</param>
     /// <param name="tzSrc">The source time zone.</param>
     /// <param name="tzDst">The destination time zone.</param>
     /// <param name="visited">The objects already walked.</param>
     /// <param name="pending">The work stack.</param>
-    /// <param name="box">The <see cref="TimeZoneBox"/> of <paramref name="input"/> when it is a boxed struct that must be written back, otherwise <c>null</c>.</param>
-    /// <returns><c>true</c> if a value was written into <paramref name="input"/> itself (a boxed struct must then be written back by its owner).</returns>
+    /// <returns><c>true</c> if a <see cref="DateTime"/> value was written into the value itself.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneGraph(object input, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending, TimeZoneBox? box)
+    private static bool ChangeTimeZoneGraph(TimeZoneNode node, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
     {
+        var input = node.Value;
         var type = input.GetType();
-
-        if (type.IsTimeZoneLeaf() || !visited.Add(input))
-        {
-            return false;
-        }
 
         switch (input)
         {
@@ -386,9 +379,10 @@ internal static partial class YANObject
                             changed = true;
                         }
                     }
-                    else if (item is not null && ChangeTimeZoneValue(item, visited, pending, box) is { } itemBox && writable)
+                    else if (item is not null)
                     {
-                        itemBox.WriteBack = ListWriteBack(list, i);
+                        // An item in which something changes is written back (list[i] = item), as in 8.3.3, unless the list is read-only.
+                        ChangeTimeZoneValue(item, visited, pending, node, writable ? list : null, null, i);
                     }
                 }
 
@@ -398,7 +392,7 @@ internal static partial class YANObject
 
         if (GetArraySegmentConverter(type) is { } segmentConverter)
         {
-            return segmentConverter(input, tzSrc, tzDst, visited, pending, box);
+            return segmentConverter(node, tzSrc, tzDst, visited, pending);
         }
 
         if (GetDateTimeDictionaryConverter(type) is { } converter)
@@ -434,10 +428,10 @@ internal static partial class YANObject
 
             if (!prop.CanWrite)
             {
-                // A getter-only collection can still be converted in place; nothing is written back.
+                // A getter-only collection can still be converted in place; it is not written back.
                 if (!value.GetType().IsValueType)
                 {
-                    _ = ChangeTimeZoneValue(value, visited, pending, box);
+                    ChangeTimeZoneValue(value, visited, pending, node, null);
                 }
 
                 continue;
@@ -448,9 +442,10 @@ internal static partial class YANObject
                 prop.SetValue(input, dt.ChangeTimeZoneImplement(tzSrc, tzDst));
                 written = true;
             }
-            else if (ChangeTimeZoneValue(value, visited, pending, box) is { } valueBox)
+            else
             {
-                valueBox.WriteBack = PropertyWriteBack(prop, input);
+                // Written back with the setter once everything reachable from it has been walked, if something in it changed.
+                ChangeTimeZoneValue(value, visited, pending, node, input, prop);
             }
         }
 
@@ -460,7 +455,7 @@ internal static partial class YANObject
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneLeafCache = new();
     private static readonly ConcurrentDictionary<Type, bool> TimeZoneCollectionCache = new();
     private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
-    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, HashSet<object>, List<object>, TimeZoneBox?, bool>?> ArraySegmentConverterCache = new();
+    private static readonly ConcurrentDictionary<Type, Func<TimeZoneNode, object?, object?, HashSet<object>, List<TimeZoneNode>, bool>?> ArraySegmentConverterCache = new();
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
@@ -542,7 +537,7 @@ internal static partial class YANObject
 
     /// <summary>
     /// Whether <paramref name="type"/> is a <see cref="Lazy{T}"/>. A class deriving from it (<see cref="Lazy{T, TMetadata}"/> included) is walked,
-    /// but the properties that <see cref="Lazy{T}"/> declares (<see cref="Lazy{T}.Value"/>) are never read, so the walk never creates a lazy value.
+    /// but the properties that <see cref="Lazy{T}"/> declares (<see cref="Lazy{T}.Value"/>) are never read by the walk.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -603,18 +598,18 @@ internal static partial class YANObject
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static Func<object, object?, object?, HashSet<object>, List<object>, TimeZoneBox?, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
+    private static Func<TimeZoneNode, object?, object?, HashSet<object>, List<TimeZoneNode>, bool>? GetArraySegmentConverter(Type type) => ArraySegmentConverterCache.GetOrAdd(type, static t =>
         IsArraySegment(t)
             ? typeof(YANObject).GetMethod(nameof(ChangeTimeZoneArraySegment), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments())
-                .CreateDelegate<Func<object, object?, object?, HashSet<object>, List<object>, TimeZoneBox?, bool>>()
+                .CreateDelegate<Func<TimeZoneNode, object?, object?, HashSet<object>, List<TimeZoneNode>, bool>>()
             : null);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool ChangeTimeZoneArraySegment<T>(object input, object? tzSrc, object? tzDst, HashSet<object> visited, List<object> pending, TimeZoneBox? box)
+    private static bool ChangeTimeZoneArraySegment<T>(TimeZoneNode node, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
     {
         // Like an array, a segment's items can be replaced (the writes go to the underlying array).
-        var segment = (ArraySegment<T>)input;
+        var segment = (ArraySegment<T>)node.Value;
         var changed = false;
 
         for (var i = 0; i < segment.Count; i++)
@@ -626,9 +621,10 @@ internal static partial class YANObject
                 segment[i] = (T)(object)dt.ChangeTimeZoneImplement(tzSrc, tzDst);
                 changed = true;
             }
-            else if (item is not null && ChangeTimeZoneValue(item, visited, pending, box) is { } itemBox)
+            else if (item is not null)
             {
-                itemBox.WriteBack = ArraySegmentWriteBack(segment, i);
+                // A struct item is written back into the underlying array; a class item is changed in place (8.3.3 did not walk segment items).
+                ChangeTimeZoneValue(item, visited, pending, node, item.GetType().IsValueType ? segment.Array : null, null, segment.Offset + i);
             }
         }
 

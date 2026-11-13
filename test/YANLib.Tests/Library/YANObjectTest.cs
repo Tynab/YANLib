@@ -947,6 +947,108 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_WritablePropertiesReturningCopies_AreWrittenBack_Object()
+    {
+        // Arrange
+        var input = new TzCopyingHolder
+        {
+            Dates = [Hour(1)],
+            Stamps = [Hour(2)],
+            Lines = [new DateTimeTestClass { DateProperty = Hour(3) }],
+            Item = new DateTimeTestClass { DateProperty = Hour(4) },
+            At = Hour(5)
+        };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (each getter returns a copy, which is converted and passed to the setter, as in 8.3.3; 011812f converted the copies and dropped them)
+        Assert.Equal([Hour(8)], input.Dates);
+        Assert.Equal([Hour(9)], input.Stamps);
+        Assert.Equal(Hour(10), input.Lines[0].DateProperty);
+        Assert.Equal(Hour(11), input.Item.DateProperty);
+        Assert.Equal(Hour(12), input.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_JsonBackedProperty_IsWrittenBackAfterItsContents_Object()
+    {
+        // Arrange
+        var input = new TzJsonHolder { Settings = new TzJsonSettings { ExpiresAt = Hour(1), Holidays = [Hour(2)] }, At = Hour(3) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the getter deserializes a new object and the setter serializes it; the setter is called once everything in that object, the Holidays
+        // list included, has been converted, as in 8.3.3; 011812f converted the deserialized object and dropped it)
+        var settings = input.Settings;
+
+        Assert.Equal(Hour(8), settings.ExpiresAt);
+        Assert.Equal([Hour(9)], settings.Holidays);
+        Assert.Equal(Hour(10), input.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ChangesInsideGetterOnlyAndReadOnlyValues_ReachTheSetterOfACopy_Object()
+    {
+        // Arrange
+        var input = new TzNestedCopyHolder(Hour(1), Hour(2));
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the getter-only list of a copied object and the struct of a copied read-only list are converted in place, and the copy that holds them
+        // is passed to the setter; 011812f dropped both copies, and 8.3.3 skipped the getter-only list and threw NotSupportedException on the read-only list)
+        Assert.Equal(Hour(8), input.StoredDate);
+        Assert.Equal(Hour(9), input.StoredStructDate);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_Setters_AreCalledForChangedValuesAfterTheirContents_Object()
+    {
+        // Arrange
+        var log = new List<string>();
+        var shared = new DateTimeTestClass { DateProperty = Hour(1) };
+
+        var input = new TzSetterLogNode("root", log)
+        {
+            At = Hour(2),
+            Child = new TzSetterLogNode("child", log) { At = Hour(3), Child = new TzSetterLogNode("grandchild", log) { At = Hour(4) } },
+            Shared = shared,
+            Again = shared,
+            Plain = new TzPlain { Name = "x" }
+        };
+
+        log.Clear();
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (as in 8.3.3, a property whose value had a DateTime converted in it is set once everything in that value is done; unlike 8.3.3, the setters
+        // of a value with nothing converted in it (Plain) and of a second reference to an object already converted (Again) are not called;
+        // 011812f only called the DateTime setters)
+        Assert.Equal(["At:root", "At:child", "At:grandchild", "Child:child", "Child:root", "Shared:root"], log);
+        Assert.Equal(Hour(8), shared.DateProperty);
+        Assert.Equal(Hour(11), input.Child!.Child!.At);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_ObjectsWithNothingConverted_AreNotWrittenBack_Object()
+    {
+        // Arrange
+        var input = new TzFrozenHolder { At = Hour(1) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (the setters of Frozen and Culture throw, but nothing in their values is converted, so they are not called; 8.3.3 called every setter
+        // and threw TargetInvocationException)
+        Assert.Equal(Hour(8), input.At);
+        Assert.Equal("x", input.Frozen.Name);
+        Assert.Same(CultureInfo.InvariantCulture, input.Culture);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_NonDataProperties_AreNotWalked_Object()
     {
         // Arrange
@@ -1482,6 +1584,170 @@ public partial class YANObjectTest
         public TzStructLink Chain { get; set; }
 
         public ITzLink? InterfaceChain { get; set; }
+    }
+
+    private sealed class TzCopyingHolder
+    {
+        private List<DateTime> dates = [];
+        private DateTime[] stamps = [];
+        private List<DateTimeTestClass> lines = [];
+        private DateTime itemDate;
+
+        public List<DateTime> Dates
+        {
+            get => [.. dates];
+            set => dates = value;
+        }
+
+        public DateTime[] Stamps
+        {
+            get => (DateTime[])stamps.Clone();
+            set => stamps = value;
+        }
+
+        public List<DateTimeTestClass> Lines
+        {
+            get => [.. lines.Select(x => new DateTimeTestClass { DateProperty = x.DateProperty })];
+            set => lines = value;
+        }
+
+        public DateTimeTestClass Item
+        {
+            get => new() { DateProperty = itemDate };
+            set => itemDate = value.DateProperty;
+        }
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzJsonSettings
+    {
+        public DateTime ExpiresAt { get; set; }
+
+        public List<DateTime> Holidays { get; set; } = [];
+    }
+
+    private sealed class TzJsonHolder
+    {
+        private string json = "{}";
+
+        public TzJsonSettings Settings
+        {
+            get => System.Text.Json.JsonSerializer.Deserialize<TzJsonSettings>(json)!;
+            set => json = System.Text.Json.JsonSerializer.Serialize(value);
+        }
+
+        public DateTime At { get; set; }
+    }
+
+    private sealed class TzDatesView(List<DateTime> dates)
+    {
+        public List<DateTime> Dates { get; } = dates;
+    }
+
+    private sealed class TzNestedCopyHolder(DateTime date, DateTime structDate)
+    {
+        private List<DateTime> dates = [date];
+        private TzStruct stored = new() { At = structDate };
+
+        public TzDatesView View
+        {
+            get => new([.. dates]);
+            set => dates = value.Dates;
+        }
+
+        public ReadOnlyCollection<object> Structs
+        {
+            get => new(new List<object> { stored });
+            set => stored = (TzStruct)value[0];
+        }
+
+        public DateTime StoredDate => dates[0];
+
+        public DateTime StoredStructDate => stored.At;
+    }
+
+    private sealed class TzSetterLogNode(string name, List<string> log)
+    {
+        private DateTime at;
+        private TzSetterLogNode? child;
+        private DateTimeTestClass? shared;
+        private DateTimeTestClass? again;
+        private TzPlain? plain;
+
+        public DateTime At
+        {
+            get => at;
+            set
+            {
+                log.Add($"At:{name}");
+                at = value;
+            }
+        }
+
+        public TzSetterLogNode? Child
+        {
+            get => child;
+            set
+            {
+                log.Add($"Child:{name}");
+                child = value;
+            }
+        }
+
+        public DateTimeTestClass? Shared
+        {
+            get => shared;
+            set
+            {
+                log.Add($"Shared:{name}");
+                shared = value;
+            }
+        }
+
+        public DateTimeTestClass? Again
+        {
+            get => again;
+            set
+            {
+                log.Add($"Again:{name}");
+                again = value;
+            }
+        }
+
+        public TzPlain? Plain
+        {
+            get => plain;
+            set
+            {
+                log.Add($"Plain:{name}");
+                plain = value;
+            }
+        }
+    }
+
+    private sealed class TzPlain
+    {
+        public string? Name { get; set; }
+    }
+
+    private sealed class TzFrozenHolder
+    {
+        private readonly TzPlain frozen = new() { Name = "x" };
+
+        public TzPlain Frozen
+        {
+            get => frozen;
+            set => throw new InvalidOperationException("Frozen.");
+        }
+
+        public CultureInfo Culture
+        {
+            get => CultureInfo.InvariantCulture;
+            set => throw new InvalidOperationException("Frozen.");
+        }
+
+        public DateTime At { get; set; }
     }
 
     private sealed class TzStructHolder

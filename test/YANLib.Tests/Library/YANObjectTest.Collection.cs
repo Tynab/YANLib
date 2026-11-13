@@ -836,6 +836,23 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperties_WritablePropertyReturningACopy_IsWrittenBack_ObjectCollection()
+    {
+        // Arrange
+        var first = new TzCopyingHolder { Dates = [Hour(1)], Item = new DateTimeTestClass { DateProperty = Hour(2) } };
+        var second = new TzCopyingHolder { Dates = [Hour(3)], Item = new DateTimeTestClass { DateProperty = Hour(4) } };
+
+        // Act
+        _ = new[] { first, second }.ChangeTimeZoneAllProperties(0, 7);
+
+        // Assert (the converted copies are passed to the setters, as in 8.3.3; 011812f dropped them)
+        Assert.Equal([Hour(8)], first.Dates);
+        Assert.Equal(Hour(9), first.Item.DateProperty);
+        Assert.Equal([Hour(10)], second.Dates);
+        Assert.Equal(Hour(11), second.Item.DateProperty);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperties_LargeCollection_PreservesOrder_ObjectCollection()
     {
         // Arrange
