@@ -389,8 +389,9 @@ public partial class YANUnmanagedTest
     // a lock, so concurrent first-time Parse<T>() calls for many distinct T corrupted it (InvalidOperationException, wrong
     // results or a hang). Every closed type below (about 3,600) is new to the process; ProcessorCount (>= 4) dedicated
     // threads meet at a Barrier before each first-time call, so they all insert the same new key at the same moment.
-    // Against the 8.3.3 implementation this failed in 6 of 6 runs (8 of 10 with only the first ~660 types); a race can
-    // never fail deterministically, so a pass on buggy code remains possible in principle.
+    // Run on its own against the 8.3.3 implementation it failed in 12 of 12 runs (8 of 10 with only the first ~660 types).
+    // It is best-effort: a race never fails deterministically, and it passed once on 8.3.3 while other tests were competing
+    // for the CPU.
     [Fact]
     public void Parse_ConcurrentFirstUseOfManyDistinctTypes_ReturnsInputWithoutThrowing_Nullable()
     {
