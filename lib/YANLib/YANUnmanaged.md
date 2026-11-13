@@ -159,12 +159,44 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 ```
 
 
+## Conversion Rules
+
+`Parse` never throws. Strings are parsed with `CultureInfo.CurrentCulture` and the same number styles as `Convert.ToInt32(string, IFormatProvider)` and its siblings (so `"1.5"` is 15 for `double` under `de-DE`).
+
+| Input | `Parse<int>()` | `Parse<int>(-1)` | `Parse<int?>()` |
+|-------|----------------|------------------|-----------------|
+| `"123"` | 123 | 123 | 123 |
+| `"3.7"` / `"-3.5"` | 3 / -4 (floored) | -1 | `null` |
+| `"abc"` | 0 | -1 | `null` |
+| `"99999999999"` (out of range) | 0 | -1 | `null` |
+| `3.7` / `2.5` (boxed `double`) | 4 / 2 (rounded half to even) | 4 / 2 | 4 / 2 |
+| `1e10` (boxed, out of range) | 0 | -1 | `null` |
+| `2147483647.6` (boxed) | 2147483647 (the floor fits) | -1 | `null` |
+
+- **Fractions**: only the one-argument `Parse<T>()` with a non-nullable integer `T` floors fractional or out-of-range numbers, using the exact `decimal` value; the `defaultValue` overload and nullable targets return the default / `null` instead.
+- **Out of range**: never throws and never wraps around: the result is `0` / `null` / the converted `defaultValue`.
+- **`nint` / `nuint`**: supported as targets and as inputs (converted through `long` / `ulong`).
+- **Already the target type**: an input that already is a `T` is returned unchanged (a derived instance typed as its base class stays the same instance; a `DateTime` keeps its milliseconds and `Kind`). A `defaultValue` of type `T` is returned unchanged as well, also when a `format` is given.
+- **`char`**: `5.Parse<char>()` converts through the text (`'5'`), `5.Parse<char>('#')` through `Convert.ToChar` (`'\u0005'`).
+- **Failing `ToString()`**: an input whose `ToString()` throws is treated as unparsable.
+
+### Changes since 8.3.3
+
+- Out-of-range integer conversions (`"99999999999".Parse<int>()`, `1e10.Parse<int>()`, and through them `100000.Pow(2)` or `int.MinValue.Abs()` on `int`) used to crash the process with a stack overflow; they now return `0` / `null` / the default value.
+- `nint` / `nuint` conversions work (`"5".Parse<nint>(0)` was 0, `"5".Parse<nint?>()` was `null`, `((object)5).Parse<nint>()` crashed).
+- Fractional strings are floored exactly: `"2.9999999999999999".Parse<int>()` is 2 (was 3), `"0.99999999999999999999".Parse<byte>()` is 0 (was 1), `"12345678901234567.9".Parse<long>()` is 12345678901234567 (was 12345678901234600).
+- Inputs that already have the target type are returned unchanged: `Animal a = new Dog(); a.IsDefault()` is `false` (was `true`), `new object[] { dog }.ToList<Animal>()` is `[dog]` (was `[null]`), parsed `DateTime` values keep milliseconds and `Kind`.
+- `"bad".Parse<DateTime>(dt, "dd/MM/yyyy")` returns `dt` (was `DateTime.MinValue`).
+- `Parses`, `ToList`, `ToArray`, `ToImmutableArray`, ... keep the input order for 1,000+ elements (they used unordered PLINQ) and are lazily evaluated on the enumerating thread.
+- Invalid strings no longer throw and catch exceptions internally: `"abc".Parse<int>()` takes about 30 ns instead of about 24 µs.
+
+
 ## Performance Considerations
 
-- The library uses caching for type reflection to improve performance
+- Per-type metadata is cached in a static generic class, which is thread-safe without locks
 - Collection methods are lazily evaluated on the enumerating thread and preserve the input order
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
-- Type conversion is optimized for common scenarios
+- Strings are parsed with `TryParse`, so invalid input does not cost an exception
 
 
 ## Implementation Details
@@ -182,8 +214,8 @@ The library provides comprehensive coverage of type conversion operations:
 
 | Category | Functions |
 |----------|-----------|
-| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<float>, Parse<double>, Parse<decimal> |
-| **Other Value Types** | Parse<bool>, Parse<char>, Parse<DateTime>, Parse<DateTimeOffset>, Parse<TimeSpan>, Parse<Guid> |
+| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<nint>, Parse<nuint>, Parse<float>, Parse<double>, Parse<decimal> |
+| **Other Value Types** | Parse<bool>, Parse<char>, Parse<DateTime>, Parse<TimeSpan>, Parse<Guid> |
 | **Enum Types** | Parse<TEnum> where TEnum : struct, Enum |
 | **Nullable Types** | Parse<T?> where T : struct |
 | **Collection Conversion** | Parses<T>, Parses<TKey, TValue> |
@@ -197,7 +229,7 @@ The library provides comprehensive coverage of type conversion operations:
 - **Default Value Handling**: Provides configurable default values when parsing fails
 - **Format Support**: Supports custom format strings for parsing formatted values like dates
 - **Enum Parsing**: Implements case-insensitive enum parsing with name and value support
-- **Type Conversion**: Uses `Convert.ChangeType()` and specialized conversion methods for type conversion
+- **Type Conversion**: Parses strings with `TryParse` (`IParsable<T>`), range-checks boxed numbers before converting them, and uses `Convert.ChangeType()` only for the remaining `IConvertible` conversions, inside `try`/`catch`
 - **Nullable Type Support**: Implements special handling for nullable value types
 - **Collection Processing**: Processes collections of objects with efficient type conversion
 - **Dictionary Conversion**: Implements key and value parsing for dictionary type conversion

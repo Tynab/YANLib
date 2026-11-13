@@ -109,6 +109,7 @@ A powerful utility library for parsing and converting objects to unmanaged types
 - Nullable type parsing with null for invalid inputs
 - Collection parsing with robust error handling
 - Format support for date/time, TimeSpan, and culture-specific parsing
+- Never throws: invalid, fractional or out-of-range input (for example `"99999999999".Parse<int>()`) gives the default value; `nint`/`nuint` are supported
 
 ```csharp
 // Parse string to int
