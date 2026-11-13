@@ -177,7 +177,8 @@ public static partial class YANObject
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
     /// <item><description>Objects and structs are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack. The order is that
     /// of 8.3.3: depth first, in property / item order, a value found in a property or an item being walked, and written back, before the next property or item of
-    /// its owner is read. Every object and struct walked is kept until the method returns. A graph that never ends (a getter that returns a new object on every call whose type leads back
+    /// its owner is read. Each item of a <see cref="System.Collections.IList"/> is read once (8.3.3 read each non-null item twice), and the list's <c>IsReadOnly</c> and
+    /// one more <c>Count</c> than in 8.3.3 are read, which only a custom list with side-effecting getters can observe. Every object and struct walked is kept until the method returns. A graph that never ends (a getter that returns a new object on every call whose type leads back
     /// to itself) is walked until memory runs out.</description></item>
     /// </list>
     /// </remarks>
