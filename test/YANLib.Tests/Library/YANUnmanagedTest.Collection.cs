@@ -357,12 +357,12 @@ public partial class YANUnmanagedTest
         // Act
         var result = input.Parses<int, string>();
 
-        // Assert
+        // Assert ("3.5" is floored to 3 like "3.5".Parse<int>(), it is not rounded up)
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
         Assert.Equal("Value1", result[1]);
         Assert.Equal("Value2", result[2]);
-        Assert.Equal("Value3", result[4]);
+        Assert.Equal("Value3", result[3]);
     }
 
     [Fact]
