@@ -79,6 +79,38 @@ public partial class YANRandomTest
         Assert.Equal(0m, result);
     }
 
+    [Fact]
+    public void NextDecimal_NoParameters_IsUniformInUnitInterval_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(42);
+        const int draws = 100_000;
+        var upperFifth = 0;
+        var belowOneTenth = 0;
+
+        // Act
+        for (var i = 0; i < draws; i++)
+        {
+            var value = random.NextDecimal();
+
+            Assert.True(value is >= 0m and < 1m);
+
+            if (value >= 0.8m)
+            {
+                upperFifth++;
+            }
+
+            if (value < 0.1m)
+            {
+                belowOneTenth++;
+            }
+        }
+
+        // Assert
+        Assert.InRange(upperFifth, draws * 18 / 100, draws * 22 / 100);
+        Assert.InRange(belowOneTenth, draws * 8 / 100, draws * 12 / 100);
+    }
+
     #endregion
 
     #region NextBool

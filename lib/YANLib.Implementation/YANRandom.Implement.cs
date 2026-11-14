@@ -13,13 +13,13 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static decimal NextDecimalImplement(this Random random)
     {
-        var bytes = new byte[16];
+        // a mantissa uniform over [0, 10^28) from two independent 14-digit halves, read with 28 decimal places: uniform over [0, 1).
+        // 8.3.3 read 96 random bits at scale 28 (0 to 7.92) and divided values above 1 by 10, so 87% of the draws fell in (0.1, 0.792].
+        const long halfRange = 100_000_000_000_000;
 
-        random.NextBytes(bytes);
+        var mantissa = (UInt128)(ulong)random.NextInt64(halfRange) * (ulong)halfRange + (ulong)random.NextInt64(halfRange);
 
-        var dec = new decimal(ToInt32(bytes, 0), ToInt32(bytes, 4), ToInt32(bytes, 8), false, 28);
-
-        return dec > 1 ? dec / 10 : dec;
+        return new decimal((int)(uint)mantissa, (int)(uint)(mantissa >> 32), (int)(uint)(mantissa >> 64), false, 28);
     }
 
     [DebuggerHidden]
