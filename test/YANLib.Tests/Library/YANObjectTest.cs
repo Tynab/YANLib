@@ -1351,6 +1351,21 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_NullableDateListTypeWithASnapshotCopyProperty_ShiftsItTwice_Object()
+    {
+        // Arrange
+        var input = new TzNullableDatesSnapshot([Hour(1), null]) { At = Hour(2) };
+
+        // Act
+        input.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (pinned: the items are converted through IList<DateTime?> and again through the writable Snapshot copy, which is then written back;
+        // 8.3.3 left the DateTime? items of the List<DateTime?> copy unchanged and converted only At)
+        Assert.Equal(Hour(9), input.At);
+        Assert.Equal([Hour(15), null], input.Snapshot);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object()
     {
         // Arrange
@@ -2251,6 +2266,21 @@ public partial class YANObjectTest
         public List<DateTime?> Backing { get; set; } = [];
 
         protected override List<DateTime?> Store => Backing;
+    }
+
+    private sealed class TzNullableDatesSnapshot(List<DateTime?> initial) : TzNullableDateList
+    {
+        private List<DateTime?> items = initial;
+
+        public DateTime At { get; set; }
+
+        public List<DateTime?> Snapshot
+        {
+            get => [.. items];
+            set => items = value;
+        }
+
+        protected override List<DateTime?> Store => items;
     }
 
     private sealed class TzNullableDatesHolder

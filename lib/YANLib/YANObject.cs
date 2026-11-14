@@ -152,7 +152,7 @@ public static partial class YANObject
     /// a JSON-backed object) receives the converted copy, and a later property that this setter writes is read, and converted, after the setter has run; state
     /// reachable through two paths is converted once per path (a copy getter over an object or field also reachable through a writable property, a getter-only list,
     /// array or dictionary property or another copy getter; a wrapper over the owner's own <see cref="DateTime"/> properties; a dictionary or <c>IList&lt;DateTime?&gt;</c>
-    /// type whose own writable property holds the collection behind its interface).
+    /// type whose own writable property holds the collection behind its interface or returns a copy of its values).
     /// No other setter is called: not for values that are not walked (strings, numbers, ...), not for a value in which nothing was converted, and not for a second
     /// reference to an object already converted. (A struct item of a read-only list is converted in a copy that is then discarded, but still counts as converted,
     /// so the setter of a property holding that list is called with the unchanged list.)</description></item>
