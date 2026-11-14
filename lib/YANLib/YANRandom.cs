@@ -124,6 +124,9 @@ public static partial class YANRandom
     /// <param name="min">The inclusive lower bound of the random number returned. If <c>null</c>, <see cref="ulong.MinValue"/> is used.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. If <c>null</c>, <see cref="ulong.MaxValue"/> is used.</param>
     /// <returns>A random unsigned long value within the specified range, or the default value if <paramref name="min"/> is greater than <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// The range is half-open and uniform, so the default range never returns <see cref="ulong.MaxValue"/>.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static ulong NextUlong(this Random random, object? min = null, object? max = null) => random.NextUlongImplement(min, max);
@@ -157,6 +160,11 @@ public static partial class YANRandom
     /// <param name="min">The inclusive lower bound of the random number returned. If <c>null</c>, <see cref="float.MinValue"/> / 100 is used.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. If <c>null</c>, <see cref="float.MaxValue"/> / 100 is used.</param>
     /// <returns>A random single-precision floating-point value within the specified range, or the default value if <paramref name="min"/> is greater than <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// The range is half-open: when rounding would produce <paramref name="max"/>, the largest <see cref="float"/> below it is returned instead.
+    /// A range wider than <see cref="float.MaxValue"/> (for example from <see cref="float.MinValue"/> to <see cref="float.MaxValue"/>) is supported.
+    /// If <paramref name="min"/> equals <paramref name="max"/>, <paramref name="min"/> is returned.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static float NextSingle(this Random random, object? min = null, object? max = null) => random.NextSingleImplement(min, max);
@@ -168,6 +176,11 @@ public static partial class YANRandom
     /// <param name="min">The inclusive lower bound of the random number returned. If <c>null</c>, <see cref="double.MinValue"/> / 100 is used.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. If <c>null</c>, <see cref="double.MaxValue"/> / 100 is used.</param>
     /// <returns>A random double-precision floating-point value within the specified range, or the default value if <paramref name="min"/> is greater than <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// The range is half-open: when rounding would produce <paramref name="max"/>, the largest <see cref="double"/> below it is returned instead.
+    /// A range wider than <see cref="double.MaxValue"/> (for example from <see cref="double.MinValue"/> to <see cref="double.MaxValue"/>) is supported.
+    /// If <paramref name="min"/> equals <paramref name="max"/>, <paramref name="min"/> is returned.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static double NextDouble(this Random random, object? min = null, object? max = null) => random.NextDoubleImplement(min, max);
@@ -179,6 +192,11 @@ public static partial class YANRandom
     /// <param name="min">The inclusive lower bound of the random number returned. If <c>null</c>, <see cref="decimal.MinValue"/> / 100 is used.</param>
     /// <param name="max">The exclusive upper bound of the random number returned. If <c>null</c>, <see cref="decimal.MaxValue"/> / 100 is used.</param>
     /// <returns>A random decimal value within the specified range, or the default value if <paramref name="min"/> is greater than <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// The range is half-open: a value that rounding brings to <paramref name="max"/> is drawn again. A range wider than
+    /// <see cref="decimal.MaxValue"/> (for example from <see cref="decimal.MinValue"/> to <see cref="decimal.MaxValue"/>) is supported.
+    /// If <paramref name="min"/> equals <paramref name="max"/>, <paramref name="min"/> is returned.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static decimal NextDecimal(this Random random, object? min = null, object? max = null) => random.NextDecimalImplement(min, max);
@@ -190,6 +208,10 @@ public static partial class YANRandom
     /// <param name="min">The inclusive lower bound of the random date returned. If <c>null</c>, <see cref="DateTime.MinValue"/> is used.</param>
     /// <param name="max">The exclusive upper bound of the random date returned. If <c>null</c>, <see cref="DateTime.MaxValue"/> is used.</param>
     /// <returns>A random DateTime value within the specified range, or the default value if <paramref name="min"/> is greater than <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// The result is a whole number of ticks in [<paramref name="min"/>, <paramref name="max"/>), so it keeps sub-second precision, and it has
+    /// the <see cref="DateTime.Kind"/> of <paramref name="min"/>. If <paramref name="min"/> equals <paramref name="max"/>, <paramref name="min"/> is returned.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static DateTime NextDateTime(this Random random, object? min = null, object? max = null) => random.NextDateTimeImplement(min, max);
@@ -220,6 +242,11 @@ public static partial class YANRandom
     /// <param name="min">The inclusive lower bound of the random value returned. If <c>null</c>, the minimum value for the type is used.</param>
     /// <param name="max">The exclusive upper bound of the random value returned. If <c>null</c>, the maximum value for the type is used.</param>
     /// <returns>A random value of the specified type within the specified range.</returns>
+    /// <remarks>
+    /// Ranges are supported for the 13 numeric types, <see cref="DateTime"/> and <see cref="char"/> (a lowercase letter when both
+    /// bounds are <c>null</c>), with the same rules as the corresponding <c>Next...</c> method; any other type gets a random
+    /// <see cref="bool"/> converted to <typeparamref name="T"/>. Values come from <see cref="Random.Shared"/>, so concurrent calls are safe.
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T GenerateRandom<T>(object? min = null, object? max = null) where T : unmanaged => Implementation.YANRandom.GenerateRandomImplement<T>(min, max);

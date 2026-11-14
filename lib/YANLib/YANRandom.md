@@ -156,7 +156,8 @@ float randomFloat = customObjects.GenerateRandom<float>(); // Random float from 
 - **Parallel Generation**: For collections with more than 1000 elements, the random generators use parallel processing for better performance; other YANLib collection methods preserve the input order
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
-- **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges
+- **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges (min greater than max); min equal to max returns min
+- **Half-Open Ranges**: Every range is [min, max): max is never returned, also not through floating-point rounding, so a call without bounds never returns the type's MaxValue
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -197,10 +198,10 @@ The library provides comprehensive coverage of random value generation:
 - **Random Number Generation**: Extends `System.Random` with additional methods for various data types
 - **Range Validation**: Implements boundary checking to ensure generated values stay within specified ranges
 - **Type-Specific Generation**: Uses specialized methods for each primitive type to ensure proper range and distribution
-- **DateTime Generation**: Generates random DateTime values within the supported DateTime range
+- **DateTime Generation**: Generates a whole number of ticks in [min, max), keeping sub-second precision and the Kind of min
 - **String Generation**: Implements character-based random string generation with configurable length
-- **Collection Sampling**: Uses reservoir sampling algorithm for selecting random elements from collections
+- **Collection Sampling**: Picks uniformly random indexes (without duplicates, it removes each picked element from a copy of the collection)
 - **Duplicate Control**: Implements tracking mechanism to prevent duplicates when requested
-- **Thread Safety**: Uses thread-local Random instances to prevent contention in multi-threaded scenarios
+- **Thread Safety**: The static `GenerateRandom`/`GenerateRandoms` methods use `Random.Shared`, which is thread-safe; the `Next...` extension methods use the `Random` instance you pass, which, like any `System.Random`, must not be shared between threads without locking
 - **Parallel Processing**: Implements parallel processing for generating large collections of random values
 - **Generic Implementation**: Uses generic type parameters with constraints to support various types

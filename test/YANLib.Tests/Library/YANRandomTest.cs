@@ -1121,4 +1121,220 @@ public partial class YANRandomTest
     }
 
     #endregion
+
+    #region Half-open ranges
+
+    [Fact]
+    public void NextUlong_AdjacentBounds_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.Equal(5UL, random.NextUlong(5UL, 6UL));
+        }
+    }
+
+    [Fact]
+    public void NextUlong_EqualBounds_ReturnsMin_RandomExtension()
+    {
+        // Act
+        var result = new Random(1).NextUlong(7UL, 7UL);
+
+        // Assert
+        Assert.Equal(7UL, result);
+    }
+
+    [Fact]
+    public void NextDateTime_AdjacentTicks_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var min = new DateTime(2024, 1, 1, 0, 0, 0, 500, DateTimeKind.Utc);
+        var max = min.AddTicks(1);
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.Equal(min, random.NextDateTime(min, max));
+        }
+    }
+
+    [Fact]
+    public void NextDateTime_WithMinMax_KeepsSubSecondTicksAndKind_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var min = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var max = min.AddSeconds(1);
+        var subSecond = false;
+
+        // Act
+        for (var i = 0; i < 100; i++)
+        {
+            var result = random.NextDateTime(min, max);
+
+            // Assert
+            Assert.Equal(DateTimeKind.Utc, result.Kind);
+            Assert.True(result >= min && result < max);
+            subSecond |= result.Ticks % TimeSpan.TicksPerSecond != 0;
+        }
+
+        Assert.True(subSecond);
+    }
+
+    [Fact]
+    public void NextSingle_DrawJustBelowOne_StaysBelowMax_RandomExtension()
+    {
+        // Act
+        var result = new UpperEdgeRandom().NextSingle(1f, 2f);
+
+        // Assert
+        Assert.Equal(MathF.BitDecrement(2f), result);
+    }
+
+    [Fact]
+    public void NextDouble_DrawJustBelowOne_StaysBelowMax_RandomExtension()
+    {
+        // Act
+        var result = new UpperEdgeRandom().NextDouble(1.0, 2.0);
+
+        // Assert
+        Assert.Equal(Math.BitDecrement(2.0), result);
+    }
+
+    [Fact]
+    public void NextDecimal_DrawJustBelowOne_StaysBelowMax_RandomExtension()
+    {
+        // Arrange
+        var min = 1_000_000_000_000_000_000_000_000_000m;
+        var max = min + 1;
+
+        // Act
+        var result = new UpperEdgeRandom().NextDecimal(min, max);
+
+        // Assert
+        Assert.True(result >= min && result < max);
+    }
+
+    [Fact]
+    public void NextDecimal_RoundingToMax_StaysBelowMax_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var min = 10_000_000_000_000_000_000_000_000_000m;
+        var max = min + 1;
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.Equal(min, random.NextDecimal(min, max));
+        }
+    }
+
+    [Fact]
+    public void NextDouble_FullRange_ReturnsFiniteValues_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.True(double.IsFinite(random.NextDouble(double.MinValue, double.MaxValue)));
+        }
+    }
+
+    [Fact]
+    public void NextDecimal_FullRange_DoesNotThrow_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var negative = false;
+        var positive = false;
+
+        // Act
+        for (var i = 0; i < 1_000; i++)
+        {
+            var result = random.NextDecimal(decimal.MinValue, decimal.MaxValue);
+
+            negative |= result < 0;
+            positive |= result > 0;
+        }
+
+        // Assert
+        Assert.True(negative && positive);
+    }
+
+    [Fact]
+    public void NextBoundedFloatingPoint_EqualBounds_ReturnBound_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var date = new DateTime(2024, 1, 1, 0, 0, 0, 123, DateTimeKind.Local);
+
+        // Act & Assert
+        Assert.Equal(1.5, random.NextDouble(1.5, 1.5));
+        Assert.Equal(1.5f, random.NextSingle(1.5f, 1.5f));
+        Assert.Equal(2m, random.NextDecimal(2m, 2m));
+        Assert.Equal(date, random.NextDateTime(date, date));
+    }
+
+    [Fact]
+    public void GenerateRandom_CharObjectBounds_HonoursRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom<char>((object)'a', (object)'c'));
+        }
+
+        // Assert
+        Assert.Equal(['a', 'b'], results.Order());
+    }
+
+    [Fact]
+    public void GenerateRandom_CharWithoutBounds_ReturnsLowercaseLetter_RandomGeneric()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom<char>(null, null);
+
+        // Assert
+        Assert.InRange(result, 'a', 'z');
+    }
+
+    [Fact]
+    public void NextBoolAndNextChar_Seeded_KeepTheirSequences_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(7);
+        var reference = new Random(7);
+        const string letters = "abcdefghijklmnopqrstuvwxyz";
+
+        // Act & Assert
+        for (var i = 0; i < 100; i++)
+        {
+            Assert.Equal(reference.Next(0, 2) == 1, random.NextBool());
+            Assert.Equal(letters[reference.Next(0, letters.Length)], random.NextChar());
+        }
+    }
+
+    /// <summary>A <see cref="Random"/> whose draws are the largest values below the exclusive upper bounds.</summary>
+    private sealed class UpperEdgeRandom : Random
+    {
+        public override double NextDouble() => Math.BitDecrement(1.0);
+
+        public override float NextSingle() => MathF.BitDecrement(1f);
+
+        public override long NextInt64(long maxValue) => maxValue - 1;
+
+        public override long NextInt64(long minValue, long maxValue) => minValue == maxValue ? minValue : maxValue - 1;
+    }
+
+    #endregion
 }

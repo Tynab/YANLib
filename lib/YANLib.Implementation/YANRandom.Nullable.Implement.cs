@@ -16,7 +16,7 @@ internal static partial class YANRandom
             targetType = GetUnderlyingType(typeof(T))!;
         }
 
-        var random = new Random();
+        var random = Random.Shared;
 
         object? raw = targetType switch
         {

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static System.BitConverter;
 
 namespace YANLib.Implementation;
 
@@ -24,7 +23,7 @@ internal static partial class YANRandom
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static bool NextBoolImplement(this Random random) => random.NextByteImplement(0, 2) is 1;
+    internal static bool NextBoolImplement(this Random random) => random.Next(0, 2) == 1;
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -107,17 +106,13 @@ internal static partial class YANRandom
         {
             return default;
         }
-        else
-        {
-            var buffer = new byte[8];
 
-            random.NextBytes(buffer);
+        // the offset in [0, max - min) drawn as a signed 64-bit value shifted down by 2^63 (as NextNuint does): uniform, and max is
+        // exclusive as documented (8.3.3 returned rand % (max - min + 1) + min, which included max and was biased)
+        var range = maxValue - minValue;
+        var offset = unchecked((ulong)(random.NextInt64(long.MinValue, long.MinValue + (long)range) - long.MinValue));
 
-            var rand = ToUInt64(buffer, 0);
-            var r = maxValue - minValue;
-
-            return r == ulong.MaxValue ? rand : rand % (r + 1) + minValue;
-        }
+        return minValue + offset;
     }
 
     [DebuggerHidden]
@@ -157,7 +152,18 @@ internal static partial class YANRandom
         var minValue = min is null ? float.MinValue / 100 : min.ParseImplement<float>();
         var maxValue = max is null ? float.MaxValue / 100 : max.ParseImplement<float>();
 
-        return minValue < maxValue ? random.NextSingle() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
+        if (!(minValue < maxValue))
+        {
+            return minValue == maxValue ? minValue : default;
+        }
+
+        var sample = random.NextSingle();
+        var range = maxValue - minValue;
+
+        // a range wider than float.MaxValue is interpolated without overflowing; rounding can reach max, which is exclusive
+        var result = float.IsFinite(range) ? sample * range + minValue : sample * maxValue + (1 - sample) * minValue;
+
+        return result < maxValue ? result : MathF.BitDecrement(maxValue);
     }
 
     [DebuggerHidden]
@@ -167,7 +173,18 @@ internal static partial class YANRandom
         var minValue = min is null ? double.MinValue / 100 : min.ParseImplement<double>();
         var maxValue = max is null ? double.MaxValue / 100 : max.ParseImplement<double>();
 
-        return minValue < maxValue ? random.NextDouble() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
+        if (!(minValue < maxValue))
+        {
+            return minValue == maxValue ? minValue : default;
+        }
+
+        var sample = random.NextDouble();
+        var range = maxValue - minValue;
+
+        // a range wider than double.MaxValue is interpolated without overflowing; rounding can reach max, which is exclusive
+        var result = double.IsFinite(range) ? sample * range + minValue : sample * maxValue + (1 - sample) * minValue;
+
+        return result < maxValue ? result : Math.BitDecrement(maxValue);
     }
 
     [DebuggerHidden]
@@ -177,7 +194,27 @@ internal static partial class YANRandom
         var minValue = min is null ? decimal.MinValue / 100 : min.ParseImplement<decimal>();
         var maxValue = max is null ? decimal.MaxValue / 100 : max.ParseImplement<decimal>();
 
-        return minValue < maxValue ? random.NextDecimalImplement() * (maxValue - minValue) + minValue : minValue == maxValue ? minValue : default;
+        if (minValue >= maxValue)
+        {
+            return minValue == maxValue ? minValue : default;
+        }
+
+        // max - min overflows when the bounds have opposite signs and the range is wider than decimal.MaxValue
+        var interpolate = minValue < 0 && maxValue > decimal.MaxValue + minValue;
+
+        // rounding can reach max, which is exclusive: draw again (each draw does so with probability at most 1/2)
+        for (var attempt = 0; attempt < 64; attempt++)
+        {
+            var sample = random.NextDecimalImplement();
+            var result = interpolate ? sample * maxValue + (1 - sample) * minValue : sample * (maxValue - minValue) + minValue;
+
+            if (result >= minValue && result < maxValue)
+            {
+                return result;
+            }
+        }
+
+        return minValue;
     }
 
     [DebuggerHidden]
@@ -187,16 +224,35 @@ internal static partial class YANRandom
         var minValue = min is null ? DateTime.MinValue : min.ParseImplement<DateTime>();
         var maxValue = max is null ? DateTime.MaxValue : max.ParseImplement<DateTime>();
 
-        return minValue > maxValue ? default : minValue.AddTicks(random.NextUlongImplement(max: (maxValue - minValue).Ticks).ParseImplement<long>());
+        // whole ticks in [min, max), with the Kind of min (8.3.3 drew from [0, max - min] and so could return max)
+        return minValue > maxValue ? default : minValue.AddTicks(random.NextInt64((maxValue - minValue).Ticks));
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static char NextCharImplement(this Random random)
     {
-        var chars = "abcdefghijklmnopqrstuvwxyz";
+        const string chars = "abcdefghijklmnopqrstuvwxyz";
 
-        return chars[random.NextByteImplement(byte.MinValue, chars.Length)];
+        return chars[random.Next(0, chars.Length)];
+    }
+
+    /// <summary>
+    /// A character in [<paramref name="min"/>, <paramref name="max"/>); without either bound, a lowercase letter like <see cref="NextCharImplement(Random)"/>.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static char NextCharImplement(this Random random, object? min, object? max)
+    {
+        if (min is null && max is null)
+        {
+            return random.NextCharImplement();
+        }
+
+        var minValue = min is null ? char.MinValue : min.ParseImplement<char>();
+        var maxValue = max is null ? char.MaxValue : max.ParseImplement<char>();
+
+        return minValue > maxValue ? default : (char)random.Next(minValue, maxValue);
     }
 
     [DebuggerHidden]
@@ -207,7 +263,8 @@ internal static partial class YANRandom
     [DebuggerStepThrough]
     internal static T GenerateRandomImplement<T>(object? min = null, object? max = null) where T : unmanaged
     {
-        var random = new Random();
+        // thread-safe and shared; 8.3.3 created and seeded a new Random for every value
+        var random = Random.Shared;
 
         return typeof(T) switch
         {
@@ -225,6 +282,7 @@ internal static partial class YANRandom
             Type doubleType when doubleType == typeof(double) => random.NextDoubleImplement(min, max).ParseImplement<T>(),
             Type decimalType when decimalType == typeof(decimal) => random.NextDecimalImplement(min, max).ParseImplement<T>(),
             Type dateTimeType when dateTimeType == typeof(DateTime) => random.NextDateTimeImplement(min, max).ParseImplement<T>(),
+            Type charType when charType == typeof(char) => random.NextCharImplement(min, max).ParseImplement<T>(),
             _ => random.NextBoolImplement().ParseImplement<T>(),
         };
     }
