@@ -277,7 +277,7 @@ public partial class YANTextTest
     }
 
     [Fact]
-    public void FormatName_WhitespaceString_ReturnsEmpty_Text()
+    public void FormatName_WhitespaceString_ReturnsInput_Text()
     {
         // Arrange
         var input = "   ";
@@ -342,6 +342,9 @@ public partial class YANTextTest
     [InlineData("123john 4doe", "John Doe")]
     [InlineData("...", "")]
     [InlineData("123", "")]
+    [InlineData(" . ", "")]
+    [InlineData("½JOHN", "½john")]
+    [InlineData("john\u200BDOE", "John\u200Bdoe")]
     public void FormatName_SeparatorRuns_JoinsWordsWithSingleSpace_Text(string input, string expected)
     {
         // Act

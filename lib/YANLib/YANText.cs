@@ -49,10 +49,11 @@ public static partial class YANText
     /// <returns>A new string formatted as a proper name, for example <c>"John Doe"</c> for <c>" john ,DOE. "</c> or <c>"John Q Public"</c> for <c>"john.q.public123"</c>.</returns>
     /// <remarks>
     /// Punctuation and white-space characters (including tabs) separate words; the words are joined with a single space, without a leading or trailing space.
-    /// Digits are removed without separating words (<c>"john123doe"</c> gives <c>"Johndoe"</c>). The first character kept in each word is converted to upper case and
-    /// the other characters to lower case, using the current culture. Other characters (such as symbols) are kept as part of a word, so a word that starts with one
-    /// keeps its letters in lower case (<c>"$john"</c> gives <c>"$john"</c>).
-    /// The result is empty when the input contains no letters or symbols (for example <c>"..."</c>).
+    /// Decimal digits are removed without separating words (<c>"john123doe"</c> gives <c>"Johndoe"</c>). The first character kept in each word is converted to upper case and
+    /// the other characters to lower case, using the current culture. Every other character (a symbol, a number that is not a decimal digit such as <c>"½"</c>, or a
+    /// control or format character) is kept as part of a word, so a word that starts with one keeps its letters in lower case (<c>"$john"</c> gives <c>"$john"</c>).
+    /// The result is empty when every character of the input is punctuation, white space or a decimal digit and the input is not only white space (for example
+    /// <c>"..."</c> or <c>" . "</c>); an input that is <c>null</c>, empty or only white space is returned unchanged.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
