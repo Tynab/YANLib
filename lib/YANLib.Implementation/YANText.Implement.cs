@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Buffers;
+using System.Diagnostics;
 using System.Text;
 using static System.Globalization.CultureInfo;
 
@@ -6,247 +7,95 @@ namespace YANLib.Implementation;
 
 internal static partial class YANText
 {
+    #region Private
+
+    // Filter and CleanSpace build inputs up to this length on the stack, longer ones in a pooled array.
+    private const int STACKALLOC_CHAR_THRESHOLD = 256;
+
+    // FormatName reuses one StringBuilder per thread (like the BCL's internal StringBuilderCache): with its culture-aware
+    // casing calls this measured faster than a stackalloc or pooled buffer. A builder that grew past this capacity is not kept.
+    private const int MAX_CACHED_BUILDER_CAPACITY = 1024;
+
+    [ThreadStatic]
+    private static StringBuilder? CachedFormatNameBuilder;
+
+    private interface ICharFilter
+    {
+        static abstract bool Keep(char c);
+    }
+
+    private readonly struct AlphabeticFilter : ICharFilter
+    {
+        public static bool Keep(char c) => c.IsAlphabeticImplement();
+    }
+
+    private readonly struct NumberFilter : ICharFilter
+    {
+        public static bool Keep(char c) => c.IsNumberImplement();
+    }
+
+    private readonly struct AlphanumericFilter : ICharFilter
+    {
+        public static bool Keep(char c) => c.IsAlphanumericImplement();
+    }
+
+    // Copies the characters of input that TFilter keeps (a struct type argument, so the check is inlined). Returns input
+    // itself when every character is kept.
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static string Filter<TFilter>(string input) where TFilter : struct, ICharFilter
+    {
+        char[]? rented = null;
+        Span<char> buffer = input.Length <= STACKALLOC_CHAR_THRESHOLD ? stackalloc char[input.Length] : rented = ArrayPool<char>.Shared.Rent(input.Length);
+
+        try
+        {
+            var count = 0;
+
+            foreach (var c in input)
+            {
+                if (TFilter.Keep(c))
+                {
+                    buffer[count++] = c;
+                }
+            }
+
+            return count == input.Length ? input : new string(buffer[..count]);
+        }
+        finally
+        {
+            if (rented is not null)
+            {
+                ArrayPool<char>.Shared.Return(rented);
+            }
+        }
+    }
+
+    #endregion
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? TitleImplement(this string? input) => input.IsNullWhiteSpaceImplement() ? input : CurrentCulture.TextInfo.ToTitleCase(input.LowerImplement()!);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string? CapitalizeImplement(this string? input)
+    internal static string? CapitalizeImplement(this string? input) => input.IsNullWhiteSpaceImplement() ? input : string.Create(input.Length, input, static (output, source) =>
     {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input);
         var isFirstChar = true;
 
-        for (var i = 0; i < sb.Length; i++)
+        for (var i = 0; i < source.Length; i++)
         {
-            if (isFirstChar && sb[i].IsAlphabeticImplement())
+            if (isFirstChar && source[i].IsAlphabeticImplement())
             {
-                sb[i] = sb[i].UpperImplement();
+                output[i] = source[i].UpperImplement();
                 isFirstChar = false;
             }
             else
             {
-                sb[i] = sb[i].LowerImplement();
+                output[i] = source[i].LowerImplement();
             }
         }
-
-        return sb.ToString();
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static string? CamelCaseImplement(this string? input)
-    {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsWhiteSpaceImplement())
-            {
-                isPreviousCharWhiteSpace = true;
-
-                continue;
-            }
-
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append(input[i].LowerImplement());
-            isPreviousCharWhiteSpace = false;
-        }
-
-        return sb.ToString();
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static string? PascalCaseImplement(this string? input)
-    {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsWhiteSpaceImplement())
-            {
-                isPreviousCharWhiteSpace = true;
-
-                continue;
-            }
-
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append(input[i].LowerImplement());
-            isPreviousCharWhiteSpace = false;
-        }
-
-        return sb.ToString();
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static string? SnakeLowerCaseImplement(this string? input)
-    {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsWhiteSpaceImplement())
-            {
-                isPreviousCharWhiteSpace = true;
-                continue;
-            }
-
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].LowerImplement()) : sb.Append('_').Append(input[i].LowerImplement());
-
-            isPreviousCharWhiteSpace = false;
-        }
-
-        return sb.ToString();
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static string? SnakeUpperCaseImplement(this string? input)
-    {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsWhiteSpaceImplement())
-            {
-                isPreviousCharWhiteSpace = true;
-                continue;
-            }
-
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append('_').Append(input[i].UpperImplement());
-
-            isPreviousCharWhiteSpace = false;
-        }
-
-        return sb.ToString();
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static string? KebabLowerCaseImplement(this string? input)
-    {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsWhiteSpaceImplement())
-            {
-                isPreviousCharWhiteSpace = true;
-
-                continue;
-            }
-
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].LowerImplement()) : sb.Append('-').Append(input[i].LowerImplement());
-            isPreviousCharWhiteSpace = false;
-        }
-
-        return sb.ToString();
-    }
-
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static string? KebabUpperCaseImplement(this string? input)
-    {
-        if (input.IsNullWhiteSpaceImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsWhiteSpaceImplement())
-            {
-                isPreviousCharWhiteSpace = true;
-
-                continue;
-            }
-
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append('-').Append(input[i].UpperImplement());
-            isPreviousCharWhiteSpace = false;
-        }
-
-        return sb.ToString();
-    }
+    });
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -257,36 +106,54 @@ internal static partial class YANText
             return input;
         }
 
-        input = input.Trim();
+        var trimmed = input.AsSpan().Trim();
 
-        if (input.IsNullEmptyImplement())
+        if (trimmed.IsEmpty)
         {
-            return input;
+            return string.Empty;
         }
 
-        var sb = new StringBuilder(input.Length);
-        var isWhiteSpace = false;
+        char[]? rented = null;
+        Span<char> buffer = trimmed.Length <= STACKALLOC_CHAR_THRESHOLD ? stackalloc char[trimmed.Length] : rented = ArrayPool<char>.Shared.Rent(trimmed.Length);
 
-        for (var i = 0; i < input.Length; i++)
+        try
         {
-            if (input[i].IsWhiteSpaceImplement())
+            var count = 0;
+            var isWhiteSpace = false;
+
+            foreach (var c in trimmed)
             {
-                if (!isWhiteSpace)
+                if (c.IsWhiteSpaceImplement())
                 {
-                    _ = sb.Append(' ');
-                    isWhiteSpace = true;
+                    if (!isWhiteSpace)
+                    {
+                        buffer[count++] = ' ';
+                        isWhiteSpace = true;
+                    }
+                }
+                else
+                {
+                    buffer[count++] = c;
+                    isWhiteSpace = false;
                 }
             }
-            else
+
+            var result = buffer[..count];
+
+            return result.SequenceEqual(input) ? input : new string(result);
+        }
+        finally
+        {
+            if (rented is not null)
             {
-                _ = sb.Append(input[i]);
-                isWhiteSpace = false;
+                ArrayPool<char>.Shared.Return(rented);
             }
         }
-
-        return sb.ToString();
     }
 
+    // Words are separated by any run of white-space and punctuation characters and joined with a single space; digits are
+    // dropped without ending a word. The first character kept in each word is upper-cased and the others lower-cased (current
+    // culture), so a word that starts with a symbol keeps its letters in lower case ("$john"). There is no leading or trailing space.
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FormatNameImplement(this string? input)
@@ -296,117 +163,58 @@ internal static partial class YANText
             return input;
         }
 
-        input = input.Trim();
+        var builder = CachedFormatNameBuilder ?? new StringBuilder(input.Length);
 
-        var sb = new StringBuilder(input.Length);
-        var isPreviousCharWhiteSpace = true;
+        CachedFormatNameBuilder = null;
+        _ = builder.Clear();
 
-        for (var i = 0; i < input.Length; i++)
+        var isWordStart = true;
+        var isSeparatorPending = false;
+
+        foreach (var c in input)
         {
-            if (input[i].IsPunctuationImplement())
+            if (c.IsPunctuationImplement() || c.IsWhiteSpaceImplement())
             {
-                _ = sb.Append(' ');
-                isPreviousCharWhiteSpace = true;
+                isWordStart = true;
+                isSeparatorPending = builder.Length > 0;
 
                 continue;
             }
 
-            if (input[i].IsNumberImplement() || isPreviousCharWhiteSpace && input[i].IsWhiteSpaceImplement())
+            if (c.IsNumberImplement())
             {
                 continue;
             }
 
-            _ = isPreviousCharWhiteSpace ? sb.Append(input[i].UpperImplement()) : sb.Append(input[i].LowerImplement());
-            isPreviousCharWhiteSpace = input[i].IsWhiteSpaceImplement();
+            if (isSeparatorPending)
+            {
+                _ = builder.Append(' ');
+                isSeparatorPending = false;
+            }
+
+            _ = builder.Append(isWordStart ? c.UpperImplement() : c.LowerImplement());
+            isWordStart = false;
         }
 
-        return sb.ToString();
+        var result = builder.ToString();
+
+        if (builder.Capacity <= MAX_CACHED_BUILDER_CAPACITY)
+        {
+            CachedFormatNameBuilder = builder;
+        }
+
+        return result;
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string? FilterAlphabeticImplement(this string? input)
-    {
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsAlphabeticImplement())
-            {
-                _ = sb.Append(input[i]);
-            }
-        }
-
-        return sb.ToString();
-    }
+    internal static string? FilterAlphabeticImplement(this string? input) => input.IsNullEmptyImplement() ? input : Filter<AlphabeticFilter>(input);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string? FilterNumberImplement(this string? input)
-    {
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsNumberImplement())
-            {
-                _ = sb.Append(input[i]);
-            }
-        }
-
-        return sb.ToString();
-    }
+    internal static string? FilterNumberImplement(this string? input) => input.IsNullEmptyImplement() ? input : Filter<NumberFilter>(input);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static string? FilterAlphanumericImplement(this string? input)
-    {
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        input = input.Trim();
-
-        if (input.IsNullEmptyImplement())
-        {
-            return input;
-        }
-
-        var sb = new StringBuilder(input.Length);
-
-        for (var i = 0; i < input.Length; i++)
-        {
-            if (input[i].IsAlphanumericImplement())
-            {
-                _ = sb.Append(input[i]);
-            }
-        }
-
-        return sb.ToString();
-    }
+    internal static string? FilterAlphanumericImplement(this string? input) => input.IsNullEmptyImplement() ? input : Filter<AlphanumericFilter>(input);
 }

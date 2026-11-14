@@ -294,8 +294,7 @@ A specialized utility library that extends the Task Parallel Library (TPL), prov
 #### Key Features
 
 - Conditional task waiting
-- Multiple result filtering
-- Asynchronous enumeration
+- Results checked in completion order
 - Error handling with exception safety
 - Cancellation support
 
@@ -310,12 +309,16 @@ var tasks = new[]
 };
 
 // Using WaitAnyWithCondition - returns as soon as it finds a match
-int? result = await tasks.WaitAnyWithCondition(x => x > 5);
+int result = await tasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 
 // Using WhenAnyWithCondition - waits for tasks to complete until it finds a match
-int? anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
+int anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
 Console.WriteLine(anotherResult); // Output: 10
+
+// No match returns default(T): 0 for int, not null
+int noMatch = await tasks.WaitAnyWithCondition(x => x > 100);
+Console.WriteLine(noMatch); // Output: 0
 ```
 
 ### YANProcess
@@ -330,10 +333,11 @@ A specialized utility library for managing system processes, focusing on process
 - Process cleanup with automatic resource disposal
 
 ```csharp
-// Kill all instances of a process with a specific name
+// Kill all instances of a process with a specific name (each with its whole process tree;
+// the calling process itself is never killed)
 await "notepad".KillAllProcessesByName();
 
-// Kill multiple processes using a collection
+// Kill multiple processes using a collection (null or blank names are skipped)
 var processNames = new List<string?>
 {
     "notepad",
@@ -485,7 +489,7 @@ public List<Product> ProcessProductData(string[] rawData)
 ### Asynchronous Operations with Error Handling
 
 ```csharp
-public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
+public async Task<WeatherData?> GetWeatherFromMultipleProviders(string location)
 {
     var providers = new[]
     {
@@ -494,7 +498,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
         GetWeatherFromProvider3(location)
     };
 
-    // Return the first non-null weather data
+    // Return the first non-null weather data (null if every provider returns null or fails)
     return await providers.WaitAnyWithCondition(data => data != null);
 }
 ```

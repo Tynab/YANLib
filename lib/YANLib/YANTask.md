@@ -3,7 +3,7 @@
 
 ## Overview
 
-`YANTask` is a specialized utility library that extends the functionality of the Task Parallel Library (TPL) in C#. It provides powerful extension methods for working with asynchronous tasks, particularly for filtering and processing task results based on conditions. The library simplifies complex asynchronous operations such as waiting for tasks that satisfy specific conditions and processing multiple matching results from concurrent operations.
+`YANTask` is a specialized utility library that extends the functionality of the Task Parallel Library (TPL) in C#. It provides extension methods for working with asynchronous tasks, particularly for waiting until a task produces a result that satisfies a condition.
 
 
 ## Features
@@ -12,22 +12,15 @@ The library is organized into several functional categories:
 
 ### Conditional Task Waiting
 
-- **Single Result Filtering**: Wait for any task that completes and satisfies a specified condition
-- **Multiple Result Filtering**: Asynchronously enumerate tasks that complete and satisfy a condition
-- **Completion Strategies**: Options for waiting until first match or until all tasks complete
-- **Result Limiting**: Ability to limit the number of matching results returned
-
-### Asynchronous Enumeration
-
-- **Async Streams**: Support for modern C# async streams (IAsyncEnumerable)
-- **Lazy Evaluation**: Results are yielded as soon as they become available
-- **Cancellation Support**: Full support for cancellation tokens to stop operations
+- **Single Result Filtering**: Wait for any task that completes and satisfies a specified condition (`WaitAnyWithCondition`, `WhenAnyWithCondition`; the two currently behave the same)
+- **Completion Order**: Tasks are checked as they complete; tasks that are already complete are checked first, in collection order
+- **No Match**: When no task satisfies the condition, the result is `default(T)`: `null` for reference and nullable types, `0` for `int`
 
 ### Error Handling
 
-- **Exception Safety**: Graceful handling of tasks that throw exceptions
-- **Null Safety**: Proper handling of null task collections
-- **Cancellation Handling**: Clean response to cancellation requests
+- **Exception Safety**: Tasks that fault or are canceled are skipped; an exception thrown by the condition counts as no match
+- **Null Safety**: A `null` or empty task collection returns `default(T)`
+- **Cancellation Handling**: The cancellation token is observed while waiting; a canceled wait throws `OperationCanceledException`
 
 
 ## Usage Examples
@@ -45,12 +38,21 @@ var tasks = new[]
 };
 
 // Using WaitAnyWithCondition - returns as soon as it finds a match
-int? result = await tasks.WaitAnyWithCondition(x => x > 5);
+int result = await tasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 
 // Using WhenAnyWithCondition - waits for tasks to complete until it finds a match
-int? anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
+int anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
 Console.WriteLine(anotherResult); // Output: 10
+
+// No match: the result is default(int), which is 0 (not null)
+int noMatch = await tasks.WaitAnyWithCondition(x => x > 100);
+Console.WriteLine(noMatch); // Output: 0
+
+// Use tasks of a nullable type when 0 can be a real result
+var nullableTasks = new[] { Task.FromResult<int?>(0), Task.FromResult<int?>(3) };
+int? none = await nullableTasks.WaitAnyWithCondition(x => x > 5);
+Console.WriteLine(none is null); // Output: True
 ```
 
 ### Handling Tasks with Exceptions
@@ -66,15 +68,15 @@ var tasksWithException = new[]
 };
 
 // Exception is handled gracefully, skipped and doesn't affect the result
-int? result = await tasksWithException.WaitAnyWithCondition(x => x > 5);
+int result = await tasksWithException.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 ```
 
 ### Using Cancellation Tokens
 
 ```csharp
-// Create a cancellation token source
-var cts = new CancellationTokenSource();
+// Create a cancellation token source that cancels after 100 ms
+using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(100));
 
 // Create a collection of delayed tasks
 var delayedTasks = new[]
@@ -86,43 +88,17 @@ var delayedTasks = new[]
 
 try
 {
-    // Start the operation and cancel it immediately
-    cts.Cancel();
+    // The wait is canceled after 100 ms, while the tasks are still running
+    int result = await delayedTasks.WaitAnyWithCondition(x => x > 5, cts.Token);
 
-    int? result = await delayedTasks.WaitAnyWithCondition(x => x > 5, cts.Token);
-    
     // This line won't be reached if cancellation occurs
     Console.WriteLine(result);
 }
-catch (TaskCanceledException)
+catch (OperationCanceledException)
 {
-    Console.WriteLine("Operation was canceled");
-}
-```
-
-### Asynchronous Enumeration of Multiple Results
-
-```csharp
-// Create a collection of tasks
-var tasks = new[]
-{
-    Task.FromResult(3),
-    Task.FromResult(7),
-    Task.FromResult(2),
-    Task.FromResult(10),
-    Task.FromResult(15)
-};
-
-// Using WaitAnyWithConditions to get all values greater than 5
-await foreach (var item in tasks.WaitAnyWithConditions(x => x > 5))
-{
-    Console.WriteLine(item); // Output: 7, 10, 15 (order may vary)
-}
-
-// Using WhenAnyWithConditions with a limit on the number of results
-await foreach (var item in tasks.WhenAnyWithConditions(x => x > 5, taken: 2))
-{
-    Console.WriteLine(item); // Output: Only the first 2 matching results
+    // A token that is already canceled when the method is called gives a TaskCanceledException,
+    // a cancellation while waiting gives an OperationCanceledException: catch the base type for both
+    Console.WriteLine("Operation was canceled"); // Output: Operation was canceled
 }
 ```
 
@@ -139,14 +115,8 @@ var delayedTasks = new[]
 };
 
 // Wait for the first task that completes and satisfies the condition
-int? fastResult = await delayedTasks.WaitAnyWithCondition(x => x > 5);
+int fastResult = await delayedTasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(fastResult); // Output: 10 (the fastest task with value > 5)
-
-// Enumerate all tasks that complete and satisfy the condition
-await foreach (var item in delayedTasks.WaitAnyWithConditions(x => x > 5))
-{
-    Console.WriteLine(item); // Output: 10, 7 (in order of completion)
-}
 ```
 
 ### Advanced Usage Examples
@@ -162,16 +132,10 @@ var apiTasks = new[]
     SimulateApiCall(5, 250)  // ID: 5, Delay: 250ms
 };
 
-// Wait for the first successful API response (status code 200)
+// Wait for the first successful API response (status code 200); null if none succeeds
 var firstSuccess = await apiTasks.WaitAnyWithCondition(response => response.StatusCode == 200);
 
-Console.WriteLine($"First successful response: ID {firstSuccess?.Id}");
-
-// Get all successful API responses as they complete
-await foreach (var response in apiTasks.WaitAnyWithConditions(r => r.StatusCode == 200))
-{
-    Console.WriteLine($"Successful response: ID {response.Id}, Time: {DateTime.Now}");
-}
+Console.WriteLine($"First successful response: ID {firstSuccess?.Id}"); // Output: First successful response: ID 4
 
 // Simulate an API call that returns after a delay
 async Task<ApiResponse> SimulateApiCall(int id, int delayMs)
@@ -201,15 +165,15 @@ var dataTasks = new[]
     ReadFromFileAsync()
 };
 
-// Wait for the first non-empty result
+// Wait for the first non-empty result; null if every source returns an empty result
 var firstData = await dataTasks.WaitAnyWithCondition(data => data != null && data.Length > 0);
 
-Console.WriteLine($"First data source returned {firstData?.Length} bytes");
+Console.WriteLine($"First data source returned {firstData?.Length} bytes"); // Output: First data source returned 200 bytes
 
-// Process all data sources that return valid data
-await foreach (var data in dataTasks.WhenAnyWithConditions(d => d != null && d.Length > 0))
+// Process all data sources that return valid data, once all of them have completed
+foreach (var data in (await Task.WhenAll(dataTasks)).Where(d => d != null && d.Length > 0))
 {
-    Console.WriteLine($"Processing {data.Length} bytes of data");
+    Console.WriteLine($"Processing {data.Length} bytes of data"); // Output: 100, 200 and 150 bytes
     await ProcessDataAsync(data);
 }
 
@@ -224,11 +188,12 @@ async Task ProcessDataAsync(byte[] data) => await Task.Delay(10);
 
 ## Performance Considerations
 
-- **Early Completion**: `WaitAnyWithCondition` and `WaitAnyWithConditions` return as soon as matching tasks are found, without waiting for other tasks
-- **Lazy Enumeration**: Results are yielded as soon as they become available, without waiting for all tasks to complete
+- **Early Completion**: `WaitAnyWithCondition` and `WhenAnyWithCondition` return as soon as a matching task is found, without waiting for the other tasks (which keep running)
+- **Linear Cost**: Each task is observed through a single continuation, so waiting on `n` tasks costs O(n) time and allocations rather than O(n²) with repeated `Task.WhenAny` calls
+- **Single Enumeration**: The task collection is enumerated exactly once, so a lazy sequence (for example `ids.Select(LoadAsync)`) does not start its tasks twice
+- **No Leaked Continuations**: The continuations registered on tasks that are still running are removed when the method returns, so many calls that share a long-running task do not accumulate memory
 - **Exception Handling**: Tasks that throw exceptions are gracefully skipped without affecting other tasks
-- **Cancellation Support**: Operations can be canceled at any time using cancellation tokens
-- **Memory Efficiency**: Uses `IAsyncEnumerable` for memory-efficient processing of large task collections
+- **Cancellation Support**: The wait can be canceled at any time using a cancellation token
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -236,9 +201,10 @@ async Task ProcessDataAsync(byte[] data) => await Task.Delay(10);
 
 - **Extension Methods**: All operations are implemented as extension methods for better integration with existing code
 - **Async/Await Pattern**: Fully embraces the modern async/await pattern for asynchronous programming
-- **Task Tracking**: Uses a `HashSet<Task<T>>` to efficiently track pending tasks
+- **Task Tracking**: The task collection is copied once into a `HashSet<Task<T>>`, so a task that appears twice is checked once; a `null` task faults the returned task with `ArgumentException`
 - **Null Safety**: All methods handle null inputs gracefully, returning appropriate default values
 - **Internal Implementation**: Core implementation details are separated from the public API for better maintainability
+- **Internal Streaming Variants**: The library also contains `WaitAnyWithConditions` / `WhenAnyWithConditions` (an `IAsyncEnumerable<T>` of all matching results with a `taken` limit) and `AsyncEnumerableEmpty`, but they are `internal`: they are not part of the public API and cannot be called from your code
 
 
 ## Task Operations Coverage
@@ -248,20 +214,15 @@ The library provides focused coverage of conditional task operations:
 | Category | Functions |
 |----------|-----------|
 | **Single Result Filtering** | WaitAnyWithCondition<T>, WhenAnyWithCondition<T> |
-| **Multiple Results Filtering** | WaitAnyWithConditions<T>, WhenAnyWithConditions<T> |
 | **Cancellation Support** | All methods support CancellationToken |
-| **Result Limiting** | Support for limiting the number of results with 'taken' parameter |
-| **Utility Functions** | AsyncEnumerableEmpty<T> |
 
 
 ## Technical Details
 
-- **Task Tracking**: Uses a `HashSet<Task<T>>` to efficiently track pending tasks and avoid duplicate processing
+- **Task Tracking**: Copies the task collection once into a `HashSet<Task<T>>` to avoid duplicate processing
 - **Asynchronous Implementation**: Uses `async/await` pattern throughout for non-blocking operations
-- **Condition Evaluation**: Evaluates task results against provided predicates as tasks complete
-- **Task Completion Detection**: Uses `Task.WhenAny` to detect when individual tasks complete
-- **Result Collection**: Implements `IAsyncEnumerable<T>` for lazy, asynchronous enumeration of results
-- **Exception Handling**: Catches and suppresses exceptions from individual tasks to prevent operation failure
-- **Cancellation Support**: Implements cancellation token support throughout the API for responsive cancellation
-- **Memory Management**: Efficiently manages memory by removing completed tasks from the tracking set
-- **Task Completion Strategies**: Implements both "wait for any" and "when any" strategies for different use cases
+- **Condition Evaluation**: Checks tasks that are already complete first, in collection order, then evaluates the others as they complete
+- **Task Completion Detection**: Registers one continuation per running task that writes the task to a `Channel<Task<T>>`, which is read in completion order; the continuations are removed (through a cancellation token) as soon as the method returns
+- **Exception Handling**: Skips tasks that fault or are canceled (their exceptions are observed) and treats an exception thrown by the condition as no match
+- **Cancellation Support**: Waits with `ChannelReader.ReadAsync(cancellationToken)`, so cancellation is observed while waiting, not only when a task completes
+- **Wait vs. When**: `WaitAnyWithCondition` and `WhenAnyWithCondition` currently have the same implementation and behave identically
