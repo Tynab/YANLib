@@ -225,7 +225,7 @@ string tidyName = " john ,\tDOE. ".FormatName(); // Returns "John Doe"
 - Collection methods that return `IEnumerable<T>` are lazily evaluated and preserve the input order; the in-place `List<string?>` / `List<char>` / `List<char?>` overloads (`Title`, `Lower`, `Upper`, ...) update lists with 1,000+ elements in parallel by index, so the order is kept as well
 - The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 - String operations are designed to minimize memory allocations where possible: `CleanSpace` and the `Filter*` methods build their result in a stack buffer (a pooled array for long strings) and return the input itself when nothing changes, `Capitalize` writes straight into the new string, and `FormatName` reuses a per-thread `StringBuilder`
-- `AllEqualsIgnoreCase`, `AnyEqualsIgnoreCase`, `AllNotEqualsIgnoreCase` and `AnyNotEqualsIgnoreCase` compare strings exactly like `EqualsIgnoreCase` (`StringComparison.OrdinalIgnoreCase`), enumerate the collection once and do not create lower-cased copies
+- `AllEqualsIgnoreCase`, `AnyEqualsIgnoreCase`, `AllNotEqualsIgnoreCase` and `AnyNotEqualsIgnoreCase` compare strings exactly like `EqualsIgnoreCase` (`StringComparison.OrdinalIgnoreCase`), enumerate the collection once and do not create lower-cased copies; for arrays and lists (of up to 16 strings for `AnyEqualsIgnoreCase` / `AllNotEqualsIgnoreCase`, which otherwise use a `HashSet`) they allocate nothing
 
 
 ## Implementation Details

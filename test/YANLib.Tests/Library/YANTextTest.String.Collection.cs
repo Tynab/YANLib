@@ -664,6 +664,45 @@ public partial class YANTextTest
         Assert.False(single.AnyNotEqualsIgnoreCase());
     }
 
+    [Theory]
+    [InlineData(5)]
+    [InlineData(40)]
+    public void AnyEqualsIgnoreCase_ArrayListAndSequence_AgreeForSmallAndLargeInputs_StringCollection(int count)
+    {
+        // Arrange (small inputs compare pairs, large ones use a set)
+        var distinct = Enumerable.Range(0, count).Select(x => (string?)$"item{x}").ToArray();
+        var withDuplicate = distinct.Append("ITEM0").ToArray();
+
+        // Act & Assert
+        foreach (var input in new IEnumerable<string?>[] { distinct, distinct.ToList(), distinct.Select(x => x) })
+        {
+            Assert.False(input.AnyEqualsIgnoreCase());
+            Assert.True(input.AllNotEqualsIgnoreCase());
+            Assert.False(input.AllEqualsIgnoreCase());
+            Assert.True(input.AnyNotEqualsIgnoreCase());
+        }
+
+        foreach (var input in new IEnumerable<string?>[] { withDuplicate, withDuplicate.ToList(), withDuplicate.Select(x => x) })
+        {
+            Assert.True(input.AnyEqualsIgnoreCase());
+            Assert.False(input.AllNotEqualsIgnoreCase());
+        }
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_List_ComparesEveryElement_StringCollection()
+    {
+        // Arrange
+        var equal = new List<string?> { "Text", "TEXT", "text" };
+        var different = new List<string?> { "Text", "TEXT", "next" };
+
+        // Act & Assert
+        Assert.True(equal.AllEqualsIgnoreCase());
+        Assert.False(equal.AnyNotEqualsIgnoreCase());
+        Assert.False(different.AllEqualsIgnoreCase());
+        Assert.True(different.AnyNotEqualsIgnoreCase());
+    }
+
     [Fact]
     public void AllEqualsIgnoreCase_LazySequence_EnumeratesOnce_StringCollection()
     {
