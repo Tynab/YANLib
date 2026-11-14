@@ -616,6 +616,76 @@ public partial class YANTextTest
         Assert.True(result);
     }
 
+    // U+212A KELVIN SIGN lower-cases (invariant) to 'k', but string.Equals(..., OrdinalIgnoreCase), which the scalar EqualsIgnoreCase uses,
+    // treats it as different from "k". The collection methods now agree with the scalar method.
+    [Fact]
+    public void EqualsIgnoreCase_KelvinSignAndK_CollectionAgreesWithScalar_StringCollection()
+    {
+        // Arrange
+        string?[] collection = ["\u212A", "k"];
+
+        // Act
+        var scalar = collection[0].EqualsIgnoreCase(collection[1]);
+
+        // Assert
+        Assert.False(scalar);
+        Assert.Equal(scalar, collection.AllEqualsIgnoreCase());
+        Assert.Equal(scalar, collection.AnyEqualsIgnoreCase());
+        Assert.Equal(!scalar, collection.AllNotEqualsIgnoreCase());
+        Assert.Equal(!scalar, collection.AnyNotEqualsIgnoreCase());
+    }
+
+    [Fact]
+    public void EqualsIgnoreCase_NullElements_NullEqualsOnlyNull_StringCollection()
+    {
+        // Arrange
+        string?[] nulls = [null, null];
+        string?[] mixed = [null, "a", "A"];
+
+        // Act & Assert
+        Assert.True(nulls.AllEqualsIgnoreCase());
+        Assert.True(nulls.AnyEqualsIgnoreCase());
+        Assert.False(mixed.AllEqualsIgnoreCase());
+        Assert.True(mixed.AnyEqualsIgnoreCase());
+        Assert.False(mixed.AllNotEqualsIgnoreCase());
+        Assert.True(mixed.AnyNotEqualsIgnoreCase());
+    }
+
+    [Fact]
+    public void EqualsIgnoreCase_SingleElement_AllEqualAndAllNotEqual_StringCollection()
+    {
+        // Arrange
+        string?[] single = ["only"];
+
+        // Act & Assert
+        Assert.True(single.AllEqualsIgnoreCase());
+        Assert.False(single.AnyEqualsIgnoreCase());
+        Assert.True(single.AllNotEqualsIgnoreCase());
+        Assert.False(single.AnyNotEqualsIgnoreCase());
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_LazySequence_EnumeratesOnce_StringCollection()
+    {
+        // Arrange
+        var enumerations = 0;
+
+        IEnumerable<string?> Strings()
+        {
+            enumerations++;
+
+            yield return "Text";
+            yield return "TEXT";
+        }
+
+        // Act
+        var result = Strings().AllEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(1, enumerations);
+    }
+
     #endregion
 
     #region Lower
