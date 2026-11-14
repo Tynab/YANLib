@@ -69,7 +69,7 @@ double negRounded = negValue.Round(); // Returns -4.0
 
 // Power functions
 double sqrt = 16.0.Sqrt(); // Returns 4.0
-double cbrt = 27.0.Cbrt(); // Returns 3.0
+double cbrt = 27.0.Cbrt(); // Returns 3.0, or 3.0000000000000004 where the C library's cbrt is not correctly rounded (glibc on Linux)
 double powered = 2.0.Pow(3); // Returns 8.0
 double abs = (-5.0).Abs(); // Returns 5.0
 ```

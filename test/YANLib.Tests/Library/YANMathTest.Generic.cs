@@ -1123,7 +1123,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(3.0, result.Value, 15);
     }
 
     [Fact]
@@ -1136,7 +1137,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(-3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(-3.0, result.Value, 15);
     }
 
     [Fact]
@@ -1149,7 +1151,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(3.0, result.Value, 15);
     }
 
     #endregion
