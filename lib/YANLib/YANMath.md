@@ -172,8 +172,10 @@ var objectNumbers = new List<object?> { 5, 2.5, "8", 1, "9" };
 int minValue = objectNumbers.Min<int>(); // Returns 1
 int maxValue = objectNumbers.Max<int>(); // Returns 9
 double avgValue = objectNumbers.Average<double>(); // Returns 5.1
-int sumValue = objectNumbers.Sum<int>(); // Returns 25
+int sumValue = objectNumbers.Sum<int>(); // Returns 26 (the elements are summed as double, 25.5, then converted)
 ```
+
+String elements are parsed with the current culture (see Conversion Rules on the [YANUnmanaged](YANUnmanaged) page). The results shown for `"3.75"` and `"2.25"` assume a culture whose decimal separator is `.`, such as en-US or the invariant culture: under de-DE or vi-VN, for example, `"3.75".Round<double>()` returns 375, and under fr-FR `"3.75"` does not parse, so it returns 0.
 
 ### Advanced Usage Examples
 

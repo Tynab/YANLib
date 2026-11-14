@@ -67,6 +67,8 @@ List<int> listResult = input.ToList<int>(); // Returns List with [1, 2, 3]
 HashSet<int> hashSetResult = input.ToHashSet<int>(); // Returns HashSet with [1, 2, 3]
 ```
 
+String elements are parsed with the current culture (see Conversion Rules on the [YANUnmanaged](YANUnmanaged) page). The results shown for `"3.5"` on this page assume a culture whose decimal separator is `.`, such as en-US or the invariant culture: under de-DE or vi-VN, for example, `"3.5"` becomes 35, and under fr-FR it does not parse, so it becomes 0.
+
 ### Dictionary and Lookup Conversion
 
 ```csharp
