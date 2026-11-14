@@ -105,6 +105,16 @@ public partial class YANMathTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public void Min_DoubleWithNaN_ReturnsNaN_Math()
+    {
+        // Act
+        var result = YANMath.Min(1.0, double.NaN, -1.0);
+
+        // Assert
+        Assert.True(double.IsNaN(result));
+    }
+
     #endregion
 
     #region Max
@@ -195,6 +205,16 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Max_DoubleWithNaN_IgnoresNaN_Math()
+    {
+        // Act
+        var result = YANMath.Max(double.NaN, 1.0, -1.0);
+
+        // Assert
+        Assert.Equal(1.0, result);
     }
 
     #endregion
@@ -302,6 +322,38 @@ public partial class YANMathTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public void Average_Int_RoundsHalfToEven_Math()
+    {
+        // Act
+        var twoAndThree = YANMath.Average(2, 3);
+        var oneAndTwo = YANMath.Average(1, 2);
+
+        // Assert
+        Assert.Equal(2, twoAndThree);
+        Assert.Equal(2, oneAndTwo);
+    }
+
+    [Fact]
+    public void Average_Decimal_KeepsAllDigits_Math()
+    {
+        // Act
+        var result = YANMath.Average(1m, 0m, 0m);
+
+        // Assert
+        Assert.Equal(1m / 3m, result);
+    }
+
+    [Fact]
+    public void Average_DoubleNegativeZero_KeepsSign_Math()
+    {
+        // Act
+        var result = YANMath.Average(-0.0);
+
+        // Assert
+        Assert.True(double.IsNegative(result));
+    }
+
     #endregion
 
     #region Sum
@@ -381,6 +433,68 @@ public partial class YANMathTest
         Assert.Equal(30, result);
     }
 
+    [Fact]
+    public void Sum_LongAboveTwoToThe53_IsExact_Math()
+    {
+        // Act
+        var result = YANMath.Sum(new long[] { 9007199254740993, 0 });
+
+        // Assert
+        Assert.Equal(9007199254740993, result);
+    }
+
+    [Fact]
+    public void Sum_LongNearMaxValue_IsExact_Math()
+    {
+        // Act
+        var result = YANMath.Sum(long.MaxValue, long.MaxValue, long.MinValue);
+
+        // Assert
+        Assert.Equal(long.MaxValue - 1, result);
+    }
+
+    [Fact]
+    public void Sum_Decimal_HasNoTrailingZeros_Math()
+    {
+        // Act
+        var result = YANMath.Sum(1.10m, 2.20m);
+
+        // Assert
+        Assert.Equal("3.3", result.ToString(System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
+    public void Sum_DecimalOverflow_FallsBackToDouble_Math()
+    {
+        // Act
+        var result = YANMath.Sum(decimal.MaxValue, decimal.MaxValue, decimal.MinValue);
+
+        // Assert
+        Assert.Equal(0m, result);
+    }
+
+    [Fact]
+    public void Sum_IntOverflow_ReturnsDefault_Math()
+    {
+        // Act
+        var result = YANMath.Sum(Enumerable.Range(0, 100_000).ToArray());
+        var nullableResult = YANMath.Sum<int?>(int.MaxValue, 1);
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Null(nullableResult);
+    }
+
+    [Fact]
+    public void Sum_Float_IsComputedInDouble_Math()
+    {
+        // Act
+        var result = YANMath.Sum(0.1f, 0.2f, 0.3f);
+
+        // Assert
+        Assert.Equal((float)((double)0.1f + 0.2f + 0.3f), result);
+    }
+
     #endregion
 
     #region Truncate
@@ -435,6 +549,16 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Truncate_LongAboveTwoToThe53_IsExact_Math()
+    {
+        // Act
+        var result = 9007199254740993L.Truncate();
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
     }
 
     #endregion
@@ -631,6 +755,44 @@ public partial class YANMathTest
         Assert.Equal(4.0, result);
     }
 
+    [Fact]
+    public void Round_DecimalMidpoint_RoundsTheDecimalValue_Math()
+    {
+        // Act
+        var result = 1.005m.Round(2);
+
+        // Assert
+        Assert.Equal(1.01m, result);
+    }
+
+    [Fact]
+    public void Round_DecimalToPositiveInfinity_KeepsExactValue_Math()
+    {
+        // Act
+        var result = 1.10m.Round(2, MidpointRounding.ToPositiveInfinity);
+
+        // Assert
+        Assert.Equal(1.1m, result);
+    }
+
+    [Fact]
+    public void Round_LongMaxValue_ReturnsInput_Math()
+    {
+        // Act
+        var result = long.MaxValue.Round(2);
+
+        // Assert
+        Assert.Equal(long.MaxValue, result);
+    }
+
+    [Fact]
+    public void Round_NegativeDigits_Throws_Math()
+    {
+        // Act & Assert
+        _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5m.Round(-1));
+        _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5.Round(-1));
+    }
+
     #endregion
 
     #region Sqrt
@@ -769,6 +931,38 @@ public partial class YANMathTest
         Assert.Equal(0, result);
     }
 
+    [Fact]
+    public void Pow_LongWholeExponent_IsExact_Math()
+    {
+        // Act
+        var result = 3L.Pow(39);
+
+        // Assert
+        Assert.Equal(4052555153018976267L, result);
+    }
+
+    [Fact]
+    public void Pow_DecimalNegativeExponent_IsExact_Math()
+    {
+        // Act
+        var result = 3m.Pow(-1);
+
+        // Assert
+        Assert.Equal(1m / 3m, result);
+    }
+
+    [Fact]
+    public void Pow_IntOverflow_ReturnsDefault_Math()
+    {
+        // Act
+        var result = 100000.Pow(2);
+        var negativeExponent = 2.Pow(-1);
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Equal(0, negativeExponent);
+    }
+
     #endregion
 
     #region Abs
@@ -849,6 +1043,28 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(5.0, result);
+    }
+
+    [Fact]
+    public void Abs_LongAboveTwoToThe53_IsExact_Math()
+    {
+        // Act
+        var result = (-9007199254740993L).Abs();
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
+    }
+
+    [Fact]
+    public void Abs_IntMinValue_ReturnsDefault_Math()
+    {
+        // Act
+        var result = int.MinValue.Abs();
+        var nullableResult = ((int?)int.MinValue).Abs();
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Null(nullableResult);
     }
 
     #endregion

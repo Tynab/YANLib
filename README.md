@@ -223,6 +223,7 @@ A comprehensive utility library for mathematical operations, providing extension
 - Power functions (Sqrt, Cbrt, Pow, Abs)
 - Trigonometric functions (Sin, Cos, Tan, Asin, Acos, Atan)
 - Logarithmic and exponential functions
+- Exact integer and decimal arithmetic without a round trip through double (`1.005m.Round(2)` is 1.01); a result that does not fit the type is the default value (`int.MinValue.Abs()` is 0)
 
 ```csharp
 // Statistical functions

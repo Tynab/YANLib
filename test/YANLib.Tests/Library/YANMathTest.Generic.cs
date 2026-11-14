@@ -362,6 +362,36 @@ public partial class YANMathTest
         Assert.Equal(30, result);
     }
 
+    [Fact]
+    public void Sum_LongObjects_AreExact_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<long>(9007199254740993L, 0);
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
+    }
+
+    [Fact]
+    public void Sum_DecimalTargetFromFloats_UsesShortestDigits_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<decimal>(0.1f, 0.2f);
+
+        // Assert
+        Assert.Equal(0.3m, result);
+    }
+
+    [Fact]
+    public void Sum_UnparsableStrings_CountAsZero_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<int>("5-", "(5)", 2);
+
+        // Assert
+        Assert.Equal(2, result);
+    }
+
     #endregion
 
     #region Truncate
@@ -612,6 +642,19 @@ public partial class YANMathTest
         Assert.Equal(4.0, result);
     }
 
+    [Fact]
+    public void Round_DecimalTargetFromDouble_UsesShortestDigits_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.005;
+
+        // Act
+        var result = input.Round<decimal>(2);
+
+        // Assert
+        Assert.Equal(1.01m, result);
+    }
+
     #endregion
 
     #region Sqrt
@@ -737,6 +780,19 @@ public partial class YANMathTest
         Assert.Equal(0.0, result);
     }
 
+    [Fact]
+    public void Pow_DecimalTargetNegativeExponent_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = 3;
+
+        // Act
+        var result = input.Pow<decimal>(-1);
+
+        // Assert
+        Assert.Equal(1m / 3m, result);
+    }
+
     #endregion
 
     #region Abs
@@ -804,6 +860,23 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Abs_IntMinValueObject_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        object? input = int.MinValue;
+
+        // Act
+        var result = input.Abs<int>();
+        var nullableResult = input.Abs<int?>();
+        var longResult = input.Abs<long>();
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Null(nullableResult);
+        Assert.Equal(2147483648L, longResult);
     }
 
     #endregion

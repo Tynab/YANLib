@@ -21,8 +21,8 @@ public static partial class YANMath
     /// <param name="input">The collection of values to truncate. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection containing the integer part of each value in the input collection, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Truncate(decimal)"/> or <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -37,8 +37,8 @@ public static partial class YANMath
     /// <returns>A collection containing the integer part of each value in the input array, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to truncate an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// This method uses <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Truncate(decimal)"/> or <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -53,8 +53,8 @@ public static partial class YANMath
     /// <returns>A collection containing the integer part of each value in the input collection, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before truncating each value.
-    /// This method uses <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Truncate(decimal)"/> or <see cref="Math.Truncate(double)"/> to remove the fractional part of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -68,8 +68,8 @@ public static partial class YANMath
     /// <param name="input">The collection of values to find the ceiling of. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection containing the ceiling of each value in the input collection, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Ceiling(decimal)"/> or <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -84,8 +84,8 @@ public static partial class YANMath
     /// <returns>A collection containing the ceiling of each value in the input array, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to find the ceiling of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// This method uses <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Ceiling(decimal)"/> or <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     public static IEnumerable<T?>? Ceilings<T>(params T?[]? input) => input.CeilingsImplement();
@@ -98,8 +98,8 @@ public static partial class YANMath
     /// <returns>A collection containing the ceiling of each value in the input collection, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before finding the ceiling of each value.
-    /// This method uses <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Ceiling(decimal)"/> or <see cref="Math.Ceiling(double)"/> to find the ceiling of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -113,8 +113,8 @@ public static partial class YANMath
     /// <param name="input">The collection of values to find the floor of. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection containing the floor of each value in the input collection, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Floor(double)"/> to find the floor of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Floor(decimal)"/> or <see cref="Math.Floor(double)"/> to find the floor of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -129,8 +129,8 @@ public static partial class YANMath
     /// <returns>A collection containing the floor of each value in the input array, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to find the floor of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// This method uses <see cref="Math.Floor(double)"/> to find the floor of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Floor(decimal)"/> or <see cref="Math.Floor(double)"/> to find the floor of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -145,8 +145,8 @@ public static partial class YANMath
     /// <returns>A collection containing the floor of each value in the input collection, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before finding the floor of each value.
-    /// This method uses <see cref="Math.Floor(double)"/> to find the floor of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Floor(decimal)"/> or <see cref="Math.Floor(double)"/> to find the floor of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -162,8 +162,8 @@ public static partial class YANMath
     /// <param name="mode">The rounding mode to use. Default is <see cref="MidpointRounding.AwayFromZero"/>.</param>
     /// <returns>A collection containing the rounded values, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Round(decimal, int, MidpointRounding)"/> or <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -178,8 +178,8 @@ public static partial class YANMath
     /// <returns>A collection containing the rounded values, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to round an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// This method uses <see cref="Math.Round(double, MidpointRounding)"/> to round each number to the nearest integer.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Round(decimal, MidpointRounding)"/> or <see cref="Math.Round(double, MidpointRounding)"/> to round each number to the nearest integer.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -196,8 +196,8 @@ public static partial class YANMath
     /// <returns>A collection containing the rounded values, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before rounding each value.
-    /// This method uses <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Round(decimal, int, MidpointRounding)"/> or <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -260,7 +260,7 @@ public static partial class YANMath
     /// <returns>A collection containing each value in the input collection raised to the specified power, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Pow(double, double)"/> to calculate the power of each number.
-    /// Each element and the power are converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one) and the power is a whole number, the power is computed exactly by repeated multiplication (a negative power as 1/x^n); otherwise each element and the power are converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>100000.Pow(2)</c> is 0 for <c>int</c>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -277,7 +277,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before raising each value to the power.
     /// This method uses <see cref="Math.Pow(double, double)"/> to calculate the power of each number.
-    /// Each element and the power are converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one) and the power is a whole number, each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the power is computed exactly by repeated multiplication (a negative power as 1/x^n); otherwise each element and the power are converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>100000.Pow(2)</c> is 0 for <c>int</c>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -291,8 +291,8 @@ public static partial class YANMath
     /// <param name="input">The collection of numbers to find the absolute value of. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection containing the absolute value of each value in the input collection, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Abs(decimal)"/> or <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>int.MinValue.Abs()</c> is 0.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -307,8 +307,8 @@ public static partial class YANMath
     /// <returns>A collection containing the absolute value of each value in the input array, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to find the absolute value of an array of values without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// This method uses <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Abs(decimal)"/> or <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>int.MinValue.Abs()</c> is 0.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
@@ -323,8 +323,8 @@ public static partial class YANMath
     /// <returns>A collection containing the absolute value of each value in the input collection, or <c>null</c> if the input is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before finding the absolute value of each value.
-    /// This method uses <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
-    /// Each element is converted to <c>double</c> for the calculation, and the results are converted back to type <typeparamref name="T"/>.
+    /// This method uses <see cref="Math.Abs(decimal)"/> or <see cref="Math.Abs(double)"/> to calculate the absolute value of each number.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>int.MinValue.Abs()</c> is 0.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]

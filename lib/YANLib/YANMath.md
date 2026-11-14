@@ -20,7 +20,6 @@ The library is organized into several functional categories:
 
 - **Basic Trigonometry**: Sin, Cos, Tan
 - **Inverse Trigonometry**: Asin, Acos, Atan
-- **Angle Conversions**: Radians to degrees, Degrees to radians
 
 ### Logarithmic and Exponential Functions
 
@@ -172,10 +171,28 @@ var objectNumbers = new List<object?> { 5, 2.5, "8", 1, "9" };
 int minValue = objectNumbers.Min<int>(); // Returns 1
 int maxValue = objectNumbers.Max<int>(); // Returns 9
 double avgValue = objectNumbers.Average<double>(); // Returns 5.1
-int sumValue = objectNumbers.Sum<int>(); // Returns 26 (the elements are summed as double, 25.5, then converted)
+int sumValue = objectNumbers.Sum<int>(); // Returns 26 (the elements are summed exactly as decimal, 25.5, then rounded half to even)
 ```
 
 String elements are parsed with the current culture (see Conversion Rules on the [YANUnmanaged](YANUnmanaged) page). The results shown for `"3.75"` and `"2.25"` assume a culture whose decimal separator is `.`, such as en-US or the invariant culture: under de-DE or vi-VN, for example, `"3.75".Round<double>()` returns 375, and under fr-FR `"3.75"` does not parse, so it returns 0.
+
+### Precision, Rounding and Overflow
+
+- **Exact integer and decimal math**: when the result type is an integer type or `decimal` (or a nullable one), Sum, Average, Truncate, Ceiling, Floor, Round, Abs and Pow with a whole-number power are computed exactly, without a round trip through `double`. Values in object collections are converted to `decimal` first; a `double` or `float` goes through its shortest round-trip text, so `1.005` stays `1.005`.
+
+```csharp
+decimal rounded = 1.005m.Round(2); // Returns 1.01 (8.3.3 returned 1, because the double nearest to 1.005 is 1.00499...)
+long sum = YANMath.Sum(new long[] { 9007199254740993, 0 }); // Returns 9007199254740993 (8.3.3: 9007199254740992)
+long power = 3L.Pow(39); // Returns 4052555153018976267
+decimal third = 3m.Pow(-1); // Returns 0.3333333333333333333333333333
+decimal objectRounded = ((object)1.005).Round<decimal>(2); // Returns 1.01
+```
+
+- **double and float**: computed in `double`, as before; a `float` result is the `double` result cast to `float`. Sqrt, Cbrt, the trigonometric, logarithmic and exponential functions are inherently `double` for every type.
+- **Decimal results** carry no trailing zeros (`YANMath.Sum(1.10m, 2.20m)` returns `3.3`, as before). If a `decimal` calculation overflows, the method falls back to the `double` calculation.
+- **Integer results** of a fractional calculation (Average, a negative power, an object value converted to an integer type) are rounded half to even: `YANMath.Average(2, 3)` returns 2.
+- **Overflow**: a result that does not fit the result type is the default value, 0 or `null` for a nullable type, never an `OverflowException`. `int.MinValue.Abs()` returns 0, `100000.Pow(2)` returns 0 for `int`, and `YANMath.Sum(Enumerable.Range(0, 100_000).ToArray())` returns 0 because the exact sum, 4999950000, exceeds `int.MaxValue` (LINQ's `Sum` throws instead). Use a wider type, for example `Sum<long>` over the values or `100000L.Pow(2)`, when results can get that large.
+- **Min and Max** compare with `Comparer<T>.Default`, like LINQ: `NaN` is the smallest `double`, and the first of equal values wins.
 
 ### Advanced Usage Examples
 
@@ -223,7 +240,7 @@ decimal decimalResult = intValue.Sqrt<decimal>(); // Returns 4.0m
 - **Collection Processing**: Collection methods are lazily evaluated and preserve input order; no parallel processing is used
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning null rather than throwing exceptions
-- **Caching**: Some operations use internal caching to improve performance for repeated calculations
+- **No Boxing for Typed Numbers**: Sum, Average and the other exact operations work on typed `int`, `long`, `decimal`, `double`, ... values (arrays, lists and other collections) without boxing them; nullable and object inputs are boxed
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -248,7 +265,7 @@ The library provides comprehensive coverage of mathematical functions:
 | **Trigonometric** | Sin, Cos, Tan, Asin, Acos, Atan |
 | **Logarithmic** | Log, Log10, Log2, ILogB |
 | **Exponential** | Exp, Exp2 |
-| **Collection Operations** | Collection versions of all operations (e.g., Mins, Maxes, Averages, Sums, Truncates, etc.) |
+| **Collection Operations** | Element-wise versions of the single-value operations (Truncates, Ceilings, Floors, Rounds, Sqrts, Pows, Abss, Sins, ..., ILogBs) |
 | **Generic Operations** | Generic versions of all operations |
 | **Nullable Operations** | Support for nullable numeric types |
 
@@ -257,7 +274,7 @@ The library provides comprehensive coverage of mathematical functions:
 
 - **Math Function Implementation**: Wraps `System.Math` methods with extension methods for better usability
 - **Numeric Type Support**: Implements operations for all numeric types (int, double, decimal, etc.)
-- **Overflow Protection**: Includes safeguards against numeric overflow in mathematical operations
+- **Overflow Handling**: A result that does not fit the result type is the default value (0, or null for a nullable type) instead of an exception; see Precision, Rounding and Overflow
 - **NaN Handling**: Properly handles NaN (Not a Number) values in floating-point operations
 - **Infinity Handling**: Includes special handling for positive and negative infinity values
 - **Rounding Precision**: Supports configurable decimal precision in rounding operations
