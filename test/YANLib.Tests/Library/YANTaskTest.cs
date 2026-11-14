@@ -223,20 +223,30 @@ public partial class YANTaskTest
         var later = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
         var never = new TaskCompletionSource<int>();
 
+        // The predicate completes the match while the already complete 1 is checked. The match comes before the 1, so it is
+        // still pending when it is checked and its result has to come through the waiting path, without any timing assumption.
         var tasks = new[]
         {
             never.Task,
-            Task.FromResult(1),
-            later.Task
+            later.Task,
+            Task.FromResult(1)
         };
 
-        // Act
-        var operation = tasks.WaitAnyWithCondition(x => x > 1);
+        bool predicate(int x)
+        {
+            if (x is 1)
+            {
+                _ = later.TrySetResult(5);
+            }
 
-        later.SetResult(5);
+            return x > 1;
+        }
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(predicate);
 
         // Assert
-        Assert.Equal(5, await operation);
+        Assert.Equal(5, result);
     }
 
     [Fact]
