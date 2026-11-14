@@ -20,13 +20,13 @@ public static partial class YANProcess
     /// </param>
     /// <returns>A task that represents the asynchronous kill operation.</returns>
     /// <exception cref="Exception">
-    /// When a process cannot be killed, the other processes (for all names) are still killed and every process handle is disposed; then the first exception is rethrown
-    /// with its original type.
+    /// When a process cannot be killed (for example <see cref="InvalidOperationException"/> when it is an ancestor of the calling process), the other processes
+    /// (for all names) are still killed and every process handle is disposed; then the first exception is rethrown with its original type.
     /// </exception>
     /// <remarks>
     /// Each name is matched as described for <see cref="KillAllProcessesByName(string?)"/>: the file name as given first, then without its extension if nothing matched.
-    /// The calling process is never killed. Each process is killed together with its entire process tree (all descendants, whatever their names; the calling process too
-    /// if a matching process is one of its ancestors).
+    /// The calling process is never killed. Each process is killed together with its entire process tree (all descendants, whatever their names), except a matching
+    /// process that is an ancestor of the calling process: .NET refuses to kill that tree, so that process keeps running and the refusal counts as a failure.
     /// It waits for each process to exit before completing.
     /// The operation is performed in parallel for all process names.
     /// </remarks>
@@ -43,14 +43,14 @@ public static partial class YANProcess
     /// </param>
     /// <returns>A task that represents the asynchronous kill operation.</returns>
     /// <exception cref="Exception">
-    /// When a process cannot be killed, the other processes (for all names) are still killed and every process handle is disposed; then the first exception is rethrown
-    /// with its original type.
+    /// When a process cannot be killed (for example <see cref="InvalidOperationException"/> when it is an ancestor of the calling process), the other processes
+    /// (for all names) are still killed and every process handle is disposed; then the first exception is rethrown with its original type.
     /// </exception>
     /// <remarks>
     /// This method provides a convenient way to kill processes by name without having to explicitly create a collection.
     /// Each name is matched as described for <see cref="KillAllProcessesByName(string?)"/>: the file name as given first, then without its extension if nothing matched.
-    /// The calling process is never killed. Each process is killed together with its entire process tree (all descendants, whatever their names; the calling process too
-    /// if a matching process is one of its ancestors).
+    /// The calling process is never killed. Each process is killed together with its entire process tree (all descendants, whatever their names), except a matching
+    /// process that is an ancestor of the calling process: .NET refuses to kill that tree, so that process keeps running and the refusal counts as a failure.
     /// It waits for each process to exit before completing.
     /// The operation is performed in parallel for all process names.
     /// </remarks>

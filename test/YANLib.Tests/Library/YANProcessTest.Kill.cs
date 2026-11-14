@@ -101,6 +101,29 @@ public partial class YANProcessTest
     // Generous: the machine may be busy; a passing test returns as soon as the process has exited.
     private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(30);
 
+    // The parent process id from /proc/self/stat ("pid (comm) state ppid ...", where comm may contain spaces and parentheses).
+    // Init (pid 1) and an unreadable file give false.
+    private static bool TryGetParentProcessId(out int parentId)
+    {
+        parentId = 0;
+
+        try
+        {
+            var stat = File.ReadAllText("/proc/self/stat");
+            var fields = stat[(stat.LastIndexOf(')') + 1)..].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            return fields.Length > 1 && int.TryParse(fields[1], out parentId) && parentId > 1;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
     #region Kill
 
     [Fact]
@@ -280,6 +303,43 @@ public partial class YANProcessTest
 
         // Assert (Kill(entireProcessTree: true) on the calling process would throw InvalidOperationException)
         Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task KillAndDispose_AncestorOfCallingProcess_IsRefusedAndTheOthersAreStillKilled_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsSupported || !TryGetParentProcessId(out var parentId))
+        {
+            return;
+        }
+
+        var name = SleepProcesses.UniqueName();
+        var parent = Process.GetProcessById(parentId);
+        var target = sleepers.Start(name);
+        var targetId = target.Id;
+
+        // Act (the parent is passed as a Process, never by name, so no other process with its name is touched;
+        // Kill(entireProcessTree: true) refuses a tree that contains the calling process)
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(() => new[] { parent, target }.KillAndDispose());
+
+        // Assert
+        using var stillRunningParent = Process.GetProcessById(parentId);
+
+        Assert.False(stillRunningParent.HasExited);
+
+        try
+        {
+            using var stillRunning = Process.GetProcessById(targetId);
+
+            Assert.True(stillRunning.ProcessName != name || stillRunning.WaitForExit(ExitTimeout));
+        }
+        catch (ArgumentException)
+        {
+            // The process no longer exists.
+        }
     }
 
     [Theory]

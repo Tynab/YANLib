@@ -20,8 +20,9 @@ public static partial class YANProcess
     /// </param>
     /// <returns>A task that represents the asynchronous kill operation.</returns>
     /// <exception cref="Exception">
-    /// When a process cannot be killed (for example <see cref="System.ComponentModel.Win32Exception"/> for access denied, or <see cref="AggregateException"/> when part of its
-    /// process tree could not be killed), the other processes are still killed and every process handle is disposed; the first exception is then rethrown with its original type.
+    /// When a process cannot be killed (for example <see cref="System.ComponentModel.Win32Exception"/> for access denied, <see cref="AggregateException"/> when part of its
+    /// process tree could not be killed, or <see cref="InvalidOperationException"/> when it is an ancestor of the calling process), the other processes are still killed and
+    /// every process handle is disposed; the first exception is then rethrown with its original type.
     /// </exception>
     /// <remarks>
     /// <para>
@@ -31,7 +32,9 @@ public static partial class YANProcess
     /// </para>
     /// <para>
     /// Each process is killed with <see cref="Process.Kill(bool)"/> and <c>entireProcessTree: true</c>: all of its descendant processes are killed too,
-    /// whatever their names. If a matching process is an ancestor of the calling process (for example the shell or host that started it), the calling process is killed with it.
+    /// whatever their names. If a matching process is an ancestor of the calling process (for example the shell that started it), <see cref="Process.Kill(bool)"/> refuses
+    /// to kill its tree with an <see cref="InvalidOperationException"/>: that process keeps running and nothing is killed through it, so the calling process survives too.
+    /// The other matching processes are still killed, and the refusal is reported like any other failure (see the exception description).
     /// </para>
     /// <para>
     /// It waits for each process to exit before completing.

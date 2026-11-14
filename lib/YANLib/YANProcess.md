@@ -51,9 +51,10 @@ await @"C:\Program Files\Mozilla Firefox\firefox.exe".KillAllProcessesByName();
 // A process whose name contains a dot can be targeted by its full name
 await "my.app".KillAllProcessesByName();
 
-// The calling process itself is never killed. Avoid passing your own process name when an ancestor can
-// have the same name (for example "dotnet" when started with `dotnet app.dll` or `dotnet test`):
-// killing that ancestor kills its whole process tree, which includes the calling process.
+// The calling process itself is never killed. If a matching process is an ancestor of the calling process
+// (for example the shell that started it), .NET refuses to kill its process tree: that process keeps running,
+// the other matching processes are still killed, and the InvalidOperationException is rethrown at the end
+// (unless another process failed first: only the first failure is rethrown).
 
 // Null-safe operation (no action taken)
 string? nullProcessName = null;
@@ -259,7 +260,7 @@ The library provides focused coverage of process termination operations:
 ## Technical Details
 
 - **Process Identification**: Uses `Process.GetProcessesByName()` to find processes by name
-- **Process Termination**: Uses `Process.Kill(entireProcessTree: true)`, which kills every descendant of a matching process, whatever its name. If a matching process is an ancestor of the calling process (for example the shell or host that started it), the calling process is killed with it
+- **Process Termination**: Uses `Process.Kill(entireProcessTree: true)`, which kills every descendant of a matching process, whatever its name. If a matching process is an ancestor of the calling process (for example the shell that started it), .NET refuses to kill its tree with an `InvalidOperationException`: that process keeps running and nothing is killed through it, the other matching processes are still killed, and the refusal is rethrown at the end like any other failure (only the first failure is rethrown)
 - **Self Protection**: Skips the process whose id is `Environment.ProcessId` (`Kill(entireProcessTree: true)` always refuses a tree that contains the caller)
 - **Asynchronous Waiting**: Uses `Process.WaitForExitAsync()` to wait for process termination without blocking
 - **Resource Cleanup**: Disposes every `Process` handle in a `finally` block, also when killing it failed
