@@ -87,7 +87,8 @@ public static partial class YANUnmanaged
     /// <remarks>
     /// This method parses both the keys and values of the input dictionary to the specified types.
     /// Keys that cannot be parsed will use the default value of <typeparamref name="TKey"/>.
-    /// Values that cannot be parsed will be <c>null</c> in the resulting dictionary.
+    /// Values that cannot be parsed will be the default value of <typeparamref name="TValue"/> in the resulting dictionary: <c>null</c> for a
+    /// reference type or a nullable value type, otherwise <c>default(TValue)</c> (for example <c>0</c> for <see cref="int"/>).
     /// If duplicate keys are encountered after parsing, an exception will be thrown.
     /// </remarks>
     [DebuggerHidden]

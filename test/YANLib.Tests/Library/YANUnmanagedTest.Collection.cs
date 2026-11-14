@@ -427,6 +427,26 @@ public partial class YANUnmanagedTest
         Assert.Contains("An item with the same key has already been added", exception.Message);
     }
 
+    // Pins the XML remark: a value that cannot be parsed becomes default(TValue), which is null only for a reference or nullable value type.
+    [Fact]
+    public void Parses_UnparsableValues_ReturnDefaultOfValueType_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "abc" },
+            { "2", "3" }
+        };
+
+        // Act
+        var result = input.Parses<int, int>();
+        var nullableResult = input.Parses<int, int?>();
+
+        // Assert
+        Assert.Equal(new Dictionary<int, int> { { 1, 0 }, { 2, 3 } }, result);
+        Assert.Equal(new Dictionary<int, int?> { { 1, null }, { 2, 3 } }, nullableResult);
+    }
+
     [Fact]
     public void Parses_DateTimeKeys_ParsesKeysCorrectly_Collection()
     {

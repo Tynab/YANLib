@@ -285,6 +285,32 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, result);
     }
 
+    // Pins the XML remarks of the unconstrained Parses<T> overloads (selected here through method-group conversion, because a call
+    // like input.Parses<int>() can bind to an unmanaged overload instead): an element that cannot be parsed becomes default(T).
+    [Fact]
+    public void Parses_UnparsableElementsToNonNullableValueType_ReturnDefault_NullableCollection()
+    {
+        // Arrange
+        Func<IEnumerable<object?>?, IEnumerable<int>?> parsesEnumerable = YANUnmanaged.Parses<int>;
+        Func<object?[]?, IEnumerable<int>?> parsesArray = YANUnmanaged.Parses<int>;
+        Func<IEnumerable?, IEnumerable<int>?> parsesNonGeneric = YANUnmanaged.Parses<int>;
+        Func<IEnumerable<object?>?, IEnumerable<string?>?> parsesString = YANUnmanaged.Parses<string>;
+        object?[] input = ["123", "not a number", null, "789"];
+        var expected = new[] { 123, 0, 0, 789 };
+
+        // Act
+        var enumerableResult = parsesEnumerable(input)?.ToArray();
+        var arrayResult = parsesArray(input)?.ToArray();
+        var nonGenericResult = parsesNonGeneric(new ArrayList(input))?.ToArray();
+        var stringResult = parsesString(input)?.ToArray();
+
+        // Assert
+        Assert.Equal(expected, enumerableResult);
+        Assert.Equal(expected, arrayResult);
+        Assert.Equal(expected, nonGenericResult);
+        Assert.Equal(new string?[] { "123", "not a number", null, "789" }, stringResult);
+    }
+
     [Fact]
     public void Parses_NullLookup_ReturnsEmptyLookup_NullableCollection()
     {
@@ -480,6 +506,27 @@ public partial class YANUnmanagedTest
         var group2 = result[2].ToList();
         _ = Assert.Single(group2);
         Assert.Equal("Value3", group2[0]);
+    }
+
+    // Pins the XML remark: keys and elements that cannot be parsed become default(TKey) / default(TElement), so for int keys they share
+    // the group of 0 with null keys, while int? keys and elements give null.
+    [Fact]
+    public void Parses_UnparsableKeysAndElements_ReturnDefaultOfType_NullableCollection()
+    {
+        // Arrange
+        var input = new object?[] { 1, "1", "x", null, 2.0 }.ToLookup(static x => x, static x => x);
+
+        // Act
+        var result = input.Parses<int, int>();
+        var nullableResult = input.Parses<int?, int?>();
+
+        // Assert
+        Assert.Equal([1, 0, 2], result.Select(static g => g.Key));
+        Assert.Equal([1, 1], result[1]);
+        Assert.Equal([0, 0], result[0]);
+        Assert.Equal([2], result[2]);
+        Assert.Equal([1, null, 2], nullableResult.Select(static g => g.Key));
+        Assert.Equal([null, null], nullableResult[null]);
     }
 
     [Fact]
