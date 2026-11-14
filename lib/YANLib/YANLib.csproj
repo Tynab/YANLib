@@ -79,6 +79,10 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="YANLib.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\YANLib.Implementation\YANLib.Implementation.csproj">
 			<PrivateAssets>all</PrivateAssets>
 		</ProjectReference>
