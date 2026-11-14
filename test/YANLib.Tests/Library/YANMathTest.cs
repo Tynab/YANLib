@@ -390,6 +390,20 @@ public partial class YANMathTest
         Assert.True(double.IsNegative(YANMath.Average<double>(negativeZero)));
     }
 
+    [Fact]
+    public void Average_SequenceEmptyOnSecondEnumeration_ReturnsDefault_Math()
+    {
+        // Act
+        var intResult = YANMath.Average<int>(new OneShot<int>(5, 1, 3));
+        var decimalResult = YANMath.Average<decimal>(new OneShot<decimal>(1m));
+        var doubleResult = YANMath.Average<double>(new OneShot<double>(1.0));
+
+        // Assert
+        Assert.Equal(0, intResult);
+        Assert.Equal(0m, decimalResult);
+        Assert.Equal(0.0, doubleResult);
+    }
+
     #endregion
 
     #region Sum
@@ -548,6 +562,23 @@ public partial class YANMathTest
         Assert.Equal(YANMath.Sum(decimals.ToArray()), YANMath.Sum<decimal>(decimals));
         Assert.Equal(0, YANMath.Sum<int>(Enumerable.Range(0, 100_000)));
         Assert.Equal(0m, YANMath.Sum<decimal>(decimalOverflow));
+    }
+
+    [Fact]
+    public void Sum_ListSubclassWithOwnEnumerator_FollowsTheEnumerator_Math()
+    {
+        // Arrange
+        IEnumerable<int> input = new FilteredList { 5, -100, 3 };
+
+        // Act
+        var sum = YANMath.Sum<int>(input);
+        var average = YANMath.Average<int>(input);
+        var min = YANMath.Min<int>(input);
+
+        // Assert
+        Assert.Equal(8, sum);
+        Assert.Equal(4, average);
+        Assert.Equal(3, min);
     }
 
     #endregion
@@ -1909,6 +1940,33 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(10, result);
+    }
+
+    #endregion
+
+    #region Helpers
+
+    /// <summary>A sequence that yields its items on the first enumeration only, as a consumed stream does.</summary>
+    private sealed class OneShot<T>(params T[] items) : IEnumerable<T>
+    {
+        private bool _enumerated;
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            var first = !_enumerated;
+
+            _enumerated = true;
+
+            return first ? ((IEnumerable<T>)items).GetEnumerator() : Enumerable.Empty<T>().GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    /// <summary>A <see cref="List{T}"/> whose own <see cref="IEnumerable{T}"/> implementation skips negative items.</summary>
+    private sealed class FilteredList : List<int>, IEnumerable<int>
+    {
+        IEnumerator<int> IEnumerable<int>.GetEnumerator() => ToArray().Where(static x => x >= 0).GetEnumerator();
     }
 
     #endregion

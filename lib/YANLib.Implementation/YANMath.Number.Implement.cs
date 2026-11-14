@@ -296,18 +296,21 @@ internal static partial class YANMath
         }
     }
 
-    /// <summary>The elements of an array or a <see cref="List{T}"/> as a span, which the aggregates loop over without an enumerator.</summary>
+    /// <summary>
+    /// The elements of a <typeparamref name="T"/>[] or a <see cref="List{T}"/> as a span, which the aggregates loop over without an
+    /// enumerator. Exact types only, as LINQ does: a subclass of <see cref="List{T}"/> can enumerate differently.
+    /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static bool TryGetSpan<T>(IEnumerable<T> input, out ReadOnlySpan<T> span)
     {
         switch (input)
         {
-            case T[] array:
+            case T[] array when array.GetType() == typeof(T[]):
                 span = array;
 
                 return true;
-            case List<T> list:
+            case List<T> list when list.GetType() == typeof(List<T>):
                 span = CollectionsMarshal.AsSpan(list);
 
                 return true;
@@ -586,7 +589,10 @@ internal static partial class YANMath
     [DebuggerStepThrough]
     private static T? SumObjectDouble<T>(IEnumerable<object?> input) => input.Sum(static x => x.ParseImplement<double>()).ParseImplement<T?>();
 
-    /// <summary>Average of the non-null elements of a typed, non-empty collection; see the class remarks.</summary>
+    /// <summary>
+    /// Average of the non-null elements of a typed collection that was not empty when checked; <c>default</c> when it has no elements
+    /// left by now (a sequence that can be enumerated only once). See the class remarks.
+    /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static T? AverageNumber<T>(IEnumerable<T?> input)
@@ -597,19 +603,21 @@ internal static partial class YANMath
         {
             var sum = SumInt128(input!, out var count);
 
-            return TryFromInt128(DivideToEven(sum, count), out T value) ? value : default;
+            return count > 0 && TryFromInt128(DivideToEven(sum, count), out T value) ? value : default;
         }
 
         if (IsBinaryFloatingPoint(kind))
         {
             var sum = SumDouble(input!, true, out var count);
 
-            return FromDouble<T>(sum / count);
+            return count > 0 ? FromDouble<T>(sum / count) : default;
         }
 
         if (kind == NumberKind.Decimal)
         {
-            return TrySumDecimal((IEnumerable<decimal>)(object)input, out var sum, out var count) ? As<decimal, T>(Normalize(sum / count)) : AverageObjectDouble<T>(input.Cast<object?>());
+            return !TrySumDecimal((IEnumerable<decimal>)(object)input, out var sum, out var count) ? AverageObjectDouble<T>(input.Cast<object?>())
+                : count > 0 ? As<decimal, T>(Normalize(sum / count))
+                : default;
         }
 
         return AverageObject<T>(input.Cast<object?>());
