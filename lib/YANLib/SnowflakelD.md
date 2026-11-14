@@ -277,11 +277,15 @@ catch (ArgumentOutOfRangeException ex)
 }
 
 // Handle clock moving backwards
-// This would occur if the system clock is adjusted backwards while the application is running
-// The generator throws an InvalidOperationException to prevent duplicate IDs
+// This would occur if the system clock is adjusted backwards while the application is running:
+// NextId throws an InvalidOperationException when the clock is earlier than when the same generator
+// made its previous ID, to prevent duplicate IDs. A new generator does not throw it on its first call,
+// so the check matters for a long-lived generator that is created once and reused
+var sharedGenerator = new IdGenerator(1, 1);
+
 try
 {
-    long id = new IdGenerator(1, 1).NextId();
+    long id = sharedGenerator.NextId();
 }
 catch (InvalidOperationException ex)
 {
