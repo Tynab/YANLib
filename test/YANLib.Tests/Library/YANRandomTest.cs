@@ -868,6 +868,62 @@ public partial class YANRandomTest
         Assert.True(result.All(static c => char.IsLower(c) && char.IsLetter(c)));
     }
 
+    [Fact]
+    public void NextString_PassedInstance_DrawsOnlyTheLength_RandomExtension()
+    {
+        // pin: the documented behaviour (see YANRandom.md, Thread Safety), as in 8.3.3: the characters come from Random.Shared, and the
+        // passed instance only draws the length when size is null; a NextString that draws its characters from it would change this test
+        // Arrange
+        var sized = new CountingRandom();
+        var unsized = new CountingRandom();
+
+        // Act
+        var fixedLength = sized.NextString(8);
+        var randomLength = unsized.NextString();
+
+        // Assert
+        Assert.Equal(8, fixedLength.Length);
+        Assert.Equal(0, sized.Draws);
+        Assert.Equal(254, randomLength.Length);
+        Assert.Equal(1, unsized.Draws);
+        Assert.True(randomLength.All(static c => c is >= 'a' and <= 'z'));
+    }
+
+    /// <summary>A <see cref="Random"/> that counts its draws; each draw is the largest value below the exclusive upper bound.</summary>
+    private sealed class CountingRandom : Random
+    {
+        public int Draws { get; private set; }
+
+        public override int Next() => Count(int.MaxValue - 1);
+
+        public override int Next(int maxValue) => Count(Math.Max(0, maxValue - 1));
+
+        public override int Next(int minValue, int maxValue) => Count(Math.Max(minValue, maxValue - 1));
+
+        public override long NextInt64() => Count(long.MaxValue - 1);
+
+        public override long NextInt64(long maxValue) => Count(Math.Max(0, maxValue - 1));
+
+        public override long NextInt64(long minValue, long maxValue) => Count(Math.Max(minValue, maxValue - 1));
+
+        public override double NextDouble() => Count(Math.BitDecrement(1.0));
+
+        public override float NextSingle() => Count(MathF.BitDecrement(1f));
+
+        public override void NextBytes(byte[] buffer) => Draws++;
+
+        public override void NextBytes(Span<byte> buffer) => Draws++;
+
+        protected override double Sample() => Count(Math.BitDecrement(1.0));
+
+        private T Count<T>(T value)
+        {
+            Draws++;
+
+            return value;
+        }
+    }
+
     #endregion
 
     #region GenerateRandom

@@ -228,9 +228,13 @@ public static partial class YANRandom
     /// <summary>
     /// Generates a random string of lowercase letters with the specified size.
     /// </summary>
-    /// <param name="random">The random number generator.</param>
+    /// <param name="random">The random number generator that draws the length when <paramref name="size"/> is <c>null</c>; it does not draw the characters.</param>
     /// <param name="size">The length of the string to generate. If <c>null</c>, a random length is used.</param>
     /// <returns>A random string of lowercase letters with the specified size.</returns>
+    /// <remarks>
+    /// The characters come from <see cref="Random.Shared"/>: <paramref name="random"/> only draws the length when <paramref name="size"/> is
+    /// <c>null</c> and is not used when a size is given, so a seeded <paramref name="random"/> does not give reproducible strings (nor did 8.3.3).
+    /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static string NextString(this Random random, object? size = null) => random.NextStringImplement(size);

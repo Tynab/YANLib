@@ -205,6 +205,6 @@ The library provides comprehensive coverage of random value generation:
 - **String Generation**: Implements character-based random string generation with configurable length
 - **Collection Sampling**: Picks uniformly random indexes (without duplicates, it removes each picked element from a copy of the collection)
 - **Duplicate Control**: Implements tracking mechanism to prevent duplicates when requested
-- **Thread Safety**: The static `GenerateRandom`/`GenerateRandoms` methods use `Random.Shared`, which is thread-safe; the `Next...` extension methods use the `Random` instance you pass, which, like any `System.Random`, must not be shared between threads without locking
+- **Thread Safety**: The static `GenerateRandom`/`GenerateRandoms` methods use `Random.Shared`, which is thread-safe; the `Next...` extension methods use the `Random` instance you pass, which, like any `System.Random`, must not be shared between threads without locking. The exception is `NextString`: its characters come from `Random.Shared`, and the instance you pass only draws the length when `size` is `null` (it is not used when you give a `size`), so a seeded `Random` gives reproducible `NextChar` values but not reproducible `NextString` values
 - **Parallel Processing**: Implements parallel processing for generating large collections of random values
 - **Generic Implementation**: Uses generic type parameters with constraints to support various types
