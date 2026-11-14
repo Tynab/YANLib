@@ -3,9 +3,15 @@
 	<PropertyGroup>
 		<!--
 			NuGet audit warnings (NU1900: the vulnerability data could not be fetched, NU1901-NU1904: a package
-			has a known vulnerability, NU1905: the audit source has no vulnerability data) stay warnings even
-			when warnings are treated as errors (-warnaserror or TreatWarningsAsErrors=true), so that a transient
-			nuget.org outage or a newly published advisory does not break the build. They are still reported.
+			has a known vulnerability, NU1905: the audit source has no vulnerability data) stay warnings when
+			TreatWarningsAsErrors=true is set (as a property in a project file or Directory.Build.props, or as
+			-p:TreatWarningsAsErrors=true; for restore and build of YANLib.sln or of a single project), so that a
+			transient nuget.org outage or a newly published advisory does not break the build. They are still
+			reported.
+			The -warnaserror switch is not covered: with it, an audit warning still fails restore and build of
+			YANLib.sln, and the build of a project whose referenced project raises the warning. To treat warnings
+			as errors in CI, set TreatWarningsAsErrors=true (for example -p:TreatWarningsAsErrors=true) instead of
+			passing -warnaserror.
 		-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);NU1900;NU1901;NU1902;NU1903;NU1904;NU1905</WarningsNotAsErrors>
 	</PropertyGroup>
