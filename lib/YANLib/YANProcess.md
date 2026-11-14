@@ -51,8 +51,9 @@ await @"C:\Program Files\Mozilla Firefox\firefox.exe".KillAllProcessesByName();
 // A process whose name contains a dot can be targeted by its full name
 await "my.app".KillAllProcessesByName();
 
-// The calling process is skipped, so killing by your own name only kills the other instances
-await Process.GetCurrentProcess().ProcessName.KillAllProcessesByName();
+// The calling process itself is never killed. Avoid passing your own process name when an ancestor can
+// have the same name (for example "dotnet" when started with `dotnet app.dll` or `dotnet test`):
+// killing that ancestor kills its whole process tree, which includes the calling process.
 
 // Null-safe operation (no action taken)
 string? nullProcessName = null;

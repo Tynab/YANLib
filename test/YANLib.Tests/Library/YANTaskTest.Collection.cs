@@ -279,7 +279,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditions_DelayedTasks_YieldsInCompletionOrder_TaskCollection()
+    public async Task WaitAnyWithConditions_PendingTasks_YieldsInCompletionOrder_TaskCollection()
     {
         // Arrange
         var first = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -291,15 +291,21 @@ public partial class YANTaskTest
             first.Task
         };
 
-        // Act
-        var enumeration = tasks.WaitAnyWithConditions(x => x > 0).ToListAsync().AsTask();
+        await using var enumerator = tasks.WaitAnyWithConditions(x => x > 0).GetAsyncEnumerator();
+
+        // Act & Assert (second completes only after first has been yielded, so no timing is involved)
+        var move = enumerator.MoveNextAsync();
 
         first.SetResult(1);
-        await Task.Delay(100);
-        second.SetResult(2);
+        Assert.True(await move);
+        Assert.Equal(1, enumerator.Current);
 
-        // Assert
-        Assert.Equal([1, 2], await enumeration);
+        move = enumerator.MoveNextAsync();
+
+        second.SetResult(2);
+        Assert.True(await move);
+        Assert.Equal(2, enumerator.Current);
+        Assert.False(await enumerator.MoveNextAsync());
     }
 
     [Fact]
