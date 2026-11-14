@@ -795,6 +795,28 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Round_TinyValueTo15Digits_RoundsInDouble_MathGeneric()
+    {
+        // pin: the documented limit (see the Round remarks and YANMath.md): with 15 or fewer digits, a value whose shortest text has more
+        // than 28 decimal places is rounded in double, as in 8.3.3, so the last digit can be one unit off (exact: 156E-15 and 28E-15)
+        // Arrange
+        object? below = 1.5699999999999999e-13;
+        object? above = 2.7000000000000002e-14;
+
+        // Act
+        var toZero = below.Round<decimal>(15, MidpointRounding.ToZero);
+        var up = above.Round<decimal>(15, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { below }.Rounds<decimal>(15, MidpointRounding.ToZero);
+        var array = new[] { 1.5699999999999999e-13 }.Rounds<decimal>(15, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(0.000000000000157m, toZero);
+        Assert.Equal(0.000000000000027m, up);
+        Assert.Equal([0.000000000000157m], collection!);
+        Assert.Equal([0.000000000000157m], array!);
+    }
+
+    [Fact]
     public void Round_TinyValueTo28Digits_KeepsEveryDigit_MathGeneric()
     {
         // the shortest texts of these doubles have 29 decimal places (1.2345678901234566E-13); rounded to 28 places as decimal they keep 16
