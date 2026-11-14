@@ -1569,6 +1569,19 @@ public partial class YANMathTest
         Assert.Equal(-1.0, result);
     }
 
+    [Fact]
+    public void Log2_PowerOfTwoObject_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = 2147483648L;
+
+        // Act
+        var result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(31.0, result);
+    }
+
     #endregion
 
     #region ILogB

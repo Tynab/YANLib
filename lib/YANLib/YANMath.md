@@ -103,6 +103,7 @@ double sinDegrees = radians.Sin(); // Returns 1.0
 double naturalLog = Math.E.Log(); // Returns 1.0
 double base10Log = 100.0.Log10(); // Returns 2.0
 double base2Log = 8.0.Log2(); // Returns 3.0
+double exactBase2Log = 536870912.0.Log2(); // Returns 29 exactly (Math.Log2; 8.3.3 used Math.Log(x, 2), which returned 29.000000000000004)
 double customBaseLog = 100.0.Log(10); // Returns 2.0
 
 // Integer logarithm

@@ -567,7 +567,7 @@ public static partial class YANMath
     /// <param name="input">The collection of objects whose logarithm is to be found. If <c>null</c> or empty, returns <c>null</c>.</param>
     /// <returns>A collection containing the base 2 logarithm of each value in the input collection, converted to type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Log(double, double)"/> with a base of 2 to calculate the base 2 logarithm of each number.
+    /// This method uses <see cref="Math.Log2(double)"/> to calculate the base 2 logarithm of each number (exact for powers of two).
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>
@@ -583,7 +583,7 @@ public static partial class YANMath
     /// <returns>A collection containing the base 2 logarithm of each value in the input array, converted to type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to find the base 2 logarithm of an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// This method uses <see cref="Math.Log(double, double)"/> with a base of 2 to calculate the base 2 logarithm of each number.
+    /// This method uses <see cref="Math.Log2(double)"/> to calculate the base 2 logarithm of each number (exact for powers of two).
     /// Each element is converted to <c>double</c> for the calculation, and the results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>

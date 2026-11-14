@@ -1790,6 +1790,16 @@ public partial class YANMathTest
         Assert.Equal(-1.0, result);
     }
 
+    [Fact]
+    public void Log2_PowerOfTwo_IsExact_Math()
+    {
+        // Act
+        var result = 536870912.0.Log2();
+
+        // Assert
+        Assert.Equal(29.0, result);
+    }
+
     #endregion
 
     #region ILogB

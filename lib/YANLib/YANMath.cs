@@ -450,7 +450,7 @@ public static partial class YANMath
     /// <param name="input">The number whose logarithm is to be found. If <c>null</c>, returns <c>null</c>.</param>
     /// <returns>The base 2 logarithm of <paramref name="input"/>, or <c>null</c> if <paramref name="input"/> is <c>null</c>.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Log(double, double)"/> with a base of 2 to calculate the logarithm.
+    /// This method uses <see cref="Math.Log2(double)"/> to calculate the logarithm (exact for powers of two).
     /// The input is converted to <c>double</c> for the calculation, and the result is converted back to type <typeparamref name="T"/>.
     /// </remarks>
     [DebuggerHidden]

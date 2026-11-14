@@ -118,7 +118,7 @@ internal static partial class YANMath
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    internal static T? Log2Implement<T>(this object? input) => UnaryObject<T>(input, static x => Math.Log(x, 2));
+    internal static T? Log2Implement<T>(this object? input) => UnaryObject<T>(input, Math.Log2);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
