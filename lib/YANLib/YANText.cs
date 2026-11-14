@@ -46,9 +46,12 @@ public static partial class YANText
     /// Formats the specified string as a proper name.
     /// </summary>
     /// <param name="input">The string to format. If <c>null</c> or whitespace, returns the input string.</param>
-    /// <returns>A new string formatted as a proper name.</returns>
+    /// <returns>A new string formatted as a proper name, for example <c>"John Doe"</c> for <c>" john ,DOE. "</c> or <c>"John Q Public"</c> for <c>"john.q.public123"</c>.</returns>
     /// <remarks>
-    /// This method removes punctuation, numbers, and normalizes whitespace. It also capitalizes the first letter of each word.
+    /// Punctuation and white-space characters (including tabs) separate words; the words are joined with a single space, without a leading or trailing space.
+    /// Digits are removed without separating words (<c>"john123doe"</c> gives <c>"Johndoe"</c>). The first letter of each word is converted to upper case and
+    /// the other letters to lower case, using the current culture. Other characters (such as symbols) are kept as part of a word.
+    /// The result is empty when the input contains no letters or symbols (for example <c>"..."</c>).
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

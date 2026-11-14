@@ -328,6 +328,40 @@ public partial class YANTextTest
         Assert.Equal("John Doe", result);
     }
 
+    [Theory]
+    [InlineData("john ,doe", "John Doe")]
+    [InlineData("John.", "John")]
+    [InlineData("john\tdoe", "John Doe")]
+    [InlineData(" john ,\tDOE. ", "John Doe")]
+    [InlineData("bob.123.JOHNSON", "Bob Johnson")]
+    [InlineData("john.q.public123", "John Q Public")]
+    [InlineData(".john", "John")]
+    [InlineData("o'neil-smith", "O Neil Smith")]
+    [InlineData("$john", "$john")]
+    [InlineData("...", "")]
+    [InlineData("123", "")]
+    public void FormatName_SeparatorRuns_JoinsWordsWithSingleSpace_Text(string input, string expected)
+    {
+        // Act
+        var result = input.FormatName();
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FormatName_LongString_FormatsEveryWord_Text()
+    {
+        // Arrange
+        var input = string.Join(" ,", Enumerable.Repeat("jOHN", 200));
+
+        // Act
+        var result = input.FormatName();
+
+        // Assert
+        Assert.Equal(string.Join(" ", Enumerable.Repeat("John", 200)), result);
+    }
+
     #endregion
 
     #region FilterAlphabetic
@@ -533,6 +567,58 @@ public partial class YANTextTest
 
         // Assert
         Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void FilterAlphanumeric_LongString_KeepsOnlyLettersAndDigits_Text()
+    {
+        // Arrange (longer than the stack buffer)
+        var input = string.Concat(Enumerable.Repeat("a1-B2 ", 100));
+
+        // Act
+        var result = input.FilterAlphanumeric();
+
+        // Assert
+        Assert.Equal(string.Concat(Enumerable.Repeat("a1B2", 100)), result);
+    }
+
+    [Fact]
+    public void FilterAlphanumeric_NothingToRemove_ReturnsEqualString_Text()
+    {
+        // Arrange
+        var input = "abc123";
+
+        // Act
+        var result = input.FilterAlphanumeric();
+
+        // Assert
+        Assert.Equal("abc123", result);
+    }
+
+    [Fact]
+    public void CleanSpace_LongString_CollapsesWhiteSpace_Text()
+    {
+        // Arrange (longer than the stack buffer)
+        var input = "  " + string.Concat(Enumerable.Repeat("a \t\n b  ", 100)) + "  ";
+
+        // Act
+        var result = input.CleanSpace();
+
+        // Assert
+        Assert.Equal(string.Join(" ", Enumerable.Repeat("a b", 100)), result);
+    }
+
+    [Fact]
+    public void Capitalize_LongString_CapitalizesOnlyFirstLetter_Text()
+    {
+        // Arrange
+        var input = "123 " + string.Concat(Enumerable.Repeat("HELLO ", 100));
+
+        // Act
+        var result = input.Capitalize();
+
+        // Assert
+        Assert.Equal("123 Hello " + string.Concat(Enumerable.Repeat("hello ", 99)), result);
     }
 
     #endregion
