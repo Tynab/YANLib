@@ -285,8 +285,8 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, result);
     }
 
-    // Pins the XML remarks of the unconstrained Parses<T> overloads (selected here through method-group conversion, because a call
-    // like input.Parses<int>() can bind to an unmanaged overload instead): an element that cannot be parsed becomes default(T).
+    // Pins the XML remarks of the unconstrained Parses<T> overloads: an element that cannot be parsed becomes default(T). A plain
+    // input.Parses<int>() binds to these one-parameter overloads too; the method-group conversions only make that choice explicit.
     [Fact]
     public void Parses_UnparsableElementsToNonNullableValueType_ReturnDefault_NullableCollection()
     {
