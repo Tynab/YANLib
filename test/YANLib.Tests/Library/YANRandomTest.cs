@@ -1122,6 +1122,115 @@ public partial class YANRandomTest
 
     #endregion
 
+    #region GenerateRandom with typed bounds
+
+    [Fact]
+    public void GenerateRandom_TypedIntBounds_ReturnsValuesInRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<int>();
+
+        // Act
+        for (var i = 0; i < 2_000; i++)
+        {
+            var result = YANRandom.GenerateRandom<int>(1, 100);
+
+            Assert.InRange(result, 1, 99);
+            _ = results.Add(result);
+        }
+
+        // Assert
+        Assert.True(results.Count > 50);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedDoubleBounds_ReturnsValuesInRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<double>();
+
+        // Act
+        for (var i = 0; i < 100; i++)
+        {
+            var result = YANRandom.GenerateRandom(-10.5, 10.5);
+
+            Assert.True(result is >= -10.5 and < 10.5);
+            _ = results.Add(result);
+        }
+
+        // Assert
+        Assert.True(results.Count > 2);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedDateTimeBounds_ReturnsValueInRangeWithKindOfMin_RandomGeneric()
+    {
+        // Arrange
+        var min = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var max = new DateTime(2020, 1, 2, 0, 0, 0, DateTimeKind.Utc);
+
+        // Act
+        var result = YANRandom.GenerateRandom(min, max);
+
+        // Assert
+        Assert.True(result >= min && result < max);
+        Assert.Equal(DateTimeKind.Utc, result.Kind);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedCharBounds_ReturnsCharsInRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom('a', 'c'));
+        }
+
+        // Assert
+        Assert.Equal(['a', 'b'], results.Order());
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedBoundsMinGreaterThanMax_ReturnsDefault_RandomGeneric()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom(5, 1);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedBoolPair_ReturnsEitherValue_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<bool>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom(true, false));
+        }
+
+        // Assert
+        Assert.Equal(2, results.Count);
+    }
+
+    [Fact]
+    public void GenerateRandom_TwoValuesAsArray_ReturnsOneOfThem_RandomParams()
+    {
+        // Act & Assert
+        for (var i = 0; i < 200; i++)
+        {
+            Assert.Contains(YANRandom.GenerateRandom(new[] { 1, 100 }), new[] { 1, 100 });
+        }
+    }
+
+    #endregion
+
     #region Half-open ranges
 
     [Fact]

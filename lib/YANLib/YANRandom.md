@@ -67,9 +67,9 @@ string randomString = random.NextString(10); // Random string of 10 lowercase le
 ```csharp
 // Generate random values of specific types
 int randomInt = YANRandom.GenerateRandom<int>(); // Random int
-int boundedInt = YANRandom.GenerateRandom<int>(1, 100); // Random int in range
+int boundedInt = YANRandom.GenerateRandom<int>(1, 100); // Random int in [1, 100)
 float randomFloat = YANRandom.GenerateRandom<float>(); // Random float
-double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in range
+double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in [-10.5, 10.5)
 DateTime randomDate = YANRandom.GenerateRandom<DateTime>(); // Random DateTime
 bool randomBool = YANRandom.GenerateRandom<bool>(); // Random boolean
 
@@ -79,14 +79,17 @@ int randomNumber = numbers.GenerateRandom(); // Random element from the array
 
 // Using params for convenience
 int randomFromParams = YANRandom.GenerateRandom(1, 2, 3, 4, 5); // Random element from params
+int oneOfTwo = YANRandom.GenerateRandom(new[] { 1, 100 }); // 1 or 100: two values must be passed as an array
 ```
+
+Two typed bounds, as in `GenerateRandom<int>(1, 100)` or `GenerateRandom(date1, date2)`, select the range overload `GenerateRandom<T>(T min, T max)`: the result is in [min, max) for the numeric types, `DateTime` and `char`, and is `min` or `max` for other types such as `bool`, `Guid` or enums. Up to version 8.3.3, which had no such overload, these calls compiled to the params overload and returned one of the two arguments; code compiled against 8.3.3 keeps that behaviour until it is recompiled.
 
 ### Generating Collections of Random Values
 
 ```csharp
 // Generate collections of random values
 IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10); // 10 random ints
-IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in range
+IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in [-10.5, 10.5)
 IEnumerable<DateTime> randomDates = YANRandom.GenerateRandoms<DateTime>(size: 3); // 3 random dates
 
 // Generate random values from an existing collection
@@ -133,8 +136,8 @@ IEnumerable<double> randomDoubles = mixedTypes.GenerateRandoms<double>(size: 5);
 IEnumerable<int> largeCollection = YANRandom.GenerateRandoms<int>(size: 10000); // 10,000 random ints
 
 // Generate random values with custom min/max for different types
-byte randomByte = YANRandom.GenerateRandom<byte>(10, 20); // Random byte between 10 and 20
-short randomShort = YANRandom.GenerateRandom<short>(-100, 100); // Random short between -100 and 100
+byte randomByte = YANRandom.GenerateRandom<byte>(10, 20); // Random byte in [10, 20)
+short randomShort = YANRandom.GenerateRandom<short>(-100, 100); // Random short in [-100, 100)
 long randomLong = YANRandom.GenerateRandom<long>(long.MinValue / 2, long.MaxValue / 2); // Random long in range
 
 // Generate random values from a collection with no duplicates
@@ -186,7 +189,7 @@ The library provides comprehensive coverage of random value generation:
 | **Boolean** | NextBool |
 | **DateTime** | NextDateTime |
 | **Text** | NextChar, NextString |
-| **Generic** | GenerateRandom<T> |
+| **Generic** | GenerateRandom<T>, GenerateRandom<T>(T min, T max) |
 | **Collections** | GenerateRandoms<T> |
 | **Collection Sampling** | GenerateRandom, GenerateRandoms |
 | **Nullable Types** | Support for generating nullable random values |

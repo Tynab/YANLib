@@ -149,13 +149,13 @@ A comprehensive utility library for generating random values of various types, s
 ```csharp
 // Generate random values of various types
 int randomInt = YANRandom.GenerateRandom<int>(); // Random int
-double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in range
+double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in [-10.5, 10.5)
 DateTime randomDate = YANRandom.GenerateRandom<DateTime>(); // Random DateTime
 bool randomBool = YANRandom.GenerateRandom<bool>(); // Random boolean
 
 // Generate collections of random values
 IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10); // 10 random ints
-IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in range
+IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in [-10.5, 10.5)
 ```
 
 ### [YANTask](YANTask)
@@ -327,7 +327,7 @@ public List<User> GenerateTestUsers(int count)
     return Enumerable.Range(1, count)
         .Select(_ => new User
         {
-            Id = YANRandom.GenerateRandom<int>(1, 10000),
+            Id = YANRandom.GenerateRandom<int>(1, 10000), // 1 to 9999: max is exclusive
             Name = $"User-{Random.Shared.NextString(8)}",
             Email = $"{Random.Shared.NextString(5)}@example.com",
             CreatedDate = YANRandom.GenerateRandom<DateTime>(

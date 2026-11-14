@@ -287,6 +287,22 @@ internal static partial class YANRandom
         };
     }
 
+    /// <summary>
+    /// The typed-bounds overload: a value in [<paramref name="min"/>, <paramref name="max"/>) for the types that have ranges, otherwise one
+    /// of the two values with equal probability (what the params overload returned for these calls).
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    internal static T GenerateRandomRangeImplement<T>(T min, T max) where T : unmanaged
+        => HasRange<T>() ? GenerateRandomImplement<T>(min, max) : Random.Shared.Next(0, 2) == 0 ? min : max;
+
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool HasRange<T>() where T : unmanaged
+        => typeof(T) == typeof(int) || typeof(T) == typeof(long) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal) || typeof(T) == typeof(float)
+        || typeof(T) == typeof(DateTime) || typeof(T) == typeof(char) || typeof(T) == typeof(byte) || typeof(T) == typeof(sbyte) || typeof(T) == typeof(short)
+        || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong) || typeof(T) == typeof(nint) || typeof(T) == typeof(nuint);
+
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static T GenerateRandomImplement<T>(this IEnumerable<T>? input) where T : unmanaged

@@ -252,6 +252,27 @@ public static partial class YANRandom
     public static T GenerateRandom<T>(object? min = null, object? max = null) where T : unmanaged => Implementation.YANRandom.GenerateRandomImplement<T>(min, max);
 
     /// <summary>
+    /// Generates a random value of the specified unmanaged type in the range [<paramref name="min"/>, <paramref name="max"/>).
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to generate a random value for.</typeparam>
+    /// <param name="min">The inclusive lower bound of the random value returned.</param>
+    /// <param name="max">The exclusive upper bound of the random value returned.</param>
+    /// <returns>
+    /// A random value in [<paramref name="min"/>, <paramref name="max"/>) for the 13 numeric types, <see cref="DateTime"/> and <see cref="char"/>
+    /// (<c>default(T)</c> if <paramref name="min"/> is greater than <paramref name="max"/>, <paramref name="min"/> if they are equal);
+    /// for any other unmanaged type (<see cref="bool"/>, <see cref="Guid"/>, enums, ...), <paramref name="min"/> or <paramref name="max"/> with equal probability.
+    /// </returns>
+    /// <remarks>
+    /// The range rules are those of <see cref="GenerateRandom{T}(object, object)"/>. This overload makes calls with two typed bounds, such as
+    /// <c>YANRandom.GenerateRandom&lt;int&gt;(18, 80)</c>, generate a value in the range: up to 8.3.3 they bound to
+    /// <see cref="GenerateRandom{T}(T[])"/>, which returns one of its arguments. To pick one of two values, pass them as an array:
+    /// <c>YANRandom.GenerateRandom(new[] { a, b })</c>.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static T GenerateRandom<T>(T min, T max) where T : unmanaged => Implementation.YANRandom.GenerateRandomRangeImplement(min, max);
+
+    /// <summary>
     /// Generates a random value from the specified input collection.
     /// </summary>
     /// <typeparam name="T">The unmanaged type of elements in the collection.</typeparam>
@@ -272,6 +293,8 @@ public static partial class YANRandom
     /// <returns>A random value selected from the input array, or the default value if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to select a random value from an array without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
+    /// A call with exactly two separate arguments binds to <see cref="GenerateRandom{T}(T, T)"/> instead, which returns a value in the range
+    /// between them for numeric types, <see cref="DateTime"/> and <see cref="char"/>; to pick one of two such values, pass an array.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
