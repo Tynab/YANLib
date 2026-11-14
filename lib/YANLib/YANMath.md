@@ -164,8 +164,8 @@ double rounded = strValue.Round<double>(); // Returns 4.0
 
 // Collections of objects
 var mixedObjects = new List<object?> { 3.75, "2.25", 0.5 };
-IEnumerable<double?>? truncatedObjects = mixedObjects.Truncates<double>(); // Returns [3.0, 2.0, 0.0]
-IEnumerable<double?>? roundedObjects = mixedObjects.Rounds<double>(); // Returns [4.0, 2.0, 1.0]
+IEnumerable<double>? truncatedObjects = mixedObjects.Truncates<double>(); // Returns [3.0, 2.0, 0.0]
+IEnumerable<double>? roundedObjects = mixedObjects.Rounds<double>(); // Returns [4.0, 2.0, 1.0]
 
 // Min/Max/Average/Sum on object collections
 var objectNumbers = new List<object?> { 5, 2.5, "8", 1, "9" };

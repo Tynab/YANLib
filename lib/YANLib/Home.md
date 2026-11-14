@@ -328,8 +328,8 @@ public List<User> GenerateTestUsers(int count)
         .Select(_ => new User
         {
             Id = YANRandom.GenerateRandom<int>(1, 10000),
-            Name = $"User-{YANRandom.GenerateRandom<string>(8)}",
-            Email = $"{YANRandom.GenerateRandom<string>(5)}@example.com",
+            Name = $"User-{Random.Shared.NextString(8)}",
+            Email = $"{Random.Shared.NextString(5)}@example.com",
             CreatedDate = YANRandom.GenerateRandom<DateTime>(
                 new DateTime(2020, 1, 1),
                 DateTime.Now)

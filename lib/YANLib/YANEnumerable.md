@@ -92,7 +92,7 @@ Dictionary<int, string?> dict = items.ToDictionary<TestItem, int, string?, int, 
 // Returns {1: "Item1", 2: "Item2", 3: "Item3"}
 
 // Convert to Lookup<int, string?>
-ILookup<int?, string?> lookup = items.ToLookup<TestItem, int, string?, int, string?>(
+ILookup<int, string?> lookup = items.ToLookup<TestItem, int, string?, int, string?>(
     item => item.Id,      // Key selector
     item => item.Name     // Value selector
 );
