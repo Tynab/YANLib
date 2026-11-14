@@ -184,6 +184,7 @@ public partial class YANMathTest
     [Fact]
     public void Max_DateTimeObjects_KeepMillisecondsAndKind_MathGeneric()
     {
+        // pin: already correct before area C (the parse fast path returns a DateTime unchanged); guards the native comparison
         // Arrange
         object earlier = new DateTime(2024, 1, 1, 10, 0, 0, 123, DateTimeKind.Local);
         object later = new DateTime(2024, 1, 1, 10, 0, 0, 456, DateTimeKind.Local);
@@ -400,6 +401,7 @@ public partial class YANMathTest
     [Fact]
     public void Sum_UnparsableStrings_CountAsZero_MathGeneric()
     {
+        // pin: unparsable strings count as 0, as in 8.3.3
         // Act
         var result = YANMath.Sum<int>("5-", "(5)", 2);
 
@@ -1026,6 +1028,7 @@ public partial class YANMathTest
     [Fact]
     public void Abs_IntMinValueObject_ReturnsDefault_MathGeneric()
     {
+        // pin: the 8.3.3 overflow result (default), which the exact object path keeps
         // Arrange
         object? input = int.MinValue;
 

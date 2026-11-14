@@ -1168,13 +1168,20 @@ public partial class YANRandomTest
         // Arrange
         var min = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var max = new DateTime(2020, 1, 2, 0, 0, 0, DateTimeKind.Utc);
+        var results = new HashSet<DateTime>();
 
         // Act
-        var result = YANRandom.GenerateRandom(min, max);
+        for (var i = 0; i < 200; i++)
+        {
+            var result = YANRandom.GenerateRandom(min, max);
+
+            Assert.True(result >= min && result < max);
+            Assert.Equal(DateTimeKind.Utc, result.Kind);
+            _ = results.Add(result);
+        }
 
         // Assert
-        Assert.True(result >= min && result < max);
-        Assert.Equal(DateTimeKind.Utc, result.Kind);
+        Assert.True(results.Count > 2);
     }
 
     [Fact]
@@ -1206,6 +1213,7 @@ public partial class YANRandomTest
     [Fact]
     public void GenerateRandom_TypedBoolPair_ReturnsEitherValue_RandomGeneric()
     {
+        // pin: a type without a range still picks one of the two values
         // Arrange
         var results = new HashSet<bool>();
 
@@ -1222,6 +1230,7 @@ public partial class YANRandomTest
     [Fact]
     public void GenerateRandom_TwoValuesAsArray_ReturnsOneOfThem_RandomParams()
     {
+        // pin: an explicit array still binds to params T[] after GenerateRandom<T>(T min, T max) was added
         // Act & Assert
         for (var i = 0; i < 200; i++)
         {
@@ -1249,6 +1258,7 @@ public partial class YANRandomTest
     [Fact]
     public void NextUlong_EqualBounds_ReturnsMin_RandomExtension()
     {
+        // pin: equal bounds return min, as before the half-open fix
         // Act
         var result = new Random(1).NextUlong(7UL, 7UL);
 
@@ -1274,6 +1284,7 @@ public partial class YANRandomTest
     [Fact]
     public void NextDateTime_WithMinMax_KeepsSubSecondTicksAndKind_RandomExtension()
     {
+        // pin: already correct before area C (ticks, and the parse fast path keeps Kind); guards the tick-based range
         // Arrange
         var random = new Random(1);
         var min = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -1318,7 +1329,7 @@ public partial class YANRandomTest
     public void NextDecimal_DrawJustBelowOne_StaysBelowMax_RandomExtension()
     {
         // Arrange
-        var min = 1_000_000_000_000_000_000_000_000_000m;
+        var min = 10_000_000_000_000_000_000_000_000_000m;
         var max = min + 1;
 
         // Act
@@ -1380,6 +1391,7 @@ public partial class YANRandomTest
     [Fact]
     public void NextBoundedFloatingPoint_EqualBounds_ReturnBound_RandomExtension()
     {
+        // pin: equal bounds return the bound, as before the half-open clamp
         // Arrange
         var random = new Random(1);
         var date = new DateTime(2024, 1, 1, 0, 0, 0, 123, DateTimeKind.Local);
@@ -1420,6 +1432,7 @@ public partial class YANRandomTest
     [Fact]
     public void NextBoolAndNextChar_Seeded_KeepTheirSequences_RandomExtension()
     {
+        // pin: the direct NextBool and NextChar keep the seeded sequences of the boxing versions
         // Arrange
         var random = new Random(7);
         var reference = new Random(7);
@@ -1433,9 +1446,13 @@ public partial class YANRandomTest
         }
     }
 
-    /// <summary>A <see cref="Random"/> whose draws are the largest values below the exclusive upper bounds.</summary>
+    /// <summary>A <see cref="Random"/> whose draws are the largest values below the exclusive upper bounds, and whose random bytes are all 0xFF.</summary>
     private sealed class UpperEdgeRandom : Random
     {
+        public override void NextBytes(byte[] buffer) => Array.Fill(buffer, byte.MaxValue);
+
+        public override void NextBytes(Span<byte> buffer) => buffer.Fill(byte.MaxValue);
+
         public override double NextDouble() => Math.BitDecrement(1.0);
 
         public override float NextSingle() => MathF.BitDecrement(1f);

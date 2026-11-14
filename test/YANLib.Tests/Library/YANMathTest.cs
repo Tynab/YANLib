@@ -95,6 +95,7 @@ public partial class YANMathTest
     [Fact]
     public void Min_AllNullNullableCollection_ReturnsNull_Math()
     {
+        // pin: a nullable target already returned null in 8.3.3; only non-nullable targets threw
         // Arrange
         IEnumerable<int?> input = [null, null];
 
@@ -108,6 +109,7 @@ public partial class YANMathTest
     [Fact]
     public void Min_DoubleWithNaN_ReturnsNaN_Math()
     {
+        // pin: the LINQ ordering of NaN that 8.3.3 had, which MinMax keeps
         // Act
         var result = YANMath.Min(1.0, double.NaN, -1.0);
 
@@ -210,6 +212,7 @@ public partial class YANMathTest
     [Fact]
     public void Max_DoubleWithNaN_IgnoresNaN_Math()
     {
+        // pin: the LINQ ordering of NaN that 8.3.3 had, which MinMax keeps
         // Act
         var result = YANMath.Max(double.NaN, 1.0, -1.0);
 
@@ -220,6 +223,7 @@ public partial class YANMathTest
     [Fact]
     public void Max_DateTimes_KeepMillisecondsAndKind_Math()
     {
+        // pin: already correct before area C (the parse fast path returns a DateTime unchanged); guards the native comparison
         // Arrange
         var earlier = new DateTime(2024, 1, 1, 10, 0, 0, 123, DateTimeKind.Utc);
         var later = new DateTime(2024, 1, 1, 10, 0, 0, 456, DateTimeKind.Utc);
@@ -343,6 +347,7 @@ public partial class YANMathTest
     [Fact]
     public void Average_Int_RoundsHalfToEven_Math()
     {
+        // pin: the 8.3.3 rounding of an integer average, which the Int128 path keeps
         // Act
         var twoAndThree = YANMath.Average(2, 3);
         var oneAndTwo = YANMath.Average(1, 2);
@@ -365,6 +370,7 @@ public partial class YANMathTest
     [Fact]
     public void Average_DoubleNegativeZero_KeepsSign_Math()
     {
+        // pin: the 8.3.3 result, which the typed double path keeps
         // Act
         var result = YANMath.Average(-0.0);
 
@@ -375,6 +381,7 @@ public partial class YANMathTest
     [Fact]
     public void Average_LazySequences_MatchArrays_Math()
     {
+        // pin: the enumerator path must give what the span path gives
         // Arrange
         var ints = Enumerable.Range(1, 1_000).Select(static x => x * 3);
         IEnumerable<long> longs = new HashSet<long> { 9007199254740993, 9007199254740995 };
@@ -506,6 +513,7 @@ public partial class YANMathTest
     [Fact]
     public void Sum_Decimal_HasNoTrailingZeros_Math()
     {
+        // pin: 8.3.3 results had no trailing zeros, and decimal results keep that
         // Act
         var result = YANMath.Sum(1.10m, 2.20m);
 
@@ -516,6 +524,7 @@ public partial class YANMathTest
     [Fact]
     public void Sum_DecimalOverflow_FallsBackToDouble_Math()
     {
+        // pin: the 8.3.3 result on decimal overflow, which the fallback keeps
         // Act
         var result = YANMath.Sum(decimal.MaxValue, decimal.MaxValue, decimal.MinValue);
 
@@ -526,6 +535,7 @@ public partial class YANMathTest
     [Fact]
     public void Sum_IntOverflow_ReturnsDefault_Math()
     {
+        // pin: the documented overflow result (default), unchanged on purpose
         // Act
         var result = YANMath.Sum(Enumerable.Range(0, 100_000).ToArray());
         var nullableResult = YANMath.Sum<int?>(int.MaxValue, 1);
@@ -538,6 +548,7 @@ public partial class YANMathTest
     [Fact]
     public void Sum_Float_IsComputedInDouble_Math()
     {
+        // pin: float sums stay in double, as in 8.3.3
         // Act
         var result = YANMath.Sum(0.1f, 0.2f, 0.3f);
 
@@ -874,6 +885,7 @@ public partial class YANMathTest
     [Fact]
     public void Round_NegativeDigits_Throws_Math()
     {
+        // pin: the 8.3.3 exception, which the decimal path keeps
         // Act & Assert
         _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5m.Round(-1));
         _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5.Round(-1));
@@ -1102,6 +1114,7 @@ public partial class YANMathTest
     [Fact]
     public void Pow_IntOverflow_ReturnsDefault_Math()
     {
+        // pin: the 8.3.3 overflow result (default), which the Int128 path keeps
         // Act
         var result = 100000.Pow(2);
         var negativeExponent = 2.Pow(-1);
@@ -1206,6 +1219,7 @@ public partial class YANMathTest
     [Fact]
     public void Abs_IntMinValue_ReturnsDefault_Math()
     {
+        // pin: the 8.3.3 overflow result (default), which the Int128 path keeps
         // Act
         var result = int.MinValue.Abs();
         var nullableResult = ((int?)int.MinValue).Abs();
