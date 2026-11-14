@@ -79,6 +79,32 @@ public partial class YANMathTest
         Assert.Equal(1, result);
     }
 
+    [Fact]
+    public void Min_AllNullCollection_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Min<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Min_AllNullNullableCollection_ReturnsNull_Math()
+    {
+        // Arrange
+        IEnumerable<int?> input = [null, null];
+
+        // Act
+        var result = YANMath.Min<int?>(input);
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 
     #region Max
@@ -158,6 +184,19 @@ public partial class YANMathTest
         Assert.Equal(9, result);
     }
 
+    [Fact]
+    public void Max_AllNullCollection_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Max<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region Average
@@ -235,6 +274,32 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(6.0, result);
+    }
+
+    [Fact]
+    public void Average_AllNullCollection_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Average<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Average_AllNullNullableCollection_ReturnsNull_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null };
+
+        // Act
+        var result = input.Average<int?>();
+
+        // Assert
+        Assert.Null(result);
     }
 
     #endregion

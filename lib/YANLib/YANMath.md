@@ -32,7 +32,7 @@ The library is organized into several functional categories:
 
 - **Collection Processing**: Apply math operations to collections of values
 - **Order Preservation**: Collection results are lazily evaluated and keep the input order
-- **Null Handling**: Graceful handling of null values in collections
+- **Null Handling**: Graceful handling of null values in collections; Min, Max and Average skip null elements and return the default value (`null` for a nullable type) when the collection is null, empty or holds only nulls
 
 ### Generic Type Support
 
