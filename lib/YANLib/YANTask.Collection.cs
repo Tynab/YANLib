@@ -8,9 +8,8 @@ namespace YANLib;
 /// Provides extension methods for working with collections of asynchronous tasks, particularly for filtering and processing task results based on conditions.
 /// </summary>
 /// <remarks>
-/// This partial class extends the functionality of the <see cref="YANTask"/> class with methods specifically designed for working with collections of tasks.
-/// It provides capabilities for asynchronous enumeration of task results that satisfy specific conditions, with support for limiting the number of results
-/// and cancellation. These methods are particularly useful for scenarios where you need to process multiple matching results from a set of concurrent operations.
+/// This partial class holds the streaming variants that enumerate every matching task result asynchronously, with a limit and cancellation
+/// (<c>WaitAnyWithConditions</c> / <c>WhenAnyWithConditions</c>). They are internal: they are not part of the public API.
 /// </remarks>
 public static partial class YANTask
 {

@@ -293,8 +293,7 @@ A specialized utility library that extends the Task Parallel Library (TPL), prov
 #### Key Features
 
 - Conditional task waiting
-- Multiple result filtering
-- Asynchronous enumeration
+- Results checked in completion order
 - Error handling with exception safety
 - Cancellation support
 
