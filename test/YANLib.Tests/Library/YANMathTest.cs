@@ -793,6 +793,54 @@ public partial class YANMathTest
         _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5.Round(-1));
     }
 
+    [Fact]
+    public void Round_DoubleMoreThan15Digits_RoundsAsDecimal_Math()
+    {
+        // Act
+        var tiny = 1e-16.Round(20);
+        var half = 1.5.Round(16);
+        var sum = (0.1 + 0.2).Round(17);
+        var cut = (0.1 + 0.2).Round(16);
+        var belowDecimalScale = 1e-30.Round(20);
+        var seventeenDigits = 30490906.876740474.Round(20);
+        var negativeZero = (-0.0).Round(20);
+
+        // Assert
+        Assert.Equal(30490906.876740474, seventeenDigits);
+        Assert.True(double.IsNegative(negativeZero));
+        Assert.Equal(1e-16, tiny);
+        Assert.Equal(1.5, half);
+        Assert.Equal(0.30000000000000004, sum);
+        Assert.Equal(0.3, cut);
+        Assert.Equal(0.0, belowDecimalScale);
+    }
+
+    [Fact]
+    public void Round_DoubleMoreThan15DigitsOutsideDecimalRange_RoundsTo15Digits_Math()
+    {
+        // Act
+        var huge = 1e300.Round(20);
+        var notANumber = double.NaN.Round(16);
+
+        // Assert
+        Assert.Equal(1e300, huge);
+        Assert.True(double.IsNaN(notANumber));
+    }
+
+    [Fact]
+    public void Round_DecimalAndIntegerMoreThan15Digits_DoNotThrow_Math()
+    {
+        // Act
+        var decimalResult = 1.23456789012345678m.Round(16);
+        var cappedResult = 1.23456789012345678m.Round(40);
+        var integerResult = 5.Round(20);
+
+        // Assert
+        Assert.Equal(1.2345678901234568m, decimalResult);
+        Assert.Equal(1.23456789012345678m, cappedResult);
+        Assert.Equal(5, integerResult);
+    }
+
     #endregion
 
     #region Sqrt

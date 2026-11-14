@@ -116,7 +116,7 @@ public static partial class YANMath
     /// <param name="mode">The rounding mode to use. Default is <see cref="MidpointRounding.AwayFromZero"/>.</param>
     /// <returns>A collection containing the rounded values, converted to type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// This method uses <see cref="Math.Round(decimal, int, MidpointRounding)"/> or <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number.
+    /// This method uses <see cref="Math.Round(decimal, int, MidpointRounding)"/> or <see cref="Math.Round(double, int, MidpointRounding)"/> to round each number. More than 15 digits are allowed: a finite <c>double</c> within the <see cref="decimal"/> range is then rounded as <see cref="decimal"/> (at most 28 digits), another <c>double</c> to 15 digits. Negative digits throw <see cref="ArgumentOutOfRangeException"/>.
     /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), each element is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise each element is converted to <c>double</c> for the calculation. The results are converted to type <typeparamref name="T"/>.
     /// The result is lazily evaluated and preserves input order.
     /// </remarks>

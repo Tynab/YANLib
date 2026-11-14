@@ -188,7 +188,7 @@ decimal third = 3m.Pow(-1); // Returns 0.3333333333333333333333333333
 decimal objectRounded = ((object)1.005).Round<decimal>(2); // Returns 1.01
 ```
 
-- **double and float**: computed in `double`, as before; a `float` result is the `double` result cast to `float`. Sqrt, Cbrt, the trigonometric, logarithmic and exponential functions are inherently `double` for every type.
+- **double and float**: computed in `double`, as before; a `float` result is the `double` result cast to `float`. Round accepts more than 15 digits (`1e-16.Round(20)` returns `1e-16`, `(0.1 + 0.2).Round(16)` returns `0.3`): a finite value within the `decimal` range is then rounded as `decimal`, up to 28 digits. Negative digits still throw `ArgumentOutOfRangeException`. Sqrt, Cbrt, the trigonometric, logarithmic and exponential functions are inherently `double` for every type.
 - **Decimal results** carry no trailing zeros (`YANMath.Sum(1.10m, 2.20m)` returns `3.3`, as before). If a `decimal` calculation overflows, the method falls back to the `double` calculation.
 - **Integer results** of a fractional calculation (Average, a negative power, an object value converted to an integer type) are rounded half to even: `YANMath.Average(2, 3)` returns 2.
 - **Overflow**: a result that does not fit the result type is the default value, 0 or `null` for a nullable type, never an `OverflowException`. `int.MinValue.Abs()` returns 0, `100000.Pow(2)` returns 0 for `int`, and `YANMath.Sum(Enumerable.Range(0, 100_000).ToArray())` returns 0 because the exact sum, 4999950000, exceeds `int.MaxValue` (LINQ's `Sum` throws instead). Use a wider type, for example `Sum<long>` over the values or `100000L.Pow(2)`, when results can get that large.

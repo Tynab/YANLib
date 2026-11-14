@@ -175,12 +175,53 @@ internal static partial class YANMath
         // the cast keeps 15 significant digits; the slower text round trip is only needed when that loses information
         result = (decimal)value;
 
-        if ((double)result != value)
+        if (!IsExactly(result, value))
         {
             result = decimal.Parse(value.ToString("R", InvariantCulture), NumberStyles.Float, InvariantCulture);
         }
 
         return true;
+    }
+
+    /// <summary>Powers of ten that <c>double</c> represents exactly.</summary>
+    private static readonly double[] ExactPowersOfTen = [1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22];
+
+    /// <summary>
+    /// Whether <paramref name="number"/> converts to exactly <paramref name="value"/>. <c>(double)number</c> cannot decide that: the
+    /// <see cref="decimal"/>-to-<c>double</c> cast is not correctly rounded and can hit <paramref name="value"/> from a neighbouring
+    /// decimal. A mantissa below 2^53 divided by an exact power of ten is a single, correctly rounded operation; other numbers answer
+    /// <c>false</c> and take the text round trip.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsExactly(decimal number, double value)
+    {
+        Span<int> bits = stackalloc int[4];
+
+        _ = decimal.GetBits(number, bits);
+
+        if (bits[2] != 0)
+        {
+            return false;
+        }
+
+        var mantissa = (ulong)(uint)bits[1] << 32 | (uint)bits[0];
+        var scale = (bits[3] >> 16) & 0xFF;
+
+        while (scale > 0 && mantissa % 10 == 0)
+        {
+            mantissa /= 10;
+            scale--;
+        }
+
+        if (mantissa >= 1UL << 53 || scale >= ExactPowersOfTen.Length)
+        {
+            return false;
+        }
+
+        var exact = mantissa / ExactPowersOfTen[scale];
+
+        return (bits[3] < 0 ? -exact : exact) == value;
     }
 
     /// <summary>
@@ -599,15 +640,41 @@ internal static partial class YANMath
     [DebuggerStepThrough]
     private static int? ParseDigits(object? digits) => digits is null ? null : digits.ParseImplement<int>();
 
-    /// <summary>Whether <see cref="Math.Round(double, int, MidpointRounding)"/> would accept the arguments (it throws for digits outside 0-15 and undefined modes).</summary>
+    /// <summary>Whether <see cref="Math.Round(double, int, MidpointRounding)"/> would accept the arguments (it throws for negative digits and undefined modes).</summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool IsValidRound(int? digits, MidpointRounding mode) => digits is not (< 0 or > 15) && mode is >= ToEven and <= ToPositiveInfinity;
+    private static bool IsValidRound(int? digits, MidpointRounding mode) => digits is not < 0 && mode is >= ToEven and <= ToPositiveInfinity;
 
-    /// <summary><see cref="Math.Round(double, int, MidpointRounding)"/>, or <see cref="Math.Round(double, MidpointRounding)"/> without digits.</summary>
+    /// <summary>
+    /// <see cref="Math.Round(double, int, MidpointRounding)"/>, which only accepts 0-15 digits: for more digits a finite value in the
+    /// <see cref="decimal"/> range is rounded as <see cref="decimal"/> (up to 28 digits) and converted back exactly, any other value
+    /// to 15 digits. Negative digits and undefined modes still throw the 8.3.3 exceptions.
+    /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static double RoundDouble(double value, int? digits, MidpointRounding mode) => digits is int places ? Math.Round(value, places, mode) : Math.Round(value, mode);
+    private static double RoundDouble(double value, int? digits, MidpointRounding mode)
+    {
+        if (digits is not int places)
+        {
+            return Math.Round(value, mode);
+        }
+
+        if (places <= 15 || !IsValidRound(places, mode))
+        {
+            return Math.Round(value, Math.Min(places, 15), mode);
+        }
+
+        if (!TryToDecimal(value, out var number))
+        {
+            return Math.Round(value, 15, mode);
+        }
+
+        var rounded = decimal.Round(number, Math.Min(places, 28), mode);
+
+        // the decimal-to-double cast is not correctly rounded (it can be one unit in the last place off), the text round trip is;
+        // a zero keeps the sign of the input, as Math.Round does
+        return rounded == 0 ? Math.CopySign(0d, value) : double.Parse(rounded.ToString(InvariantCulture), InvariantCulture);
+    }
 
     /// <summary><see cref="decimal.Round(decimal, int, MidpointRounding)"/> for valid arguments (see <see cref="IsValidRound"/>); more than 28 digits means 28.</summary>
     [DebuggerHidden]

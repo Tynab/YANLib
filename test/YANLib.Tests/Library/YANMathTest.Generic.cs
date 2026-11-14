@@ -655,6 +655,21 @@ public partial class YANMathTest
         Assert.Equal(1.01m, result);
     }
 
+    [Fact]
+    public void Round_MoreThan15DigitsObject_DoesNotThrow_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.5;
+
+        // Act
+        var doubleResult = input.Round<double>(16);
+        var decimalResult = input.Round<decimal>(20);
+
+        // Assert
+        Assert.Equal(1.5, doubleResult);
+        Assert.Equal(1.5m, decimalResult);
+    }
+
     #endregion
 
     #region Sqrt
