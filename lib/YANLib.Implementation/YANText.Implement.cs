@@ -152,8 +152,8 @@ internal static partial class YANText
     }
 
     // Words are separated by any run of white-space and punctuation characters and joined with a single space; digits are
-    // dropped without ending a word. The first letter of each word is upper-cased and the others lower-cased (current
-    // culture). There is no leading or trailing space.
+    // dropped without ending a word. The first character kept in each word is upper-cased and the others lower-cased (current
+    // culture), so a word that starts with a symbol keeps its letters in lower case ("$john"). There is no leading or trailing space.
     [DebuggerHidden]
     [DebuggerStepThrough]
     internal static string? FormatNameImplement(this string? input)

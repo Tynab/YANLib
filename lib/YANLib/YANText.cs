@@ -49,8 +49,9 @@ public static partial class YANText
     /// <returns>A new string formatted as a proper name, for example <c>"John Doe"</c> for <c>" john ,DOE. "</c> or <c>"John Q Public"</c> for <c>"john.q.public123"</c>.</returns>
     /// <remarks>
     /// Punctuation and white-space characters (including tabs) separate words; the words are joined with a single space, without a leading or trailing space.
-    /// Digits are removed without separating words (<c>"john123doe"</c> gives <c>"Johndoe"</c>). The first letter of each word is converted to upper case and
-    /// the other letters to lower case, using the current culture. Other characters (such as symbols) are kept as part of a word.
+    /// Digits are removed without separating words (<c>"john123doe"</c> gives <c>"Johndoe"</c>). The first character kept in each word is converted to upper case and
+    /// the other characters to lower case, using the current culture. Other characters (such as symbols) are kept as part of a word, so a word that starts with one
+    /// keeps its letters in lower case (<c>"$john"</c> gives <c>"$john"</c>).
     /// The result is empty when the input contains no letters or symbols (for example <c>"..."</c>).
     /// </remarks>
     [DebuggerHidden]

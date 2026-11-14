@@ -338,6 +338,8 @@ public partial class YANTextTest
     [InlineData(".john", "John")]
     [InlineData("o'neil-smith", "O Neil Smith")]
     [InlineData("$john", "$john")]
+    [InlineData("$JOHN doe", "$john Doe")]
+    [InlineData("123john 4doe", "John Doe")]
     [InlineData("...", "")]
     [InlineData("123", "")]
     public void FormatName_SeparatorRuns_JoinsWordsWithSingleSpace_Text(string input, string expected)
