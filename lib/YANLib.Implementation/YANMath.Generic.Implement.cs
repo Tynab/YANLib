@@ -49,9 +49,10 @@ internal static partial class YANMath
             return RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
         }
 
-        // rounding a double or float to a whole number needs no text round trip (see TryToWholeDecimal)
+        // rounding a double or float to a whole number needs no text round trip (see TryToWholeDecimal); for more than 15 digits a value
+        // with more than 28 decimal places is rounded to 28 first, as RoundDouble does, but the decimal result keeps all its digits
         return places is null && IsDoubleOrFloat(input, out var value) && TryToWholeDecimal(Math.Round(value, mode), out var whole) ? whole.ParseImplement<T?>()
-            : TryToDecimal(input, out var number) ? FromDecimal<T>(RoundDecimal(number, places, mode))
+            : TryToDecimal(input, out var number, places > 15) ? FromDecimal<T>(RoundDecimal(number, places, mode))
             : RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
     }
 

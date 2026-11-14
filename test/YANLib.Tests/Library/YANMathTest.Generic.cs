@@ -795,6 +795,29 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Round_TinyValueTo28Digits_KeepsEveryDigit_MathGeneric()
+    {
+        // the shortest texts of these doubles have 29 decimal places (1.2345678901234566E-13); rounded to 28 places as decimal they keep 16
+        // significant digits, where a round trip through a double result kept 15 and was up to 6 units in the last place off
+        // Arrange
+        object? input = 1.2345678901234566e-13;
+        object? negative = -1.2345678901234566e-13;
+        object? directed = 4.4444444444444444e-13;
+
+        // Act
+        var nearest = input.Round<decimal>(28);
+        var clamped = negative.Round<decimal?>(29);
+        var up = directed.Round<decimal>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input }.Rounds<decimal>(28);
+
+        // Assert
+        Assert.Equal(0.0000000000001234567890123457m, nearest);
+        Assert.Equal(-0.0000000000001234567890123457m, clamped);
+        Assert.InRange(up, 0.0000000000004444444444444444m, 0.0000000000004444444444444445m);
+        Assert.Equal([0.0000000000001234567890123457m], collection!);
+    }
+
+    [Fact]
     public void Round_FractionalDoubleWithoutDigits_MatchesMathRound_MathGeneric()
     {
         // pin: Round without digits rounds a double in double and converts the whole result exactly, without the text round trip
