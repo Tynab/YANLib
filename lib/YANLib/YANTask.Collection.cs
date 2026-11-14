@@ -31,14 +31,15 @@ public static partial class YANTask
     /// Asynchronously enumerates tasks that complete and meet the specified condition, stopping after finding the specified number of matching tasks.
     /// </summary>
     /// <typeparam name="T">The type of the task result.</typeparam>
-    /// <param name="tasks">The collection of tasks to wait on. If <c>null</c> or empty, returns an empty enumerable.</param>
-    /// <param name="predicate">The condition that the task result must satisfy.</param>
+    /// <param name="tasks">The collection of tasks to wait on. If <c>null</c> or empty, returns an empty enumerable. The collection is enumerated once, when the enumeration starts; duplicate task instances are checked once.</param>
+    /// <param name="predicate">The condition that the task result must satisfy. An exception it throws ends the enumeration and propagates to the consumer.</param>
     /// <param name="taken">The maximum number of matching results to take. If 0, all matching results are returned.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
-    /// <returns>An asynchronous enumerable that yields the results of tasks that satisfy the condition, up to the specified limit.</returns>
+    /// <returns>An asynchronous enumerable that yields the results of tasks that satisfy the condition, in completion order, up to the specified limit.</returns>
+    /// <exception cref="ArgumentException">Thrown by the enumeration when <paramref name="tasks"/> contains a <c>null</c> task.</exception>
     /// <remarks>
     /// This method will stop waiting as soon as it finds the specified number of tasks that satisfy the condition.
-    /// If the cancellation token is canceled, the enumeration will stop immediately.
+    /// If the cancellation token is canceled, before or during the enumeration (including a token passed with <c>WithCancellation</c>), the enumeration ends immediately without an exception.
     /// Tasks that throw exceptions are skipped and do not count toward the taken limit.
     /// </remarks>
     [DebuggerHidden]
@@ -50,14 +51,15 @@ public static partial class YANTask
     /// Asynchronously enumerates tasks that complete and meet the specified condition, continuing until all tasks complete or the specified number of matching tasks is found.
     /// </summary>
     /// <typeparam name="T">The type of the task result.</typeparam>
-    /// <param name="tasks">The collection of tasks to wait on. If <c>null</c> or empty, returns an empty enumerable.</param>
-    /// <param name="predicate">The condition that the task result must satisfy.</param>
+    /// <param name="tasks">The collection of tasks to wait on. If <c>null</c> or empty, returns an empty enumerable. The collection is enumerated once, when the enumeration starts; duplicate task instances are checked once.</param>
+    /// <param name="predicate">The condition that the task result must satisfy. An exception it throws ends the enumeration and propagates to the consumer.</param>
     /// <param name="taken">The maximum number of matching results to take. If 0, all matching results are returned.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
-    /// <returns>An asynchronous enumerable that yields the results of tasks that satisfy the condition, up to the specified limit.</returns>
+    /// <returns>An asynchronous enumerable that yields the results of tasks that satisfy the condition, in completion order, up to the specified limit.</returns>
+    /// <exception cref="ArgumentException">Thrown by the enumeration when <paramref name="tasks"/> contains a <c>null</c> task.</exception>
     /// <remarks>
-    /// Unlike <see cref="WaitAnyWithConditions{T}"/>, this method will continue to wait for tasks to complete until it finds the specified number of tasks that satisfy the condition or all tasks have completed.
-    /// If the cancellation token is canceled, the enumeration will stop immediately.
+    /// This method currently behaves exactly like <see cref="WaitAnyWithConditions{T}"/>: it waits until it finds the specified number of tasks that satisfy the condition or all tasks have completed.
+    /// If the cancellation token is canceled, before or during the enumeration (including a token passed with <c>WithCancellation</c>), the enumeration ends immediately without an exception.
     /// Tasks that throw exceptions are skipped and do not count toward the taken limit.
     /// </remarks>
     [DebuggerHidden]

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading.Channels;
 using static System.Threading.Tasks.Task;
 
 namespace YANLib.Implementation;
@@ -8,48 +9,106 @@ internal static partial class YANTask
 {
     #region Private
 
+    // Returns null instead of throwing when the token is cancelled, so the caller can end its enumeration quietly.
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static async ValueTask<Task<T>?> ReadOrNullAsync<T>(ChannelReader<Task<T>> reader, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return null;
+        }
+    }
+
+    // A cancelled token (already cancelled, passed later through WithCancellation, or cancelled while waiting or while
+    // the consumer handles an item) ends the enumeration without an exception. Exceptions thrown by the predicate
+    // propagate to the consumer.
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static async IAsyncEnumerable<T> AnyWithConditions<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await Yield();
 
-        if (tasks.IsNullEmptyImplement())
+        if (tasks is null || cancellationToken.IsCancellationRequested)
         {
             yield break;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
+        var pending = Materialize(tasks);
 
-        var pending = new HashSet<Task<T>>(tasks);
-        var emitted = 0;
-        var maxToEmit = taken.IsDefaultImplement() ? pending.Count.ParseImplement<uint>() : taken;
-
-        while (pending.Count > 0 && emitted < maxToEmit)
+        if (pending.Count is 0)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            yield break;
+        }
 
-            var completed = await WhenAny(pending).ConfigureAwait(false);
+        var maxToEmit = taken.IsDefaultImplement() ? (uint)pending.Count : taken;
+        var emitted = 0u;
+        List<Task<T>>? incomplete = null;
 
-            _ = pending.Remove(completed);
-
-            T result;
-
-            try
+        // Tasks that are already complete come first, in collection order, without registering anything.
+        foreach (var task in pending)
+        {
+            if (!task.IsCompleted)
             {
-                result = await completed.ConfigureAwait(false);
-            }
-            catch
-            {
+                (incomplete ??= []).Add(task);
+
                 continue;
             }
 
-            if (predicate(result))
+            if (cancellationToken.IsCancellationRequested)
             {
-                emitted++;
-
-                yield return result;
+                yield break;
             }
+
+            if (IsSuccessful(task) && predicate(task.Result))
+            {
+                yield return task.Result;
+
+                if (++emitted >= maxToEmit)
+                {
+                    yield break;
+                }
+            }
+        }
+
+        if (incomplete is null)
+        {
+            yield break;
+        }
+
+        using var stop = new CancellationTokenSource();
+
+        try
+        {
+            var completions = InCompletionOrder(incomplete, stop.Token);
+
+            for (var remaining = incomplete.Count; remaining > 0; remaining--)
+            {
+                var completed = await ReadOrNullAsync(completions, cancellationToken).ConfigureAwait(false);
+
+                if (completed is null)
+                {
+                    yield break;
+                }
+
+                if (IsSuccessful(completed) && predicate(completed.Result))
+                {
+                    yield return completed.Result;
+
+                    if (++emitted >= maxToEmit)
+                    {
+                        yield break;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            stop.Cancel();
         }
     }
 

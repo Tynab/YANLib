@@ -154,6 +154,105 @@ public partial class YANTaskTest
         Assert.Equal(default, result);
     }
 
+    [Fact]
+    public async Task WaitAnyWithCondition_CanceledWhileWaiting_ThrowsOperationCanceledException_Task()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var cts = new CancellationTokenSource();
+        var tasks = new[] { never.Task };
+
+        // Act
+        var operation = tasks.WaitAnyWithCondition(x => x > 0, cts.Token);
+
+        cts.CancelAfter(200);
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(operation, await Task.WhenAny(operation, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => operation);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_LazySequence_StartsEachTaskOnce_Task()
+    {
+        // Arrange
+        var starts = 0;
+
+        // An iterator has no precomputed count, so checking it for emptiness would run (and start) its first item.
+        IEnumerable<Task<int>> StartTasks()
+        {
+            for (var x = 1; x <= 3; x++)
+            {
+                starts++;
+
+                yield return Task.FromResult(x);
+            }
+        }
+
+        var tasks = StartTasks();
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(x => x == 3);
+
+        // Assert
+        Assert.Equal(3, result);
+        Assert.Equal(3, starts);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_PredicateThrows_SkipsThatResult_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromResult(0),
+            Task.FromResult(2)
+        };
+
+        // Act
+        var result = await tasks.WaitAnyWithCondition(x => 10 / x > 1);
+
+        // Assert
+        Assert.Equal(2, result);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_MatchCompletesLater_ReturnsIt_Task()
+    {
+        // Arrange
+        var later = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var never = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            never.Task,
+            Task.FromResult(1),
+            later.Task
+        };
+
+        // Act
+        var operation = tasks.WaitAnyWithCondition(x => x > 1);
+
+        later.SetResult(5);
+
+        // Assert
+        Assert.Equal(5, await operation);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithCondition_NullTaskInCollection_ThrowsArgumentException_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            null!
+        };
+
+        // Act & Assert
+        _ = await Assert.ThrowsAsync<ArgumentException>(() => tasks.WaitAnyWithCondition(x => x > 0));
+    }
+
     #endregion
 
     #region WhenAnyWithCondition
@@ -306,6 +405,51 @@ public partial class YANTaskTest
 
         // Assert
         Assert.Equal(default, result);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithCondition_CanceledWhileWaiting_ThrowsOperationCanceledException_Task()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var cts = new CancellationTokenSource();
+        var tasks = new[] { never.Task };
+
+        // Act
+        var operation = tasks.WhenAnyWithCondition(x => x > 0, cts.Token);
+
+        cts.CancelAfter(200);
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(operation, await Task.WhenAny(operation, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => operation);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithCondition_LazySequence_StartsEachTaskOnce_Task()
+    {
+        // Arrange
+        var starts = 0;
+
+        // An iterator has no precomputed count, so checking it for emptiness would run (and start) its first item.
+        IEnumerable<Task<int>> StartTasks()
+        {
+            for (var x = 1; x <= 3; x++)
+            {
+                starts++;
+
+                yield return Task.FromResult(x);
+            }
+        }
+
+        var tasks = StartTasks();
+
+        // Act
+        var result = await tasks.WhenAnyWithCondition(x => x == 3);
+
+        // Assert
+        Assert.Equal(3, result);
+        Assert.Equal(3, starts);
     }
 
     #endregion

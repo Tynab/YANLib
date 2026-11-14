@@ -309,12 +309,16 @@ var tasks = new[]
 };
 
 // Using WaitAnyWithCondition - returns as soon as it finds a match
-int? result = await tasks.WaitAnyWithCondition(x => x > 5);
+int result = await tasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 
 // Using WhenAnyWithCondition - waits for tasks to complete until it finds a match
-int? anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
+int anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
 Console.WriteLine(anotherResult); // Output: 10
+
+// No match returns default(T): 0 for int, not null
+int noMatch = await tasks.WaitAnyWithCondition(x => x > 100);
+Console.WriteLine(noMatch); // Output: 0
 ```
 
 ### YANProcess
@@ -484,7 +488,7 @@ public List<Product> ProcessProductData(string[] rawData)
 ### Asynchronous Operations with Error Handling
 
 ```csharp
-public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
+public async Task<WeatherData?> GetWeatherFromMultipleProviders(string location)
 {
     var providers = new[]
     {
@@ -493,7 +497,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
         GetWeatherFromProvider3(location)
     };
 
-    // Return the first non-null weather data
+    // Return the first non-null weather data (null if every provider returns null or fails)
     return await providers.WaitAnyWithCondition(data => data != null);
 }
 ```
