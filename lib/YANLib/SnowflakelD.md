@@ -233,7 +233,7 @@ try
 }
 catch (ArgumentException ex)
 {
-    Console.WriteLine(ex.Message); // "Worker ID must be between 0 and 31, but got 32."
+    Console.WriteLine(ex.Message); // "Worker ID must be between 0 and 31, but got 32. (Parameter 'workerId')"
 }
 
 // Handle invalid datacenter ID
@@ -243,7 +243,7 @@ try
 }
 catch (ArgumentException ex)
 {
-    Console.WriteLine(ex.Message); // "Datacenter ID must be between 0 and 31, but got 32."
+    Console.WriteLine(ex.Message); // "Datacenter ID must be between 0 and 31, but got 32. (Parameter 'datacenterId')"
 }
 
 // Handle invalid bit allocation
@@ -263,7 +263,7 @@ try
 }
 catch (ArgumentException ex)
 {
-    Console.WriteLine(ex.Message); // "Worker ID must be between 0 and 1023, but got 1500."
+    Console.WriteLine(ex.Message); // "Worker ID must be between 0 and 1023, but got 1500. (Parameter 'workerId')"
 }
 
 // Handle an invalid initial sequence (ArgumentOutOfRangeException derives from ArgumentException)
