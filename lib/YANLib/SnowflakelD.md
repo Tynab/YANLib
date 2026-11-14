@@ -24,14 +24,14 @@ The library offers several key capabilities:
 - **Timestamp Extraction**: Extract the creation time from an existing ID
 - **Worker ID Extraction**: Extract the worker ID component from an ID
 - **Datacenter ID Extraction**: Extract the datacenter ID component from an ID
-- **Format Support**: Extract components from numeric, alphabetic, or alphanumeric IDs
+- **Format Support**: Extract components from numeric, alphabetic, or alphanumeric IDs; invalid strings (empty, lower-case or other characters outside the alphabet, larger than 64 bits) are rejected with `ArgumentException`
 - **Strategy-Aware Extraction**: Extract components using the same bit allocation strategy used for generation
 - **Bit Allocation Awareness**: Component extraction with matching bit allocation configuration
 
 ### Thread Safety
 
 - **Synchronized Access**: Thread-safe implementation for concurrent ID generation
-- **Clock Drift Handling**: Protection against system clock moving backwards
+- **Clock Drift Handling**: Protection against system clock moving backwards (`InvalidOperationException`)
 - **Sequence Overflow**: Automatic handling of sequence overflow within the same millisecond
 
 
@@ -103,6 +103,7 @@ var defaultGenerator = new IdGenerator(1, 1);
 
 // Custom bit allocation for more workers and datacenters, fewer sequences
 // 10 bits for worker ID (0-1023), 10 bits for datacenter ID (0-1023), 3 bits for sequence (0-7)
+// The sequence argument is the sequence number of the first ID (0 to 7 here); later milliseconds start again at 0
 var distributedGenerator = new IdGenerator(
     workerId: 100,
     datacenterId: 200,
@@ -150,6 +151,7 @@ var strategicComponents = IdGenerator.ExtractIdComponents(
 );
 
 // Extract components from an ID with custom bit allocation
+// (the sequence argument is ignored: earlier versions subtracted it from the timestamp)
 var customComponents = IdGenerator.ExtractIdComponents(
     id: id,
     timestampEpoch: IdGenerator.TIMESTAMP_EPOCH,
@@ -159,6 +161,9 @@ var customComponents = IdGenerator.ExtractIdComponents(
     sequenceBits: 3
 );
 
+// The sequence is not part of the returned tuple; read it from the low bits of the ID
+long sequence = id & ((1L << 13) - 1); // default allocation: 13 sequence bits
+
 // Extract components from an alphabetic ID
 string alphabeticId = "BPNHEBKDMGLCQ";
 var alphabeticComponents = IdGenerator.ExtractIdAlphabeticComponents(alphabeticId);
@@ -166,6 +171,16 @@ var alphabeticComponents = IdGenerator.ExtractIdAlphabeticComponents(alphabeticI
 // Extract components from an alphanumeric ID
 string alphanumericId = "1Z9DHPKW0S";
 var alphanumericComponents = IdGenerator.ExtractIdAlphanumericComponents(alphanumericId);
+
+// Invalid strings are rejected instead of producing a wrong ID
+try
+{
+    IdGenerator.ExtractIdAlphanumericComponents("1z9dhpkw0s"); // lower case is not part of the alphabet
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine(ex.ParamName); // "id"
+}
 ```
 
 ### Multiple Generator Instances
@@ -251,9 +266,27 @@ catch (ArgumentException ex)
     Console.WriteLine(ex.Message); // "Worker ID must be between 0 and 1023, but got 1500."
 }
 
+// Handle an invalid initial sequence (ArgumentOutOfRangeException derives from ArgumentException)
+try
+{
+    var generator = new IdGenerator(1, 1, 8192); // Sequence must be between 0 and 8191 with 13 sequence bits
+}
+catch (ArgumentOutOfRangeException ex)
+{
+    Console.WriteLine(ex.ParamName); // "sequence"
+}
+
 // Handle clock moving backwards
 // This would occur if the system clock is adjusted backwards while the application is running
-// The generator will throw an exception to prevent duplicate IDs
+// The generator throws an InvalidOperationException to prevent duplicate IDs
+try
+{
+    long id = new IdGenerator(1, 1).NextId();
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine(ex.Message); // "Clock moved backwards. Refusing to generate ID for timestamp earlier than last timestamp."
+}
 ```
 
 
@@ -273,9 +306,10 @@ catch (ArgumentException ex)
 
 - **ID Structure**: 64-bit IDs composed of timestamp (41 bits) and configurable bits for datacenter ID, worker ID, and sequence (total 23 bits)
 - **Epoch**: Default epoch is January 1, 2023 00:00:00 UTC (1,672,531,200,000 milliseconds since Unix epoch)
+- **Sequence**: The first ID uses the sequence passed to the constructor (0 by default, validated against the sequence bits); further IDs in the same millisecond increment it, and each new millisecond starts again at 0
 - **Sequence Overflow**: When sequence exceeds maximum value within the same millisecond, the generator waits for the next millisecond
-- **Clock Drift**: Throws an exception if the system clock moves backwards to prevent duplicate IDs
-- **Base Conversion**: Implements custom base-26 (alphabetic) and base-36 (alphanumeric) conversion for string representations
+- **Clock Drift**: Throws an `InvalidOperationException` if the system clock moves backwards to prevent duplicate IDs
+- **Base Conversion**: Implements custom base-26 (alphabetic, `A` = 0) and base-36 (alphanumeric) conversion for string representations; a negative ID (generated with a `timestampEpoch` later than the current time) is encoded as its unsigned 64-bit value, so it still uses only the alphabet and converts back to the same ID
 - **Component Extraction**: Provides methods to extract the original components from an ID
 - **Bit Allocation**: Supports both predefined strategies and customizable bit allocation between worker ID, datacenter ID, and sequence components
 
@@ -311,7 +345,7 @@ You can also create custom bit allocations to suit your specific needs, as long 
 - **Clock Handling**: Includes logic to handle clock drift and sequence overflow
 - **Base Conversion**: Implements custom algorithms for converting between numeric and string representations
 - **Component Extraction**: Uses bit manipulation to extract the original components from an ID
-- **Error Handling**: Includes validation for worker ID, datacenter ID, and bit allocation ranges
+- **Error Handling**: Includes validation for worker ID, datacenter ID, sequence, bit allocation ranges and the alphabetic / alphanumeric ID strings
 - **Bit Allocation Validation**: Ensures the total bits allocated equals 23 (41 bits for timestamp + 23 bits = 64 bits total)
 - **Strategy Implementation**: Encapsulates bit allocation patterns in an enum for simplified configuration
 - **Debugging Support**: Includes attributes to improve debugging experience
