@@ -217,6 +217,24 @@ public partial class YANMathTest
         Assert.Equal(1.0, result);
     }
 
+    [Fact]
+    public void Max_DateTimes_KeepMillisecondsAndKind_Math()
+    {
+        // Arrange
+        var earlier = new DateTime(2024, 1, 1, 10, 0, 0, 123, DateTimeKind.Utc);
+        var later = new DateTime(2024, 1, 1, 10, 0, 0, 456, DateTimeKind.Utc);
+
+        // Act
+        var max = YANMath.Max(earlier, later);
+        var min = YANMath.Min(later, earlier);
+
+        // Assert
+        Assert.Equal(later, max);
+        Assert.Equal(DateTimeKind.Utc, max.Kind);
+        Assert.Equal(earlier, min);
+        Assert.Equal(DateTimeKind.Utc, min.Kind);
+    }
+
     #endregion
 
     #region Average
