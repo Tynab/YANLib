@@ -1228,6 +1228,26 @@ public partial class YANRandomTest
     }
 
     [Fact]
+    public void GenerateRandom_NamedGuidBounds_ReturnsOneOfThem_RandomGeneric()
+    {
+        // compiled against 8.3.3, both two-bound calls bound to GenerateRandom<T>(object?, object?) and returned Guid.Empty; pin: a call with
+        // one named bound still binds there
+        // Arrange
+        var first = new Guid("11111111-1111-1111-1111-111111111111");
+        var second = new Guid("22222222-2222-2222-2222-222222222222");
+        Guid[] bounds = [first, second];
+
+        // Act & Assert
+        for (var i = 0; i < 50; i++)
+        {
+            Assert.Contains(YANRandom.GenerateRandom<Guid>(min: first, max: second), bounds);
+            Assert.Contains(YANRandom.GenerateRandom<Guid>(first, max: second), bounds);
+        }
+
+        Assert.Equal(Guid.Empty, YANRandom.GenerateRandom<Guid>(max: second));
+    }
+
+    [Fact]
     public void GenerateRandom_TwoValuesAsArray_ReturnsOneOfThem_RandomParams()
     {
         // pin: an explicit array still binds to params T[] after GenerateRandom<T>(T min, T max) was added

@@ -267,7 +267,7 @@ public static partial class YANRandom
     /// <remarks>
     /// The range rules are those of <see cref="GenerateRandom{T}(object, object)"/>. This overload makes calls with two typed bounds, such as
     /// <c>YANRandom.GenerateRandom&lt;int&gt;(18, 80)</c>, generate a value in the range: up to 8.3.3 they bound to
-    /// <see cref="GenerateRandom{T}(T[])"/>, which returns one of its arguments. A call that names a bound, such as
+    /// <see cref="GenerateRandom{T}(T[])"/>, which returns one of its arguments. A two-bound call that names one or both bounds, such as
     /// <c>YANRandom.GenerateRandom&lt;Guid&gt;(min: a, max: b)</c> or <c>(a, max: b)</c>, bound to <see cref="GenerateRandom{T}(object, object)"/>
     /// instead, which ignores the bounds of a <see cref="bool"/>, <see cref="Guid"/> or enum (a random <see cref="bool"/>, <see cref="Guid.Empty"/>,
     /// the zero value of most enums); such a call now returns <paramref name="min"/> or <paramref name="max"/> as well. To pick one of two values,
