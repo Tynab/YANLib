@@ -7,19 +7,6 @@
 # (whitespace, code style and analyzers at their default severity: warning). Run it from the repository
 # root; it must exit with code 0. `dotnet format YANLib.sln` (without --verify-no-changes) applies the fixes.
 #
-# TEMPORARY EXCEPTION: two files of the in-progress YANObject work still fail the whitespace check (several
-# collection-expression elements on one line in lib/YANLib.Implementation/YANObject.Implement.cs, three misindented
-# lines in test/YANLib.Tests/Library/YANObjectTest.Property.cs), so the command above exits with code 2 for now.
-# Until they are reformatted, gate on
-#
-#     dotnet format YANLib.sln --verify-no-changes --exclude lib/YANLib.Implementation/YANObject.Implement.cs test/YANLib.Tests/Library/YANObjectTest.Property.cs
-#
-# which must exit with code 0. To lift the exception, commit the whitespace-only result of
-#
-#     dotnet format whitespace YANLib.sln --include lib/YANLib.Implementation/YANObject.Implement.cs test/YANLib.Tests/Library/YANObjectTest.Property.cs
-#
-# check that the plain command above exits with code 0, and delete this paragraph.
-#
 # The code-style preferences below have no severity suffix, so they guide the IDE and `dotnet format`
 # without failing the check; only the whitespace rules and warning-level analyzers can fail it.
 

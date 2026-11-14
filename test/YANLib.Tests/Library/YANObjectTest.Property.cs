@@ -808,7 +808,7 @@ public partial class YANObjectTest
         IEnumerable<TestClass?> input =
         [
           new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
-      new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
         ];
 
         // Act
@@ -964,7 +964,7 @@ public partial class YANObjectTest
         IEnumerable<TestClass?> input =
         [
           new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
-      new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
         ];
 
         // Act
@@ -1145,7 +1145,7 @@ public partial class YANObjectTest
         IEnumerable<TestClass?> input =
         [
           new() { StringProperty = "test1", IntProperty = 1, DateProperty = new DateTime(2023, 1, 1), Value = "" },
-      new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
+            new() { StringProperty = "test2", IntProperty = 2, DateProperty = new DateTime(2023, 1, 2), Value = "" }
         ];
 
         // Act

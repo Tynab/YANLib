@@ -520,8 +520,20 @@ internal static partial class YANObject
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
-        typeof(MemberInfo), typeof(Assembly), typeof(Module), typeof(ParameterInfo), typeof(Delegate), typeof(Stream), typeof(TextReader), typeof(TextWriter),
-        typeof(Task), typeof(WaitHandle), typeof(Thread), typeof(CancellationTokenSource), typeof(SafeHandle), typeof(Pointer)
+        typeof(MemberInfo),
+        typeof(Assembly),
+        typeof(Module),
+        typeof(ParameterInfo),
+        typeof(Delegate),
+        typeof(Stream),
+        typeof(TextReader),
+        typeof(TextWriter),
+        typeof(Task),
+        typeof(WaitHandle),
+        typeof(Thread),
+        typeof(CancellationTokenSource),
+        typeof(SafeHandle),
+        typeof(Pointer)
     ];
 
     /// <summary>
