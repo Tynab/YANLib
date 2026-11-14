@@ -84,7 +84,7 @@ public static partial class YANMath
     /// <returns>The average of all values in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c>, empty or has only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method ignores <c>null</c> elements in the collection when calculating the average.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -99,7 +99,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method provides a convenient way to calculate the average of an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method ignores <c>null</c> elements in the array when calculating the average.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -112,7 +112,7 @@ public static partial class YANMath
     /// <param name="input">The collection of objects to calculate the sum of. If <c>null</c> or empty, returns <c>default(T)</c>.</param>
     /// <returns>The sum of all values in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c> or empty.</returns>
     /// <remarks>
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. If the sum does not fit in <typeparamref name="T"/>, the result is <c>default(T)</c> (0, or <c>null</c> for a nullable type) instead of an <see cref="OverflowException"/>: the <c>int</c> sum of <c>Enumerable.Range(0, 100_000)</c> is 0.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. If the sum does not fit in <typeparamref name="T"/>, the result is <c>default(T)</c> (0, or <c>null</c> for a nullable type) instead of an <see cref="OverflowException"/>: the <c>int</c> sum of <c>Enumerable.Range(0, 100_000)</c> is 0.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -126,7 +126,7 @@ public static partial class YANMath
     /// <returns>The sum of all values in the array, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the array is <c>null</c> or empty.</returns>
     /// <remarks>
     /// This method provides a convenient way to calculate the sum of an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. If the sum does not fit in <typeparamref name="T"/>, the result is <c>default(T)</c> (0, or <c>null</c> for a nullable type) instead of an <see cref="OverflowException"/>: the <c>int</c> sum of <c>Enumerable.Range(0, 100_000)</c> is 0.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. If the sum does not fit in <typeparamref name="T"/>, the result is <c>default(T)</c> (0, or <c>null</c> for a nullable type) instead of an <see cref="OverflowException"/>: the <c>int</c> sum of <c>Enumerable.Range(0, 100_000)</c> is 0.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -140,7 +140,7 @@ public static partial class YANMath
     /// <returns>The integer part of <paramref name="input"/>, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if <paramref name="input"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Truncate(decimal)"/> or <see cref="Math.Truncate(double)"/> to remove the fractional part of the number.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -154,7 +154,7 @@ public static partial class YANMath
     /// <returns>The ceiling of <paramref name="input"/>, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if <paramref name="input"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Ceiling(decimal)"/> or <see cref="Math.Ceiling(double)"/> to find the ceiling of the number.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -168,7 +168,7 @@ public static partial class YANMath
     /// <returns>The floor of <paramref name="input"/>, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if <paramref name="input"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Floor(decimal)"/> or <see cref="Math.Floor(double)"/> to find the floor of the number.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -184,7 +184,7 @@ public static partial class YANMath
     /// <returns>The rounded value, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if <paramref name="input"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Round(decimal, int, MidpointRounding)"/> or <see cref="Math.Round(double, int, MidpointRounding)"/> to round the number. More than 15 digits are allowed: a finite <c>double</c> within the <see cref="decimal"/> range is then rounded as <see cref="decimal"/> (at most 28 digits), another <c>double</c> to 15 digits. Negative digits throw <see cref="ArgumentOutOfRangeException"/>.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -213,7 +213,7 @@ public static partial class YANMath
     /// <returns>The result of raising <paramref name="input"/> to the <paramref name="power"/>, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if either <paramref name="input"/> or <paramref name="power"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Pow(double, double)"/> to calculate the power.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one) and the power is a whole number, the input is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the power is computed exactly by repeated multiplication (a negative power as 1/x^n); otherwise both the input and power are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>100000.Pow(2)</c> is 0 for <c>int</c>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one) and the power is a whole number, the input is converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and the power is computed by repeated multiplication (a negative power as 1/x^n), exactly for an integer type and to the 28-29 significant digits of <see cref="decimal"/> for <see cref="decimal"/>; otherwise both the input and power are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>100000.Pow(2)</c> is 0 for <c>int</c>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -227,7 +227,7 @@ public static partial class YANMath
     /// <returns>The absolute value of <paramref name="input"/>, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if <paramref name="input"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Abs(decimal)"/> or <see cref="Math.Abs(double)"/> to calculate the absolute value.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>int.MinValue.Abs()</c> is 0.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the input is converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and the calculation is exact; otherwise the input is converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>int.MinValue.Abs()</c> is 0.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

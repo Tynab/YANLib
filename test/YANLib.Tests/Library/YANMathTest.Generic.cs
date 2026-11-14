@@ -407,6 +407,18 @@ public partial class YANMathTest
         Assert.Equal(2, result);
     }
 
+    [Fact]
+    public void Sum_WholeDoubleAndFloat_AreExact_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<long>(Math.Pow(2, 60), 1L);
+        var floatResult = YANMath.Sum<int>(123456792f);
+
+        // Assert
+        Assert.Equal(1152921504606846977L, result);
+        Assert.Equal(123456792, floatResult);
+    }
+
     #endregion
 
     #region Truncate
@@ -461,6 +473,43 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Truncate_WholeDoubleAbove2Pow53_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = Math.Pow(2, 60);
+        object? unsignedInput = 9223372036854775808.0;
+
+        // Act
+        var result = input.Truncate<long>();
+        var unsignedResult = unsignedInput.Truncate<ulong>();
+        var decimalResult = input.Truncate<decimal>();
+        var largeDecimalResult = ((object?)1e23).Truncate<decimal>();
+
+        // Assert
+        Assert.Equal(1152921504606846976L, result);
+        Assert.Equal(9223372036854775808UL, unsignedResult);
+        Assert.Equal(1152921504606846976m, decimalResult);
+        Assert.Equal(99999999999999991611392m, largeDecimalResult);
+    }
+
+    [Fact]
+    public void Truncate_WholeFloatAbove2Pow24_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = 123456792f;
+
+        // Act
+        var result = input.Truncate<int>();
+        var decimalResult = input.Truncate<decimal>();
+        var fraction = ((object?)0.1f).Round<decimal>(5);
+
+        // Assert
+        Assert.Equal(123456792, result);
+        Assert.Equal(123456792m, decimalResult);
+        Assert.Equal(0.1m, fraction);
     }
 
     #endregion
@@ -519,6 +568,22 @@ public partial class YANMathTest
         Assert.Equal(4.0, result);
     }
 
+    [Fact]
+    public void Ceiling_TinyPositiveValue_ReturnsOne_MathGeneric()
+    {
+        // Act
+        var result = ((object?)1e-29).Ceiling<int>();
+        var epsilonResult = ((object?)double.Epsilon).Ceiling<int>();
+        var decimalResult = ((object?)1e-30).Ceiling<decimal>();
+        var stringResult = ((object?)"1e-29").Ceiling<int>();
+
+        // Assert
+        Assert.Equal(1, result);
+        Assert.Equal(1, epsilonResult);
+        Assert.Equal(1m, decimalResult);
+        Assert.Equal(1, stringResult);
+    }
+
     #endregion
 
     #region Floor
@@ -573,6 +638,20 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Floor_TinyNegativeValue_ReturnsMinusOne_MathGeneric()
+    {
+        // Act
+        var result = ((object?)-1e-29).Floor<int>();
+        var nullableResult = ((object?)-1e-30).Floor<long?>();
+        var stringResult = ((object?)"-1E-30").Floor<int>();
+
+        // Assert
+        Assert.Equal(-1, result);
+        Assert.Equal(-1L, nullableResult);
+        Assert.Equal(-1, stringResult);
     }
 
     #endregion
@@ -683,6 +762,58 @@ public partial class YANMathTest
         // Assert
         Assert.Equal(1.5, doubleResult);
         Assert.Equal(1.5m, decimalResult);
+    }
+
+    [Fact]
+    public void Round_WholeDoubleAndFloatExtension_IsExact_MathGeneric()
+    {
+        // Act
+        var result = Math.Pow(2, 60).Round<long>();
+        var floatResult = 123456792f.Round<int>();
+
+        // Assert
+        Assert.Equal(1152921504606846976L, result);
+        Assert.Equal(123456792, floatResult);
+    }
+
+    [Fact]
+    public void Round_TinyValueDirected_KeepsTheStep_MathGeneric()
+    {
+        // Act
+        var up = ((object?)1e-30).Round<decimal>(2, MidpointRounding.ToPositiveInfinity);
+        var down = ((object?)-1e-30).Round<int>(null, MidpointRounding.ToNegativeInfinity);
+        var toZero = ((object?)1.9999999999999998e-13).Round<decimal>(15, MidpointRounding.ToZero);
+        var smallest = ((object?)1e-28).Round<decimal>(28);
+
+        // Assert
+        Assert.Equal(0.01m, up);
+        Assert.Equal(-1, down);
+        Assert.Equal(0.000000000000199m, toZero);
+        Assert.Equal(0.0000000000000000000000000001m, smallest);
+    }
+
+    [Fact]
+    public void Round_FractionalDoubleWithoutDigits_MatchesMathRound_MathGeneric()
+    {
+        // pin: Round without digits rounds a double in double and converts the whole result exactly, without the text round trip
+        // Arrange
+        object?[] inputs = [2.5, -2.5, 0.49999999999999994, 2.4999999999999996, -1.5f, 123.45678901234567];
+        MidpointRounding[] modes = [MidpointRounding.ToEven, MidpointRounding.AwayFromZero, MidpointRounding.ToZero, MidpointRounding.ToNegativeInfinity, MidpointRounding.ToPositiveInfinity];
+
+        foreach (var input in inputs)
+        {
+            foreach (var mode in modes)
+            {
+                // Act
+                var expected = Math.Round(Convert.ToDouble(input), mode);
+                var result = input.Round<long>(null, mode);
+                var decimalResult = input.Round<decimal?>(null, mode);
+
+                // Assert
+                Assert.Equal((long)expected, result);
+                Assert.Equal((decimal)expected, decimalResult);
+            }
+        }
     }
 
     #endregion

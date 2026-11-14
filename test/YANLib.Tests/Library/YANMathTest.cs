@@ -914,6 +914,20 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Round_DoubleMoreThan28DecimalPlaces_RoundsAt28PlacesFirst_Math()
+    {
+        // pin: the documented limit (see YANMath.md): a value whose shortest text has more than 28 decimal places is rounded to 28
+        // places before it is rounded to more than 15 digits, so the last digit can be one unit off (exact: 1.9999999E-13)
+        // Act
+        var result = 1.9999999999999998e-13.Round(20, MidpointRounding.ToZero);
+        var fifteenDigits = 1.9999999999999998e-13.Round(15, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(2e-13, result);
+        Assert.Equal(1.99e-13, fifteenDigits);
+    }
+
+    [Fact]
     public void Round_DecimalAndIntegerMoreThan15Digits_DoNotThrow_Math()
     {
         // Act

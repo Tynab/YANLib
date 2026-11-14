@@ -140,7 +140,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before calculating the average.
     /// This method ignores <c>null</c> elements in the collection when calculating the average.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -181,7 +181,7 @@ public static partial class YANMath
     /// <returns>The sum of all values in the collection, or <c>default(T)</c> if the collection is <c>null</c>.</returns>
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before calculating the sum.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a <see cref="double"/> or <see cref="float"/> through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. If the sum does not fit in <typeparamref name="T"/>, the result is <c>default(T)</c> (0, or <c>null</c> for a nullable type) instead of an <see cref="OverflowException"/>: the <c>int</c> sum of <c>Enumerable.Range(0, 100_000)</c> is 0.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. If the sum does not fit in <typeparamref name="T"/>, the result is <c>default(T)</c> (0, or <c>null</c> for a nullable type) instead of an <see cref="OverflowException"/>: the <c>int</c> sum of <c>Enumerable.Range(0, 100_000)</c> is 0.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -268,7 +268,7 @@ public static partial class YANMath
     /// <returns>The result of raising <paramref name="input"/> to the <paramref name="power"/>, or <c>default(T)</c> if either <paramref name="input"/> or <paramref name="power"/> is <c>null</c>.</returns>
     /// <remarks>
     /// This method uses <see cref="Math.Pow(double, double)"/> to calculate the power.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one) and the power is a whole number, the power is computed exactly by repeated multiplication (a negative power as 1/x^n); otherwise both the input and power are converted to <c>double</c> for the calculation, and the result is converted back to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>100000.Pow(2)</c> is 0 for <c>int</c>.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one) and the power is a whole number, the power is computed by repeated multiplication (a negative power as 1/x^n), exactly for an integer type and to the 28-29 significant digits of <see cref="decimal"/> for <see cref="decimal"/>; otherwise both the input and power are converted to <c>double</c> for the calculation, and the result is converted back to type <typeparamref name="T"/>. A result that does not fit in <typeparamref name="T"/> is <c>default(T)</c> (0, or <c>null</c> for a nullable type): <c>100000.Pow(2)</c> is 0 for <c>int</c>.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

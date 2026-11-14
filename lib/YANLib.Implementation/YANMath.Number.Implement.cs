@@ -157,13 +157,59 @@ internal static partial class YANMath
     [DebuggerStepThrough]
     private static T? FromDecimal<T>(decimal value) => Normalize(value).ParseImplement<T?>();
 
+    /// <summary>Whether <paramref name="input"/> is a boxed <c>double</c> or <see cref="float"/>, and its value.</summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool IsDoubleOrFloat(object? input, out double value)
+    {
+        switch (input)
+        {
+            case double number:
+                value = number;
+
+                return true;
+            case float number:
+                value = number;
+
+                return true;
+            default:
+                value = default;
+
+                return false;
+        }
+    }
+
     /// <summary>
-    /// The shortest decimal that round-trips to <paramref name="value"/> (0.1 becomes 0.1m, not 0.1000000000000000055...); <c>false</c>
-    /// for NaN, infinities and magnitudes from <see cref="decimal.MaxValue"/> on.
+    /// <paramref name="value"/> exactly when it is a whole number in the <see cref="decimal"/> range. Truncate, Ceiling, Floor and Round to
+    /// a whole number give the same result for a <c>double</c> or <see cref="float"/> as for its shortest round-trip text, so the object
+    /// path computes them in <c>double</c> and converts a whole result this way, without the slower text round trip.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool TryToDecimal(double value, out decimal result)
+    private static bool TryToWholeDecimal(double value, out decimal result)
+    {
+        if (double.IsInteger(value) && Math.Abs(value) < (double)decimal.MaxValue)
+        {
+            // below 2^96, so Int128 and decimal hold it exactly
+            result = (decimal)(Int128)value;
+
+            return true;
+        }
+
+        result = default;
+
+        return false;
+    }
+
+    /// <summary>
+    /// A whole <paramref name="value"/> exactly (2^60 stays 1152921504606846976, not the 1152921504606847000 of its shortest text), any
+    /// other the shortest decimal that round-trips to it (0.1 becomes 0.1m, not 0.1000000000000000055...); <c>false</c> for NaN,
+    /// infinities, magnitudes from <see cref="decimal.MaxValue"/> on, and values whose shortest text has more than the 28 decimal
+    /// places of <see cref="decimal"/> (1e-30 would become 0), unless <paramref name="rounded"/> accepts them rounded to 28 places.
+    /// </summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool TryToDecimal(double value, out decimal result, bool rounded = false)
     {
         if (!double.IsFinite(value) || Math.Abs(value) >= (double)decimal.MaxValue)
         {
@@ -172,16 +218,32 @@ internal static partial class YANMath
             return false;
         }
 
+        if (TryToWholeDecimal(value, out result))
+        {
+            return true;
+        }
+
         // the cast keeps 15 significant digits; the slower text round trip is only needed when that loses information
         result = (decimal)value;
 
-        if (!IsExactly(result, value))
+        if (IsExactly(result, value))
         {
-            result = decimal.Parse(value.ToString("R", InvariantCulture), NumberStyles.Float, InvariantCulture);
+            return true;
         }
 
-        return true;
+        Span<char> text = stackalloc char[32];
+
+        _ = value.TryFormat(text, out var length, "R", InvariantCulture);
+        result = decimal.Parse(text[..length], NumberStyles.Float, InvariantCulture);
+
+        // a scale below 28 means the parse kept every digit
+        return rounded || result.Scale < 28 || RoundTrips(result, value);
     }
+
+    /// <summary>Whether <paramref name="number"/> reads back as <paramref name="value"/>, through text (the <see cref="decimal"/>-to-<c>double</c> cast is not correctly rounded).</summary>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static bool RoundTrips(decimal number, double value) => double.Parse(number.ToString(InvariantCulture), InvariantCulture) == value;
 
     /// <summary>Powers of ten that <c>double</c> represents exactly.</summary>
     private static readonly double[] ExactPowersOfTen = [1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22];
@@ -225,14 +287,16 @@ internal static partial class YANMath
     }
 
     /// <summary>
-    /// Converts an element of the object path to <see cref="decimal"/>: integers and decimals exactly, <c>double</c> and
-    /// <see cref="float"/> through their shortest round-trip text, strings with the same styles and culture as the 8.3.3
-    /// <c>double</c> parse, everything else through that <c>double</c> parse (enum values, <c>true</c> = 1, unparsable = 0);
-    /// <c>null</c> is 0. <c>false</c> when the value has no <see cref="decimal"/> equivalent (NaN, infinity, out of range).
+    /// Converts an element of the object path to <see cref="decimal"/>: integers, decimals and whole <c>double</c> and
+    /// <see cref="float"/> values exactly, other <c>double</c> and <see cref="float"/> values through their shortest round-trip text,
+    /// strings with the same styles and culture as the 8.3.3 <c>double</c> parse, everything else through that <c>double</c> parse
+    /// (enum values, <c>true</c> = 1, unparsable = 0); <c>null</c> is 0. <c>false</c> when the value has no <see cref="decimal"/>
+    /// equivalent (NaN, infinity, out of range), or needs more than 28 decimal places (1e-30) and <paramref name="rounded"/> is
+    /// <c>false</c>: the caller then takes the 8.3.3 <c>double</c> path, which keeps the sign of such a value for Floor and Ceiling.
     /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static bool TryToDecimal(object? input, out decimal result)
+    private static bool TryToDecimal(object? input, out decimal result, bool rounded = false)
     {
         switch (input)
         {
@@ -285,14 +349,18 @@ internal static partial class YANMath
 
                 return true;
             case double value:
-                return TryToDecimal(value, out result);
+                return TryToDecimal(value, out result, rounded);
             case float value:
-                return TryToDecimal(double.Parse(value.ToString("R", InvariantCulture), InvariantCulture), out result);
+                // a whole float is exact as double; the text of 123456792f, 1.2345679E+08, is not
+                return TryToDecimal(float.IsInteger(value) ? value : double.Parse(value.ToString("R", InvariantCulture), InvariantCulture), out result, rounded);
             case string text:
-                // double.TryParse(text, CurrentCulture) uses Float | AllowThousands; accepting the same strings keeps "5-" and "(5)" at 0
-                return decimal.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CurrentCulture, out result) || TryToDecimal(text.ParseImplement<double>(), out result);
+                // double.TryParse(text, CurrentCulture) uses Float | AllowThousands; accepting the same strings keeps "5-" and "(5)" at 0.
+                // A scale of 28 can mean the parse rounded ("1e-30" to 0): kept only when that is the double the text stands for.
+                return decimal.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CurrentCulture, out result)
+                    ? rounded || result.Scale < 28 || RoundTrips(result, text.ParseImplement<double>())
+                    : TryToDecimal(text.ParseImplement<double>(), out result, rounded);
             default:
-                return TryToDecimal(input.ParseImplement<double>(), out result);
+                return TryToDecimal(input.ParseImplement<double>(), out result, rounded);
         }
     }
 
@@ -513,7 +581,10 @@ internal static partial class YANMath
         }
     }
 
-    /// <summary>Exact sum of object-path elements converted with <see cref="TryToDecimal(object, out decimal)"/>; <c>false</c> on a failed conversion or an overflow.</summary>
+    /// <summary>
+    /// Exact sum of object-path elements converted with <see cref="TryToDecimal(object, out decimal, bool)"/>, a value with more than 28
+    /// decimal places rounded to 28 (the precision of the <see cref="decimal"/> sum); <c>false</c> on a failed conversion or an overflow.
+    /// </summary>
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static bool TrySumDecimal(IEnumerable<object?> input, out decimal sum, out long count)
@@ -525,7 +596,7 @@ internal static partial class YANMath
         {
             foreach (var value in input)
             {
-                if (!TryToDecimal(value, out var number))
+                if (!TryToDecimal(value, out var number, true))
                 {
                     return false;
                 }
@@ -672,7 +743,9 @@ internal static partial class YANMath
             return Math.Round(value, Math.Min(places, 15), mode);
         }
 
-        if (!TryToDecimal(value, out var number))
+        // a value whose shortest round-trip text has more than 28 decimal places (1.9999999999999998E-13) is rounded to 28 places first,
+        // so a result with more than 15 digits can be one unit in the last place off for such a value (2E-13 for 20 digits ToZero)
+        if (!TryToDecimal(value, out var number, true))
         {
             return Math.Round(value, 15, mode);
         }
@@ -850,7 +923,11 @@ internal static partial class YANMath
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static T? ExactObject<T>(object? input, Func<double, double> function, Func<decimal, decimal> decimalFunction)
-        => input is null ? default : NumberTarget<T>.IsDecimal && TryToDecimal(input, out var number) ? FromDecimal<T>(decimalFunction(number)) : UnaryObject<T>(input, function);
+        => input is null ? default
+        : !NumberTarget<T>.IsDecimal ? UnaryObject<T>(input, function)
+        : IsDoubleOrFloat(input, out var value) && TryToWholeDecimal(function(value), out var whole) ? whole.ParseImplement<T?>()
+        : TryToDecimal(input, out var number) ? FromDecimal<T>(decimalFunction(number))
+        : UnaryObject<T>(input, function);
 
     #endregion
 }

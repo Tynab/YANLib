@@ -44,8 +44,14 @@ internal static partial class YANMath
 
         var places = ParseDigits(digits);
 
-        return NumberTarget<T>.IsDecimal && IsValidRound(places, mode) && TryToDecimal(input, out var number)
-            ? FromDecimal<T>(RoundDecimal(number, places, mode))
+        if (!NumberTarget<T>.IsDecimal || !IsValidRound(places, mode))
+        {
+            return RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
+        }
+
+        // rounding a double or float to a whole number needs no text round trip (see TryToWholeDecimal)
+        return places is null && IsDoubleOrFloat(input, out var value) && TryToWholeDecimal(Math.Round(value, mode), out var whole) ? whole.ParseImplement<T?>()
+            : TryToDecimal(input, out var number) ? FromDecimal<T>(RoundDecimal(number, places, mode))
             : RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
     }
 
