@@ -16,12 +16,15 @@ The library is organized into several functional categories:
 - **Multiple Process Management**: Kill all processes with names matching any in a collection
 - **Asynchronous Operations**: All operations are asynchronous, returning Tasks
 - **Process Cleanup**: Automatically disposes of process resources after termination
+- **Process Trees**: Each matching process is killed together with all of its descendant processes
+- **Self Protection**: The calling process is never killed, even when it has the specified name
 
 ### Error Handling
 
 - **Null Safety**: Graceful handling of null or empty process names
-- **Exception Safety**: Robust error handling during process termination
-- **Whitespace Handling**: Proper handling of whitespace in process names
+- **Exception Safety**: If a process cannot be killed, the others are still killed and every handle is disposed; then the first exception is rethrown
+- **Whitespace Handling**: Null, empty and whitespace names are skipped without affecting the other names
+- **Empty Names**: A path without a file name (for example a directory path) or a bare extension such as `".exe"` matches no process
 
 ### Collection Support
 
@@ -41,8 +44,15 @@ await "notepad".KillAllProcessesByName();
 // Process name is case-insensitive and doesn't need the .exe extension
 await "chrome".KillAllProcessesByName();
 
-// Kill a process using a full path (only the filename will be used)
+// Kill a process using a full path (only the file name is used): "firefox.exe" is looked up first,
+// and since no process has that name, the processes named "firefox" are killed
 await @"C:\Program Files\Mozilla Firefox\firefox.exe".KillAllProcessesByName();
+
+// A process whose name contains a dot can be targeted by its full name
+await "my.app".KillAllProcessesByName();
+
+// The calling process is skipped, so killing by your own name only kills the other instances
+await Process.GetCurrentProcess().ProcessName.KillAllProcessesByName();
 
 // Null-safe operation (no action taken)
 string? nullProcessName = null;
@@ -113,6 +123,17 @@ await YANProcess.KillAllProcessesByNames("Process1", "Process2", "Process3");
 Console.WriteLine("Terminating notepad...");
 await "notepad".KillAllProcessesByName();
 Console.WriteLine("Notepad terminated successfully");
+
+// A process that cannot be killed (for example access denied) does not stop the others:
+// all of them are tried and disposed, then the first exception is rethrown
+try
+{
+    await YANProcess.KillAllProcessesByNames("ProtectedService", "notepad");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Some processes could not be killed: {ex.Message}");
+}
 ```
 
 ### Integration with Application Shutdown
@@ -153,18 +174,42 @@ private async Task SaveApplicationState()
 // The following code shows what happens internally
 
 // Manual implementation (for illustration only - YANProcess does this automatically)
-public async Task ManualProcessKill(string processName)
+public async Task ManualProcessKill(string processNameOrPath)
 {
-    var processes = Process.GetProcessesByName(
-        Path.GetFileNameWithoutExtension(Path.GetFileName(processName)));
-    
+    var name = Path.GetFileName(processNameOrPath);
+
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return; // Process.GetProcessesByName("") would return every process
+    }
+
+    // Look the name up as given first, then without its extension
+    var processes = Process.GetProcessesByName(name);
+
+    if (processes.Length == 0 && Path.HasExtension(name))
+    {
+        var nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
+
+        processes = string.IsNullOrWhiteSpace(nameWithoutExtension) ? [] : Process.GetProcessesByName(nameWithoutExtension);
+    }
+
+    ExceptionDispatchInfo? firstFailure = null;
+
     foreach (var process in processes)
     {
         try
         {
-            // Kill the process and wait for it to exit
-            process.Kill(true);
-            await process.WaitForExitAsync();
+            // Never kill the calling process; kill the others with their process trees and wait for them to exit
+            if (process.Id != Environment.ProcessId)
+            {
+                process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Keep going; remember the first failure
+            firstFailure ??= ExceptionDispatchInfo.Capture(ex);
         }
         finally
         {
@@ -172,6 +217,8 @@ public async Task ManualProcessKill(string processName)
             process.Dispose();
         }
     }
+
+    firstFailure?.Throw();
 }
 ```
 
@@ -182,7 +229,7 @@ public async Task ManualProcessKill(string processName)
 - **Parallel Processing**: When killing multiple processes, operations are performed in parallel
 - **Resource Management**: Processes are properly disposed after termination to prevent resource leaks
 - **Null Handling**: All methods handle null inputs gracefully, avoiding unnecessary operations
-- **Exception Safety**: Operations are designed to be robust, handling exceptions during process termination
+- **Exception Safety**: A failure to kill one process does not stop the others or leak process handles; the first failure is rethrown at the end
 - **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
 
 
@@ -211,11 +258,12 @@ The library provides focused coverage of process termination operations:
 ## Technical Details
 
 - **Process Identification**: Uses `Process.GetProcessesByName()` to find processes by name
-- **Process Termination**: Uses `Process.Kill(true)` to terminate processes and their child processes
+- **Process Termination**: Uses `Process.Kill(entireProcessTree: true)`, which kills every descendant of a matching process, whatever its name. If a matching process is an ancestor of the calling process (for example the shell or host that started it), the calling process is killed with it
+- **Self Protection**: Skips the process whose id is `Environment.ProcessId` (`Kill(entireProcessTree: true)` always refuses a tree that contains the caller)
 - **Asynchronous Waiting**: Uses `Process.WaitForExitAsync()` to wait for process termination without blocking
-- **Resource Cleanup**: Implements proper resource disposal using `using` statements or explicit `Dispose()` calls
-- **Path Handling**: Uses `Path.GetFileNameWithoutExtension()` and `Path.GetFileName()` to extract process names from paths
-- **Case Insensitivity**: Implements case-insensitive process name matching for Windows compatibility
+- **Resource Cleanup**: Disposes every `Process` handle in a `finally` block, also when killing it failed
+- **Path Handling**: Uses `Path.GetFileName()` to drop the directory, looks the file name up as given, and only if nothing matches and it has an extension, looks it up again without the extension (`Path.GetFileNameWithoutExtension()`); a name that is empty at that point matches nothing
+- **Case Insensitivity**: Process names are matched case-insensitively by `Process.GetProcessesByName()` (on Windows and Linux)
 - **Parallel Termination**: Implements parallel processing for terminating multiple processes efficiently
-- **Exception Handling**: Catches and suppresses exceptions during process termination to ensure robustness
+- **Exception Handling**: Tries every process, then rethrows the first failure with `ExceptionDispatchInfo`, so its type (`Win32Exception`, `AggregateException`, `InvalidOperationException`, ...) and stack trace are kept
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code

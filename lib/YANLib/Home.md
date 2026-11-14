@@ -190,10 +190,11 @@ Console.WriteLine(noMatch); // Output: 0
 A specialized utility library for managing system processes, focusing on process termination operations.
 
 ```csharp
-// Kill all instances of a process with a specific name
+// Kill all instances of a process with a specific name (each with its whole process tree;
+// the calling process itself is never killed)
 await "notepad".KillAllProcessesByName();
 
-// Kill multiple processes using a collection
+// Kill multiple processes using a collection (null or blank names are skipped)
 var processNames = new List<string?>
 {
     "notepad",

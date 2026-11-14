@@ -333,10 +333,11 @@ A specialized utility library for managing system processes, focusing on process
 - Process cleanup with automatic resource disposal
 
 ```csharp
-// Kill all instances of a process with a specific name
+// Kill all instances of a process with a specific name (each with its whole process tree;
+// the calling process itself is never killed)
 await "notepad".KillAllProcessesByName();
 
-// Kill multiple processes using a collection
+// Kill multiple processes using a collection (null or blank names are skipped)
 var processNames = new List<string?>
 {
     "notepad",

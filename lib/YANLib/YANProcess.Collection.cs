@@ -14,10 +14,19 @@ public static partial class YANProcess
     /// <summary>
     /// Kills all processes with names matching any of the specified names.
     /// </summary>
-    /// <param name="names">The collection of process names to kill. If <c>null</c>, empty, or contains only <c>null</c> or whitespace elements, no action is taken.</param>
+    /// <param name="names">
+    /// The collection of process names (or executable paths) to kill. If <c>null</c> or empty, no action is taken; <c>null</c> or whitespace elements are skipped
+    /// and the other names are still processed.
+    /// </param>
     /// <returns>A task that represents the asynchronous kill operation.</returns>
+    /// <exception cref="Exception">
+    /// When a process cannot be killed, the other processes (for all names) are still killed and every process handle is disposed; then the first exception is rethrown
+    /// with its original type.
+    /// </exception>
     /// <remarks>
-    /// This method finds all processes with names matching any in the specified collection (without file extensions) and kills them.
+    /// Each name is matched as described for <see cref="KillAllProcessesByName(string?)"/>: the file name as given first, then without its extension if nothing matched.
+    /// The calling process is never killed. Each process is killed together with its entire process tree (all descendants, whatever their names; the calling process too
+    /// if a matching process is one of its ancestors).
     /// It waits for each process to exit before completing.
     /// The operation is performed in parallel for all process names.
     /// </remarks>
@@ -28,11 +37,20 @@ public static partial class YANProcess
     /// <summary>
     /// Kills all processes with names matching any of the specified names.
     /// </summary>
-    /// <param name="names">The array of process names to kill. If <c>null</c>, empty, or contains only <c>null</c> or whitespace elements, no action is taken.</param>
+    /// <param name="names">
+    /// The array of process names (or executable paths) to kill. If <c>null</c> or empty, no action is taken; <c>null</c> or whitespace elements are skipped
+    /// and the other names are still processed.
+    /// </param>
     /// <returns>A task that represents the asynchronous kill operation.</returns>
+    /// <exception cref="Exception">
+    /// When a process cannot be killed, the other processes (for all names) are still killed and every process handle is disposed; then the first exception is rethrown
+    /// with its original type.
+    /// </exception>
     /// <remarks>
     /// This method provides a convenient way to kill processes by name without having to explicitly create a collection.
-    /// It finds all processes with names matching any in the specified array (without file extensions) and kills them.
+    /// Each name is matched as described for <see cref="KillAllProcessesByName(string?)"/>: the file name as given first, then without its extension if nothing matched.
+    /// The calling process is never killed. Each process is killed together with its entire process tree (all descendants, whatever their names; the calling process too
+    /// if a matching process is one of its ancestors).
     /// It waits for each process to exit before completing.
     /// The operation is performed in parallel for all process names.
     /// </remarks>
