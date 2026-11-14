@@ -372,6 +372,24 @@ public partial class YANMathTest
         Assert.True(double.IsNegative(result));
     }
 
+    [Fact]
+    public void Average_LazySequences_MatchArrays_Math()
+    {
+        // Arrange
+        var ints = Enumerable.Range(1, 1_000).Select(static x => x * 3);
+        IEnumerable<long> longs = new HashSet<long> { 9007199254740993, 9007199254740995 };
+        var doubles = Enumerable.Range(1, 100).Select(static x => x / 7.0);
+        var decimals = Enumerable.Range(1, 100).Select(static x => x / 7m);
+        var negativeZero = new[] { -0.0 }.Select(static x => x);
+
+        // Act & Assert
+        Assert.Equal(YANMath.Average(ints.ToArray()), YANMath.Average<int>(ints));
+        Assert.Equal(9007199254740994L, YANMath.Average<long>(longs));
+        Assert.Equal(YANMath.Average(doubles.ToArray()), YANMath.Average<double>(doubles));
+        Assert.Equal(YANMath.Average(decimals.ToArray()), YANMath.Average<decimal>(decimals));
+        Assert.True(double.IsNegative(YANMath.Average<double>(negativeZero)));
+    }
+
     #endregion
 
     #region Sum
@@ -511,6 +529,25 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal((float)((double)0.1f + 0.2f + 0.3f), result);
+    }
+
+    [Fact]
+    public void Sum_LazySequences_MatchArrays_Math()
+    {
+        // Arrange
+        var ints = Enumerable.Range(1, 1_000).Select(static x => x * 3);
+        IEnumerable<long> longs = new HashSet<long> { 9007199254740993, 1, 2 };
+        var doubles = Enumerable.Range(1, 100).Select(static x => x / 7.0);
+        var decimals = Enumerable.Range(1, 100).Select(static x => x / 7m);
+        var decimalOverflow = new[] { decimal.MaxValue, decimal.MaxValue, decimal.MinValue }.Select(static x => x);
+
+        // Act & Assert
+        Assert.Equal(YANMath.Sum(ints.ToArray()), YANMath.Sum<int>(ints));
+        Assert.Equal(9007199254740996L, YANMath.Sum<long>(longs));
+        Assert.Equal(YANMath.Sum(doubles.ToArray()), YANMath.Sum<double>(doubles));
+        Assert.Equal(YANMath.Sum(decimals.ToArray()), YANMath.Sum<decimal>(decimals));
+        Assert.Equal(0, YANMath.Sum<int>(Enumerable.Range(0, 100_000)));
+        Assert.Equal(0m, YANMath.Sum<decimal>(decimalOverflow));
     }
 
     #endregion
