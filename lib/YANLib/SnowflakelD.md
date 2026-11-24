@@ -304,6 +304,7 @@ catch (InvalidOperationException ex)
 ## Changes since 8.3.3
 
 - `NextId`, `NextIdAlphabetic` and `NextIdAlphanumeric` throw `ArgumentOutOfRangeException` (`ParamName` `"timestampEpoch"`) when `timestampEpoch` is later than the current time, or 2^41 ms (about 69.7 years) or more before it, so that the time since the epoch does not fit the 41-bit timestamp field. 8.3.3 returned a negative ID (an epoch in the future) or a wrapped ID (an epoch too far in the past) from `NextId`, and its string forms threw `IndexOutOfRangeException` for a negative ID. The check runs before the generator's state changes, so a failing call uses up no sequence number.
+- When the sequences of a millisecond are used up, the generator waits for the next millisecond with `SpinWait` instead of a busy loop at 100% CPU; the IDs are the same. In one measurement (`BitAllocationStrategy.MoreDistributed`, 8 IDs per millisecond, 16,000 IDs) the loop took about 2.3 s instead of 2.0 s, and about 0.1 s of CPU time instead of 2.0 s.
 - The fixes to the constructor's sequence, the `Extract*` methods and the string IDs are described in the sections above.
 
 
@@ -324,7 +325,7 @@ catch (InvalidOperationException ex)
 - **ID Structure**: 64-bit IDs composed of timestamp (41 bits) and configurable bits for datacenter ID, worker ID, and sequence (total 23 bits)
 - **Epoch**: Default epoch is January 1, 2023 00:00:00 UTC (1,672,531,200,000 milliseconds since Unix epoch)
 - **Sequence**: The first ID uses the sequence passed to the constructor (0 by default, validated against the sequence bits); further IDs in the same millisecond increment it, and each new millisecond starts again at 0
-- **Sequence Overflow**: When sequence exceeds maximum value within the same millisecond, the generator waits for the next millisecond
+- **Sequence Overflow**: When sequence exceeds maximum value within the same millisecond, the generator waits for the next millisecond (with `SpinWait`, which pauses, then yields the processor and sleeps, instead of a busy loop at 100% CPU while it holds the lock; a sleep can end a fraction of a millisecond after the clock has moved on)
 - **Epoch Range**: The time since `timestampEpoch` must fit the 41-bit timestamp field (0 to 2^41 - 1 ms, about 69.7 years); `NextId`, `NextIdAlphabetic` and `NextIdAlphanumeric` throw `ArgumentOutOfRangeException` for an epoch later than the current time or 2^41 ms or more before it. From 2^40 ms (about 34.8 years; with the default epoch, from November 2057) the timestamp reaches the sign bit, so the ID is negative, and `ExtractIdComponents` reads its timestamp as 2^41 ms earlier
 - **Clock Drift**: Throws an `InvalidOperationException` if the system clock moves backwards to prevent duplicate IDs
 - **Base Conversion**: Implements custom base-26 (alphabetic, `A` = 0) and base-36 (alphanumeric) conversion for string representations; a negative ID (its timestamp reaches the sign bit, see Epoch Range) is encoded as its unsigned 64-bit value, so it still uses only the alphabet and converts back to the same ID

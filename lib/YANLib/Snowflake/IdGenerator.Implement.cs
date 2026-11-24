@@ -29,10 +29,14 @@ public partial class IdGenerator
     [DebuggerStepThrough]
     private static long WaitForNextMillisecond(long lastTimestamp)
     {
+        // SpinWait backs off (it pauses, then yields and sleeps) instead of burning a core at 100% while the lock is held; a sleep can end
+        // a fraction of a millisecond after the clock has moved on
+        var spinner = new SpinWait();
         var currentTimestamp = GetCurrentTimestamp();
 
         while (currentTimestamp <= lastTimestamp)
         {
+            spinner.SpinOnce();
             currentTimestamp = GetCurrentTimestamp();
         }
 
