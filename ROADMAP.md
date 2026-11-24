@@ -1,0 +1,880 @@
+# YANLib roadmap and open decisions
+
+This page records the design decisions found during the 8.3.3 review (Areas A-E). Each entry lists the context, the options and a recommendation. Nothing here is implemented unless the entry says it was chosen for 8.4.0.
+
+## Owner decisions (November 2026)
+
+- Next release: **8.4.0**.
+- Breaking changes stay out of 8.x; they are collected under *Planned for 9.0* below.
+- New, non-breaking API for 8.4.0: `Parse` with `IFormatProvider`, `Random.NextChar(char min, char max)`, `YANProcess` overloads with an `entireProcessTree` choice and with cancellation/timeout, and public `YANTask.WaitAnyWithConditions` / `WhenAnyWithConditions` (cancellation throws `OperationCanceledException`).
+- Internal improvements for 8.4.0: compiled property accessors in `YANObject`, `Snowflake` `SpinWait` and epoch-range validation, exact `Round` beyond 15 digits for tiny doubles, and no `[DebuggerHidden]`/`[DebuggerStepThrough]` in `YANLib.Implementation`.
+
+## Chosen for 8.4.0
+
+### Culture dependency of Parse and Convert
+
+*Area:* Parse / collections
+
+**Chosen for 8.4.0: additive IFormatProvider overloads, CurrentCulture stays the default (option 2). Invariant default is a 9.0 item.**
+
+Strings are parsed with CultureInfo.CurrentCulture, as Convert.ChangeType did. Under de-DE and vi-VN, "1.5".Parse<double>() == 15 and 1.5.Parse<string>() == "1,5". The equivalence table shows the same culture behaviour old and new.
+
+Options:
+
+- Use InvariantCulture by default (breaking)
+- Add IFormatProvider overloads (additive; check CS0121 against the params string?[] format overload with a scratch consumer)
+- Keep and document (done in YANUnmanaged.md)
+
+Recommendation: Add IFormatProvider overloads in a minor release (or one taking ParseOptions to avoid ambiguity with params), keep CurrentCulture as the default, and consider an invariant default for 9.0.
+
+### Compiled accessors for IsNullDefault / AllProperties* / Copy (spec-listed)
+
+*Area:* YANObject / YANExpression
+
+**Chosen for 8.4.0: compiled getters/setters cached per type, getter exceptions still wrapped in TargetInvocationException (option 2).**
+
+Every property is read with PropertyInfo.GetValue on every call (the ~30 ns reflection invoke dominates; IsNullDefault on 6 properties is ~200+ ns). An earlier prototype with Expression-compiled getters/setters per type was 2-10x faster, but getter exceptions would surface raw instead of wrapped in TargetInvocationException, which the docs now describe.
+
+Options:
+
+- Keep reflection (current; exception type documented as TargetInvocationException)
+- Compiled getters/setters cached per Type, and wrap getter exceptions in TargetInvocationException to keep the contract
+- Compiled accessors with raw exceptions, documented as a behaviour change in a minor release
+
+Recommendation: Option 2. Same observable behaviour with a large speed-up. Do it in a separate change with a BenchmarkDotNet suite.
+
+### [DebuggerHidden]/[DebuggerStepThrough] on public members
+
+*Area:* Packaging / docs / tooling
+
+**Chosen for 8.4.0: remove the attributes from YANLib.Implementation only (option 2).**
+
+1160 occurrences of each in lib/*.cs. Consumers cannot step into library frames, and exceptions surface at the call site.
+
+Options:
+
+- Keep
+- Remove from the implementation only
+- Remove everywhere
+
+Recommendation: Option 2: keep the thin facade hidden but let the debugger step into the implementation.
+
+### Version bump and release notes
+
+*Area:* Packaging / docs / tooling
+
+**Chosen: 8.4.0.**
+
+Areas A-E add API and change packaging (XML docs, no favicon content, validation). The version is still 8.3.3 and PackageReleaseNotes describe 8.3.3. Package validation baseline is 8.3.3.
+
+Options:
+
+- 8.4.0 (new API, packaging fixes)
+- 8.3.4 (if only fixes are counted)
+- Leave to the owner at release time
+
+Recommendation: Option 1 (8.4.0) chosen by the owner; I did not bump. Update PackageReleaseNotes then. The validation baseline can stay at 8.3.3 or move to the last published version.
+
+### Make WaitAnyWithConditions / WhenAnyWithConditions (and AsyncEnumerableEmpty) public
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+**Chosen for 8.4.0: make WaitAnyWithConditions / WhenAnyWithConditions public (AsyncEnumerableEmpty stays internal).**
+
+They are internal in the facade. YANTask.md documented them as public; it now marks them internal, and tests reach them via InternalsVisibleTo.
+
+Options:
+
+- Keep them internal (current); docs say so
+- Make them public in a minor release (an addition, package validation passes) after N5/N6 and the cancellation semantics are settled
+- Delete them
+
+Recommendation: Keep internal until N5/N6 and the cancellation semantics below are decided, then make them public in a minor release.
+
+### Streaming variants: cancellation ends the enumeration quietly vs throws
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+**Chosen for 8.4.0: throw OperationCanceledException in every cancellation case, as the .NET convention (option 2), together with making the methods public.**
+
+Implemented quiet end in every case: already cancelled, WithCancellation, while waiting, while the consumer handles an item. This matches the XML doc and the pre-cancel tests; the old code threw only mid-enumeration. Only internal callers exist.
+
+Options:
+
+- Keep the quiet end (current)
+- Throw OperationCanceledException in every case (the .NET convention, e.g. ChannelReader.ReadAllAsync), changing the pre-cancel tests
+- Add a parameter that chooses
+
+Recommendation: If the methods become public, switch to throwing OperationCanceledException in all cases before shipping; otherwise keep the current behaviour.
+
+### N7: YANProcess has no timeout/cancellation; the facade methods are redundant async/await wrappers
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+**Chosen for 8.4.0: add CancellationToken / timeout overloads (option 2).**
+
+WaitForExitAsync can wait indefinitely for a process that ignores SIGKILL (e.g. D state); the facade does `async Task X() => await XImplement()`.
+
+Options:
+
+- Keep
+- Add overloads with CancellationToken / TimeSpan timeout (non-breaking additions)
+- Drop async/await in the facade and return the task directly (no signature change; slightly different stack traces)
+
+Recommendation: Add CancellationToken overloads and return the implementation task directly.
+
+### S7: WaitForNextMillisecond busy-spins at 100% CPU while holding the lock
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+**Chosen for 8.4.0: SpinWait.SpinOnce() in the wait loop.**
+
+Not changed (spec: thread-safety fine, locking untouched).
+
+Options:
+
+- Keep
+- SpinWait.SpinOnce() in the loop (same latency, less CPU burn)
+- Sleep until the next millisecond (Thread.Sleep(1); coarse on Windows)
+
+Recommendation: SpinWait.SpinOnce(); low risk, no output change.
+
+### S8: timestampEpoch is not validated, so the 41-bit timestamp field can overflow or go negative
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+**Chosen for 8.4.0: NextId* throw ArgumentOutOfRangeException when now - epoch is negative or >= 2^41 (option 2; a behaviour change, listed in the release notes).**
+
+Not changed. Negative IDs now encode safely, but an epoch far in the past can overflow into the sign bit.
+
+Options:
+
+- Keep
+- Throw ArgumentOutOfRangeException in NextId when now - epoch is negative or >= 2^41
+- Validate a fixed epoch in the constructor (API change)
+
+Recommendation: Throw ArgumentOutOfRangeException in NextId* in the next major (behaviour change for callers relying on negative IDs).
+
+### Kill(entireProcessTree: true) vs Kill() in YANProcess (corrected context)
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3).**
+
+KillAllProcessesByName(s) kills each matching process with Process.Kill(entireProcessTree: true), so every descendant is killed too, whatever its name (for example child processes of a matching shell). The earlier record wrongly said the caller dies when a matching process is its ancestor. In fact .NET refuses any tree that contains the calling process: the ancestor stays alive, nothing is killed through it, and the library still kills the other matches and then rethrows the first failure. I verified this with the new test KillAndDispose_AncestorOfCallingProcess_IsRefusedAndTheOthersAreStillKilled_Process; the two verifiers observed it on .NET 8.0.34. The calling process itself is skipped by id. So the caller is never killed, but a by-name call that matches an ancestor (for example a shell name) ends with InvalidOperationException. Switching to Kill() would stop killing unrelated descendants and would also stop the ancestor refusal: an ancestor with a matching name would then be killed on its own, without its tree.
+
+Options:
+
+- Keep Kill(entireProcessTree: true) as documented now (descendants die, ancestor tree refused with InvalidOperationException, caller never killed)
+- Switch to Kill() (only the named processes; a matching ancestor would be killed itself and no InvalidOperationException), a behaviour change for callers relying on tree kills
+- Add an opt-in overload or parameter (for example entireProcessTree: bool = true) and check overload resolution for CS0121 and silent rebinding
+- Keep tree kills but skip ancestors of the caller explicitly (no InvalidOperationException), a behaviour change in which exceptions are thrown
+
+Recommendation: Keep Kill(entireProcessTree: true) for this release, now correctly documented. If tree kills prove surprising, add an opt-in overload in a later minor version rather than changing the default.
+
+### A public bounded NextChar
+
+*Area:* YANMath / YANRandom
+
+**Chosen for 8.4.0: typed NextChar(this Random, char min, char max).**
+
+Public NextChar(this Random) returns a-z only. Char bounds now work through GenerateRandom<char>(min, max) and GenerateRandom('a', 'f'). The other Next* methods take (object? min, object? max), and NextChar does not.
+
+Options:
+
+- Leave as is; GenerateRandom<char> covers bounds
+- Add NextChar(this Random, object? min, object? max) to match the other Next* methods (random.NextChar() still binds to the parameterless one)
+- Add a typed NextChar(this Random, char min, char max)
+
+Recommendation: Add NextChar(this Random random, char min, char max) in a minor release. It is typed and unambiguous, and the internal NextCharImplement(random, min, max) already implements it.
+
+### RoundDouble with more than 15 digits for values whose shortest text needs more than 28 decimal places
+
+*Area:* YANMath / YANRandom
+
+**Chosen for 8.4.0: digit-shift rounding (option b).**
+
+The spec's recipe is Math.Round(ToDecimal(v), Math.Min(decimals, 28), mode). For |v| < ~1e-11 with 17 significant digits, ToDecimal first rounds v to 28 places, so the result can be one unit in the last requested place off. Example: 1.9999999999999998e-13.Round(20, ToZero) returns 2E-13; the exact answer is 1.9999999E-13. 8.3.3 threw ArgumentOutOfRangeException for any digits above 15. The object path is fixed, because it falls back to the double computation. RoundDouble cannot use that fallback, because Math.Round(v, 15) returns 0 for these values. The limit is documented in YANMath.md, the Round XML remarks and a code comment, and pinned by Round_DoubleMoreThan28DecimalPlaces_RoundsAt28PlacesFirst.
+
+Options:
+
+- (a) Keep the documented limit (current).
+- (b) Add digit-shift rounding, about 20 lines. Take the mantissa digits and exponent of the R text, build a decimal shifted by 10^places, decimal.Round to 0 places, and parse back as '<q>E-<places>'. Use it only when the direct conversion needs more than 28 places. Flip the pin test to 1.9999999e-13.
+- (c) Throw ArgumentOutOfRangeException, as 8.3.3 did, when such a value is rounded to more than 15 digits.
+- (d) Round such values to 15 digits with Math.Round. This is often worse: tiny values become 0.
+
+Recommendation: (b) as a small follow-up, so the new 'more than 15 digits' feature is correct across its whole domain. Until then, (a) is in place and documented.
+
+## Planned for 9.0 (breaking)
+
+These change public behaviour or signatures. The recommendations describe the 9.0 direction; 8.x keeps today's behaviour (documented in the wiki pages).
+
+### Parse overload semantics disagree (floor vs default vs null; char)
+
+*Area:* Parse / collections
+
+"3.5".Parse<int>() = 3 (floors), "3.5".Parse<int>(-77) = -77, "3.5".Parse<int?>() = null. 5.Parse<char>() = '5' (through text) but 5.Parse<char>('#') = '\u0005' (Convert.ToChar). This is preserved exactly from 8.3.3 and documented in YANUnmanaged.md 'Conversion Rules'.
+
+Options:
+
+- Keep and document (current state)
+- Unify on floor for every integer target and overload (breaking for defaultValue and nullable callers)
+- Unify on 'a fraction is a failure' (breaking: "3.7".Parse<int>() becomes 0)
+- Add an explicit option (e.g. rounding/fraction mode or an options overload), keeping today's defaults
+
+Recommendation: Keep and document in 8.x. In the next major, unify on 'fraction = failure' unless a rounding mode is passed explicitly (option 4 + 3), with an [Obsolete] note one minor release earlier.
+
+### Should PropertyExpression invoke methods at all? (spec-listed)
+
+*Area:* YANObject / YANExpression
+
+With B6, a name that matches no property but a public parameterless method builds a call (ToString, GetType, GetHashCode, or any user method with side effects). If the name is user-controlled (e.g. an API sort field), callers can make the app invoke arbitrary parameterless methods. The XML remarks now recommend validating with IsValidField first.
+
+Options:
+
+- Keep method invocation (current, documented)
+- Stop matching methods and throw ArgumentException (breaking for anyone relying on it, though 8.3.3's method branch never worked)
+- Add an opt-in overload / flag for methods and make the default properties-only in the next major version
+
+Recommendation: Option 2 or 3. The method branch never produced a working expression in 8.3.3, so removing it breaks no working code. Properties-only is the safer default for a 'PropertyExpression'.
+
+### API surface trimming / renaming for a major version
+
+*Area:* Packaging / docs / tooling
+
+643 public methods on the YAN* classes (plus 18 on IdGenerator), many singular/plural pairs (Abss/Sqrts/Titles...) and many object/unconstrained-T extensions. Package validation now guards against accidental breaks.
+
+Options:
+
+- Keep the surface; only add
+- Mark redundant forms [Obsolete] in 8.x and remove them in 9.0
+- Do a 9.0 redesign (fewer object/T extensions, consistent naming)
+
+Recommendation: Option 2: deprecate first, then let package validation with a 9.0 baseline enforce the removal.
+
+### N5: scalar WaitAny/WhenAnyWithCondition swallow predicate exceptions; streaming variants propagate them
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+Behaviour preserved and now documented in the XML docs and YANTask.md; tests pin both.
+
+Options:
+
+- Keep and document (current)
+- Propagate in the scalar methods too (breaking: a faulted task instead of skip)
+- Swallow in the streaming methods too
+
+Recommendation: Propagate in both in the next major; swallowing hides predicate bugs.
+
+### N6: WaitAny* and WhenAny* are identical although the docs described different semantics
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+The docs now say they currently behave identically.
+
+Options:
+
+- Keep both, documented as identical (current)
+- Mark WhenAny* [Obsolete] in favour of WaitAny*
+- Give WhenAny* distinct semantics (e.g. wait for all, return the first match in completion order)
+
+Recommendation: Mark WhenAny* [Obsolete] in a minor release and remove it in the next major.
+
+### Extract*Components keep an ignored 'sequence' parameter
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+The public signature must stay; the parameter is now ignored and documented as such on all 6 overloads.
+
+Options:
+
+- Keep it ignored (current)
+- Add overloads without it and mark the old ones [Obsolete]
+- Remove it in the next major
+
+Recommendation: Add parameterless-sequence overloads plus [Obsolete] in a minor release (check CS0121 with a scratch consumer first), remove in the next major.
+
+### LINQ shadowing by YANMath collection overloads
+
+*Area:* YANMath / YANRandom
+
+With 'using YANLib;', calls such as List<string>.Min() and List<DateTime>.Max() are ambiguous (CS0121) between Enumerable.Min<TSource> and YANMath.Min<T>(IEnumerable<T?>?). My probe hit it: new List<DateTime>{...}.Max<DateTime>() did not compile. int, long, double and decimal are fine because LINQ's non-generic overloads win. OverloadResolutionPriority cannot help across declaring types.
+
+Options:
+
+- Document only (status quo)
+- Rename the collection overloads to MinOrDefault/MaxOrDefault/SumOrDefault/AverageOrDefault (major version)
+- Move the IEnumerable<T?> Min/Max/Sum/Average overloads into an opt-in namespace, e.g. YANLib.Linq (major version)
+- Keep only the static params/object forms and drop the extension form of the generic collection overloads (major version)
+
+Recommendation: Document the CS0121 cases in YANMath.md now. In 9.0 move the generic collection overloads into an opt-in YANLib.Linq namespace, which keeps the names for users who want them and stops shadowing LINQ for everyone else.
+
+### YANMath overflow semantics (Area A handed this over)
+
+*Area:* YANMath / YANRandom
+
+Kept and now documented: a result that does not fit T is default (0, or null for a nullable T), never an OverflowException. Examples: int.MinValue.Abs() == 0, 100000.Pow(2) == 0 for int, and the int sum of Enumerable.Range(0, 100_000) == 0, where LINQ throws. The new exact computation keeps this; only values that were wrongly out of range through double (long.MaxValue and similar) now come back.
+
+Options:
+
+- Keep default/null (current, documented in the XML remarks and YANMath.md)
+- Throw OverflowException like LINQ and checked arithmetic (breaks the library's never-throw contract)
+- Saturate to MinValue/MaxValue (CreateSaturating)
+- Add opt-in variants (SumChecked/PowChecked, or an overflow-mode parameter), or a Sum<TSource, TResult> that widens, keeping today's default
+
+Recommendation: Keep default/null in 8.x. Add opt-in checked and widening variants in a minor release, with a scratch consumer check for CS0121. Do not change the default before 9.0, and then only together with the decision on the never-throw contract.
+
+### Public generic-math API
+
+*Area:* YANMath / YANRandom
+
+The precision and zero-boxing gains are internal: typeof dispatch over the 13 numeric types. Public 'where T : INumber<T>' overloads with the same names cause CS0111 in YANMath, CS0121 from any other class in namespace YANLib (16.0.Sqrt() breaks), and a constrained Round<T>(this T, int) would silently rebind existing calls.
+
+Options:
+
+- No new public API: the internal dispatcher is enough (current)
+- New names with INumber<T> constraints (SumNumber, RoundNumber, ...)
+- Constrained overloads in an opt-in namespace YANLib.Numerics
+- A major version in which the constrained signatures replace the unconstrained T/object overloads
+
+Recommendation: Keep it internal in 8.x. If users ask for compile-time numeric constraints, add YANLib.Numerics in a minor release, check overload resolution with a scratch consumer, and leave the YANLib namespace unchanged.
+
+### Params overload design
+
+*Area:* YANMath / YANRandom
+
+The params overloads cannot take extra arguments: Rounds(params T?[]) always uses no digits and AwayFromZero; Logs(params) is always the natural log; there is no Pows(params). A single argument to GenerateRandom(params T[]) picks that argument. Two typed arguments now bind to the new GenerateRandom<T>(T, T) range overload, so picking one of two values needs an array.
+
+Options:
+
+- Keep and document (current; the params remark now says to pass two values as an array)
+- Add leading-parameter overloads such as Rounds(int digits, params T[] values), checking CS0121 against the object?-digits overloads
+- Remove the params overloads of the aggregates and GenerateRandom in a major version
+
+Recommendation: Keep and document in 8.x. In 9.0, drop params on GenerateRandom (explicit arrays or collections only) and review whether the math params overloads are worth their ambiguity.
+
+### Full-range random calls never return MaxValue
+
+*Area:* YANMath / YANRandom
+
+Every range is [min, max) and a null max means MaxValue, so NextUlong(), NextInt(), NextLong(), GenerateRandom<int>() and the others never return the type's MaxValue (NextUlong() could before, because of its old bug). float, double and decimal defaults are MinValue/100..MaxValue/100.
+
+Options:
+
+- Keep half-open everywhere (current, documented)
+- Treat a null max as inclusive (the whole type range including MaxValue), e.g. through NextInt64() or NextBytes
+- Add explicit inclusive overloads or a flag (NextIntInclusive or similar)
+
+Recommendation: Keep half-open for explicit bounds. In 9.0 consider making the no-bounds calls cover the full range including MaxValue, since 'a random int' reads that way; it is a semantic change, so not in 8.x.
+
+### Decision 2 with corrected scope: text-conversion cost of double/float elements with an integer or decimal result type
+
+*Area:* YANMath / YANRandom
+
+With an integer or decimal result type, Sum and Average convert each fractional double or float with more than 15 significant digits to decimal through its shortest round-trip text, which is slower than the 8.3.3 double sum. The earlier wording limited this to object collections. It also applies to typed double/float collections whose result type differs from the element type: doubles.Sum<decimal>(), doubles.Sum<long>() and doubles.Average<long>() bind to the non-generic Sum/Average<T>(IEnumerable?) overload, which boxes every element. Same-type typed calls such as YANMath.Sum<double>(doubles) or YANMath.Average<double>(doubles) are not affected. Int collections with another result type (ints.Sum<long>()) box but take the fast integer conversion. YANMath.md now documents this scope (ece8d88).
+
+Options:
+
+- Keep the exact conversion and document the scope (current state)
+- Make the conversion allocation-free and faster without changing results: shortest digits written straight into a decimal, no string parse. Measure with BenchmarkDotNet
+- Add a runtime fast path in the IEnumerable overloads for IEnumerable<double>/IEnumerable<float> that avoids boxing. This saves the box only; the text cost remains
+- Sum double elements as double when the result type is an integer type, as in 8.3.3. Fast, but gives up exactness (behaviour change, major version only)
+
+Recommendation: Option 1 for 8.x (done). Then option 2 as a separate perf change with benchmarks, because it keeps every result identical. Do not choose option 4 outside a major version.
+
+### NextString character source (seeded reproducibility)
+
+*Area:* YANMath / YANRandom
+
+NextString(this Random random, object? size) draws its characters from Random.Shared (8.3.3: a new Random per character). The passed instance draws only the length when size is null. A seeded Random therefore never gave reproducible strings, so no existing seeded string output could break. This is now documented (12c194a). Taking the characters from the passed instance would make strings reproducible, but it has costs. (1) It changes how many draws NextString takes from the caller's instance, so every later value from that seeded instance shifts. (2) Sizes of 1000 or more go through GenerateRandomsImplement's AsParallel branch, and a non-thread-safe System.Random cannot be shared across PLINQ workers, so that branch would have to become sequential (or lock) for the passed instance. (3) It is a visible behaviour change of a public method.
+
+Options:
+
+- Keep the current behaviour (characters from Random.Shared, length from the passed instance), now documented in the XML remarks and YANRandom.md.
+- Draw the characters sequentially from the passed instance (random.NextCharImplement() per character, no AsParallel): seeded strings become reproducible, but later draws from a seeded instance shift and large strings lose parallelism.
+- Keep NextString as is and add a new opt-in member for seeded strings (for example a NextString overload or a separately named method that uses the passed instance), with no change to existing call sites.
+
+Recommendation: Option 1 for this release, since it is documented and non-breaking. If seeded strings are wanted, do option 2 in the next major version (or option 3 if a minor-version addition is preferred), with a behaviour-change note.
+
+## Other open decisions (non-breaking, not chosen yet)
+
+Today's behaviour is documented in the wiki pages; these can be picked up in any minor release.
+
+### Dictionary conversion when two keys parse to the same value (N8)
+
+*Area:* Parse / collections
+
+Parses<TKey,TValue>(IDictionary), ToDictionary and ToImmutable(Sorted)Dictionary use Add, so keys like "1" and 1, or "3.2" and "3.7" (both floor to 3), throw ArgumentException. This is unchanged.
+
+Options:
+
+- Keep throwing and document it on the correct method (the docs are currently swapped)
+- Last value wins (indexer)
+- First value wins (TryAdd)
+- Add an overload with a conflict policy / merge delegate
+
+Recommendation: Keep throwing in 8.x (silent data loss is worse) and fix the docs, then add an overload with a conflict policy.
+
+### Overflow semantics for conversions (Parse, YANMath results)
+
+*Area:* Parse / collections
+
+Out-of-range conversions now return 0, null or defaultValue instead of crashing, which follows the existing never-throw contract. As a result int.MinValue.Abs() == 0 and int 100000.Pow(2) == 0, which is mathematically surprising.
+
+Options:
+
+- Keep default/0/null (current)
+- Throw OverflowException (breaking for the never-throw contract)
+- Saturate (CreateSaturating: int.MaxValue)
+- Return null for nullable targets and default otherwise (current for Parse), but saturate or widen for YANMath
+
+Recommendation: Keep default/null for Parse (never-throw contract). Let Area C decide YANMath separately, where saturation or an explicit checked variant is more useful than 0.
+
+### Parallelism for CPU-heavy collection helpers after removing PLINQ
+
+*Area:* Parse / collections
+
+Measured on 4 CPUs, unordered PLINQ gave lower wall time for Titles and Serializes at 10k-100k items (13 ms vs 21-22 ms at 100k) at 2x the CPU, but returned a scrambled order. The decided fix (sequential, no AsOrdered) is implemented.
+
+Options:
+
+- Keep sequential and document the caller-side recipe `input.AsParallel().AsOrdered().Select(x => x.Title())`
+- Add opt-in ordered parallel overloads (e.g. a ParallelOptions/degree parameter) using AsOrdered
+- Re-introduce automatic AsOrdered PLINQ above a threshold
+
+Recommendation: Keep sequential and document the recipe. Add opt-in overloads only if users ask; avoid automatic parallelism inside a library.
+
+### A string defaultValue together with a format for Parse<DateTime>
+
+*Area:* Parse / collections
+
+Only a DateTime-typed defaultValue is used as is now. A string default is still parsed with the given format, so `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` still returns DateTime.MinValue (unchanged 8.3.3 behaviour).
+
+Options:
+
+- Keep (current)
+- Parse the string default with the format, then fall back to a general DateTime.TryParse
+- Parse the string default without the format
+
+Recommendation: Option 2: format first, then general parse. It honours defaults written in either form and only changes results that are DateTime.MinValue today.
+
+### Case-sensitivity and re-enumeration of the `names` overloads (A3, spec-listed)
+
+*Area:* YANObject / YANExpression
+
+AllPropertiesDefault(names) and the related overloads match names with names.Contains(prop.Name), which is case-sensitive, while IsValidField / PropertyExpression are case-insensitive with an exact match preferred. `names` is re-enumerated once per property and per element in the collection overloads.
+
+Options:
+
+- Keep case-sensitive and document it (done in YANObject.md)
+- Use the IsValidField lookup (exact first, then case-insensitive) and materialise `names` once into a set
+- Add an overload taking a StringComparer
+
+Recommendation: Option 2 in the next minor release, listed as a behaviour change. It makes the names overloads agree with IsValidField, which callers typically use to validate the same names.
+
+### Single vs collection `names` overloads validate differently (A4, spec-listed)
+
+*Area:* YANObject / YANExpression
+
+The single-object overloads reject `names` only when it is null, empty or all-whitespace (blank entries are ignored). The collection overloads require names.AllNotNullWhiteSpace, so any blank entry makes them return false. ["Name", null] therefore behaves differently in AllPropertiesDefault vs AllPropertiesDefaults.
+
+Options:
+
+- Keep as is (documented in XML only implicitly)
+- Make the collection overloads ignore blank entries like the single ones
+- Make the single overloads reject any blank entry like the collection ones
+
+Recommendation: Option 2. Ignoring blank entries is the more forgiving rule and matches the single overloads used most often.
+
+### Naming / visibility inconsistencies and static reflection caches (A5, A2, spec-listed)
+
+*Area:* YANObject / YANExpression
+
+The implementation's ValidField methods are `public static` in an internal class while the rest are internal. AnyNullDefault forwards to AnyNullEmptyImplement and similar. The static caches (PropertyCache, DefaultValueCache, CopyPropertyCache, the time-zone leaf, collection and dictionary caches, and the YANExpression cache keyed by user strings) hold strong Type references, which prevents collectible AssemblyLoadContexts from unloading; the expression cache is unbounded.
+
+Options:
+
+- Leave as is (documented that the expression cache is never trimmed)
+- Rename/align visibility in the implementation only (no public impact) and switch the Type-keyed caches to ConditionalWeakTable<Type, ...>
+- Additionally bound the expression cache (e.g. only cache names that resolved, or an LRU)
+
+Recommendation: Option 2 plus caching only successful lookups. That needs no public API change. Implementation renames are safe because the facade is unchanged.
+
+### Copy<T> for value types (implemented differently from the spec's literal wording)
+
+*Area:* YANObject / YANExpression
+
+The spec said 'Structs: copy into a boxed copy and unbox'. Copying settable properties into a boxed new T() still returns default values for structs without settable properties (5.Copy() == 0, DateTime.Copy() == MinValue, Guid.Copy() == Empty), which was the reported bug. Boxing the input and copying its properties into itself is a no-op. I implemented 'return the value itself' (and a new box for a boxed struct typed as object), which matches 'shallow copy' for value types.
+
+Options:
+
+- Keep: return the value (all fields copied)
+- Literal spec: Activator.CreateInstance + settable properties into the box, then unbox (primitives and read-only structs become default)
+- Throw NotSupportedException for value types
+
+Recommendation: Option 1.
+
+### IsNotValidField semantics for blank names
+
+*Area:* YANObject / YANExpression
+
+To make 'a blank name is never a valid field' hold in every method and keep the 8.3.3 All = !Any(opposite) centralisation sound, IsNotValidField is now exactly !IsValidField, so IsNotValidField(null) is true (8.3.3: false; the method did not exist in 8.3.2). The alternative three-valued reading (blank is neither valid nor not valid) would keep IsNotValidField(null) == false and use All(IsValid) / All(IsNotValid), making AnyNotValidField(["Name", null]) false, which is weaker as an input-validation guard.
+
+Options:
+
+- Keep two-valued (implemented; 3 tests corrected)
+- Three-valued: blank is neither; AllNotValidFields(["Bogus", null]) and AnyNotValidField(["Name", null]) become false
+
+Recommendation: Option 1. It matches the XML docs ('does not represent a valid field') and rejects blank sort fields.
+
+### ChangeTimeZoneAllProperty coverage limits
+
+*Area:* YANObject / YANExpression
+
+Documented limitations: HashSet<DateTime>, Queue<T> and other non-list collections are not changed. Dictionary values that are not DateTime/DateTime? (e.g. Dictionary<string, Order>) are not walked. Multi-dimensional arrays are skipped. There is no depth guard against getters that create a new object on every call.
+
+Options:
+
+- Keep and document (current)
+- Walk reference-typed elements of any ICollection<T> and dictionary values in place (no write-back), and add a depth limit that throws a clear exception
+- Rebuild sets (HashSet<DateTime>) by clearing and re-adding converted values
+
+Recommendation: Option 2 for dictionary values and ICollection<T> reference elements plus a depth guard. Avoid option 3 because it changes set identity and ordering semantics.
+
+### Walking and copying both a base property and the `new` property of another type that hides it
+
+*Area:* YANObject / YANExpression
+
+To restore 8.3.3, Copy and ChangeTimeZoneAllProperty now handle both properties when a derived class hides a base property with `new` and a different type. This is right when the two have separate storage; that is the verifier's data-loss case. When the derived property forwards to the base one (`new DateTime? When { get => base.When; set => base.When = value ?? default; }`), the DateTime is converted twice, because value-type DateTimes are not in the visited set. Measured on the new tree: 10:00 -> next day 00:00. 8.3.3 does the same by code reading. The previous HEAD 45fad3a converted it once but lost independent base values.
+
+Options:
+
+- Keep both properties, as in 8.3.3 and as now implemented, and document that a forwarding `new` property of another type is converted twice
+- Keep only the most-derived property for the walk but both for Copy (copying twice is harmless) and list 'independent hidden base DateTime no longer converted' as a behaviour change
+- Keep only the most-derived property for both and document the loss for Copy and the walk
+
+Recommendation: Option 1 (implemented). It matches 8.3.3 for a patch release. Forwarding `new` properties of a different DateTime type are rare, while silent data loss in Copy is worse. Option 2 is the alternative if the double shift turns up in practice.
+
+### Guard against never-ending object graphs in ChangeTimeZoneAllProperty (updates the recorded 'no depth guard' decision)
+
+*Area:* YANObject / YANExpression
+
+The walk now uses a work list instead of recursion, so it has no depth limit. A getter that returns a new object on every call, of a type that leads back to itself, therefore runs until memory runs out. 8.3.3 and 20e2b7a crashed with a stack overflow instead. A getter-only list that builds new wrapper objects over a cyclic model (e.g. List<View> Neighbors => ...Select(n => new View(n))) also runs until memory runs out; 8.3.3 returned normally because it never walked getter-only properties, and 20e2b7a overflowed the stack. Each object is visited once and has finitely many properties, so a graph that never ends always means unbounded depth; a depth limit separates it from a wide finite graph, and an object count does not.
+
+Options:
+
+- Keep no guard. A never-ending graph ends in OutOfMemoryException; under a 512 MB heap limit that took about 4.2 s.
+- Carry a depth with each work-list entry and throw InvalidOperationException once it passes a large documented limit (for example 1 000 000 levels, far above the 8.3.3 stack ceilings of about 3 000 on a 1 MB thread and 30 000 on the main thread).
+- Cap the total number of objects visited per call. This is simpler, but it rejects wide finite graphs and does not target the real cause.
+- Go back to recursion with RuntimeHelpers.EnsureSufficientExecutionStack. This gives a catchable InsufficientExecutionStackException, but the depth ceiling is lower than 8.3.3's.
+
+Recommendation: Option 2 if the maintainers want a fail-fast guard: depth uniquely identifies endless generation and the limit can be far above anything 8.3.3 handled. Otherwise keep option 1, which is the current, documented behaviour.
+
+### Scope of the getter-only collection rule in ChangeTimeZoneAllProperty
+
+*Area:* YANObject / YANExpression
+
+8.3.3 never walked getter-only properties. The walk now walks a getter-only property whose declared type is a class that is an array, a list or a dictionary. Two framework wrappers broke this rule and were fixed one by one: ArraySegment<T>.Array converted the whole array, and Lazy<T>.Value ran the factory. Other framework getter-only collections are still reached, such as Exception.Data and ThreadLocal<T>.Values, as is the getter-only 'view' case in the guard decision.
+
+Options:
+
+- Keep the rule with the exclusions now in place (current).
+- Walk getter-only collection properties only when the declaring type is not a framework type (declaring assembly not System.Private.CoreLib or System.*). DTO properties such as List<T> Items { get; } keep working, and framework backing stores are never read.
+- Revert to 8.3.3 and never walk getter-only properties. This loses in-place conversion of getter-only DTO lists.
+
+Recommendation: Option 2. It removes the whole class of wrapper and backing-store problems without losing the DTO use case that motivated the rule.
+
+### Items of custom IList<T>-only collection types in ChangeTimeZoneAllProperty
+
+*Area:* YANObject / YANExpression
+
+Types that implement IList<T> or IReadOnlyList<T> but not the non-generic IList (ArraySegment<T> is now special-cased) have their public properties walked, not their items. 8.3.3 threw TargetParameterCountException when their indexer had a setter.
+
+Options:
+
+- Keep the current behaviour (properties walked, items not).
+- Walk their items through a cached generic IList<T> converter, as for ArraySegment<T>, writing back only when !IsReadOnly.
+- Treat them as leaves.
+
+Recommendation: Option 2, for consistency with IList and ArraySegment<T>; document it as a change from 8.3.3, which threw.
+
+### Copy() on collection types
+
+*Area:* YANObject / YANExpression
+
+Copy copies only readable and writable properties, so new List<int>{1,2}.Copy() and a List-derived DTO lose their items without any warning (now documented). 8.3.3 threw TargetParameterCountException for every such type, because all of them have an indexer, so no 8.3.3 caller depends on the call succeeding.
+
+Options:
+
+- Keep the documented behaviour (settable properties only; items dropped).
+- Throw NotSupportedException for IList, IDictionary and ICollection<T> types other than string.
+- Copy the items shallowly (Add each item into the new instance) in addition to the properties.
+
+Recommendation: Option 2: it turns silent data loss into a clear error and breaks no 8.3.3 caller. Option 3 is a feature that can be added later if wanted.
+
+### ChangeTimeZoneAllProperty: which walked values are written back
+
+*Area:* YANObject / YANExpression
+
+The HIGH finding asked for 8.3.3's write-back of walked class values to be restored. It is implemented post-order and gated: a property or writable-list item is set only when a DateTime was converted in its value or below it. 8.3.3 set every writable property with a non-null value, strings and numbers included, and every list item. So a setter that rejects all writes (a read-only CultureInfo property, a frozen model) failed the walk, and ObservableCollection raised Replace for unchanged items. The gate also over-reports in one case: a struct item of a typed read-only list is converted in a discarded copy and still triggers the owning property's setter. That case is documented.
+
+Options:
+
+- (a) Keep the gate (current): set only values with a converted DateTime inside, post-order, and skip second references to already-walked objects.
+- (b) Set every walked (non-leaf, first-visit) value post-order regardless of change, closer to 8.3.3 but re-introducing throws for read-only/frozen properties.
+- (c) Full 8.3.3 parity: also set leaf values (strings, numbers) and second references (shared objects would still be converted once).
+
+Recommendation: (a): it converts every copy-getter, computed and JSON-backed case 8.3.3 converted, without 8.3.3's spurious setter calls and throws. To flip to (b), drop the `if (!Changed) return;` gate in TimeZoneNode.Complete.
+
+### State exposed through copy getters over the owner's own (or otherwise reachable) DateTime data is converted once per path
+
+*Area:* YANObject / YANExpression
+
+Restoring 8.3.3's interleaved order fixes the Appt/DTO case. It also brings back 8.3.3's double conversion for some shapes: a wrapper property over the owner's own Start/End (EvBefore, EvBetween, EvAfter, OrderVm), a copy getter next to a direct reference to the same object (SnapHolder), and two copy getters over one field (TwoCopies). These are now pinned by WrapperDeclaredBetweenItsDateTimes_ShiftsThemTogether and documented in YANObject.md and the XML remarks. The walk cannot tell that a copy aliases state it has already converted, or will convert, through another path.
+
+Options:
+
+- Keep 8.3.3's behaviour: convert once per path and document it (current state).
+- Snapshot every DateTime before the walk and convert each distinct storage location once. This is not possible in general: reflection cannot see the field behind a computed getter.
+- Add an opt-in overload or flag to skip computed or copy-returning writable properties (e.g. walk only auto-properties, or only properties whose getter returns the same reference twice). This is new API.
+- Skip writable properties whose getter returns a new object on each read (two reads compared by reference). This changes behaviour for JSON-backed and defensive-copy properties that 8.3.3 handled.
+
+Recommendation: Option 1: keep 8.3.3's behaviour and the documentation. It is what 8.3.3 users got, it is now deterministic and independent of declaration order, and the alternatives are either impossible in general or new API or behaviour that belongs in a minor release.
+
+### ChangeTimeZoneAllProperty: user subclasses of non-data framework types (TextWriter/StringWriter, CancellationTokenSource, Task, Stream, ...) are leaves
+
+*Area:* YANObject / YANExpression
+
+IsTimeZoneLeaf treats every type assignable to TimeZoneLeafBaseTypes (MemberInfo, Assembly, Module, ParameterInfo, Delegate, Stream, TextReader, TextWriter, Task, WaitHandle, Thread, CancellationTokenSource, SafeHandle, Pointer) as a leaf. A user class deriving from one of them therefore keeps its own DateTime properties unconverted, whether it is the root, a property value or a list item. Measured with the probe (leafsub.prop, leafsub.root, tasksub): `class LogWriter : StringWriter { public DateTime Started { get; set; } }`, `class Job : CancellationTokenSource { DateTime Due }` and `class Work : Task { DateTime Due }` were converted by 8.3.3 (17:00) and are now left at 10:00. The leaf list exists because reading these types' inherited getters threw or did harm (MemoryStream.ReadTimeout threw in 8.3.3). This is now documented (md leaf rule, XML remarks, 'Changes since 8.3.3') and pinned by ChangeTimeZoneAllProperty_SubclassesOfNonDataFrameworkTypes_AreNotWalked_Object; the leaf logic is unchanged.
+
+Options:
+
+- Keep (current): every subclass of a leaf base type is a leaf; documented and pinned.
+- Walk only the properties DECLARED by non-framework subclasses: for a type assignable to a leaf base whose own assembly is not a framework assembly, walk only the properties whose DeclaringType is not a framework type, never the inherited framework properties (Stream.ReadTimeout, TextWriter.Encoding / NewLine, Task.*, CancellationTokenSource.Token). This restores 8.3.3's results for the measured shapes without reading framework getters.
+- Walk all properties of such subclasses, as 8.3.3 did: this reads and may write back inherited framework properties (Stream timeouts, which throw and would now be skipped; TextWriter.NewLine / FormatProvider; StreamWriter.AutoFlush) and walks into framework internals, which is the problem the leaf list fixed.
+
+Recommendation: Option 2, in a later release, listed as a behaviour change from this release. It restores 8.3.3's conversion of user data on these classes and keeps framework getters unread. Keep option 1 for this patch, since it is documented and pinned.
+
+### Scope of the getter-only collection rule in ChangeTimeZoneAllProperty (updated with the getter-only list plus copy-getter double shift)
+
+*Area:* YANObject / YANExpression
+
+Previously recorded: 8.3.3 never walked getter-only properties. The walk now walks getter-only properties declared as an array, list or dictionary class or interface. ArraySegment<T>.Array and Lazy<T>.Value were excluded one by one, and framework getter-only collections such as Exception.Data and ThreadLocal<T>.Values are still reached. The earlier recommendation was to skip getter-only properties declared by framework types. New evidence (r4 probe goandcopy / copyandgo, 4 cultures): a field exposed both by a getter-only collection property and by a writable copy getter is now shifted twice, in either declaration order. Examples are `List<DateTime> View => _d;` with `List<DateTime> Copy { get => _d.ToList(); set => _d = value; }`, and `DateTime[] _d` behind `List<DateTime> Days { get => _d.ToList(); set => _d = value.ToArray(); }` plus `IList<DateTime> View => _d`. With (0, 7), 10:00 becomes 00:00 the next day (+14 h); 8.3.3 gave 17:00 (+7 h). This is now documented (md:153 no longer says 'as in 8.3.3' for it, plus a 'Changes since 8.3.3' entry) and pinned by ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object. The DTO is a user type, so the earlier recommended option (skip framework-declared getter-only properties) does not remove this double shift. For dictionary and IList<DateTime?>-only types, the walk of their own properties (finding 1) already skips getter-only properties for the same reason.
+
+Options:
+
+- Keep the current rule with its exclusions; the double shift stays documented and pinned.
+- Walk getter-only collection properties only when the declaring type is not a framework type (declaring assembly not System.Private.CoreLib / System.*). This fixes the framework wrapper and backing-store cases, but NOT this double shift.
+- Heuristic: skip a getter-only collection property when the same type also has a writable property of a collection type (assume 'view plus serializer copy'). This removes this shape but stops converting getter-only DTO lists whenever the DTO has any other writable list, which makes it fragile.
+- Revert to 8.3.3 and never walk getter-only properties. This removes this double shift and every wrapper problem, but loses in-place conversion of `List<T> Items { get; }` DTO lists (CA2227 style), the common case that motivated the rule.
+
+Recommendation: Option 2, keeping the documented double shift for user DTOs. A field behind both a getter-only view and a writable copy getter is the same once-per-path class as two copy getters over one field, which also double-shifts in 8.3.3. Choose option 4 instead only if this patch release must match 8.3.3's final values on every shape.
+
+### Dictionary / IList<DateTime?>-only types: own properties walked after their values (finding 1), and the wrapper whose writable property returns its backing collection
+
+*Area:* YANObject / YANExpression
+
+To restore 8.3.3's results, the walk now converts the values or items through the interface (as 1bb38c4 did) and then walks the type's own readable and writable properties (as 8.3.3 did). Getter-only properties are not walked, so a getter-only view of the backing store is not converted again (x.viewdict converts once). A type whose own WRITABLE property returns the collection behind its interface (`IList<DateTime?>` over `public List<DateTime?> Backing { get; set; }`, or an explicit IDictionary<string, DateTime> over `Dictionary<string, DateTime> Inner { get; set; }`) is converted through the interface and again through that property: 00:00 the next day (+14 h). Before, 1bb38c4 gave +7 h but lost the type's own DateTime properties; 8.3.3 left DateTime? items unchanged, or threw TargetParameterCountException for a Dictionary backing. This is documented (md once-per-path sentence, 'Changes since 8.3.3', XML remarks) and pinned by ChangeTimeZoneAllProperty_NullableDateListTypeExposingItsBackingList_ShiftsItTwice_Object.
+
+Options:
+
+- Keep (current): convert through the interface, then walk the own readable and writable properties; the wrapper alias is documented and pinned.
+- For user (non-framework) types that implement these interfaces, walk only their properties and do not convert through the interface. This gives exactly 8.3.3's final values for these shapes, but explicitly implemented writable dictionaries and IList<DateTime?>-only types would no longer have their values converted (1bb38c4 converted them, and spec B5 asks for dictionary values to be converted).
+- Walk all readable properties of these types, including the getter-only collection rule, for consistency with other objects. This adds double conversion through getter-only views (x.viewdict would go from 17:00 to 00:00 the next day).
+
+Recommendation: Option 1. It matches 8.3.3 for the own properties and keeps the spec's value conversion. Aliasing through a public writable backing property belongs to the documented once-per-path class.
+
+### Merge YANLib.Implementation into YANLib
+
+*Area:* Packaging / docs / tooling
+
+Two assemblies ship in one package. This needs InternalsVisibleTo and the custom IncludeImplementationAssembly pack target.
+
+Options:
+
+- Keep two assemblies (status quo; the pack target now works)
+- Merge the implementation sources into YANLib as internal classes (one assembly, no consumer break, removes InternalsVisibleTo and the pack target)
+- Keep the separate project but compile its sources into YANLib via <Compile Include> links
+
+Recommendation: Option 2 in a future minor version, after areas C/D land, since it touches every file pair.
+
+### Trimming/AOT annotations and multi-targeting
+
+*Area:* Packaging / docs / tooling
+
+net8.0 only; reflection-heavy areas (YANObject, YANExpression, YANUnmanaged) have no trimming annotations.
+
+Options:
+
+- Keep net8.0 only, no annotations
+- Add IsTrimmable/IsAotCompatible plus annotations, fixing the warnings
+- Also target net10.0
+
+Recommendation: Option 1 for now. Revisit option 2 separately, since annotations on the reflection paths are design work.
+
+### Test project references the Benchmarks exe (ConcurrentCollectionTests)
+
+*Area:* Packaging / docs / tooling
+
+test/YANLib.Tests references console/YANLib.Benchmarks only for ConcurrentCollectionTests.cs, which checks benchmark code rather than YANLib. This pulls BenchmarkDotNet into the test build.
+
+Options:
+
+- Keep as is
+- Move ConcurrentCollectionTests and the Models it needs into the test project and drop the reference
+- Delete the test (it does not test YANLib)
+
+Recommendation: Option 2.
+
+### WaitAnyWithConditions/WhenAnyWithConditions documented but internal
+
+*Area:* Packaging / docs / tooling
+
+YANTask.md documents them as public (see deferred lines); they are internal in YANLib.Implementation and the facade exposes only the single-result variants.
+
+Options:
+
+- Expose public facade methods (additive, check CS0121 against the existing overloads)
+- Remove them from YANTask.md
+- Leave for area D
+
+Recommendation: Area D decides. Option 2 is the safe default if no public API is wanted.
+
+### Rename SnowflakelD.md (typo l for I)
+
+*Area:* Packaging / docs / tooling
+
+The wiki page name carries a typo; I linked it from the Sidebar under its current name.
+
+Options:
+
+- Keep the name
+- Rename to SnowflakeId.md and update the Sidebar (breaks existing wiki links)
+- Rename and leave a stub page linking to the new name
+
+Recommendation: Option 3, done by the wiki owner.
+
+### README 'Important Notes' block (ABP/EF text)
+
+*Area:* Packaging / docs / tooling
+
+README.md, at the end of Project Architecture, has notes about Elastic.Apm, DotNetCap.CAP, EF Core tools and 'Host'/'Domain.Shared' layers. None of these exist in this repo; they look like an ABP solution template. The README is also the NuGet readme. I left it in place.
+
+Options:
+
+- Keep
+- Remove the block
+- Move it to the wiki or a separate maintainer note
+
+Recommendation: Option 2 if the owner confirms it is a leftover.
+
+### PackageTags wording
+
+*Area:* Packaging / docs / tooling
+
+I converted the comma-separated tags 1:1 to 'C# .NET Library'.
+
+Options:
+
+- Keep 'C# .NET Library'
+- Add descriptive tags (e.g. extensions utilities json text math random datetime snowflake)
+
+Recommendation: Option 2 at the owner's discretion, for discoverability.
+
+### Names that reduce to an empty file name now kill nothing
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+Before, 'dir/', '/', '.exe' or '.bashrc' reached Process.GetProcessesByName(""), which returns every process (105 of 105 here). As root that would have killed everything killable. Implemented as a no-op.
+
+Options:
+
+- No-op (current)
+- Throw ArgumentException for such names
+- Restore the old behaviour
+
+Recommendation: Keep the no-op (consistent with null/blank names); an ArgumentException is acceptable if callers should learn about bad input.
+
+### FormatName uses a [ThreadStatic] cached StringBuilder
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+stackalloc (no dynamic PGO) and ArrayPool versions measured 5-40% slower than the old code; the per-thread builder (cleared, capped at 1024 chars) measured 175-186 vs 197-201 ns with 58 vs 222 B.
+
+Options:
+
+- Keep the per-thread builder (current)
+- ArrayPool buffer (no thread-static state, ~10% slower than old in the library measurement)
+- Plain new StringBuilder (old speed, more allocation)
+
+Recommendation: Keep the per-thread builder.
+
+### Negative Snowflake IDs in NextIdAlphabetic/NextIdAlphanumeric
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+They threw IndexOutOfRangeException. Implemented an unsigned 64-bit encoding, which keeps the documented A-Z / 0-9A-Z alphabet and round-trips through Extract* (long.MinValue, -1, 0, long.MaxValue checked).
+
+Options:
+
+- Unsigned encoding (current)
+- Throw ArgumentOutOfRangeException for a negative ID
+- Prefix a '-' sign (breaks the alphabet contract)
+
+Recommendation: Keep unsigned, and prevent negative IDs at the source by validating timestampEpoch (S8).
+
+### Lower-case input to ExtractIdAlphabetic/AlphanumericComponents
+
+*Area:* YANTask / YANProcess / YANText / Snowflake
+
+Implemented strict rejection (ArgumentException), as the spec lists lowercase among the invalid inputs.
+
+Options:
+
+- Reject (current)
+- Accept case-insensitively (upper-case before decoding)
+
+Recommendation: Keep rejecting; base-36 IDs copied through case-folding systems could be accepted later as a non-breaking relaxation.
+
+### Scale of decimal results
+
+*Area:* YANMath / YANRandom
+
+Native decimal arithmetic keeps scale (1.10m + 2.20m = 3.30m, 1.10m.Pow(2) = 1.2100m). 8.3.3 went through double and so always returned values without trailing zeros (3.3m). I chose the status quo: results are normalised by dividing by 1.0000000000000000000000000000m, verified on 200,000 random decimals.
+
+Options:
+
+- Normalise, as 8.3.3 output did (current)
+- Return native decimal scale, as C# arithmetic does
+- Make it configurable
+
+Recommendation: Keep normalised in 8.x, so ToString output does not change for existing users. Revisit only together with a public decimal-specific API.
+
+### Decimal aggregates whose intermediate sum overflows
+
+*Area:* YANMath / YANRandom
+
+Typed and object decimal Sum/Average fall back to the 8.3.3 double result when an intermediate sum overflows decimal. Sum then keeps its old answer (usually 0). Average(decimal.MaxValue, decimal.MaxValue) is still 0 although the exact average decimal.MaxValue fits.
+
+Options:
+
+- Keep the double fallback (current; never worse than 8.3.3)
+- Compute Average without overflow, e.g. as a running mean or the sum of x/n with a correction term
+- Accumulate in a wider exact type (BigInteger mantissa plus a common scale) and narrow at the end
+
+Recommendation: Use the wider exact accumulation for Average in a minor release. Sum's out-of-range result stays default, per the overflow decision.
+
+### Decimal result for whole doubles of 2^53 or more on the object path
+
+*Area:* YANMath / YANRandom
+
+Integer targets must use the exact value; that matches (long)x, Convert.ToInt64 and 8.3.3. Decimal targets now also get the exact value of the double, as the verifier recommended: ((object)7.9e28).Truncate<decimal>() = 78999999999999996926548246528 and ((object)1e23).Truncate<decimal>() = 99999999999999991611392. 8.3.3 used the 15-digit Convert.ToDecimal (79000000000000000000000000000; 1152921504606850000 for 2^60). HEAD used the shortest text (79000000000000000000000000000; 1152921504606847000). So gate rows v4, v27 and v28 differ from both 8.3.3 and HEAD.
+
+Options:
+
+- (a) Exact binary value for every whole double or float (current). It is consistent with integer targets, so Truncate<decimal> and Truncate<long> agree, and no information is lost.
+- (b) Exact only below 2^64 (the integer-target range), and shortest text above. 7.9e28 then gives 79000000000000000000000000000, but there is a discontinuity at 2^64.
+- (c) Shortest text for decimal targets (the HEAD behaviour) and exact only for integer targets. TryToDecimal would need the target type, and the decimal and long results would disagree for 2^60.
+- (d) 15-digit Convert.ToDecimal, as 8.3.3 did. This loses digits, for example for 2^60.
+
+Recommendation: (a), already implemented and documented in YANMath.md with the 1e23 example.
