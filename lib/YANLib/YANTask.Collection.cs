@@ -51,10 +51,9 @@ public static partial class YANTask
     /// <c>MoveNextAsync</c>, even when no item is left).
     /// </exception>
     /// <exception cref="ArgumentException">Thrown by the enumeration when <paramref name="tasks"/> contains a <c>null</c> task.</exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown by the enumeration (by <c>MoveNextAsync</c>) when <paramref name="predicate"/> is <c>null</c>, at the first task that completed successfully:
-    /// the predicate is not checked for <c>null</c> in advance, so when no task completes successfully (or <paramref name="tasks"/> is <c>null</c> or empty)
-    /// the enumeration is empty instead. <see cref="WaitAnyWithCondition{T}"/> treats a <c>null</c> predicate as no match.
+    /// <exception cref="ArgumentNullException">
+    /// Thrown by the enumeration (by the first <c>MoveNextAsync</c>, like the other argument checks) when <paramref name="predicate"/> is <c>null</c>,
+    /// whatever the tasks are (also for a <c>null</c> or empty <paramref name="tasks"/>). <see cref="WaitAnyWithCondition{T}"/> treats a <c>null</c> predicate as no match.
     /// </exception>
     /// <remarks>
     /// <para>
@@ -105,10 +104,9 @@ public static partial class YANTask
     /// <c>MoveNextAsync</c>, even when no item is left).
     /// </exception>
     /// <exception cref="ArgumentException">Thrown by the enumeration when <paramref name="tasks"/> contains a <c>null</c> task.</exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown by the enumeration (by <c>MoveNextAsync</c>) when <paramref name="predicate"/> is <c>null</c>, at the first task that completed successfully:
-    /// the predicate is not checked for <c>null</c> in advance, so when no task completes successfully (or <paramref name="tasks"/> is <c>null</c> or empty)
-    /// the enumeration is empty instead. <see cref="WhenAnyWithCondition{T}"/> treats a <c>null</c> predicate as no match.
+    /// <exception cref="ArgumentNullException">
+    /// Thrown by the enumeration (by the first <c>MoveNextAsync</c>, like the other argument checks) when <paramref name="predicate"/> is <c>null</c>,
+    /// whatever the tasks are (also for a <c>null</c> or empty <paramref name="tasks"/>). <see cref="WhenAnyWithCondition{T}"/> treats a <c>null</c> predicate as no match.
     /// </exception>
     /// <remarks>
     /// <para>

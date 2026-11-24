@@ -17,6 +17,7 @@ internal static partial class YANTask
         await Yield();
 
         cancellationToken.ThrowIfCancellationRequested();
+        ArgumentNullException.ThrowIfNull(predicate);
 
         if (tasks is null)
         {
