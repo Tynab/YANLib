@@ -19,6 +19,9 @@ public partial class IdGenerator
 
     private const int TOTAL_BITS = 23;
 
+    // The largest time since the epoch, in milliseconds, that the 41-bit timestamp field holds (2^41 - 1, about 69.7 years).
+    private const long MAX_TIMESTAMP = (1L << (64 - TOTAL_BITS)) - 1;
+
     // Default bit allocation (5-5-13)
     private const int DEFAULT_WORKER_ID_BITS = 5;
     private const int DEFAULT_DATACENTER_ID_BITS = 5;

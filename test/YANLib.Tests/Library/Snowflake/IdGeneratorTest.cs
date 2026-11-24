@@ -1118,39 +1118,165 @@ public partial class IdGeneratorTest
     }
 
     [Fact]
-    public void NextIdAlphabetic_EpochInFuture_RoundTripsNegativeId()
+    public void NextId_EpochInFuture_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
         var idGenerator = new IdGenerator(5, 10);
         var epoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
 
-        // Act
-        var id = idGenerator.NextIdAlphabetic(epoch);
-        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdAlphabeticComponents(id, epoch);
+        // Act & Assert (8.3.3 returned a negative ID)
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(epoch));
 
-        // Assert
-        Assert.Matches("^[A-Z]+$", id);
-        Assert.Equal(5, workerId);
-        Assert.Equal(10, datacenterId);
-        Assert.InRange(timestamp, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
+        Assert.Equal("timestampEpoch", exception.ParamName);
+        Assert.Equal(epoch, exception.ActualValue);
     }
 
     [Fact]
-    public void NextIdAlphanumeric_EpochInFuture_RoundTripsNegativeId()
+    public void NextIdAlphabetic_EpochInFuture_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
         var idGenerator = new IdGenerator(5, 10);
         var epoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
 
+        // Act & Assert (8.3.3 returned the negative ID encoded as its unsigned 64-bit value)
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextIdAlphanumeric_EpochInFuture_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        // Act & Assert (8.3.3 returned the negative ID encoded as its unsigned 64-bit value)
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphanumeric(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Theory]
+    [InlineData(long.MaxValue)]
+    [InlineData(long.MinValue)]
+    [InlineData(long.MinValue + 1)]
+    public void NextId_EpochAtTheEndsOfLong_ThrowsArgumentOutOfRangeException(long epoch)
+    {
+        // Arrange (long.MinValue: the subtraction wraps, the time since the epoch is far beyond 2^41 ms)
+        var idGenerator = new IdGenerator(5, 10);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextId_EpochIsNow_HasTimestampZeroOrJustAbove()
+    {
+        // Arrange (the current time can only be at or after the epoch when NextId reads it)
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
         // Act
-        var id = idGenerator.NextIdAlphanumeric(epoch);
-        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdAlphanumericComponents(id, epoch);
+        var id = idGenerator.NextId(epoch);
+        var after = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdComponents(id, epoch);
 
         // Assert
-        Assert.Matches("^[0-9A-Z]+$", id);
+        Assert.InRange(id >> 23, 0, after - epoch);
+        Assert.InRange(new DateTimeOffset(timestamp).ToUnixTimeMilliseconds(), epoch, after);
         Assert.Equal(5, workerId);
         Assert.Equal(10, datacenterId);
-        Assert.InRange(timestamp, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
+    }
+
+    [Fact]
+    public void NextId_EpochNearlyTwoToThe41MillisecondsAgo_FillsTheTimestampField()
+    {
+        // Arrange: 2^41 - 1 ms before now, plus a margin of ten minutes for the time the test takes. The timestamp reaches the sign bit,
+        // so the ID is negative, and the string forms encode it as its unsigned 64-bit value
+        const long largest = (1L << 41) - 1;
+        const long margin = 10 * 60 * 1000;
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - largest + margin;
+
+        // Act
+        var id = idGenerator.NextId(epoch);
+        var alphabetic = idGenerator.NextIdAlphabetic(epoch);
+        var alphanumeric = idGenerator.NextIdAlphanumeric(epoch);
+        var (_, workerId, datacenterId) = IdGenerator.ExtractIdAlphabeticComponents(alphabetic, epoch);
+        var (_, alphanumericWorkerId, alphanumericDatacenterId) = IdGenerator.ExtractIdAlphanumericComponents(alphanumeric, epoch);
+
+        // Assert
+        Assert.True(id < 0);
+        Assert.InRange((long)((ulong)id >> 23), largest - margin, largest);
+        Assert.Matches("^[A-Z]+$", alphabetic);
+        Assert.Matches("^[0-9A-Z]+$", alphanumeric);
+        Assert.Equal((5L, 10L), (workerId, datacenterId));
+        Assert.Equal((5L, 10L), (alphanumericWorkerId, alphanumericDatacenterId));
+    }
+
+    [Fact]
+    public void NextId_EpochTwoToThe41MillisecondsAgo_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange (whenever NextId reads the clock, at least 2^41 ms have passed since this epoch)
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - (1L << 41);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+        Assert.Equal(epoch, exception.ActualValue);
+    }
+
+    [Fact]
+    public void NextId_InvalidEpoch_DoesNotUseUpASequenceNumber()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(workerId: 1, datacenterId: 1, sequence: 5);
+        var lastTimestamp = typeof(IdGenerator).GetField("_lastTimestamp", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        var future = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        Assert.NotNull(lastTimestamp);
+
+        // Act & Assert: before the first ID
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(future));
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(future));
+
+        Assert.Equal(5, idGenerator.Sequence);
+        Assert.Equal(-1L, lastTimestamp.GetValue(idGenerator));
+
+        // the first ID still uses the sequence passed to the constructor
+        var id = idGenerator.NextId();
+
+        Assert.Equal(5, id & idGenerator.MaxSequence);
+
+        // after an ID, a failing call leaves the last timestamp and the sequence as they were
+        var last = lastTimestamp.GetValue(idGenerator);
+        var sequence = idGenerator.Sequence;
+
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphanumeric(future));
+
+        Assert.Equal(last, lastTimestamp.GetValue(idGenerator));
+        Assert.Equal(sequence, idGenerator.Sequence);
+    }
+
+    [Theory]
+    [InlineData("HLHXCZMXSYUMQP", "3W5E11264SGSF")]
+    public void ExtractIdComponents_NegativeIdStrings_ReadTheSameId(string alphabetic, string alphanumeric)
+    {
+        // the largest strings stand for the unsigned 64-bit value of -1, the encoding of a negative ID
+        // Act
+        var expected = IdGenerator.ExtractIdComponents(-1);
+        var fromAlphabetic = IdGenerator.ExtractIdAlphabeticComponents(alphabetic);
+        var fromAlphanumeric = IdGenerator.ExtractIdAlphanumericComponents(alphanumeric);
+
+        // Assert
+        Assert.Equal(expected, fromAlphabetic);
+        Assert.Equal(expected, fromAlphanumeric);
+        Assert.Equal((31L, 31L), (expected.WorkerId, expected.DatacenterId));
     }
 
     [Theory]

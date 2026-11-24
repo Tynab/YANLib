@@ -39,8 +39,9 @@ public partial class IdGenerator
         return currentTimestamp;
     }
 
-    // A negative ID (generated with a timestampEpoch later than the current time) is encoded as its unsigned 64-bit
-    // two's complement value, so the string only uses the alphabet and FromBase returns the same ID.
+    // A negative ID (its timestamp reaches the sign bit 2^40 ms, about 34.8 years, after timestampEpoch; 8.3.3 also generated one for an
+    // epoch later than the current time) is encoded as its unsigned 64-bit two's complement value, so the string only uses the alphabet
+    // and FromBase returns the same ID.
     [DebuggerHidden]
     [DebuggerStepThrough]
     private static string ToBase(long value, string alphabet)
@@ -124,9 +125,19 @@ public partial class IdGenerator
     /// <summary>
     /// Generates a new unique ID based on the Snowflake algorithm.
     /// </summary>
-    /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <returns>A unique 64-bit ID. It is negative when <paramref name="timestampEpoch"/> is later than the current time.</returns>
+    /// <param name="timestampEpoch">
+    /// The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>. It must not be later than the current time, nor
+    /// 2^41 ms (about 69.7 years) or more before it, so that the time since the epoch fits the 41-bit timestamp field.
+    /// </param>
+    /// <returns>
+    /// A unique 64-bit ID. From 2^40 ms (about 34.8 years) after <paramref name="timestampEpoch"/> on, the timestamp reaches the sign bit
+    /// and the ID is negative; <see cref="ExtractIdComponents(long, long, long, int, int, int)"/> reads the timestamp of such an ID as 2^41 ms earlier.
+    /// </returns>
     /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards (it derives from <see cref="Exception"/>, so existing <c>catch (Exception)</c> blocks still catch it).</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="timestampEpoch"/> is later than the current time, or 2^41 ms or more before it (8.3.3 returned a negative or
+    /// wrapped ID instead). The failing call changes nothing: it uses up no sequence number.
+    /// </exception>
     /// <remarks>
     /// The generated ID is composed of:
     /// - 41 bits for timestamp (milliseconds since epoch)
@@ -149,25 +160,41 @@ public partial class IdGenerator
             {
                 throw new InvalidOperationException("Clock moved backwards. Refusing to generate ID for timestamp earlier than last timestamp.");
             }
-            else if (currentTimestamp == _lastTimestamp)
-            {
-                Sequence = (Sequence + 1) & MaxSequence;
 
-                if (Sequence is 0)
+            var sequence = Sequence;
+
+            if (currentTimestamp == _lastTimestamp)
+            {
+                sequence = (sequence + 1) & MaxSequence;
+
+                if (sequence is 0)
                 {
                     currentTimestamp = WaitForNextMillisecond(_lastTimestamp);
                 }
             }
             else if (_hasGeneratedId)
             {
-                Sequence = default;
+                sequence = default;
+            }
+
+            // Validated before the state changes, so a failing call uses up no sequence number. The subtraction wraps to a negative value
+            // only when the true difference is 2^63 or more.
+            var timestamp = unchecked(currentTimestamp - timestampEpoch);
+
+            if (timestamp is < 0 or > MAX_TIMESTAMP)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(timestampEpoch),
+                    timestampEpoch,
+                    $"The epoch must not be later than the current time ({currentTimestamp}) nor {MAX_TIMESTAMP + 1} ms or more before it, so that the time since the epoch fits the 41-bit timestamp field.");
             }
 
             // The first ID keeps the sequence passed to the constructor.
+            Sequence = sequence;
             _hasGeneratedId = true;
             _lastTimestamp = currentTimestamp;
 
-            return ((currentTimestamp - timestampEpoch) << _timestampLeftShift) | (DatacenterId << _datacenterIdShift) | (WorkerId << _workerIdShift) | (Sequence & MaxSequence);
+            return (timestamp << _timestampLeftShift) | (DatacenterId << _datacenterIdShift) | (WorkerId << _workerIdShift) | (sequence & MaxSequence);
         }
     }
 
@@ -177,11 +204,14 @@ public partial class IdGenerator
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
     /// <returns>A unique ID as a base-26 alphabetic string (upper-case letters only, 'A' = 0).</returns>
     /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="timestampEpoch"/> is later than the current time, or 2^41 ms or more before it (see <see cref="NextId(long)"/>).
+    /// </exception>
     /// <remarks>
     /// This method generates a Snowflake ID and then converts it to a base-26 alphabetic string.
     /// The resulting string is more compact than the decimal representation of the ID.
-    /// A negative ID (when <paramref name="timestampEpoch"/> is later than the current time) is encoded as its unsigned 64-bit value,
-    /// so the string still contains only A-Z and <see cref="ExtractIdAlphabeticComponents(string, long, long, int, int, int)"/> reads it back.
+    /// A negative ID (from 2^40 ms after <paramref name="timestampEpoch"/> on, see <see cref="NextId(long)"/>) is encoded as its unsigned 64-bit
+    /// value, so the string still contains only A-Z and <see cref="ExtractIdAlphabeticComponents(string, long, long, int, int, int)"/> reads the same 64-bit ID from it.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -193,11 +223,14 @@ public partial class IdGenerator
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
     /// <returns>A unique ID as a base-36 alphanumeric string (digits and upper-case letters only).</returns>
     /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="timestampEpoch"/> is later than the current time, or 2^41 ms or more before it (see <see cref="NextId(long)"/>).
+    /// </exception>
     /// <remarks>
     /// This method generates a Snowflake ID and then converts it to a base-36 alphanumeric string.
     /// The resulting string is more compact than both the decimal and alphabetic representations of the ID.
-    /// A negative ID (when <paramref name="timestampEpoch"/> is later than the current time) is encoded as its unsigned 64-bit value,
-    /// so the string still contains only 0-9 and A-Z and <see cref="ExtractIdAlphanumericComponents(string, long, long, int, int, int)"/> reads it back.
+    /// A negative ID (from 2^40 ms after <paramref name="timestampEpoch"/> on, see <see cref="NextId(long)"/>) is encoded as its unsigned 64-bit
+    /// value, so the string still contains only 0-9 and A-Z and <see cref="ExtractIdAlphanumericComponents(string, long, long, int, int, int)"/> reads the same 64-bit ID from it.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
