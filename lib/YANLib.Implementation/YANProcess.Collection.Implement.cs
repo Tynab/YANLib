@@ -4,16 +4,25 @@ namespace YANLib.Implementation;
 
 internal static partial class YANProcess
 {
+    #region Private
+
     // A null, empty or white-space name is skipped; it no longer cancels the other names.
-    internal static async Task KillAllProcessesByNamesImplement(this IEnumerable<string?>? names)
+    private static async Task KillAll(IEnumerable<string?>? names, bool entireProcessTree, CancellationToken cancellationToken)
     {
         if (names is null)
         {
             return;
         }
 
-        await WhenAll(names.Select(KillAndDisposeAsync)).ConfigureAwait(false);
+        await WhenAll(names.Select(name => KillAndDisposeAsync(name, entireProcessTree, cancellationToken))).ConfigureAwait(false);
     }
+
+    #endregion
+
+    // A token that is already cancelled gives a cancelled task and kills nothing. Task.WhenAll reports a failure to kill
+    // (a faulted name) before a cancelled wait (a cancelled name).
+    internal static Task KillAllProcessesByNamesImplement(this IEnumerable<string?>? names, bool entireProcessTree = true, CancellationToken cancellationToken = default)
+        => cancellationToken.IsCancellationRequested ? FromCanceled(cancellationToken) : KillAll(names, entireProcessTree, cancellationToken);
 
     internal static Task KillAllProcessesByNamesImplement(params string?[]? names) => names.KillAllProcessesByNamesImplement();
 }

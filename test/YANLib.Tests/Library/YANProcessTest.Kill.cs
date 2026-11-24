@@ -2,18 +2,24 @@
 
 namespace YANLib.Tests.Library;
 
-// Starts copies of /bin/sleep under unique names (at most 15 characters, the Linux limit for process names) in a temporary
-// directory, and on Dispose kills whatever is still running and deletes the directory, also when a test fails.
-// Supported only where /bin/sleep exists (Linux); the tests return early elsewhere.
+// Starts copies of /bin/sleep (and of /bin/sh) under unique names (at most 15 characters, the Linux limit for process names)
+// in a temporary directory, and on Dispose kills whatever is still running and deletes the directory, also when a test fails.
+// Supported only where /bin/sleep exists (Linux); the shell fixtures also need /bin/sh. The tests return early elsewhere.
 internal sealed class SleepProcesses : IDisposable
 {
     private const string SLEEP_PATH = "/bin/sleep";
+    private const string SHELL_PATH = "/bin/sh";
+
+    // Generous: the machine may be busy; the waits end as soon as the state is reached.
+    private static readonly TimeSpan StateTimeout = TimeSpan.FromSeconds(30);
 
     private readonly List<(int Id, string Name)> _started = [];
+    private readonly List<string> _startedIndirectly = [];
 
     public SleepProcesses()
     {
         IsSupported = OperatingSystem.IsLinux() && File.Exists(SLEEP_PATH);
+        IsShellSupported = IsSupported && File.Exists(SHELL_PATH);
         Directory = Path.Combine(Path.GetTempPath(), $"yanlib-process-{Guid.NewGuid():N}");
 
         if (IsSupported)
@@ -23,6 +29,8 @@ internal sealed class SleepProcesses : IDisposable
     }
 
     public bool IsSupported { get; }
+
+    public bool IsShellSupported { get; }
 
     public string Directory { get; }
 
@@ -34,14 +42,7 @@ internal sealed class SleepProcesses : IDisposable
 
     public TProcess Start<TProcess>(string fileName, TProcess process) where TProcess : Process
     {
-        var path = Path.Combine(Directory, fileName);
-
-        if (!File.Exists(path))
-        {
-            File.Copy(SLEEP_PATH, path);
-        }
-
-        process.StartInfo = new ProcessStartInfo(path, "60")
+        process.StartInfo = new ProcessStartInfo(CopyOf(SLEEP_PATH, fileName), "60")
         {
             UseShellExecute = false
         };
@@ -52,8 +53,166 @@ internal sealed class SleepProcesses : IDisposable
         return process;
     }
 
+    // Starts a copy of /bin/sh named parentName that starts a copy of /bin/sleep named childName for 60 seconds and waits
+    // for it; returns the parent (owned by the caller) once the child is running, and the child's id.
+    public (Process Parent, int ChildId) StartParentWithChild(string parentName, string childName)
+    {
+        var parent = StartShell(parentName, $"'{CopyOf(SLEEP_PATH, childName)}' 60 & wait");
+
+        _startedIndirectly.Add(childName);
+
+        return (parent, WaitForProcess(childName, state => state is not 'Z'));
+    }
+
+    // Leaves a zombie named zombieName: a copy of /bin/sh starts a copy of /bin/sleep named zombieName for 1 second, then
+    // replaces itself (exec) with a copy of /bin/sleep named holderName, which never reaps the child that exits. As long as
+    // the holder runs, the zombie never exits for .NET (it still exists for kill(pid, 0)), and Kill() does not fail on it.
+    // Returns the zombie's id once it is a zombie.
+    public int StartZombie(string holderName, string zombieName)
+    {
+        var zombiePath = CopyOf(SLEEP_PATH, zombieName);
+        var holderPath = CopyOf(SLEEP_PATH, holderName);
+        using var holder = StartShell(UniqueName("yh"), $"'{zombiePath}' 1 & exec '{holderPath}' 60");
+
+        // After exec the started process carries the holder's name.
+        _started[^1] = (holder.Id, holderName);
+        _startedIndirectly.Add(zombieName);
+
+        return WaitForProcess(zombieName, state => state is 'Z');
+    }
+
+    // Whether the process with this id still runs under this name: a zombie (state Z) or a dead process (X) has exited,
+    // whether or not its parent has reaped it yet.
+    public static bool IsRunning(int id, string name)
+    {
+        try
+        {
+            var (comm, state) = ReadStat($"/proc/{id}/stat");
+
+            return comm == name && state is not ('Z' or 'X');
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+    }
+
+    // Polls until the process is no longer running; false if it still runs after the (generous) timeout.
+    public static bool WaitUntilStopped(int id, string name)
+    {
+        var deadline = Stopwatch.StartNew();
+
+        while (IsRunning(id, name))
+        {
+            if (deadline.Elapsed > StateTimeout)
+            {
+                return false;
+            }
+
+            Thread.Sleep(50);
+        }
+
+        return true;
+    }
+
+    // "pid (comm) state ppid ...", where comm may contain spaces and parentheses.
+    private static (string Comm, char State) ReadStat(string path)
+    {
+        var stat = File.ReadAllText(path);
+        var end = stat.LastIndexOf(')');
+
+        return (stat[(stat.IndexOf('(') + 1)..end], stat[end + 2]);
+    }
+
+    // Polls /proc until a process with this name is in an accepted state; fails the test after the (generous) timeout.
+    private static int WaitForProcess(string name, Func<char, bool> acceptState)
+    {
+        var deadline = Stopwatch.StartNew();
+
+        while (deadline.Elapsed <= StateTimeout)
+        {
+            foreach (var directory in System.IO.Directory.EnumerateDirectories("/proc"))
+            {
+                if (!int.TryParse(Path.GetFileName(directory), out var id))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var (comm, state) = ReadStat(Path.Combine(directory, "stat"));
+
+                    if (comm == name && acceptState(state))
+                    {
+                        return id;
+                    }
+                }
+                catch (IOException)
+                {
+                    // The process exited meanwhile.
+                }
+            }
+
+            Thread.Sleep(50);
+        }
+
+        throw new TimeoutException($"No process named {name} reached the expected state.");
+    }
+
+    private string CopyOf(string sourcePath, string fileName)
+    {
+        var path = Path.Combine(Directory, fileName);
+
+        if (!File.Exists(path))
+        {
+            File.Copy(sourcePath, path);
+        }
+
+        return path;
+    }
+
+    private Process StartShell(string fileName, string command)
+    {
+        var process = new Process
+        {
+            StartInfo = new ProcessStartInfo(CopyOf(SHELL_PATH, fileName))
+            {
+                ArgumentList =
+                {
+                    "-c",
+                    command
+                },
+                UseShellExecute = false
+            }
+        };
+
+        _ = process.Start();
+        _started.Add((process.Id, fileName));
+
+        return process;
+    }
+
     public void Dispose()
     {
+        // Processes started by the shells: unique names, so no unrelated process is touched.
+        foreach (var name in _startedIndirectly)
+        {
+            foreach (var process in Process.GetProcessesByName(name))
+            {
+                using (process)
+                {
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch
+                    {
+                        // Already exited.
+                    }
+                }
+            }
+        }
+
         foreach (var (id, name) in _started)
         {
             try
@@ -340,6 +499,277 @@ public partial class YANProcessTest
         {
             // The process no longer exists.
         }
+    }
+
+    [Fact]
+    public async Task KillAndDispose_CurrentProcessWithoutTree_IsSkipped_Process()
+    {
+        // Arrange
+        var current = Process.GetCurrentProcess();
+
+        // Act (Kill() on the calling process would end the test run)
+        var exception = await Record.ExceptionAsync(() => new[] { current }.KillAndDispose(entireProcessTree: false));
+
+        // Assert
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByName_EntireProcessTreeFalse_LeavesChildRunning_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var parentName = SleepProcesses.UniqueName("yp");
+        var childName = SleepProcesses.UniqueName("yc");
+        var (parent, childId) = sleepers.StartParentWithChild(parentName, childName);
+
+        using (parent)
+        {
+            // Act
+            await parentName.KillAllProcessesByName(entireProcessTree: false);
+
+            // Assert (the child is killed by the fixture afterwards)
+            Assert.True(parent.WaitForExit(ExitTimeout));
+            Assert.True(SleepProcesses.IsRunning(childId, childName));
+        }
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByName_EntireProcessTreeTrue_KillsChild_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var parentName = SleepProcesses.UniqueName("yp");
+        var childName = SleepProcesses.UniqueName("yc");
+        var (parent, childId) = sleepers.StartParentWithChild(parentName, childName);
+
+        using (parent)
+        {
+            // Act
+            await parentName.KillAllProcessesByName(entireProcessTree: true, CancellationToken.None);
+
+            // Assert
+            Assert.True(parent.WaitForExit(ExitTimeout));
+            Assert.True(SleepProcesses.WaitUntilStopped(childId, childName));
+        }
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByNames_EntireProcessTreeFalse_LeavesChildRunning_ProcessCollection()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var parentName = SleepProcesses.UniqueName("yp");
+        var childName = SleepProcesses.UniqueName("yc");
+        var (parent, childId) = sleepers.StartParentWithChild(parentName, childName);
+        List<string?> names = [null, parentName];
+
+        using (parent)
+        {
+            // Act
+            await names.KillAllProcessesByNames(entireProcessTree: false);
+
+            // Assert
+            Assert.True(parent.WaitForExit(ExitTimeout));
+            Assert.True(SleepProcesses.IsRunning(childId, childName));
+        }
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByNames_EntireProcessTreeTrue_KillsChild_ProcessCollection()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var parentName = SleepProcesses.UniqueName("yp");
+        var childName = SleepProcesses.UniqueName("yc");
+        var (parent, childId) = sleepers.StartParentWithChild(parentName, childName);
+
+        using (parent)
+        {
+            // Act
+            await new[] { parentName }.KillAllProcessesByNames(entireProcessTree: true);
+
+            // Assert
+            Assert.True(parent.WaitForExit(ExitTimeout));
+            Assert.True(SleepProcesses.WaitUntilStopped(childId, childName));
+        }
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByName_AlreadyCanceledToken_ThrowsOperationCanceledExceptionAndKillsNothing_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsSupported)
+        {
+            return;
+        }
+
+        var name = SleepProcesses.UniqueName();
+        using var process = sleepers.Start(name);
+        using var cts = new CancellationTokenSource();
+
+        cts.Cancel();
+
+        // Act & Assert
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => name.KillAllProcessesByName(cts.Token));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => name.KillAllProcessesByName(entireProcessTree: false, cts.Token));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => new[] { name }.KillAllProcessesByNames(cts.Token));
+        Assert.True(SleepProcesses.IsRunning(process.Id, name));
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByNames_NullNamesWithAlreadyCanceledToken_ThrowsOperationCanceledException_ProcessCollection()
+    {
+        // Arrange
+        IEnumerable<string?>? names = null;
+        using var cts = new CancellationTokenSource();
+
+        cts.Cancel();
+
+        // Act & Assert
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => names.KillAllProcessesByNames(cts.Token));
+    }
+
+    [Fact]
+    public async Task KillAndDispose_AlreadyCanceledToken_KillsNothingAndDisposesHandles_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsSupported)
+        {
+            return;
+        }
+
+        var name = SleepProcesses.UniqueName();
+        var target = sleepers.Start(name, new DisposeTrackingProcess());
+        var targetId = target.Id;
+        using var cts = new CancellationTokenSource();
+
+        cts.Cancel();
+
+        // Act
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => new[] { target }.KillAndDispose(cancellationToken: cts.Token));
+
+        // Assert
+        Assert.True(target.IsDisposed);
+        Assert.True(SleepProcesses.IsRunning(targetId, name));
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByName_CanceledWhileWaiting_ThrowsOperationCanceledException_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var zombieName = SleepProcesses.UniqueName("yz");
+
+        _ = sleepers.StartZombie(SleepProcesses.UniqueName("yh"), zombieName);
+
+        using var cts = new CancellationTokenSource();
+
+        // Act (the zombie is signalled but never exits while its parent runs, so only the cancellation ends the wait)
+        var kill = zombieName.KillAllProcessesByName(cts.Token);
+
+        cts.Cancel();
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(kill, await Task.WhenAny(kill, Task.Delay(ExitTimeout)));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => kill);
+    }
+
+    [Fact]
+    public async Task KillAndDispose_CanceledWhileWaitingForProcessThatDoesNotExit_StillKillsAndDisposesTheOthers_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var zombieName = SleepProcesses.UniqueName("yz");
+
+        _ = sleepers.StartZombie(SleepProcesses.UniqueName("yh"), zombieName);
+
+        var zombie = Assert.Single(Process.GetProcessesByName(zombieName));
+        var name = SleepProcesses.UniqueName();
+        var target = sleepers.Start(name, new DisposeTrackingProcess());
+        using var observer = Process.GetProcessById(target.Id);
+        using var cts = new CancellationTokenSource();
+
+        // Act (every process is signalled before the first wait, which never ends for the zombie)
+        var kill = new[] { zombie, target }.KillAndDispose(cancellationToken: cts.Token);
+
+        cts.Cancel();
+
+        // Assert
+        Assert.Same(kill, await Task.WhenAny(kill, Task.Delay(ExitTimeout)));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => kill);
+        Assert.True(target.IsDisposed);
+        Assert.True(observer.WaitForExit(ExitTimeout));
+    }
+
+    [Fact]
+    public async Task KillAndDispose_FailureAndCanceledWait_RethrowsTheFailure_Process()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsShellSupported)
+        {
+            return;
+        }
+
+        var zombieName = SleepProcesses.UniqueName("yz");
+
+        _ = sleepers.StartZombie(SleepProcesses.UniqueName("yh"), zombieName);
+
+        var failing = new DisposeTrackingProcess();
+        var zombie = Assert.Single(Process.GetProcessesByName(zombieName));
+        using var cts = new CancellationTokenSource();
+
+        // Act (a Process that was never started has no Id: reading it throws InvalidOperationException before the wait is canceled)
+        var kill = new[] { failing, zombie }.KillAndDispose(cancellationToken: cts.Token);
+
+        cts.Cancel();
+
+        // Assert
+        Assert.Same(kill, await Task.WhenAny(kill, Task.Delay(ExitTimeout)));
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(() => kill);
+        Assert.True(failing.IsDisposed);
     }
 
     [Theory]

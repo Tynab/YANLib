@@ -9,14 +9,14 @@ internal static partial class YANProcess
 {
     #region Private
 
-    private static async Task KillAndDisposeAsync(string? processNameOrPath)
+    private static async Task KillAndDisposeAsync(string? processNameOrPath, bool entireProcessTree, CancellationToken cancellationToken)
     {
         if (processNameOrPath.IsNullWhiteSpaceImplement())
         {
             return;
         }
 
-        await processNameOrPath.GetProcessesByFileNameImplement().KillAndDisposeImplement().ConfigureAwait(false);
+        await processNameOrPath.GetProcessesByFileNameImplement().KillAndDisposeImplement(entireProcessTree, cancellationToken).ConfigureAwait(false);
     }
 
     #endregion
@@ -46,28 +46,60 @@ internal static partial class YANProcess
         return fileNameWithoutExtension.IsNullWhiteSpaceImplement() ? [] : GetProcessesByName(fileNameWithoutExtension);
     }
 
-    // Tries every process and disposes every handle; the first failure is rethrown afterwards with its original type and
-    // stack trace. The calling process is skipped: Kill(entireProcessTree: true) always refuses a tree that contains it.
-    internal static async Task KillAndDisposeImplement(this IEnumerable<Process> processes)
+    // Signals every process first, then waits for each to exit, so a process that does not exit (or a cancelled wait)
+    // never keeps the others from being killed. Every handle is disposed and the first failure is rethrown afterwards
+    // with its original type and stack trace; a cancelled wait comes after every kill, so a failure to kill wins over it.
+    // A token that is already cancelled kills nothing; a token cancelled later only stops the waiting (the processes stay
+    // signalled). The calling process is skipped: Kill(entireProcessTree: true) always refuses a tree that contains it,
+    // and Kill() would kill the caller itself.
+    internal static async Task KillAndDisposeImplement(this IEnumerable<Process> processes, bool entireProcessTree = true, CancellationToken cancellationToken = default)
     {
         var currentProcessId = Environment.ProcessId;
+        Process[] all = [.. processes];
+        List<Process>? signalled = null;
         ExceptionDispatchInfo? firstFailure = null;
 
-        foreach (var process in processes)
+        try
         {
-            try
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var process in all)
             {
-                if (process.Id != currentProcessId)
+                try
                 {
-                    process.Kill(entireProcessTree: true);
-                    await process.WaitForExitAsync().ConfigureAwait(false);
+                    if (process.Id != currentProcessId)
+                    {
+                        process.Kill(entireProcessTree);
+                        (signalled ??= []).Add(process);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    firstFailure ??= ExceptionDispatchInfo.Capture(exception);
                 }
             }
-            catch (Exception exception)
+
+            foreach (var process in signalled ?? [])
             {
-                firstFailure ??= ExceptionDispatchInfo.Capture(exception);
+                try
+                {
+                    await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException exception) when (cancellationToken.IsCancellationRequested)
+                {
+                    firstFailure ??= ExceptionDispatchInfo.Capture(exception);
+
+                    break;
+                }
+                catch (Exception exception)
+                {
+                    firstFailure ??= ExceptionDispatchInfo.Capture(exception);
+                }
             }
-            finally
+        }
+        finally
+        {
+            foreach (var process in all)
             {
                 process.Dispose();
             }
@@ -76,5 +108,6 @@ internal static partial class YANProcess
         firstFailure?.Throw();
     }
 
-    internal static Task KillAllProcessesByNameImplement(this string? name) => new[] { name }.KillAllProcessesByNamesImplement();
+    internal static Task KillAllProcessesByNameImplement(this string? name, bool entireProcessTree = true, CancellationToken cancellationToken = default)
+        => new[] { name }.KillAllProcessesByNamesImplement(entireProcessTree, cancellationToken);
 }
