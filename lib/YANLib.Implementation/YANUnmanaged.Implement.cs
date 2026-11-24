@@ -341,8 +341,8 @@ internal static partial class YANUnmanaged
     /// <summary>
     /// The text of <paramref name="input"/>, or <c>null</c> when its <see cref="object.ToString"/> throws. With a <paramref name="provider"/>,
     /// an <see cref="IFormattable"/> input is formatted with it (<c>1.5</c> is <c>"1.5"</c> with the invariant culture under de-DE);
-    /// a <c>null</c> provider calls <see cref="object.ToString"/> as 8.3.3 did. <see cref="Enum"/> ignores the provider, so an enum value without
-    /// a name, such as <c>(DayOfWeek)(-1)</c>, still gets the negative sign of the current culture.
+    /// a <c>null</c> provider calls <see cref="object.ToString"/> as 8.3.3 did. <see cref="Enum"/> ignores the provider, so a negative enum value
+    /// without a name, such as <c>(DayOfWeek)(-1)</c>, still gets the negative sign of the current culture.
     /// </summary>
     private static string? SafeToString(this object? input, IFormatProvider? provider)
     {
