@@ -135,7 +135,7 @@ public partial class IdGenerator
     /// </param>
     /// <returns>
     /// A unique 64-bit ID. From 2^40 ms (about 34.8 years) after <paramref name="timestampEpoch"/> on, the timestamp reaches the sign bit
-    /// and the ID is negative; <see cref="ExtractIdComponents(long, long, long, int, int, int)"/> reads the timestamp of such an ID as 2^41 ms earlier.
+    /// and the ID is negative; <see cref="ExtractIdComponents(long, long, long, int, int, int)"/> reads its timestamp correctly (unsigned).
     /// </returns>
     /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards (it derives from <see cref="Exception"/>, so existing <c>catch (Exception)</c> blocks still catch it).</exception>
     /// <exception cref="ArgumentOutOfRangeException">
@@ -294,7 +294,8 @@ public partial class IdGenerator
         var timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
 
         // Extract components
-        var timestamp = FromUnixTimeMilliseconds((id >> timestampLeftShift) + timestampEpoch).UtcDateTime;
+        // Unsigned shift: the 41-bit timestamp field ends at the sign bit, so an ID made 2^40 ms or more after the epoch is negative.
+        var timestamp = FromUnixTimeMilliseconds((long)((ulong)id >> timestampLeftShift) + timestampEpoch).UtcDateTime;
         var workerId = (id >> workerIdShift) & ((1L << workerIdBits) - 1);
         var datacenterId = (id >> datacenterIdShift) & ((1L << datacenterIdBits) - 1);
 
