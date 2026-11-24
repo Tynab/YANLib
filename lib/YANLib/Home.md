@@ -215,6 +215,12 @@ var processNames = new List<string?>
 };
 
 await processNames.KillAllProcessesByNames();
+
+// Kill only the matching processes (their child processes keep running), and stop waiting for
+// them to exit after 10 seconds: OperationCanceledException, the processes stay signalled
+using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+await "notepad".KillAllProcessesByName(entireProcessTree: false, timeout.Token);
+await processNames.KillAllProcessesByNames(timeout.Token);
 ```
 
 ### [YANExpression](YANExpression)

@@ -344,6 +344,7 @@ A specialized utility library for managing system processes, focusing on process
 - Multiple process management
 - Asynchronous operations
 - Process cleanup with automatic resource disposal
+- Optional single-process kills (`entireProcessTree: false`) and cancellation or timeout of the wait
 
 ```csharp
 // Kill all instances of a process with a specific name (each with its whole process tree;
@@ -359,6 +360,12 @@ var processNames = new List<string?>
 };
 
 await processNames.KillAllProcessesByNames();
+
+// Kill only the matching processes (their child processes keep running), and stop waiting for
+// them to exit after 10 seconds: OperationCanceledException, the processes stay signalled
+using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+await "notepad".KillAllProcessesByName(entireProcessTree: false, timeout.Token);
+await processNames.KillAllProcessesByNames(timeout.Token);
 ```
 
 ### YANExpression
