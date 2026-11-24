@@ -294,6 +294,7 @@ A specialized utility library that extends the Task Parallel Library (TPL), prov
 #### Key Features
 
 - Conditional task waiting
+- Streaming of every matching result as an `IAsyncEnumerable<T>`, with an optional limit
 - Results checked in completion order
 - Error handling with exception safety
 - Cancellation support
@@ -319,6 +320,18 @@ Console.WriteLine(anotherResult); // Output: 10
 // No match returns default(T): 0 for int, not null
 int noMatch = await tasks.WaitAnyWithCondition(x => x > 100);
 Console.WriteLine(noMatch); // Output: 0
+
+// Enumerate every matching result as the tasks complete (tasks that are already complete come in collection order)
+await foreach (var item in tasks.WaitAnyWithConditions(x => x > 5))
+{
+    Console.WriteLine(item); // Output: 7, 10
+}
+
+// Stop after the first matching result; a canceled token throws OperationCanceledException from the loop
+await foreach (var item in tasks.WhenAnyWithConditions(x => x > 5, taken: 1))
+{
+    Console.WriteLine(item); // Output: 7
+}
 ```
 
 ### YANProcess
