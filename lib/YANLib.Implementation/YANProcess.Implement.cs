@@ -9,8 +9,6 @@ internal static partial class YANProcess
 {
     #region Private
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static async Task KillAndDisposeAsync(string? processNameOrPath)
     {
         if (processNameOrPath.IsNullWhiteSpaceImplement())
@@ -27,8 +25,6 @@ internal static partial class YANProcess
     // Only when nothing matches and the name has an extension ("notepad.exe", "MyApp.dll") is the lookup repeated without
     // it. A name that is empty after this (a directory path, ".exe") matches nothing: Process.GetProcessesByName("") would
     // return every process.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static Process[] GetProcessesByFileNameImplement(this string? processNameOrPath)
     {
         var fileName = GetFileName(processNameOrPath);
@@ -52,8 +48,6 @@ internal static partial class YANProcess
 
     // Tries every process and disposes every handle; the first failure is rethrown afterwards with its original type and
     // stack trace. The calling process is skipped: Kill(entireProcessTree: true) always refuses a tree that contains it.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static async Task KillAndDisposeImplement(this IEnumerable<Process> processes)
     {
         var currentProcessId = Environment.ProcessId;
@@ -82,7 +76,5 @@ internal static partial class YANProcess
         firstFailure?.Throw();
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static Task KillAllProcessesByNameImplement(this string? name) => new[] { name }.KillAllProcessesByNamesImplement();
 }

@@ -306,7 +306,7 @@ catch (InvalidOperationException ex)
 - **Clock Synchronization**: For distributed systems, ensure clocks are synchronized to prevent issues with timestamp ordering
 - **Bit Allocation Trade-offs**: Consider the trade-offs between number of workers/datacenters and sequence capacity when customizing bit allocation
 - **Strategy Selection**: Choose the appropriate predefined strategy based on your system's scale and throughput requirements
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details

@@ -76,8 +76,6 @@ internal static partial class YANMath
         /// </summary>
         internal static readonly bool IsDecimal = IsDecimalTarget(Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T));
 
-        [DebuggerHidden]
-        [DebuggerStepThrough]
         private static bool IsDecimalTarget(Type type)
             => type == typeof(decimal) || type == typeof(int) || type == typeof(long) || type == typeof(uint) || type == typeof(ulong) || type == typeof(short)
             || type == typeof(ushort) || type == typeof(byte) || type == typeof(sbyte) || type == typeof(nint) || type == typeof(nuint);
@@ -108,8 +106,6 @@ internal static partial class YANMath
     };
 
     /// <summary>Narrows <paramref name="value"/> to an integer <typeparamref name="T"/>; <c>false</c> when it is out of range.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryFromInt128<T>(Int128 value, out T result) => KindOf<T>() switch
     {
         NumberKind.SByte => TryNarrow<sbyte, T>(value, out result),
@@ -153,13 +149,9 @@ internal static partial class YANMath
     private static decimal Normalize(decimal value) => value / 1.0000000000000000000000000000m;
 
     /// <summary>A <see cref="decimal"/> result converted to <typeparamref name="T"/> like a <c>double</c> result was (rounded half to even for integers, <c>default</c> when out of range).</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? FromDecimal<T>(decimal value) => Normalize(value).ParseImplement<T?>();
 
     /// <summary>Whether <paramref name="input"/> is a boxed <c>double</c> or <see cref="float"/>, and its value.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsDoubleOrFloat(object? input, out double value)
     {
         switch (input)
@@ -184,8 +176,6 @@ internal static partial class YANMath
     /// a whole number give the same result for a <c>double</c> or <see cref="float"/> as for its shortest round-trip text, so the object
     /// path computes them in <c>double</c> and converts a whole result this way, without the slower text round trip.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryToWholeDecimal(double value, out decimal result)
     {
         if (double.IsInteger(value) && Math.Abs(value) < (double)decimal.MaxValue)
@@ -207,8 +197,6 @@ internal static partial class YANMath
     /// infinities, magnitudes from <see cref="decimal.MaxValue"/> on, and values whose shortest text has more than the 28 decimal
     /// places of <see cref="decimal"/> (1e-30 would become 0), unless <paramref name="rounded"/> accepts them rounded to 28 places.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryToDecimal(double value, out decimal result, bool rounded = false)
     {
         if (!double.IsFinite(value) || Math.Abs(value) >= (double)decimal.MaxValue)
@@ -241,8 +229,6 @@ internal static partial class YANMath
     }
 
     /// <summary>Whether <paramref name="number"/> reads back as <paramref name="value"/>, through text (the <see cref="decimal"/>-to-<c>double</c> cast is not correctly rounded).</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool RoundTrips(decimal number, double value) => double.Parse(number.ToString(InvariantCulture), InvariantCulture) == value;
 
     /// <summary>Powers of ten that <c>double</c> represents exactly.</summary>
@@ -254,8 +240,6 @@ internal static partial class YANMath
     /// decimal. A mantissa below 2^53 divided by an exact power of ten is a single, correctly rounded operation; other numbers answer
     /// <c>false</c> and take the text round trip.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsExactly(decimal number, double value)
     {
         Span<int> bits = stackalloc int[4];
@@ -294,8 +278,6 @@ internal static partial class YANMath
     /// equivalent (NaN, infinity, out of range), or needs more than 28 decimal places (1e-30) and <paramref name="rounded"/> is
     /// <c>false</c>: the caller then takes the 8.3.3 <c>double</c> path, which keeps the sign of such a value for Floor and Ceiling.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryToDecimal(object? input, out decimal result, bool rounded = false)
     {
         switch (input)
@@ -368,8 +350,6 @@ internal static partial class YANMath
     /// The elements of a <typeparamref name="T"/>[] or a <see cref="List{T}"/> as a span, which the aggregates loop over without an
     /// enumerator. Exact types only, as LINQ does: a subclass of <see cref="List{T}"/> can enumerate differently.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryGetSpan<T>(IEnumerable<T> input, out ReadOnlySpan<T> span)
     {
         switch (input)
@@ -401,8 +381,6 @@ internal static partial class YANMath
     /// <see cref="Comparer{T}.Default"/>, the first of equal values wins, and NaN is the smallest double. LINQ throws
     /// "Sequence contains no elements" for a value type when every element is null; this returns <c>default</c>, as for empty input.
     /// </remarks>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? MinMax<T>(IEnumerable<T?> values, bool max)
     {
         var comparer = Comparer<T?>.Default;
@@ -439,8 +417,6 @@ internal static partial class YANMath
     /// The mean of <paramref name="values"/> computed like <see cref="Enumerable.Average{TSource}(IEnumerable{TSource}, Func{TSource, double})"/>
     /// (the sum starts from the first value), or <c>false</c> when there are no values (LINQ throws).
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryAverage(IEnumerable<double> values, out double average)
     {
         using var enumerator = values.GetEnumerator();
@@ -467,8 +443,6 @@ internal static partial class YANMath
     }
 
     /// <summary>Exact sum of integer elements; 64 bits per element and fewer than 2^63 elements cannot overflow <see cref="Int128"/>.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Int128 SumInt128<T>(IEnumerable<T> input, out long count)
     {
         Int128 sum = 0;
@@ -500,8 +474,6 @@ internal static partial class YANMath
     /// Sum of <see cref="float"/>/<see cref="double"/> elements in <c>double</c>, in order, like 8.3.3: from 0 for Sum
     /// (<see cref="Enumerable.Sum{TSource}(IEnumerable{TSource}, Func{TSource, double})"/>), from the first element for Average.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static double SumDouble<T>(IEnumerable<T> input, bool fromFirst, out long count)
     {
         if (TryGetSpan(input, out var span))
@@ -546,8 +518,6 @@ internal static partial class YANMath
     }
 
     /// <summary>Exact sum of <see cref="decimal"/> elements; <c>false</c> when an intermediate sum overflows.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TrySumDecimal(IEnumerable<decimal> input, out decimal sum, out long count)
     {
         sum = 0;
@@ -585,8 +555,6 @@ internal static partial class YANMath
     /// Exact sum of object-path elements converted with <see cref="TryToDecimal(object, out decimal, bool)"/>, a value with more than 28
     /// decimal places rounded to 28 (the precision of the <see cref="decimal"/> sum); <c>false</c> on a failed conversion or an overflow.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TrySumDecimal(IEnumerable<object?> input, out decimal sum, out long count)
     {
         sum = 0;
@@ -614,8 +582,6 @@ internal static partial class YANMath
     }
 
     /// <summary><paramref name="sum"/> / <paramref name="count"/> rounded half to even, as the <c>double</c> average was when converted to an integer.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Int128 DivideToEven(Int128 sum, long count)
     {
         var (quotient, remainder) = Int128.DivRem(sum, count);
@@ -625,8 +591,6 @@ internal static partial class YANMath
     }
 
     /// <summary>Sum of a typed, non-empty collection; see the class remarks.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? SumNumber<T>(IEnumerable<T?> input)
     {
         var kind = KindOf<T>();
@@ -650,22 +614,16 @@ internal static partial class YANMath
     }
 
     /// <summary>Sum of a non-empty object-path collection; see the class remarks.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? SumObject<T>(IEnumerable<object?> input)
         => NumberTarget<T>.IsDecimal && TrySumDecimal(input, out var sum, out _) ? FromDecimal<T>(sum) : SumObjectDouble<T>(input);
 
     /// <summary>The 8.3.3 sum: every element (null = 0) as <c>double</c>.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? SumObjectDouble<T>(IEnumerable<object?> input) => input.Sum(static x => x.ParseImplement<double>()).ParseImplement<T?>();
 
     /// <summary>
     /// Average of the non-null elements of a typed collection that was not empty when checked; <c>default</c> when it has no elements
     /// left by now (a sequence that can be enumerated only once). See the class remarks.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? AverageNumber<T>(IEnumerable<T?> input)
     {
         var kind = KindOf<T>();
@@ -695,8 +653,6 @@ internal static partial class YANMath
     }
 
     /// <summary>Average of the non-null elements of a non-empty object-path collection; <c>default</c> when all are null.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? AverageObject<T>(IEnumerable<object?> input)
     {
         var values = input.Where(static x => x is not null);
@@ -705,8 +661,6 @@ internal static partial class YANMath
     }
 
     /// <summary>The 8.3.3 average: the non-null elements as <c>double</c>; <c>default</c> when there are none.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? AverageObjectDouble<T>(IEnumerable<object?> input)
         => TryAverage(input.Where(static x => x is not null).Select(static x => x.ParseImplement<double>()), out var average) ? average.ParseImplement<T?>() : default;
 
@@ -715,13 +669,9 @@ internal static partial class YANMath
     #region Rounding and powers
 
     /// <summary><c>null</c> digits as given, otherwise parsed like 8.3.3 (<c>digits.ParseImplement&lt;int&gt;()</c>).</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static int? ParseDigits(object? digits) => digits is null ? null : digits.ParseImplement<int>();
 
     /// <summary>Whether <see cref="Math.Round(double, int, MidpointRounding)"/> would accept the arguments (it throws for negative digits and undefined modes).</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsValidRound(int? digits, MidpointRounding mode) => digits is not < 0 && mode is >= ToEven and <= ToPositiveInfinity;
 
     /// <summary>
@@ -729,8 +679,6 @@ internal static partial class YANMath
     /// <see cref="decimal"/> range is rounded as <see cref="decimal"/> (up to 28 digits) and converted back exactly, any other value
     /// to 15 digits. Negative digits and undefined modes still throw the 8.3.3 exceptions.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static double RoundDouble(double value, int? digits, MidpointRounding mode)
     {
         if (digits is not int places)
@@ -758,18 +706,12 @@ internal static partial class YANMath
     }
 
     /// <summary><see cref="decimal.Round(decimal, int, MidpointRounding)"/> for valid arguments (see <see cref="IsValidRound"/>); more than 28 digits means 28.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static decimal RoundDecimal(decimal value, int? digits, MidpointRounding mode) => digits is int places ? decimal.Round(value, Math.Min(places, 28), mode) : decimal.Round(value, mode);
 
     /// <summary>The 8.3.3 power: the input as <c>double</c>, <see cref="Math.Pow(double, double)"/>, the result converted to <typeparamref name="T"/>.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? PowDouble<T>(object? input, double exponent) => Math.Pow(input.ParseImplement<double>(), exponent).ParseImplement<T?>();
 
     /// <summary>Whether <paramref name="exponent"/> is a whole number that <see cref="int"/> can hold.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsWholeExponent(double exponent, out int whole)
     {
         if (exponent == Math.Floor(exponent) && Math.Abs(exponent) <= int.MaxValue)
@@ -789,8 +731,6 @@ internal static partial class YANMath
     /// there (out of range for every 64-bit target). A negative exponent gives 1/x^n rounded half to even, as the <c>double</c>
     /// result was: 0 unless |x| is 1. <c>false</c> for a fractional exponent and for 0 to a negative power (<c>double</c> gives infinity).
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryPowInteger(Int128 value, double exponent, out Int128 result)
     {
         if (!IsWholeExponent(exponent, out var n) || n < 0 && value == 0)
@@ -838,8 +778,6 @@ internal static partial class YANMath
     /// negative exponent (or (1/x)^n when |x| &lt; 1, which keeps more digits). <c>false</c> for a fractional exponent, for 0 to a
     /// negative power and on overflow, where the caller falls back to <see cref="Math.Pow(double, double)"/>.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryPowDecimal(decimal value, double exponent, out decimal result)
     {
         if (!IsWholeExponent(exponent, out var n) || n < 0 && value == 0)
@@ -888,22 +826,16 @@ internal static partial class YANMath
     /// A function that is inherently <c>double</c> (Sqrt, Sin, Log, ...): computed directly for a <see cref="float"/>/<see cref="double"/>
     /// <typeparamref name="T"/>, and through the 8.3.3 object path for every other type.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? Unary<T>(T? input, Func<double, double> function)
         => input is null ? input : IsBinaryFloatingPoint(KindOf<T>()) ? FromDouble<T>(function(ToDouble(input))) : UnaryObject<T>(input, function);
 
     /// <summary>The 8.3.3 computation: the input as <c>double</c>, the result converted to <typeparamref name="T"/>.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? UnaryObject<T>(object? input, Func<double, double> function) => input is null ? default : function(input.ParseImplement<double>()).ParseImplement<T?>();
 
     /// <summary>
     /// Truncate, Ceiling, Floor and Abs of a typed value: identity for integers (Abs: exact, out of range = <c>default</c>),
     /// <see cref="decimal"/> natively, <see cref="float"/>/<see cref="double"/> in <c>double</c>, other types through the object path.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? Exact<T>(T? input, Func<double, double> function, Func<decimal, decimal> decimalFunction, bool abs)
     {
         if (input is null)
@@ -920,8 +852,6 @@ internal static partial class YANMath
     }
 
     /// <summary>Truncate, Ceiling, Floor and Abs on the object path: in <see cref="decimal"/> for integer and decimal targets, otherwise as 8.3.3.</summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T? ExactObject<T>(object? input, Func<double, double> function, Func<decimal, decimal> decimalFunction)
         => input is null ? default
         : !NumberTarget<T>.IsDecimal ? UnaryObject<T>(input, function)

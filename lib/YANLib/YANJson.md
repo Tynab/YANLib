@@ -220,7 +220,7 @@ var processedData = people
 - **Default Serialization Options**: Uses camel case property naming by default for serialization
 - **Default Deserialization Options**: Uses case-insensitive property matching by default for deserialization
 - **Null Handling**: All methods handle null inputs gracefully, returning null rather than throwing exceptions
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 - **Extension Methods**: Implemented as extension methods for better integration with existing code
 - **Partial Classes**: Uses partial classes to organize functionality by category
 

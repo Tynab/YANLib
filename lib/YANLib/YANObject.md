@@ -197,7 +197,7 @@ var copy = original.Copy(); // Creates a new instance with the same property val
 - The library caches the property list and the `default(T)` value of each type (thread-safe `ConcurrentDictionary`); property values are read through reflection on every call
 - `ChangeTimeZoneAllProperty` (and `ChangeTimeZoneAllProperties`, for the whole call) keeps every object and struct it walks in a set until it returns, so that each object is converted once, plus one work-list entry per level of the path being walked. Measured with Release builds on a list of 3 000 000 small items holding one `DateTime` each: a peak working set of about 464 MB for class items and 381 MB for struct items (8.3.3, which kept no such set: 307 MB and 188 MB); both completed under a 384 MB GC heap hard limit (`DOTNET_GCHeapHardLimit`)
 - `ChangeTimeZoneAllProperties` runs eagerly and sequentially: it enumerates the input once, converts every element in input order before returning, and returns the elements as a new array (enumerating the result again does not convert anything again)
-- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details

@@ -195,7 +195,7 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 
 - Per-type metadata is cached in a static generic class, which is thread-safe without locks
 - Collection methods are lazily evaluated on the enumerating thread and preserve the input order
-- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 - Strings are parsed with `TryParse`, so invalid input does not cost an exception
 
 

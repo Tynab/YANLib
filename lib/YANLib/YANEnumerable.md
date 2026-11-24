@@ -186,7 +186,7 @@ HashSet<int> hashSetResult = duplicates.ToHashSet<int>(); // Returns HashSet wit
 
 - The library uses optimized implementations for different collection types
 - Type conversion is performed efficiently with minimal overhead
-- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 - Collection operations are designed to minimize memory allocations where possible
 
 

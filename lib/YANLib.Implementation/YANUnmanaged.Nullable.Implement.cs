@@ -1,11 +1,8 @@
-﻿using System.Diagnostics;
-
+﻿
 namespace YANLib.Implementation;
 
 internal static partial class YANUnmanaged
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? ParseImplement<T>(this object? input)
     {
         if (input is null)

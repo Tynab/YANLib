@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using static System.Linq.Expressions.Expression;
 using static System.Reflection.BindingFlags;
@@ -11,8 +10,6 @@ internal static partial class YANExpression
 {
     private static readonly ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression> Cache = new();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static Expression<Func<T, object>> PropertyExpressionImplement<T>(string parameterName, string propertyName)
     {
         if (parameterName.IsNullWhiteSpaceImplement())
@@ -28,8 +25,6 @@ internal static partial class YANExpression
         return (Expression<Func<T, object>>)Cache.GetOrAdd((typeof(T), parameterName, propertyName), static key => CreatePropertyExpression<T>(key.ParameterName, key.PropertyName));
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Expression<Func<T, object>> CreatePropertyExpression<T>(string parameterName, string propertyName)
     {
         var parameter = Parameter(typeof(T), parameterName);

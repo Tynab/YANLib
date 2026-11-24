@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -24,8 +23,6 @@ internal static partial class YANObject
     /// by a property of another type is kept (reflection already leaves out one hidden by a property of the same type), so <c>Copy</c> and
     /// <c>ChangeTimeZoneAllProperty</c> handle both, as 8.3.3 did.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedReadableProperties(Type type) => ReadablePropertyCache.GetOrAdd(type, static t =>
         [.. t.GetProperties(Public | Instance).Where(static x => x.CanRead && !x.PropertyType.IsByRefLike && x.GetIndexParameters().Length is 0)]);
 
@@ -33,16 +30,12 @@ internal static partial class YANObject
     /// Gets the properties of <see cref="GetCachedReadableProperties(Type)"/> that are also writable: the properties that <c>Copy</c> copies and, as in
     /// 8.3.3, that <c>ChangeTimeZoneAllProperty</c> walks in a dictionary type or a type implementing only <c>IList&lt;DateTime?&gt;</c>.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedReadWriteProperties(Type type)
         => ReadWritePropertyCache.GetOrAdd(type, static t => [.. GetCachedReadableProperties(t).Where(static x => x.CanWrite)]);
 
     /// <summary>
     /// Gets the properties of <see cref="GetCachedReadableProperties(Type)"/>, keeping for a name hidden with <c>new</c> only the most-derived property.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, static t =>
     {
         var result = new List<PropertyInfo>();
@@ -64,21 +57,15 @@ internal static partial class YANObject
         return [.. result];
     });
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static PropertyInfo[] GetCachedProperties(Type type, IEnumerable<string?> names) => [.. GetCachedProperties(type).Where(x => names.Contains(x.Name))];
 
     /// <summary>
     /// Gets <c>default(T)</c> for <paramref name="type"/> as an object: <c>null</c> for reference and nullable types, otherwise a cached
     /// zero-initialised box (a struct's explicit parameterless constructor is not run, unlike <see cref="Activator.CreateInstance(Type)"/>).
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static object? GetDefaultValue(Type type)
         => type.IsValueType && Nullable.GetUnderlyingType(type) is null ? DefaultValueCache.GetOrAdd(type, static t => RuntimeHelpers.GetUninitializedObject(t)) : null;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsDefaultValue(this PropertyInfo prop, object input) => EqualityComparer<object>.Default.Equals(prop.GetValue(input), GetDefaultValue(prop.PropertyType));
 
     #endregion
@@ -89,8 +76,6 @@ internal static partial class YANObject
     /// Finds the readable, non-indexer public instance property named <paramref name="name"/>: an exact (ordinal) match wins over a
     /// case-insensitive one, and within each group the most-derived declaration wins (so <c>new</c>-hidden properties are not ambiguous).
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static PropertyInfo? GetPropertyImplement(this Type type, string name)
     {
         PropertyInfo? exact = null;
@@ -114,8 +99,6 @@ internal static partial class YANObject
         return exact ?? ignoreCase;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static int GetCountImplement<T>(this IEnumerable<T>? input) => input switch
     {
         null => 0,
@@ -128,44 +111,30 @@ internal static partial class YANObject
 
     #region Default
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsDefaultImplement<T>(this T input) => EqualityComparer<T>.Default.Equals(input.ParseImplement<T>(), default);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsNotDefaultImplement<T>(this T input) => !EqualityComparer<T>.Default.Equals(input.ParseImplement<T>(), default);
 
     #endregion
 
     #region NullDefault
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsNullDefaultImplement<T>(this T? input) where T : class => input is null || input.AllPropertiesDefaultImplement();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsNotNullDefaultImplement<T>(this T? input) where T : class => input is not null && input.AnyPropertiesNotDefaultImplement();
 
     #endregion
 
     #region NullEmpty
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsNullEmptyImplement<T>([NotNullWhen(false)] this IEnumerable<T>? input) => input is null || !input.Any();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static bool IsNotNullEmptyImplement<T>([NotNullWhen(true)] this IEnumerable<T>? input) => input is not null && input.Any();
 
     #endregion
 
     #region ChangeTimeZoneAllProperty
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? ChangeTimeZoneAllPropertyImplement<T>(this T? input, object? tzSrc = null, object? tzDst = null) where T : class
     {
         if (input is not null)
@@ -184,8 +153,6 @@ internal static partial class YANObject
     /// <paramref name="root"/>, each with the position where its walk resumes, instead of on the call stack, so the depth of the graph (a long linked
     /// list, a deep tree, a chain of structs) is not limited by the call stack.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static void ChangeTimeZoneRoot(object root, object? tzSrc, object? tzDst, HashSet<object> visited, List<TimeZoneNode> pending)
     {
         if (!TryVisitTimeZoneValue(root, visited))
@@ -267,8 +234,6 @@ internal static partial class YANObject
         /// property's setter or the list's indexer), so that a struct, or a property whose getter returns a copy (a defensive copy, a computed or a
         /// JSON-backed object), gets the converted value, and marks the owner as changed so that it is written back in turn.
         /// </summary>
-        [DebuggerHidden]
-        [DebuggerStepThrough]
         public void Complete()
         {
             if (!Changed)
@@ -298,8 +263,6 @@ internal static partial class YANObject
     /// <summary>
     /// Whether <paramref name="value"/> is to be walked: it is not a leaf and was not walked before. It is then added to <paramref name="visited"/>.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryVisitTimeZoneValue(object value, HashSet<object> visited) => !value.GetType().IsTimeZoneLeaf() && visited.Add(value);
 
     /// <summary>
@@ -311,8 +274,6 @@ internal static partial class YANObject
     /// <param name="tzDst">The destination time zone.</param>
     /// <param name="visited">The objects already walked.</param>
     /// <returns>The node of the next value to walk (already added to <paramref name="visited"/>), or <c>null</c> when <paramref name="node"/>'s value is done.</returns>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static TimeZoneNode? ChangeTimeZoneNext(TimeZoneNode node, object? tzSrc, object? tzDst, HashSet<object> visited)
     {
         if (!node.Started)
@@ -413,8 +374,6 @@ internal static partial class YANObject
     /// the values of a dictionary, or the items of a type that implements <c>IList&lt;DateTime?&gt;</c> but not <see cref="IList"/>, are converted, the
     /// readable and writable properties of its type are read as well (as in 8.3.3, which walked them for these types).
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static void ChangeTimeZoneStart(TimeZoneNode node, object? tzSrc, object? tzDst)
     {
         var input = node.Value;
@@ -541,8 +500,6 @@ internal static partial class YANObject
     /// non-data types (reflection, delegates, streams, tasks, threads, handles, pointers, <see cref="Lazy{T}"/>, whose value the walk must not create),
     /// or an array / list / <see cref="ArraySegment{T}"/> whose elements are all such values.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsTimeZoneLeaf(this Type type) => TimeZoneLeafCache.GetOrAdd(type, static t => IsTimeZoneLeaf(t, []));
 
     /// <summary>
@@ -550,8 +507,6 @@ internal static partial class YANObject
     /// whose element type leads back to it (<c>class Node : List&lt;Node&gt;</c>, or <c>class A : List&lt;B&gt;</c> with <c>class B : List&lt;A&gt;</c>)
     /// ends the recursion instead of overflowing the stack.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsTimeZoneLeaf(Type type, HashSet<Type> listTypes)
     {
         if (TimeZoneLeafCache.TryGetValue(type, out var cached))
@@ -594,30 +549,20 @@ internal static partial class YANObject
     /// Whether <paramref name="type"/> is a collection that the walk converts in place (an array, a list or a dictionary), so a getter-only property
     /// of this type is still walked.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsTimeZoneCollection(this Type type) => TimeZoneCollectionCache.GetOrAdd(type, static t =>
         !t.IsValueType && !t.IsTimeZoneLeaf() && (t.IsArray || typeof(IList).IsAssignableFrom(t) || typeof(IDictionary).IsAssignableFrom(t)
         || IsGenericInterface(t, typeof(IList<>)) || IsGenericInterface(t, typeof(IDictionary<,>)) || Array.Exists(t.GetInterfaces(), x => IsGenericInterface(x, typeof(IList<>)) || IsGenericInterface(x, typeof(IDictionary<,>)))));
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsGenericInterface(Type type, Type definition) => type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == definition;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsArraySegment(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ArraySegment<>);
 
     /// <summary>
     /// Whether <paramref name="type"/> is a <see cref="Lazy{T}"/>. A class deriving from it (<see cref="Lazy{T, TMetadata}"/> included) is walked,
     /// but the properties that <see cref="Lazy{T}"/> declares (<see cref="Lazy{T}.Value"/>) are never read by the walk.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsLazy(Type? type) => type is { IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Lazy<>);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Type? GetSequenceElementType(Type type)
     {
         Type? elementType = null;
@@ -641,8 +586,6 @@ internal static partial class YANObject
     /// <summary>
     /// Gets a converter for a type that implements <c>IDictionary&lt;TKey, DateTime&gt;</c> or <c>IDictionary&lt;TKey, DateTime?&gt;</c>, or <c>null</c>.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Func<object, object?, object?, bool>? GetDateTimeDictionaryConverter(Type type) => DateTimeDictionaryConverterCache.GetOrAdd(type, static t =>
     {
         foreach (var itf in t.GetInterfaces())
@@ -670,16 +613,12 @@ internal static partial class YANObject
     /// the segment's items in that array instead of walking the segment's properties, which would convert the items outside the segment too.
     /// (Segments of <see cref="DateTime"/> / <c>DateTime?</c> are converted as lists.)
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Func<object, (IList? Array, int Offset, int Count)>? GetArraySegmentBounds(Type type) => ArraySegmentBoundsCache.GetOrAdd(type, static t =>
         IsArraySegment(t)
             ? typeof(YANObject).GetMethod(nameof(ArraySegmentBounds), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments())
                 .CreateDelegate<Func<object, (IList? Array, int Offset, int Count)>>()
             : null);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static (IList? Array, int Offset, int Count) ArraySegmentBounds<T>(object input)
     {
         var segment = (ArraySegment<T>)input;
@@ -687,8 +626,6 @@ internal static partial class YANObject
         return (segment.Array, segment.Offset, segment.Count);
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool ChangeTimeZoneDictionary<TKey>(object input, object? tzSrc, object? tzDst)
     {
         var dictionary = (IDictionary<TKey, DateTime>)input;
@@ -706,8 +643,6 @@ internal static partial class YANObject
         return dictionary.Count > 0;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool ChangeTimeZoneNullableDictionary<TKey>(object input, object? tzSrc, object? tzDst)
     {
         var dictionary = (IDictionary<TKey, DateTime?>)input;
@@ -735,8 +670,6 @@ internal static partial class YANObject
 
     #region Copy
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T CopyImplement<T>(this T input) where T : new()
     {
         if (input is null || typeof(T).IsValueType)

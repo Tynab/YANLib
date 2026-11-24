@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Numerics;
 using static System.Convert;
 using static System.DateTime;
@@ -13,38 +12,22 @@ internal static partial class YANUnmanaged
 {
     #region Private
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null)
         => input.IsNullWhiteSpaceImplement() ? defaultValue : format.IsNullEmptyImplement() ? TryParse(input, out var dt) ? dt : defaultValue : TryParseExact(input, [.. format], InvariantCulture, None, out dt) ? dt : defaultValue;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Guid ParseGuid(this string? input, Guid defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : Guid.TryParse(input, out var guid) ? guid : defaultValue;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static TimeSpan ParseTimeSpan(this string? input, TimeSpan defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : TimeSpan.TryParse(input, out var ts) ? ts : defaultValue;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T ParseEnum<T>(this string? input, T defaultValue = default) where T : unmanaged
         => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var e) && e is T value ? value : defaultValue;
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Guid? ParseGuidNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : Guid.TryParse(input, out var guid) ? guid : default(Guid?);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static TimeSpan? ParseTimeSpanNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TimeSpan.TryParse(input, out var ts) ? ts : default(TimeSpan?);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
     {
         // already the requested type: return it unchanged (8.3.3 round-tripped DateTime through ToString(), losing milliseconds and Kind)
@@ -99,8 +82,6 @@ internal static partial class YANUnmanaged
     /// <see cref="long"/>/<see cref="ulong"/>. When <paramref name="floorFractions"/> is set and an integer target cannot
     /// take the value directly, the exact floor of the value is used if it is in range.
     /// </remarks>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryChangeType(object input, Type targetType, ParseKind kind, bool floorFractions, out object? result)
     {
         if (kind is not ParseKind.Other)
@@ -140,8 +121,6 @@ internal static partial class YANUnmanaged
     /// Parses <paramref name="text"/> with <see cref="IParsable{TSelf}.TryParse(string?, IFormatProvider?, out TSelf)"/> and the current
     /// culture, which uses the same <see cref="NumberStyles"/> as <see cref="Convert.ChangeType(object, Type)"/> did, without exceptions.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryParseValue<TValue>(string text, out object? result) where TValue : IParsable<TValue>
         => TValue.TryParse(text, CurrentCulture, out var value) ? Succeed(value, out result) : Fail(out result);
 
@@ -149,8 +128,6 @@ internal static partial class YANUnmanaged
     /// Mirrors <see cref="Convert.ChangeType(object, Type)"/> for the remaining targets, rejecting up front the cases in which it
     /// always throws.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryChangeTypeFallback(object input, Type targetType, out object? result)
     {
         if (input is not IConvertible)
@@ -164,8 +141,6 @@ internal static partial class YANUnmanaged
             : TryChangeTypeCore(input, targetType, out result);
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryConvertInteger<TInteger>(object input, bool floorFractions, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
     {
         switch (input)
@@ -194,12 +169,8 @@ internal static partial class YANUnmanaged
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static Type IntegerConversionType<TInteger>() => typeof(TInteger) == typeof(nint) ? typeof(long) : typeof(TInteger) == typeof(nuint) ? typeof(ulong) : typeof(TInteger);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryGetInt128(object? input, out Int128 value)
     {
         (var isInteger, value) = input switch
@@ -219,20 +190,14 @@ internal static partial class YANUnmanaged
         return isInteger;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryFromInt128<TInteger>(Int128 value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
         => value >= Int128.CreateTruncating(TInteger.MinValue) && value <= Int128.CreateTruncating(TInteger.MaxValue) ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
 
     /// <remarks><paramref name="value"/> must already be integral. The upper bound is exclusive (MaxValue + 1 is a power of two and exact as a double).</remarks>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryFromDouble<TInteger>(double value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
         => value >= double.CreateTruncating(TInteger.MinValue) && value < double.CreateTruncating(TInteger.MaxValue) + 1 ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
 
     /// <remarks><paramref name="value"/> must already be integral.</remarks>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryFromDecimal<TInteger>(decimal value, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
         => value >= decimal.CreateTruncating(TInteger.MinValue) && value <= decimal.CreateTruncating(TInteger.MaxValue) ? Succeed(TInteger.CreateTruncating(value), out result) : Fail(out result);
 
@@ -241,8 +206,6 @@ internal static partial class YANUnmanaged
     /// whose magnitude is at least 2^96 (binary exponent above 96); every smaller value converts (rounded to 15 or 7 significant
     /// digits), so only the certain failures are rejected here and the rest is left to the guarded conversion.
     /// </remarks>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsDecimalRange(double value) => Math.Abs(value) < 79228162514264337593543950336.0;
 
     /// <summary>
@@ -250,8 +213,6 @@ internal static partial class YANUnmanaged
     /// exception-free equivalent (bool/char/DateTime sources, custom <see cref="IConvertible"/> implementations). Strings never
     /// get here for numeric, <see cref="bool"/>, <see cref="char"/>, enum or <see cref="TypeCode.Object"/> targets.
     /// </summary>
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool TryChangeTypeCore(object input, Type targetType, out object? result)
     {
         try
@@ -266,8 +227,6 @@ internal static partial class YANUnmanaged
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool Succeed<TValue>(TValue value, out object? result)
     {
         result = value;
@@ -275,8 +234,6 @@ internal static partial class YANUnmanaged
         return true;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool Fail(out object? result)
     {
         result = null;
@@ -284,8 +241,6 @@ internal static partial class YANUnmanaged
         return false;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static string? SafeToString(this object? input)
     {
         try
@@ -298,8 +253,6 @@ internal static partial class YANUnmanaged
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static ParseKind GetParseKind(Type type) => type.IsEnum ? ParseKind.Enum : type == typeof(nint) ? ParseKind.NInt : type == typeof(nuint) ? ParseKind.NUInt : Type.GetTypeCode(type) switch
     {
         TypeCode.Boolean => ParseKind.Boolean,
@@ -361,8 +314,6 @@ internal static partial class YANUnmanaged
 
     #endregion
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T ParseImplement<T>(this object? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
         => ParseHelper<T>(input, defaultValue, format);
 }

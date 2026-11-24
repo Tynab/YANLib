@@ -232,7 +232,7 @@ public async Task ManualProcessKill(string processNameOrPath)
 - **Resource Management**: Processes are properly disposed after termination to prevent resource leaks
 - **Null Handling**: All methods handle null inputs gracefully, avoiding unnecessary operations
 - **Exception Safety**: A failure to kill one process does not stop the others or leak process handles; the first failure is rethrown at the end
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 using static System.Threading.Tasks.Task;
 using static System.Threading.Tasks.TaskContinuationOptions;
 
@@ -11,8 +10,6 @@ internal static partial class YANTask
 
     // Enumerates the source once (a lazy sequence such as tasks.Select(StartAsync) would otherwise start its tasks again)
     // and drops duplicate task instances.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static HashSet<Task<T>> Materialize<T>(IEnumerable<Task<T>> tasks)
     {
         var pending = new HashSet<Task<T>>(tasks);
@@ -25,8 +22,6 @@ internal static partial class YANTask
     // tasks that are still pending: callers must cancel it as soon as they stop reading (match found, cancellation,
     // abandoned enumeration), otherwise every call that shares a long-lived task leaves a continuation, and the channel it
     // holds, attached to that task.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static ChannelReader<Task<T>> InCompletionOrder<T>(List<Task<T>> tasks, CancellationToken stopToken)
     {
         var channel = Channel.CreateUnbounded<Task<T>>(new UnboundedChannelOptions
@@ -43,8 +38,6 @@ internal static partial class YANTask
     }
 
     // Marks the exception of a faulted task as observed, as awaiting it did before.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool IsSuccessful<T>(Task<T> task)
     {
         if (task.IsCompletedSuccessfully)
@@ -58,8 +51,6 @@ internal static partial class YANTask
     }
 
     // An exception thrown by the predicate counts as no match.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static bool Matches<T>(Task<T> task, Func<T, bool> predicate)
     {
         if (!IsSuccessful(task))
@@ -77,8 +68,6 @@ internal static partial class YANTask
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static async Task<T?> AnyWithCondition<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
     {
         await Yield();
@@ -143,13 +132,9 @@ internal static partial class YANTask
 
     #endregion
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static Task<T?> WaitAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
         => cancellationToken.IsCancellationRequested ? FromCanceled<T?>(cancellationToken) : AnyWithCondition(tasks, predicate, cancellationToken);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static Task<T?> WhenAnyWithConditionImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, CancellationToken cancellationToken = default)
         => cancellationToken.IsCancellationRequested ? FromCanceled<T?>(cancellationToken) : AnyWithCondition(tasks, predicate, cancellationToken);
 }

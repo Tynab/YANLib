@@ -1,5 +1,4 @@
 ﻿using System.Buffers;
-using System.Diagnostics;
 using System.Text;
 using static System.Globalization.CultureInfo;
 
@@ -41,8 +40,6 @@ internal static partial class YANText
 
     // Copies the characters of input that TFilter keeps (a struct type argument, so the check is inlined). Returns input
     // itself when every character is kept.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static string Filter<TFilter>(string input) where TFilter : struct, ICharFilter
     {
         char[]? rented = null;
@@ -73,12 +70,8 @@ internal static partial class YANText
 
     #endregion
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? TitleImplement(this string? input) => input.IsNullWhiteSpaceImplement() ? input : CurrentCulture.TextInfo.ToTitleCase(input.LowerImplement()!);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? CapitalizeImplement(this string? input) => input.IsNullWhiteSpaceImplement() ? input : string.Create(input.Length, input, static (output, source) =>
     {
         var isFirstChar = true;
@@ -97,8 +90,6 @@ internal static partial class YANText
         }
     });
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? CleanSpaceImplement(this string? input)
     {
         if (input.IsNullEmptyImplement())
@@ -154,8 +145,6 @@ internal static partial class YANText
     // Words are separated by any run of white-space and punctuation characters and joined with a single space; digits are
     // dropped without ending a word. The first character kept in each word is upper-cased and the others lower-cased (current
     // culture), so a word that starts with a symbol keeps its letters in lower case ("$john"). There is no leading or trailing space.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? FormatNameImplement(this string? input)
     {
         if (input.IsNullWhiteSpaceImplement())
@@ -206,15 +195,9 @@ internal static partial class YANText
         return result;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? FilterAlphabeticImplement(this string? input) => input.IsNullEmptyImplement() ? input : Filter<AlphabeticFilter>(input);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? FilterNumberImplement(this string? input) => input.IsNullEmptyImplement() ? input : Filter<NumberFilter>(input);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static string? FilterAlphanumericImplement(this string? input) => input.IsNullEmptyImplement() ? input : Filter<AlphanumericFilter>(input);
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 using static System.Threading.Tasks.Task;
 
@@ -10,8 +9,6 @@ internal static partial class YANTask
     #region Private
 
     // Returns null instead of throwing when the token is cancelled, so the caller can end its enumeration quietly.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static async ValueTask<Task<T>?> ReadOrNullAsync<T>(ChannelReader<Task<T>> reader, CancellationToken cancellationToken)
     {
         try
@@ -27,8 +24,6 @@ internal static partial class YANTask
     // A cancelled token (already cancelled, passed later through WithCancellation, or cancelled while waiting or while
     // the consumer handles an item) ends the enumeration without an exception. Exceptions thrown by the predicate
     // propagate to the consumer.
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     private static async IAsyncEnumerable<T> AnyWithConditions<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await Yield();
@@ -114,8 +109,6 @@ internal static partial class YANTask
 
     #endregion
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static async IAsyncEnumerable<T> AsyncEnumerableEmptyImplement<T>()
     {
         await Yield();
@@ -123,13 +116,9 @@ internal static partial class YANTask
         yield break;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IAsyncEnumerable<T> WaitAnyWithConditionsImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
         => cancellationToken.IsCancellationRequested ? AsyncEnumerableEmptyImplement<T>() : AnyWithConditions(tasks, predicate, taken, cancellationToken);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IAsyncEnumerable<T> WhenAnyWithConditionsImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
         => cancellationToken.IsCancellationRequested ? AsyncEnumerableEmptyImplement<T>() : AnyWithConditions(tasks, predicate, taken, cancellationToken);
 }

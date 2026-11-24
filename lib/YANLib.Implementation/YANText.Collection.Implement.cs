@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using static System.Threading.Tasks.Parallel;
+﻿using static System.Threading.Tasks.Parallel;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANText
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void TitleImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -27,13 +24,9 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? TitlesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.TitleImplement());
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void CapitalizeImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -54,13 +47,9 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? CapitalizesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.CapitalizeImplement());
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void CleanSpaceImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -81,13 +70,9 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? CleanSpacesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.CleanSpaceImplement());
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void FormatNameImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -108,13 +93,9 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? FormatNamesImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.FormatNameImplement());
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void FilterAlphabeticImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -135,13 +116,9 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterAlphabeticsImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.FilterAlphabeticImplement());
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void FilterNumberImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -162,13 +139,9 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterNumbersImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.FilterNumberImplement());
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void FilterAlphanumericImplement(this List<string?>? input)
     {
         if (input.IsNullEmptyImplement())
@@ -189,8 +162,6 @@ internal static partial class YANText
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<string?>? FilterAlphanumericsImplement(this IEnumerable<string?>? input)
         => input.IsNullEmptyImplement() ? input : input.Select(static x => x.FilterAlphanumericImplement());
 }

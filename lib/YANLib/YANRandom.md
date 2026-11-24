@@ -161,7 +161,7 @@ float randomFloat = customObjects.GenerateRandom<float>(); // Random float from 
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
 - **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges (min greater than max); min equal to max returns min
 - **Half-Open Ranges**: Every range is [min, max): max is never returned, also not through floating-point rounding, so a call without bounds never returns the type's MaxValue
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details

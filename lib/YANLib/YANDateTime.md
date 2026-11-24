@@ -215,7 +215,7 @@ var safeResults = mixedValidInvalid.GetWeekOfYears<int?>()?.ToArray(); // Return
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
 - **Edge Case Protection**: Time zone conversions include protection against DateTime overflow/underflow
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details

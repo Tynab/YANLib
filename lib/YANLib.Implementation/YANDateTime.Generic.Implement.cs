@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using static System.Globalization.DateTimeFormatInfo;
+﻿using static System.Globalization.DateTimeFormatInfo;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANDateTime
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? GetWeekOfYearImplement<T>(this object? input)
     {
         var dt = input is DateTime d ? d : input.ParseImplement<DateTime?>();
@@ -14,8 +11,6 @@ internal static partial class YANDateTime
         return dt.HasValue ? CurrentInfo.Calendar.GetWeekOfYear(dt.Value, CurrentInfo.CalendarWeekRule, CurrentInfo.FirstDayOfWeek).ParseImplement<T?>() : default;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? TotalMonthImplement<T>(object? input1, object? input2)
     {
         var dt1 = input1 is DateTime d1 ? d1 : input1.ParseImplement<DateTime?>();

@@ -1,13 +1,10 @@
-﻿using System.Diagnostics;
-using static System.Linq.Enumerable;
+﻿using static System.Linq.Enumerable;
 using static System.Threading.Tasks.Parallel;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANDateTime
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static void ChangeTimeZoneImplement(this List<object?>? input, object? tzSrc = null, object? tzDst = null)
     {
         if (input.IsNullEmptyImplement())
@@ -28,13 +25,9 @@ internal static partial class YANDateTime
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<DateTime?>? ChangeTimeZonesImplement(this IEnumerable<object?>? input, object? tzSrc = null, object? tzDst = null)
         => input.IsNullEmptyImplement() ? default : input.Select(x => x.ChangeTimeZoneImplement(tzSrc, tzDst));
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<DateTime?>? ChangeTimeZonesImplement(this System.Collections.IEnumerable? input, object? tzSrc = null, object? tzDst = null)
         => input is null ? default : input.Cast<object?>().ChangeTimeZonesImplement(tzSrc, tzDst);
 }

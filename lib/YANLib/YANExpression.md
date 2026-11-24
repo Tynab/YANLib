@@ -219,7 +219,7 @@ bool areDifferentTypes = object.ReferenceEquals(expr1, customerExpr); // Returns
 - **Compilation Cost**: The cache holds expression trees, not compiled delegates; `Compile()` is relatively expensive and runs on every call to it, so compile once and keep the delegate
 - **Memory Usage**: Cached expressions are stored in a `ConcurrentDictionary` that is never trimmed, so it grows with every distinct type/parameter/property combination; validate untrusted names (e.g. with `IsValidField<T>()`) before passing them
 - **Thread Safety**: The caching mechanism is thread-safe (`ConcurrentDictionary.GetOrAdd`): concurrent first calls for the same key all receive the same instance
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details

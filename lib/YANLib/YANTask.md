@@ -194,7 +194,7 @@ async Task ProcessDataAsync(byte[] data) => await Task.Delay(10);
 - **No Leaked Continuations**: The continuations registered on tasks that are still running are removed when the method returns, so many calls that share a long-running task do not accumulate memory
 - **Exception Handling**: Tasks that throw exceptions are gracefully skipped without affecting other tasks
 - **Cancellation Support**: The wait can be canceled at any time using a cancellation token
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details
