@@ -93,4 +93,60 @@ public class YANTaskLeakTest
         GC.KeepAlive(never);
         Assert.True(growth < MAX_GROWTH_BYTES, $"The heap grew by {growth:N0} bytes after {CALLS:N0} enumerations.");
     }
+
+    // Best-effort, see above: the same check for an enumeration that is canceled while it waits. The predicate cancels the
+    // token while the already complete 0 is checked, so the continuation on the long-lived task is always registered before
+    // the wait is canceled, without any timing assumption.
+    [Fact]
+    public async Task WaitAnyWithConditions_CanceledWhileWaitingWithLongLivedTask_DoesNotLeakContinuations_TaskCollection()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+
+        static async Task EnumerateUntilCanceled(Task<int> longLived)
+        {
+            using var cts = new CancellationTokenSource();
+
+            Task<int>[] tasks =
+            [
+                longLived,
+                Task.FromResult(0)
+            ];
+
+            try
+            {
+                await foreach (var item in tasks.WaitAnyWithConditions(x =>
+                {
+                    cts.Cancel();
+
+                    return false;
+                }, cancellationToken: cts.Token))
+                {
+                    Assert.Fail("No task matches.");
+                }
+
+                Assert.Fail("The enumeration was not canceled.");
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected.
+            }
+        }
+
+        await EnumerateUntilCanceled(never.Task);
+
+        var before = GC.GetTotalMemory(forceFullCollection: true);
+
+        // Act
+        for (var i = 0; i < CALLS; i++)
+        {
+            await EnumerateUntilCanceled(never.Task);
+        }
+
+        var growth = GC.GetTotalMemory(forceFullCollection: true) - before;
+
+        // Assert
+        GC.KeepAlive(never);
+        Assert.True(growth < MAX_GROWTH_BYTES, $"The heap grew by {growth:N0} bytes after {CALLS:N0} canceled enumerations.");
+    }
 }
