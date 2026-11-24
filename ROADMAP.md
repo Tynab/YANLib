@@ -31,7 +31,7 @@ Recommendation: Add IFormatProvider overloads in a minor release (or one taking 
 
 *Area:* YANObject / YANExpression
 
-**Chosen for 8.4.0: compiled getters/setters cached per type, getter exceptions still wrapped in TargetInvocationException (option 2).**
+**Chosen for 8.4.0: compiled getters/setters cached per type, getter exceptions still wrapped in TargetInvocationException (option 2). Done: the property checks (IsNullDefault, IsNotNullDefault, AllProperties*/AnyProperties*, every form) and Copy read and write each property through a DynamicMethod accessor cached per Type and compiled on the accessor's second call (its first call stays the reflection call, as .NET 8 reflection's own first call is interpreted, so the results, the getter/setter calls and the exceptions are unchanged); getter, setter and constructor exceptions surface as TargetInvocationException wrapping the thrown instance; pointer, function pointer and ref-return properties stay on reflection; ChangeTimeZoneAllProperty is unchanged. Measured (Release, Stopwatch): IsNullDefault on 6 properties 196 -> 95 ns, Copy of 10 properties 568 -> 91 ns; the second call of a new type costs about 0.3 ms (6-property IsNullDefault) to 0.8 ms (10-property Copy) more for the compilation (YANObject.md, Performance Considerations). No BenchmarkDotNet suite was added.**
 
 Every property is read with PropertyInfo.GetValue on every call (the ~30 ns reflection invoke dominates; IsNullDefault on 6 properties is ~200+ ns). An earlier prototype with Expression-compiled getters/setters per type was 2-10x faster, but getter exceptions would surface raw instead of wrapped in TargetInvocationException, which the docs now describe.
 
