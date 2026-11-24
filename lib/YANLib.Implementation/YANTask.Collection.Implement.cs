@@ -34,7 +34,9 @@ internal static partial class YANTask
         var emitted = 0u;
         List<Task<T>>? incomplete = null;
 
-        // Tasks that are already complete come first, in collection order, without registering anything.
+        // The tasks are checked in collection order, without registering anything: each task that is complete when it is
+        // reached (also one that completed while the consumer handled an earlier result) is yielded at once. The others are
+        // registered afterwards, in collection order, so those that have completed by then come first, in that order.
         foreach (var task in pending)
         {
             if (!task.IsCompleted)

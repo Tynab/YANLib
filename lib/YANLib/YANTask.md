@@ -19,7 +19,7 @@ The library is organized into several functional categories:
 ### Streaming All Matching Results
 
 - **Multiple Result Filtering**: Enumerate every task result that satisfies a condition as an `IAsyncEnumerable<T>`, with `await foreach` (`WaitAnyWithConditions`, `WhenAnyWithConditions`; the two currently behave the same)
-- **Completion Order**: Each result is yielded as soon as its task completes; tasks that are already complete when the enumeration starts come first, in collection order
+- **Completion Order**: Each result is yielded as its task completes. The tasks are checked in collection order first, and each task that is complete when it is reached is yielded at once, including a task that completed while your loop body handled an earlier result; the tasks that were still running are then yielded in the order they complete (those that have completed by the time the enumeration starts waiting for them come first, in collection order)
 - **Result Limiting**: The `taken` parameter ends the enumeration after that many results (`0`, the default, yields every match)
 - **Lazy Execution**: Nothing runs until the result is enumerated, and the task collection is read again by each new enumeration
 
@@ -327,7 +327,7 @@ The library provides focused coverage of conditional task operations:
 
 - **Task Tracking**: Copies the task collection once into a `HashSet<Task<T>>` to avoid duplicate processing
 - **Asynchronous Implementation**: Uses `async/await` pattern throughout for non-blocking operations
-- **Condition Evaluation**: Checks tasks that are already complete first, in collection order, then evaluates the others as they complete
+- **Condition Evaluation**: Checks the tasks in collection order and evaluates each one that is complete when it is reached, then registers the others, in collection order, and evaluates them as they complete (so those that have completed by then come first, in collection order)
 - **Task Completion Detection**: Registers one continuation per running task that writes the task to a `Channel<Task<T>>`, which is read in completion order; the continuations are removed (through a cancellation token) as soon as the method returns
 - **Exception Handling**: Skips tasks that fault or are canceled (their exceptions are observed); an exception thrown by the condition counts as no match in the single-result methods and propagates from the streaming methods
 - **Cancellation Support**: Waits with `ChannelReader.ReadAsync(cancellationToken)`, so cancellation is observed while waiting, not only when a task completes; the streaming methods are async iterators whose token parameter has `[EnumeratorCancellation]`, so the token passed to the method and one passed with `WithCancellation` are combined, and every cancellation throws `OperationCanceledException`, as `ChannelReader.ReadAllAsync` does

@@ -365,6 +365,70 @@ public partial class YANTaskTest
         Assert.False(await enumerator.MoveNextAsync());
     }
 
+    [Theory]
+    [InlineData(0u, new[] { 1, 2, 3 })]
+    [InlineData(2u, new[] { 1, 2 })]
+    public async Task WaitAnyWithConditions_TaskCompletesWhileEarlierItemIsHandled_YieldsItWhenReached_TaskCollection(uint taken, int[] expected)
+    {
+        // Arrange
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (the second task completes while the first result is handled, after the enumeration has started)
+        await foreach (var item in tasks.WaitAnyWithConditions(x => x > 0, taken))
+        {
+            items.Add(item);
+
+            if (item is 1)
+            {
+                second.SetResult(2);
+            }
+        }
+
+        // Assert (tasks are checked in collection order: the second task is complete when it is reached, so it comes before the third)
+        Assert.Equal(expected, items);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_RunningTasksCompleteBeforeWaitStarts_YieldsThemInCollectionOrder_TaskCollection()
+    {
+        // Arrange
+        var first = new TaskCompletionSource<int>();
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            first.Task,
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (both running tasks complete, the second one first, while the third result is handled, before the enumeration starts waiting)
+        await foreach (var item in tasks.WaitAnyWithConditions(x => x > 0))
+        {
+            items.Add(item);
+
+            if (item is 3)
+            {
+                second.SetResult(2);
+                first.SetResult(1);
+            }
+        }
+
+        // Assert (tasks that complete before the enumeration starts waiting come in collection order)
+        Assert.Equal([3, 1, 2], items);
+    }
+
     [Fact]
     public async Task WaitAnyWithConditions_PredicateThrows_PropagatesException_TaskCollection()
     {
@@ -653,6 +717,70 @@ public partial class YANTaskTest
         // Assert
         Assert.Equal([2, 3], items);
         Assert.Equal(3, starts);
+    }
+
+    [Theory]
+    [InlineData(0u, new[] { 1, 2, 3 })]
+    [InlineData(2u, new[] { 1, 2 })]
+    public async Task WhenAnyWithConditions_TaskCompletesWhileEarlierItemIsHandled_YieldsItWhenReached_TaskCollection(uint taken, int[] expected)
+    {
+        // Arrange
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (the second task completes while the first result is handled, after the enumeration has started)
+        await foreach (var item in tasks.WhenAnyWithConditions(x => x > 0, taken))
+        {
+            items.Add(item);
+
+            if (item is 1)
+            {
+                second.SetResult(2);
+            }
+        }
+
+        // Assert (tasks are checked in collection order: the second task is complete when it is reached, so it comes before the third)
+        Assert.Equal(expected, items);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_RunningTasksCompleteBeforeWaitStarts_YieldsThemInCollectionOrder_TaskCollection()
+    {
+        // Arrange
+        var first = new TaskCompletionSource<int>();
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            first.Task,
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (both running tasks complete, the second one first, while the third result is handled, before the enumeration starts waiting)
+        await foreach (var item in tasks.WhenAnyWithConditions(x => x > 0))
+        {
+            items.Add(item);
+
+            if (item is 3)
+            {
+                second.SetResult(2);
+                first.SetResult(1);
+            }
+        }
+
+        // Assert (tasks that complete before the enumeration starts waiting come in collection order)
+        Assert.Equal([3, 1, 2], items);
     }
 
     [Fact]
