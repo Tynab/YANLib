@@ -48,8 +48,9 @@ public static partial class YANUnmanaged
     /// The culture-specific format information for every culture-dependent step: parsing numbers, <see cref="DateTime"/> and <see cref="TimeSpan"/>
     /// text, <see cref="Convert.ChangeType(object, Type, IFormatProvider)"/>, and turning an <paramref name="input"/> that implements
     /// <see cref="IFormattable"/> into text, also for <see cref="string"/> targets (with <see cref="IFormattable.ToString(string, IFormatProvider)"/>,
-    /// which can differ from <see cref="object.ToString"/> for a custom type). If <c>null</c>, the current culture is used exactly as by
-    /// <see cref="Parse{T}(object)"/>, and text comes from <see cref="object.ToString"/>.
+    /// which can differ from <see cref="object.ToString"/> for a custom type). An enum is the exception: <see cref="Enum"/> ignores the provider,
+    /// so an enum value without a name, such as <c>(DayOfWeek)(-1)</c>, gets the negative sign of the current culture (U+2212 under sv-SE).
+    /// If <c>null</c>, the current culture is used exactly as by <see cref="Parse{T}(object)"/>, and text comes from <see cref="object.ToString"/>.
     /// </param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or <c>null</c> if parsing fails or the input is <c>null</c>.</returns>
     /// <remarks>
