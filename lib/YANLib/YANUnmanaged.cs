@@ -50,4 +50,57 @@ public static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T Parse<T>(this object? input, object? defaultValue = null, params string?[]? format) where T : unmanaged => input.ParseImplement<T>(defaultValue, format);
+
+    /// <summary>
+    /// Parses an object to the specified unmanaged type with the given culture-specific format information.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
+    /// <param name="input">The object to parse. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every culture-dependent step: parsing numbers, <see cref="DateTime"/> and <see cref="TimeSpan"/>
+    /// text, <see cref="Convert.ChangeType(object, Type, IFormatProvider)"/>, and turning an <paramref name="input"/> or <paramref name="defaultValue"/>
+    /// that implements <see cref="IFormattable"/> into text (with <see cref="IFormattable.ToString(string, IFormatProvider)"/>, which can differ
+    /// from <see cref="object.ToString"/> for a custom type). If <c>null</c>, the current culture is used exactly as by
+    /// <see cref="Parse{T}(object, object, IEnumerable{string})"/>, and text comes from <see cref="object.ToString"/>.
+    /// </param>
+    /// <param name="defaultValue">The default value to return if parsing fails. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="format">
+    /// The exact format strings for <see cref="DateTime"/> parsing. As with <see cref="Parse{T}(object, object, IEnumerable{string})"/>, they are always
+    /// matched with the invariant culture (<c>/</c> and <c>:</c> stay literal); <paramref name="provider"/> does not change them.
+    /// </param>
+    /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
+    /// <remarks>
+    /// The conversion rules are those of <see cref="Parse{T}(object, object, IEnumerable{string})"/>; only the culture differs. For example, with
+    /// <c>CultureInfo.InvariantCulture</c> the string <c>"1.5"</c> is 1.5 for <see cref="double"/> under any current culture, while
+    /// <c>"1.5".Parse&lt;double&gt;(0d)</c> is 15 under de-DE or vi-VN. The method never throws, also when <paramref name="provider"/> throws: that step
+    /// then counts as a failed parse.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static T ParseWith<T>(this object? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
+        => input.ParseWithImplement<T>(provider, defaultValue, format);
+
+    /// <summary>
+    /// Parses an object to the specified unmanaged type with the given culture-specific format information and the provided format strings.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
+    /// <param name="input">The object to parse. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every culture-dependent step (see <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>).
+    /// If <c>null</c>, the current culture is used exactly as by <see cref="Parse{T}(object, object, string[])"/>.
+    /// </param>
+    /// <param name="defaultValue">The default value to return if parsing fails. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="format">
+    /// The exact format strings for <see cref="DateTime"/> parsing, always matched with the invariant culture; <paramref name="provider"/> does not change them.
+    /// </param>
+    /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
+    /// <remarks>
+    /// This overload accepts format strings as params array for convenience: <c>"1.5".ParseWith&lt;double&gt;(CultureInfo.InvariantCulture, 0d)</c> is 1.5
+    /// under any current culture. The conversion rules are those of <see cref="Parse{T}(object, object, string[])"/>; the method never throws, also when
+    /// <paramref name="provider"/> throws.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static T ParseWith<T>(this object? input, IFormatProvider? provider, object? defaultValue, params string?[]? format) where T : unmanaged
+        => input.ParseWithImplement<T>(provider, defaultValue, format);
 }

@@ -61,6 +61,46 @@ public static partial class YANUnmanaged
     public static IEnumerable<T?>? Parses<T>(this System.Collections.IEnumerable? input) => input.ParsesImplement<T>();
 
     /// <summary>
+    /// Parses a collection of objects to a collection of the specified nullable type with the given culture-specific format information.
+    /// </summary>
+    /// <typeparam name="T">The type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The collection of objects to parse. If <c>null</c> or empty, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every element (see <see cref="ParseWith{T}(object, IFormatProvider)"/>). If <c>null</c>, the
+    /// current culture of the enumerating thread is read for each element, exactly as by <see cref="Parses{T}(IEnumerable{object})"/>.
+    /// </param>
+    /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// Each element is parsed like <see cref="ParseWith{T}(object, IFormatProvider)"/>. The result is lazily evaluated and preserves input order.
+    /// Elements that cannot be parsed will be the default value of <typeparamref name="T"/> in the resulting collection: <c>null</c> for a reference
+    /// type or a nullable value type, otherwise <c>default(T)</c> (for example <c>0</c> for <see cref="int"/>).
+    /// An array of objects binds to this overload; there is no <c>params</c> form like <see cref="Parses{T}(object[])"/>.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T?>? ParsesWith<T>(this IEnumerable<object?>? input, IFormatProvider? provider) => input.ParsesWithImplement<T>(provider);
+
+    /// <summary>
+    /// Parses a non-generic collection of objects to a collection of the specified nullable type with the given culture-specific format information.
+    /// </summary>
+    /// <typeparam name="T">The type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The non-generic collection of objects to parse. If <c>null</c> or empty, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every element (see <see cref="ParseWith{T}(object, IFormatProvider)"/>). If <c>null</c>, the
+    /// current culture of the enumerating thread is read for each element, exactly as by <see cref="Parses{T}(System.Collections.IEnumerable)"/>.
+    /// </param>
+    /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This method first casts the non-generic collection to a generic collection of objects before parsing.
+    /// The result is lazily evaluated and preserves input order.
+    /// Elements that cannot be parsed will be the default value of <typeparamref name="T"/> in the resulting collection: <c>null</c> for a reference
+    /// type or a nullable value type, otherwise <c>default(T)</c> (for example <c>0</c> for <see cref="int"/>).
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T?>? ParsesWith<T>(this System.Collections.IEnumerable? input, IFormatProvider? provider) => input.ParsesWithImplement<T>(provider);
+
+    /// <summary>
     /// Parses a lookup of objects to a lookup of the specified nullable key and element types.
     /// </summary>
     /// <typeparam name="TKey">The key type to parse to. Can be any type, including reference types and nullable value types.</typeparam>

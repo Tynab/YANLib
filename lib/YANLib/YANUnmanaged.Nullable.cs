@@ -38,4 +38,30 @@ public static partial class YANUnmanaged
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T? Parse<T>(this object? input) => input.ParseImplement<T>();
+
+    /// <summary>
+    /// Parses an object to the specified nullable type with the given culture-specific format information.
+    /// </summary>
+    /// <typeparam name="T">The type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The object to parse. If <c>null</c>, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every culture-dependent step: parsing numbers, <see cref="DateTime"/> and <see cref="TimeSpan"/>
+    /// text, <see cref="Convert.ChangeType(object, Type, IFormatProvider)"/>, and turning an <paramref name="input"/> that implements
+    /// <see cref="IFormattable"/> into text, also for <see cref="string"/> targets (with <see cref="IFormattable.ToString(string, IFormatProvider)"/>,
+    /// which can differ from <see cref="object.ToString"/> for a custom type). If <c>null</c>, the current culture is used exactly as by
+    /// <see cref="Parse{T}(object)"/>, and text comes from <see cref="object.ToString"/>.
+    /// </param>
+    /// <returns>The parsed value of type <typeparamref name="T"/>, or <c>null</c> if parsing fails or the input is <c>null</c>.</returns>
+    /// <remarks>
+    /// The conversion rules are those of <see cref="Parse{T}(object)"/> (for example a fractional string is floored for a non-nullable integer
+    /// <typeparamref name="T"/>); only the culture differs. Under any current culture, <c>"1.5".ParseWith&lt;double&gt;(CultureInfo.InvariantCulture)</c>
+    /// is 1.5 and <c>1.5.ParseWith&lt;string&gt;(CultureInfo.InvariantCulture)</c> is <c>"1.5"</c>, while <c>"1.5".Parse&lt;double&gt;()</c> is 15 and
+    /// <c>1.5.Parse&lt;string&gt;()</c> is <c>"1,5"</c> under de-DE or vi-VN. For the rules of
+    /// <see cref="Parse{T}(object, object, IEnumerable{string})"/> instead (no flooring), pass a default value:
+    /// <c>"3.7".ParseWith&lt;int&gt;(CultureInfo.InvariantCulture)</c> is 3, <c>"3.7".ParseWith&lt;int&gt;(CultureInfo.InvariantCulture, null)</c> is 0.
+    /// The method never throws, also when <paramref name="provider"/> throws: that step then counts as a failed parse.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static T? ParseWith<T>(this object? input, IFormatProvider? provider) => input.ParseWithImplement<T>(provider);
 }

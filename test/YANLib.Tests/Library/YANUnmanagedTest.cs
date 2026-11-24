@@ -482,6 +482,168 @@ public partial class YANUnmanagedTest
 
     #endregion
 
+    #region ParseWith
+
+    [Theory]
+    [InlineData("de-DE")]
+    [InlineData("vi-VN")]
+    public void ParseWith_InvariantProviderUnderCommaDecimalCulture_ParsesDotAsDecimalSeparator(string culture)
+    {
+        // Act
+        var (with, existing) = WithCulture(new CultureInfo(culture), static () => ("1.5".ParseWith<double>(CultureInfo.InvariantCulture, 0d), "1.5".Parse<double>(0d)));
+
+        // Assert (the existing overload reads the current culture, where '.' is the group separator)
+        Assert.Equal(1.5, with);
+        Assert.Equal(15, existing);
+    }
+
+    [Fact]
+    public void ParseWith_GermanProviderUnderInvariantCulture_ParsesCommaAsDecimalSeparator()
+    {
+        // Arrange
+        var german = new CultureInfo("de-DE");
+
+        // Act
+        var (number, grouped, existing) = WithCulture(CultureInfo.InvariantCulture, () => ("1,5".ParseWith<double>(german, 0d), "-1.234,5".ParseWith<decimal>(german, 0m), "1,5".Parse<double>(0d)));
+
+        // Assert
+        Assert.Equal(1.5, number);
+        Assert.Equal(-1234.5m, grouped);
+        Assert.Equal(15, existing);
+    }
+
+    [Fact]
+    public void ParseWith_NullProvider_UsesCurrentCultureLikeParse()
+    {
+        // Act
+        var (withNull, existing, comma) = WithCulture(new CultureInfo("de-DE"), static () => ("1.5".ParseWith<double>(null, 0d), "1.5".Parse<double>(0d), "1,5".ParseWith<double>(null, 0d, (IEnumerable<string?>?)null)));
+
+        // Assert
+        Assert.Equal(existing, withNull);
+        Assert.Equal(15, withNull);
+        Assert.Equal(1.5, comma);
+    }
+
+    [Fact]
+    public void ParseWith_StringDefaultValue_IsParsedWithProvider()
+    {
+        // Act
+        var (with, existing) = WithCulture(new CultureInfo("de-DE"), static () => ("abc".ParseWith<double>(CultureInfo.InvariantCulture, "2.5"), "abc".Parse<double>("2.5")));
+
+        // Assert
+        Assert.Equal(2.5, with);
+        Assert.Equal(25, existing);
+    }
+
+    [Fact]
+    public void ParseWith_FractionalStringForInteger_ReturnsDefaultValueLikeParse()
+    {
+        // Act (the defaultValue overloads do not floor fractional strings, whatever the provider)
+        var (withNullDefault, withDefault) = WithCulture(new CultureInfo("de-DE"), static () => ("3.7".ParseWith<int>(CultureInfo.InvariantCulture, null), "3.7".ParseWith<int>(CultureInfo.InvariantCulture, -1)));
+
+        // Assert
+        Assert.Equal(0, withNullDefault);
+        Assert.Equal(-1, withDefault);
+    }
+
+    [Fact]
+    public void ParseWith_DateTimeWithoutFormat_UsesProviderDatePattern()
+    {
+        // Arrange
+        object input = "01/02/2025";
+
+        // Act
+        var (us, british, existing) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParseWith<DateTime>(new CultureInfo("en-US"), null), input.ParseWith<DateTime>(new CultureInfo("en-GB"), null), input.Parse<DateTime>(null)));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 1, 2), us);
+        Assert.Equal(new DateTime(2025, 2, 1), british);
+        Assert.Equal(new DateTime(2025, 1, 2), existing);
+    }
+
+    [Fact]
+    public void ParseWith_DateTimeTextOfProvider_RoundTrips()
+    {
+        // Arrange (the text comes from the BCL, so the test does not depend on the ICU version's date pattern)
+        var german = new CultureInfo("de-DE");
+        var expected = new DateTime(2025, 12, 13, 14, 15, 16);
+        object input = expected.ToString(german);
+
+        // Act
+        var result = WithCulture(new CultureInfo("en-US"), () => input.ParseWith<DateTime>(german, DateTime.MaxValue));
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ParseWith_ExactFormat_IsMatchedWithInvariantCulture()
+    {
+        // Arrange
+        var german = new CultureInfo("de-DE");
+
+        // Act (as with Parse, '/' in an exact format is a literal slash; the provider does not change the formats)
+        var (slash, dot) = WithCulture(german, () => ("13/12/2025".ParseWith<DateTime>(german, null, "dd/MM/yyyy"), "13.12.2025".ParseWith<DateTime>(german, null, new List<string?> { "dd/MM/yyyy" })));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 12, 13), slash);
+        Assert.Equal(default, dot);
+    }
+
+    [Fact]
+    public void ParseWith_TimeSpanWithCultureDecimalSeparator_UsesProvider()
+    {
+        // Arrange
+        object input = "1:02:03:04,5";
+        var fallback = TimeSpan.FromMinutes(77);
+        var expected = TimeSpan.Parse("1:02:03:04,5", new CultureInfo("de-DE"));
+
+        // Act
+        var (german, invariant) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParseWith<TimeSpan>(new CultureInfo("de-DE"), fallback), input.ParseWith<TimeSpan>(CultureInfo.InvariantCulture, fallback)));
+
+        // Assert
+        Assert.Equal(new TimeSpan(1, 2, 3, 4, 500), expected);
+        Assert.Equal(expected, german);
+        Assert.Equal(fallback, invariant);
+    }
+
+    [Fact]
+    public void ParseWith_CustomConvertible_ReceivesProvider()
+    {
+        // Arrange
+        object input = new ProviderEchoConvertible();
+        var german = new CultureInfo("de-DE");
+
+        // Act
+        var (with, withNull, existing) = WithCulture(new CultureInfo("vi-VN"), () => (input.ParseWith<long>(german, 0L), input.ParseWith<long>(null, 0L), input.Parse<long>(0L)));
+
+        // Assert (a null provider passes the current culture, as Convert.ChangeType(object, Type) does)
+        Assert.Equal(ProviderEchoConvertible.Code(german), with);
+        Assert.Equal(ProviderEchoConvertible.Code(new CultureInfo("vi-VN")), withNull);
+        Assert.Equal(withNull, existing);
+    }
+
+    [Fact]
+    public void ParseWith_ProviderThrows_ReturnsDefaultValue()
+    {
+        // Arrange
+        var provider = new ThrowingFormatProvider();
+        var date = new DateTime(2000, 1, 1);
+        var time = TimeSpan.FromMinutes(77);
+
+        // Act & Assert (never throws: the step that uses the provider counts as a failed parse)
+        Assert.Equal(42, "5".ParseWith<int>(provider, 42));
+        Assert.Equal(42L, "5".ParseWith<long>(provider, 42L, (IEnumerable<string?>?)null));
+        Assert.Equal(2.5, "1.5".ParseWith<double>(provider, 2.5));
+        Assert.Equal(2.5m, "1.5".ParseWith<decimal>(provider, 2.5m));
+        Assert.Equal(date, "2025-01-02".ParseWith<DateTime>(provider, date));
+        Assert.Equal(date, ((object)1.5).ParseWith<DateTime>(provider, date));
+        Assert.Equal(time, "01:02:03".ParseWith<TimeSpan>(provider, time));
+        Assert.Equal(7, new ProviderEchoConvertible().ParseWith<int>(provider, 7));
+    }
+
+    #endregion
+
     private class Animal
     {
     }
@@ -493,6 +655,66 @@ public partial class YANUnmanagedTest
     private sealed class ThrowingToString
     {
         public override string ToString() => throw new InvalidOperationException("ToString failed");
+    }
+
+    private sealed class ThrowingFormatProvider : IFormatProvider
+    {
+        public object? GetFormat(Type? formatType) => throw new InvalidOperationException("GetFormat failed");
+    }
+
+    /// <summary>Formats differently with and without a provider, to show which <c>ToString</c> the parse methods call.</summary>
+    private sealed class FormattableEcho : IFormattable
+    {
+        public override string ToString() => "plain";
+
+        public string ToString(string? format, IFormatProvider? formatProvider) => "formatted:" + (formatProvider as CultureInfo)?.Name;
+    }
+
+    /// <summary>A custom <see cref="IConvertible"/> whose numeric conversions report the provider they were handed.</summary>
+    private sealed class ProviderEchoConvertible : IConvertible
+    {
+        public static int Code(IFormatProvider? provider) => provider switch
+        {
+            null => 1,
+            CultureInfo { Name: "de-DE" } => 2,
+            CultureInfo { Name: "vi-VN" } => 3,
+            CultureInfo => 4,
+            _ => provider.GetFormat(typeof(NumberFormatInfo)) is null ? 5 : 6
+        };
+
+        public TypeCode GetTypeCode() => TypeCode.Object;
+
+        public bool ToBoolean(IFormatProvider? provider) => throw new InvalidCastException();
+
+        public byte ToByte(IFormatProvider? provider) => (byte)Code(provider);
+
+        public char ToChar(IFormatProvider? provider) => throw new InvalidCastException();
+
+        public DateTime ToDateTime(IFormatProvider? provider) => throw new InvalidCastException();
+
+        public decimal ToDecimal(IFormatProvider? provider) => Code(provider);
+
+        public double ToDouble(IFormatProvider? provider) => Code(provider);
+
+        public short ToInt16(IFormatProvider? provider) => (short)Code(provider);
+
+        public int ToInt32(IFormatProvider? provider) => Code(provider);
+
+        public long ToInt64(IFormatProvider? provider) => Code(provider);
+
+        public sbyte ToSByte(IFormatProvider? provider) => (sbyte)Code(provider);
+
+        public float ToSingle(IFormatProvider? provider) => Code(provider);
+
+        public string ToString(IFormatProvider? provider) => "echo" + Code(provider);
+
+        public object ToType(Type conversionType, IFormatProvider? provider) => throw new InvalidCastException();
+
+        public ushort ToUInt16(IFormatProvider? provider) => (ushort)Code(provider);
+
+        public uint ToUInt32(IFormatProvider? provider) => (uint)Code(provider);
+
+        public ulong ToUInt64(IFormatProvider? provider) => (ulong)Code(provider);
     }
 
     private static T WithCulture<T>(CultureInfo culture, Func<T> action)

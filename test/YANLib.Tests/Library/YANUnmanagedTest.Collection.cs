@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 
 namespace YANLib.Tests.Library;
 
@@ -530,6 +531,90 @@ public partial class YANUnmanagedTest
         Assert.Equal(2, result.Count);
         Assert.Equal(guid1, result[new DateTime(2023, 1, 1)]);
         Assert.Equal(guid2, result[new DateTime(2023, 2, 1)]);
+    }
+
+    #endregion
+
+    #region ParsesWith
+
+    [Fact]
+    public void ParsesWith_InvariantProviderUnderGermanCulture_ParsesEveryElement_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "1.5", "-2.25", "abc", null, 3 };
+        var nonGeneric = new ArrayList(input);
+
+        // Act (enumerated under de-DE, so the provider, not the current culture, decides)
+        var results = WithCulture(new CultureInfo("de-DE"), () => new
+        {
+            Generic = input.ParsesWith<double>(CultureInfo.InvariantCulture, -1d)?.ToList(),
+            GenericEnumerableFormat = input.ParsesWith<double>(CultureInfo.InvariantCulture, -1d, (IEnumerable<string?>?)null)?.ToList(),
+            NonGeneric = nonGeneric.ParsesWith<double>(CultureInfo.InvariantCulture, -1d)?.ToList(),
+            NonGenericEnumerableFormat = nonGeneric.ParsesWith<double>(CultureInfo.InvariantCulture, -1d, (IEnumerable<string?>?)null)?.ToList(),
+            Existing = input.Parses<double>(-1d)?.ToList()
+        });
+
+        // Assert
+        List<double> expected = [1.5, -2.25, -1, -1, 3];
+
+        Assert.Equal(expected, results.Generic);
+        Assert.Equal(expected, results.GenericEnumerableFormat);
+        Assert.Equal(expected, results.NonGeneric);
+        Assert.Equal(expected, results.NonGenericEnumerableFormat);
+        Assert.Equal([15, -225, -1, -1, 3], results.Existing);
+    }
+
+    [Fact]
+    public void ParsesWith_DateTimeFormats_AreMatchedWithInvariantCulture_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "13/12/2025", "13.12.2025" };
+        var fallback = new DateTime(1999, 9, 9);
+
+        // Act
+        var (generic, nonGeneric) = WithCulture(new CultureInfo("de-DE"), () => (input.ParsesWith<DateTime>(new CultureInfo("de-DE"), fallback, "dd/MM/yyyy")?.ToList(), new ArrayList(input).ParsesWith<DateTime>(new CultureInfo("de-DE"), fallback, new List<string?> { "dd/MM/yyyy" })?.ToList()));
+
+        // Assert
+        Assert.Equal([new DateTime(2025, 12, 13), fallback], generic);
+        Assert.Equal([new DateTime(2025, 12, 13), fallback], nonGeneric);
+    }
+
+    [Fact]
+    public void ParsesWith_NullProvider_ReadsCultureOfEnumeratingThread_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "1.5" };
+
+        // Act (created under the invariant culture, enumerated under de-DE)
+        var (withNull, withCurrent) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParsesWith<double>(null, 0d), input.ParsesWith<double>(CultureInfo.CurrentCulture, 0d)));
+        var (enumeratedNull, enumeratedCurrent) = WithCulture(new CultureInfo("de-DE"), () => (withNull?.ToList(), withCurrent?.ToList()));
+
+        // Assert (a null provider behaves like Parses; an explicit provider is fixed when ParsesWith is called)
+        Assert.Equal([15d], enumeratedNull);
+        Assert.Equal([1.5], enumeratedCurrent);
+    }
+
+    [Fact]
+    public void ParsesWith_NullOrEmptyInput_ReturnsNull_Collection()
+    {
+        // Act & Assert
+        Assert.Null(((List<object?>?)null).ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+        Assert.Null(new List<object?>().ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+        Assert.Null(((ArrayList?)null).ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+        Assert.Null(new ArrayList().ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+    }
+
+    [Fact]
+    public void ParsesWith_ProviderThrows_UsesDefaultValue_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "5", "1.5", 7 };
+
+        // Act
+        var result = input.ParsesWith<int>(new ThrowingFormatProvider(), -1)?.ToList();
+
+        // Assert (never throws; a boxed int does not need the provider)
+        Assert.Equal([-1, -1, 7], result);
     }
 
     #endregion

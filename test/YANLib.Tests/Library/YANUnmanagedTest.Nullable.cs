@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using System.Globalization;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANUnmanagedTest
 {
@@ -379,6 +381,137 @@ public partial class YANUnmanagedTest
         Assert.Null(input.Parse<DayOfWeek?>());
         Assert.Null(input.Parse<char?>());
         Assert.Equal(0, input.Parse<int>());
+    }
+
+    #endregion
+
+    #region ParseWith
+
+    [Theory]
+    [InlineData("de-DE")]
+    [InlineData("vi-VN")]
+    public void ParseWith_InvariantProviderUnderCommaDecimalCulture_UsesInvariantCulture_Nullable(string culture)
+    {
+        // Act
+        var results = WithCulture(new CultureInfo(culture), static () => new
+        {
+            Double = "1.5".ParseWith<double>(CultureInfo.InvariantCulture),
+            NullableDouble = "1.5".ParseWith<double?>(CultureInfo.InvariantCulture),
+            Text = ((object)1.5).ParseWith<string>(CultureInfo.InvariantCulture),
+            ExistingDouble = "1.5".Parse<double>(),
+            ExistingText = ((object)1.5).Parse<string>()
+        });
+
+        // Assert
+        Assert.Equal(1.5, results.Double);
+        Assert.Equal(1.5, results.NullableDouble);
+        Assert.Equal("1.5", results.Text);
+        Assert.Equal(15, results.ExistingDouble);
+        Assert.Equal("1,5", results.ExistingText);
+    }
+
+    [Fact]
+    public void ParseWith_FractionalStringForInteger_FloorsLikeParse_Nullable()
+    {
+        // Act (one-argument semantics: a non-nullable integer target floors, a nullable one returns null)
+        var results = WithCulture(new CultureInfo("de-DE"), static () => new
+        {
+            Floored = "3.7".ParseWith<int>(CultureInfo.InvariantCulture),
+            Negative = "-3.5".ParseWith<long>(CultureInfo.InvariantCulture),
+            Nullable = "3.7".ParseWith<int?>(CultureInfo.InvariantCulture),
+            Existing = "3.7".Parse<int>()
+        });
+
+        // Assert (under de-DE '.' is the group separator, so the existing overload reads 37)
+        Assert.Equal(3, results.Floored);
+        Assert.Equal(-4L, results.Negative);
+        Assert.Null(results.Nullable);
+        Assert.Equal(37, results.Existing);
+    }
+
+    [Theory]
+    [InlineData("1.5")]
+    [InlineData("1,5")]
+    [InlineData("-1.234,5")]
+    [InlineData("3.7")]
+    [InlineData("abc")]
+    [InlineData("13.12.2025")]
+    public void ParseWith_NullProvider_EqualsParse_Nullable(string input)
+    {
+        // Act
+        var results = WithCulture(new CultureInfo("de-DE"), () => new
+        {
+            With = (input.ParseWith<double?>(null), input.ParseWith<int>(null), input.ParseWith<decimal?>(null), input.ParseWith<DateTime?>(null), input.ParseWith<string>(null)),
+            Existing = (input.Parse<double?>(), input.Parse<int>(), input.Parse<decimal?>(), input.Parse<DateTime?>(), input.Parse<string>())
+        });
+
+        // Assert
+        Assert.Equal(results.Existing, results.With);
+    }
+
+    [Fact]
+    public void ParseWith_FormattableInput_UsesToStringWithProviderOnlyWhenProviderIsGiven_Nullable()
+    {
+        // Arrange
+        object input = new FormattableEcho();
+
+        // Act
+        var results = WithCulture(new CultureInfo("de-DE"), () => new
+        {
+            Existing = input.Parse<string>(),
+            WithNull = input.ParseWith<string>(null),
+            WithInvariant = input.ParseWith<string>(CultureInfo.InvariantCulture),
+            WithCurrent = input.ParseWith<string>(CultureInfo.CurrentCulture)
+        });
+
+        // Assert (a null provider calls ToString(); a provider, even the current culture, calls IFormattable.ToString(null, provider))
+        Assert.Equal("plain", results.Existing);
+        Assert.Equal("plain", results.WithNull);
+        Assert.Equal("formatted:", results.WithInvariant);
+        Assert.Equal("formatted:de-DE", results.WithCurrent);
+    }
+
+    [Fact]
+    public void ParseWith_DateTimeWithoutFormat_UsesProviderDatePattern_Nullable()
+    {
+        // Arrange
+        object input = "01/02/2025";
+
+        // Act
+        var (us, british) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParseWith<DateTime?>(new CultureInfo("en-US")), input.ParseWith<DateTime?>(new CultureInfo("en-GB"))));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 1, 2), us);
+        Assert.Equal(new DateTime(2025, 2, 1), british);
+    }
+
+    [Fact]
+    public void ParseWith_ProviderThrows_ReturnsNullOrDefault_Nullable()
+    {
+        // Arrange
+        var provider = new ThrowingFormatProvider();
+
+        // Act & Assert (never throws: the step that uses the provider counts as a failed parse)
+        Assert.Equal(0, "5".ParseWith<int>(provider));
+        Assert.Null("5".ParseWith<int?>(provider));
+        Assert.Null("1.5".ParseWith<double?>(provider));
+        Assert.Null("2025-01-02".ParseWith<DateTime?>(provider));
+        Assert.Null("01:02:03".ParseWith<TimeSpan?>(provider));
+        Assert.Null(((object)1.5).ParseWith<string>(provider));
+        Assert.Null(new ProviderEchoConvertible().ParseWith<int?>(provider));
+        Assert.Equal("5", "5".ParseWith<string>(provider));
+    }
+
+    [Fact]
+    public void ParseWith_NullInput_ReturnsNull_Nullable()
+    {
+        // Arrange
+        object? input = null;
+
+        // Act & Assert
+        Assert.Null(input.ParseWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(input.ParseWith<string>(CultureInfo.InvariantCulture));
+        Assert.Equal(0, input.ParseWith<int>(null));
     }
 
     #endregion

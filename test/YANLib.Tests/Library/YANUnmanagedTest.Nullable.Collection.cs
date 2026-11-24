@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 
 namespace YANLib.Tests.Library;
 
@@ -650,6 +651,85 @@ public partial class YANUnmanagedTest
                 Assert.Contains($"Value{i}-{j}", group);
             }
         }
+    }
+
+    #endregion
+
+    #region ParsesWith
+
+    [Fact]
+    public void ParsesWith_InvariantProviderUnderVietnameseCulture_ParsesEveryElement_NullableCollection()
+    {
+        // Arrange
+        var input = new List<object?> { "1.5", "abc", null, 2.5 };
+        var nonGeneric = new ArrayList(input);
+
+        // Act (enumerated under vi-VN, so the provider, not the current culture, decides)
+        var results = WithCulture(new CultureInfo("vi-VN"), () => new
+        {
+            Generic = input.ParsesWith<double?>(CultureInfo.InvariantCulture)?.ToList(),
+            NonGeneric = nonGeneric.ParsesWith<double?>(CultureInfo.InvariantCulture)?.ToList(),
+            Text = input.ParsesWith<string>(CultureInfo.InvariantCulture)?.ToList(),
+            ExistingText = input.Parses<string>()?.ToList()
+        });
+
+        // Assert
+        Assert.Equal([1.5, null, null, 2.5], results.Generic);
+        Assert.Equal([1.5, null, null, 2.5], results.NonGeneric);
+        Assert.Equal(["1.5", "abc", null, "2.5"], results.Text);
+        Assert.Equal(["1.5", "abc", null, "2,5"], results.ExistingText);
+    }
+
+    [Fact]
+    public void ParsesWith_FractionalStringForInteger_FloorsLikeParses_NullableCollection()
+    {
+        // Arrange
+        var input = new List<object?> { "3.7", "-3.5", "x" };
+
+        // Act
+        var (floored, nullable) = WithCulture(new CultureInfo("de-DE"), () => (input.ParsesWith<int>(CultureInfo.InvariantCulture)?.ToList(), input.ParsesWith<int?>(CultureInfo.InvariantCulture)?.ToList()));
+
+        // Assert
+        Assert.Equal([3, -4, 0], floored);
+        Assert.Equal([null, null, null], nullable);
+    }
+
+    [Fact]
+    public void ParsesWith_NullProvider_ReadsCultureOfEnumeratingThread_NullableCollection()
+    {
+        // Arrange
+        var input = new ArrayList { "1.5" };
+
+        // Act (created under the invariant culture, enumerated under de-DE)
+        var (withNull, withCurrent) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParsesWith<double?>(null), input.ParsesWith<double?>(CultureInfo.CurrentCulture)));
+        var (enumeratedNull, enumeratedCurrent) = WithCulture(new CultureInfo("de-DE"), () => (withNull?.ToList(), withCurrent?.ToList()));
+
+        // Assert (a null provider behaves like Parses; an explicit provider is fixed when ParsesWith is called)
+        Assert.Equal([15d], enumeratedNull);
+        Assert.Equal([1.5], enumeratedCurrent);
+    }
+
+    [Fact]
+    public void ParsesWith_NullOrEmptyInput_ReturnsNull_NullableCollection()
+    {
+        // Act & Assert
+        Assert.Null(((List<object?>?)null).ParsesWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(new List<object?>().ParsesWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(((ArrayList?)null).ParsesWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(new ArrayList().ParsesWith<int?>(CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
+    public void ParsesWith_ProviderThrows_ReturnsNulls_NullableCollection()
+    {
+        // Arrange
+        var input = new ArrayList { "5", "1.5", 7 };
+
+        // Act
+        var result = input.ParsesWith<int?>(new ThrowingFormatProvider())?.ToList();
+
+        // Assert (never throws; a boxed int does not need the provider)
+        Assert.Equal([null, null, 7], result);
     }
 
     #endregion

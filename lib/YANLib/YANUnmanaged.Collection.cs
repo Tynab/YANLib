@@ -78,6 +78,96 @@ public static partial class YANUnmanaged
     public static IEnumerable<T>? Parses<T>(this System.Collections.IEnumerable? input, object? defaultValue = null, params string?[]? format) where T : unmanaged => input.ParsesImplement<T>(defaultValue, format);
 
     /// <summary>
+    /// Parses a collection of objects to a collection of the specified unmanaged type with the given culture-specific format information.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
+    /// <param name="input">The collection of objects to parse. If <c>null</c> or empty, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every element (see <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>).
+    /// If <c>null</c>, the current culture of the enumerating thread is read for each element, exactly as by
+    /// <see cref="Parses{T}(IEnumerable{object}, object, IEnumerable{string})"/>.
+    /// </param>
+    /// <param name="defaultValue">The default value to use for elements that cannot be parsed. If <c>null</c>, uses the default value of <typeparamref name="T"/>.</param>
+    /// <param name="format">The exact format strings for <see cref="DateTime"/> parsing, always matched with the invariant culture.</param>
+    /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// Each element is parsed like <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>.
+    /// The result is lazily evaluated and preserves input order.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T>? ParsesWith<T>(this IEnumerable<object?>? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
+        => input.ParsesWithImplement<T>(provider, defaultValue, format);
+
+    /// <summary>
+    /// Parses a collection of objects to a collection of the specified unmanaged type with the given culture-specific format information and the provided format strings.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
+    /// <param name="input">The collection of objects to parse. If <c>null</c> or empty, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every element (see <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>).
+    /// If <c>null</c>, the current culture of the enumerating thread is read for each element, exactly as by
+    /// <see cref="Parses{T}(IEnumerable{object}, object, string[])"/>.
+    /// </param>
+    /// <param name="defaultValue">The default value to use for elements that cannot be parsed. If <c>null</c>, uses the default value of <typeparamref name="T"/>.</param>
+    /// <param name="format">The exact format strings for <see cref="DateTime"/> parsing, always matched with the invariant culture.</param>
+    /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This overload accepts format strings as params array for convenience.
+    /// Each element is parsed like <see cref="ParseWith{T}(object, IFormatProvider, object, string[])"/>.
+    /// The result is lazily evaluated and preserves input order.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T>? ParsesWith<T>(this IEnumerable<object?>? input, IFormatProvider? provider, object? defaultValue, params string?[]? format) where T : unmanaged
+        => input.ParsesWithImplement<T>(provider, defaultValue, format);
+
+    /// <summary>
+    /// Parses a non-generic collection of objects to a collection of the specified unmanaged type with the given culture-specific format information.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
+    /// <param name="input">The non-generic collection of objects to parse. If <c>null</c> or empty, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every element (see <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>).
+    /// If <c>null</c>, the current culture of the enumerating thread is read for each element, exactly as by
+    /// <see cref="Parses{T}(System.Collections.IEnumerable, object, IEnumerable{string})"/>.
+    /// </param>
+    /// <param name="defaultValue">The default value to use for elements that cannot be parsed. If <c>null</c>, uses the default value of <typeparamref name="T"/>.</param>
+    /// <param name="format">The exact format strings for <see cref="DateTime"/> parsing, always matched with the invariant culture.</param>
+    /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This method first casts the non-generic collection to a generic collection of objects before parsing.
+    /// The result is lazily evaluated and preserves input order.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T>? ParsesWith<T>(this System.Collections.IEnumerable? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
+        => input.ParsesWithImplement<T>(provider, defaultValue, format);
+
+    /// <summary>
+    /// Parses a non-generic collection of objects to a collection of the specified unmanaged type with the given culture-specific format information and the provided format strings.
+    /// </summary>
+    /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
+    /// <param name="input">The non-generic collection of objects to parse. If <c>null</c> or empty, returns <c>null</c>.</param>
+    /// <param name="provider">
+    /// The culture-specific format information for every element (see <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>).
+    /// If <c>null</c>, the current culture of the enumerating thread is read for each element, exactly as by
+    /// <see cref="Parses{T}(System.Collections.IEnumerable, object, string[])"/>.
+    /// </param>
+    /// <param name="defaultValue">The default value to use for elements that cannot be parsed. If <c>null</c>, uses the default value of <typeparamref name="T"/>.</param>
+    /// <param name="format">The exact format strings for <see cref="DateTime"/> parsing, always matched with the invariant culture.</param>
+    /// <returns>A collection of parsed values of type <typeparamref name="T"/>, or <c>null</c> if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// This overload accepts format strings as params array for convenience.
+    /// This method first casts the non-generic collection to a generic collection of objects before parsing.
+    /// The result is lazily evaluated and preserves input order.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static IEnumerable<T>? ParsesWith<T>(this System.Collections.IEnumerable? input, IFormatProvider? provider, object? defaultValue, params string?[]? format) where T : unmanaged
+        => input.ParsesWithImplement<T>(provider, defaultValue, format);
+
+    /// <summary>
     /// Parses a dictionary of objects to a dictionary with keys of the specified unmanaged type and values of the specified nullable type.
     /// </summary>
     /// <typeparam name="TKey">The unmanaged key type to parse to.</typeparam>
