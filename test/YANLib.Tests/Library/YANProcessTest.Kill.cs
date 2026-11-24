@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 
 namespace YANLib.Tests.Library;
 
@@ -15,6 +16,7 @@ internal sealed class SleepProcesses : IDisposable
 
     private readonly List<(int Id, string Name)> _started = [];
     private readonly List<string> _startedIndirectly = [];
+    private readonly List<(string Name, Process Shell, StringBuilder Errors)> _shells = [];
 
     public SleepProcesses()
     {
@@ -125,7 +127,7 @@ internal sealed class SleepProcesses : IDisposable
     }
 
     // Polls /proc until a process with this name is in an accepted state; fails the test after the (generous) timeout.
-    private static int WaitForProcess(string name, Func<char, bool> acceptState)
+    private int WaitForProcess(string name, Func<char, bool> acceptState)
     {
         var deadline = Stopwatch.StartNew();
 
@@ -156,7 +158,7 @@ internal sealed class SleepProcesses : IDisposable
             Thread.Sleep(50);
         }
 
-        throw new TimeoutException($"No process named {name} reached the expected state.");
+        throw new TimeoutException($"No process named {name} reached the expected state. {Diagnostics()}");
     }
 
     private string CopyOf(string sourcePath, string fileName)
@@ -173,6 +175,7 @@ internal sealed class SleepProcesses : IDisposable
 
     private Process StartShell(string fileName, string command)
     {
+        var errors = new StringBuilder();
         var process = new Process
         {
             StartInfo = new ProcessStartInfo(CopyOf(SHELL_PATH, fileName))
@@ -182,14 +185,82 @@ internal sealed class SleepProcesses : IDisposable
                     "-c",
                     command
                 },
-                UseShellExecute = false
+                UseShellExecute = false,
+                RedirectStandardError = true
+            }
+        };
+
+        // The shell's error output (for example a failed exec) goes into the diagnostics of a failed wait.
+        process.ErrorDataReceived += (_, e) =>
+        {
+            if (e.Data is not null)
+            {
+                lock (errors)
+                {
+                    _ = errors.AppendLine(e.Data);
+                }
             }
         };
 
         _ = process.Start();
+        process.BeginErrorReadLine();
         _started.Add((process.Id, fileName));
+        _shells.Add((fileName, process, errors));
 
         return process;
+    }
+
+    // What the shells did and which fixture processes exist, for the message of a failed wait.
+    public string Diagnostics()
+    {
+        var text = new StringBuilder();
+
+        foreach (var (name, shell, errors) in _shells)
+        {
+            string exit;
+
+            try
+            {
+                exit = shell.HasExited ? $"exited with {shell.ExitCode}" : "running";
+            }
+            catch (Exception e)
+            {
+                exit = e.GetType().Name;
+            }
+
+            lock (errors)
+            {
+                _ = text.Append($"Shell {name} (pid {shell.Id}): {exit}; stderr: [{errors.ToString().Trim()}]. ");
+            }
+        }
+
+        _ = text.Append("Processes: ");
+
+        foreach (var directory in System.IO.Directory.EnumerateDirectories("/proc"))
+        {
+            if (!int.TryParse(Path.GetFileName(directory), out var id))
+            {
+                continue;
+            }
+
+            try
+            {
+                var stat = File.ReadAllText(Path.Combine(directory, "stat"));
+                var (comm, state) = ReadStat(Path.Combine(directory, "stat"));
+                var fields = stat[(stat.LastIndexOf(')') + 2)..].Split(' ');
+
+                if (comm.StartsWith('y'))
+                {
+                    _ = text.Append($"{id} {comm} {state} ppid {fields[1]}; ");
+                }
+            }
+            catch (IOException)
+            {
+                // The process exited meanwhile.
+            }
+        }
+
+        return text.Append($"Directory {Directory}: [{string.Join(", ", System.IO.Directory.EnumerateFiles(Directory).Select(Path.GetFileName))}].").ToString();
     }
 
     public void Dispose()
@@ -547,7 +618,7 @@ public partial class YANProcessTest
 
             // Assert (the child is killed by the fixture afterwards)
             Assert.True(parent.WaitForExit(ExitTimeout));
-            Assert.True(SleepProcesses.IsRunning(childId, childName));
+            Assert.True(SleepProcesses.IsRunning(childId, childName), sleepers.Diagnostics());
         }
     }
 
@@ -600,7 +671,7 @@ public partial class YANProcessTest
 
             // Assert
             Assert.True(parent.WaitForExit(ExitTimeout));
-            Assert.True(SleepProcesses.IsRunning(childId, childName));
+            Assert.True(SleepProcesses.IsRunning(childId, childName), sleepers.Diagnostics());
         }
     }
 
