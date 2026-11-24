@@ -226,6 +226,22 @@ public static partial class YANRandom
     public static char NextChar(this Random random) => random.NextCharImplement();
 
     /// <summary>
+    /// Generates a random character within the specified range.
+    /// </summary>
+    /// <param name="random">The random number generator.</param>
+    /// <param name="min">The inclusive lower bound of the character returned.</param>
+    /// <param name="max">The exclusive upper bound of the character returned.</param>
+    /// <returns>A random character within the specified range, or the default value (<c>'\0'</c>) if <paramref name="min"/> is greater than <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// The range is half-open, like the other ranged <c>Next...</c> methods: <c>random.NextChar('a', 'f')</c> returns one of <c>'a'</c> to <c>'e'</c>.
+    /// If <paramref name="min"/> equals <paramref name="max"/>, <paramref name="min"/> is returned. The bounds can be any characters; without bounds,
+    /// <see cref="NextChar(Random)"/> returns a lowercase letter.
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static char NextChar(this Random random, char min, char max) => random.NextCharImplement(min, max);
+
+    /// <summary>
     /// Generates a random string of lowercase letters with the specified size.
     /// </summary>
     /// <param name="random">The random number generator that draws the length when <paramref name="size"/> is <c>null</c>; it does not draw the characters.</param>

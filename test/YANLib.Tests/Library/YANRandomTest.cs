@@ -835,6 +835,81 @@ public partial class YANRandomTest
         Assert.True(results.Count > 1);
     }
 
+    [Fact]
+    public void NextChar_Range_ReturnsEveryCharacterOfTheHalfOpenRange_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(20261124);
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 1_000; i++)
+        {
+            _ = results.Add(random.NextChar('a', 'f'));
+        }
+
+        // Assert
+        Assert.Equal(['a', 'b', 'c', 'd', 'e'], results.Order());
+    }
+
+    [Fact]
+    public void NextChar_RangeAtCharMaxValue_ExcludesMax_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(42);
+        var min = (char)(char.MaxValue - 2);
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 1_000; i++)
+        {
+            _ = results.Add(random.NextChar(min, char.MaxValue));
+        }
+
+        // Assert
+        Assert.Equal([min, (char)(char.MaxValue - 1)], results.Order());
+    }
+
+    [Fact]
+    public void NextChar_Range_Seeded_DrawsLikeNext_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(7);
+        var reference = new Random(7);
+
+        // Act & Assert
+        for (var i = 0; i < 100; i++)
+        {
+            Assert.Equal((char)reference.Next('0', 'z'), random.NextChar('0', 'z'));
+        }
+    }
+
+    [Fact]
+    public void NextChar_MinEqualsMax_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var result = random.NextChar('q', 'q');
+
+        // Assert
+        Assert.Equal('q', result);
+    }
+
+    [Fact]
+    public void NextChar_MinGreaterThanMax_ReturnsDefault_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var result = random.NextChar('z', 'a');
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
     #endregion
 
     #region NextString

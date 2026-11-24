@@ -213,8 +213,14 @@ internal static partial class YANRandom
         var minValue = min is null ? char.MinValue : min.ParseImplement<char>();
         var maxValue = max is null ? char.MaxValue : max.ParseImplement<char>();
 
-        return minValue > maxValue ? default : (char)random.Next(minValue, maxValue);
+        return random.NextCharImplement(minValue, maxValue);
     }
+
+    /// <summary>
+    /// A character in [<paramref name="min"/>, <paramref name="max"/>); <paramref name="min"/> when the bounds are equal, <c>default</c>
+    /// when <paramref name="min"/> is greater than <paramref name="max"/>, as the other ranged <c>Next...</c> methods.
+    /// </summary>
+    internal static char NextCharImplement(this Random random, char min, char max) => min > max ? default : (char)random.Next(min, max);
 
     internal static string NextStringImplement(this Random random, object? size = null) => string.Concat(GenerateRandomsImplement<char>(size: size ?? random.NextByteImplement()));
 
