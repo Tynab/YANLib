@@ -109,7 +109,8 @@ A powerful utility library for parsing and converting objects to unmanaged types
 - Object parsing with default value fallbacks
 - Nullable type parsing with null for invalid inputs
 - Collection parsing with robust error handling
-- Format support for date/time, TimeSpan, and culture-specific parsing
+- Format support for date/time and TimeSpan
+- Culture-specific parsing: `Parse` and `Parses` use the current culture; `ParseWith` and `ParsesWith` (8.4.0) take an `IFormatProvider` (a `null` provider is the current culture) and otherwise follow the same rules, see Culture on the YANUnmanaged wiki page
 - Never throws: invalid or out-of-range input (for example `"99999999999".Parse<int>()`) gives the default value (`0`, `null` or `defaultValue`); `Parse<int>()` floors fractional strings (`"3.7"` -> 3) and boxed fractions are rounded half to even in every overload (`3.7` -> 4), see Conversion Rules on the YANUnmanaged wiki page; `nint`/`nuint` are supported
 
 ```csharp
@@ -128,6 +129,10 @@ DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
 // Parse to TimeSpan
 object timeInput = "01:30:45";
 TimeSpan time = timeInput.Parse<TimeSpan>(); // Returns TimeSpan of 1 hour, 30 minutes, 45 seconds
+
+// Parse with a given culture (8.4.0)
+object priceInput = "1.5";
+double price = priceInput.ParseWith<double>(CultureInfo.InvariantCulture); // Returns 1.5 under any current culture (Parse<double>() returns 15 under de-DE)
 ```
 
 ### YANEnumerable

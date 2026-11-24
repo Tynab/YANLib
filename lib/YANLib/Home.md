@@ -46,6 +46,10 @@ int resultWithDefault = invalidInput.Parse<int>(42); // Returns 42
 // Parse to enum
 object enumInput = "Tuesday";
 DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
+
+// Parse with a given culture (8.4.0); Parse uses the current culture
+object priceInput = "1.5";
+double price = priceInput.ParseWith<double>(CultureInfo.InvariantCulture); // Returns 1.5 under any current culture (Parse<double>() returns 15 under de-DE)
 ```
 
 ### [YANEnumerable](YANEnumerable)

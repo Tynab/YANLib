@@ -15,7 +15,7 @@ This page records the design decisions found during the 8.3.3 review (Areas A-E)
 
 *Area:* Parse / collections
 
-**Chosen for 8.4.0: additive IFormatProvider overloads, CurrentCulture stays the default (option 2). Invariant default is a 9.0 item.**
+**Chosen for 8.4.0: additive IFormatProvider overloads, CurrentCulture stays the default (option 2). Invariant default is a 9.0 item. Done: `ParseWith<T>(this object?, IFormatProvider?)` (rules of `Parse<T>()`), `ParseWith<T>(this object?, IFormatProvider?, object? defaultValue, IEnumerable<string?>? / params string?[]? format) where T : unmanaged`, and `ParsesWith<T>` for the `IEnumerable<object?>` and non-generic `IEnumerable` forms of both (YANUnmanaged.md, Culture). They have a new name because a `Parse<T>(object?, IFormatProvider)` overload would silently rebind `x.Parse<int>(CultureInfo.InvariantCulture)` and `x.Parse<int>(null)`, which pass a defaultValue today; a scratch consumer (C# 12 to 14) binds all 148 existing Parse/Parses call shapes as before. A `null` provider is the existing behaviour. Exact DateTime formats stay on InvariantCulture with any provider, as in `Parse`. The dictionary/lookup forms and the YANEnumerable conversions have no provider form.**
 
 Strings are parsed with CultureInfo.CurrentCulture, as Convert.ChangeType did. Under de-DE and vi-VN, "1.5".Parse<double>() == 15 and 1.5.Parse<string>() == "1,5". The equivalence table shows the same culture behaviour old and new.
 
