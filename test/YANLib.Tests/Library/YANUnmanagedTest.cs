@@ -536,6 +536,23 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void ParseWith_StringDefaultValueForDateTimeAndTimeSpan_IsParsedWithProvider()
+    {
+        // Act (under the invariant culture "01/02/2025" is 2 January and "1:02:03:04,5" is no TimeSpan)
+        var (british, american, timeSpan, invariantTimeSpan) = WithCulture(CultureInfo.InvariantCulture, static () => (
+            "abc".ParseWith<DateTime>(new CultureInfo("en-GB"), "01/02/2025"),
+            "abc".ParseWith<DateTime>(new CultureInfo("en-US"), "01/02/2025"),
+            "abc".ParseWith<TimeSpan>(new CultureInfo("de-DE"), "1:02:03:04,5"),
+            "abc".ParseWith<TimeSpan>(CultureInfo.InvariantCulture, "1:02:03:04,5")));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 2, 1), british);
+        Assert.Equal(new DateTime(2025, 1, 2), american);
+        Assert.Equal(new TimeSpan(1, 2, 3, 4, 500), timeSpan);
+        Assert.Equal(TimeSpan.Zero, invariantTimeSpan);
+    }
+
+    [Fact]
     public void ParseWith_FractionalStringForInteger_ReturnsDefaultValueLikeParse()
     {
         // Act (the defaultValue overloads do not floor fractional strings, whatever the provider)
