@@ -16,7 +16,7 @@ internal static partial class YANProcess
             return;
         }
 
-        await processNameOrPath.GetProcessesByFileNameImplement().KillAndDisposeImplement(entireProcessTree, cancellationToken).ConfigureAwait(false);
+        await processNameOrPath.GetProcessesByFileNameImplement().KillAndDisposeImplement(entireProcessTree, cancellationToken, tokenCheckedByCaller: true).ConfigureAwait(false);
     }
 
     #endregion
@@ -50,9 +50,11 @@ internal static partial class YANProcess
     // never keeps the others from being killed. Every handle is disposed and the first failure is rethrown afterwards
     // with its original type and stack trace; a cancelled wait comes after every kill, so a failure to kill wins over it.
     // A token that is already cancelled kills nothing; a token cancelled later only stops the waiting (the processes stay
-    // signalled). The calling process is skipped: Kill(entireProcessTree: true) always refuses a tree that contains it,
-    // and Kill() would kill the caller itself.
-    internal static async Task KillAndDisposeImplement(this IEnumerable<Process> processes, bool entireProcessTree = true, CancellationToken cancellationToken = default)
+    // signalled). With tokenCheckedByCaller, the caller (KillAllProcessesByNamesImplement) has checked the token once,
+    // before any name was looked up, so it is not checked again: a token cancelled since then (while the names are read or
+    // looked up) still lets these processes be killed. The calling process is skipped: Kill(entireProcessTree: true) always
+    // refuses a tree that contains it, and Kill() would kill the caller itself.
+    internal static async Task KillAndDisposeImplement(this IEnumerable<Process> processes, bool entireProcessTree = true, CancellationToken cancellationToken = default, bool tokenCheckedByCaller = false)
     {
         var currentProcessId = Environment.ProcessId;
         Process[] all = [.. processes];
@@ -61,7 +63,10 @@ internal static partial class YANProcess
 
         try
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            if (!tokenCheckedByCaller)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+            }
 
             foreach (var process in all)
             {

@@ -283,6 +283,17 @@ public partial class YANProcessTest
         }
     }
 
+    // Yields the first name, then cancels the source before it yields the second: the token is canceled after the call has
+    // started and before the second name is looked up.
+    private static IEnumerable<string?> CancelBetween(string? first, CancellationTokenSource source, string? second)
+    {
+        yield return first;
+
+        source.Cancel();
+
+        yield return second;
+    }
+
     #region Kill
 
     [Fact]
@@ -654,6 +665,30 @@ public partial class YANProcessTest
 
         // Act & Assert
         _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => names.KillAllProcessesByNames(cts.Token));
+    }
+
+    [Fact]
+    public async Task KillAllProcessesByNames_TokenCanceledBeforeANameIsLookedUp_StillKillsItsProcesses_ProcessCollection()
+    {
+        // Arrange
+        using var sleepers = new SleepProcesses();
+
+        if (!sleepers.IsSupported)
+        {
+            return;
+        }
+
+        var name = SleepProcesses.UniqueName();
+        using var process = sleepers.Start(name);
+        using var cts = new CancellationTokenSource();
+
+        // Act (the token is not canceled when the method is called; the names cancel it before the target is looked up)
+        var exception = await Record.ExceptionAsync(() => CancelBetween(SleepProcesses.UniqueName("yn"), cts, name).KillAllProcessesByNames(cts.Token));
+
+        // Assert (only the wait is canceled: it throws unless the process has already exited)
+        Assert.True(cts.IsCancellationRequested);
+        Assert.True(exception is null or OperationCanceledException);
+        Assert.True(SleepProcesses.WaitUntilStopped(process.Id, name));
     }
 
     [Fact]

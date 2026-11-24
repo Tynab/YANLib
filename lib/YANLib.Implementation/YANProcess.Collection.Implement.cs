@@ -19,8 +19,9 @@ internal static partial class YANProcess
 
     #endregion
 
-    // A token that is already cancelled gives a cancelled task and kills nothing. Task.WhenAll reports a failure to kill
-    // (a faulted name) before a cancelled wait (a cancelled name).
+    // A token that is already cancelled gives a cancelled task and kills nothing. This is the only check before the kills:
+    // a token cancelled after it (while the names are read or looked up) still lets every matching process be killed and
+    // only stops the waiting. Task.WhenAll reports a failure to kill (a faulted name) before a cancelled wait (a cancelled name).
     internal static Task KillAllProcessesByNamesImplement(this IEnumerable<string?>? names, bool entireProcessTree = true, CancellationToken cancellationToken = default)
         => cancellationToken.IsCancellationRequested ? FromCanceled(cancellationToken) : KillAll(names, entireProcessTree, cancellationToken);
 

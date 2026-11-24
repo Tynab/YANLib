@@ -244,6 +244,10 @@ private async Task SaveApplicationState()
 // Manual implementation (for illustration only - YANProcess does this automatically)
 public async Task ManualProcessKill(string processNameOrPath, bool entireProcessTree = true, CancellationToken cancellationToken = default)
 {
+    // A token that is already canceled kills nothing. This is the only check before the kills:
+    // a token canceled after it only stops the waiting below
+    cancellationToken.ThrowIfCancellationRequested();
+
     var name = Path.GetFileName(processNameOrPath);
 
     if (string.IsNullOrWhiteSpace(name))
@@ -266,9 +270,6 @@ public async Task ManualProcessKill(string processNameOrPath, bool entireProcess
 
     try
     {
-        // A token that is already canceled kills nothing
-        cancellationToken.ThrowIfCancellationRequested();
-
         // First signal every process: never the calling process; the others with their process trees
         // (Kill() instead when entireProcessTree is false)
         foreach (var process in processes)
