@@ -709,8 +709,11 @@ internal static partial class YANMath
     /// <see cref="decimal"/> range is rounded exactly on its shortest round-trip text, as <see cref="decimal"/> (up to 28 digits) and
     /// converted back exactly, or by digit shifting (<see cref="TryRoundShortestText"/>) when that text has more decimal places than
     /// <see cref="decimal"/> holds; any other value to 15 digits. Negative digits and undefined modes still throw the 8.3.3 exceptions.
+    /// <paramref name="fromDecimal"/>: <paramref name="value"/> is a <see cref="decimal"/> input converted with the 8.3.3 cast, which is
+    /// not correctly rounded (1e-28m becomes 1.0000000000000001E-28, a text with 44 decimal places that the decimal does not have); such a
+    /// value is rounded to 28 places first, as before, instead of digit shifting.
     /// </summary>
-    private static double RoundDouble(double value, int? digits, MidpointRounding mode)
+    private static double RoundDouble(double value, int? digits, MidpointRounding mode, bool fromDecimal = false)
     {
         if (digits is not int places)
         {
@@ -722,11 +725,11 @@ internal static partial class YANMath
             return Math.Round(value, Math.Min(places, 15), mode);
         }
 
-        if (!TryToDecimal(value, out var number))
+        if (!TryToDecimal(value, out var number, fromDecimal))
         {
             // a value whose shortest text has more than the 28 decimal places of decimal (1.9999999999999998E-13 has 29; every such value
             // is below 1e-11) is rounded on that text by digit shifting, NaN, the infinities and magnitudes from decimal.MaxValue on to 15 digits
-            return Math.Abs(value) < 1e-11 ? RoundShortestTextToDouble(value, places, mode) : Math.Round(value, 15, mode);
+            return !fromDecimal && Math.Abs(value) < 1e-11 ? RoundShortestTextToDouble(value, places, mode) : Math.Round(value, 15, mode);
         }
 
         var rounded = decimal.Round(number, Math.Min(places, 28), mode);

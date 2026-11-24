@@ -29,7 +29,8 @@ internal static partial class YANMath
 
         if (!NumberTarget<T>.IsDecimal || !IsValidRound(places, mode))
         {
-            return RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
+            // a decimal input goes through the 8.3.3 cast to double, which can land next to its value (see RoundDouble)
+            return RoundDouble(input.ParseImplement<double>(), places, mode, input is decimal).ParseImplement<T?>();
         }
 
         // rounding a double or float to a whole number needs no text round trip (see TryToWholeDecimal). For more than 15 digits a double or

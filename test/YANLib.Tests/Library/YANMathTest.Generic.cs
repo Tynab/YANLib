@@ -887,6 +887,27 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Round_TinyDecimalToDouble_RoundsAt28PlacesFirst_MathGeneric()
+    {
+        // pin: a decimal with a double result is converted with the 8.3.3 cast, which turns 1e-28m into 1.0000000000000001E-28; rounded to
+        // 28 places first, as before, it stays 1e-28 (rounding that double exactly toward positive infinity would give 2E-28)
+        // Arrange
+        object? input = 0.0000000000000000000000000001m;
+
+        // Act
+        var up = input.Round<double>(28, MidpointRounding.ToPositiveInfinity);
+        var beyond = input.Round<double>(31, MidpointRounding.ToPositiveInfinity);
+        var single = input.Round<float>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input }.Rounds<double>(28, MidpointRounding.ToPositiveInfinity);
+
+        // Assert
+        Assert.Equal(1e-28, up);
+        Assert.Equal(1e-28, beyond);
+        Assert.Equal(1e-28f, single);
+        Assert.Equal([1e-28], collection!);
+    }
+
+    [Fact]
     public void Round_FractionalDoubleWithoutDigits_MatchesMathRound_MathGeneric()
     {
         // pin: Round without digits rounds a double in double and converts the whole result exactly, without the text round trip
