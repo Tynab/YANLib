@@ -24,7 +24,7 @@ The library is organized into several functional categories:
 
 - **Null Safety**: Graceful handling of null or empty process names
 - **Exception Safety**: If a process cannot be killed, the others are still killed and every handle is disposed; then the first exception is rethrown
-- **Cancellation**: A canceled token throws `OperationCanceledException`: if it is already canceled when the method is called, nothing is killed; otherwise the matching processes have been signalled (they stay signalled) and only the wait stops. A failure to kill a process takes precedence and is thrown instead
+- **Cancellation**: A token that is already canceled when the method is called throws `OperationCanceledException`, and nothing is killed. A token canceled after the call has started only stops the wait: the matching processes have been signalled (they stay signalled), and `OperationCanceledException` is thrown only if a signalled process has not exited when the wait for it sees the cancellation (for example, nothing is thrown when no process matched). A failure to kill a process takes precedence and is thrown instead
 - **Whitespace Handling**: Null, empty and whitespace names are skipped without affecting the other names
 - **Empty Names**: A path without a file name (for example a directory path) or a bare extension such as `".exe"` matches no process
 
@@ -146,9 +146,16 @@ catch (OperationCanceledException)
     Console.WriteLine("Gave up waiting after 10 seconds");
 }
 
-// Combine with the process tree choice, for one name or a collection
-await "notepad".KillAllProcessesByName(entireProcessTree: false, timeout.Token);
-await new[] { "notepad", "calc" }.KillAllProcessesByNames(timeout.Token);
+// A canceled token stays canceled: give each call that needs its own timeout a new CancellationTokenSource
+// (the token above may already be canceled here, and would make these calls kill nothing and throw at once)
+
+// Combine with the process tree choice, for one name or a collection; each call has its own 10 seconds
+// and, like the call above, throws OperationCanceledException when they run out
+using var treeTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+await "notepad".KillAllProcessesByName(entireProcessTree: false, treeTimeout.Token);
+
+using var namesTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+await new[] { "notepad", "calc" }.KillAllProcessesByNames(namesTimeout.Token);
 
 // A token that is already canceled kills nothing: the call throws OperationCanceledException right away
 using var canceled = new CancellationTokenSource();

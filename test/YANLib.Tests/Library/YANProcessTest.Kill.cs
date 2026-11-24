@@ -692,6 +692,20 @@ public partial class YANProcessTest
     }
 
     [Fact]
+    public async Task KillAllProcessesByNames_TokenCanceledAfterCallStartsAndNothingMatches_DoesNotThrow_ProcessCollection()
+    {
+        // Arrange
+        using var cts = new CancellationTokenSource();
+
+        // Act (the token is not canceled when the method is called; the names cancel it, and no process has either name)
+        var exception = await Record.ExceptionAsync(() => CancelBetween(SleepProcesses.UniqueName("yn"), cts, SleepProcesses.UniqueName("yn")).KillAllProcessesByNames(cts.Token));
+
+        // Assert (a token canceled after the call has started only stops a wait, and there is nothing to wait for)
+        Assert.True(cts.IsCancellationRequested);
+        Assert.Null(exception);
+    }
+
+    [Fact]
     public async Task KillAndDispose_AlreadyCanceledToken_KillsNothingAndDisposesHandles_Process()
     {
         // Arrange
