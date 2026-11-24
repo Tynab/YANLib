@@ -29,13 +29,17 @@ internal static partial class YANMath
 
         if (!NumberTarget<T>.IsDecimal || !IsValidRound(places, mode))
         {
-            return RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
+            // a decimal input goes through the 8.3.3 cast to double, which can land next to its value (see RoundDouble)
+            return RoundDouble(input.ParseImplement<double>(), places, mode, input is decimal).ParseImplement<T?>();
         }
 
-        // rounding a double or float to a whole number needs no text round trip (see TryToWholeDecimal); for more than 15 digits a value
-        // with more than 28 decimal places is rounded to 28 first, as RoundDouble does, but the decimal result keeps all its digits
+        // rounding a double or float to a whole number needs no text round trip (see TryToWholeDecimal). For more than 15 digits a double or
+        // float whose shortest text has more than the 28 decimal places of decimal (every such value is below 1e-11; a float through its own
+        // text, as TryToDecimal converts it) is rounded exactly on that text by digit shifting, as RoundDouble does, and any other input with
+        // more than 28 decimal places (a string such as "1e-30") is rounded to 28 places first; the decimal result keeps all its digits
         return places is null && IsDoubleOrFloat(input, out var value) && TryToWholeDecimal(Math.Round(value, mode), out var whole) ? whole.ParseImplement<T?>()
-            : TryToDecimal(input, out var number, places > 15) ? FromDecimal<T>(RoundDecimal(number, places, mode))
+            : TryToDecimal(input, out var number, places > 15 && input is not (double or float)) ? FromDecimal<T>(RoundDecimal(number, places, mode))
+            : places is int count and > 15 && TryGetShortestDouble(input, out value) && Math.Abs(value) < 1e-11 ? FromDecimal<T>(RoundShortestTextToDecimal(value, count, mode))
             : RoundDouble(input.ParseImplement<double>(), places, mode).ParseImplement<T?>();
     }
 

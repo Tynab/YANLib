@@ -819,8 +819,8 @@ public partial class YANMathTest
     [Fact]
     public void Round_TinyValueTo28Digits_KeepsEveryDigit_MathGeneric()
     {
-        // the shortest texts of these doubles have 29 decimal places (1.2345678901234566E-13); rounded to 28 places as decimal they keep 16
-        // significant digits, where a round trip through a double result kept 15 and was up to 6 units in the last place off
+        // the shortest texts of these doubles have 29 decimal places (1.2345678901234566E-13); rounded exactly at 28 places of that text they
+        // keep 16 significant digits, where a round trip through a double result kept 15 and was up to 6 units in the last place off
         // Arrange
         object? input = 1.2345678901234566e-13;
         object? negative = -1.2345678901234566e-13;
@@ -835,8 +835,76 @@ public partial class YANMathTest
         // Assert
         Assert.Equal(0.0000000000001234567890123457m, nearest);
         Assert.Equal(-0.0000000000001234567890123457m, clamped);
-        Assert.InRange(up, 0.0000000000004444444444444444m, 0.0000000000004444444444444445m);
+        Assert.Equal(0.0000000000004444444444444445m, up);
         Assert.Equal([0.0000000000001234567890123457m], collection!);
+    }
+
+    [Fact]
+    public void Round_TinyValueMoreThan15Digits_IsExactOnShortestText_MathGeneric()
+    {
+        // a double or float whose shortest text has more than 28 decimal places is rounded exactly on that text (digit shifting), for a
+        // decimal result at no more than 28 places; until 8.4.0 development it was rounded to 28 places first (0.0000000000002)
+        // Arrange
+        object? input = 1.9999999999999998e-13;
+        object? negative = -1.9999999999999998e-13;
+        object? tiny = 1e-30;
+        object? single = 1e-30f;
+
+        // Act
+        var toZero = input.Round<decimal>(20, MidpointRounding.ToZero);
+        var clamped = input.Round<decimal>(29, MidpointRounding.ToZero);
+        var nullable = negative.Round<decimal?>(20, MidpointRounding.ToNegativeInfinity);
+        var asDouble = input.Round<double>(20, MidpointRounding.ToZero);
+        var up = tiny.Round<decimal>(20, MidpointRounding.ToPositiveInfinity);
+        var singleUp = single.Round<decimal>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input, tiny }.Rounds<decimal>(20, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(0.00000000000019999999m, toZero);
+        Assert.Equal(0.0000000000001999999999999999m, clamped);
+        Assert.Equal(-0.0000000000002m, nullable);
+        Assert.Equal(1.9999999e-13, asDouble);
+        Assert.Equal(0.00000000000000000001m, up);
+        Assert.Equal(0.0000000000000000000000000001m, singleUp);
+        Assert.Equal([0.00000000000019999999m, 0m], collection!);
+    }
+
+    [Fact]
+    public void Round_StringMoreThan28DecimalPlaces_RoundsAt28PlacesFirst_MathGeneric()
+    {
+        // pin: a string is parsed as decimal, which keeps 28 decimal places, so a decimal result to more than 15 digits is rounded from
+        // those 28 places (exact: 0.00000000000019999999); a double result goes through the parsed double and is exact
+        // Arrange
+        object? input = "1.9999999999999998e-13";
+
+        // Act
+        var asDecimal = input.Round<decimal>(20, MidpointRounding.ToZero);
+        var asDouble = input.Round<double>(20, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(0.0000000000002m, asDecimal);
+        Assert.Equal(1.9999999e-13, asDouble);
+    }
+
+    [Fact]
+    public void Round_TinyDecimalToDouble_RoundsAt28PlacesFirst_MathGeneric()
+    {
+        // pin: a decimal with a double result is converted with the 8.3.3 cast, which turns 1e-28m into 1.0000000000000001E-28; rounded to
+        // 28 places first, as before, it stays 1e-28 (rounding that double exactly toward positive infinity would give 2E-28)
+        // Arrange
+        object? input = 0.0000000000000000000000000001m;
+
+        // Act
+        var up = input.Round<double>(28, MidpointRounding.ToPositiveInfinity);
+        var beyond = input.Round<double>(31, MidpointRounding.ToPositiveInfinity);
+        var single = input.Round<float>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input }.Rounds<double>(28, MidpointRounding.ToPositiveInfinity);
+
+        // Assert
+        Assert.Equal(1e-28, up);
+        Assert.Equal(1e-28, beyond);
+        Assert.Equal(1e-28f, single);
+        Assert.Equal([1e-28], collection!);
     }
 
     [Fact]

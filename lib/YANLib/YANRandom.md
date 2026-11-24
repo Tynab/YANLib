@@ -59,6 +59,7 @@ DateTime boundedDate = random.NextDateTime(
     new DateTime(2023, 1, 1), 
     new DateTime(2023, 12, 31)); // Random date in 2023
 char randomChar = random.NextChar(); // Random lowercase letter
+char boundedChar = random.NextChar('a', 'f'); // Random character in ['a', 'f'): 'a' to 'e' (min if min == max, '\0' if min > max)
 string randomString = random.NextString(10); // Random string of 10 lowercase letters
 ```
 
@@ -188,7 +189,7 @@ The library provides comprehensive coverage of random value generation:
 | **Numeric Types** | NextByte, NextSbyte, NextShort, NextUshort, NextInt, NextUint, NextLong, NextUlong, NextNint, NextNuint, NextSingle, NextDouble, NextDecimal |
 | **Boolean** | NextBool |
 | **DateTime** | NextDateTime |
-| **Text** | NextChar, NextString |
+| **Text** | NextChar, NextChar(char min, char max), NextString |
 | **Generic** | GenerateRandom<T>, GenerateRandom<T>(T min, T max) |
 | **Collections** | GenerateRandoms<T> |
 | **Collection Sampling** | GenerateRandom, GenerateRandoms |

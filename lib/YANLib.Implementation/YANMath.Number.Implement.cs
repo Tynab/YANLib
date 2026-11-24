@@ -151,6 +151,12 @@ internal static partial class YANMath
     /// <summary>A <see cref="decimal"/> result converted to <typeparamref name="T"/> like a <c>double</c> result was (rounded half to even for integers, <c>default</c> when out of range).</summary>
     private static T? FromDecimal<T>(decimal value) => Normalize(value).ParseImplement<T?>();
 
+    /// <summary>
+    /// A <see cref="float"/> as the <c>double</c> that the object path converts to <see cref="decimal"/>: a whole <see cref="float"/>
+    /// exactly, any other through its own shortest round-trip text (the text of 123456792f, 1.2345679E+08, is not exact).
+    /// </summary>
+    private static double ToShortestDouble(float value) => float.IsInteger(value) ? value : double.Parse(value.ToString("R", InvariantCulture), InvariantCulture);
+
     /// <summary>Whether <paramref name="input"/> is a boxed <c>double</c> or <see cref="float"/>, and its value.</summary>
     private static bool IsDoubleOrFloat(object? input, out double value)
     {
@@ -162,6 +168,29 @@ internal static partial class YANMath
                 return true;
             case float number:
                 value = number;
+
+                return true;
+            default:
+                value = default;
+
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// Whether <paramref name="input"/> is a boxed <c>double</c> or <see cref="float"/>, and its value as the object path converts it to
+    /// <see cref="decimal"/> (a <see cref="float"/> through <see cref="ToShortestDouble"/>).
+    /// </summary>
+    private static bool TryGetShortestDouble(object? input, out double value)
+    {
+        switch (input)
+        {
+            case double number:
+                value = number;
+
+                return true;
+            case float number:
+                value = ToShortestDouble(number);
 
                 return true;
             default:
@@ -195,7 +224,8 @@ internal static partial class YANMath
     /// A whole <paramref name="value"/> exactly (2^60 stays 1152921504606846976, not the 1152921504606847000 of its shortest text), any
     /// other the shortest decimal that round-trips to it (0.1 becomes 0.1m, not 0.1000000000000000055...); <c>false</c> for NaN,
     /// infinities, magnitudes from <see cref="decimal.MaxValue"/> on, and values whose shortest text has more than the 28 decimal
-    /// places of <see cref="decimal"/> (1e-30 would become 0), unless <paramref name="rounded"/> accepts them rounded to 28 places.
+    /// places of <see cref="decimal"/> (1e-30 would become 0), unless <paramref name="rounded"/> accepts them rounded to 28 places (Sum and
+    /// Average do; Round to more than 15 digits rounds such a value exactly on its text instead, see <see cref="TryRoundShortestText"/>).
     /// </summary>
     private static bool TryToDecimal(double value, out decimal result, bool rounded = false)
     {
@@ -276,7 +306,8 @@ internal static partial class YANMath
     /// strings with the same styles and culture as the 8.3.3 <c>double</c> parse, everything else through that <c>double</c> parse
     /// (enum values, <c>true</c> = 1, unparsable = 0); <c>null</c> is 0. <c>false</c> when the value has no <see cref="decimal"/>
     /// equivalent (NaN, infinity, out of range), or needs more than 28 decimal places (1e-30) and <paramref name="rounded"/> is
-    /// <c>false</c>: the caller then takes the 8.3.3 <c>double</c> path, which keeps the sign of such a value for Floor and Ceiling.
+    /// <c>false</c>: the caller then takes the 8.3.3 <c>double</c> path, which keeps the sign of such a value for Floor and Ceiling (Round
+    /// to more than 15 digits rounds such a <c>double</c> or <see cref="float"/> exactly on its text, see <see cref="TryRoundShortestText"/>).
     /// </summary>
     private static bool TryToDecimal(object? input, out decimal result, bool rounded = false)
     {
@@ -333,8 +364,7 @@ internal static partial class YANMath
             case double value:
                 return TryToDecimal(value, out result, rounded);
             case float value:
-                // a whole float is exact as double; the text of 123456792f, 1.2345679E+08, is not
-                return TryToDecimal(float.IsInteger(value) ? value : double.Parse(value.ToString("R", InvariantCulture), InvariantCulture), out result, rounded);
+                return TryToDecimal(ToShortestDouble(value), out result, rounded);
             case string text:
                 // double.TryParse(text, CurrentCulture) uses Float | AllowThousands; accepting the same strings keeps "5-" and "(5)" at 0.
                 // A scale of 28 can mean the parse rounded ("1e-30" to 0): kept only when that is the double the text stands for.
@@ -676,10 +706,14 @@ internal static partial class YANMath
 
     /// <summary>
     /// <see cref="Math.Round(double, int, MidpointRounding)"/>, which only accepts 0-15 digits: for more digits a finite value in the
-    /// <see cref="decimal"/> range is rounded as <see cref="decimal"/> (up to 28 digits) and converted back exactly, any other value
-    /// to 15 digits. Negative digits and undefined modes still throw the 8.3.3 exceptions.
+    /// <see cref="decimal"/> range is rounded exactly on its shortest round-trip text, as <see cref="decimal"/> (up to 28 digits) and
+    /// converted back exactly, or by digit shifting (<see cref="TryRoundShortestText"/>) when that text has more decimal places than
+    /// <see cref="decimal"/> holds; any other value to 15 digits. Negative digits and undefined modes still throw the 8.3.3 exceptions.
+    /// <paramref name="fromDecimal"/>: <paramref name="value"/> is a <see cref="decimal"/> input converted with the 8.3.3 cast, which is
+    /// not correctly rounded (1e-28m becomes 1.0000000000000001E-28, a text with 44 decimal places that the decimal does not have); such a
+    /// value is rounded to 28 places first, as before, instead of digit shifting.
     /// </summary>
-    private static double RoundDouble(double value, int? digits, MidpointRounding mode)
+    private static double RoundDouble(double value, int? digits, MidpointRounding mode, bool fromDecimal = false)
     {
         if (digits is not int places)
         {
@@ -691,11 +725,11 @@ internal static partial class YANMath
             return Math.Round(value, Math.Min(places, 15), mode);
         }
 
-        // a value whose shortest round-trip text has more than 28 decimal places (1.9999999999999998E-13) is rounded to 28 places first,
-        // so a result with more than 15 digits can be one unit in the last place off for such a value (2E-13 for 20 digits ToZero)
-        if (!TryToDecimal(value, out var number, true))
+        if (!TryToDecimal(value, out var number, fromDecimal))
         {
-            return Math.Round(value, 15, mode);
+            // a value whose shortest text has more than the 28 decimal places of decimal (1.9999999999999998E-13 has 29; every such value
+            // is below 1e-11) is rounded on that text by digit shifting, NaN, the infinities and magnitudes from decimal.MaxValue on to 15 digits
+            return !fromDecimal && Math.Abs(value) < 1e-11 ? RoundShortestTextToDouble(value, places, mode) : Math.Round(value, 15, mode);
         }
 
         var rounded = decimal.Round(number, Math.Min(places, 28), mode);
@@ -703,6 +737,79 @@ internal static partial class YANMath
         // the decimal-to-double cast is not correctly rounded (it can be one unit in the last place off), the text round trip is;
         // a zero keeps the sign of the input, as Math.Round does
         return rounded == 0 ? Math.CopySign(0d, value) : double.Parse(rounded.ToString(InvariantCulture), InvariantCulture);
+    }
+
+    /// <summary>
+    /// Digit-shift rounding of a finite <paramref name="value"/> whose shortest round-trip text has more than the 28 decimal places of
+    /// <see cref="decimal"/>, which converting it to <see cref="decimal"/> would round first (1.9999999999999998E-13 rounded to 20 places
+    /// toward zero would become 2E-13 instead of 1.9999999E-13). The digits of that text, at most 17, become a <see cref="decimal"/> shifted
+    /// so that rounding it to a whole number rounds exactly at <paramref name="places"/> decimal places of the text; ties are decided on the
+    /// text, as <see cref="decimal"/> decides them for shorter texts. <paramref name="quotient"/> is that whole number q, with the sign of
+    /// <paramref name="value"/>: the result is q × 10^-<paramref name="places"/>. <c>false</c> when the text has no more than
+    /// <paramref name="places"/> decimal places, so <paramref name="value"/> is already rounded.
+    /// </summary>
+    private static bool TryRoundShortestText(double value, int places, MidpointRounding mode, out decimal quotient)
+    {
+        Span<char> buffer = stackalloc char[32];
+
+        _ = value.TryFormat(buffer, out var length, "R", InvariantCulture);
+
+        // "-1.9999999999999998E-13": the 17 digits stand for 16 + 13 = 29 decimal places
+        var text = buffer[..length];
+        var e = text.IndexOf('E');
+        var exponent = e < 0 ? 0 : int.Parse(text[(e + 1)..], NumberStyles.AllowLeadingSign, InvariantCulture);
+        var mantissa = e < 0 ? text : text[..e];
+        var point = mantissa.IndexOf('.');
+        var digits = 0UL;
+
+        foreach (var character in mantissa)
+        {
+            if (char.IsAsciiDigit(character))
+            {
+                digits = (digits * 10) + (ulong)(character - '0');
+            }
+        }
+
+        var shift = (point < 0 ? 0 : mantissa.Length - point - 1) - exponent - places;
+
+        if (shift <= 0)
+        {
+            quotient = default;
+
+            return false;
+        }
+
+        // shifted by more than 28 places the digits (below 10^17) are below 10^-11, which every mode rounds like the smallest decimal, 10^-28
+        var shifted = shift > 28
+            ? new decimal(1, 0, 0, value < 0, 28)
+            : new decimal((int)(uint)digits, (int)(uint)(digits >> 32), 0, value < 0, (byte)shift);
+
+        quotient = decimal.Round(shifted, 0, mode);
+
+        return true;
+    }
+
+    /// <summary>
+    /// <see cref="TryRoundShortestText"/> as the nearest <c>double</c> (the text round trip is correctly rounded); a zero keeps the sign of
+    /// <paramref name="value"/>, as <see cref="Math.Round(double, int, MidpointRounding)"/> does. Any number of places is honoured.
+    /// </summary>
+    private static double RoundShortestTextToDouble(double value, int places, MidpointRounding mode)
+        => !TryRoundShortestText(value, places, mode, out var quotient) ? value
+        : quotient == 0 ? Math.CopySign(0d, value)
+        : double.Parse(string.Create(InvariantCulture, $"{quotient}E-{places}"), InvariantCulture);
+
+    /// <summary>
+    /// <see cref="TryRoundShortestText"/> as a <see cref="decimal"/>, exactly. More than 28 places round at the 28th, the most a
+    /// <see cref="decimal"/> holds, with <paramref name="mode"/> (the text has more than 28 decimal places, so there is always a digit to round).
+    /// </summary>
+    private static decimal RoundShortestTextToDecimal(double value, int places, MidpointRounding mode)
+    {
+        var scale = Math.Min(places, 28);
+
+        _ = TryRoundShortestText(value, scale, mode, out var quotient);
+
+        // q × 10^-scale: q has at most 18 digits, so the product is exact
+        return quotient * new decimal(1, 0, 0, false, (byte)scale);
     }
 
     /// <summary><see cref="decimal.Round(decimal, int, MidpointRounding)"/> for valid arguments (see <see cref="IsValidRound"/>); more than 28 digits means 28.</summary>

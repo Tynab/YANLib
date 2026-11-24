@@ -926,17 +926,80 @@ public partial class YANMathTest
     }
 
     [Fact]
-    public void Round_DoubleMoreThan28DecimalPlaces_RoundsAt28PlacesFirst_Math()
+    public void Round_DoubleMoreThan28DecimalPlaces_RoundsExactlyOnShortestText_Math()
     {
-        // pin: the documented limit (see YANMath.md): a value whose shortest text has more than 28 decimal places is rounded to 28
-        // places before it is rounded to more than 15 digits, so the last digit can be one unit off (exact: 1.9999999E-13)
+        // the shortest text of this double has 29 decimal places, more than decimal holds: digit-shift rounding is exact at any number of
+        // digits (until 8.4.0 development it was rounded to 28 places first and returned 2E-13 for 20 digits ToZero)
         // Act
         var result = 1.9999999999999998e-13.Round(20, MidpointRounding.ToZero);
+        var twentyEight = 1.9999999999999998e-13.Round(28, MidpointRounding.ToZero);
+        var beyondTheText = 1.9999999999999998e-13.Round(30, MidpointRounding.ToZero);
+        var thousand = 1.9999999999999998e-13.Round(1000);
+        var directed = 4.4444444444444444e-13.Round(28, MidpointRounding.ToPositiveInfinity);
+        var negative = (-1.9999999999999998e-13).Round(20, MidpointRounding.ToNegativeInfinity);
         var fifteenDigits = 1.9999999999999998e-13.Round(15, MidpointRounding.ToZero);
 
         // Assert
-        Assert.Equal(2e-13, result);
+        Assert.Equal(1.9999999e-13, result);
+        Assert.Equal(1.999999999999999e-13, twentyEight);
+        Assert.Equal(1.9999999999999998e-13, beyondTheText);
+        Assert.Equal(1.9999999999999998e-13, thousand);
+        Assert.Equal(4.444444444444445e-13, directed);
+        Assert.Equal(-2e-13, negative);
         Assert.Equal(1.99e-13, fifteenDigits);
+    }
+
+    [Fact]
+    public void Round_DoubleMoreThan28DecimalPlaces_DecidesTiesOnShortestText_Math()
+    {
+        // 3.5e-28 is 3.49999...e-28 in binary and 2.5e-28 is 2.50000...1e-28: the ties are decided on the text, as decimal decides them
+        // Act
+        var awayFromZero = 3.5e-28.Round(28);
+        var toEven = 2.5e-28.Round(28, MidpointRounding.ToEven);
+        var negativeToEven = (-3.5e-28).Round(28, MidpointRounding.ToEven);
+
+        // Assert
+        Assert.Equal(4e-28, awayFromZero);
+        Assert.Equal(2e-28, toEven);
+        Assert.Equal(-4e-28, negativeToEven);
+    }
+
+    [Fact]
+    public void Round_TinyDoubleDirected_KeepsTheStep_Math()
+    {
+        // Act
+        var up = 1e-30.Round(20, MidpointRounding.ToPositiveInfinity);
+        var down = (-1e-30).Round(20, MidpointRounding.ToNegativeInfinity);
+        var nearest = 1e-30.Round(20);
+        var exact = 1e-30.Round(30);
+        var smallest = double.Epsilon.Round(16, MidpointRounding.ToPositiveInfinity);
+        var negativeSmallest = (-double.Epsilon).Round(16, MidpointRounding.ToPositiveInfinity);
+        var tiny = 1e-300.Round(20, MidpointRounding.ToNegativeInfinity);
+        var single = 1e-30f.Round(30);
+
+        // Assert
+        Assert.Equal(1e-20, up);
+        Assert.Equal(-1e-20, down);
+        Assert.Equal(0.0, nearest);
+        Assert.Equal(1e-30, exact);
+        Assert.Equal(1e-16, smallest);
+        Assert.True(negativeSmallest == 0 && double.IsNegative(negativeSmallest));
+        Assert.Equal(0.0, tiny);
+        Assert.Equal(1e-30f, single);
+    }
+
+    [Fact]
+    public void Rounds_DoubleMoreThan28DecimalPlaces_RoundsExactly_Math()
+    {
+        // Act
+        var array = new[] { 1.9999999999999998e-13, -1e-30 }.Rounds(20, MidpointRounding.ToZero);
+        var nullable = new double?[] { 1.9999999999999998e-13, null }.Rounds(20, MidpointRounding.ToZero);
+        var nonGeneric = new System.Collections.ArrayList { 1.9999999999999998e-13 }.Rounds<double>(20, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal([1.9999999e-13, -0.0], array!);
+        Assert.Equal([1.9999999e-13, null], nullable!);
+        Assert.Equal([1.9999999e-13], nonGeneric!);
     }
 
     [Fact]
