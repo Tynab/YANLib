@@ -27,7 +27,7 @@ The library is organized into several functional categories:
 
 - **Exception Safety**: Tasks that fault or are canceled are skipped (and do not count toward `taken`)
 - **Condition Exceptions**: An exception thrown by the condition counts as no match in `WaitAnyWithCondition` / `WhenAnyWithCondition`, but ends the enumeration and propagates to the consumer in `WaitAnyWithConditions` / `WhenAnyWithConditions`
-- **Null Safety**: A `null` or empty task collection returns `default(T)`, or an empty enumeration for the streaming methods; a `null` task in the collection throws `ArgumentException`
+- **Null Safety**: A `null` or empty task collection returns `default(T)`, or an empty enumeration for the streaming methods; a `null` task in the collection throws `ArgumentException`. The condition must not be `null`: it is not checked in advance, so a `null` condition counts as no match in `WaitAnyWithCondition` / `WhenAnyWithCondition` (the result is `default(T)`), but makes `WaitAnyWithConditions` / `WhenAnyWithConditions` throw `NullReferenceException` at the first task that completed successfully (the enumeration is empty when no task completes successfully)
 - **Cancellation Handling**: The cancellation token is observed while waiting; a canceled wait throws `OperationCanceledException`. The streaming methods throw it in every cancellation case: a token that is already canceled when the enumeration starts, a token passed with `WithCancellation`, a cancellation while waiting for a task, and a cancellation while your loop body handles an item (thrown by the next `MoveNextAsync`)
 
 
@@ -306,7 +306,7 @@ async Task ProcessDataAsync(byte[] data) => await Task.Delay(10);
 - **Extension Methods**: All operations are implemented as extension methods for better integration with existing code
 - **Async/Await Pattern**: Fully embraces the modern async/await pattern for asynchronous programming
 - **Task Tracking**: The task collection is copied once into a `HashSet<Task<T>>`, so a task that appears twice is checked once; a `null` task faults the returned task with `ArgumentException`
-- **Null Safety**: All methods handle null inputs gracefully, returning appropriate default values
+- **Null Safety**: A `null` or empty task collection gives `default(T)`, or an empty enumeration for the streaming methods. The condition is not checked for `null`: a `null` condition counts as no match in the single-result methods, and the streaming enumeration throws `NullReferenceException` at the first task that completed successfully
 - **Internal Implementation**: Core implementation details are separated from the public API for better maintainability
 - **Streaming Variants**: `WaitAnyWithConditions` / `WhenAnyWithConditions` return an `IAsyncEnumerable<T>` of all matching results with a `taken` limit; they are public since 8.4.0 (the `AsyncEnumerableEmpty` helper stays internal)
 

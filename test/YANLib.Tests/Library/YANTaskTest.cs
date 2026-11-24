@@ -263,6 +263,23 @@ public partial class YANTaskTest
         _ = await Assert.ThrowsAsync<ArgumentException>(() => tasks.WaitAnyWithCondition(x => x > 0));
     }
 
+    [Fact]
+    public async Task WaitAnyWithCondition_NullPredicate_ReturnsDefault_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            Task.FromResult(2)
+        };
+
+        // Act (pins the documented behaviour: the predicate is not checked for null, and the exception from calling it counts as no match)
+        var result = await tasks.WaitAnyWithCondition(null!);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region WhenAnyWithCondition
@@ -460,6 +477,23 @@ public partial class YANTaskTest
         // Assert
         Assert.Equal(3, result);
         Assert.Equal(3, starts);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithCondition_NullPredicate_ReturnsDefault_Task()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            Task.FromResult(2)
+        };
+
+        // Act (pins the documented behaviour: the predicate is not checked for null, and the exception from calling it counts as no match)
+        var result = await tasks.WhenAnyWithCondition(null!);
+
+        // Assert
+        Assert.Equal(0, result);
     }
 
     #endregion

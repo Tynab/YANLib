@@ -439,6 +439,33 @@ public partial class YANTaskTest
         _ = await Assert.ThrowsAsync<DivideByZeroException>(async () => await tasks.WaitAnyWithConditions(x => 10 / x > 1).ToListAsync());
     }
 
+    [Fact]
+    public async Task WaitAnyWithConditions_NullPredicate_ThrowsNullReferenceException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[] { Task.FromResult(1) };
+
+        // Act & Assert (pins the documented behaviour: the predicate is not checked for null, so calling it for the first successful task throws)
+        _ = await Assert.ThrowsAsync<NullReferenceException>(async () => await tasks.WaitAnyWithConditions(null!).ToListAsync());
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_NullPredicateAndNoSuccessfulTask_ReturnsEmptyEnumerable_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromException<int>(new Exception("Test exception")),
+            Task.FromCanceled<int>(new CancellationToken(true))
+        };
+
+        // Act (pins the documented behaviour: the predicate is never called, so the null predicate goes unnoticed)
+        var items = await tasks.WaitAnyWithConditions(null!).ToListAsync();
+
+        // Assert
+        Assert.Empty(items);
+    }
+
     #endregion
 
     #region WhenAnyWithConditions
@@ -791,6 +818,33 @@ public partial class YANTaskTest
 
         // Act & Assert
         _ = await Assert.ThrowsAsync<DivideByZeroException>(async () => await tasks.WhenAnyWithConditions(x => 10 / x > 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_NullPredicate_ThrowsNullReferenceException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[] { Task.FromResult(1) };
+
+        // Act & Assert (pins the documented behaviour: the predicate is not checked for null, so calling it for the first successful task throws)
+        _ = await Assert.ThrowsAsync<NullReferenceException>(async () => await tasks.WhenAnyWithConditions(null!).ToListAsync());
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_NullPredicateAndNoSuccessfulTask_ReturnsEmptyEnumerable_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromException<int>(new Exception("Test exception")),
+            Task.FromCanceled<int>(new CancellationToken(true))
+        };
+
+        // Act (pins the documented behaviour: the predicate is never called, so the null predicate goes unnoticed)
+        var items = await tasks.WhenAnyWithConditions(null!).ToListAsync();
+
+        // Assert
+        Assert.Empty(items);
     }
 
     #endregion

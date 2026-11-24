@@ -36,8 +36,8 @@ public static partial class YANTask
     /// when that enumeration starts; a task that appears more than once is checked once.
     /// </param>
     /// <param name="predicate">
-    /// The condition that a task result must satisfy. An exception it throws ends the enumeration and propagates to the consumer, unlike
-    /// <see cref="WaitAnyWithCondition{T}"/>, which treats it as no match.
+    /// The condition that a task result must satisfy; it must not be <c>null</c> (see the exceptions). An exception it throws ends the enumeration and
+    /// propagates to the consumer, unlike <see cref="WaitAnyWithCondition{T}"/>, which treats it as no match.
     /// </param>
     /// <param name="taken">The maximum number of matching results to yield. If 0 (the default), every matching result is yielded.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the enumeration. A token passed with <c>WithCancellation</c> is observed too.</param>
@@ -51,6 +51,11 @@ public static partial class YANTask
     /// <c>MoveNextAsync</c>, even when no item is left).
     /// </exception>
     /// <exception cref="ArgumentException">Thrown by the enumeration when <paramref name="tasks"/> contains a <c>null</c> task.</exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown by the enumeration (by <c>MoveNextAsync</c>) when <paramref name="predicate"/> is <c>null</c>, at the first task that completed successfully:
+    /// the predicate is not checked for <c>null</c> in advance, so when no task completes successfully (or <paramref name="tasks"/> is <c>null</c> or empty)
+    /// the enumeration is empty instead. <see cref="WaitAnyWithCondition{T}"/> treats a <c>null</c> predicate as no match.
+    /// </exception>
     /// <remarks>
     /// <para>
     /// Order: the tasks are checked in collection order, and each task that is complete when it is reached is yielded at once, including a task that completed
@@ -85,8 +90,8 @@ public static partial class YANTask
     /// when that enumeration starts; a task that appears more than once is checked once.
     /// </param>
     /// <param name="predicate">
-    /// The condition that a task result must satisfy. An exception it throws ends the enumeration and propagates to the consumer, unlike
-    /// <see cref="WhenAnyWithCondition{T}"/>, which treats it as no match.
+    /// The condition that a task result must satisfy; it must not be <c>null</c> (see the exceptions). An exception it throws ends the enumeration and
+    /// propagates to the consumer, unlike <see cref="WhenAnyWithCondition{T}"/>, which treats it as no match.
     /// </param>
     /// <param name="taken">The maximum number of matching results to yield. If 0 (the default), every matching result is yielded.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the enumeration. A token passed with <c>WithCancellation</c> is observed too.</param>
@@ -100,6 +105,11 @@ public static partial class YANTask
     /// <c>MoveNextAsync</c>, even when no item is left).
     /// </exception>
     /// <exception cref="ArgumentException">Thrown by the enumeration when <paramref name="tasks"/> contains a <c>null</c> task.</exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown by the enumeration (by <c>MoveNextAsync</c>) when <paramref name="predicate"/> is <c>null</c>, at the first task that completed successfully:
+    /// the predicate is not checked for <c>null</c> in advance, so when no task completes successfully (or <paramref name="tasks"/> is <c>null</c> or empty)
+    /// the enumeration is empty instead. <see cref="WhenAnyWithCondition{T}"/> treats a <c>null</c> predicate as no match.
+    /// </exception>
     /// <remarks>
     /// <para>
     /// Order: the tasks are checked in collection order, and each task that is complete when it is reached is yielded at once, including a task that completed
