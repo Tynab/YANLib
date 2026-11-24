@@ -365,7 +365,7 @@ await processNames.KillAllProcessesByNames();
 // them to exit after 10 seconds: OperationCanceledException, the processes stay signalled
 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 await "notepad".KillAllProcessesByName(entireProcessTree: false, timeout.Token);
-await processNames.KillAllProcessesByNames(timeout.Token);
+await processNames.KillAllProcessesByNames(entireProcessTree: false, timeout.Token);
 ```
 
 ### YANExpression
