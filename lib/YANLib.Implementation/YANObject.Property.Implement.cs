@@ -33,9 +33,9 @@ internal static partial class YANObject
             return default;
         }
 
-        foreach (var prop in GetCachedProperties(input.GetType()))
+        foreach (var reader in GetCachedReaders(input.GetType()))
         {
-            if (!prop.IsDefaultValue(input))
+            if (!reader.IsDefault(input))
             {
                 return false;
             }
@@ -53,16 +53,16 @@ internal static partial class YANObject
             return false;
         }
 
-        var props = GetCachedProperties(input.GetType(), names);
+        var readers = GetCachedReaders(input.GetType(), names);
 
-        if (props.Length is 0)
+        if (readers.Length is 0)
         {
             return false;
         }
 
-        foreach (var prop in props)
+        foreach (var reader in readers)
         {
-            if (!prop.IsDefaultValue(input))
+            if (!reader.IsDefault(input))
             {
                 return false;
             }
@@ -85,9 +85,9 @@ internal static partial class YANObject
             return default;
         }
 
-        foreach (var prop in GetCachedProperties(input.GetType()))
+        foreach (var reader in GetCachedReaders(input.GetType()))
         {
-            if (prop.IsDefaultValue(input))
+            if (reader.IsDefault(input))
             {
                 return false;
             }
@@ -105,16 +105,16 @@ internal static partial class YANObject
             return false;
         }
 
-        var props = GetCachedProperties(input.GetType(), names);
+        var readers = GetCachedReaders(input.GetType(), names);
 
-        if (props.Length is 0)
+        if (readers.Length is 0)
         {
             return false;
         }
 
-        foreach (var prop in props)
+        foreach (var reader in readers)
         {
-            if (prop.IsDefaultValue(input))
+            if (reader.IsDefault(input))
             {
                 return false;
             }
@@ -137,9 +137,9 @@ internal static partial class YANObject
             return default;
         }
 
-        foreach (var prop in GetCachedProperties(input.GetType()))
+        foreach (var reader in GetCachedReaders(input.GetType()))
         {
-            if (prop.IsDefaultValue(input))
+            if (reader.IsDefault(input))
             {
                 return true;
             }
@@ -157,9 +157,9 @@ internal static partial class YANObject
             return false;
         }
 
-        foreach (var prop in GetCachedProperties(input.GetType(), names))
+        foreach (var reader in GetCachedReaders(input.GetType(), names))
         {
-            if (prop.IsDefaultValue(input))
+            if (reader.IsDefault(input))
             {
                 return true;
             }
@@ -182,9 +182,9 @@ internal static partial class YANObject
             return default;
         }
 
-        foreach (var prop in GetCachedProperties(input.GetType()))
+        foreach (var reader in GetCachedReaders(input.GetType()))
         {
-            if (!prop.IsDefaultValue(input))
+            if (!reader.IsDefault(input))
             {
                 return true;
             }
@@ -202,9 +202,9 @@ internal static partial class YANObject
             return false;
         }
 
-        foreach (var prop in GetCachedProperties(input.GetType(), names))
+        foreach (var reader in GetCachedReaders(input.GetType(), names))
         {
-            if (!prop.IsDefaultValue(input))
+            if (!reader.IsDefault(input))
             {
                 return true;
             }
