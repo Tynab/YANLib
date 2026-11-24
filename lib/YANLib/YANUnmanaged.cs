@@ -17,7 +17,10 @@ public static partial class YANUnmanaged
     /// Parses an object to the specified unmanaged type.
     /// </summary>
     /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
-    /// <param name="input">The object to parse. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="input">
+    /// The object to parse. A <c>null</c> input counts as a failed parse: the method returns <paramref name="defaultValue"/>, or the default value
+    /// of <typeparamref name="T"/> when <paramref name="defaultValue"/> is <c>null</c> or cannot be converted.
+    /// </param>
     /// <param name="defaultValue">The default value to return if parsing fails. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
     /// <param name="format">The format strings to use for parsing. Used primarily for <see cref="DateTime"/> parsing.</param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
@@ -39,7 +42,10 @@ public static partial class YANUnmanaged
     /// Parses an object to the specified unmanaged type using the provided format strings.
     /// </summary>
     /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
-    /// <param name="input">The object to parse. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="input">
+    /// The object to parse. A <c>null</c> input counts as a failed parse: the method returns <paramref name="defaultValue"/>, or the default value
+    /// of <typeparamref name="T"/> when <paramref name="defaultValue"/> is <c>null</c> or cannot be converted.
+    /// </param>
     /// <param name="defaultValue">The default value to return if parsing fails. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
     /// <param name="format">The format strings to use for parsing. Used primarily for <see cref="DateTime"/> parsing.</param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
@@ -55,7 +61,10 @@ public static partial class YANUnmanaged
     /// Parses an object to the specified unmanaged type with the given culture-specific format information.
     /// </summary>
     /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
-    /// <param name="input">The object to parse. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="input">
+    /// The object to parse. A <c>null</c> input counts as a failed parse: the method returns <paramref name="defaultValue"/>, or the default value
+    /// of <typeparamref name="T"/> when <paramref name="defaultValue"/> is <c>null</c> or cannot be converted.
+    /// </param>
     /// <param name="provider">
     /// The culture-specific format information for every culture-dependent step: parsing numbers, <see cref="DateTime"/> and <see cref="TimeSpan"/>
     /// text, <see cref="Convert.ChangeType(object, Type, IFormatProvider)"/>, and turning an <paramref name="input"/> or <paramref name="defaultValue"/>
@@ -84,7 +93,10 @@ public static partial class YANUnmanaged
     /// Parses an object to the specified unmanaged type with the given culture-specific format information and the provided format strings.
     /// </summary>
     /// <typeparam name="T">The unmanaged type to parse to.</typeparam>
-    /// <param name="input">The object to parse. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
+    /// <param name="input">
+    /// The object to parse. A <c>null</c> input counts as a failed parse: the method returns <paramref name="defaultValue"/>, or the default value
+    /// of <typeparamref name="T"/> when <paramref name="defaultValue"/> is <c>null</c> or cannot be converted.
+    /// </param>
     /// <param name="provider">
     /// The culture-specific format information for every culture-dependent step (see <see cref="ParseWith{T}(object, IFormatProvider, object, IEnumerable{string})"/>).
     /// If <c>null</c>, the current culture is used exactly as by <see cref="Parse{T}(object, object, string[])"/>.
