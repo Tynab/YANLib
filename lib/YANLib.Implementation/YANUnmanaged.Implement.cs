@@ -80,7 +80,10 @@ internal static partial class YANUnmanaged
         }
     }
 
-    /// <param name="provider">The culture for every culture-dependent step; <c>null</c> keeps the 8.3.3 behaviour (current culture).</param>
+    /// <summary>
+    /// The parse core of <c>ParseImplement</c> and <c>ParseWithImplement</c>: <paramref name="provider"/> is the culture for every
+    /// culture-dependent step, and <c>null</c> keeps the 8.3.3 behaviour (current culture).
+    /// </summary>
     private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format, IFormatProvider? provider) where T : unmanaged
     {
         // already the requested type: return it unchanged (8.3.3 round-tripped DateTime through ToString(), losing milliseconds and Kind)
