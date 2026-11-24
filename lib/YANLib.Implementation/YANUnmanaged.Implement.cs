@@ -12,23 +12,64 @@ internal static partial class YANUnmanaged
 {
     #region Private
 
-    private static DateTime ParseDateTime(this string? input, DateTime defaultValue = default, IEnumerable<string?>? format = null)
-        => input.IsNullWhiteSpaceImplement() ? defaultValue : format.IsNullEmptyImplement() ? TryParse(input, out var dt) ? dt : defaultValue : TryParseExact(input, [.. format], InvariantCulture, None, out dt) ? dt : defaultValue;
+    /// <remarks>
+    /// Exact <paramref name="format"/> strings are always matched with the invariant culture, whatever <paramref name="provider"/> is
+    /// (8.3.3 behaviour, kept by the overloads that take a provider).
+    /// </remarks>
+    private static DateTime ParseDateTime(this string? input, IFormatProvider? provider, DateTime defaultValue = default, IEnumerable<string?>? format = null)
+        => input.IsNullWhiteSpaceImplement() ? defaultValue : format.IsNullEmptyImplement() ? TryParseDateTime(input, provider, out var dt) ? dt : defaultValue : TryParseExact(input, [.. format], InvariantCulture, None, out dt) ? dt : defaultValue;
 
     private static Guid ParseGuid(this string? input, Guid defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : Guid.TryParse(input, out var guid) ? guid : defaultValue;
 
-    private static TimeSpan ParseTimeSpan(this string? input, TimeSpan defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : TimeSpan.TryParse(input, out var ts) ? ts : defaultValue;
+    private static TimeSpan ParseTimeSpan(this string? input, IFormatProvider? provider, TimeSpan defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : TryParseTimeSpan(input, provider, out var ts) ? ts : defaultValue;
 
     private static T ParseEnum<T>(this string? input, T defaultValue = default) where T : unmanaged
         => input.IsNullWhiteSpaceImplement() ? defaultValue : Enum.TryParse(typeof(T), input, true, out var e) && e is T value ? value : defaultValue;
 
-    private static DateTime? ParseDateTimeNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TryParse(input, out var dt) ? dt : default(DateTime?);
+    private static DateTime? ParseDateTimeNullable(this string? input, IFormatProvider? provider) => input.IsNullWhiteSpaceImplement() ? default : TryParseDateTime(input, provider, out var dt) ? dt : default(DateTime?);
 
     private static Guid? ParseGuidNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : Guid.TryParse(input, out var guid) ? guid : default(Guid?);
 
-    private static TimeSpan? ParseTimeSpanNullable(this string? input) => input.IsNullWhiteSpaceImplement() ? default : TimeSpan.TryParse(input, out var ts) ? ts : default(TimeSpan?);
+    private static TimeSpan? ParseTimeSpanNullable(this string? input, IFormatProvider? provider) => input.IsNullWhiteSpaceImplement() ? default : TryParseTimeSpan(input, provider, out var ts) ? ts : default(TimeSpan?);
 
-    private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
+    /// <summary>
+    /// <see cref="DateTime.TryParse(string?, IFormatProvider?, DateTimeStyles, out DateTime)"/>; a <c>null</c> <paramref name="provider"/>
+    /// is the current culture, exactly like <see cref="DateTime.TryParse(string?, out DateTime)"/>. A provider that throws counts as a failed parse.
+    /// </summary>
+    private static bool TryParseDateTime(string input, IFormatProvider? provider, out DateTime result)
+    {
+        try
+        {
+            return TryParse(input, provider, None, out result);
+        }
+        catch
+        {
+            result = default;
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TimeSpan.TryParse(string?, IFormatProvider?, out TimeSpan)"/>; a <c>null</c> <paramref name="provider"/> is the current
+    /// culture, exactly like <see cref="TimeSpan.TryParse(string?, out TimeSpan)"/>. A provider that throws counts as a failed parse.
+    /// </summary>
+    private static bool TryParseTimeSpan(string input, IFormatProvider? provider, out TimeSpan result)
+    {
+        try
+        {
+            return TimeSpan.TryParse(input, provider, out result);
+        }
+        catch
+        {
+            result = default;
+
+            return false;
+        }
+    }
+
+    /// <param name="provider">The culture for every culture-dependent step; <c>null</c> keeps the 8.3.3 behaviour (current culture).</param>
+    private static T ParseHelper<T>(object? input, object? defaultValue, IEnumerable<string?>? format, IFormatProvider? provider) where T : unmanaged
     {
         // already the requested type: return it unchanged (8.3.3 round-tripped DateTime through ToString(), losing milliseconds and Kind)
         if (input is T value)
@@ -39,27 +80,27 @@ internal static partial class YANUnmanaged
         if (typeof(T) == typeof(DateTime))
         {
             // a DateTime default is used as is; 8.3.3 re-parsed its ToString() with the format and so ignored it when a format was given
-            var fallback = defaultValue is DateTime dateTime ? dateTime : defaultValue.SafeToString().ParseDateTime(default, format);
+            var fallback = defaultValue is DateTime dateTime ? dateTime : defaultValue.SafeToString(provider).ParseDateTime(provider, default, format);
 
-            return (T)(object)input.SafeToString().ParseDateTime(fallback, format);
+            return (T)(object)input.SafeToString(provider).ParseDateTime(provider, fallback, format);
         }
 
         if (typeof(T) == typeof(Guid))
         {
-            return (T)(object)input.SafeToString().ParseGuid(defaultValue is Guid guid ? guid : defaultValue.SafeToString().ParseGuid(default));
+            return (T)(object)input.SafeToString(provider).ParseGuid(defaultValue is Guid guid ? guid : defaultValue.SafeToString(provider).ParseGuid(default));
         }
 
         if (typeof(T) == typeof(TimeSpan))
         {
-            return (T)(object)input.SafeToString().ParseTimeSpan(defaultValue is TimeSpan timeSpan ? timeSpan : defaultValue.SafeToString().ParseTimeSpan(default));
+            return (T)(object)input.SafeToString(provider).ParseTimeSpan(provider, defaultValue is TimeSpan timeSpan ? timeSpan : defaultValue.SafeToString(provider).ParseTimeSpan(provider, default));
         }
 
         if (typeof(T).IsEnum)
         {
-            return input.SafeToString().ParseEnum(defaultValue is T enumValue ? enumValue : defaultValue.SafeToString().ParseEnum<T>(default));
+            return input.SafeToString(provider).ParseEnum(defaultValue is T enumValue ? enumValue : defaultValue.SafeToString(provider).ParseEnum<T>(default));
         }
 
-        if (input is not null && TryChangeType(input, typeof(T), ParseCache<T>.Kind, false, out var result) && result is T parsed)
+        if (input is not null && TryChangeType(input, typeof(T), ParseCache<T>.Kind, false, provider, out var result) && result is T parsed)
         {
             return parsed;
         }
@@ -68,7 +109,7 @@ internal static partial class YANUnmanaged
         {
             null => default,
             T typedDefault => typedDefault,
-            _ => TryChangeType(defaultValue, typeof(T), ParseCache<T>.Kind, false, out var converted) && converted is T convertedDefault ? convertedDefault : default
+            _ => TryChangeType(defaultValue, typeof(T), ParseCache<T>.Kind, false, provider, out var converted) && converted is T convertedDefault ? convertedDefault : default
         };
     }
 
@@ -76,13 +117,14 @@ internal static partial class YANUnmanaged
     /// Converts <paramref name="input"/> to <paramref name="targetType"/> without throwing and without recursion.
     /// </summary>
     /// <remarks>
-    /// Keeps the <see cref="Convert.ChangeType(object, Type)"/> semantics of 8.3.3 (current culture, round-half-to-even for
-    /// boxed fractional numbers) but range-checks numbers first instead of catching <see cref="OverflowException"/>.
+    /// Keeps the <see cref="Convert.ChangeType(object, Type)"/> semantics of 8.3.3 (current culture, or <paramref name="provider"/> when it
+    /// is not <c>null</c>; round-half-to-even for boxed fractional numbers) but range-checks numbers first instead of catching
+    /// <see cref="OverflowException"/>.
     /// <see cref="nint"/>/<see cref="nuint"/>, which <see cref="IConvertible"/> does not support, are converted through
     /// <see cref="long"/>/<see cref="ulong"/>. When <paramref name="floorFractions"/> is set and an integer target cannot
     /// take the value directly, the exact floor of the value is used if it is in range.
     /// </remarks>
-    private static bool TryChangeType(object input, Type targetType, ParseKind kind, bool floorFractions, out object? result)
+    private static bool TryChangeType(object input, Type targetType, ParseKind kind, bool floorFractions, IFormatProvider? provider, out object? result)
     {
         if (kind is not ParseKind.Other)
         {
@@ -96,39 +138,49 @@ internal static partial class YANUnmanaged
 
         return kind switch
         {
-            ParseKind.SByte => TryConvertInteger<sbyte>(input, floorFractions, out result),
-            ParseKind.Byte => TryConvertInteger<byte>(input, floorFractions, out result),
-            ParseKind.Int16 => TryConvertInteger<short>(input, floorFractions, out result),
-            ParseKind.UInt16 => TryConvertInteger<ushort>(input, floorFractions, out result),
-            ParseKind.Int32 => TryConvertInteger<int>(input, floorFractions, out result),
-            ParseKind.UInt32 => TryConvertInteger<uint>(input, floorFractions, out result),
-            ParseKind.Int64 => TryConvertInteger<long>(input, floorFractions, out result),
-            ParseKind.UInt64 => TryConvertInteger<ulong>(input, floorFractions, out result),
-            ParseKind.NInt => TryConvertInteger<nint>(input, floorFractions, out result),
-            ParseKind.NUInt => TryConvertInteger<nuint>(input, floorFractions, out result),
-            ParseKind.Boolean when input is string text => TryParseValue<bool>(text, out result),
-            ParseKind.Char when input is string text => TryParseValue<char>(text, out result),
-            ParseKind.Single when input is string text => TryParseValue<float>(text, out result),
-            ParseKind.Double when input is string text => TryParseValue<double>(text, out result),
-            ParseKind.Decimal when input is string text => TryParseValue<decimal>(text, out result),
+            ParseKind.SByte => TryConvertInteger<sbyte>(input, floorFractions, provider, out result),
+            ParseKind.Byte => TryConvertInteger<byte>(input, floorFractions, provider, out result),
+            ParseKind.Int16 => TryConvertInteger<short>(input, floorFractions, provider, out result),
+            ParseKind.UInt16 => TryConvertInteger<ushort>(input, floorFractions, provider, out result),
+            ParseKind.Int32 => TryConvertInteger<int>(input, floorFractions, provider, out result),
+            ParseKind.UInt32 => TryConvertInteger<uint>(input, floorFractions, provider, out result),
+            ParseKind.Int64 => TryConvertInteger<long>(input, floorFractions, provider, out result),
+            ParseKind.UInt64 => TryConvertInteger<ulong>(input, floorFractions, provider, out result),
+            ParseKind.NInt => TryConvertInteger<nint>(input, floorFractions, provider, out result),
+            ParseKind.NUInt => TryConvertInteger<nuint>(input, floorFractions, provider, out result),
+            ParseKind.Boolean when input is string text => TryParseValue<bool>(text, provider, out result),
+            ParseKind.Char when input is string text => TryParseValue<char>(text, provider, out result),
+            ParseKind.Single when input is string text => TryParseValue<float>(text, provider, out result),
+            ParseKind.Double when input is string text => TryParseValue<double>(text, provider, out result),
+            ParseKind.Decimal when input is string text => TryParseValue<decimal>(text, provider, out result),
             ParseKind.Decimal when input is double or float && !IsDecimalRange(input is double d ? d : (float)input) => Fail(out result),
             ParseKind.Enum => Fail(out result),
-            _ => TryChangeTypeFallback(input, targetType, out result)
+            _ => TryChangeTypeFallback(input, targetType, provider, out result)
         };
     }
 
     /// <summary>
     /// Parses <paramref name="text"/> with <see cref="IParsable{TSelf}.TryParse(string?, IFormatProvider?, out TSelf)"/> and the current
-    /// culture, which uses the same <see cref="NumberStyles"/> as <see cref="Convert.ChangeType(object, Type)"/> did, without exceptions.
+    /// culture (or <paramref name="provider"/>), which uses the same <see cref="NumberStyles"/> as <see cref="Convert.ChangeType(object, Type)"/>
+    /// did, without exceptions. A provider that throws counts as a failed parse.
     /// </summary>
-    private static bool TryParseValue<TValue>(string text, out object? result) where TValue : IParsable<TValue>
-        => TValue.TryParse(text, CurrentCulture, out var value) ? Succeed(value, out result) : Fail(out result);
+    private static bool TryParseValue<TValue>(string text, IFormatProvider? provider, out object? result) where TValue : IParsable<TValue>
+    {
+        try
+        {
+            return TValue.TryParse(text, provider ?? CurrentCulture, out var value) ? Succeed(value, out result) : Fail(out result);
+        }
+        catch
+        {
+            return Fail(out result);
+        }
+    }
 
     /// <summary>
     /// Mirrors <see cref="Convert.ChangeType(object, Type)"/> for the remaining targets, rejecting up front the cases in which it
     /// always throws.
     /// </summary>
-    private static bool TryChangeTypeFallback(object input, Type targetType, out object? result)
+    private static bool TryChangeTypeFallback(object input, Type targetType, IFormatProvider? provider, out object? result)
     {
         if (input is not IConvertible)
         {
@@ -138,10 +190,10 @@ internal static partial class YANUnmanaged
         // the BCL IConvertible types (string, primitives, DateTime, enums...) convert to no TypeCode.Object type except object itself
         return targetType != typeof(object) && Type.GetTypeCode(targetType) == TypeCode.Object && Type.GetTypeCode(input.GetType()) != TypeCode.Object
             ? Fail(out result)
-            : TryChangeTypeCore(input, targetType, out result);
+            : TryChangeTypeCore(input, targetType, provider, out result);
     }
 
-    private static bool TryConvertInteger<TInteger>(object input, bool floorFractions, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+    private static bool TryConvertInteger<TInteger>(object input, bool floorFractions, IFormatProvider? provider, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
     {
         switch (input)
         {
@@ -154,18 +206,35 @@ internal static partial class YANUnmanaged
             case decimal value:
                 return TryFromDecimal<TInteger>(decimal.Round(value), out result) || floorFractions && TryFromDecimal<TInteger>(decimal.Floor(value), out result);
             case string text:
-                return TInteger.TryParse(text, CurrentCulture, out var parsed) ? Succeed(parsed, out result)
-                    : floorFractions && decimal.TryParse(text, NumberStyles.Number, CurrentCulture, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
-                    || Fail(out result);
+                return TryParseInteger<TInteger>(text, floorFractions, provider, out result);
             default:
                 if (TryGetInt128(input, out var number))
                 {
                     return TryFromInt128<TInteger>(number, out result);
                 }
 
-                return input is IConvertible && TryChangeTypeCore(input, IntegerConversionType<TInteger>(), out var converted) && TryGetInt128(converted, out number) && TryFromInt128<TInteger>(number, out result)
-                    || floorFractions && input is IConvertible && TryChangeTypeCore(input, typeof(decimal), out var boxed) && boxed is decimal m && TryFromDecimal<TInteger>(decimal.Floor(m), out result)
+                return input is IConvertible && TryChangeTypeCore(input, IntegerConversionType<TInteger>(), provider, out var converted) && TryGetInt128(converted, out number) && TryFromInt128<TInteger>(number, out result)
+                    || floorFractions && input is IConvertible && TryChangeTypeCore(input, typeof(decimal), provider, out var boxed) && boxed is decimal m && TryFromDecimal<TInteger>(decimal.Floor(m), out result)
                     || Fail(out result);
+        }
+    }
+
+    /// <summary>
+    /// Parses <paramref name="text"/> as <typeparamref name="TInteger"/> with the current culture (or <paramref name="provider"/>); with
+    /// <paramref name="floorFractions"/>, a fractional or out-of-range number is floored exactly if the floor fits. A provider that throws
+    /// counts as a failed parse.
+    /// </summary>
+    private static bool TryParseInteger<TInteger>(string text, bool floorFractions, IFormatProvider? provider, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+    {
+        try
+        {
+            return TInteger.TryParse(text, provider ?? CurrentCulture, out var parsed) ? Succeed(parsed, out result)
+                : floorFractions && decimal.TryParse(text, NumberStyles.Number, provider ?? CurrentCulture, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
+                || Fail(out result);
+        }
+        catch
+        {
+            return Fail(out result);
         }
     }
 
@@ -209,15 +278,19 @@ internal static partial class YANUnmanaged
     private static bool IsDecimalRange(double value) => Math.Abs(value) < 79228162514264337593543950336.0;
 
     /// <summary>
-    /// The only place that still calls <see cref="Convert.ChangeType(object, Type)"/>; kept for conversions that have no
+    /// The only place that still calls <see cref="Convert.ChangeType(object, Type, IFormatProvider)"/>; kept for conversions that have no
     /// exception-free equivalent (bool/char/DateTime sources, custom <see cref="IConvertible"/> implementations). Strings never
     /// get here for numeric, <see cref="bool"/>, <see cref="char"/>, enum or <see cref="TypeCode.Object"/> targets.
     /// </summary>
-    private static bool TryChangeTypeCore(object input, Type targetType, out object? result)
+    /// <remarks>
+    /// A <c>null</c> <paramref name="provider"/> passes the current culture, which is what <see cref="Convert.ChangeType(object, Type)"/>
+    /// passes, so a custom <see cref="IConvertible"/> sees the same provider as in 8.3.3.
+    /// </remarks>
+    private static bool TryChangeTypeCore(object input, Type targetType, IFormatProvider? provider, out object? result)
     {
         try
         {
-            result = ChangeType(input, targetType);
+            result = ChangeType(input, targetType, provider ?? CurrentCulture);
 
             return true;
         }
@@ -241,11 +314,16 @@ internal static partial class YANUnmanaged
         return false;
     }
 
-    private static string? SafeToString(this object? input)
+    /// <summary>
+    /// The text of <paramref name="input"/>, or <c>null</c> when its <see cref="object.ToString"/> throws. With a <paramref name="provider"/>,
+    /// an <see cref="IFormattable"/> input is formatted with it (<c>1.5</c> is <c>"1.5"</c> with the invariant culture under de-DE);
+    /// a <c>null</c> provider calls <see cref="object.ToString"/> as 8.3.3 did.
+    /// </summary>
+    private static string? SafeToString(this object? input, IFormatProvider? provider)
     {
         try
         {
-            return input?.ToString();
+            return provider is not null && input is IFormattable formattable ? formattable.ToString(null, provider) : input?.ToString();
         }
         catch
         {
@@ -315,5 +393,8 @@ internal static partial class YANUnmanaged
     #endregion
 
     internal static T ParseImplement<T>(this object? input, object? defaultValue = null, IEnumerable<string?>? format = null) where T : unmanaged
-        => ParseHelper<T>(input, defaultValue, format);
+        => ParseHelper<T>(input, defaultValue, format, null);
+
+    internal static T ParseWithImplement<T>(this object? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
+        => ParseHelper<T>(input, defaultValue, format, provider);
 }
