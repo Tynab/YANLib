@@ -111,7 +111,7 @@ Recommendation: If the methods become public, switch to throwing OperationCancel
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
-**Chosen for 8.4.0: add CancellationToken / timeout overloads (option 2).**
+**Chosen for 8.4.0: add CancellationToken / timeout overloads (option 2). Done: `KillAllProcessesByName(this string?, CancellationToken)` and `KillAllProcessesByNames<TNames>(this TNames?, CancellationToken)`, plus the token parameter of the entireProcessTree overloads below. A timeout is the token of `new CancellationTokenSource(TimeSpan)`: TimeSpan overloads would make a `default` argument ambiguous (CS0121). The facade async/await wrappers are unchanged.**
 
 WaitForExitAsync can wait indefinitely for a process that ignores SIGKILL (e.g. D state); the facade does `async Task X() => await XImplement()`.
 
@@ -159,7 +159,7 @@ Recommendation: Throw ArgumentOutOfRangeException in NextId* in the next major (
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
-**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3).**
+**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3). Done: `KillAllProcessesByName(this string?, bool entireProcessTree, CancellationToken = default)` and `KillAllProcessesByNames<TNames>(this TNames?, bool entireProcessTree, CancellationToken = default) where TNames : IEnumerable<string?>`, generic so that `params` calls with only null/default arguments keep their binding; `false` uses Kill(), so a matching ancestor of the caller is killed on its own.**
 
 KillAllProcessesByName(s) kills each matching process with Process.Kill(entireProcessTree: true), so every descendant is killed too, whatever its name (for example child processes of a matching shell). The earlier record wrongly said the caller dies when a matching process is its ancestor. In fact .NET refuses any tree that contains the calling process: the ancestor stays alive, nothing is killed through it, and the library still kills the other matches and then rethrows the first failure. I verified this with the new test KillAndDispose_AncestorOfCallingProcess_IsRefusedAndTheOthersAreStillKilled_Process; the two verifiers observed it on .NET 8.0.34. The calling process itself is skipped by id. So the caller is never killed, but a by-name call that matches an ancestor (for example a shell name) ends with InvalidOperationException. Switching to Kill() would stop killing unrelated descendants and would also stop the ancestor refusal: an ancestor with a matching name would then be killed on its own, without its tree.
 
@@ -729,6 +729,8 @@ Recommendation: Option 2.
 ### WaitAnyWithConditions/WhenAnyWithConditions documented but internal
 
 *Area:* Packaging / docs / tooling
+
+**Resolved for 8.4.0: the methods are public and documented (see "Make WaitAnyWithConditions / WhenAnyWithConditions (and AsyncEnumerableEmpty) public").**
 
 YANTask.md documents them as public (see deferred lines); they are internal in YANLib.Implementation and the facade exposes only the single-result variants.
 
