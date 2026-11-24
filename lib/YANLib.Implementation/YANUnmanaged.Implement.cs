@@ -33,10 +33,19 @@ internal static partial class YANUnmanaged
     private static TimeSpan? ParseTimeSpanNullable(this string? input, IFormatProvider? provider) => input.IsNullWhiteSpaceImplement() ? default : TryParseTimeSpan(input, provider, out var ts) ? ts : default(TimeSpan?);
 
     /// <summary>
-    /// <see cref="DateTime.TryParse(string?, IFormatProvider?, DateTimeStyles, out DateTime)"/>; a <c>null</c> <paramref name="provider"/>
-    /// is the current culture, exactly like <see cref="DateTime.TryParse(string?, out DateTime)"/>. A provider that throws counts as a failed parse.
+    /// <see cref="DateTime.TryParse(string?, out DateTime)"/> (current culture) for a <c>null</c> <paramref name="provider"/>, as in 8.3.3;
+    /// otherwise <see cref="DateTime.TryParse(string?, IFormatProvider?, DateTimeStyles, out DateTime)"/>, where a provider that throws
+    /// counts as a failed parse.
     /// </summary>
+    /// <remarks>
+    /// The exception guard sits in a separate method so that the <c>null</c> path, which every existing overload takes, has no exception
+    /// handler (with the handler in the same method, <c>"01:02:03".Parse&lt;TimeSpan&gt;(default)</c> measured about 10 ns slower).
+    /// The same split is used by <see cref="TryParseTimeSpan"/>, <see cref="TryParseValue{TValue}"/> and <see cref="TryParseInteger{TInteger}"/>.
+    /// </remarks>
     private static bool TryParseDateTime(string input, IFormatProvider? provider, out DateTime result)
+        => provider is null ? TryParse(input, out result) : TryParseDateTimeGuarded(input, provider, out result);
+
+    private static bool TryParseDateTimeGuarded(string input, IFormatProvider provider, out DateTime result)
     {
         try
         {
@@ -51,10 +60,13 @@ internal static partial class YANUnmanaged
     }
 
     /// <summary>
-    /// <see cref="TimeSpan.TryParse(string?, IFormatProvider?, out TimeSpan)"/>; a <c>null</c> <paramref name="provider"/> is the current
-    /// culture, exactly like <see cref="TimeSpan.TryParse(string?, out TimeSpan)"/>. A provider that throws counts as a failed parse.
+    /// <see cref="TimeSpan.TryParse(string?, out TimeSpan)"/> (current culture) for a <c>null</c> <paramref name="provider"/>, as in 8.3.3;
+    /// otherwise <see cref="TimeSpan.TryParse(string?, IFormatProvider?, out TimeSpan)"/>, where a provider that throws counts as a failed parse.
     /// </summary>
     private static bool TryParseTimeSpan(string input, IFormatProvider? provider, out TimeSpan result)
+        => provider is null ? TimeSpan.TryParse(input, out result) : TryParseTimeSpanGuarded(input, provider, out result);
+
+    private static bool TryParseTimeSpanGuarded(string input, IFormatProvider provider, out TimeSpan result)
     {
         try
         {
@@ -165,10 +177,13 @@ internal static partial class YANUnmanaged
     /// did, without exceptions. A provider that throws counts as a failed parse.
     /// </summary>
     private static bool TryParseValue<TValue>(string text, IFormatProvider? provider, out object? result) where TValue : IParsable<TValue>
+        => provider is null ? TValue.TryParse(text, CurrentCulture, out var value) ? Succeed(value, out result) : Fail(out result) : TryParseValueGuarded<TValue>(text, provider, out result);
+
+    private static bool TryParseValueGuarded<TValue>(string text, IFormatProvider provider, out object? result) where TValue : IParsable<TValue>
     {
         try
         {
-            return TValue.TryParse(text, provider ?? CurrentCulture, out var value) ? Succeed(value, out result) : Fail(out result);
+            return TValue.TryParse(text, provider, out var value) ? Succeed(value, out result) : Fail(out result);
         }
         catch
         {
@@ -225,18 +240,24 @@ internal static partial class YANUnmanaged
     /// counts as a failed parse.
     /// </summary>
     private static bool TryParseInteger<TInteger>(string text, bool floorFractions, IFormatProvider? provider, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+        => provider is null ? TryParseIntegerCore<TInteger>(text, floorFractions, CurrentCulture, out result) : TryParseIntegerGuarded<TInteger>(text, floorFractions, provider, out result);
+
+    private static bool TryParseIntegerGuarded<TInteger>(string text, bool floorFractions, IFormatProvider provider, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
     {
         try
         {
-            return TInteger.TryParse(text, provider ?? CurrentCulture, out var parsed) ? Succeed(parsed, out result)
-                : floorFractions && decimal.TryParse(text, NumberStyles.Number, provider ?? CurrentCulture, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
-                || Fail(out result);
+            return TryParseIntegerCore<TInteger>(text, floorFractions, provider, out result);
         }
         catch
         {
             return Fail(out result);
         }
     }
+
+    private static bool TryParseIntegerCore<TInteger>(string text, bool floorFractions, IFormatProvider provider, out object? result) where TInteger : struct, IBinaryInteger<TInteger>, IMinMaxValue<TInteger>
+        => TInteger.TryParse(text, provider, out var parsed) ? Succeed(parsed, out result)
+            : floorFractions && decimal.TryParse(text, NumberStyles.Number, provider, out var fraction) && TryFromDecimal<TInteger>(decimal.Floor(fraction), out result)
+            || Fail(out result);
 
     private static Type IntegerConversionType<TInteger>() => typeof(TInteger) == typeof(nint) ? typeof(long) : typeof(TInteger) == typeof(nuint) ? typeof(ulong) : typeof(TInteger);
 
