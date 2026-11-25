@@ -511,6 +511,213 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parses_DuplicateKeysWithOnDuplicate_ResolvesInEnumerationOrder_Collection()
+    {
+        // Arrange ("1" and 1 parse to the same int key, and so do "3.2" and "3.7", both floored to 3 where '.' is the decimal separator)
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "first" },
+            { 1, "second" },
+            { "3.2", "a" },
+            { "3.7", "b" },
+            { "5", "single" }
+        };
+
+        // Act
+        var (keepFirst, keepLast, merged) = WithCulture(CultureInfo.InvariantCulture, () => (
+            input.Parses<int, string>(static (stored, _) => stored),
+            input.Parses<int, string>(static (_, incoming) => incoming),
+            input.Parses<int, string>(static (stored, incoming) => stored + "+" + incoming)));
+
+        // Assert
+        Assert.Equal(new Dictionary<int, string?> { { 1, "first" }, { 3, "a" }, { 5, "single" } }, keepFirst);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "second" }, { 3, "b" }, { 5, "single" } }, keepLast);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "first+second" }, { 3, "a+b" }, { 5, "single" } }, merged);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicate_ReceivesParsedValues_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "7", "10" },
+            { 7L, 5 },
+            { 7.0, "x" }
+        };
+
+        var calls = new List<(int? Stored, int? Incoming)>();
+
+        // Act (values are parsed before the resolver sees them; "x" is null for int?)
+        var result = input.Parses<int, int?>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return (stored ?? 0) + (incoming ?? 0);
+        });
+
+        // Assert
+        Assert.Equal([(10, 5), (15, null)], calls);
+        Assert.Equal(new Dictionary<int, int?> { { 7, 15 } }, result);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateWithoutCollision_IsNotCalled_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "a" },
+            { "2", "b" }
+        };
+
+        var called = false;
+
+        // Act
+        var result = input.Parses<int, string>((stored, _) =>
+        {
+            called = true;
+
+            return stored;
+        });
+        var nullResult = ((IDictionary<object, object?>?)null).Parses<int, string>(static (stored, _) => stored);
+        var emptyResult = new Dictionary<object, object?>().Parses<int, string>(static (stored, _) => stored);
+
+        // Assert
+        Assert.False(called);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "a" }, { 2, "b" } }, result);
+        Assert.Empty(nullResult);
+        Assert.Empty(emptyResult);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateThrows_ExceptionPropagates_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "a" },
+            { 1, "b" }
+        };
+
+        // Act
+        var exception = Assert.Throws<InvalidOperationException>(() => input.Parses<int, string>(static (_, _) => throw new InvalidOperationException("conflict")));
+
+        // Assert
+        Assert.Equal("conflict", exception.Message);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateKeysEqualUnderDefaultComparer_CallsOnDuplicate_Collection()
+    {
+        // Arrange (two keys that the input's own comparer keeps apart but object.Equals does not, two "1" strings or two boxes of 1 under
+        // ReferenceEqualityComparer: 8.4.0 before this change copied the input under the default comparer first, so they threw ArgumentException
+        // before onDuplicate was called)
+        var input = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { new string('1', 1), "a" },
+            { new string('1', 1), "b" }
+        };
+
+        var boxes = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { 1, "a" },
+            { 1, "b" },
+            { "2", "c" }
+        };
+
+        var calls = new List<(string? Stored, string? Incoming)>();
+
+        // Act
+        var keepLast = input.Parses<int, string>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return incoming;
+        });
+        var keepFirst = boxes.Parses<int, string>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return stored;
+        });
+
+        // Assert (in the enumeration order of the input, which is left unchanged)
+        Assert.Equal(new Dictionary<int, string?> { { 1, "b" } }, keepLast);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "a" }, { 2, "c" } }, keepFirst);
+        Assert.Equal([("a", "b"), ("a", "b")], calls);
+        Assert.Equal((2, 3), (input.Count, boxes.Count));
+    }
+
+    [Fact]
+    public void Parses_KeysEqualUnderDefaultComparer_ThrowsArgumentException_Collection()
+    {
+        // pin: without onDuplicate the input is still copied under the default comparer before its keys are parsed, as in 8.3.3, so two keys that
+        // its own comparer keeps apart but object.Equals does not (two "1" strings, or two boxes of 1, under ReferenceEqualityComparer) throw
+        // ArgumentException from that copy
+        // Arrange
+        var input = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { new string('1', 1), "a" },
+            { new string('1', 1), "b" }
+        };
+
+        var boxes = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { 1, "a" },
+            { 1, "b" }
+        };
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => input.Parses<int, string>());
+        var boxesException = Assert.Throws<ArgumentException>(() => boxes.Parses<int, string>());
+
+        // Assert
+        Assert.Contains("An item with the same key has already been added", exception.Message);
+        Assert.Contains("An item with the same key has already been added", boxesException.Message);
+        Assert.Null(exception.ParamName);
+        Assert.Null(boxesException.ParamName);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateNullKeyOfCustomDictionary_IsParsedLikeAnUnparsableKey_Collection()
+    {
+        // Arrange (only a custom IDictionary can hold a null key; 8.4.0 before this change threw ArgumentNullException from the copy, as the
+        // overload without onDuplicate still does)
+        var input = new EntriesDictionary(new(null!, "n"), new(0, "z"));
+        var calls = new List<(string? Stored, string? Incoming)>();
+
+        // Act
+        var result = input.Parses<int, string>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return incoming;
+        });
+        var exception = Assert.Throws<ArgumentNullException>(() => input.Parses<int, string>());
+
+        // Assert
+        Assert.Equal(new Dictionary<int, string?> { { 0, "z" } }, result);
+        Assert.Equal([("n", "z")], calls);
+        Assert.Equal("key", exception.ParamName);
+    }
+
+    [Fact]
+    public void Parses_NullOnDuplicate_ThrowsArgumentNullException_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?> { { "1", "a" } };
+
+        // Act
+        var exception = Assert.Throws<ArgumentNullException>(() => input.Parses<int, string>(null!));
+        var nullInputException = Assert.Throws<ArgumentNullException>(static () => ((IDictionary<object, object?>?)null).Parses<int, string>(null!));
+
+        // Assert
+        Assert.Equal("onDuplicate", exception.ParamName);
+        Assert.Equal("onDuplicate", nullInputException.ParamName);
+    }
+
+    [Fact]
     public void Parses_ComplexTypes_HandlesComplexTypesCorrectly_Collection()
     {
         // Arrange
@@ -580,6 +787,30 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parses_StringDefaultValueNotMatchingFormat_FallsBackToGeneralParse_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "15/06/2023", "bad" };
+        var german = new CultureInfo("de-DE");
+
+        // Act (before 8.4.0 the unparsable elements became DateTime.MinValue)
+        var results = WithCulture(new CultureInfo("en-US"), () => new[]
+        {
+            input.Parses<DateTime>("2025-01-01", "dd/MM/yyyy")?.ToList(),
+            input.Parses<DateTime>("2025-01-01", new List<string?> { "dd/MM/yyyy" })?.ToList(),
+            new ArrayList(input).Parses<DateTime>("2025-01-01", "dd/MM/yyyy")?.ToList(),
+            new ArrayList(input).Parses<DateTime>("2025-01-01", new List<string?> { "dd/MM/yyyy" })?.ToList(),
+            input.ParsesWith<DateTime>(german, "01.01.2025", "dd/MM/yyyy")?.ToList(),
+            input.ParsesWith<DateTime>(german, "01.01.2025", new List<string?> { "dd/MM/yyyy" })?.ToList(),
+            new ArrayList(input).ParsesWith<DateTime>(german, "01.01.2025", "dd/MM/yyyy")?.ToList(),
+            new ArrayList(input).ParsesWith<DateTime>(german, "01.01.2025", new List<string?> { "dd/MM/yyyy" })?.ToList()
+        });
+
+        // Assert
+        Assert.All(results, static result => Assert.Equal([new DateTime(2023, 6, 15), new DateTime(2025, 1, 1)], result));
+    }
+
+    [Fact]
     public void ParsesWith_NullProvider_ReadsCultureOfEnumeratingThread_Collection()
     {
         // Arrange
@@ -637,4 +868,44 @@ public partial class YANUnmanagedTest
     }
 
     #endregion
+
+    /// <summary>A read-only <see cref="IDictionary{TKey, TValue}"/> that enumerates the given entries as they are, a <c>null</c> key included.</summary>
+    private sealed class EntriesDictionary(params KeyValuePair<object, object?>[] entries) : IDictionary<object, object?>
+    {
+        public ICollection<object> Keys => [.. entries.Select(static x => x.Key)];
+
+        public ICollection<object?> Values => [.. entries.Select(static x => x.Value)];
+
+        public int Count => entries.Length;
+
+        public bool IsReadOnly => true;
+
+        public object? this[object key]
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        public void Add(object key, object? value) => throw new NotSupportedException();
+
+        public void Add(KeyValuePair<object, object?> item) => throw new NotSupportedException();
+
+        public void Clear() => throw new NotSupportedException();
+
+        public bool Contains(KeyValuePair<object, object?> item) => entries.Contains(item);
+
+        public bool ContainsKey(object key) => entries.Any(x => Equals(x.Key, key));
+
+        public void CopyTo(KeyValuePair<object, object?>[] array, int arrayIndex) => entries.CopyTo(array, arrayIndex);
+
+        public IEnumerator<KeyValuePair<object, object?>> GetEnumerator() => ((IEnumerable<KeyValuePair<object, object?>>)entries).GetEnumerator();
+
+        public bool Remove(object key) => throw new NotSupportedException();
+
+        public bool Remove(KeyValuePair<object, object?> item) => throw new NotSupportedException();
+
+        public bool TryGetValue(object key, out object? value) => throw new NotSupportedException();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }

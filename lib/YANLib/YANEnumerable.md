@@ -19,7 +19,7 @@ The library is organized into several functional categories:
 
 ### Dictionary and Lookup Conversion
 
-- **Dictionary Creation**: Convert collections to dictionaries with typed keys and values
+- **Dictionary Creation**: Convert collections to dictionaries with typed keys and values; keys that parse to the same value throw `ArgumentException`, or are resolved by an `onDuplicate` function
 - **Lookup Creation**: Transform collections into lookups with typed keys and elements
 - **Key/Value Selection**: Extract and convert keys and values from source elements
 
@@ -100,6 +100,29 @@ ILookup<int, string?> lookup = items.ToLookup<TestItem, int, string?, int, strin
 );
 // Returns lookup with keys [1, 2, 3] and corresponding values
 ```
+
+#### Keys that parse to the same value
+
+`ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` throw `ArgumentException` when the keys of two elements parse to the same `TKey` (for example the `double` keys 1.2 and 0.8, which both convert to the `int` 1). Since 8.4.0 each has an overload with a `Func<TValue?, TValue?, TValue?> onDuplicate` parameter: it receives the value already stored for the key and the converted value of the new element, in input order, and returns the value to store. It is not called when no keys collide, an exception it throws propagates, and a `null` function throws `ArgumentNullException`.
+
+```csharp
+class Reading
+{
+    public double Sensor { get; set; }
+    public string? Value { get; set; }
+}
+
+IEnumerable<object?> readings = [
+    new Reading { Sensor = 1.2, Value = "a" },
+    new Reading { Sensor = 0.8, Value = "b" }   // also key 1
+];
+
+// readings.ToDictionary<Reading, int, string?, double, string?>(r => r.Sensor, r => r.Value) throws ArgumentException
+Dictionary<int, string?> first = readings.ToDictionary<Reading, int, string?, double, string?>(r => r.Sensor, r => r.Value, (stored, incoming) => stored); // {1: "a"}
+Dictionary<int, string?> last = readings.ToDictionary<Reading, int, string?, double, string?>(r => r.Sensor, r => r.Value, (stored, incoming) => incoming); // {1: "b"}
+```
+
+With the second overload, the method groups no longer have a natural type: `var f = items.ToDictionary<TestItem, int, string?, int, string?>;` (and the same for `ToImmutableDictionary` and `ToImmutableSortedDictionary`) needs an explicit delegate type since 8.4.0 (CS8917).
 
 ### Immutable Collection Conversion
 
@@ -208,7 +231,7 @@ The library provides comprehensive coverage of collection conversion operations:
 | **Array Conversion** | ToArray<T> |
 | **List Conversion** | ToList<T> |
 | **HashSet Conversion** | ToHashSet<T> |
-| **Dictionary Conversion** | ToDictionary<TSource, TKey, TValue, TKeyResult, TValueResult> |
+| **Dictionary Conversion** | ToDictionary<TSource, TKey, TValue, TKeyResult, TValueResult>, with an optional onDuplicate function |
 | **Lookup Conversion** | ToLookup<TSource, TKey, TElement, TKeyResult, TElementResult> |
 | **Immutable Array** | ToImmutableArray<T> |
 | **Immutable List** | ToImmutableList<T> |
@@ -229,7 +252,7 @@ The library provides comprehensive coverage of collection conversion operations:
 - **LINQ Integration**: Builds upon LINQ methods for efficient collection processing
 - **Immutable Collection Support**: Integrates with `System.Collections.Immutable` for immutable collection types
 - **Dictionary Key Generation**: Implements key selection and validation for dictionary conversion
-- **Duplicate Key Handling**: Includes strategies for handling duplicate keys in dictionary conversion
+- **Duplicate Key Handling**: Keys that parse to the same value throw `ArgumentException`; the `onDuplicate` overloads let the caller keep the first or last value or merge them
 - **Null Element Handling**: Properly processes null elements during collection conversion
 - **Extension Method Pattern**: Implements all functionality as extension methods for better integration with existing code
 - **Memory Efficiency**: Optimizes collection operations to minimize memory allocations

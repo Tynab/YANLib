@@ -8,6 +8,10 @@ This page records the design decisions found during the 8.3.3 review (Areas A-E)
 - Breaking changes stay out of 8.x; they are collected under *Planned for 9.0* below.
 - New, non-breaking API for 8.4.0: `Parse` with `IFormatProvider`, `Random.NextChar(char min, char max)`, `YANProcess` overloads with an `entireProcessTree` choice and with cancellation/timeout, and public `YANTask.WaitAnyWithConditions` / `WhenAnyWithConditions` (cancellation throws `OperationCanceledException`).
 - Internal improvements for 8.4.0: compiled property accessors in `YANObject`, `Snowflake` `SpinWait` and epoch-range validation, exact `Round` beyond 15 digits for tiny doubles, and no `[DebuggerHidden]`/`[DebuggerStepThrough]` in `YANLib.Implementation`.
+- Internal and repository follow-ups for 8.4.0 (H2): `Copy()` throws `NotSupportedException` for collection types, which 8.3.3 copied without their items (unless a settable property held them) or failed on (H2a), the per-type reflection caches hold their `Type` keys weakly so collectible `AssemblyLoadContext`s can unload (H2b), the README 'Important Notes' block from another project is removed (H2c), and the test project no longer references the benchmark console (H2d).
+- Last follow-ups for 8.4.0 (I1): `Copy()` also rejects classes that implement only the non-generic `ICollection` (I1a); YANJson with collectible `AssemblyLoadContext`s is investigated and documented, with no code change (I1b); `Parses` with `onDuplicate` no longer re-keys the input dictionary (I1c); the extra `Average` pass for an element without a `decimal` value is listed in CHANGELOG.md (I1d); the re-enumeration design of the exact `decimal` `Average` on overflow is confirmed.
+- After the final 8.4.0 claim check: `Copy()` keeps rejecting a collection class that holds its items in a public settable property, which 8.3.3 copied as a shallow copy sharing that property; it is documented as a behaviour change. The commented-out workflow files `main.yml` and `pr-management.yml` are removed.
+- 9.0: `sequence` is removed from the custom-bit `Extract*Components` overloads together with the `[Obsolete]` strategy overloads that take it.
 
 ## Chosen for 8.4.0
 
@@ -135,7 +139,7 @@ Recommendation: Add CancellationToken overloads and return the implementation ta
 
 **Chosen for 8.4.0: SpinWait.SpinOnce() in the wait loop.**
 
-**Done in 8.4.0 (0984360): WaitForNextMillisecond spins with SpinWait.SpinOnce(); the IDs are unchanged. Measured with BitAllocationStrategy.MoreDistributed (16,000 IDs): about 0.1 s of CPU instead of 2.0 s, and about 2.2 s instead of 2.0 s of wall time (see "SpinWait.SpinOnce() vs SpinOnce(-1)" below).**
+**Done in 8.4.0 (0984360): WaitForNextMillisecond spins with SpinWait.SpinOnce(); the IDs are unchanged. Measured with BitAllocationStrategy.MoreDistributed (16,000 IDs): about 0.1 s of CPU instead of 2.0 s, and about 2.3 s instead of 2.0 s of wall time (see "SpinWait.SpinOnce() vs SpinOnce(-1)" below).**
 
 The 8.3.3 review did not change it (spec: thread-safety fine, locking untouched).
 
@@ -169,7 +173,7 @@ Recommendation: Throw ArgumentOutOfRangeException in NextId* in the next major (
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
-**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3). Done in 8.4.0 (be44ee9): `KillAllProcessesByName(this string?, bool entireProcessTree, CancellationToken = default)` and `KillAllProcessesByNames<TNames>(this TNames?, bool entireProcessTree, CancellationToken = default) where TNames : IEnumerable<string?>`, generic so that `params` calls with only null/default arguments keep their binding; `false` uses Kill(), so a matching ancestor of the caller is killed on its own. The new same-name overloads remove the natural type of the `KillAllProcessesByName` method group: `var f = YANProcess.KillAllProcessesByName;` needs an explicit delegate type (`Func<string?, Task>`) since 8.4.0 (CS8917; see N7).**
+**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3). Done in 8.4.0 (be44ee9): `KillAllProcessesByName(this string?, bool entireProcessTree, CancellationToken = default)` and `KillAllProcessesByNames<TNames>(this TNames?, bool entireProcessTree, CancellationToken = default) where TNames : IEnumerable<string?>`, generic so that `params` calls with only null/default arguments keep their binding; `false` uses Kill(), so a matching ancestor of the caller is killed on its own. The new same-name overloads remove the natural type of the `KillAllProcessesByName` method group: `var f = YANProcess.KillAllProcessesByName;` needs an explicit delegate type (`Func<string?, Task>`) since 8.4.0 (CS8917; see N7). The generic `KillAllProcessesByNames<TNames>` overloads do the same for the extension form on a collection, `var g = names.KillAllProcessesByNames;`, which had one candidate in 8.3.3 (`Func<Task> g = names.KillAllProcessesByNames;` still compiles).**
 
 KillAllProcessesByName(s) kills each matching process with Process.Kill(entireProcessTree: true), so every descendant is killed too, whatever its name (for example child processes of a matching shell). The earlier record wrongly said the caller dies when a matching process is its ancestor. In fact .NET refuses any tree that contains the calling process: the ancestor stays alive, nothing is killed through it, and the library still kills the other matches and then rethrows the first failure. I verified this with the new test KillAndDispose_AncestorOfCallingProcess_IsRefusedAndTheOthersAreStillKilled_Process; the two verifiers observed it on .NET 8.0.34. The calling process itself is skipped by id. So the caller is never killed, but a by-name call that matches an ancestor (for example a shell name) ends with InvalidOperationException. Switching to Kill() would stop killing unrelated descendants and would also stop the ancestor refusal: an ancestor with a matching name would then be killed on its own, without its tree.
 
@@ -298,6 +302,16 @@ Recommendation: Mark WhenAny* [Obsolete] in a minor release and remove it in the
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
+**Partly done in 8.4.0 (the recommendation, chosen by the owner): the three `BitAllocationStrategy` overloads. `ExtractIdComponents(long id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH)` and the `string` forms of `ExtractIdAlphabeticComponents` / `ExtractIdAlphanumericComponents` have no `sequence`; the old strategy overloads are `[Obsolete]` (warning) and their `sequence` is required, with `timestampEpoch` still optional through `[Optional, DefaultParameterValue]` so that `ExtractIdComponents(id, strategy, sequence: 0)` keeps compiling. A Roslyn bind probe (71 shapes, C# 12, 13 and 14, f344fc4 vs new DLLs) shows every strategy call without `sequence` on the new overloads without CS0121, every call with `sequence` (positional, named, `0`, `default`) on the old ones with CS0618, and the custom-bit calls unchanged; `(id, 0, epoch)` and `(id, default, epoch)`, which were CS0121, now bind to the strategy overload. Package validation against 8.3.3 accepts the optional-to-required change.**
+
+**Not done for the three overloads with custom bit counts (`(long id, long timestampEpoch, long sequence, int workerIdBits, int datacenterIdBits, int sequenceBits)` and the `string` forms): no shape meets both rules.** **Decided by the owner (November 2026): option 1. The custom-bit overloads keep their ignored `sequence` in 8.x; 9.0 removes it from them together with the `[Obsolete]` strategy overloads that take `sequence`.** A sequence-free overload must accept `ExtractIdComponents(id, epoch, workerIdBits: 4, datacenterIdBits: 6, sequenceBits: 13)` (valid today, no `sequence`), so it has `int` parameters right after `timestampEpoch`. Then a positional call that passes `sequence` as an `int` (`ExtractIdComponents(id, epoch, 0)`, `(id, epoch, 0, 5)`, `(id, epoch, 0, 5, 5)` or an `int` variable) binds to it, because int-to-int beats int-to-long, and reads the 0 as `workerIdBits`: a silent rebinding that throws `ArgumentException` (bits no longer add up to 23) or, for `(id, epoch, 5, 5)`, decodes with other bit counts. Making `timestampEpoch` and `sequence` of the old overload required as well breaks `ExtractIdComponents(id, sequence: 1)` (checked with a stub bind probe of both shapes). Without a sequence-free overload, marking the old one `[Obsolete]` would warn on calls that do not pass `sequence`. Options:
+
+- Keep the ignored parameter on the custom-bit overloads until 9.0 and remove it there (current; documented on each overload)
+- Add the sequence-free custom-bit overloads under a new name (for example `ExtractIdComponentsWithBits`) and mark the old ones `[Obsolete]`
+- Add same-name overloads anyway and accept the silent rebinding of positional `int` sequences (breaking; not for 8.x)
+
+Recommendation: option 1; remove `sequence` from the custom-bit overloads in 9.0 together with the obsolete strategy overloads.
+
 The public signature must stay; the parameter is now ignored and documented as such on all 6 overloads.
 
 Options:
@@ -418,7 +432,9 @@ Today's behaviour is documented in the wiki pages; these can be picked up in any
 
 *Area:* Parse / collections
 
-Parses<TKey,TValue>(IDictionary), ToDictionary and ToImmutable(Sorted)Dictionary use Add, so keys like "1" and 1, or "3.2" and "3.7" (both floor to 3), throw ArgumentException. This is unchanged.
+**Done in 8.4.0 (option 4, chosen by the owner): `Parses<TKey, TValue>(IDictionary<object, object?>)`, `ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` have an overload with a `Func<TValue?, TValue?, TValue?> onDuplicate` (stored value, incoming value -> stored value, in input order; a `null` function throws `ArgumentNullException`, an exception from it propagates). The existing overloads keep throwing `ArgumentException`, documented on each method (XML docs, YANUnmanaged.md, YANEnumerable.md). No new public type. The overloads differ from the existing ones in arity, so no existing call shape changes its binding (C# 12, 13 and 14); `var f = dict.Parses<int, string>;` and the same for the three conversions with all type arguments lose their natural type (CS8917), as for NextChar. With `onDuplicate`, `Parses` snapshots the entries of the input in its enumeration order without re-keying them (8.4.0 first copied them under the default comparer), so two keys that are equal under `object.Equals` but kept apart by the input's comparer (two distinct `"1"` strings, or two boxes of 1, under `ReferenceEqualityComparer`) reach `onDuplicate` instead of throwing `ArgumentException` from the copy, and a `null` key of a custom `IDictionary` is parsed like a key that cannot be parsed (the copy threw `ArgumentNullException`). The overload without `onDuplicate` keeps its copy: a before/after probe (e635cee vs now) over duplicate parsed keys, `ReferenceEqualityComparer` inputs, a case-insensitive comparer with `"a"` / `"A"`, `null` and empty input, keys that fail to parse, `ConcurrentDictionary` and `SortedDictionary` inputs and a `null` key gives the same results, exception types, messages and `ParamName` for it, and differs only in those `onDuplicate` rows. `ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` enumerate their input directly and never copied it, so they were unchanged. Not changed: `ToImmutableSortedDictionary` with `onDuplicate` builds the dictionary under `EqualityComparer<TKey>.Default` and then sorts it under `Comparer<TKey>.Default`, so two keys of a user struct whose `CompareTo` returns 0 although `Equals` is false throw `ArgumentException` when the sorted dictionary is built, without `onDuplicate` seeing them (measured; the overload without `onDuplicate` throws the same way); this is left to the owner.**
+
+Parses<TKey,TValue>(IDictionary), ToDictionary and ToImmutable(Sorted)Dictionary use Add, so keys like "1" and 1, or "3.2" and "3.7" (both floor to 3 where '.' is the decimal separator), throw ArgumentException. This is unchanged.
 
 Options:
 
@@ -462,15 +478,17 @@ Recommendation: Keep sequential and document the recipe. Add opt-in overloads on
 
 *Area:* Parse / collections
 
-Only a DateTime-typed defaultValue is used as is now. A string default is still parsed with the given format, so `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` still returns DateTime.MinValue (unchanged 8.3.3 behaviour).
+**Done in 8.4.0 (option 2, chosen by the owner): a default value that is not a `DateTime` is parsed with the format first and, if that fails, like an input without a format (CurrentCulture for `Parse` / `Parses`, the provider for `ParseWith` / `ParsesWith`); `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` is 1 January 2025. Only results that were `DateTime.MinValue` change (YANUnmanaged.md, Conversion Rules).**
+
+In 8.3.3 a default value was parsed with the given format only (a DateTime-typed one through its text), so `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` returned DateTime.MinValue.
 
 Options:
 
-- Keep (current)
+- Keep (8.3.3)
 - Parse the string default with the format, then fall back to a general DateTime.TryParse
 - Parse the string default without the format
 
-Recommendation: Option 2: format first, then general parse. It honours defaults written in either form and only changes results that are DateTime.MinValue today.
+Recommendation: Option 2: format first, then general parse. It honours defaults written in either form and only changes results that were DateTime.MinValue in 8.3.3.
 
 ### Case-sensitivity and re-enumeration of the `names` overloads (A3, spec-listed)
 
@@ -504,6 +522,8 @@ Recommendation: Option 2. Ignoring blank entries is the more forgiving rule and 
 
 *Area:* YANObject / YANExpression
 
+**Chosen for 8.4.0: the cache part of option 2 (Type-keyed caches held weakly), with caching only successful lookups. Done in 8.4.0: every static Type-keyed cache in YANLib.Implementation is a `ConditionalWeakTable<Type, ...>`: in YANObject the readable, read-write and property lists, the default values, the compiled readers and copiers, the ChangeTimeZoneAllProperty leaf, collection, dictionary-converter and ArraySegment caches, and Copy's collection check of a runtime type it does not construct (added later, see *Copy() on collection types*); in YANExpression a `ConditionalWeakTable<Type, ConcurrentDictionary<(ParameterName, PropertyName), LambdaExpression>>`. `GetValue` has the semantics of `GetOrAdd` (the factory runs outside the lock and the first stored value wins), so first-use behaviour and the compiled-accessor tiering are unchanged. Gate: CollectibleTypeTests loads a copy of the test assembly into a collectible AssemblyLoadContext, runs IsNullDefault, IsValidField, Copy, ChangeTimeZoneAllProperty, PropertyExpression and Parse three times each on its types (one row and one context per operation), unloads the context and checks that it is collected; the first five rows failed with the ConcurrentDictionary caches, and making any one of the eleven caches of that time strong again (checked one at a time) fails at least one row, and making the Copy collection-check cache strong fails the Copy row. The Parse row passed before too: ParseCache<T> is a static generic class per closed type, collected with the context, so it is left as is. Caching only successful lookups changes nothing: the expression cache never stored a failure (a name that matches nothing throws inside `GetOrAdd`), and the other caches are keyed by Type alone (a `null` converter means 'not a dictionary type'). Measured with Release builds (Stopwatch, medians of 10 interleaved runs of each build on a shared 4-CPU container, f344fc4 -> now): IsNullDefault of 6 default properties 93 -> 97 ns (98 ns with only the Copy change), Copy of 10 properties 89 -> 86 ns, AllPropertiesNotDefault() of 6 properties 99 -> 93 ns, PropertyExpression cache hit 25 -> 28 ns, ChangeTimeZoneAllProperty of 3 properties 320 -> 316 ns, all within the run-to-run spread (the runs of one build range over about 20 to 55 ns); a lookup alone took 10 to 16 ns with ConditionalWeakTable and 9 to 14 ns with ConcurrentDictionary. Not done: the renames and visibility alignment of option 2, and a bound on the expression cache (option 3). YANJson is not covered: the caches that keep the types it serializes or deserializes alive belong to System.Text.Json (investigated in 8.4.0, chosen by the owner: document only; see *YANJson and collectible AssemblyLoadContexts* below and YANJson.md, Collectible AssemblyLoadContexts).**
+
 The implementation's ValidField methods are `public static` in an internal class while the rest are internal. AnyNullDefault forwards to AnyNullEmptyImplement and similar. The static caches (PropertyCache, DefaultValueCache, CopyPropertyCache, the time-zone leaf, collection and dictionary caches, and the YANExpression cache keyed by user strings) hold strong Type references, which prevents collectible AssemblyLoadContexts from unloading; the expression cache is unbounded.
 
 Options:
@@ -518,7 +538,7 @@ Recommendation: Option 2 plus caching only successful lookups. That needs no pub
 
 *Area:* YANObject / YANExpression
 
-The spec said 'Structs: copy into a boxed copy and unbox'. Copying settable properties into a boxed new T() still returns default values for structs without settable properties (5.Copy() == 0, DateTime.Copy() == MinValue, Guid.Copy() == Empty), which was the reported bug. Boxing the input and copying its properties into itself is a no-op. I implemented 'return the value itself' (and a new box for a boxed struct typed as object), which matches 'shallow copy' for value types.
+The spec said 'Structs: copy into a boxed copy and unbox'. Copying settable properties into a boxed new T() still returns default values for structs without settable properties (5.Copy() == 0, DateTime.Copy() == MinValue, Guid.Copy() == Empty), which was the reported bug. Boxing the input and copying its properties into itself is a no-op. I implemented 'return the value itself' (and a new box for a boxed struct typed as object; a boxed primitive or enum, which `RuntimeHelpers.GetObjectValue` does not re-box, is returned as the same box), which matches 'shallow copy' for value types.
 
 Options:
 
@@ -590,7 +610,7 @@ Recommendation: Option 2 if the maintainers want a fail-fast guard: depth unique
 
 8.3.3 never walked getter-only properties. The walk now walks a getter-only property whose declared type is an array, a list or a dictionary class or interface. Two framework wrappers broke this rule and were fixed one by one: ArraySegment<T>.Array converted the whole array, and Lazy<T>.Value ran the factory. Other framework getter-only collections are still reached, such as Exception.Data and ThreadLocal<T>.Values, as is the getter-only 'view' case in the guard decision. The first recommendation was to walk getter-only collection properties only when the declaring type is not a framework type, which removes the whole class of wrapper and backing-store problems without losing the DTO use case that motivated the rule.
 
-Later evidence (r4 probe goandcopy / copyandgo, 4 cultures): a field exposed both by a getter-only collection property and by a writable copy getter is now shifted twice, in either declaration order. Examples are `List<DateTime> View => _d;` with `List<DateTime> Copy { get => _d.ToList(); set => _d = value; }`, and `DateTime[] _d` behind `List<DateTime> Days { get => _d.ToList(); set => _d = value.ToArray(); }` plus `IList<DateTime> View => _d`. With (0, 7), 10:00 becomes 00:00 the next day (+14 h); 8.3.3 gave 17:00 (+7 h). This is now documented (md:153 no longer says 'as in 8.3.3' for it, plus a 'Changes since 8.3.3' entry) and pinned by ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object. The DTO is a user type, so the earlier recommended option (skip framework-declared getter-only properties) does not remove this double shift. For dictionary and IList<DateTime?>-only types, the walk of their own properties (finding 1) already skips getter-only properties for the same reason.
+Later evidence (r4 probe goandcopy / copyandgo, 4 cultures): a field exposed both by a getter-only collection property and by a writable copy getter is now shifted twice when the getter-only property is declared first or the copy's setter stores a copy (`set => _d = value.ToList()`); with the copy property declared first and `set => _d = value`, it is shifted once, as in 8.3.3 (corrected after the 8.4.0 claim check measured the copy-first case: this record first said 'in either declaration order'). Corrected again after the second review of those corrections: 'declared first' means first in property order, the order of Type.GetProperties, which on .NET 8 lists a class's own properties before the inherited ones (a getter-only property declared in a derived class comes before a copy property of its base class), and for a Dictionary<TKey, DateTime> field 8.3.3 threw TargetParameterCountException in both orders. Examples are `List<DateTime> View => _d;` with `List<DateTime> Copy { get => _d.ToList(); set => _d = value; }`, and `DateTime[] _d` behind `List<DateTime> Days { get => _d.ToList(); set => _d = value.ToArray(); }` plus `IList<DateTime> View => _d`. With (0, 7), 10:00 becomes 00:00 the next day (+14 h); 8.3.3 gave 17:00 (+7 h). This is now documented (md:153 no longer says 'as in 8.3.3' for it, plus a 'Changes since 8.3.3' entry) and pinned by ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object. The DTO is a user type, so the earlier recommended option (skip framework-declared getter-only properties) does not remove this double shift. For dictionary and IList<DateTime?>-only types, the walk of their own properties (finding 1) already skips getter-only properties for the same reason.
 
 Options:
 
@@ -605,7 +625,7 @@ Recommendation: Option 2, keeping the documented double shift for user DTOs. A f
 
 *Area:* YANObject / YANExpression
 
-Types that implement IList<T> or IReadOnlyList<T> but not the non-generic IList (ArraySegment<T> is now special-cased) have their public properties walked, not their items. 8.3.3 threw TargetParameterCountException when their indexer had a setter.
+Types that implement IList<T> or IReadOnlyList<T> but not the non-generic IList (ArraySegment<T> is now special-cased) have their public properties walked, not their items. 8.3.3 threw TargetParameterCountException for some of them.
 
 Options:
 
@@ -618,6 +638,8 @@ Recommendation: Option 2, for consistency with IList and ArraySegment<T>; docume
 ### Copy() on collection types
 
 *Area:* YANObject / YANExpression
+
+**Chosen for 8.4.0: option 2. Done in 8.4.0: `Copy()` throws `NotSupportedException` (the message names the type and points to the collection's copy constructor, `ToList`, `ToArray` or `ToDictionary`) when the input's runtime type is a class that implements `IList`, `IDictionary` or `ICollection<T>`, checked before any constructor runs. Arrays are included: they implement `IList`, an array type cannot be `T` (no parameterless constructor), and an array typed as `object` used to come back as a bare `new object()`; the same holds for a `ReadOnlyCollection<T>` typed as `object`. `null` input is returned first, value types (`ArraySegment<T>`, `ImmutableArray<T>`) are still copied by value, and `string` is not affected. Correction to the context below: `HashSet<T>`, `LinkedList<T>`, `SortedSet<T>` and other `ICollection<T>` types without a public read-write indexer did not throw in 8.3.3 but returned a copy without the items (measured on 8.3.3), so for them the change is from silent loss to an exception. Also corrected after the 8.4.0 claim check: a collection class without a public read-write indexer that keeps its items in a public settable property (an `ICollection<T>` over `public List<T> Items { get; set; }`, or an `IList<T>` that implements its indexer explicitly over such a list) was copied by 8.3.3 with its items, the copy sharing that list (measured on 8.3.3), so for it the change is from a working shallow copy to an exception, and 'breaks no 8.3.3 caller' in the recommendation below does not hold for it. The owner chose to keep the rejection and document it as a behaviour change (November 2026). Widened in 8.4.0 (chosen by the owner): the non-generic `ICollection` is rejected too, with the same message, in the same place (before any constructor runs) and cached the same way (with the property copiers of a type that `Copy` constructs, otherwise in the per-type `ConditionalWeakTable`; the collectible-context test still passes), so `Queue<T>`, `Stack<T>`, `ConcurrentQueue<T>`, `ConcurrentStack<T>`, `ConcurrentBag<T>`, `BlockingCollection<T>`, the non-generic `Queue` and `Stack`, `BitArray` and the `NameObjectCollectionBase` types (`NameValueCollection`, `WebHeaderCollection`) throw `NotSupportedException`. Measured with the same calls: 8.3.3 returned the queues, stacks, bags and `BlockingCollection<T>` empty (typed as `object`, a new `object`) and threw `TargetParameterCountException` for `NameValueCollection`, `WebHeaderCollection` and a `BitArray` typed as `object`; 8.4.0 before the widening returned all of them empty (typed as `object`, an empty instance of the runtime type), and a `BitArray` typed as `object` as a new `object`. A reflection scan of the .NET 8 shared framework finds 43 public classes that implement `ICollection` but none of the other three interfaces. Still not rejected, and copied like any other class (properties only): classes that implement only `IEnumerable`, `IEnumerable<T>` or `IReadOnlyCollection<T>` (`StringDictionary` is copied empty, `ImmutableQueue<T>` typed as `object` becomes a new `object`) and `PriorityQueue<TElement, TPriority>`, which implements no collection interface (copied empty). Cost: when the runtime type has no public parameterless constructor, so a new `T` gets the properties of `T` (`Base b = new Derived(5); b.Copy()`), the runtime type is checked too, and `Type.GetInterfaces` allocates an array when the type implements interfaces. Checked on every call, a copy of such a type implementing three interfaces allocated 72 bytes instead of 24 and took 83 to 113 ns instead of 40 to 58 ns (Release builds, best of 7 timed loops in each of 6 alternating runs per build on a shared 4-CPU container, f344fc4 -> uncached check); 8.3.3 allocated 112 bytes and took 118 to 148 ns on the same container. The check of such a runtime type is therefore cached per type (a `ConditionalWeakTable`, like the other caches; the Copy row of the collectible-context test covers it): the same copy allocates 24 bytes again and took 50 to 57 ns best (60 to 70 ns median) against 84 to 92 ns (85 to 101 ns median) with the uncached check (Release, 3 alternating runs per build, best and median of 7 loops of 1,000,000 copies). A copy of 10 properties of the input's own type, whose check is held with its property copiers, allocates 88 bytes with every build.**
 
 Copy copies only readable and writable properties, so new List<int>{1,2}.Copy() and a List-derived DTO lose their items without any warning (now documented). 8.3.3 threw TargetParameterCountException for every such type, because all of them have an indexer, so no 8.3.3 caller depends on the call succeeding.
 
@@ -647,7 +669,7 @@ Recommendation: (a): it converts every copy-getter, computed and JSON-backed cas
 
 *Area:* YANObject / YANExpression
 
-Restoring 8.3.3's interleaved order fixes the Appt/DTO case. It also brings back 8.3.3's double conversion for some shapes: a wrapper property over the owner's own Start/End (EvBefore, EvBetween, EvAfter, OrderVm), a copy getter next to a direct reference to the same object (SnapHolder), and two copy getters over one field (TwoCopies). These are now pinned by WrapperDeclaredBetweenItsDateTimes_ShiftsThemTogether and documented in YANObject.md and the XML remarks. The walk cannot tell that a copy aliases state it has already converted, or will convert, through another path.
+Restoring 8.3.3's interleaved order fixes the Appt/DTO case. It also brings back 8.3.3's double conversion for some shapes: a wrapper property over the owner's own Start/End (EvBefore, EvBetween, EvAfter, OrderVm), a copy getter next to a direct reference to the same object (SnapHolder), and two copy getters over one field (TwoCopies). Corrected after the 8.4.0 claim check: SnapHolder's shape shifts twice only when the direct reference is declared first, the copy's setter stores a copy or the copy is a struct; with the copy getter declared first and a setter that stores the copy it receives, a copied list, array, dictionary or other class instance is shifted once (8.3.3 threw for a dictionary), because the direct reference then returns the copy the walk has already converted ('declared first' means first in property order, the order of Type.GetProperties, which on .NET 8 lists a class's own properties before the inherited ones; added after the second review of these corrections). These are now pinned by WrapperDeclaredBetweenItsDateTimes_ShiftsThemTogether and CopyGetterOverAWritableList_ShiftsOnceOnlyWhenDeclaredFirstAndStored, and documented in YANObject.md and the XML remarks. The walk cannot tell that a copy aliases state it has already converted, or will convert, through another path.
 
 Options:
 
@@ -656,7 +678,7 @@ Options:
 - Add an opt-in overload or flag to skip computed or copy-returning writable properties (e.g. walk only auto-properties, or only properties whose getter returns the same reference twice). This is new API.
 - Skip writable properties whose getter returns a new object on each read (two reads compared by reference). This changes behaviour for JSON-backed and defensive-copy properties that 8.3.3 handled.
 
-Recommendation: Option 1: keep 8.3.3's behaviour and the documentation. It is what 8.3.3 users got, it is now deterministic and independent of declaration order, and the alternatives are either impossible in general or new API or behaviour that belongs in a minor release.
+Recommendation: Option 1: keep 8.3.3's behaviour and the documentation. It is what 8.3.3 users got (except for SnapHolder's copy-first case above), it is now deterministic and independent of declaration order (except for that case: this sentence first said so without exception), and the alternatives are either impossible in general or new API or behaviour that belongs in a minor release.
 
 ### ChangeTimeZoneAllProperty: user subclasses of non-data framework types (TextWriter/StringWriter, CancellationTokenSource, Task, Stream, ...) are leaves
 
@@ -718,6 +740,8 @@ Recommendation: Option 1 for now. Revisit option 2 separately, since annotations
 
 *Area:* Packaging / docs / tooling
 
+**Chosen for 8.4.0: option 2. Done in 8.4.0: test/YANLib.Tests no longer references console/YANLib.Benchmarks. ConcurrentCollectionTests builds its data with test/YANLib.Tests/Models/ConcurrentCollectionData.cs (the fields and Setup of ConcurrentCollectionBenchmark, with an item type holding only the Id the test reads), so BenchmarkDotNet and Roslyn are no longer restored for the test project. The benchmark console is unchanged and still builds with YANLib.sln.**
+
 test/YANLib.Tests references console/YANLib.Benchmarks only for ConcurrentCollectionTests.cs, which checks benchmark code rather than YANLib. This pulls BenchmarkDotNet into the test build.
 
 Options:
@@ -761,6 +785,8 @@ Recommendation: Option 3, done by the wiki owner.
 ### README 'Important Notes' block (ABP/EF text)
 
 *Area:* Packaging / docs / tooling
+
+**Chosen for 8.4.0: option 2. Done in 8.4.0: the block is removed from README.md, which is also the package readme; lib/YANLib/Home.md and the other wiki pages never had it.**
 
 README.md, at the end of Project Architecture, has notes about Elastic.Apm, DotNetCap.CAP, EF Core tools and 'Host'/'Domain.Shared' layers. None of these exist in this repo; they look like an ABP solution template. The README is also the NuGet readme. I left it in place.
 
@@ -860,7 +886,9 @@ Recommendation: Keep normalised in 8.x, so ToString output does not change for e
 
 *Area:* YANMath / YANRandom
 
-Typed and object decimal Sum/Average fall back to the 8.3.3 double result when an intermediate sum overflows decimal. Sum then keeps its old answer (usually 0). Average(decimal.MaxValue, decimal.MaxValue) is still 0 although the exact average decimal.MaxValue fits.
+**Done in 8.4.0 for Average (the recommendation, chosen by the owner): when the running `decimal` sum of an Average overflows, the elements are added exactly as a `BigInteger` count of 10^-28 and the exact mean is rounded as `decimal` division rounds (half to even, largest scale whose mantissa fits 96 bits; on about two million non-overflowing inputs it matched `decimal` division bit for bit for every non-zero result, while a zero mean is always positive where `decimal` division can give a negative zero). This covers the typed, nullable, object and non-generic overloads and integer results computed in `decimal`; `Average(decimal.MaxValue, decimal.MaxValue)` is `decimal.MaxValue`. Averages that do not overflow give the same bits as before (4,012 inputs over every overload, compared with f344fc4), and are not slower: typed `decimal[1000]` took about 9 µs instead of 16-25 µs, and a lazy `Select` over 1,000 values and boxed `object[1000]` about 16 µs and 23 µs, as in f344fc4 (best of 40 x 100 calls, each case in its own process, five interleaved launches, with and without a 3-second warm-up). On an overflow, every path enumerates the collection once more and adds all elements exactly, so an iterator source is started three times (8.3.3, which computed only in double, started it twice; an object element without a decimal value after the overflow adds a fourth, double pass): a running sum that was rounded before the overflow cannot be continued exactly (an independent check found that continuing it gave 0.2666666666666666666666666667 instead of 8/15 for `{ MaxValue, 0.4m x 10, MaxValue, -MaxValue, -MaxValue, 4m }` through `Select` and `object[]`). The owner confirmed this re-enumeration design (November 2026, option 1 of the decision recorded with the fix). Sum keeps the double fallback, as the overflow decision says.**
+
+When this record was written, typed and object decimal Sum/Average fell back to the 8.3.3 double result if an intermediate sum overflowed decimal, so Sum kept its old answer (usually 0) and Average(decimal.MaxValue, decimal.MaxValue) was still 0 although the exact average decimal.MaxValue fits. Sum still falls back (`Sum(decimal.MaxValue, decimal.MaxValue)` is 0, as in 8.3.3); Average is now exact (see the Done note above).
 
 Options:
 
@@ -1009,7 +1037,7 @@ Recommendation: Keep 'kill failure wins'. It preserves the existing first-failur
 
 *Area:* YANTask / YANProcess (8.4.0)
 
-KillAllProcessesByName had one overload in 8.3.3. With the owner-chosen (string?, CancellationToken) and (string?, bool, CancellationToken) overloads, its method group has no natural type. Consumer code such as `var f = YANProcess.KillAllProcessesByName;` or `Delegate d = YANProcess.KillAllProcessesByName;`, which compiled against 8.3.3, now fails with CS8917. Explicitly typed delegates and Select method groups still bind to the old overload, and package validation (binary API) is unaffected. KillAllProcessesByNames already had two overloads. This is now documented in YANProcess.md and the ROADMAP, but it is a source break the owner has not explicitly accepted.
+KillAllProcessesByName had one overload in 8.3.3. With the owner-chosen (string?, CancellationToken) and (string?, bool, CancellationToken) overloads, its method group has no natural type. Consumer code such as `var f = YANProcess.KillAllProcessesByName;` or `Delegate d = YANProcess.KillAllProcessesByName;`, which compiled against 8.3.3, now fails with CS8917. Explicitly typed delegates and Select method groups still bind to the old overload, and package validation (binary API) is unaffected. KillAllProcessesByNames already had two overloads, but its extension form (`names.KillAllProcessesByNames`) had one and also fails with CS8917 now. This is now documented in YANProcess.md and the ROADMAP, but it is a source break the owner has not explicitly accepted.
 
 Options:
 
@@ -1082,6 +1110,26 @@ Options:
 - Eager compile with no emulation, documenting the static-constructor timing difference as a behaviour change
 
 Recommendation: Keep compile-on-second-call. It is the only option that keeps reflection's first-call semantics exactly, and its one-time cost (about 0.3-0.8 ms more per type) is paid back after a few thousand calls. Revisit with a higher threshold only if real workloads check many types just two or three times.
+
+### YANJson and collectible AssemblyLoadContexts
+
+*Area:* YANJson
+
+**Investigated in 8.4.0, chosen by the owner: document only (no library change). Documented in YANJson.md (Collectible AssemblyLoadContexts) and CHANGELOG.md (known limitation of the weak caches).**
+
+H2 measured that a type of a collectible AssemblyLoadContext keeps the context loaded after `YANJson.Serialize` (with its static options or a caller's new `JsonSerializerOptions`) and after `System.Text.Json.JsonSerializer.Serialize` called directly, within 100 GC rounds and 6 s. Investigated with a probe (one process per row: the plugin type loaded, serialized or deserialized once in a NoInlining method on a thread that exits, the context unloaded, then 100 GC rounds and up to 150 s of `GC.Collect` once a second; Release, .NET 8.0.34, the only runtime of the container, `dotnet --list-runtimes`):
+
+- A longer wait does not help by itself: with YANJson's default options, `JsonSerializerOptions.Default`, a `new JsonSerializerOptions()` or options with settings of their own (`MaxDepth = 17`), `Serialize` and `Deserialize` alike, the context was still loaded after 150 s, also while the host serialized its own type once a second with a `new JsonSerializerOptions()` (H2's loop, whose metadata is cached after the first call).
+- Two System.Text.Json caches hold the plugin's types, shown by counting their entries and clearing them through reflection in the probe only: (1) the cache of compiled constructors and property accessors (`ReflectionEmitCachingMemberAccessor`, sliding expiration 1,000 ms, evicted at most every 200 ms and only when the cache is used again, that is when metadata is next built through reflection) held 4 entries of plugin types after every reflection-based call. Clearing it unloaded the context within 3 GC rounds for options with settings of their own created for the call, and so did 3 s of the host serializing its own type once a second with a new options instance of distinct settings (each call builds metadata, which evicts the expired entries). (2) The metadata cache of a long-lived options instance held 2 plugin types: YANJson's two static options, `JsonSerializerOptions.Default`, and any live instance whose settings equal those of the options passed (a `new JsonSerializerOptions()` shares the cache of `JsonSerializerOptions.Default` once that has been used, or of an equal instance the host holds). With those, clearing the accessor cache alone left the context loaded for 10 s more; System.Text.Json's hot-reload handler (`JsonSerializerOptionsUpdateHandler.ClearCache`, named in its `[assembly: MetadataUpdateHandler]`), which clears the caches of every live options instance and the accessor cache, unloaded every row within 3 GC rounds. Neither cache has a public clearing API in .NET 8.
+- Source-generated metadata defined in the plugin (a `JsonSerializerContext`) unloaded after 2 GC rounds in every row: YANJson `Serialize` and `Deserialize<T>` with `new JsonSerializerOptions { TypeInfoResolver = context }`, `JsonSerializer.Serialize` with the context and `JsonSerializer.Deserialize` with its `JsonTypeInfo`, also while the host used `JsonSerializerOptions.Default` or held an options instance of its own.
+
+Options:
+
+- Document the limitation and the source-generated workaround (chosen)
+- Create YANJson's default options per call (does not help: an equal live instance shares its cache, and the accessor cache keeps the types until a later metadata build)
+- Clear System.Text.Json's caches from YANLib through its internal hot-reload handler (reflection on internals, clears every application cache; not for a library)
+
+Recommendation: Option 1, as chosen.
 
 ## CI and tooling
 

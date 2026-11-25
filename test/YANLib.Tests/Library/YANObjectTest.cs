@@ -1277,8 +1277,8 @@ public partial class YANObjectTest
         holder.ChangeTimeZoneAllProperty(0, 7);
         items.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (as in 8.3.3, the readable and writable properties of a type implementing IDictionary<TKey, DateTime> / IDictionary<TKey, DateTime?>
-        // without a public indexer are walked; 1bb38c4 converted only the values; the values of a writable one are converted once, a read-only one's are left)
+        // Assert (as in 8.3.3, the readable and writable properties of these types implementing IDictionary<TKey, DateTime> / IDictionary<TKey, DateTime?>
+        // are walked; 1bb38c4 converted only the values; the values of a writable one are converted once, a read-only one's are left)
         Assert.Equal(Hour(8), writable.At);
         Assert.Equal(Hour(9), writable.Child.DateProperty);
         Assert.Equal(Hour(17), writable.View["a"]);
@@ -1371,15 +1371,45 @@ public partial class YANObjectTest
         // Arrange
         var viewFirst = new TzViewAndCopy([Hour(1)]);
         var copyFirst = new TzCopyAndView([Hour(1)]);
+        var viewInDerived = new TzViewOverCopyBase([Hour(1)]);
 
         // Act
         viewFirst.ChangeTimeZoneAllProperty(0, 7);
         copyFirst.ChangeTimeZoneAllProperty(0, 7);
+        viewInDerived.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, in either
-        // declaration order; 8.3.3 did not read the getter-only property and shifted the field once, to Hour(8))
+        // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, when the
+        // getter-only property comes first in property order (viewFirst; viewInDerived, whose View is declared in the derived class and on .NET 8 comes
+        // before the inherited Copy) or the copy's setter stores a copy (copyFirst); with the copy property first and a setter that stores the list
+        // it receives, the field is shifted once, as in 8.3.3. 8.3.3 did not read the getter-only property and shifted the field once, to Hour(8))
         Assert.Equal([Hour(15)], viewFirst.View);
         Assert.Equal([Hour(15)], copyFirst.View);
+        Assert.Equal([Hour(15)], viewInDerived.View);
+    }
+
+    [Fact]
+    public void ChangeTimeZoneAllProperty_CopyGetterOverAWritableList_ShiftsOnceOnlyWhenDeclaredFirstAndStored_Object()
+    {
+        // Arrange
+        var copyFirst = new TzCopyBeforeDirect { Direct = [Hour(1)] };
+        var directFirst = new TzDirectBeforeCopy { Direct = [Hour(1)] };
+        var copyFirstCopyingSetter = new TzCopyBeforeDirectCopyingSetter { Direct = [Hour(1)] };
+        var copyInDerived = new TzCopyOverDirectBase { Direct = [Hour(1)] };
+
+        // Act
+        copyFirst.ChangeTimeZoneAllProperty(0, 7);
+        directFirst.ChangeTimeZoneAllProperty(0, 7);
+        copyFirstCopyingSetter.ChangeTimeZoneAllProperty(0, 7);
+        copyInDerived.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (pinned: the setter of Copy, declared first, stores the converted copy in Direct, which then returns that list, already converted, so the
+        // value is shifted once, where 8.3.3 converted it again through Direct, to Hour(15); with Direct declared first, or a setter that stores a copy,
+        // it is shifted twice, as in 8.3.3. On .NET 8, property order puts a class's own properties before the inherited ones, so a Copy declared in a class
+        // deriving from the one that declares Direct comes first too (copyInDerived) and the value is shifted once)
+        Assert.Equal([Hour(8)], copyFirst.Direct);
+        Assert.Equal([Hour(15)], directFirst.Direct);
+        Assert.Equal([Hour(15)], copyFirstCopyingSetter.Direct);
+        Assert.Equal([Hour(8)], copyInDerived.Direct);
     }
 
     [Fact]
@@ -1465,20 +1495,145 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void Copy_CollectionType_CopiesPropertiesButNotItems_Object()
+    public void Copy_CollectionType_ThrowsNotSupportedException_Object()
     {
         // Arrange
-        var input = new CopyNamedList { 1, 2 };
+        var namedList = new CopyNamedList { 1, 2 };
 
-        input.Name = "n";
+        namedList.Name = "n";
+
+        // Act and Assert (8.4.0 before this check copied only the settable properties, so the items were lost: new List<int> { 1, 2 }.Copy() was an
+        // empty list; 8.3.3 threw TargetParameterCountException for the types with a public read-write indexer and returned an empty HashSet,
+        // LinkedList or SortedSet)
+        var exception = Assert.Throws<NotSupportedException>(() => namedList.Copy());
+
+        Assert.Contains(typeof(CopyNamedList).ToString(), exception.Message);
+        Assert.Equal([1, 2], namedList);
+        Assert.Throws<NotSupportedException>(() => new List<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new Dictionary<string, int> { ["a"] = 1 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new HashSet<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new LinkedList<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => new SortedSet<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new ObservableCollection<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.ArrayList { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Hashtable { ["a"] = 1 }.Copy());
+    }
+
+    [Fact]
+    public void Copy_CollectionTypeOnlyImplementingGenericICollection_ThrowsBeforeItsConstructorRuns_Object()
+    {
+        // Arrange
+        var input = new CopyCountingCollection { 1, 2 };
+        object boxed = new CopyCountingCollection { 3 };
+        var constructed = CopyCountingCollection.Constructed;
+
+        // Act and Assert (no indexer, so 8.3.3 also copied the settable Name and lost the items)
+        Assert.Throws<NotSupportedException>(() => input.Copy());
+        Assert.Throws<NotSupportedException>(() => boxed.Copy());
+        Assert.Equal(constructed, CopyCountingCollection.Constructed);
+        Assert.Equal([1, 2], input);
+    }
+
+    [Fact]
+    public void Copy_CollectionWithoutParameterlessConstructorTypedAsBase_ThrowsNotSupportedException_Object()
+    {
+        // Arrange (no public parameterless constructor: 8.4.0 before this check, and 8.3.3, returned a new object or CopyBase without the items)
+        object array = new[] { 1, 2 };
+        object readOnly = new ReadOnlyCollection<int>([1, 2]);
+        CopyBase asBase = new CopyNoDefaultConstructorCollection(5) { BaseValue = 1 };
+
+        // Act and Assert
+        Assert.Throws<NotSupportedException>(() => array.Copy());
+        Assert.Throws<NotSupportedException>(() => readOnly.Copy());
+        Assert.Throws<NotSupportedException>(() => asBase.Copy());
+    }
+
+    [Fact]
+    public void Copy_ClassImplementingOnlyNonGenericICollection_ThrowsNotSupportedException_Object()
+    {
+        // Arrange
+        var queue = new Queue<int>([1, 2]);
+        var names = new NameValueCollection { { "a", "1" } };
+
+        // Act and Assert (8.4.0 before this check and 8.3.3 returned an empty Queue<T>, Stack<T>, ConcurrentQueue<T>, ConcurrentStack<T>, ConcurrentBag<T>,
+        // Queue or Stack, and typed as object 8.4.0 before this check returned an empty instance and 8.3.3 a new object; 8.3.3 threw
+        // TargetParameterCountException for a NameValueCollection and for a BitArray typed as object, which 8.4.0 before this check returned
+        // as an empty NameValueCollection and a new object)
+        var exception = Assert.Throws<NotSupportedException>(() => queue.Copy());
+
+        Assert.Contains(typeof(Queue<int>).ToString(), exception.Message);
+        Assert.Equal(new[] { 1, 2 }, queue);
+        Assert.Throws<NotSupportedException>(() => ((object)queue).Copy());
+        Assert.Throws<NotSupportedException>(() => new Stack<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)new Stack<int>([1, 2])).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Concurrent.ConcurrentQueue<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Concurrent.ConcurrentStack<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Concurrent.ConcurrentBag<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)new System.Collections.Concurrent.ConcurrentBag<int>([1, 2])).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Queue(new[] { 1, 2 }).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Stack(new[] { 1, 2 }).Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)new System.Collections.BitArray(3)).Copy());
+        Assert.Throws<NotSupportedException>(() => names.Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)names).Copy());
+        Assert.Equal("1", names["a"]);
+    }
+
+    [Fact]
+    public void Copy_ClassImplementingOnlyNonGenericICollection_ThrowsBeforeItsConstructorRuns_Object()
+    {
+        // Arrange
+        var input = new CopyCountingNonGenericCollection { Name = "n" };
+        object boxed = new CopyCountingNonGenericCollection { Name = "b" };
+        var constructed = CopyCountingNonGenericCollection.Constructed;
+
+        // Act and Assert (8.4.0 before this check and 8.3.3 constructed a new instance and copied the settable Name)
+        Assert.Throws<NotSupportedException>(() => input.Copy());
+        Assert.Throws<NotSupportedException>(() => boxed.Copy());
+        Assert.Equal(constructed, CopyCountingNonGenericCollection.Constructed);
+    }
+
+    [Fact]
+    public void Copy_ClassImplementingOnlyIEnumerableOrIReadOnlyCollection_IsStillCopied_Object()
+    {
+        // Arrange
+        var enumerable = new CopyEnumerableOnly { Name = "e" };
+        var readOnly = new CopyReadOnlyCollection { Name = "r" };
+        object boxed = new CopyEnumerableOnly { Name = "b" };
 
         // Act
-        var result = input.Copy();
+        var enumerableResult = enumerable.Copy();
+        var readOnlyResult = readOnly.Copy();
+        var boxedResult = boxed.Copy();
 
-        // Assert (documented: only settable properties are copied; 8.3.3 threw TargetParameterCountException on the indexer)
-        Assert.Equal("n", result.Name);
-        Assert.Empty(result);
-        Assert.NotSame(input, result);
+        // Assert (not collection types for Copy: like any other class, their settable properties are copied)
+        Assert.NotSame(enumerable, enumerableResult);
+        Assert.Equal("e", enumerableResult.Name);
+        Assert.NotSame(readOnly, readOnlyResult);
+        Assert.Equal("r", readOnlyResult.Name);
+        Assert.Equal("b", Assert.IsType<CopyEnumerableOnly>(boxedResult).Name);
+    }
+
+    [Fact]
+    public void Copy_NullCollectionStructCollectionAndString_AreNotRejected_Object()
+    {
+        // Arrange
+        List<int>? none = null;
+        var segment = new ArraySegment<int>([1, 2, 3], 1, 2);
+        object boxedSegment = segment;
+        object text = "abc";
+
+        // Act
+        var noneResult = none!.Copy();
+        var segmentResult = segment.Copy();
+        var boxedSegmentResult = boxedSegment.Copy();
+        var textResult = text.Copy();
+
+        // Assert (null is returned, a struct is copied by value like an assignment, sharing its items, and a string is not a collection type here)
+        Assert.Null(noneResult);
+        Assert.Equal(segment, segmentResult);
+        Assert.Equal(segment, Assert.IsType<ArraySegment<int>>(boxedSegmentResult));
+        Assert.NotSame(boxedSegment, boxedSegmentResult);
+        Assert.Equal(typeof(object), textResult.GetType());
     }
 
     [Fact]
@@ -2314,6 +2469,73 @@ public partial class YANObjectTest
         public IList<DateTime> View => dates;
     }
 
+    private sealed class TzCopyBeforeDirect
+    {
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = value;
+        }
+
+        public List<DateTime> Direct { get; set; } = [];
+    }
+
+    private sealed class TzDirectBeforeCopy
+    {
+        public List<DateTime> Direct { get; set; } = [];
+
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = value;
+        }
+    }
+
+    private sealed class TzCopyBeforeDirectCopyingSetter
+    {
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = [.. value];
+        }
+
+        public List<DateTime> Direct { get; set; } = [];
+    }
+
+    private class TzCopyBase(List<DateTime> initial)
+    {
+        private List<DateTime> dates = initial;
+
+        public List<DateTime> Copy
+        {
+            get => [.. dates];
+            set => dates = value;
+        }
+
+        protected List<DateTime> Dates => dates;
+    }
+
+    // View is declared in the derived class; on .NET 8, Type.GetProperties lists it before the inherited Copy.
+    private sealed class TzViewOverCopyBase(List<DateTime> initial) : TzCopyBase(initial)
+    {
+        public List<DateTime> View => Dates;
+    }
+
+    private class TzDirectBase
+    {
+        public List<DateTime> Direct { get; set; } = [];
+    }
+
+    // Copy is declared in the derived class; on .NET 8, Type.GetProperties lists it before the inherited Direct.
+    private sealed class TzCopyOverDirectBase : TzDirectBase
+    {
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = value;
+        }
+    }
+
     private sealed class TzLogWriter : StringWriter
     {
         public DateTime Started { get; set; }
@@ -2377,6 +2599,102 @@ public partial class YANObjectTest
     private sealed class CopyNoDefaultConstructor(int value) : CopyBase
     {
         public int Value { get; set; } = value;
+    }
+
+    private sealed class CopyNoDefaultConstructorCollection(int value) : CopyBase, ICollection<int>
+    {
+        private readonly List<int> _items = [value];
+
+        public int Count => _items.Count;
+
+        public bool IsReadOnly => false;
+
+        public void Add(int item) => _items.Add(item);
+
+        public void Clear() => _items.Clear();
+
+        public bool Contains(int item) => _items.Contains(item);
+
+        public void CopyTo(int[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
+
+        public bool Remove(int item) => _items.Remove(item);
+
+        public IEnumerator<int> GetEnumerator() => _items.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class CopyCountingCollection : ICollection<int>
+    {
+        private static int constructed;
+        private readonly List<int> _items = [];
+
+        public CopyCountingCollection() => Interlocked.Increment(ref constructed);
+
+        public static int Constructed => Volatile.Read(ref constructed);
+
+        public string? Name { get; set; }
+
+        public int Count => _items.Count;
+
+        public bool IsReadOnly => false;
+
+        public void Add(int item) => _items.Add(item);
+
+        public void Clear() => _items.Clear();
+
+        public bool Contains(int item) => _items.Contains(item);
+
+        public void CopyTo(int[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
+
+        public bool Remove(int item) => _items.Remove(item);
+
+        public IEnumerator<int> GetEnumerator() => _items.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class CopyCountingNonGenericCollection : System.Collections.ICollection
+    {
+        private static int constructed;
+
+        public CopyCountingNonGenericCollection() => Interlocked.Increment(ref constructed);
+
+        public static int Constructed => Volatile.Read(ref constructed);
+
+        public string? Name { get; set; }
+
+        public int Count => 0;
+
+        public bool IsSynchronized => false;
+
+        public object SyncRoot => this;
+
+        public void CopyTo(Array array, int index)
+        {
+        }
+
+        public System.Collections.IEnumerator GetEnumerator() => Enumerable.Empty<object>().GetEnumerator();
+    }
+
+    private sealed class CopyEnumerableOnly : IEnumerable<int>
+    {
+        public string? Name { get; set; }
+
+        public IEnumerator<int> GetEnumerator() => Enumerable.Range(1, 2).GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class CopyReadOnlyCollection : IReadOnlyCollection<int>
+    {
+        public string? Name { get; set; }
+
+        public int Count => 2;
+
+        public IEnumerator<int> GetEnumerator() => Enumerable.Range(1, 2).GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     private class Animal

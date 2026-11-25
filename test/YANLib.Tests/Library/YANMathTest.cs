@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using System.Numerics;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANMathTest
 {
@@ -409,6 +411,341 @@ public partial class YANMathTest
         Assert.Equal(0, intResult);
         Assert.Equal(0m, decimalResult);
         Assert.Equal(0.0, doubleResult);
+    }
+
+    // Before 8.4.0 an overflowing decimal sum fell back to the double average, which is 0 here (the double mean of two decimal.MaxValue
+    // values does not convert back to decimal) or lost the small terms.
+    [Fact]
+    public void Average_DecimalSumOverflows_ReturnsExactMean_Math()
+    {
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        var third = 1m / 3m;
+
+        // Act & Assert: typed span path (array, params, List<T>) and enumerator path
+        Assert.Equal(max, YANMath.Average(max, max));
+        Assert.Equal(max, YANMath.Average<decimal>(new[] { max, max, max }));
+        Assert.Equal(third, YANMath.Average<decimal>(new List<decimal> { max, 1m, -max }));
+        Assert.Equal(third, YANMath.Average<decimal>(new[] { max, 1m, -max }.Select(static x => x)));
+        Assert.Equal(max - 1, YANMath.Average<decimal>(new HashSet<decimal> { max, max - 1, max - 2 }));
+        Assert.Equal(-max, YANMath.Average(-max, -max));
+
+        // object path: nullable and boxed elements, the non-generic overload and an integer result computed in decimal
+        Assert.Equal(max, YANMath.Average<decimal?>(max, null, max));
+        Assert.Equal(max, YANMath.Average<decimal>(new object?[] { max, "79228162514264337593543950335", null }));
+        Assert.Equal(max, new System.Collections.ArrayList { max, max }.Average<decimal>());
+        Assert.Equal(1L, YANMath.Average<long>(new object?[] { max, 3m, -max }));
+        Assert.Equal(1, YANMath.Average<int?>(new object?[] { max, 3, -max }));
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflows_RoundsHalfToEven_Math()
+    {
+        // Arrange (the means are 79228162514264337593543950334.5 and ...333.5: no decimal place is left, so they round to even)
+        const decimal max = decimal.MaxValue;
+
+        // Act
+        var down = YANMath.Average(max, max - 1);
+        var up = YANMath.Average(max, max - 3);
+        var negative = YANMath.Average(-max, -(max - 1));
+        var objectPath = YANMath.Average<decimal?>(max, max - 3);
+
+        // Assert
+        Assert.Equal(79228162514264337593543950334m, down);
+        Assert.Equal(79228162514264337593543950334m, up);
+        Assert.Equal(-79228162514264337593543950334m, negative);
+        Assert.Equal(79228162514264337593543950334m, objectPath);
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflowsToZeroMean_IsPositiveZero_Math()
+    {
+        // Arrange
+        const decimal max = decimal.MaxValue;
+
+        // Act
+        var typed = YANMath.Average(max, max, -max, -max);
+        var boxed = YANMath.Average<decimal>(new object?[] { -max, -max, max, max });
+
+        // Assert
+        Assert.Equal(0m, typed);
+        Assert.False(decimal.IsNegative(typed));
+        Assert.Equal(0m, boxed);
+        Assert.False(decimal.IsNegative(boxed));
+    }
+
+    [Fact]
+    public void Average_DecimalOverflowThenFailedConversion_KeepsDoubleFallback_Math()
+    {
+        // pin: a value without a decimal equivalent (NaN) still sends the object path to the 8.3.3 double average, also after an overflow
+        // Arrange
+        const decimal max = decimal.MaxValue;
+
+        // Act
+        var nanLast = YANMath.Average<decimal>(new object?[] { max, max, double.NaN });
+        var nanFirst = YANMath.Average<decimal>(new object?[] { double.NaN, max, max });
+        var convertible = YANMath.Average<decimal>(new object?[] { max, max, 1e20 });
+
+        // Assert (a double that converts to decimal after the overflow keeps the exact path: (2 * max + 1e20) / 3)
+        Assert.Equal(0m, nanLast);
+        Assert.Equal(0m, nanFirst);
+        Assert.Equal(52818775042842891729029300223m, convertible);
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflows_EnumeratesSequenceOnceMore_Math()
+    {
+        // pin of the documented counts: the emptiness check and the decimal pass start an iterator source twice, as 8.3.3 (which computed
+        // only in double) did; an overflow adds a third, exact pass, and an object element without a decimal value one more, double pass
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        var plain = new CountingSequence<decimal>(1m, 2m, 3m);
+        var typed = new CountingSequence<decimal>(max, max, 1m);
+        var nullable = new CountingSequence<decimal?>(max, null, max);
+        var boxed = new CountingSequence<object?>(max, max, 1m);
+        var nonGeneric = new CountingSequence<decimal>(max, max, 1m);
+        var integer = new CountingSequence<object?>(max, 3m, -max);
+        var nanAfterOverflow = new CountingSequence<object?>(max, max, double.NaN);
+        var nanFirst = new CountingSequence<object?>(double.NaN, max, max);
+
+        // Act
+        var plainResult = YANMath.Average<decimal>(plain);
+        var typedResult = YANMath.Average<decimal>(typed);
+        var nullableResult = YANMath.Average<decimal?>(nullable);
+        var boxedResult = YANMath.Average<decimal>(boxed);
+        var nonGenericResult = ((System.Collections.IEnumerable)nonGeneric).Average<decimal>();
+        var integerResult = YANMath.Average<long>(integer);
+        var nanResult = YANMath.Average<decimal>(nanAfterOverflow);
+        var nanFirstResult = YANMath.Average<decimal>(nanFirst);
+
+        // Assert
+        Assert.Equal((2m, 2), (plainResult, plain.Enumerations));
+        Assert.Equal(3, typed.Enumerations);
+        Assert.Equal((max, 3), (nullableResult, nullable.Enumerations));
+        Assert.Equal(3, boxed.Enumerations);
+        Assert.Equal((typedResult, 3), (nonGenericResult, nonGeneric.Enumerations));
+        Assert.Equal(boxedResult, typedResult);
+        Assert.Equal((1L, 3), (integerResult, integer.Enumerations));
+        Assert.Equal((0m, 4), (nanResult, nanAfterOverflow.Enumerations));
+        Assert.Equal((0m, 3), (nanFirstResult, nanFirst.Enumerations));
+    }
+
+    [Fact]
+    public void Sum_DecimalPassFails_EnumeratesSequenceThreeTimes_Math()
+    {
+        // pin of the documented counts: with an integer or decimal result, a failed decimal pass (an object element without a decimal value,
+        // an overflow) is followed by the double pass that gives the result, as in 8.3.3, so an iterator source is started three times (8.3.3:
+        // twice); an Average over only nulls takes the same three passes, also in the typed overloads with any nullable integer or decimal
+        // result; with a double result both start it twice, and an Average with a float result too
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        var nan = new CountingSequence<object?>(1, double.NaN, 2);
+        var infinity = new CountingSequence<object?>(1, double.NegativeInfinity);
+        var outOfRange = new CountingSequence<object?>(1, 1e30);
+        var nonGeneric = new CountingSequence<object?>(1, double.NaN, 2);
+        var boxedOverflow = new CountingSequence<object?>(max, max);
+        var typedOverflow = new CountingSequence<decimal>(max, max);
+        var nullableOverflow = new CountingSequence<decimal?>(max, null, max);
+        var doubleSum = new CountingSequence<object?>(1, double.NaN, 2);
+        var allNull = new CountingSequence<object?>(null, null);
+        var typedAllNull = new CountingSequence<int?>(null, null);
+        var typedLongAllNull = new CountingSequence<long?>(null, null);
+        var typedNintAllNull = new CountingSequence<nint?>(null, null);
+        var typedFloatAllNull = new CountingSequence<float?>(null, null);
+        var doubleAllNull = new CountingSequence<object?>(null, null);
+
+        // Act
+        var nanResult = YANMath.Sum<int>(nan);
+        var infinityResult = YANMath.Sum<decimal?>(infinity);
+        var outOfRangeResult = YANMath.Sum<long>(outOfRange);
+        var nonGenericResult = ((System.Collections.IEnumerable)nonGeneric).Sum<long>();
+        var boxedOverflowResult = YANMath.Sum<decimal>(boxedOverflow);
+        var typedOverflowResult = YANMath.Sum<decimal>(typedOverflow);
+        var nullableOverflowResult = YANMath.Sum<decimal?>(nullableOverflow);
+        var doubleSumResult = YANMath.Sum<double>(doubleSum);
+        var allNullResult = YANMath.Average<decimal>(allNull);
+        var typedAllNullResult = YANMath.Average<int?>(typedAllNull);
+        var typedLongAllNullResult = YANMath.Average<long?>(typedLongAllNull);
+        var typedNintAllNullResult = YANMath.Average<nint?>(typedNintAllNull);
+        var typedFloatAllNullResult = YANMath.Average<float?>(typedFloatAllNull);
+        var doubleAllNullResult = YANMath.Average<double>(doubleAllNull);
+
+        // Assert
+        Assert.Equal((0, 3), (nanResult, nan.Enumerations));
+        Assert.Equal(((decimal?)null, 3), (infinityResult, infinity.Enumerations));
+        Assert.Equal((0L, 3), (outOfRangeResult, outOfRange.Enumerations));
+        Assert.Equal((0L, 3), (nonGenericResult, nonGeneric.Enumerations));
+        Assert.Equal((0m, 3), (boxedOverflowResult, boxedOverflow.Enumerations));
+        Assert.Equal((0m, 3), (typedOverflowResult, typedOverflow.Enumerations));
+        Assert.Equal(((decimal?)null, 3), (nullableOverflowResult, nullableOverflow.Enumerations));
+        Assert.Equal((double.NaN, 2), (doubleSumResult, doubleSum.Enumerations));
+        Assert.Equal((0m, 3), (allNullResult, allNull.Enumerations));
+        Assert.Equal(((int?)null, 3), (typedAllNullResult, typedAllNull.Enumerations));
+        Assert.Equal(((long?)null, 3), (typedLongAllNullResult, typedLongAllNull.Enumerations));
+        Assert.Equal(((nint?)null, 3), (typedNintAllNullResult, typedNintAllNull.Enumerations));
+        Assert.Equal(((float?)null, 2), (typedFloatAllNullResult, typedFloatAllNull.Enumerations));
+        Assert.Equal((0d, 2), (doubleAllNullResult, doubleAllNull.Enumerations));
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflows_MatchesExactOracle_Math()
+    {
+        // Arrange: seeded inputs whose decimal sum overflows, with values of every scale
+        var random = new Random(20261125);
+
+        for (var round = 0; round < 300; round++)
+        {
+            var count = random.Next(2, 9);
+            var values = new decimal[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                var scale = (byte)(i == 0 ? 0 : random.Next(0, 29));
+                var high = i == 0 ? (int)(0xC0000000u | (uint)random.Next()) : random.Next();
+                values[i] = new decimal(random.Next(), random.Next(), high, random.Next(4) == 0, scale);
+            }
+
+            values[0] = decimal.Abs(values[0]);
+            values[1] = new decimal(-1, -1, -1 - random.Next(16), false, 0);
+
+            // Act & Assert
+            AssertEveryAveragePath(values, ExactMean(values));
+        }
+    }
+
+    // decimal.MaxValue + 0.4m is decimal.MaxValue: the decimal running sum can round before it overflows, so the exact sum cannot start from
+    // it. Before this was fixed, only arrays and List<T> added every element exactly; the other paths lost what the rounding dropped.
+    [Fact]
+    public void Average_DecimalSumRoundsBeforeOverflow_ReturnsExactMeanOnEveryPath_Math()
+    {
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        decimal[] fractionLost = [max, 0.4m, max, 4m];
+        decimal[] cancelled = [max, .. Enumerable.Repeat(0.4m, 10), max, -max, -max, 4m];
+
+        // Act & Assert: (2 * max + 4.4) / 4 = 39614081257132168796771975168.6 rounds to ...169, and 8 / 15
+        AssertEveryAveragePath(fractionLost, 39614081257132168796771975169m);
+        AssertEveryAveragePath(cancelled, 8m / 15m);
+        Assert.Equal(1L, YANMath.Average<long>(cancelled.Cast<object?>().ToArray()));
+    }
+
+    [Fact]
+    public void Average_DecimalSumRoundsBeforeOverflow_MatchesExactOracleOnEveryPath_Math()
+    {
+        // Arrange: seeded inputs whose decimal sum rounds before it overflows: a large whole value, fractions that a sum of that size cannot
+        // hold, a value near decimal.MaxValue that overflows the sum, mostly two values that nearly cancel the first and the third (so the
+        // dropped fractions matter), then more fractions
+        var random = new Random(20261126);
+
+        for (var round = 0; round < 300; round++)
+        {
+            var large = new decimal(random.Next(), random.Next(), (int)(0xC0000000u | (uint)random.Next()), false, 0);
+            var nearMax = new decimal(-1, -1, -1 - random.Next(16), false, 0);
+            var values = new List<decimal> { large };
+
+            AddFractions(values, random, random.Next(1, 5));
+            values.Add(nearMax);
+
+            if (random.Next(4) != 0)
+            {
+                values.Add(-large + random.Next(-3, 4));
+                values.Add(-nearMax + random.Next(0, 4));
+            }
+
+            AddFractions(values, random, random.Next(0, 4));
+
+            // Act & Assert
+            AssertEveryAveragePath([.. values], ExactMean(values));
+        }
+
+        static void AddFractions(List<decimal> values, Random random, int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                values.Add(new decimal(random.Next(), random.Next(), random.Next(1 << 20), random.Next(2) == 0, (byte)random.Next(1, 29)));
+            }
+        }
+    }
+
+    [Fact]
+    public void Sum_DecimalOverflow_KeepsDocumentedResult_Math()
+    {
+        // pin: Sum keeps its overflow semantics (the double fallback), only Average became exact
+        // Act
+        var sum = YANMath.Sum(decimal.MaxValue, decimal.MaxValue);
+        var objectSum = YANMath.Sum<decimal?>(decimal.MaxValue, decimal.MaxValue);
+
+        // Assert
+        Assert.Equal(0m, sum);
+        Assert.Null(objectSum);
+    }
+
+    /// <summary>
+    /// Asserts that every Average overload with a <see cref="decimal"/> result gives the bits of <paramref name="expected"/> for
+    /// <paramref name="values"/>: the span paths, the enumerator path, and the object paths (nullable, boxed, non-generic).
+    /// </summary>
+    private static void AssertEveryAveragePath(decimal[] values, decimal expected)
+    {
+        var results = new (string Path, decimal? Result)[]
+        {
+            ("decimal[]", YANMath.Average(values)),
+            ("List<decimal>", YANMath.Average<decimal>(values.ToList())),
+            ("Select", YANMath.Average<decimal>(values.Select(static x => x))),
+            ("ReadOnlyCollection", YANMath.Average<decimal>(new System.Collections.ObjectModel.ReadOnlyCollection<decimal>(values))),
+            ("decimal?[]", YANMath.Average<decimal?>(values.Select(static x => (decimal?)x).ToArray())),
+            ("object[]", YANMath.Average<decimal>(values.Cast<object?>().ToArray())),
+            ("ArrayList", new System.Collections.ArrayList(values).Average<decimal>())
+        };
+
+        foreach (var (path, result) in results)
+        {
+            Assert.True(result.HasValue && decimal.GetBits(expected).SequenceEqual(decimal.GetBits(result.Value)), $"{path} [{string.Join(", ", values)}]: {result} != {expected}");
+        }
+    }
+
+    /// <summary>
+    /// The mean of <paramref name="values"/> as <see cref="decimal"/> division would give it if the sum fitted: the exact rational mean,
+    /// rounded half to even at the largest scale (up to 28) whose mantissa fits in 96 bits, without trailing zeros.
+    /// </summary>
+    private static decimal ExactMean(IReadOnlyList<decimal> values)
+    {
+        var numerator = BigInteger.Zero;
+
+        foreach (var value in values)
+        {
+            var bits = decimal.GetBits(value);
+            var mantissa = (new BigInteger((uint)bits[2]) << 64) + (new BigInteger((uint)bits[1]) << 32) + new BigInteger((uint)bits[0]);
+            var term = mantissa * BigInteger.Pow(10, 28 - ((bits[3] >> 16) & 0xFF));
+
+            numerator += bits[3] < 0 ? -term : term;
+        }
+
+        var denominator = values.Count * BigInteger.Pow(10, 28);
+
+        for (var scale = 28; scale >= 0; scale--)
+        {
+            var scaled = BigInteger.Abs(numerator) * BigInteger.Pow(10, scale);
+            var quotient = BigInteger.DivRem(scaled, denominator, out var remainder);
+            var comparison = (remainder * 2).CompareTo(denominator);
+
+            if (comparison > 0 || comparison == 0 && !quotient.IsEven)
+            {
+                quotient++;
+            }
+
+            if (quotient.GetBitLength() <= 96)
+            {
+                var bytes = quotient.ToByteArray(isUnsigned: true, isBigEndian: false);
+
+                Array.Resize(ref bytes, 12);
+
+                var result = new decimal(BitConverter.ToInt32(bytes, 0), BitConverter.ToInt32(bytes, 4), BitConverter.ToInt32(bytes, 8), numerator.Sign < 0 && !quotient.IsZero, (byte)scale);
+
+                return result / 1.0000000000000000000000000000m;
+            }
+        }
+
+        throw new OverflowException("The mean does not fit decimal.");
     }
 
     #endregion
@@ -2049,6 +2386,21 @@ public partial class YANMathTest
             _enumerated = true;
 
             return first ? ((IEnumerable<T>)items).GetEnumerator() : Enumerable.Empty<T>().GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    /// <summary>A sequence that counts how often it is enumerated, as an iterator source would be started.</summary>
+    private sealed class CountingSequence<T>(params T[] items) : IEnumerable<T>
+    {
+        public int Enumerations { get; private set; }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            Enumerations++;
+
+            return ((IEnumerable<T>)items).GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();

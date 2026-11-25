@@ -442,6 +442,67 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parse_StringDefaultValueNotMatchingFormat_FallsBackToGeneralParse()
+    {
+        // Act (before 8.4.0 the string default was parsed with the format only, so these returned DateTime.MinValue)
+        var (iso, enumerableFormat, usDefault, ukDefault) = WithCulture(new CultureInfo("en-US"), static () => (
+            "bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy"),
+            "bad".Parse<DateTime>("2025-01-01", new List<string?> { "dd/MM/yyyy" }),
+            "bad".Parse<DateTime>("01/02/2025", "yyyyMMdd"),
+            WithCulture(new CultureInfo("en-GB"), static () => "bad".Parse<DateTime>("01/02/2025", "yyyyMMdd"))));
+
+        // Assert (the general parse uses the current culture)
+        Assert.Equal(new DateTime(2025, 1, 1), iso);
+        Assert.Equal(new DateTime(2025, 1, 1), enumerableFormat);
+        Assert.Equal(new DateTime(2025, 1, 2), usDefault);
+        Assert.Equal(new DateTime(2025, 2, 1), ukDefault);
+    }
+
+    [Fact]
+    public void Parse_StringDefaultValueMatchingFormat_UsesFormatFirst()
+    {
+        // Act (en-US would read "02/01/2025" as 1 February; the format reads it as 2 January)
+        var (result, minValue) = WithCulture(new CultureInfo("en-US"), static () => ("bad".Parse<DateTime>("02/01/2025", "dd/MM/yyyy"), "bad".Parse<DateTime>("01/01/0001", "dd/MM/yyyy")));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 1, 2), result);
+        Assert.Equal(DateTime.MinValue, minValue);
+    }
+
+    [Fact]
+    public void Parse_UnparsableStringDefaultValueWithFormat_ReturnsMinValue()
+    {
+        // Act
+        var (bad, blank, input) = WithCulture(new CultureInfo("en-US"), static () => (
+            "bad".Parse<DateTime>("also bad", "dd/MM/yyyy"),
+            "bad".Parse<DateTime>(" ", "dd/MM/yyyy"),
+            "15/06/2023".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")));
+
+        // Assert (a valid input still wins over the default)
+        Assert.Equal(DateTime.MinValue, bad);
+        Assert.Equal(DateTime.MinValue, blank);
+        Assert.Equal(new DateTime(2023, 6, 15), input);
+    }
+
+    [Fact]
+    public void ParseWith_StringDefaultValueNotMatchingFormat_FallsBackToProvider()
+    {
+        // Arrange
+        var german = new CultureInfo("de-DE");
+
+        // Act (the current culture is en-US; the general parse of the default uses the provider)
+        var (result, enumerableFormat, invariantFormat) = WithCulture(new CultureInfo("en-US"), () => (
+            "bad".ParseWith<DateTime>(german, "01.02.2025", "yyyyMMdd"),
+            "bad".ParseWith<DateTime>(german, "01.02.2025", new List<string?> { "yyyyMMdd" }),
+            "bad".ParseWith<DateTime>(german, "20250102", "yyyyMMdd")));
+
+        // Assert
+        Assert.Equal(new DateTime(2025, 2, 1), result);
+        Assert.Equal(new DateTime(2025, 2, 1), enumerableFormat);
+        Assert.Equal(new DateTime(2025, 1, 2), invariantFormat);
+    }
+
+    [Fact]
     public void Parse_DateTimeStringWithMilliseconds_KeepsMilliseconds()
     {
         // Act

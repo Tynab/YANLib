@@ -149,10 +149,13 @@ public static partial class YANObject
     /// by a property of another type is walked too. A <see cref="DateTime"/> or <c>DateTime?</c> value is converted and written back. Any other value that is walked
     /// (an object or a struct) is written back with the property's setter when a <see cref="DateTime"/> was converted somewhere inside it, once everything reachable
     /// from it has been walked and before the next property is read, as in 8.3.3. So a property whose getter returns a copy (a defensive copy, a computed wrapper,
-    /// a JSON-backed object) receives the converted copy, and a later property that this setter writes is read, and converted, after the setter has run; state
-    /// reachable through two paths is converted once per path (a copy getter over an object or field also reachable through a writable property, a getter-only list,
-    /// array or dictionary property or another copy getter; a wrapper over the owner's own <see cref="DateTime"/> properties; a dictionary or <c>IList&lt;DateTime?&gt;</c>
-    /// type whose own writable property holds the collection behind its interface or returns a copy of its values).
+    /// a JSON-backed object) receives the converted copy, and a later property that this setter writes is read, and converted, after the setter has run (a class
+    /// instance already converted, such as the copy itself when the setter stores it, is not converted again); state reachable through two paths is converted once
+    /// per path (a copy getter over an object or field also reachable through a writable property (for a list, array, dictionary or other class instance, only when
+    /// the writable property comes first in property order, see below, or the copy's setter stores a copy), a getter-only list, array or dictionary property
+    /// (when the getter-only property comes first in property order or the copy's setter stores a copy) or another copy getter; a wrapper over the owner's
+    /// own <see cref="DateTime"/> properties; a dictionary or <c>IList&lt;DateTime?&gt;</c> type whose own writable property holds the collection behind
+    /// its interface or returns a copy of its values).
     /// No other setter is called: not for values that are not walked (strings, numbers, ...), not for a value in which nothing was converted, and not for a second
     /// reference to an object already converted. (A struct item of a read-only list is converted in a copy that is then discarded, but still counts as converted,
     /// so the setter of a property holding that list is called with the unchanged list.)</description></item>
@@ -176,9 +179,10 @@ public static partial class YANObject
     /// which creates that value.</description></item>
     /// <item><description>A property whose getter throws is skipped; an exception thrown by a setter propagates.</description></item>
     /// <item><description>Objects and structs are walked from a work list, not recursively, so the depth of the graph is not limited by the call stack. The order is that
-    /// of 8.3.3: depth first, in property / item order, a value found in a property or an item being walked, and written back, before the next property or item of
-    /// its owner is read. Each item of a <see cref="System.Collections.IList"/> is read once (8.3.3 read each non-null item twice), and the list's <c>IsReadOnly</c> and
-    /// one more <c>Count</c> than in 8.3.3 are read, which only a custom list with side-effecting getters can observe. Every object and struct walked is kept until the method returns. A graph that never ends (a getter that returns a new object on every call whose type leads back
+    /// of 8.3.3: depth first, in property / item order (properties in the order <c>Type.GetProperties</c> returns them, which on .NET 8 is a class's own
+    /// properties in declaration order, then the inherited ones), a value found in a property or an item being walked, and written back, before the next
+    /// property or item of its owner is read. Each item of a <see cref="System.Collections.IList"/> is read once (8.3.3 read each non-null item twice), and
+    /// the list's <c>IsReadOnly</c> and one more <c>Count</c> than in 8.3.3 are read, which only a custom list with side-effecting getters can observe. Every object and struct walked is kept until the method returns. A graph that never ends (a getter that returns a new object on every call whose type leads back
     /// to itself) is walked until memory runs out.</description></item>
     /// </list>
     /// </remarks>
@@ -196,11 +200,20 @@ public static partial class YANObject
     /// For a class, the copy is an instance of the input's runtime type when that type differs from <typeparamref name="T"/> and has a public parameterless constructor,
     /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded,
     /// and a base property hidden with <c>new</c> by a property of another type included) are copied; reference values are shared, not cloned.
-    /// Only properties are copied: the items of a collection type (<see cref="List{T}"/>, <see cref="Dictionary{TKey, TValue}"/>, ...) are not.
+    /// Only properties are copied, so a class whose runtime type is a collection type (it implements <see cref="System.Collections.IList"/>, arrays included,
+    /// <see cref="System.Collections.IDictionary"/>, <see cref="System.Collections.ICollection"/> or <see cref="ICollection{T}"/>: <see cref="List{T}"/>,
+    /// <see cref="Dictionary{TKey, TValue}"/>, <see cref="HashSet{T}"/>, <see cref="Queue{T}"/>, <see cref="Stack{T}"/>,
+    /// <see cref="System.Collections.Concurrent.ConcurrentBag{T}"/>, <see cref="System.Collections.Specialized.NameValueCollection"/>, a class deriving
+    /// from <see cref="List{T}"/>, ...) is rejected, before any constructor runs, since a copy of its properties would lose its items (or share the
+    /// property that holds them). A class that implements only <see cref="System.Collections.IEnumerable"/>, <see cref="IEnumerable{T}"/> or <see cref="IReadOnlyCollection{T}"/> is still copied: its properties only,
+    /// so items that it stores are not copied.
     /// When the copy is an instance of the runtime type, its constructor runs, and an exception thrown by it surfaces as <see cref="System.Reflection.TargetInvocationException"/>.
     /// For a value type, the value itself is returned, since assigning a struct already copies all of its fields; a boxed struct passed as <see cref="object"/>
-    /// is returned in a new box.
+    /// is returned in a new box, except that a boxed primitive type (<see cref="Type.IsPrimitive"/>) or enum is returned as the same box.
     /// </remarks>
+    /// <exception cref="NotSupportedException">The runtime type of <paramref name="input"/> is a class that implements <see cref="System.Collections.IList"/>,
+    /// <see cref="System.Collections.IDictionary"/>, <see cref="System.Collections.ICollection"/> or <see cref="ICollection{T}"/>. Use the collection's own copy constructor (such as
+    /// <c>new List&lt;T&gt;(list)</c>) or <c>ToList</c>, <c>ToArray</c> or <c>ToDictionary</c> instead.</exception>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T Copy<T>(this T input) where T : new() => input.CopyImplement();

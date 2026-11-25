@@ -149,13 +149,14 @@ Console.WriteLine($"Worker ID: {workerId}");
 Console.WriteLine($"Datacenter ID: {datacenterId}");
 
 // Extract components using a specific bit allocation strategy
+// (since 8.4.0 the strategy overloads have no sequence parameter; the old ones, which ignore it, are obsolete)
 var strategicComponents = IdGenerator.ExtractIdComponents(
     id,
     BitAllocationStrategy.MoreDistributed
 );
 
 // Extract components from an ID with custom bit allocation
-// (the sequence argument is ignored: earlier versions subtracted it from the timestamp)
+// (the sequence argument is ignored: earlier versions subtracted it from the timestamp; it can be left out)
 var customComponents = IdGenerator.ExtractIdComponents(
     id: id,
     timestampEpoch: IdGenerator.TIMESTAMP_EPOCH,
@@ -307,6 +308,7 @@ catch (InvalidOperationException ex)
 - `ExtractIdComponents` (and the alphabetic/alphanumeric variants) read the 41-bit timestamp field unsigned. An ID generated 2^40 ms (about 34.8 years) or more after its epoch has the sign bit set; 8.3.3 read its timestamp 2^41 ms (about 69.7 years) too early (for example `NextId(0L)`, the Unix epoch, decoded to a date in 1957). The timestamp of a negative ID that 8.3.3 generated for an epoch in the future, which has no valid timestamp, now decodes differently.
 - When the sequences of a millisecond are used up, the generator waits for the next millisecond with `SpinWait` instead of a busy loop at 100% CPU; the IDs are the same. In one measurement (`BitAllocationStrategy.MoreDistributed`, 8 IDs per millisecond, 16,000 IDs) the loop took about 2.3 s instead of 2.0 s, and about 0.1 s of CPU time instead of 2.0 s.
 - The fixes to the constructor's sequence, the `Extract*` methods and the string IDs are described in the sections above.
+- New in 8.4.0: `ExtractIdComponents(long id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH)`, and the same for `ExtractIdAlphabeticComponents` and `ExtractIdAlphanumericComponents` with a `string` ID, without the ignored `sequence` parameter. The strategy overloads that take `sequence` are `[Obsolete]` (a warning, CS0618) and are chosen only when a `sequence` argument is passed, by position or by name (`timestampEpoch` can still be left out then); they return the same components. Calls that pass no `sequence` bind to the new overloads without a warning. The overloads with custom bit counts keep their ignored `sequence` parameter without a warning: a sequence-free overload would take over calls such as `ExtractIdComponents(id, epoch, 0, 5, 5)`, which pass `sequence` by position as an `int`, and read the 0 as `workerIdBits` (see ROADMAP.md in the repository).
 
 
 ## Performance Considerations

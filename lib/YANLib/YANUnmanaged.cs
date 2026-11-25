@@ -32,7 +32,10 @@ public static partial class YANUnmanaged
     /// and to fractional strings for integer types (<c>"3.5"</c>); boxed fractional numbers are rounded half to even like <see cref="Convert.ToInt32(double)"/>.
     /// An <paramref name="input"/> that already is a <typeparamref name="T"/> is returned unchanged (a <see cref="DateTime"/> keeps its
     /// milliseconds and <see cref="DateTime.Kind"/>), and so is a <paramref name="defaultValue"/> of type <typeparamref name="T"/>, also when
-    /// <paramref name="format"/> is given. The method never throws, even when <see cref="object.ToString"/> of the input throws.
+    /// <paramref name="format"/> is given. For <see cref="DateTime"/>, a <paramref name="defaultValue"/> of another type (usually a string) is
+    /// turned into text and parsed with <paramref name="format"/> first and, if that fails, like an input without a format (current culture):
+    /// <c>"bad".Parse&lt;DateTime&gt;("2025-01-01", "dd/MM/yyyy")</c> is 1 January 2025 (before 8.4.0 it was <see cref="DateTime.MinValue"/>).
+    /// The method never throws, even when <see cref="object.ToString"/> of the input throws.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -76,7 +79,9 @@ public static partial class YANUnmanaged
     /// <param name="defaultValue">The default value to return if parsing fails. If <c>null</c>, returns the default value of <typeparamref name="T"/>.</param>
     /// <param name="format">
     /// The exact format strings for <see cref="DateTime"/> parsing. As with <see cref="Parse{T}(object, object, IEnumerable{string})"/>, they are always
-    /// matched with the invariant culture (<c>/</c> and <c>:</c> stay literal); <paramref name="provider"/> does not change them.
+    /// matched with the invariant culture (<c>/</c> and <c>:</c> stay literal); <paramref name="provider"/> does not change them. A
+    /// <paramref name="defaultValue"/> that is not a <see cref="DateTime"/> is parsed with them first and, if they do not match, with
+    /// <paramref name="provider"/> like an input without a format.
     /// </param>
     /// <returns>The parsed value of type <typeparamref name="T"/>, or the default value if parsing fails.</returns>
     /// <remarks>

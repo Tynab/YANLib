@@ -1,22 +1,11 @@
-﻿using YANLib.Benchmarks.Common;
-using YANLib.Benchmarks.Models;
+﻿using YANLib.Tests.Models;
 
 namespace YANLib.Tests;
 
 public class ConcurrentCollectionTests
 {
     private const int TEST_SIZE = 10_000;
-    private readonly ConcurrentCollectionBenchmark _benchmark;
-
-    public ConcurrentCollectionTests()
-    {
-        _benchmark = new ConcurrentCollectionBenchmark
-        {
-            Size = TEST_SIZE
-        };
-
-        _benchmark.Setup();
-    }
+    private readonly ConcurrentCollectionData _data = new(TEST_SIZE);
 
     [Fact]
     public async Task TestResultsMatch()
@@ -35,18 +24,18 @@ public class ConcurrentCollectionTests
         }
     }
 
-    private async Task<List<SampleClass>> ExecuteParallelWithLock()
+    private async Task<List<ConcurrentCollectionItem>> ExecuteParallelWithLock()
     {
-        var result = new List<SampleClass>();
-        var batches = _benchmark._batches;
-        var allData = _benchmark._allData;
-        var lockObj = _benchmark._lockObj;
+        var result = new List<ConcurrentCollectionItem>();
+        var batches = _data.Batches;
+        var allData = _data.AllData;
+        var lockObj = _data.LockObj;
 
-        var tasks = batches!.Select(async batchNumber =>
+        var tasks = batches.Select(async batchNumber =>
         {
-            var skip = batchNumber * _benchmark.BATCH_SIZE;
-            var take = YANMath.Min(_benchmark.BATCH_SIZE, _benchmark.Size - skip);
-            var batchData = allData!.Skip(skip).Take(take).ToList();
+            var skip = batchNumber * _data.BatchSize;
+            var take = YANMath.Min(_data.BatchSize, _data.Size - skip);
+            var batchData = allData.Skip(skip).Take(take).ToList();
 
             lock (lockObj)
             {
@@ -61,16 +50,16 @@ public class ConcurrentCollectionTests
         return result;
     }
 
-    private async Task<List<SampleClass>> ExecuteParallelWithDirectCopy()
+    private async Task<List<ConcurrentCollectionItem>> ExecuteParallelWithDirectCopy()
     {
-        var finalResult = new SampleClass[_benchmark.Size];
-        var batches = _benchmark._batches;
-        var allDataArray = _benchmark._allData!.ToArray();
+        var finalResult = new ConcurrentCollectionItem[_data.Size];
+        var batches = _data.Batches;
+        var allDataArray = _data.AllData.ToArray();
 
-        var tasks = batches!.Select(async batchNumber =>
+        var tasks = batches.Select(async batchNumber =>
         {
-            var skip = batchNumber * _benchmark.BATCH_SIZE;
-            var take = YANMath.Min(_benchmark.BATCH_SIZE, _benchmark.Size - skip);
+            var skip = batchNumber * _data.BatchSize;
+            var take = YANMath.Min(_data.BatchSize, _data.Size - skip);
 
             Array.Copy(allDataArray, skip, finalResult, skip, take);
             await Task.CompletedTask;
@@ -81,18 +70,18 @@ public class ConcurrentCollectionTests
         return [.. finalResult];
     }
 
-    private async Task<List<SampleClass>> ExecuteWhenAllWithSemaphoreSlim()
+    private async Task<List<ConcurrentCollectionItem>> ExecuteWhenAllWithSemaphoreSlim()
     {
-        var result = new List<SampleClass>();
-        var batches = _benchmark._batches;
-        var allData = _benchmark._allData;
+        var result = new List<ConcurrentCollectionItem>();
+        var batches = _data.Batches;
+        var allData = _data.AllData;
         var ss = new SemaphoreSlim(1);
 
-        var tasks = batches!.Select(async batchNumber =>
+        var tasks = batches.Select(async batchNumber =>
         {
-            var skip = batchNumber * _benchmark.BATCH_SIZE;
-            var take = YANMath.Min(_benchmark.BATCH_SIZE, _benchmark.Size - skip);
-            var batchData = allData!.Skip(skip).Take(take).ToList();
+            var skip = batchNumber * _data.BatchSize;
+            var take = YANMath.Min(_data.BatchSize, _data.Size - skip);
+            var batchData = allData.Skip(skip).Take(take).ToList();
 
             await ss.WaitAsync();
 

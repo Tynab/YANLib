@@ -19,23 +19,18 @@ internal static partial class YANEnumerable
     internal static ImmutableHashSet<T> ToImmutableHashSetImplement<T>(this System.Collections.IEnumerable? input) => input is null ? [] : [.. (input as ImmutableHashSet<object?> ?? input).ParsesImplement<T>() ?? Enumerable.Empty<T>()];
 
     internal static ImmutableDictionary<TKey, TValue?> ToImmutableDictionaryImplement<T, TKey, TValue, TK, TV>(this IEnumerable<object?>? input, Func<T, TK> keySelector, Func<T, TV> elementSelector) where TKey : unmanaged where TK : unmanaged
+        => input.IsNullEmptyImplement() ? ImmutableDictionary<TKey, TValue?>.Empty : ImmutableDictionary.CreateRange(ToDictionaryCore<T, TKey, TValue, TK, TV>(input, keySelector, elementSelector, null));
+
+    internal static ImmutableDictionary<TKey, TValue?> ToImmutableDictionaryImplement<T, TKey, TValue, TK, TV>(
+        this IEnumerable<object?>? input,
+        Func<T, TK> keySelector,
+        Func<T, TV> elementSelector,
+        Func<TValue?, TValue?, TValue?> onDuplicate
+    ) where TKey : unmanaged where TK : unmanaged
     {
-        if (input.IsNullEmptyImplement())
-        {
-            return ImmutableDictionary<TKey, TValue?>.Empty;
-        }
+        ArgumentNullException.ThrowIfNull(onDuplicate);
 
-        var dict = new Dictionary<TKey, TValue?>();
-
-        foreach (var obj in input)
-        {
-            if (obj is T item)
-            {
-                dict.Add(keySelector(item).ParseImplement<TKey>(), elementSelector(item).ParseImplement<TValue?>());
-            }
-        }
-
-        return ImmutableDictionary.CreateRange(dict);
+        return input.IsNullEmptyImplement() ? ImmutableDictionary<TKey, TValue?>.Empty : ImmutableDictionary.CreateRange(ToDictionaryCore<T, TKey, TValue, TK, TV>(input, keySelector, elementSelector, onDuplicate));
     }
 
     internal static ImmutableStack<T> ToImmutableStackImplement<T>(this IEnumerable<object?>? input) => input.IsNullEmptyImplement() ? [] : [.. (input as ImmutableStack<object?> ?? input).ParsesImplement<T>()!];
@@ -51,22 +46,17 @@ internal static partial class YANEnumerable
     internal static ImmutableSortedSet<T> ToImmutableSortedSetImplement<T>(this System.Collections.IEnumerable? input) => input is null ? [] : [.. (input as ImmutableSortedSet<object?> ?? input).ParsesImplement<T>() ?? Enumerable.Empty<T>()];
 
     internal static ImmutableSortedDictionary<TKey, TValue?> ToImmutableSortedDictionaryImplement<T, TKey, TValue, TK, TV>(this IEnumerable<object?>? input, Func<T, TK> keySelector, Func<T, TV> elementSelector) where TKey : unmanaged where TK : unmanaged
+        => input.IsNullEmptyImplement() ? ImmutableSortedDictionary<TKey, TValue?>.Empty : CreateRange(ToDictionaryCore<T, TKey, TValue, TK, TV>(input, keySelector, elementSelector, null));
+
+    internal static ImmutableSortedDictionary<TKey, TValue?> ToImmutableSortedDictionaryImplement<T, TKey, TValue, TK, TV>(
+        this IEnumerable<object?>? input,
+        Func<T, TK> keySelector,
+        Func<T, TV> elementSelector,
+        Func<TValue?, TValue?, TValue?> onDuplicate
+    ) where TKey : unmanaged where TK : unmanaged
     {
-        if (input.IsNullEmptyImplement())
-        {
-            return ImmutableSortedDictionary<TKey, TValue?>.Empty;
-        }
+        ArgumentNullException.ThrowIfNull(onDuplicate);
 
-        var dict = new Dictionary<TKey, TValue?>();
-
-        foreach (var obj in input)
-        {
-            if (obj is T item)
-            {
-                dict.Add(keySelector(item).ParseImplement<TKey>(), elementSelector(item).ParseImplement<TValue?>());
-            }
-        }
-
-        return CreateRange(dict);
+        return input.IsNullEmptyImplement() ? ImmutableSortedDictionary<TKey, TValue?>.Empty : CreateRange(ToDictionaryCore<T, TKey, TValue, TK, TV>(input, keySelector, elementSelector, onDuplicate));
     }
 }

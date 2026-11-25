@@ -112,6 +112,7 @@ A powerful utility library for parsing and converting objects to unmanaged types
 - Format support for date/time and TimeSpan
 - Culture-specific parsing: `Parse` and `Parses` use the current culture; `ParseWith` and `ParsesWith` (8.4.0) take an `IFormatProvider` (a `null` provider is the current culture) and otherwise follow the same rules, see Culture on the YANUnmanaged wiki page
 - Never throws: invalid or out-of-range input (for example `"99999999999".Parse<int>()`) gives the default value (`0`, `null` or `defaultValue`); `Parse<int>()` floors fractional strings (`"3.7"` -> 3) and boxed fractions are rounded half to even in every overload (`3.7` -> 4), see Conversion Rules on the YANUnmanaged wiki page; `nint`/`nuint` are supported
+- Dictionary keys that parse to the same value: `Parses<TKey, TValue>(IDictionary<object, object?>)` throws `ArgumentException`, and its `onDuplicate` overload (8.4.0) lets you choose the value to keep (`(stored, incoming) => stored` keeps the first)
 
 ```csharp
 // Parse string to int
@@ -133,6 +134,10 @@ TimeSpan time = timeInput.Parse<TimeSpan>(); // Returns TimeSpan of 1 hour, 30 m
 // Parse with a given culture (8.4.0)
 object priceInput = "1.5";
 double price = priceInput.ParseWith<double>(CultureInfo.InvariantCulture); // Returns 1.5 under any current culture (Parse<double>() returns 15 under de-DE)
+
+// Keys that parse to the same value: keep the first (8.4.0); Parses<int, string>() without onDuplicate throws ArgumentException
+var rawDictionary = new Dictionary<object, object?> { { "1", "a" }, { 1, "b" } };
+Dictionary<int, string?> firstWins = rawDictionary.Parses<int, string>((stored, incoming) => stored); // Returns { 1: "a" }
 ```
 
 ### YANEnumerable
@@ -145,6 +150,7 @@ A versatile utility library for converting collections of objects to strongly-ty
 - Dictionary and Lookup creation
 - Immutable collection support
 - Type parsing during conversion
+- Keys that parse to the same value: `ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` throw `ArgumentException`, and their `onDuplicate` overloads (8.4.0) let you choose the value to keep
 
 ```csharp
 // Convert collection of objects to array of integers
@@ -158,6 +164,13 @@ ImmutableArray<int> immutableArray = input.ToImmutableArray<int>(); // Returns I
 Dictionary<int, string?> dict = items.ToDictionary<TestItem, int, string?, int, string?>(
     item => item.Id,      // Key selector
     item => item.Name     // Value selector
+);
+
+// Items with the same Id: keep the last Name (8.4.0); without onDuplicate this throws ArgumentException
+Dictionary<int, string?> lastWins = items.ToDictionary<TestItem, int, string?, int, string?>(
+    item => item.Id,
+    item => item.Name,
+    (stored, incoming) => incoming
 );
 ```
 
@@ -404,7 +417,7 @@ A robust implementation of the Snowflake ID algorithm for generating distributed
 - Alphabetic and alphanumeric string representations
 - Time-ordered IDs for easy sorting
 - Distributed system support with worker and datacenter IDs
-- Component extraction from existing IDs
+- Component extraction from existing IDs (8.4.0: the `BitAllocationStrategy` overloads have no `sequence` parameter; the obsolete ones that take it warn with CS0618)
 - Predefined bit allocation strategies for different use cases
 - Customizable bit allocation for specialized scaling needs
 
@@ -437,7 +450,7 @@ DateTime timestamp = components.Timestamp;
 long workerId = components.WorkerId;
 long datacenterId = components.DatacenterId;
 
-// Extract components using the same strategy used to generate the ID
+// Extract components using the same strategy used to generate the ID (no sequence argument since 8.4.0)
 var strategicComponents = IdGenerator.ExtractIdComponents(
     distributedGenerator.NextId(),
     BitAllocationStrategy.MoreDistributed
@@ -694,7 +707,7 @@ YANLib/
 
 Each component in YANLib is implemented with careful attention to performance, memory usage, and error handling:
 
-- **YANObject**: Caches the properties of each type and reads and writes them through accessors compiled on their second use (`IsNullDefault`, `AllPropertiesDefault`, ..., `Copy`), implements efficient null and default value checking
+- **YANObject**: Caches the properties of each type (holding the types weakly, so a collectible `AssemblyLoadContext` can unload) and reads and writes them through accessors compiled on their second use (`IsNullDefault`, `AllPropertiesDefault`, ..., `Copy`), implements efficient null and default value checking
 - **YANUnmanaged**: Implements specialized parsing methods for each unmanaged type with format support
 - **YANEnumerable**: Uses optimized collection conversion with LINQ integration and immutable collection support
 - **YANText**: Implements efficient string manipulation using StringBuilder where appropriate
@@ -704,22 +717,8 @@ Each component in YANLib is implemented with careful attention to performance, m
 - **YANRandom**: Extends System.Random with type-specific generation and range validation
 - **YANTask**: Uses HashSet<Task`<T>`> for efficient task tracking and implements async/await patterns
 - **YANProcess**: Uses Process.GetProcessesByName() with proper resource cleanup
-- **YANExpression**: Uses expression trees with thread-safe caching in ConcurrentDictionary
+- **YANExpression**: Uses expression trees with thread-safe caching per type in a ConditionalWeakTable (the types are held weakly)
 - **YANLib.Snowflake**: Implements the Snowflake algorithm with bit manipulation for efficient ID generation and customizable bit allocation
-
-
-### Important Notes
-
-- Elastic.Apm... (v1.24.x and above) is spam logs.
-- DotNetCap.CAP... (v8.3.2 and above) error CreateConnectionAsync method.
-- Do not [Remove Unused References...] in layers:
-    - Host:
-        - Microsoft.EntityFrameworkCore.Tools
-        - DotNetCap.CAP...
-        - Serilog...
-        - Volo.Abp.EntityFrameworkCore.SqlServer
-    - Domain.Shared:
-        - Microsoft.Extensions.FileProviders.Embedded
 
 
 ## 📜 License

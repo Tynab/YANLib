@@ -37,7 +37,7 @@ public static partial class YANText
     /// Removes extra whitespace from the specified string.
     /// </summary>
     /// <param name="input">The string to clean. If <c>null</c> or empty, returns the input string.</param>
-    /// <returns>A new string with normalized whitespace (trimmed and with consecutive whitespace characters replaced by a single space).</returns>
+    /// <returns>A string with normalized whitespace (trimmed and with consecutive whitespace characters replaced by a single space); the input string itself when nothing changes.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static string? CleanSpace(this string? input) => input.CleanSpaceImplement();
@@ -63,7 +63,7 @@ public static partial class YANText
     /// Filters the specified string to keep only alphabetic characters.
     /// </summary>
     /// <param name="input">The string to filter. If <c>null</c> or empty, returns the input string.</param>
-    /// <returns>A new string containing only alphabetic characters from the input string.</returns>
+    /// <returns>A string containing only alphabetic characters from the input string; the input string itself when nothing changes.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static string? FilterAlphabetic(this string? input) => input.FilterAlphabeticImplement();
@@ -72,7 +72,7 @@ public static partial class YANText
     /// Filters the specified string to keep only numeric characters.
     /// </summary>
     /// <param name="input">The string to filter. If <c>null</c> or empty, returns the input string.</param>
-    /// <returns>A new string containing only numeric characters from the input string.</returns>
+    /// <returns>A string containing only numeric characters from the input string; the input string itself when nothing changes.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static string? FilterNumber(this string? input) => input.FilterNumberImplement();
@@ -81,7 +81,7 @@ public static partial class YANText
     /// Filters the specified string to keep only alphanumeric characters.
     /// </summary>
     /// <param name="input">The string to filter. If <c>null</c> or empty, returns the input string.</param>
-    /// <returns>A new string containing only alphanumeric characters from the input string.</returns>
+    /// <returns>A string containing only alphanumeric characters from the input string; the input string itself when nothing changes.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static string? FilterAlphanumeric(this string? input) => input.FilterAlphanumericImplement();

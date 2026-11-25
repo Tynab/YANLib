@@ -179,9 +179,39 @@ public static partial class YANUnmanaged
     /// Keys that cannot be parsed will use the default value of <typeparamref name="TKey"/>.
     /// Values that cannot be parsed will be the default value of <typeparamref name="TValue"/> in the resulting dictionary: <c>null</c> for a
     /// reference type or a nullable value type, otherwise <c>default(TValue)</c> (for example <c>0</c> for <see cref="int"/>).
-    /// If duplicate keys are encountered after parsing, an exception will be thrown.
+    /// If two keys parse to the same value (<c>"1"</c> and <c>1</c>, or <c>"3.2"</c> and <c>"3.7"</c>, which are both floored to 3 for <see cref="int"/>
+    /// under a culture whose decimal separator is <c>.</c>), an <see cref="ArgumentException"/> is thrown;
+    /// <see cref="Parses{TKey, TValue}(IDictionary{object, object}, Func{TValue, TValue, TValue})"/> lets the caller choose the value instead.
     /// </remarks>
+    /// <exception cref="ArgumentException">Thrown when two keys of <paramref name="input"/> parse to the same <typeparamref name="TKey"/> value.</exception>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static Dictionary<TKey, TValue?> Parses<TKey, TValue>(this IDictionary<object, object?>? input) where TKey : unmanaged => input.ParsesImplement<TKey, TValue>();
+
+    /// <summary>
+    /// Parses a dictionary of objects to a dictionary with keys of the specified unmanaged type and values of the specified nullable type,
+    /// resolving keys that parse to the same value with <paramref name="onDuplicate"/>.
+    /// </summary>
+    /// <typeparam name="TKey">The unmanaged key type to parse to.</typeparam>
+    /// <typeparam name="TValue">The value type to parse to. Can be any type, including reference types and nullable value types.</typeparam>
+    /// <param name="input">The dictionary of objects to parse. If <c>null</c> or empty, returns an empty dictionary.</param>
+    /// <param name="onDuplicate">
+    /// Called when a key parses to a value that is already in the result, with the value stored for it and the parsed value of the new entry;
+    /// its result is stored. <c>(stored, incoming) =&gt; stored</c> keeps the first value, <c>(stored, incoming) =&gt; incoming</c> the last one.
+    /// </param>
+    /// <returns>A dictionary with keys of type <typeparamref name="TKey"/> and values of type <typeparamref name="TValue"/>, or an empty dictionary if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// Keys and values are parsed as by <see cref="Parses{TKey, TValue}(IDictionary{object, object})"/>, in the enumeration order of <paramref name="input"/>,
+    /// which decides what "first" and "last" mean (insertion order for a <see cref="Dictionary{TKey, TValue}"/> without removals).
+    /// <paramref name="onDuplicate"/> is not called when no two keys collide, and an exception it throws propagates.
+    /// The entries of <paramref name="input"/> are read once, before any key is parsed, and are not re-keyed under another comparer, so keys that the
+    /// comparer of <paramref name="input"/> keeps apart (two distinct <c>"1"</c> strings, or two boxes of the same value, under
+    /// <see cref="ReferenceEqualityComparer"/>) reach <paramref name="onDuplicate"/> when they parse to the same value. A <c>null</c> key, which only a
+    /// custom <see cref="IDictionary{TKey, TValue}"/> can hold, is parsed like any other key that cannot be parsed.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="onDuplicate"/> is <c>null</c> (also for a <c>null</c> or empty <paramref name="input"/>).</exception>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static Dictionary<TKey, TValue?> Parses<TKey, TValue>(this IDictionary<object, object?>? input, Func<TValue?, TValue?, TValue?> onDuplicate) where TKey : unmanaged
+        => input.ParsesImplement<TKey, TValue>(onDuplicate);
 }
