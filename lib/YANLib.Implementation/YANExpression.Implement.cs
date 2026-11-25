@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using static System.Linq.Expressions.Expression;
 using static System.Reflection.BindingFlags;
 using static System.Type;
@@ -8,7 +9,12 @@ namespace YANLib.Implementation;
 
 internal static partial class YANExpression
 {
-    private static readonly ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression> Cache = new();
+    /// <summary>
+    /// The expressions built so far, per type, then per parameter and property name. The types are held weakly (a <see cref="ConditionalWeakTable{TKey, TValue}"/>),
+    /// so a type of a collectible <c>AssemblyLoadContext</c> does not keep it from unloading. Only expressions that were built are stored: a name that
+    /// matches no property or method throws and is not cached.
+    /// </summary>
+    private static readonly ConditionalWeakTable<Type, ConcurrentDictionary<(string ParameterName, string PropertyName), LambdaExpression>> Cache = new();
 
     internal static Expression<Func<T, object>> PropertyExpressionImplement<T>(string parameterName, string propertyName)
     {
@@ -22,7 +28,8 @@ internal static partial class YANExpression
             throw new ArgumentException("Property name cannot be null or whitespace.", nameof(propertyName));
         }
 
-        return (Expression<Func<T, object>>)Cache.GetOrAdd((typeof(T), parameterName, propertyName), static key => CreatePropertyExpression<T>(key.ParameterName, key.PropertyName));
+        return (Expression<Func<T, object>>)Cache.GetValue(typeof(T), static _ => new())
+            .GetOrAdd((parameterName, propertyName), static key => CreatePropertyExpression<T>(key.ParameterName, key.PropertyName));
     }
 
     private static Expression<Func<T, object>> CreatePropertyExpression<T>(string parameterName, string propertyName)

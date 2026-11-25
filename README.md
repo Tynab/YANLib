@@ -694,7 +694,7 @@ YANLib/
 
 Each component in YANLib is implemented with careful attention to performance, memory usage, and error handling:
 
-- **YANObject**: Caches the properties of each type and reads and writes them through accessors compiled on their second use (`IsNullDefault`, `AllPropertiesDefault`, ..., `Copy`), implements efficient null and default value checking
+- **YANObject**: Caches the properties of each type (holding the types weakly, so a collectible `AssemblyLoadContext` can unload) and reads and writes them through accessors compiled on their second use (`IsNullDefault`, `AllPropertiesDefault`, ..., `Copy`), implements efficient null and default value checking
 - **YANUnmanaged**: Implements specialized parsing methods for each unmanaged type with format support
 - **YANEnumerable**: Uses optimized collection conversion with LINQ integration and immutable collection support
 - **YANText**: Implements efficient string manipulation using StringBuilder where appropriate
@@ -704,22 +704,8 @@ Each component in YANLib is implemented with careful attention to performance, m
 - **YANRandom**: Extends System.Random with type-specific generation and range validation
 - **YANTask**: Uses HashSet<Task`<T>`> for efficient task tracking and implements async/await patterns
 - **YANProcess**: Uses Process.GetProcessesByName() with proper resource cleanup
-- **YANExpression**: Uses expression trees with thread-safe caching in ConcurrentDictionary
+- **YANExpression**: Uses expression trees with thread-safe caching per type in a ConditionalWeakTable (the types are held weakly)
 - **YANLib.Snowflake**: Implements the Snowflake algorithm with bit manipulation for efficient ID generation and customizable bit allocation
-
-
-### Important Notes
-
-- Elastic.Apm... (v1.24.x and above) is spam logs.
-- DotNetCap.CAP... (v8.3.2 and above) error CreateConnectionAsync method.
-- Do not [Remove Unused References...] in layers:
-    - Host:
-        - Microsoft.EntityFrameworkCore.Tools
-        - DotNetCap.CAP...
-        - Serilog...
-        - Volo.Abp.EntityFrameworkCore.SqlServer
-    - Domain.Shared:
-        - Microsoft.Extensions.FileProviders.Embedded
 
 
 ## 📜 License

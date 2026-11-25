@@ -1465,20 +1465,79 @@ public partial class YANObjectTest
     }
 
     [Fact]
-    public void Copy_CollectionType_CopiesPropertiesButNotItems_Object()
+    public void Copy_CollectionType_ThrowsNotSupportedException_Object()
     {
         // Arrange
-        var input = new CopyNamedList { 1, 2 };
+        var namedList = new CopyNamedList { 1, 2 };
 
-        input.Name = "n";
+        namedList.Name = "n";
+
+        // Act and Assert (8.4.0 before this check copied only the settable properties, so the items were lost: new List<int> { 1, 2 }.Copy() was an
+        // empty list; 8.3.3 threw TargetParameterCountException for the types with an indexer and returned an empty HashSet, LinkedList or SortedSet)
+        var exception = Assert.Throws<NotSupportedException>(() => namedList.Copy());
+
+        Assert.Contains(typeof(CopyNamedList).ToString(), exception.Message);
+        Assert.Equal([1, 2], namedList);
+        Assert.Throws<NotSupportedException>(() => new List<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new Dictionary<string, int> { ["a"] = 1 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new HashSet<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new LinkedList<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => new SortedSet<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new ObservableCollection<int> { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.ArrayList { 1, 2 }.Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Hashtable { ["a"] = 1 }.Copy());
+    }
+
+    [Fact]
+    public void Copy_CollectionTypeOnlyImplementingGenericICollection_ThrowsBeforeItsConstructorRuns_Object()
+    {
+        // Arrange
+        var input = new CopyCountingCollection { 1, 2 };
+        object boxed = new CopyCountingCollection { 3 };
+        var constructed = CopyCountingCollection.Constructed;
+
+        // Act and Assert (no indexer, so 8.3.3 also copied the settable Name and lost the items)
+        Assert.Throws<NotSupportedException>(() => input.Copy());
+        Assert.Throws<NotSupportedException>(() => boxed.Copy());
+        Assert.Equal(constructed, CopyCountingCollection.Constructed);
+        Assert.Equal([1, 2], input);
+    }
+
+    [Fact]
+    public void Copy_CollectionWithoutParameterlessConstructorTypedAsBase_ThrowsNotSupportedException_Object()
+    {
+        // Arrange (no public parameterless constructor: 8.4.0 before this check, and 8.3.3, returned a new object or CopyBase without the items)
+        object array = new[] { 1, 2 };
+        object readOnly = new ReadOnlyCollection<int>([1, 2]);
+        CopyBase asBase = new CopyNoDefaultConstructorCollection(5) { BaseValue = 1 };
+
+        // Act and Assert
+        Assert.Throws<NotSupportedException>(() => array.Copy());
+        Assert.Throws<NotSupportedException>(() => readOnly.Copy());
+        Assert.Throws<NotSupportedException>(() => asBase.Copy());
+    }
+
+    [Fact]
+    public void Copy_NullCollectionStructCollectionAndString_AreNotRejected_Object()
+    {
+        // Arrange
+        List<int>? none = null;
+        var segment = new ArraySegment<int>([1, 2, 3], 1, 2);
+        object boxedSegment = segment;
+        object text = "abc";
 
         // Act
-        var result = input.Copy();
+        var noneResult = none!.Copy();
+        var segmentResult = segment.Copy();
+        var boxedSegmentResult = boxedSegment.Copy();
+        var textResult = text.Copy();
 
-        // Assert (documented: only settable properties are copied; 8.3.3 threw TargetParameterCountException on the indexer)
-        Assert.Equal("n", result.Name);
-        Assert.Empty(result);
-        Assert.NotSame(input, result);
+        // Assert (null is returned, a struct is copied by value like an assignment, sharing its items, and a string is not a collection type here)
+        Assert.Null(noneResult);
+        Assert.Equal(segment, segmentResult);
+        Assert.Equal(segment, Assert.IsType<ArraySegment<int>>(boxedSegmentResult));
+        Assert.NotSame(boxedSegment, boxedSegmentResult);
+        Assert.Equal(typeof(object), textResult.GetType());
     }
 
     [Fact]
@@ -2377,6 +2436,59 @@ public partial class YANObjectTest
     private sealed class CopyNoDefaultConstructor(int value) : CopyBase
     {
         public int Value { get; set; } = value;
+    }
+
+    private sealed class CopyNoDefaultConstructorCollection(int value) : CopyBase, ICollection<int>
+    {
+        private readonly List<int> _items = [value];
+
+        public int Count => _items.Count;
+
+        public bool IsReadOnly => false;
+
+        public void Add(int item) => _items.Add(item);
+
+        public void Clear() => _items.Clear();
+
+        public bool Contains(int item) => _items.Contains(item);
+
+        public void CopyTo(int[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
+
+        public bool Remove(int item) => _items.Remove(item);
+
+        public IEnumerator<int> GetEnumerator() => _items.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class CopyCountingCollection : ICollection<int>
+    {
+        private static int constructed;
+        private readonly List<int> _items = [];
+
+        public CopyCountingCollection() => Interlocked.Increment(ref constructed);
+
+        public static int Constructed => Volatile.Read(ref constructed);
+
+        public string? Name { get; set; }
+
+        public int Count => _items.Count;
+
+        public bool IsReadOnly => false;
+
+        public void Add(int item) => _items.Add(item);
+
+        public void Clear() => _items.Clear();
+
+        public bool Contains(int item) => _items.Contains(item);
+
+        public void CopyTo(int[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
+
+        public bool Remove(int item) => _items.Remove(item);
+
+        public IEnumerator<int> GetEnumerator() => _items.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     private class Animal
