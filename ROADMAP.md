@@ -718,6 +718,8 @@ Recommendation: Option 1 for now. Revisit option 2 separately, since annotations
 
 *Area:* Packaging / docs / tooling
 
+**Chosen for 8.4.0: option 2. Done in 8.4.0: test/YANLib.Tests no longer references console/YANLib.Benchmarks. ConcurrentCollectionTests builds its data with test/YANLib.Tests/Models/ConcurrentCollectionData.cs (the fields and Setup of ConcurrentCollectionBenchmark, with an item type holding only the Id the test reads), so BenchmarkDotNet and Roslyn are no longer restored for the test project. The benchmark console is unchanged and still builds with YANLib.sln.**
+
 test/YANLib.Tests references console/YANLib.Benchmarks only for ConcurrentCollectionTests.cs, which checks benchmark code rather than YANLib. This pulls BenchmarkDotNet into the test build.
 
 Options:
