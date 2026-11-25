@@ -493,6 +493,44 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Average_DecimalSumOverflows_EnumeratesSequenceOnceMore_Math()
+    {
+        // pin of the documented counts: the emptiness check and the decimal pass start an iterator source twice, as 8.3.3 (which computed
+        // only in double) did; an overflow adds a third, exact pass, and an object element without a decimal value one more, double pass
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        var plain = new CountingSequence<decimal>(1m, 2m, 3m);
+        var typed = new CountingSequence<decimal>(max, max, 1m);
+        var nullable = new CountingSequence<decimal?>(max, null, max);
+        var boxed = new CountingSequence<object?>(max, max, 1m);
+        var nonGeneric = new CountingSequence<decimal>(max, max, 1m);
+        var integer = new CountingSequence<object?>(max, 3m, -max);
+        var nanAfterOverflow = new CountingSequence<object?>(max, max, double.NaN);
+        var nanFirst = new CountingSequence<object?>(double.NaN, max, max);
+
+        // Act
+        var plainResult = YANMath.Average<decimal>(plain);
+        var typedResult = YANMath.Average<decimal>(typed);
+        var nullableResult = YANMath.Average<decimal?>(nullable);
+        var boxedResult = YANMath.Average<decimal>(boxed);
+        var nonGenericResult = ((System.Collections.IEnumerable)nonGeneric).Average<decimal>();
+        var integerResult = YANMath.Average<long>(integer);
+        var nanResult = YANMath.Average<decimal>(nanAfterOverflow);
+        var nanFirstResult = YANMath.Average<decimal>(nanFirst);
+
+        // Assert
+        Assert.Equal((2m, 2), (plainResult, plain.Enumerations));
+        Assert.Equal(3, typed.Enumerations);
+        Assert.Equal((max, 3), (nullableResult, nullable.Enumerations));
+        Assert.Equal(3, boxed.Enumerations);
+        Assert.Equal((typedResult, 3), (nonGenericResult, nonGeneric.Enumerations));
+        Assert.Equal(boxedResult, typedResult);
+        Assert.Equal((1L, 3), (integerResult, integer.Enumerations));
+        Assert.Equal((0m, 4), (nanResult, nanAfterOverflow.Enumerations));
+        Assert.Equal((0m, 3), (nanFirstResult, nanFirst.Enumerations));
+    }
+
+    [Fact]
     public void Average_DecimalSumOverflows_MatchesExactOracle_Math()
     {
         // Arrange: seeded inputs whose decimal sum overflows, with values of every scale
@@ -2291,6 +2329,21 @@ public partial class YANMathTest
             _enumerated = true;
 
             return first ? ((IEnumerable<T>)items).GetEnumerator() : Enumerable.Empty<T>().GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    /// <summary>A sequence that counts how often it is enumerated, as an iterator source would be started.</summary>
+    private sealed class CountingSequence<T>(params T[] items) : IEnumerable<T>
+    {
+        public int Enumerations { get; private set; }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            Enumerations++;
+
+            return ((IEnumerable<T>)items).GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();

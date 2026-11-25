@@ -720,8 +720,9 @@ internal static partial class YANMath
         // the 8.3.3 loop, into a separate local: passing sum by reference made the span loop above about twice as slow
         if (!TrySumDecimal(input, out var total, out count))
         {
-            // the running sum may have been rounded before it overflowed, so it cannot be continued: enumerate the sequence again and add
-            // every element exactly, as the 8.3.3 double path enumerated it again (an OverflowException of the sequence itself ends there)
+            // the running sum may have been rounded before it overflowed, so it cannot be continued: enumerate the sequence once more (a third
+            // time, counting the emptiness check; 8.3.3 enumerated it twice) and add every element exactly (an OverflowException of the
+            // sequence itself ends there)
             return TryAverageExactly(input, out average, out count);
         }
 
