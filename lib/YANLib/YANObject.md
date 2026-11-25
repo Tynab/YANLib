@@ -12,7 +12,7 @@ The library is organized into several functional categories:
 
 ### Basic Object Operations
 
-- **Null Checking**: `IsNull` / `IsNotNull` were removed in 8.3.3 by mistake and are restored as obsolete shims in the next release; use `is null` / `is not null`
+- **Null Checking**: `IsNull` / `IsNotNull` were removed in 8.3.3 by mistake and are restored as obsolete shims in 8.4.0; use `is null` / `is not null`
 - **Default Value Checking**: Check if values match their type's default value
 - **Null/Default Combined Checking**: Verify if objects are null or have default property values
 - **Collection Emptiness**: Check if collections are null or empty
@@ -44,7 +44,7 @@ The library is organized into several functional categories:
 object? obj = null;
 bool isNull = obj is null;          // Returns true
 bool isNotNull = obj is not null;   // Returns false
-// IsNull()/IsNotNull() were removed in 8.3.3 by mistake and are restored as obsolete shims in the next release; use `is null` / `is not null`
+// IsNull()/IsNotNull() were removed in 8.3.3 by mistake and are restored as obsolete shims in 8.4.0; use `is null` / `is not null`
 
 // Default value checking
 int value = 0;
@@ -217,7 +217,7 @@ The library provides comprehensive coverage of object operations:
 
 | Category | Functions |
 |----------|-----------|
-| **Null Checking** | IsNull, IsNotNull (obsolete shims: removed in 8.3.3 by mistake, restored in the next release; use `is null` / `is not null`) |
+| **Null Checking** | IsNull, IsNotNull (obsolete shims: removed in 8.3.3 by mistake, restored in 8.4.0; use `is null` / `is not null`) |
 | **Default Value Checking** | IsDefault, IsNotDefault |
 | **Combined Checking** | IsNullDefault, IsNotNullDefault |
 | **Collection Checking** | IsNullEmpty, IsNotNullEmpty |

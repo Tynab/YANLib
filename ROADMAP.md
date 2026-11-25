@@ -63,7 +63,7 @@ Recommendation: Option 2: keep the thin facade hidden but let the debugger step 
 
 *Area:* Packaging / docs / tooling
 
-**Chosen: 8.4.0.**
+**Chosen: 8.4.0. Done: Version 8.4.0, PackageReleaseNotes and CHANGELOG.md.**
 
 Areas A-E add API and change packaging (XML docs, no favicon content, validation). The version is still 8.3.3 and PackageReleaseNotes describe 8.3.3. Package validation baseline is 8.3.3.
 
@@ -880,3 +880,163 @@ Options:
 - (d) 15-digit Convert.ToDecimal, as 8.3.3 did. This loses digits, for example for 2^60.
 
 Recommendation: (a), already implemented and documented in YANMath.md with the 1e23 example.
+
+## Decisions recorded while building 8.4.0
+
+The 8.4.0 additions kept the behaviour described in each entry; these are follow-up choices.
+
+### NextChar(char, char) removes the natural delegate type of the NextChar method group (CS8917)
+
+*Area:* Random / YANMath / Snowflake (8.4.0)
+
+The owner-chosen typed overload makes `var h = random.NextChar;` and `Delegate d = random.NextChar;` fail with CS8917 'The delegate type could not be inferred'. Both compiled against 2f3a038 (scratchpad/g1-consumer). Typed method groups (Func<char>, Func<Random,char>, Select(YANRandom.NextChar)), random.NextChar() and GenerateRandom<char> are unaffected. Binary compatibility is preserved, and package validation passes. Any second overload named NextChar would cause the same error.
+
+Options:
+
+- Keep NextChar(char, char) as chosen and note the CS8917 source impact in the 8.4.0 release notes
+- Rename the ranged method (for example NextCharInRange) so NextChar keeps a single overload
+- Revert the overload and keep GenerateRandom<char>(min, max) as the only ranged char API
+
+Recommendation: Keep it (option 1). .NET's own compatibility rules treat a new overload as acceptable, the untyped method-group shape is rare, and the owner chose this exact signature. Mention it in the release notes.
+
+### Strings with more than 28 decimal places and a decimal/integer result are still rounded to 28 places first
+
+*Area:* Random / YANMath / Snowflake (8.4.0)
+
+decimal.TryParse rounds such a string to 28 places, so ((object)"1.9999999999999998e-13").Round<decimal>(20, ToZero) is 0.0000000000002 (exact: 0.00000000000019999999). The same string with Round<double> now goes through its parsed double and is exact (1.9999999E-13). This is pinned by Round_StringMoreThan28DecimalPlaces_RoundsAt28PlacesFirst_MathGeneric and documented in YANMath.md. A string can carry more than 29 significant digits, which a decimal digit shift cannot hold exactly.
+
+Options:
+
+- Keep it (decimal-parse semantics for strings, documented and pinned)
+- Digit-shift the string's own digits when they fit in 28-29 significant digits, otherwise keep the 28-place parse
+- Route such strings through double.Parse and the double digit shift (loses digits beyond 17)
+
+Recommendation: Keep it for 8.4.0 (option 1). Option 2 is the only exact one and could follow later if string inputs with that many places matter.
+
+### Boxed decimal inputs with a double/float result keep the 28-places-first path
+
+*Area:* Random / YANMath / Snowflake (8.4.0)
+
+The object Round with a double/float result converts a decimal with the 8.3.3 cast, which is not correctly rounded: (double)1e-28m = 1.0000000000000001E-28. Digit shifting that double turned ((object)1e-28m).Round<double>(28, ToPositiveInfinity) from 1E-28 into 2E-28. A decimal input never needs more than 28 places, so 930c0ed keeps the old path for it (byte-identical to 2f3a038, pinned by Round_TinyDecimalToDouble_RoundsAt28PlacesFirst_MathGeneric). The cast error still leaks for larger decimals, as it did before.
+
+Options:
+
+- Keep the 2f3a038 path for decimal inputs (implemented)
+- Round the decimal itself with decimal.Round(min(digits, 28)) and convert the result to double correctly rounded through text (exact for the decimal; changes the <=28-place class as well)
+- Round the cast double exactly (digit shift), exposing the cast error in directed modes
+
+Recommendation: Option 1 for 8.4.0. Consider option 2 for 9.0 together with the planned conversion changes.
+
+### SpinWait.SpinOnce() vs SpinOnce(-1) in WaitForNextMillisecond
+
+*Area:* Random / YANMath / Snowflake (8.4.0)
+
+The spec's SpinOnce() cuts CPU while waiting from about 2000 ms to about 100 ms per 2000 waits. It occasionally calls Sleep(1), which overshoots the millisecond: 870-880 waits/s instead of about 1000. In the library with MoreDistributed (8 IDs/ms, 16,000 IDs), wall time went from about 2.0 s to about 2.3 s. SpinOnce(-1) (no Sleep(1)) kept the throughput (987-999 waits/s) but saved no CPU on an idle machine (1980 ms per 2000 waits), because Yield and Sleep(0) return at once. The ROADMAP's 'same latency, less CPU burn' cannot both hold.
+
+Options:
+
+- Keep SpinOnce() (implemented): about 95% less CPU, about 13% lower peak throughput when every millisecond's sequence is used up
+- SpinOnce(-1): same throughput as 8.3.3, lets other ready threads run, but still burns a core when idle
+- A hybrid: spin with SpinOnce(-1) until the next millisecond is near, then SpinOnce(); more code, needs measurement
+
+Recommendation: Keep SpinOnce() (option 1), the owner's choice and the stated goal. Only strategies that use up their sequence every millisecond (MoreDistributed, 8 IDs/ms) feel the throughput cost. Document it, which SnowflakelD.md now does.
+
+### Shape of the collection overloads for entireProcessTree/cancellation (deviation from the spec's example signature)
+
+*Area:* YANTask / YANProcess (8.4.0)
+
+The spec suggested KillAllProcessesByNames(this IEnumerable<string?>? names, bool entireProcessTree, CancellationToken cancellationToken = default). A compiled stub matrix showed that any non-generic (IEnumerable<string?>?, ...) overload with 2-3 parameters competes with the expanded params string?[] overload for literal-only calls. The C# normal-vs-expanded tie-breaker applies only to identical parameter types. With the spec shape, KillAllProcessesByNames(null, default) and (default, default) silently rebind (a no-op either way), and (null, default, default) and (default, default, default) become CS0121. Adding the token-only non-generic overload makes all four CS0121. This breaks the common rule (no CS0121, no silent rebinding). A generic form, KillAllProcessesByNames<TNames>(this TNames? names, ...) where TNames : IEnumerable<string?>, drops out of overload resolution for null/default literals because type inference fails. All 25 existing call sites bind to the same IL target on 07a75db and on the new tree, and list/array/ImmutableArray/IEnumerable receivers work. Cost: an unusual generic signature, and a null literal needs a typed variable or a cast (documented). I implemented the generic form.
+
+Options:
+
+- Generic collection overloads (implemented): zero rebinding or ambiguity on the measured matrix; the TNames type parameter shows in IntelliSense
+- Spec's non-generic shape: simpler signature, but literal-only params calls rebind ((null, default)) or fail with CS0121 ((null, default, default))
+- Single-name overloads only: fully safe; multi-name callers use Task.WhenAll(names.Select(n => n.KillAllProcessesByName(false, token)))
+- Options type with a different method name (e.g. KillAllProcessesByNamesWith(names, options)): no overload interaction, but a new name that is inconsistent with the rest of the API
+
+Recommendation: Keep the generic form for 8.4.0: it is the only same-name shape that meets the non-breaking rule. For 9.0, consider dropping the params overload or moving the options into a ProcessKillOptions parameter, so a plain IEnumerable<string?> overload becomes possible.
+
+### Kill order for the existing and new methods: signal all first, then wait (two-phase)
+
+*Area:* YANTask / YANProcess (8.4.0)
+
+To give cancellation and timeouts a useful meaning, KillAndDispose now signals every matching process before waiting for any. Before, each process was killed and awaited in turn. For the existing methods the final result is the same; only the order and timing differ (processes die in parallel; a process that never exits no longer blocks the others from being signalled). The alternative, sequential kill-and-wait with the token, would leave the remaining processes unsignalled when a timeout hits on a stuck first process. That makes the timeout recipe much weaker. A test pins the two-phase behaviour.
+
+Options:
+
+- Two-phase signal-then-wait for all overloads (implemented)
+- Sequential kill-then-wait, with cancellation stopping the loop (unsignalled processes remain on timeout)
+- Two-phase only for the new overloads; keep sequential for the old ones (two code paths)
+
+Recommendation: Keep two-phase everywhere. It is listed as a behaviour change and documented in YANProcess.md and the XML remarks.
+
+### Precedence when a kill fails and the wait is also canceled
+
+*Area:* YANTask / YANProcess (8.4.0)
+
+The new overloads follow the existing 'first failure is rethrown' rule, and a canceled wait counts as a failure after every kill. So if a process could not be killed (e.g. Win32Exception access denied) and the token is then canceled, the caller gets the kill failure, not OperationCanceledException. Across names, Task.WhenAll likewise reports a faulted name before a canceled one. A caller that catches only OperationCanceledException for a timeout therefore sees the Win32Exception in that case. This is documented in the XML exception docs and YANProcess.md, and tested (KillAndDispose_FailureAndCanceledWait_RethrowsTheFailure_Process).
+
+Options:
+
+- Kill failure wins (implemented; consistent with first-failure and with Task.WhenAll)
+- Cancellation wins: always throw OperationCanceledException when the token was canceled, losing the kill failure
+- Throw an AggregateException with both
+
+Recommendation: Keep 'kill failure wins'. It preserves the existing first-failure contract and surfaces the more serious error; the docs warn about it.
+
+### KillAllProcessesByName method group loses its natural type (CS8917 source break) because of the 8.4.0 same-name overloads
+
+*Area:* YANTask / YANProcess (8.4.0)
+
+KillAllProcessesByName had one overload in 8.3.3. With the owner-chosen (string?, CancellationToken) and (string?, bool, CancellationToken) overloads, its method group has no natural type. Consumer code such as `var f = YANProcess.KillAllProcessesByName;` or `Delegate d = YANProcess.KillAllProcessesByName;`, which compiled against 8.3.3, now fails with CS8917. Explicitly typed delegates and Select method groups still bind to the old overload, and package validation (binary API) is unaffected. KillAllProcessesByNames already had two overloads. This is now documented in YANProcess.md and the ROADMAP, but it is a source break the owner has not explicitly accepted.
+
+Options:
+
+- Keep the same-name overloads as chosen and document the break (done in 17fb1e6; add it to PackageReleaseNotes at the bump)
+- Rename the new single-name overloads (for example KillAllProcessesByNameWithOptions / KillAllProcessesByName with a different name for the token variants) so the original method group keeps its natural type, at the cost of the consistent naming the owner chose and of updating the docs and tests added in G2b
+
+Recommendation: Option 1: keep and document. Assigning the method group to `var` or `Delegate` is rare, the fix at the call site is a one-word delegate type, the binary API is unchanged, and the same-name overloads match the owner's 8.4.0 choice and the .NET convention.
+
+### YANTask streaming methods: the yield-order contract
+
+*Area:* YANTask / YANProcess (8.4.0)
+
+WaitAnyWithConditions and WhenAnyWithConditions check the tasks lazily in collection order and yield each one that is complete when it is reached. That includes a task that completed while the consumer handled an earlier result, so it comes before a later task that was already complete at the start ([1,tcs,3] gives [1,2,3]; taken 2 gives [1,2]). Running tasks are registered after that pass, in collection order, so those that have completed by then come in collection order ([a,b,3] with b completing before a gives [3,1,2]). This round documents that order exactly and changes no code. The verifier's alternative, snapshotting IsCompleted before the first yield, would change which results `taken` returns. On its own it would not make the rest strictly completion-ordered either: the [3,1,2] case would still come out in collection order.
+
+Options:
+
+- A: keep the current order, now documented exactly in the XML remarks and YANTask.md. No continuations or allocations when the already-complete tasks satisfy `taken`, and the check order matches the scalar WaitAny/WhenAnyWithCondition.
+- B: snapshot IsCompleted for every task before the first yield, so tasks complete at the start come first in collection order and the others follow. This changes the `taken` results, and the rest is still not strictly completion-ordered (tasks that complete before registration still come in collection order).
+- C: snapshot and register the InCompletionOrder continuations for every running task before the first yield, so the rest is in true completion order. This changes the `taken` results and registers continuations even when the already-complete tasks satisfy `taken` (the Leak tests would need rechecking).
+
+Recommendation: A. The order is now documented precisely and pinned by tests. B gives only part of the guarantee and still changes results, and C adds cost for a guarantee nobody has asked for. Revisit only if the owner wants a strict completion-order contract before 8.4.0 ships.
+
+### Should the IFormatProvider of ParseWith/ParsesWith also govern exact DateTime format strings?
+
+*Area:* Parse with IFormatProvider (8.4.0)
+
+The spec says to thread the provider through DateTime parsing "with and without formats". Today Parse matches exact formats with InvariantCulture ('/' and ':' are literal, invariant month names), and equivalence gate (1) requires ParseWith(CultureInfo.CurrentCulture) == Parse. If formats used the provider, gate (1) would fail for formats: under de-DE, "13/12/2025" with "dd/MM/yyyy" matches with invariant, and with the de-DE provider '/' means '.'. Implemented: formats stay invariant with any provider, documented in the XML docs and in YANUnmanaged.md, and pinned by ParseWith_ExactFormat_IsMatchedWithInvariantCulture and ParsesWith_DateTimeFormats_AreMatchedWithInvariantCulture_Collection. Evidence: $SP/equiv-G3/fmt-decision-probe.txt (25 input x format x culture cases). With the provider, de-DE would accept "13.12.2025" for dd/MM/yyyy and reject "13 December 2025" for "dd MMMM yyyy"; fr-FR would accept "13 décembre 2025".
+
+Options:
+
+- Keep exact formats invariant for every provider (implemented). Consistent with Parse, keeps gate (1) exact, and documented.
+- Use the provider for exact formats in ParseWith only. Allows localized month names and separators, but ParseWith(CultureInfo.CurrentCulture, ..., format) then differs from Parse(..., format), and '/' or ':' in existing format strings changes meaning.
+- Use the provider for exact formats only when it is non-null (null = invariant formats as today). Same consequence as option 2 for an explicit CurrentCulture, and the rule is harder to explain.
+- Add a separate format-culture parameter or options type later (9.0, with the invariant-default change).
+
+Recommendation: Option 1 for 8.4.0, as implemented. Revisit in 9.0 together with the planned invariant default (option 4), so that a format culture is chosen explicitly rather than inferred.
+
+### When the compiled accessors are built (compile on second call vs eager)
+
+*Area:* YANObject compiled accessors (8.4.0)
+
+The spec asks for compiled getters/setters cached per type with an unchanged observable contract. Compiling eagerly at first use (the partial work) made the equivalence probe differ: .NET 8 reflection's interpreted first call runs a struct property type's precise static constructor before the getter, and a throwing one surfaces as TIE(TypeInitializationException). Implemented: each accessor's first call goes through reflection and its second call compiles. This mirrors .NET reflection's own tiering, makes the probe byte-identical (mixed sequences with ChangeTimeZoneAllProperty included), and means a type used once compiles nothing. Trade-off: the second call on a new type costs about 2x reflection's second call (IsNullDefault 6 props: 641 vs 298 µs; Copy 10 props: 1346 vs 512 µs). Steady state is 2-6x faster.
+
+Options:
+
+- Keep compile-on-second-call (as committed)
+- Eager compile on first use, emulating the static-constructor trigger with RuntimeHelpers.RunClassConstructor on the first call (cheaper to explain; diverges after a failed static constructor or when another method made the first reflection call)
+- Compile after N calls (for example 8 or 16), so rarely used types never compile; calls 2..N then pay reflection's own emitted-stub cost as well as the later compile
+- Eager compile with no emulation, documenting the static-constructor timing difference as a behaviour change
+
+Recommendation: Keep compile-on-second-call. It is the only option that keeps reflection's first-call semantics exactly, and its one-time cost (about 0.3-0.8 ms more per type) is paid back after a few thousand calls. Revisit with a higher threshold only if real workloads check many types just two or three times.
