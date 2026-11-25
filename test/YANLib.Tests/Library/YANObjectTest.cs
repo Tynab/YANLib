@@ -1385,6 +1385,27 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void ChangeTimeZoneAllProperty_CopyGetterOverAWritableList_ShiftsOnceOnlyWhenDeclaredFirstAndStored_Object()
+    {
+        // Arrange
+        var copyFirst = new TzCopyBeforeDirect { Direct = [Hour(1)] };
+        var directFirst = new TzDirectBeforeCopy { Direct = [Hour(1)] };
+        var copyFirstCopyingSetter = new TzCopyBeforeDirectCopyingSetter { Direct = [Hour(1)] };
+
+        // Act
+        copyFirst.ChangeTimeZoneAllProperty(0, 7);
+        directFirst.ChangeTimeZoneAllProperty(0, 7);
+        copyFirstCopyingSetter.ChangeTimeZoneAllProperty(0, 7);
+
+        // Assert (pinned: the setter of Copy, declared first, stores the converted copy in Direct, which then returns that list, already converted, so the
+        // value is shifted once, where 8.3.3 converted it again through Direct, to Hour(15); with Direct declared first, or a setter that stores a copy,
+        // it is shifted twice, as in 8.3.3)
+        Assert.Equal([Hour(8)], copyFirst.Direct);
+        Assert.Equal([Hour(15)], directFirst.Direct);
+        Assert.Equal([Hour(15)], copyFirstCopyingSetter.Direct);
+    }
+
+    [Fact]
     public void ChangeTimeZoneAllProperty_SubclassesOfNonDataFrameworkTypes_AreNotWalked_Object()
     {
         // Arrange
@@ -2438,6 +2459,39 @@ public partial class YANObjectTest
         }
 
         public IList<DateTime> View => dates;
+    }
+
+    private sealed class TzCopyBeforeDirect
+    {
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = value;
+        }
+
+        public List<DateTime> Direct { get; set; } = [];
+    }
+
+    private sealed class TzDirectBeforeCopy
+    {
+        public List<DateTime> Direct { get; set; } = [];
+
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = value;
+        }
+    }
+
+    private sealed class TzCopyBeforeDirectCopyingSetter
+    {
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = [.. value];
+        }
+
+        public List<DateTime> Direct { get; set; } = [];
     }
 
     private sealed class TzLogWriter : StringWriter

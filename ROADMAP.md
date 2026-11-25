@@ -668,7 +668,7 @@ Recommendation: (a): it converts every copy-getter, computed and JSON-backed cas
 
 *Area:* YANObject / YANExpression
 
-Restoring 8.3.3's interleaved order fixes the Appt/DTO case. It also brings back 8.3.3's double conversion for some shapes: a wrapper property over the owner's own Start/End (EvBefore, EvBetween, EvAfter, OrderVm), a copy getter next to a direct reference to the same object (SnapHolder), and two copy getters over one field (TwoCopies). These are now pinned by WrapperDeclaredBetweenItsDateTimes_ShiftsThemTogether and documented in YANObject.md and the XML remarks. The walk cannot tell that a copy aliases state it has already converted, or will convert, through another path.
+Restoring 8.3.3's interleaved order fixes the Appt/DTO case. It also brings back 8.3.3's double conversion for some shapes: a wrapper property over the owner's own Start/End (EvBefore, EvBetween, EvAfter, OrderVm), a copy getter next to a direct reference to the same object (SnapHolder), and two copy getters over one field (TwoCopies). Corrected after the 8.4.0 claim check: SnapHolder's shape shifts twice only when the direct reference is declared first, the copy's setter stores a copy or the copy is a struct; with the copy getter declared first and a setter that stores the copy it receives, a copied list, array, dictionary or other class instance is shifted once (8.3.3 shifted a list, array or object twice and threw for a dictionary), because the direct reference then returns the copy the walk has already converted. These are now pinned by WrapperDeclaredBetweenItsDateTimes_ShiftsThemTogether and CopyGetterOverAWritableList_ShiftsOnceOnlyWhenDeclaredFirstAndStored, and documented in YANObject.md and the XML remarks. The walk cannot tell that a copy aliases state it has already converted, or will convert, through another path.
 
 Options:
 
@@ -677,7 +677,7 @@ Options:
 - Add an opt-in overload or flag to skip computed or copy-returning writable properties (e.g. walk only auto-properties, or only properties whose getter returns the same reference twice). This is new API.
 - Skip writable properties whose getter returns a new object on each read (two reads compared by reference). This changes behaviour for JSON-backed and defensive-copy properties that 8.3.3 handled.
 
-Recommendation: Option 1: keep 8.3.3's behaviour and the documentation. It is what 8.3.3 users got, it is now deterministic and independent of declaration order, and the alternatives are either impossible in general or new API or behaviour that belongs in a minor release.
+Recommendation: Option 1: keep 8.3.3's behaviour and the documentation. It is what 8.3.3 users got (except for SnapHolder's copy-first case above), it is now deterministic and independent of declaration order (except for that case: this sentence first said so without exception), and the alternatives are either impossible in general or new API or behaviour that belongs in a minor release.
 
 ### ChangeTimeZoneAllProperty: user subclasses of non-data framework types (TextWriter/StringWriter, CancellationTokenSource, Task, Stream, ...) are leaves
 
