@@ -57,7 +57,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
   - All matches are signalled before any wait.
 - **YANText**:
   - `FormatName` leaves single spaces and no trailing space.
-  - The string `EqualsIgnoreCase` collection helpers use the same comparison as the scalar method and allocate nothing for arrays and lists.
+  - The string `EqualsIgnoreCase` collection helpers use the same comparison as the scalar method and allocate nothing for arrays and lists (for `AnyEqualsIgnoreCase` / `AllNotEqualsIgnoreCase` up to 16 strings; larger inputs use a `HashSet`).
 - **Snowflake**:
   - The constructor's `sequence` is honoured and validated.
   - `ExtractIdComponents` returns correct components.
@@ -80,7 +80,7 @@ Each item changes a result, an exception or a side effect that code written agai
 
 **Collection helpers**
 
-- The helpers that return a sequence (`Parses` and the `ToList` / `ToArray` / `ToImmutable*` conversions built on it, `Serializes` / `Deserializes`, the `YANText` and `YANDateTime` collection methods) are lazy, keep the input order and run on the enumerating thread. 8.3.3 used unordered PLINQ for 1,000 or more items, which changed the order and wrapped an exception from one item in an `AggregateException` (`Serializes` of 2,000 objects with a throwing getter); the exception now surfaces as itself. The in-place `List<T>` overloads still use `Parallel.For` for large lists, and `GenerateRandoms` still generates 1,000 or more values in parallel.
+- The helpers that return a sequence (`Parses` and the `ToList` / `ToArray` / `ToImmutable*` conversions built on it, `Serializes` / `Deserializes`, the `YANText` and `YANDateTime` collection methods) are deferred, keep the input order and run on the enumerating thread; as in 8.3.3, the first item is read at the call (to return `null` for an empty input), so an iterator source is started twice. 8.3.3 used unordered PLINQ for 1,000 or more items, which changed the order and wrapped an exception from one item in an `AggregateException` (`Serializes` of 2,000 objects with a throwing getter); the exception now surfaces as itself. The in-place `List<T>` overloads still use `Parallel.For` for large lists, and `GenerateRandoms` still generates 1,000 or more values in parallel.
 
 **YANMath**
 
@@ -90,14 +90,14 @@ Each item changes a result, an exception or a side effect that code written agai
 - `Round` with 16 or more digits rounds instead of throwing `ArgumentOutOfRangeException`: `(0.1 + 0.2).Round(16)` is 0.3. Negative digits still throw. With 16 or more digits, an undefined `MidpointRounding` throws `ArgumentException` (`ParamName` `mode`) instead of `ArgumentOutOfRangeException` (`digits`).
 - `Log2` uses `Math.Log2`: `536870912.0.Log2()` 29.000000000000004 -> 29. Other results can change in the last digit.
 - The exact conversion costs time: `Sum` and `Average` with an integer or `decimal` result over boxed `double` values, or over a `double` collection with another result type (`doubles.Sum<decimal>()`), are several times slower. `YANMath.Sum<decimal>` over 1,000 boxed random doubles took about 0.58 ms instead of about 0.15 ms. Same-type typed calls (`YANMath.Sum<double>(doubles)`) are not affected.
-- Typed `Sum` / `Average` / `Min` / `Max` over a `List<T>` subclass that re-implements `IEnumerable<T>` follow that enumeration: for a list holding 5, -100 and 3 that enumerates 5 and 3, `Average` -31 -> 4 and `Min` -100 -> 3.
+- Typed `Average` / `Min` / `Max` over a `List<T>` subclass that re-implements `IEnumerable<T>` follow that enumeration, as typed `Sum` already did: for a list holding 5, -100 and 3 that enumerates 5 and 3, `Average` -31 -> 4 and `Min` -100 -> 3.
 
 **YANRandom**
 
 - Ranges are half-open and uniform: `NextUlong(5, 6)` returned 5 or 6 (and was modulo-biased), now always 5; `NextDateTime(min, max)` could return `max` and now returns whole ticks in `[min, max)` with the `Kind` of `min` (was `Unspecified`); `NextSingle` / `NextDouble` / `NextDecimal` never return `max`, also not through rounding (`NextDecimal(1e28m, 1e28m + 1)` returned `max` about half the time, now always `min`). A call without bounds never returns the type's `MaxValue`.
 - `NextDecimal()` is uniform over `[0, 1)`; 8.3.3 put 96% of its values between 0.1 and 0.792.
 - A seeded `Random` gives different values from `NextDecimal` (with or without bounds), `NextUlong` and `NextDateTime`. `NextInt`, `NextLong`, `NextByte`, `NextDouble` and `NextSingle` gave the same values as 8.3.3 in a check with `new Random(42)`.
-- `GenerateRandom<char>(min, max)` with `object` bounds and `GenerateRandoms<char>(min, max, size)` return a `char` in `[min, max)`, or `a`-`z` when both bounds are `null` (they returned `'\0'` or `'\u0001'`).
+- `GenerateRandom<char>(min, max)` with `object` bounds and `GenerateRandoms<char>(min, max, size)` return a `char` in `[min, max)`, or `a`-`z` when both bounds are `null` (they returned `'\0'`).
 - After recompiling: `GenerateRandom<T>(a, b)` with two typed numeric, `DateTime` or `char` arguments binds to the new range overload and returns a value in `[a, b)` (8.3.3 bound to `params T[]`: 2,000 calls of `GenerateRandom<int>(1, 100)` gave only 1 and 100); `bool`, enum and `Guid` pairs still return one of the two. A two-bound call with named arguments, such as `GenerateRandom<Guid>(min: a, max: b)`, returned `Guid.Empty` (the enum's zero value, a random `bool`) and now returns `a` or `b`. Binaries compiled against 8.3.3 keep the old binding until rebuilt.
 
 **YANObject**
@@ -107,7 +107,7 @@ Each item changes a result, an exception or a side effect that code written agai
 - `AllPropertiesDefault(names)`, `AllPropertiesDefaults(names)` and `AllPropertiesNotDefaults(names)` return `false` when no name matches a property (were `true`). `AllPropertiesDefaults` / `AllPropertiesNotDefaults` return `false` for a collection that contains `null` (a `null` element satisfied both).
 - Field names: blank names are never valid, as in 8.3.2 (`["Name", null].AllValidFields<User>()` `true` -> `false`; `IsNotValidField` of `null`, `""` or whitespace `false` -> `true`; `["Name", null].AnyNotValidField<User>()` `false` -> `true`). The indexer `"Item"` and write-only properties are no longer valid fields, and a `new`-hidden property is valid (threw `AmbiguousMatchException`).
 - `Copy()`: `Base b = new Derived(); b.Copy()` returns a `Derived` made with `Derived`'s constructor (8.3.3 threw `TargetException` when `Derived` adds a settable property, and otherwise returned a `Base`). Structs and `DateTime` values are copied (`5.Copy()` 0 -> 5), and `new List<int> { 1, 2 }.Copy()` is an empty list (threw `TargetParameterCountException`).
-- From a property's second read by the property checks, or its second copy by `Copy`, a getter or setter exception still arrives as a `TargetInvocationException` with the same type, message and `InnerException`, but its `Source` is `YANLib.Implementation` (was `System.Private.CoreLib`), its `TargetSite` is `PropertyReader.GetValue` or `PropertyCopier.Copy`, and the stack frames differ; `Assembly.GetCallingAssembly()` in such a getter returns `Anonymously Hosted DynamicMethods Assembly`.
+- From a property's second read by the property checks, or its second copy by `Copy`, a getter or setter exception still arrives as a `TargetInvocationException` with the same type, message and `InnerException`, but its `Source` is `YANLib.Implementation` (was `System.Private.CoreLib`), its `TargetSite` is `PropertyReader.GetValue` or `PropertyCopier.Copy`, and the stack frames differ; `Assembly.GetCallingAssembly()` in such a getter can return `Anonymously Hosted DynamicMethods Assembly` (seen for value-type properties; for a reference-type property the JIT usually tail-calls the getter and it still returns `YANLib.Implementation`).
 - `ChangeTimeZoneAllProperties` runs at once and returns an array: with the result ignored, 8.3.3 converted nothing, and enumerating its lazy result twice shifted the objects twice (+14 h). An object listed twice or shared by several elements is shifted once.
 - `ChangeTimeZoneAllProperty` converts more: an object reached through two references is shifted once (was twice); getter-only lists, arrays and dictionaries, `DateTime` items of `object` lists and arrays, `DateTime?` items of lists and arrays, and `Dictionary<TKey, DateTime>` values are converted (8.3.3 left them unchanged, or threw `TargetParameterCountException` for the dictionary).
 - `ChangeTimeZoneAllProperty` calls fewer setters. 8.3.3 set every readable and writable property with a non-null value (strings, numbers, objects with nothing to convert) and every non-null item of a list (an `ObservableCollection<T>` raised a `Replace` event for each item). Now only `DateTime` properties and values in which a `DateTime` was converted are written back, so a read-only `CultureInfo` property or another throwing setter on such a value no longer fails the walk. A throwing getter is skipped.
@@ -164,5 +164,5 @@ Each item changes a result, an exception or a side effect that code written agai
 - The package's project URL is https://github.com/Tynab/YANLib, and its description says .NET 8 (LTS).
 - A clean `dotnet pack` works, and `dotnet pack` validates the API against 8.3.3.
 - Restore uses nuget.org only.
-- The debugger can step into `YANLib.Implementation`; only the thin public facade stays hidden.
-- New: `.editorconfig` (checked by `dotnet format --verify-no-changes`), the CI workflow (it pins the .NET 8 SDK with a `global.json` it writes itself, so contributors can use any SDK), a Publish workflow (pushing a tag such as `v8.4.0` runs CI and pushes the matching package to nuget.org; it needs the repository secret `NUGET_API_KEY`) and `ROADMAP.md`.
+- The debugger can step into `YANLib.Implementation`; the public facade and the Snowflake `IdGenerator` (which lives in `YANLib.dll`) stay hidden.
+- `.editorconfig` now describes the code style and is checked by `dotnet format --verify-no-changes`. New: the CI workflow (it pins the .NET 8 SDK with a `global.json` it writes itself, so contributors can use any SDK), a Publish workflow (pushing a tag such as `v8.4.0` runs CI and pushes the matching package to nuget.org; it needs the repository secret `NUGET_API_KEY`) and `ROADMAP.md`.
