@@ -163,7 +163,7 @@ Each item changes a result, an exception or a side effect that code written agai
 
 ### Source compatibility notes
 
-- The new overloads of `NextChar` and `KillAllProcessesByName` remove the natural delegate type of these method groups, so `var f = random.NextChar;` or `Delegate d = YANProcess.KillAllProcessesByName;` now gives CS8917; use a typed delegate (`Func<char> f = random.NextChar;`).
+- The new overloads of `NextChar`, `KillAllProcessesByName` and `KillAllProcessesByNames` remove the natural delegate type of these method groups (for `KillAllProcessesByNames`, the extension form on a collection, which had one candidate in 8.3.3), so `var f = random.NextChar;`, `Delegate d = YANProcess.KillAllProcessesByName;` or `var g = names.KillAllProcessesByNames;` now gives CS8917; use a typed delegate (`Func<char> f = random.NextChar;`, `Func<Task> g = names.KillAllProcessesByNames;`).
 - `GenerateRandom<T>(a, b)` with two typed arguments binds to the new range overload when recompiled (see *YANRandom* above).
 - `ParseWith` / `ParsesWith` are new extension names: a project that already has its own `ParseWith` / `ParsesWith` extension on `object` or `IEnumerable` in an imported namespace may now get CS0121.
 - `IsNull()` / `IsNotNull()` compile again, with an obsolete warning (CS0618).
