@@ -39,7 +39,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
   - Inherited properties are checked, and indexers and write-only properties are skipped.
   - `AllValidFields` with a blank name is `false` again, as in 8.3.2.
   - `Copy()` creates the runtime type, and throws `NotSupportedException` for a collection type instead of losing its items.
-  - The per-type caches hold their types weakly (`ConditionalWeakTable`), so a type of a collectible `AssemblyLoadContext` (a plugin) used with the property checks, the field-name checks, `Copy` or `ChangeTimeZoneAllProperty` no longer keeps that context from unloading.
+  - The per-type caches hold their types weakly (`ConditionalWeakTable`): a type of a collectible `AssemblyLoadContext` (a plugin) used with the property checks no longer keeps that context from unloading (8.3.3 cached their properties per type for the life of the process), and the caches added since 8.3.3 for the field-name checks, `Copy` and `ChangeTimeZoneAllProperty` do not keep it either.
   - `ChangeTimeZoneAllProperties` is eager and converts each object once.
   - `ChangeTimeZoneAllProperty`:
     - It handles cycles, deep graphs (a 1,000,000-node list), read-only collections, dictionaries and `ArraySegment<T>`.
