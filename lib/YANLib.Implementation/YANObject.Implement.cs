@@ -19,6 +19,9 @@ internal static partial class YANObject
     private static readonly ConditionalWeakTable<Type, PropertyInfo[]> ReadWritePropertyCache = new();
     private static readonly ConditionalWeakTable<Type, object> DefaultValueCache = new();
 
+    // A boxed bool (the values of a ConditionalWeakTable are references): whether Copy rejects a runtime type that it does not construct.
+    private static readonly ConditionalWeakTable<Type, object> CopyCollectionCache = new();
+
     #region Private
 
     /// <summary>
@@ -699,10 +702,10 @@ internal static partial class YANObject
         }
         else
         {
-            // The runtime type has no public parameterless constructor, so a new T gets the properties of T. The runtime type is checked here without
-            // being cached (as its constructor is looked up): an array or a ReadOnlyCollection<T> typed as object is rejected instead of becoming a new
-            // object. T, a base class of a type that is not a collection type, is not one either.
-            if (IsCopyCollection(runtimeType))
+            // The runtime type has no public parameterless constructor, so a new T gets the properties of T. The runtime type is checked here too
+            // (cached per type): an array or a ReadOnlyCollection<T> typed as object is rejected instead of becoming a new object. T, a base class of a
+            // type that is not a collection type, is not one either.
+            if (IsCachedCopyCollection(runtimeType))
             {
                 throw CopyCollectionNotSupported(runtimeType);
             }
@@ -725,6 +728,13 @@ internal static partial class YANObject
     /// </summary>
     private static bool IsCopyCollection(Type type)
         => typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), static x => IsGenericInterface(x, typeof(ICollection<>)));
+
+    /// <summary>
+    /// <see cref="IsCopyCollection(Type)"/>, cached per type, for a runtime type that <c>Copy</c> does not construct (it has no public parameterless
+    /// constructor), so it has no <see cref="PropertyCopier"/> list that would hold the answer. <see cref="Type.GetInterfaces"/> allocates a new array
+    /// on every call.
+    /// </summary>
+    private static bool IsCachedCopyCollection(Type type) => (bool)CopyCollectionCache.GetValue(type, static t => IsCopyCollection(t));
 
     private static NotSupportedException CopyCollectionNotSupported(Type type) => new($"Copy does not support the collection type {type}: it copies properties only, so the "
         + "items would be lost. Use the collection's own copy constructor (such as new List<T>(list)) or ToList, ToArray or ToDictionary instead.");

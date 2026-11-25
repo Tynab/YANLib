@@ -64,7 +64,12 @@ public static class CollectiblePlugin
         var input = CollectiblePluginDto.Filled();
         var copy = input.Copy();
 
-        return !ReferenceEquals(copy, input) && copy.Name == input.Name && copy.When == input.When && copy.Point.X == input.Point.X && ReferenceEquals(copy.Child, input.Child);
+        // A runtime type without a public parameterless constructor, typed as its base: Copy checks the runtime type (cached) and copies into a new base.
+        CollectiblePluginBase derived = new CollectiblePluginDerived(5) { Name = "plugin" };
+        var baseCopy = derived.Copy();
+
+        return !ReferenceEquals(copy, input) && copy.Name == input.Name && copy.When == input.When && copy.Point.X == input.Point.X && ReferenceEquals(copy.Child, input.Child)
+            && baseCopy.GetType() == typeof(CollectiblePluginBase) && baseCopy.Name == "plugin";
     }
 
     private static bool RunChangeTimeZoneAllProperty()
@@ -136,6 +141,18 @@ public struct CollectiblePluginPoint
 public sealed class CollectiblePluginChild
 {
     public DateTime At { get; set; }
+}
+
+public class CollectiblePluginBase
+{
+    public string? Name { get; set; }
+}
+
+public sealed class CollectiblePluginDerived(int id) : CollectiblePluginBase, IComparable<CollectiblePluginDerived>
+{
+    public int Id { get; } = id;
+
+    public int CompareTo(CollectiblePluginDerived? other) => other is null ? 1 : Id.CompareTo(other.Id);
 }
 
 public enum CollectiblePluginKind
