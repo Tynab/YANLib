@@ -36,7 +36,7 @@ namespace YANLib.Implementation;
 internal static partial class YANObject
 {
     private static readonly ConcurrentDictionary<Type, PropertyReader[]> PropertyReaderCache = new();
-    private static readonly ConcurrentDictionary<Type, PropertyCopier[]> PropertyCopierCache = new();
+    private static readonly ConcurrentDictionary<Type, PropertyCopier[]?> PropertyCopierCache = new();
 
     /// <summary>
     /// A marker for a value that is not computed yet.
@@ -84,10 +84,10 @@ internal static partial class YANObject
 
     /// <summary>
     /// Gets a <see cref="PropertyCopier"/> for each property of <see cref="GetCachedReadWriteProperties(Type)"/>, in the same order: the properties
-    /// that <c>Copy</c> copies.
+    /// that <c>Copy</c> copies; or <c>null</c> for a collection type (<see cref="IsCopyCollection(Type)"/>), which <c>Copy</c> does not support.
     /// </summary>
-    private static PropertyCopier[] GetCachedCopiers(Type type)
-        => PropertyCopierCache.GetOrAdd(type, static t => [.. GetCachedReadWriteProperties(t).Select(static x => new PropertyCopier(x))]);
+    private static PropertyCopier[]? GetCachedCopiers(Type type) => PropertyCopierCache.GetOrAdd(type, static t
+        => IsCopyCollection(t) ? null : [.. GetCachedReadWriteProperties(t).Select(static x => new PropertyCopier(x))]);
 
     /// <summary>
     /// Whether a value of <paramref name="type"/> can be passed by a compiled accessor: not a pointer, function pointer, by-ref (ref return) or

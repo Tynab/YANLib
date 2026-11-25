@@ -684,24 +684,45 @@ internal static partial class YANObject
         }
 
         T result;
+        PropertyCopier[] copiers;
 
-        if (runtimeType != typeof(T) && runtimeType.GetConstructor(Type.EmptyTypes) is not null)
+        // A collection type is rejected before any constructor runs.
+        if (runtimeType == typeof(T) || runtimeType.GetConstructor(Type.EmptyTypes) is not null)
         {
-            result = (T)Activator.CreateInstance(runtimeType)!;
+            copiers = GetCachedCopiers(runtimeType) ?? throw CopyCollectionNotSupported(runtimeType);
+            result = runtimeType == typeof(T) ? new T() : (T)Activator.CreateInstance(runtimeType)!;
         }
         else
         {
+            // The runtime type has no public parameterless constructor, so a new T gets the properties of T. The runtime type is checked here without
+            // being cached (as its constructor is looked up): an array or a ReadOnlyCollection<T> typed as object is rejected instead of becoming a new
+            // object. T, a base class of a type that is not a collection type, is not one either.
+            if (IsCopyCollection(runtimeType))
+            {
+                throw CopyCollectionNotSupported(runtimeType);
+            }
+
+            copiers = GetCachedCopiers(typeof(T))!;
             result = new T();
-            runtimeType = typeof(T);
         }
 
-        foreach (var copier in GetCachedCopiers(runtimeType))
+        foreach (var copier in copiers)
         {
             copier.Copy(input, result);
         }
 
         return result;
     }
+
+    /// <summary>
+    /// Whether <c>Copy</c> rejects <paramref name="type"/> as a collection type: it implements <see cref="IList"/> (arrays included), <see cref="IDictionary"/>
+    /// or <see cref="ICollection{T}"/>, whose items would be lost, since <c>Copy</c> copies properties only.
+    /// </summary>
+    private static bool IsCopyCollection(Type type)
+        => typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), static x => IsGenericInterface(x, typeof(ICollection<>)));
+
+    private static NotSupportedException CopyCollectionNotSupported(Type type) => new($"Copy does not support the collection type {type}: it copies properties only, so the "
+        + "items would be lost. Use the collection's own copy constructor (such as new List<T>(list)) or ToList, ToArray or ToDictionary instead.");
 
     #endregion
 }

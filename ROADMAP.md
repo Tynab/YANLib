@@ -619,6 +619,8 @@ Recommendation: Option 2, for consistency with IList and ArraySegment<T>; docume
 
 *Area:* YANObject / YANExpression
 
+**Chosen for 8.4.0: option 2. Done in 8.4.0: `Copy()` throws `NotSupportedException` (the message names the type and points to the collection's copy constructor, `ToList`, `ToArray` or `ToDictionary`) when the input's runtime type is a class that implements `IList`, `IDictionary` or `ICollection<T>`, checked before any constructor runs. Arrays are included: they implement `IList`, an array type cannot be `T` (no parameterless constructor), and an array typed as `object` used to come back as a bare `new object()`; the same holds for a `ReadOnlyCollection<T>` typed as `object`. `null` input is returned first, value types (`ArraySegment<T>`, `ImmutableArray<T>`) are still copied by value, and `string` is not affected. Correction to the context below: `HashSet<T>`, `LinkedList<T>`, `SortedSet<T>` and other `ICollection<T>` types without an indexer did not throw in 8.3.3 but returned a copy without the items (measured on 8.3.3), so for them the change is from silent loss to an exception. `Queue<T>`, `Stack<T>` and the concurrent queue / stack / bag types implement none of the three interfaces and are still copied without their items (see YANObject.md, Copy Rules).**
+
 Copy copies only readable and writable properties, so new List<int>{1,2}.Copy() and a List-derived DTO lose their items without any warning (now documented). 8.3.3 threw TargetParameterCountException for every such type, because all of them have an indexer, so no 8.3.3 caller depends on the call succeeding.
 
 Options:

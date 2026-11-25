@@ -196,11 +196,16 @@ public static partial class YANObject
     /// For a class, the copy is an instance of the input's runtime type when that type differs from <typeparamref name="T"/> and has a public parameterless constructor,
     /// otherwise a new <typeparamref name="T"/>. The readable and writable public instance properties of that type (inherited ones included, indexers excluded,
     /// and a base property hidden with <c>new</c> by a property of another type included) are copied; reference values are shared, not cloned.
-    /// Only properties are copied: the items of a collection type (<see cref="List{T}"/>, <see cref="Dictionary{TKey, TValue}"/>, ...) are not.
+    /// Only properties are copied, so a class whose runtime type is a collection type (it implements <see cref="System.Collections.IList"/>, arrays included,
+    /// <see cref="System.Collections.IDictionary"/> or <see cref="ICollection{T}"/>: <see cref="List{T}"/>, <see cref="Dictionary{TKey, TValue}"/>,
+    /// <see cref="HashSet{T}"/>, a class deriving from <see cref="List{T}"/>, ...) is rejected, before any constructor runs, instead of losing its items.
     /// When the copy is an instance of the runtime type, its constructor runs, and an exception thrown by it surfaces as <see cref="System.Reflection.TargetInvocationException"/>.
     /// For a value type, the value itself is returned, since assigning a struct already copies all of its fields; a boxed struct passed as <see cref="object"/>
     /// is returned in a new box.
     /// </remarks>
+    /// <exception cref="NotSupportedException">The runtime type of <paramref name="input"/> is a class that implements <see cref="System.Collections.IList"/>,
+    /// <see cref="System.Collections.IDictionary"/> or <see cref="ICollection{T}"/>. Use the collection's own copy constructor (such as
+    /// <c>new List&lt;T&gt;(list)</c>) or <c>ToList</c>, <c>ToArray</c> or <c>ToDictionary</c> instead.</exception>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static T Copy<T>(this T input) where T : new() => input.CopyImplement();
