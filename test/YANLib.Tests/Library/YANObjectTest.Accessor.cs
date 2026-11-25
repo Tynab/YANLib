@@ -264,7 +264,7 @@ public partial class YANObjectTest
     public void Copy_CollectibleRuntimeTypeWithoutParameterlessConstructor_DoesNotKeepTheTypeAlive_Object()
     {
         // Arrange and Act (Copy<object> of an instance whose runtime type has no public parameterless constructor copies into a new object, so, as
-        // in 8.3.3, nothing caches that runtime type and its collectible assembly can be unloaded)
+        // before the compiled accessors, nothing caches that runtime type and its collectible assembly can be unloaded)
         var type = CopyInstanceOfCollectibleType();
 
         for (var i = 0; i < 20 && type.IsAlive; i++)
