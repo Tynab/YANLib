@@ -1277,8 +1277,8 @@ public partial class YANObjectTest
         holder.ChangeTimeZoneAllProperty(0, 7);
         items.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (as in 8.3.3, the readable and writable properties of a type implementing IDictionary<TKey, DateTime> / IDictionary<TKey, DateTime?>
-        // without a public indexer are walked; 1bb38c4 converted only the values; the values of a writable one are converted once, a read-only one's are left)
+        // Assert (as in 8.3.3, the readable and writable properties of these types implementing IDictionary<TKey, DateTime> / IDictionary<TKey, DateTime?>
+        // are walked; 1bb38c4 converted only the values; the values of a writable one are converted once, a read-only one's are left)
         Assert.Equal(Hour(8), writable.At);
         Assert.Equal(Hour(9), writable.Child.DateProperty);
         Assert.Equal(Hour(17), writable.View["a"]);
@@ -1379,7 +1379,7 @@ public partial class YANObjectTest
         viewInDerived.ChangeTimeZoneAllProperty(0, 7);
 
         // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, when the
-        // getter-only property comes first in property order (viewFirst; viewInDerived, whose View is declared in the derived class and so comes
+        // getter-only property comes first in property order (viewFirst; viewInDerived, whose View is declared in the derived class and on .NET 8 comes
         // before the inherited Copy) or the copy's setter stores a copy (copyFirst); with the copy property first and a setter that stores the list
         // it receives, the field is shifted once, as in 8.3.3. 8.3.3 did not read the getter-only property and shifted the field once, to Hour(8))
         Assert.Equal([Hour(15)], viewFirst.View);
@@ -1404,7 +1404,7 @@ public partial class YANObjectTest
 
         // Assert (pinned: the setter of Copy, declared first, stores the converted copy in Direct, which then returns that list, already converted, so the
         // value is shifted once, where 8.3.3 converted it again through Direct, to Hour(15); with Direct declared first, or a setter that stores a copy,
-        // it is shifted twice, as in 8.3.3. Property order puts a class's own properties before the inherited ones, so a Copy declared in a class
+        // it is shifted twice, as in 8.3.3. On .NET 8, property order puts a class's own properties before the inherited ones, so a Copy declared in a class
         // deriving from the one that declares Direct comes first too (copyInDerived) and the value is shifted once)
         Assert.Equal([Hour(8)], copyFirst.Direct);
         Assert.Equal([Hour(15)], directFirst.Direct);
@@ -2515,7 +2515,7 @@ public partial class YANObjectTest
         protected List<DateTime> Dates => dates;
     }
 
-    // View is declared in the derived class, so Type.GetProperties lists it before the inherited Copy.
+    // View is declared in the derived class; on .NET 8, Type.GetProperties lists it before the inherited Copy.
     private sealed class TzViewOverCopyBase(List<DateTime> initial) : TzCopyBase(initial)
     {
         public List<DateTime> View => Dates;
@@ -2526,7 +2526,7 @@ public partial class YANObjectTest
         public List<DateTime> Direct { get; set; } = [];
     }
 
-    // Copy is declared in the derived class, so Type.GetProperties lists it before the inherited Direct.
+    // Copy is declared in the derived class; on .NET 8, Type.GetProperties lists it before the inherited Direct.
     private sealed class TzCopyOverDirectBase : TzDirectBase
     {
         public List<DateTime> Copy
