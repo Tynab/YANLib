@@ -535,7 +535,8 @@ public partial class YANMathTest
     {
         // pin of the documented counts: with an integer or decimal result, a failed decimal pass (an object element without a decimal value,
         // an overflow) is followed by the double pass that gives the result, as in 8.3.3, so an iterator source is started three times (8.3.3:
-        // twice); an Average over only nulls takes the same three passes; with a double result both start it twice
+        // twice); an Average over only nulls takes the same three passes, also in the typed overloads with any nullable integer or decimal
+        // result; with a double result both start it twice, and an Average with a float result too
         // Arrange
         const decimal max = decimal.MaxValue;
         var nan = new CountingSequence<object?>(1, double.NaN, 2);
@@ -548,6 +549,9 @@ public partial class YANMathTest
         var doubleSum = new CountingSequence<object?>(1, double.NaN, 2);
         var allNull = new CountingSequence<object?>(null, null);
         var typedAllNull = new CountingSequence<int?>(null, null);
+        var typedLongAllNull = new CountingSequence<long?>(null, null);
+        var typedNintAllNull = new CountingSequence<nint?>(null, null);
+        var typedFloatAllNull = new CountingSequence<float?>(null, null);
         var doubleAllNull = new CountingSequence<object?>(null, null);
 
         // Act
@@ -561,6 +565,9 @@ public partial class YANMathTest
         var doubleSumResult = YANMath.Sum<double>(doubleSum);
         var allNullResult = YANMath.Average<decimal>(allNull);
         var typedAllNullResult = YANMath.Average<int?>(typedAllNull);
+        var typedLongAllNullResult = YANMath.Average<long?>(typedLongAllNull);
+        var typedNintAllNullResult = YANMath.Average<nint?>(typedNintAllNull);
+        var typedFloatAllNullResult = YANMath.Average<float?>(typedFloatAllNull);
         var doubleAllNullResult = YANMath.Average<double>(doubleAllNull);
 
         // Assert
@@ -574,6 +581,9 @@ public partial class YANMathTest
         Assert.Equal((double.NaN, 2), (doubleSumResult, doubleSum.Enumerations));
         Assert.Equal((0m, 3), (allNullResult, allNull.Enumerations));
         Assert.Equal(((int?)null, 3), (typedAllNullResult, typedAllNull.Enumerations));
+        Assert.Equal(((long?)null, 3), (typedLongAllNullResult, typedLongAllNull.Enumerations));
+        Assert.Equal(((nint?)null, 3), (typedNintAllNullResult, typedNintAllNull.Enumerations));
+        Assert.Equal(((float?)null, 2), (typedFloatAllNullResult, typedFloatAllNull.Enumerations));
         Assert.Equal((0d, 2), (doubleAllNullResult, doubleAllNull.Enumerations));
     }
 
