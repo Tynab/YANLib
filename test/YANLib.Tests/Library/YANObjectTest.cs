@@ -1518,6 +1518,71 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void Copy_ClassImplementingOnlyNonGenericICollection_ThrowsNotSupportedException_Object()
+    {
+        // Arrange
+        var queue = new Queue<int>([1, 2]);
+        var names = new NameValueCollection { { "a", "1" } };
+
+        // Act and Assert (8.4.0 before this check and 8.3.3 returned an empty Queue<T>, Stack<T>, ConcurrentQueue<T>, ConcurrentStack<T>, ConcurrentBag<T>,
+        // Queue or Stack, and typed as object 8.4.0 before this check returned an empty instance and 8.3.3 a new object; 8.3.3 threw
+        // TargetParameterCountException for a NameValueCollection and for a BitArray typed as object, which 8.4.0 before this check returned
+        // as an empty NameValueCollection and a new object)
+        var exception = Assert.Throws<NotSupportedException>(() => queue.Copy());
+
+        Assert.Contains(typeof(Queue<int>).ToString(), exception.Message);
+        Assert.Equal(new[] { 1, 2 }, queue);
+        Assert.Throws<NotSupportedException>(() => ((object)queue).Copy());
+        Assert.Throws<NotSupportedException>(() => new Stack<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)new Stack<int>([1, 2])).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Concurrent.ConcurrentQueue<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Concurrent.ConcurrentStack<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Concurrent.ConcurrentBag<int>([1, 2]).Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)new System.Collections.Concurrent.ConcurrentBag<int>([1, 2])).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Queue(new[] { 1, 2 }).Copy());
+        Assert.Throws<NotSupportedException>(() => new System.Collections.Stack(new[] { 1, 2 }).Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)new System.Collections.BitArray(3)).Copy());
+        Assert.Throws<NotSupportedException>(() => names.Copy());
+        Assert.Throws<NotSupportedException>(() => ((object)names).Copy());
+        Assert.Equal("1", names["a"]);
+    }
+
+    [Fact]
+    public void Copy_ClassImplementingOnlyNonGenericICollection_ThrowsBeforeItsConstructorRuns_Object()
+    {
+        // Arrange
+        var input = new CopyCountingNonGenericCollection { Name = "n" };
+        object boxed = new CopyCountingNonGenericCollection { Name = "b" };
+        var constructed = CopyCountingNonGenericCollection.Constructed;
+
+        // Act and Assert (8.4.0 before this check and 8.3.3 constructed a new instance and copied the settable Name)
+        Assert.Throws<NotSupportedException>(() => input.Copy());
+        Assert.Throws<NotSupportedException>(() => boxed.Copy());
+        Assert.Equal(constructed, CopyCountingNonGenericCollection.Constructed);
+    }
+
+    [Fact]
+    public void Copy_ClassImplementingOnlyIEnumerableOrIReadOnlyCollection_IsStillCopied_Object()
+    {
+        // Arrange
+        var enumerable = new CopyEnumerableOnly { Name = "e" };
+        var readOnly = new CopyReadOnlyCollection { Name = "r" };
+        object boxed = new CopyEnumerableOnly { Name = "b" };
+
+        // Act
+        var enumerableResult = enumerable.Copy();
+        var readOnlyResult = readOnly.Copy();
+        var boxedResult = boxed.Copy();
+
+        // Assert (not collection types for Copy: like any other class, their settable properties are copied)
+        Assert.NotSame(enumerable, enumerableResult);
+        Assert.Equal("e", enumerableResult.Name);
+        Assert.NotSame(readOnly, readOnlyResult);
+        Assert.Equal("r", readOnlyResult.Name);
+        Assert.Equal("b", Assert.IsType<CopyEnumerableOnly>(boxedResult).Name);
+    }
+
+    [Fact]
     public void Copy_NullCollectionStructCollectionAndString_AreNotRejected_Object()
     {
         // Arrange
@@ -2487,6 +2552,49 @@ public partial class YANObjectTest
         public bool Remove(int item) => _items.Remove(item);
 
         public IEnumerator<int> GetEnumerator() => _items.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class CopyCountingNonGenericCollection : System.Collections.ICollection
+    {
+        private static int constructed;
+
+        public CopyCountingNonGenericCollection() => Interlocked.Increment(ref constructed);
+
+        public static int Constructed => Volatile.Read(ref constructed);
+
+        public string? Name { get; set; }
+
+        public int Count => 0;
+
+        public bool IsSynchronized => false;
+
+        public object SyncRoot => this;
+
+        public void CopyTo(Array array, int index)
+        {
+        }
+
+        public System.Collections.IEnumerator GetEnumerator() => Enumerable.Empty<object>().GetEnumerator();
+    }
+
+    private sealed class CopyEnumerableOnly : IEnumerable<int>
+    {
+        public string? Name { get; set; }
+
+        public IEnumerator<int> GetEnumerator() => Enumerable.Range(1, 2).GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private sealed class CopyReadOnlyCollection : IReadOnlyCollection<int>
+    {
+        public string? Name { get; set; }
+
+        public int Count => 2;
+
+        public IEnumerator<int> GetEnumerator() => Enumerable.Range(1, 2).GetEnumerator();
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
     }

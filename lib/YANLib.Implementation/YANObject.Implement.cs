@@ -703,7 +703,7 @@ internal static partial class YANObject
         else
         {
             // The runtime type has no public parameterless constructor, so a new T gets the properties of T. The runtime type is checked here too
-            // (cached per type): an array or a ReadOnlyCollection<T> typed as object is rejected instead of becoming a new object. T, a base class of a
+            // (cached per type): an array, a ReadOnlyCollection<T> or a BitArray typed as object is rejected instead of becoming a new object. T, a base class of a
             // type that is not a collection type, is not one either.
             if (IsCachedCopyCollection(runtimeType))
             {
@@ -723,11 +723,13 @@ internal static partial class YANObject
     }
 
     /// <summary>
-    /// Whether <c>Copy</c> rejects <paramref name="type"/> as a collection type: it implements <see cref="IList"/> (arrays included), <see cref="IDictionary"/>
-    /// or <see cref="ICollection{T}"/>, whose items would be lost, since <c>Copy</c> copies properties only.
+    /// Whether <c>Copy</c> rejects <paramref name="type"/> as a collection type: it implements <see cref="IList"/> (arrays included), <see cref="IDictionary"/>,
+    /// <see cref="ICollection"/> (<see cref="Queue{T}"/>, <see cref="Stack{T}"/>, the concurrent queue, stack and bag, <see cref="BitArray"/>, ...)
+    /// or <see cref="ICollection{T}"/>, whose items would be lost, since <c>Copy</c> copies properties only. <see cref="IList"/> and
+    /// <see cref="IDictionary"/> derive from <see cref="ICollection"/>, so one check covers the three non-generic interfaces.
     /// </summary>
     private static bool IsCopyCollection(Type type)
-        => typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), static x => IsGenericInterface(x, typeof(ICollection<>)));
+        => typeof(ICollection).IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), static x => IsGenericInterface(x, typeof(ICollection<>)));
 
     /// <summary>
     /// <see cref="IsCopyCollection(Type)"/>, cached per type, for a runtime type that <c>Copy</c> does not construct (it has no public parameterless
