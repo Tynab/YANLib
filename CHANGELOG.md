@@ -165,5 +165,6 @@ Each item changes a result, an exception or a side effect that code written agai
 - A clean `dotnet pack` works, and `dotnet pack` validates the API against 8.3.3.
 - Restore uses nuget.org only.
 - The test project no longer references the benchmark console (`console/YANLib.Benchmarks`): `ConcurrentCollectionTests` builds its own data, so BenchmarkDotNet is no longer part of the test build.
+- README.md, the package readme, no longer ends with an 'Important Notes' block about Elastic.Apm, DotNetCap.CAP and ABP / Entity Framework layers, which came from another project.
 - The debugger can step into `YANLib.Implementation`; the public facade and the Snowflake `IdGenerator` (which lives in `YANLib.dll`) stay hidden.
 - `.editorconfig` now describes the code style and is checked by `dotnet format --verify-no-changes`. New: the CI workflow (it pins the .NET 8 SDK with a `global.json` it writes itself, so contributors can use any SDK), a Publish workflow (pushing a tag such as `v8.4.0` runs CI and pushes the matching package to nuget.org; it needs the repository secret `NUGET_API_KEY`) and `ROADMAP.md`.
