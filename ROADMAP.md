@@ -298,6 +298,16 @@ Recommendation: Mark WhenAny* [Obsolete] in a minor release and remove it in the
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
+**Partly done in 8.4.0 (the recommendation, chosen by the owner): the three `BitAllocationStrategy` overloads. `ExtractIdComponents(long id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH)` and the `string` forms of `ExtractIdAlphabeticComponents` / `ExtractIdAlphanumericComponents` have no `sequence`; the old strategy overloads are `[Obsolete]` (warning) and their `sequence` is required, with `timestampEpoch` still optional through `[Optional, DefaultParameterValue]` so that `ExtractIdComponents(id, strategy, sequence: 0)` keeps compiling. A Roslyn bind probe (77 shapes, C# 12, 13 and 14, f344fc4 vs new DLLs) shows every strategy call without `sequence` on the new overloads without CS0121, every call with `sequence` (positional, named, `0`, `default`) on the old ones with CS0618, and the custom-bit calls unchanged; `(id, 0, epoch)` and `(id, default, epoch)`, which were CS0121, now bind to the strategy overload. Package validation against 8.3.3 accepts the optional-to-required change.**
+
+**Not done for the three overloads with custom bit counts (`(long id, long timestampEpoch, long sequence, int workerIdBits, int datacenterIdBits, int sequenceBits)` and the `string` forms): no shape meets both rules.** A sequence-free overload must accept `ExtractIdComponents(id, epoch, workerIdBits: 4, datacenterIdBits: 6, sequenceBits: 13)` (valid today, no `sequence`), so it has `int` parameters right after `timestampEpoch`. Then a positional call that passes `sequence` as an `int` (`ExtractIdComponents(id, epoch, 0)`, `(id, epoch, 0, 5)`, `(id, epoch, 0, 5, 5)` or an `int` variable) binds to it, because int-to-int beats int-to-long, and reads the 0 as `workerIdBits`: a silent rebinding that throws `ArgumentException` (bits no longer add up to 23) or, for `(id, epoch, 5, 5)`, decodes with other bit counts. Making `timestampEpoch` and `sequence` of the old overload required as well breaks `ExtractIdComponents(id, sequence: 1)` (checked with a stub bind probe of both shapes). Without a sequence-free overload, marking the old one `[Obsolete]` would warn on calls that do not pass `sequence`. Options:
+
+- Keep the ignored parameter on the custom-bit overloads until 9.0 and remove it there (current; documented on each overload)
+- Add the sequence-free custom-bit overloads under a new name (for example `ExtractIdComponentsWithBits`) and mark the old ones `[Obsolete]`
+- Add same-name overloads anyway and accept the silent rebinding of positional `int` sequences (breaking; not for 8.x)
+
+Recommendation: option 1; remove `sequence` from the custom-bit overloads in 9.0 together with the obsolete strategy overloads.
+
 The public signature must stay; the parameter is now ignored and documented as such on all 6 overloads.
 
 Options:

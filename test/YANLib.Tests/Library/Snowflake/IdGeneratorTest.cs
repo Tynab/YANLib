@@ -925,6 +925,77 @@ public partial class IdGeneratorTest
         Assert.True(Timestamp > DateTime.UtcNow.AddMinutes(-1) && Timestamp <= DateTime.UtcNow);
     }
 
+    [Fact]
+    public void ExtractComponents_StrategyOverloadsWithSequence_AreObsoleteWarnings()
+    {
+        // Arrange (8.4.0: the strategy overloads that take the ignored sequence are obsolete, and their sequence is required, so that a
+        // call without it binds to the new overload; timestampEpoch keeps its default for calls that name sequence)
+        var oldOverloads = new[]
+        {
+            typeof(IdGenerator).GetMethod(nameof(IdGenerator.ExtractIdComponents), [typeof(long), typeof(BitAllocationStrategy), typeof(long), typeof(long)]),
+            typeof(IdGenerator).GetMethod(nameof(IdGenerator.ExtractIdAlphabeticComponents), [typeof(string), typeof(BitAllocationStrategy), typeof(long), typeof(long)]),
+            typeof(IdGenerator).GetMethod(nameof(IdGenerator.ExtractIdAlphanumericComponents), [typeof(string), typeof(BitAllocationStrategy), typeof(long), typeof(long)])
+        };
+
+        var newOverloads = new[]
+        {
+            typeof(IdGenerator).GetMethod(nameof(IdGenerator.ExtractIdComponents), [typeof(long), typeof(BitAllocationStrategy), typeof(long)]),
+            typeof(IdGenerator).GetMethod(nameof(IdGenerator.ExtractIdAlphabeticComponents), [typeof(string), typeof(BitAllocationStrategy), typeof(long)]),
+            typeof(IdGenerator).GetMethod(nameof(IdGenerator.ExtractIdAlphanumericComponents), [typeof(string), typeof(BitAllocationStrategy), typeof(long)])
+        };
+
+        // Assert
+        Assert.All(oldOverloads, static method =>
+        {
+            Assert.NotNull(method);
+
+            var obsolete = Assert.Single(method.GetCustomAttributes(typeof(ObsoleteAttribute), false).Cast<ObsoleteAttribute>());
+            var parameters = method.GetParameters();
+
+            Assert.False(obsolete.IsError);
+            Assert.Contains("sequence argument is ignored", obsolete.Message);
+            Assert.True(parameters[2].IsOptional);
+            Assert.Equal(IdGenerator.TIMESTAMP_EPOCH, parameters[2].DefaultValue);
+            Assert.False(parameters[3].IsOptional);
+        });
+
+        Assert.All(newOverloads, static method =>
+        {
+            Assert.NotNull(method);
+            Assert.Empty(method.GetCustomAttributes(typeof(ObsoleteAttribute), false));
+            Assert.Equal(IdGenerator.TIMESTAMP_EPOCH, method.GetParameters()[2].DefaultValue);
+        });
+    }
+
+    [Fact]
+    public void ExtractComponents_StrategyWithoutSequence_MatchesObsoleteOverload()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(100, 200, 0, BitAllocationStrategy.MoreDistributed);
+        var id = idGenerator.NextId();
+        var alphabetic = idGenerator.NextIdAlphabetic();
+        var alphanumeric = idGenerator.NextIdAlphanumeric();
+        const long epoch = 1_600_000_000_000;
+
+        // Act
+        var numeric = IdGenerator.ExtractIdComponents(id, BitAllocationStrategy.MoreDistributed, epoch);
+        var letters = IdGenerator.ExtractIdAlphabeticComponents(alphabetic, BitAllocationStrategy.MoreDistributed);
+        var mixed = IdGenerator.ExtractIdAlphanumericComponents(alphanumeric, strategy: BitAllocationStrategy.MoreDistributed, timestampEpoch: epoch);
+#pragma warning disable CS0618 // the obsolete overloads still return the same components and ignore the sequence
+        var numericOld = IdGenerator.ExtractIdComponents(id, BitAllocationStrategy.MoreDistributed, epoch, 12345);
+        var lettersOld = IdGenerator.ExtractIdAlphabeticComponents(alphabetic, BitAllocationStrategy.MoreDistributed, sequence: 7);
+        var mixedOld = IdGenerator.ExtractIdAlphanumericComponents(alphanumeric, BitAllocationStrategy.MoreDistributed, sequence: 7, timestampEpoch: epoch);
+#pragma warning restore CS0618
+
+        // Assert
+        Assert.Equal(numeric, numericOld);
+        Assert.Equal(letters, lettersOld);
+        Assert.Equal(mixed, mixedOld);
+        Assert.Equal((100L, 200L), (numeric.WorkerId, numeric.DatacenterId));
+        Assert.Equal((100L, 200L), (letters.WorkerId, letters.DatacenterId));
+        Assert.Equal((100L, 200L), (mixed.WorkerId, mixed.DatacenterId));
+    }
+
     #endregion
 
     #region BitAllocationStrategy Integration Tests

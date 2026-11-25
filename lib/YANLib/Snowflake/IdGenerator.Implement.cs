@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using static System.DateTimeOffset;
 
 namespace YANLib.Snowflake;
@@ -308,7 +309,6 @@ public partial class IdGenerator
     /// <param name="id">The Snowflake ID to extract components from.</param>
     /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
     /// <remarks>
     /// This method simplifies component extraction by using predefined bit allocation strategies.
@@ -316,12 +316,38 @@ public partial class IdGenerator
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdComponents(long id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH, long sequence = default)
+    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdComponents(long id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH)
     {
         var (workerIdBits, datacenterIdBits, sequenceBits) = GetBitAllocationForStrategy(strategy);
 
-        return ExtractIdComponents(id, timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
+        return ExtractIdComponents(id, timestampEpoch, default, workerIdBits, datacenterIdBits, sequenceBits);
     }
+
+    /// <summary>
+    /// Extracts the timestamp, worker ID, and datacenter ID components from a Snowflake ID using a predefined bit allocation strategy.
+    /// Obsolete: the <paramref name="sequence"/> argument is ignored; use <see cref="ExtractIdComponents(long, BitAllocationStrategy, long)"/>.
+    /// </summary>
+    /// <param name="id">The Snowflake ID to extract components from.</param>
+    /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
+    /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
+    /// <param name="sequence">
+    /// Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp. Since 8.4.0 this overload
+    /// is obsolete and is chosen only when <paramref name="sequence"/> is passed; leave it out to call the overload without it.
+    /// </param>
+    /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <remarks>
+    /// The result is that of <see cref="ExtractIdComponents(long, BitAllocationStrategy, long)"/>. <paramref name="timestampEpoch"/> is still
+    /// optional for a call that names <paramref name="sequence"/> (<c>ExtractIdComponents(id, strategy, sequence: 0)</c>).
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    [Obsolete("The sequence argument is ignored. Leave it out to call ExtractIdComponents(long, BitAllocationStrategy, long).")]
+    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdComponents(
+        long id,
+        BitAllocationStrategy strategy,
+        [Optional, DefaultParameterValue(TIMESTAMP_EPOCH)] long timestampEpoch,
+        long sequence
+    ) => ExtractIdComponents(id, strategy, timestampEpoch);
 
     /// <summary>
     /// Extracts the timestamp, worker ID, and datacenter ID components from a base-26 alphabetic Snowflake ID.
@@ -356,7 +382,6 @@ public partial class IdGenerator
     /// <param name="id">The base-26 alphabetic Snowflake ID to extract components from.</param>
     /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
@@ -366,12 +391,40 @@ public partial class IdGenerator
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdAlphabeticComponents(string id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH, long sequence = default)
+    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdAlphabeticComponents(string id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH)
     {
         var (workerIdBits, datacenterIdBits, sequenceBits) = GetBitAllocationForStrategy(strategy);
 
-        return ExtractIdAlphabeticComponents(id, timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
+        return ExtractIdAlphabeticComponents(id, timestampEpoch, default, workerIdBits, datacenterIdBits, sequenceBits);
     }
+
+    /// <summary>
+    /// Extracts the timestamp, worker ID, and datacenter ID components from a base-26 alphabetic Snowflake ID using a predefined bit allocation strategy.
+    /// Obsolete: the <paramref name="sequence"/> argument is ignored; use <see cref="ExtractIdAlphabeticComponents(string, BitAllocationStrategy, long)"/>.
+    /// </summary>
+    /// <param name="id">The base-26 alphabetic Snowflake ID to extract components from.</param>
+    /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
+    /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
+    /// <param name="sequence">
+    /// Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp. Since 8.4.0 this overload
+    /// is obsolete and is chosen only when <paramref name="sequence"/> is passed; leave it out to call the overload without it.
+    /// </param>
+    /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
+    /// <remarks>
+    /// The result is that of <see cref="ExtractIdAlphabeticComponents(string, BitAllocationStrategy, long)"/>. <paramref name="timestampEpoch"/> is still
+    /// optional for a call that names <paramref name="sequence"/> (<c>ExtractIdAlphabeticComponents(id, strategy, sequence: 0)</c>).
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    [Obsolete("The sequence argument is ignored. Leave it out to call ExtractIdAlphabeticComponents(string, BitAllocationStrategy, long).")]
+    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdAlphabeticComponents(
+        string id,
+        BitAllocationStrategy strategy,
+        [Optional, DefaultParameterValue(TIMESTAMP_EPOCH)] long timestampEpoch,
+        long sequence
+    ) => ExtractIdAlphabeticComponents(id, strategy, timestampEpoch);
 
     /// <summary>
     /// Extracts the timestamp, worker ID, and datacenter ID components from a base-36 alphanumeric Snowflake ID.
@@ -406,7 +459,6 @@ public partial class IdGenerator
     /// <param name="id">The base-36 alphanumeric Snowflake ID to extract components from.</param>
     /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than 0-9 and A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
@@ -416,10 +468,38 @@ public partial class IdGenerator
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
-    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdAlphanumericComponents(string id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH, long sequence = default)
+    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdAlphanumericComponents(string id, BitAllocationStrategy strategy, long timestampEpoch = TIMESTAMP_EPOCH)
     {
         var (workerIdBits, datacenterIdBits, sequenceBits) = GetBitAllocationForStrategy(strategy);
 
-        return ExtractIdAlphanumericComponents(id, timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
+        return ExtractIdAlphanumericComponents(id, timestampEpoch, default, workerIdBits, datacenterIdBits, sequenceBits);
     }
+
+    /// <summary>
+    /// Extracts the timestamp, worker ID, and datacenter ID components from a base-36 alphanumeric Snowflake ID using a predefined bit allocation strategy.
+    /// Obsolete: the <paramref name="sequence"/> argument is ignored; use <see cref="ExtractIdAlphanumericComponents(string, BitAllocationStrategy, long)"/>.
+    /// </summary>
+    /// <param name="id">The base-36 alphanumeric Snowflake ID to extract components from.</param>
+    /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
+    /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
+    /// <param name="sequence">
+    /// Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp. Since 8.4.0 this overload
+    /// is obsolete and is chosen only when <paramref name="sequence"/> is passed; leave it out to call the overload without it.
+    /// </param>
+    /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than 0-9 and A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
+    /// <remarks>
+    /// The result is that of <see cref="ExtractIdAlphanumericComponents(string, BitAllocationStrategy, long)"/>. <paramref name="timestampEpoch"/> is still
+    /// optional for a call that names <paramref name="sequence"/> (<c>ExtractIdAlphanumericComponents(id, strategy, sequence: 0)</c>).
+    /// </remarks>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    [Obsolete("The sequence argument is ignored. Leave it out to call ExtractIdAlphanumericComponents(string, BitAllocationStrategy, long).")]
+    public static (DateTime Timestamp, long WorkerId, long DatacenterId) ExtractIdAlphanumericComponents(
+        string id,
+        BitAllocationStrategy strategy,
+        [Optional, DefaultParameterValue(TIMESTAMP_EPOCH)] long timestampEpoch,
+        long sequence
+    ) => ExtractIdAlphanumericComponents(id, strategy, timestampEpoch);
 }

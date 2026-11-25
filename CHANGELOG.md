@@ -11,6 +11,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
 - **YANTask**: `WaitAnyWithConditions` / `WhenAnyWithConditions` are public. They stream every matching result as its task completes (the exact order is described on the YANTask wiki page), every cancellation throws `OperationCanceledException`, and a `null` predicate throws `ArgumentNullException`.
 - **YANProcess**: overloads of `KillAllProcessesByName` / `KillAllProcessesByNames` take `bool entireProcessTree` (the existing methods keep killing the whole tree) and a `CancellationToken`; use `new CancellationTokenSource(TimeSpan)` for a timeout.
 - **YANObject**: `IsNull()` / `IsNotNull()`, removed in 8.3.3 by mistake, are back as `[Obsolete]` shims with their 8.3.2 signatures. Use `is null` / `is not null`.
+- **Snowflake**: `ExtractIdComponents(id, strategy, timestampEpoch)` and the alphabetic/alphanumeric forms without the ignored `sequence` parameter. The `BitAllocationStrategy` overloads that take `sequence` are `[Obsolete]` (warning) and bind only when `sequence` is passed; the overloads with custom bit counts keep their ignored `sequence` (see ROADMAP.md).
 - **Duplicate dictionary keys**: `Parses<TKey, TValue>(IDictionary<object, object?>)`, `ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` have an overload with a `Func<TValue?, TValue?, TValue?> onDuplicate` that receives the stored and the incoming value of a key that parses to an existing key (`"1"` and `1`, or `"3.2"` and `"3.7"`) and returns the value to keep: `(stored, incoming) => stored` keeps the first. The existing overloads still throw `ArgumentException`.
 
 ### Fixes
@@ -160,6 +161,7 @@ Each item changes a result, an exception or a side effect that code written agai
 - `GenerateRandom<T>(a, b)` with two typed arguments binds to the new range overload when recompiled (see *YANRandom* above).
 - `ParseWith` / `ParsesWith` are new extension names: a project that already has its own `ParseWith` / `ParsesWith` extension on `object` or `IEnumerable` in an imported namespace may now get CS0121.
 - `IsNull()` / `IsNotNull()` compile again, with an obsolete warning (CS0618).
+- A call that passes `sequence` to `ExtractIdComponents`, `ExtractIdAlphabeticComponents` or `ExtractIdAlphanumericComponents` with a `BitAllocationStrategy` (`ExtractIdComponents(id, strategy, epoch, 0)`, `ExtractIdComponents(id, strategy, sequence: 0)`) gets an obsolete warning (CS0618), an error with warnings as errors; leave `sequence` out. Calls without it, and all calls of the overloads with custom bit counts, bind as before or to the new overload with the same result.
 - The `onDuplicate` overloads remove the natural delegate type of `dict.Parses<int, string>`, `YANEnumerable.ToDictionary<...>`, `ToImmutableDictionary<...>` and `ToImmutableSortedDictionary<...>` with all type arguments given, so `var f = dict.Parses<int, string>;` now gives CS8917; typed delegates and `Assert.Throws<ArgumentException>(dict.Parses<int, string>)` bind as before (checked with C# 12, 13 and 14).
 - The public API is otherwise a superset of 8.3.3; package validation against 8.3.3 passes.
 
