@@ -1,16 +1,17 @@
 # YANLib roadmap and open decisions
 
-This page records the design decisions found during the 8.3.3 review (Areas A-E), while the 8.4.0 additions were built (G1-G4) and when CI was added (F). Each entry lists the context, the options and a recommendation. Nothing here is implemented unless the entry says it was chosen for, or done in, 8.4.0.
+This page records the design decisions found during the 8.3.3 review (Areas A-E), while the 8.4.0 additions were built (G1-G4) and when CI was added (F). Each entry lists the context, the options and a recommendation. Nothing here is implemented unless the entry says it was chosen for, or done in, 8.4.0 or 8.5.0.
 
 ## Owner decisions (November 2026)
 
-- Next release: **8.4.0**.
+- Next release: **8.4.0** (published in November 2026), then **8.5.0**.
 - Breaking changes stay out of 8.x; they are collected under *Planned for 9.0* below.
 - New, non-breaking API for 8.4.0: `Parse` with `IFormatProvider`, `Random.NextChar(char min, char max)`, `YANProcess` overloads with an `entireProcessTree` choice and with cancellation/timeout, and public `YANTask.WaitAnyWithConditions` / `WhenAnyWithConditions` (cancellation throws `OperationCanceledException`).
 - Internal improvements for 8.4.0: compiled property accessors in `YANObject`, `Snowflake` `SpinWait` and epoch-range validation, exact `Round` beyond 15 digits for tiny doubles, and no `[DebuggerHidden]`/`[DebuggerStepThrough]` in `YANLib.Implementation`.
 - Internal and repository follow-ups for 8.4.0 (H2): `Copy()` throws `NotSupportedException` for collection types, which 8.3.3 copied without their items (unless a settable property held them) or failed on (H2a), the per-type reflection caches hold their `Type` keys weakly so collectible `AssemblyLoadContext`s can unload (H2b), the README 'Important Notes' block from another project is removed (H2c), and the test project no longer references the benchmark console (H2d).
 - Last follow-ups for 8.4.0 (I1): `Copy()` also rejects classes that implement only the non-generic `ICollection` (I1a); YANJson with collectible `AssemblyLoadContext`s is investigated and documented, with no code change (I1b); `Parses` with `onDuplicate` no longer re-keys the input dictionary (I1c); the extra `Average` pass for an element without a `decimal` value is listed in CHANGELOG.md (I1d); the re-enumeration design of the exact `decimal` `Average` on overflow is confirmed.
 - After the final 8.4.0 claim check: `Copy()` keeps rejecting a collection class that holds its items in a public settable property, which 8.3.3 copied as a shallow copy sharing that property; it is documented as a behaviour change. The commented-out workflow files `main.yml` and `pr-management.yml` are removed.
+- 8.5.0, from the open GitHub issues: the 20 'v2 Tests Sample' issues (#123 to #142) are closed as not planned, because the ABP sample application they would test was removed in 50c69a6; word case conversion (#172 to #195) uses its own word splitter (every character that is not a letter, digit or combining mark separates words, plus case and acronym boundaries) and invariant-culture casing; `IsEven` / `IsOdd` (#214, #215) take every `INumberBase<T>` type, with nullable overloads.
 - 9.0: `sequence` is removed from the custom-bit `Extract*Components` overloads together with the `[Obsolete]` strategy overloads that take it.
 
 ## Chosen for 8.4.0

@@ -15,6 +15,7 @@ The library is organized into several functional categories:
 - **Statistical Functions**: Min, Max, Average, Sum
 - **Rounding Operations**: Truncate, Ceiling, Floor, Round
 - **Power Functions**: Square root, Cube root, Power, Absolute value
+- **Parity** (8.5.0): IsEven, IsOdd for every number type that implements `INumberBase<T>` (the integer types, `BigInteger`, `double`, `float`, `decimal`, ...; also `char`, which .NET counts as a number, so `'b'.IsEven()` is true), with nullable overloads that return false for `null`
 
 ### Trigonometric Functions
 
@@ -58,6 +59,13 @@ double ceiling = value.Ceiling(); // Returns 4.0
 double floor = value.Floor(); // Returns 3.0
 double rounded = value.Round(); // Returns 4.0
 double roundedToDigits = value.Round(1); // Returns 3.8
+
+// Parity (8.5.0): any number type (INumberBase<T>); only integers are even or odd
+bool even = 4.IsEven(); // Returns true
+bool odd = (-3).IsOdd(); // Returns true
+bool wholeDouble = 4.0.IsEven(); // Returns true
+bool fraction = 4.5.IsEven() || 4.5.IsOdd(); // Returns false
+bool noValue = ((int?)null).IsEven(); // Returns false
 
 // Negative values
 double negValue = -3.75;
@@ -265,6 +273,7 @@ The library provides comprehensive coverage of mathematical functions:
 | **Statistical** | Min, Max, Average, Sum |
 | **Rounding** | Truncate, Ceiling, Floor, Round |
 | **Power** | Sqrt, Cbrt, Pow, Abs |
+| **Parity** | IsEven, IsOdd |
 | **Trigonometric** | Sin, Cos, Tan, Asin, Acos, Atan |
 | **Logarithmic** | Log, Log10, Log2, ILogB |
 | **Exponential** | Exp, Exp2 |

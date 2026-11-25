@@ -93,6 +93,11 @@ string upper = text.Upper(); // Returns "HELLO WORLD"
 string title = text.Title(); // Returns "Hello World"
 string capitalized = text.Capitalize(); // Returns "Hello world"
 
+// Word case conversion (8.5.0)
+string camel = "hello world".CamelCase(); // Returns "helloWorld"
+string snake = "HTTPServer".SnakeLowerCase(); // Returns "http_server"
+string kebab = "user_id".KebabUpperCase(); // Returns "USER-ID"
+
 // Text formatting
 string name = "john.doe";
 string formatted = name.FormatName(); // Returns "John Doe"
@@ -136,6 +141,10 @@ double avg = YANMath.Average(5.2, 3.1, 7.8, 2.4); // Returns 4.625
 double sqrt = 16.0.Sqrt(); // Returns 4.0
 double powered = 2.0.Pow(3); // Returns 8.0
 double abs = (-5.0).Abs(); // Returns 5.0
+
+// Parity (8.5.0)
+bool even = 4.IsEven(); // Returns true
+bool odd = (-3).IsOdd(); // Returns true
 ```
 
 ### [YANDateTime](YANDateTime)
