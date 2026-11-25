@@ -608,6 +608,48 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parses_OnDuplicateKeysEqualUnderDefaultComparer_ThrowsArgumentException_Collection()
+    {
+        // pin of the documented limitation: the input is copied under the default comparer before its keys are parsed, so two keys that its
+        // own comparer keeps apart but object.Equals does not (two "1" strings, or two boxes of 1, under ReferenceEqualityComparer) throw
+        // before onDuplicate is called
+        // Arrange
+        var input = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { new string('1', 1), "a" },
+            { new string('1', 1), "b" }
+        };
+
+        var boxes = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { 1, "a" },
+            { 1, "b" }
+        };
+
+        var calls = 0;
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => input.Parses<int, string>((_, incoming) =>
+        {
+            calls++;
+
+            return incoming;
+        }));
+        var boxesException = Assert.Throws<ArgumentException>(() => boxes.Parses<int, string>((stored, _) =>
+        {
+            calls++;
+
+            return stored;
+        }));
+
+        // Assert
+        Assert.Equal((2, 2), (input.Count, boxes.Count));
+        Assert.Contains("An item with the same key has already been added", exception.Message);
+        Assert.Contains("An item with the same key has already been added", boxesException.Message);
+        Assert.Equal(0, calls);
+    }
+
+    [Fact]
     public void Parses_NullOnDuplicate_ThrowsArgumentNullException_Collection()
     {
         // Arrange

@@ -204,8 +204,15 @@ public static partial class YANUnmanaged
     /// Keys and values are parsed as by <see cref="Parses{TKey, TValue}(IDictionary{object, object})"/>, in the enumeration order of <paramref name="input"/>,
     /// which decides what "first" and "last" mean (insertion order for a <see cref="Dictionary{TKey, TValue}"/> without removals).
     /// <paramref name="onDuplicate"/> is not called when no two keys collide, and an exception it throws propagates.
+    /// <paramref name="input"/> is copied under the default comparer before its keys are parsed, so two keys that are equal under
+    /// <see cref="object.Equals(object)"/> but kept apart by the comparer of <paramref name="input"/> (two distinct <c>"1"</c> strings, or two
+    /// boxes of the same value, under <see cref="ReferenceEqualityComparer"/>) throw <see cref="ArgumentException"/> before
+    /// <paramref name="onDuplicate"/> is called.
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="onDuplicate"/> is <c>null</c> (also for a <c>null</c> or empty <paramref name="input"/>).</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when two keys of <paramref name="input"/> are equal under <see cref="object.Equals(object)"/> although its comparer keeps them apart.
+    /// </exception>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static Dictionary<TKey, TValue?> Parses<TKey, TValue>(this IDictionary<object, object?>? input, Func<TValue?, TValue?, TValue?> onDuplicate) where TKey : unmanaged
