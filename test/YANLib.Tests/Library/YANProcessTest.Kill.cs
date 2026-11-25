@@ -5,7 +5,8 @@ namespace YANLib.Tests.Library;
 
 // Starts copies of /bin/sleep (and of /bin/sh) under unique names (at most 15 characters, the Linux limit for process names)
 // in a temporary directory, and on Dispose kills whatever is still running and deletes the directory, also when a test fails.
-// Supported only where /bin/sleep exists (Linux); the shell fixtures also need /bin/sh. The tests return early elsewhere.
+// Supported only where /bin/sleep exists (Linux) and a renamed copy of it can sleep (see SleepArguments); the shell fixtures
+// also need /bin/sh. The tests return early elsewhere.
 internal sealed class SleepProcesses : IDisposable
 {
     private const string SLEEP_PATH = "/bin/sleep";
@@ -18,9 +19,14 @@ internal sealed class SleepProcesses : IDisposable
     private readonly List<string> _startedIndirectly = [];
     private readonly List<(string Name, Process Shell, StringBuilder Errors)> _shells = [];
 
+    // Arguments that make a renamed copy of /bin/sleep sleep. A plain sleep binary needs none; the multi-call coreutils binary
+    // (to which /bin/sleep links on some systems, e.g. the GitHub ubuntu-latest image) chooses its program by file name and
+    // fails with "unknown program" for a renamed copy unless it is told which program to run. null: no variant works.
+    private static readonly Lazy<string[]?> SleepArguments = new(ProbeSleepArguments);
+
     public SleepProcesses()
     {
-        IsSupported = OperatingSystem.IsLinux() && File.Exists(SLEEP_PATH);
+        IsSupported = OperatingSystem.IsLinux() && File.Exists(SLEEP_PATH) && SleepArguments.Value is not null;
         IsShellSupported = IsSupported && File.Exists(SHELL_PATH);
         Directory = Path.Combine(Path.GetTempPath(), $"yanlib-process-{Guid.NewGuid():N}");
 
@@ -36,6 +42,66 @@ internal sealed class SleepProcesses : IDisposable
 
     public string Directory { get; }
 
+    // The sleep arguments for a shell command line, each preceded by a space (they contain no characters the shell interprets).
+    private static string SleepShellArguments => string.Concat(SleepArguments.Value!.Select(x => $" {x}"));
+
+    // Runs a renamed copy of /bin/sleep for 0 seconds with each candidate argument list and returns the first that succeeds.
+    private static string[]? ProbeSleepArguments()
+    {
+        if (!OperatingSystem.IsLinux() || !File.Exists(SLEEP_PATH))
+        {
+            return null;
+        }
+
+        var directory = Path.Combine(Path.GetTempPath(), $"yanlib-sleep-probe-{Guid.NewGuid():N}");
+
+        try
+        {
+            _ = System.IO.Directory.CreateDirectory(directory);
+
+            var copy = Path.Combine(directory, "ysprobe");
+
+            File.Copy(SLEEP_PATH, copy);
+
+            foreach (var candidate in new[] { Array.Empty<string>(), ["--coreutils-prog=sleep"], ["sleep"] })
+            {
+                var startInfo = new ProcessStartInfo(copy)
+                {
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                };
+
+                foreach (var argument in candidate)
+                {
+                    startInfo.ArgumentList.Add(argument);
+                }
+
+                startInfo.ArgumentList.Add("0");
+
+                using var process = Process.Start(startInfo)!;
+
+                if (process.WaitForExit(TimeSpan.FromSeconds(30)) && process.ExitCode is 0)
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
+        }
+        finally
+        {
+            try
+            {
+                System.IO.Directory.Delete(directory, recursive: true);
+            }
+            catch
+            {
+                // Best effort.
+            }
+        }
+    }
+
     // A unique process name: prefix + 8 hex digits.
     public static string UniqueName(string prefix = "ys") => $"{prefix}{Guid.NewGuid():N}"[..(prefix.Length + 8)];
 
@@ -44,10 +110,17 @@ internal sealed class SleepProcesses : IDisposable
 
     public TProcess Start<TProcess>(string fileName, TProcess process) where TProcess : Process
     {
-        process.StartInfo = new ProcessStartInfo(CopyOf(SLEEP_PATH, fileName), "60")
+        process.StartInfo = new ProcessStartInfo(CopyOf(SLEEP_PATH, fileName))
         {
             UseShellExecute = false
         };
+
+        foreach (var argument in SleepArguments.Value!)
+        {
+            process.StartInfo.ArgumentList.Add(argument);
+        }
+
+        process.StartInfo.ArgumentList.Add("60");
 
         _ = process.Start();
         _started.Add((process.Id, fileName));
@@ -59,7 +132,7 @@ internal sealed class SleepProcesses : IDisposable
     // for it; returns the parent (owned by the caller) once the child is running, and the child's id.
     public (Process Parent, int ChildId) StartParentWithChild(string parentName, string childName)
     {
-        var parent = StartShell(parentName, $"'{CopyOf(SLEEP_PATH, childName)}' 60 & wait");
+        var parent = StartShell(parentName, $"'{CopyOf(SLEEP_PATH, childName)}'{SleepShellArguments} 60 & wait");
 
         _startedIndirectly.Add(childName);
 
@@ -74,7 +147,7 @@ internal sealed class SleepProcesses : IDisposable
     {
         var zombiePath = CopyOf(SLEEP_PATH, zombieName);
         var holderPath = CopyOf(SLEEP_PATH, holderName);
-        using var holder = StartShell(UniqueName("yh"), $"'{zombiePath}' 1 & exec '{holderPath}' 60");
+        using var holder = StartShell(UniqueName("yh"), $"'{zombiePath}'{SleepShellArguments} 1 & exec '{holderPath}'{SleepShellArguments} 60");
 
         // After exec the started process carries the holder's name.
         _started[^1] = (holder.Id, holderName);
