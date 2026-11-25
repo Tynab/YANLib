@@ -768,7 +768,7 @@ Recommendation: Option 3, done by the wiki owner.
 
 *Area:* Packaging / docs / tooling
 
-**Chosen for 8.4.0: option 2 (the owner confirmed it is a leftover). Done in 8.4.0: the block is removed from README.md, which is also the package readme; lib/YANLib/Home.md and the other wiki pages never had it.**
+**Chosen for 8.4.0: option 2. Done in 8.4.0: the block is removed from README.md, which is also the package readme; lib/YANLib/Home.md and the other wiki pages never had it.**
 
 README.md, at the end of Project Architecture, has notes about Elastic.Apm, DotNetCap.CAP, EF Core tools and 'Host'/'Domain.Shared' layers. None of these exist in this repo; they look like an ABP solution template. The README is also the NuGet readme. I left it in place.
 
