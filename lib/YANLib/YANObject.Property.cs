@@ -10,6 +10,9 @@ namespace YANLib;
 /// This partial class extends <see cref="YANObject"/> with methods for working with object properties.
 /// It includes methods for checking if properties have default values, if all or any properties meet certain conditions,
 /// and for working with specific named properties of objects and collections.
+/// The checks use the public instance properties of each object's runtime type, inherited ones included; indexers and write-only properties are skipped,
+/// for a property hidden with <c>new</c> only the most-derived one is used, and value types are compared with <c>default(T)</c>.
+/// The <c>names</c> overloads match property names case-sensitively.
 /// </remarks>
 public static partial class YANObject
 {
@@ -18,9 +21,13 @@ public static partial class YANObject
     /// <summary>
     /// Determines whether the specified string represents a valid field (property) name for type <typeparamref name="T"/>.
     /// </summary>
+    /// <remarks>
+    /// The name is looked up among the readable, non-indexer public instance properties of <typeparamref name="T"/>, inherited ones included,
+    /// case-insensitively (an exact match is preferred), with the same lookup as <see cref="YANExpression.PropertyExpression{T}(string, string)"/>.
+    /// </remarks>
     /// <typeparam name="T">The target type to validate the field against.</typeparam>
     /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
-    /// <returns><c>true</c> if the string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c> (always for a <c>null</c>, empty or whitespace string).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsValidField<T>(this string? input) where T : class => input.IsValidFieldImplement<T>();
@@ -30,7 +37,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if every string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if every string corresponds to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. A <c>null</c>, empty or whitespace element is never a valid field.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllValidFields<T>(this IEnumerable<string?>? input) where T : class => input.AllValidFieldsImplement<T>();
@@ -54,7 +61,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the field against.</typeparam>
     /// <param name="input">The string to validate. May contain additional tokens separated by spaces; the first token is used as the property name.</param>
-    /// <returns><c>true</c> if the string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the string does not correspond to an existing public instance property on <typeparamref name="T"/> (always for a <c>null</c>, empty or whitespace string); otherwise, <c>false</c>. This is always the opposite of <see cref="IsValidField{T}(string)"/>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool IsNotValidField<T>(this string? input) where T : class => input.IsNotValidFieldImplement<T>();
@@ -64,7 +71,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if every string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if every string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. A <c>null</c>, empty or whitespace element counts as not valid.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllNotValidFields<T>(this IEnumerable<string?>? input) where T : class => input.AllNotValidFieldsImplement<T>();
@@ -74,7 +81,7 @@ public static partial class YANObject
     /// </summary>
     /// <typeparam name="T">The target type to validate the fields against.</typeparam>
     /// <param name="input">The sequence of strings to validate. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if at least one string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if at least one string does not correspond to an existing public instance property on <typeparamref name="T"/>; otherwise, <c>false</c>. A <c>null</c>, empty or whitespace element counts as not valid.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyNotValidField<T>(this IEnumerable<string?>? input) where T : class => input.AnyNotValidFieldImplement<T>();
@@ -97,7 +104,7 @@ public static partial class YANObject
     /// Determines whether all properties of all objects in the specified collection have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all properties of all objects have their default values; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -107,7 +114,7 @@ public static partial class YANObject
     /// Determines whether all properties of all objects in the specified array have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the array.</typeparam>
-    /// <param name="input">The array of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The array of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all properties of all objects have their default values; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -119,7 +126,7 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to check. If <c>null</c>, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesDefault<T>(this T? input, IEnumerable<string?>? names) where T : class => input.AllPropertiesDefaultImplement(names);
@@ -128,9 +135,9 @@ public static partial class YANObject
     /// Determines whether all specified properties of all objects in the collection have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties of all objects have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties of all objects have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesDefaults<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class => input.AllPropertiesDefaultsImplement(names);
@@ -141,7 +148,7 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to check. If <c>null</c>, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesDefault<T>(this T? input, params string?[]? names) where T : class => input.AllPropertiesDefaultImplement(names);
@@ -150,9 +157,9 @@ public static partial class YANObject
     /// Determines whether all specified properties of all objects in the collection have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties of all objects have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties of all objects have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class => input.AllPropertiesDefaultsImplement(names);
@@ -175,7 +182,7 @@ public static partial class YANObject
     /// Determines whether all properties of all objects in the specified collection do not have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all properties of all objects do not have their default values; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -185,7 +192,7 @@ public static partial class YANObject
     /// Determines whether all properties of all objects in the specified array do not have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the array.</typeparam>
-    /// <param name="input">The array of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The array of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all properties of all objects do not have their default values; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -197,7 +204,7 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to check. If <c>null</c>, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties do not have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties do not have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesNotDefault<T>(this T? input, IEnumerable<string?>? names) where T : class => input.AllPropertiesNotDefaultImplement(names);
@@ -206,9 +213,9 @@ public static partial class YANObject
     /// Determines whether all specified properties of all objects in the collection do not have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties of all objects do not have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties of all objects do not have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesNotDefaults<T>(this IEnumerable<T?>? input, IEnumerable<string?>? names) where T : class => input.AllPropertiesNotDefaultsImplement(names);
@@ -219,7 +226,7 @@ public static partial class YANObject
     /// <typeparam name="T">The type of the object.</typeparam>
     /// <param name="input">The object to check. If <c>null</c>, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties do not have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties do not have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesNotDefault<T>(this T? input, params string?[]? names) where T : class => input.AllPropertiesNotDefaultImplement(names);
@@ -228,9 +235,9 @@ public static partial class YANObject
     /// Determines whether all specified properties of all objects in the collection do not have their default values.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the collection.</typeparam>
-    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, returns <c>false</c>.</param>
+    /// <param name="input">The collection of objects to check. If <c>null</c> or empty, or if it contains a <c>null</c> element, returns <c>false</c>.</param>
     /// <param name="names">The names of the properties to check. If <c>null</c>, empty, or contains only whitespace, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if all specified properties of all objects do not have their default values; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if all specified properties of all objects do not have their default values; otherwise, <c>false</c> (also when none of the names matches a property).</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllPropertiesNotDefaults<T>(this IEnumerable<T?>? input, params string?[]? names) where T : class => input.AllPropertiesNotDefaultsImplement(names);

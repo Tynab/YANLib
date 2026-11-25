@@ -4,13 +4,12 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<ApplicationIcon>favicon.ico</ApplicationIcon>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>YANLib</Title>
 		<Authors>Yami An</Authors>
 		<Company>YAN</Company>
 		<Description>
-			YANLib (YAMI AN NEPHILIM LIBRARY) is a comprehensive .NET utility library providing powerful extension methods that enhance developer productivity. Built on .NET 6.0 LTS, it offers high-performance utilities for JSON serialization, text manipulation, object validation, task coordination, mathematical operations, DateTime handling, and more.
+			YANLib (YAMI AN NEPHILIM LIBRARY) is a comprehensive .NET utility library providing powerful extension methods that enhance developer productivity. Built on .NET 8 (LTS), it offers high-performance utilities for JSON serialization, text manipulation, object validation, task coordination, mathematical operations, DateTime handling, and more.
 
 			Key features:
 			• YANJson: High-performance JSON serialization with robust error handling
@@ -28,50 +27,39 @@
 		</Description>
 		<Copyright>Copyright ©  2023</Copyright>
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageProjectUrl>https://github.com/Tynab</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/Tynab/YANLib</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Tynab/YANLib</RepositoryUrl>
-		<PackageTags>C#, .NET, Library</PackageTags>
+		<PackageTags>C# .NET Library</PackageTags>
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.3.3 – Not Valid Field &amp; Property Validation Improvements
+		<PackageReleaseNotes>### YANLib 8.4.0 – Correctness, Performance and New Overloads
 
-* **Not Valid Field Utilities**
+* **New API**: `ParseWith`/`ParsesWith` (parse with an `IFormatProvider`), `GenerateRandom&lt;T&gt;(T min, T max)` and `Random.NextChar(char min, char max)`, public `YANTask.WaitAnyWithConditions`/`WhenAnyWithConditions`, `YANProcess` overloads with `entireProcessTree` and `CancellationToken`, and `IsNull`/`IsNotNull` restored as obsolete shims.
+* **Fixes**: `Parse` no longer crashes on out-of-range values and supports `nint`/`nuint`; exact integer/decimal math in `YANMath`; uniform, half-open `YANRandom` ranges; inherited properties, safe graph walks and runtime-type `Copy` in `YANObject`; prompt cancellation and O(n) completion order in `YANTask`; robust `YANProcess` kills; `Snowflake` sequence, extraction and validation fixes; order-preserving collection helpers.
+* **Faster**: TryParse instead of exceptions, no boxing in typed `Sum`/`Average`, compiled property accessors in `YANObject`.
+* **Behaviour changes to check**: `IdGenerator.NextId*` throws for an epoch in the future or 2^41 ms or more in the past; `GenerateRandom&lt;T&gt;(a, b)` with two typed numeric, `DateTime` or `char` arguments returns a value in [a, b); inherited properties count in `IsNullDefault`; the collection helpers that return a sequence keep the input order (no more unordered PLINQ).
+* **Package**: ships XML docs, no `favicon.ico` content file, API validated against 8.3.3.
 
-  * Refined property/field-name validation helpers for sorting, filtering, and dynamic queries
-  * More predictable behavior with `null`, empty, or loosely formatted input values
-
-* **Architecture &amp; Developer Experience**
-
-  * Centralized validation logic for consistent behavior across the library
-  * Cleaner naming and structure to improve readability and maintainability
-
-This maintenance release focuses on internal improvements to property-based validation while keeping existing behavior fully compatible.
-
-See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
+Full list: [CHANGELOG.md](https://github.com/Tynab/YANLib/blob/develop/CHANGELOG.md). Documentation: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.3.3</Version>
-		<LangVersion>preview</LangVersion>
+		<Version>8.4.0</Version>
+		<LangVersion>12</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<IsPackable>true</IsPackable>
 		<IncludeBuildOutput>true</IncludeBuildOutput>
+		<!--
+			Pack fails if the public API is not compatible with the baseline package downloaded from nuget.org
+			during restore. Validation runs after the package is created, so a failed pack still leaves the
+			.nupkg in the output folder: pack into an empty folder and never push after a failed pack.
+			Validation is incremental: after changing only the baseline version, delete obj/ so that it runs again.
+		-->
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<PackageValidationBaselineVersion>8.3.3</PackageValidationBaselineVersion>
 	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<Optimize>False</Optimize>
-		<DebugType>portable</DebugType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<Optimize>True</Optimize>
-		<DebugType>portable</DebugType>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <Content Include="favicon.ico" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\..\README.md">
@@ -85,13 +73,32 @@ See full documentation at: [https://github.com/Tynab/YANLib/wiki](https://github
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="YANLib.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\YANLib.Implementation\YANLib.Implementation.csproj">
 			<PrivateAssets>all</PrivateAssets>
 		</ProjectReference>
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="..\YANLib.Implementation\bin\$(Configuration)\$(TargetFramework)\YANLib.Implementation.dll" Pack="true" PackagePath="lib\$(TargetFramework)" Visible="false" />
-	</ItemGroup>
+	<!--
+		YANLib.Implementation is not published as its own package (PrivateAssets="all"), so its assembly is
+		shipped inside this package. Asking the referenced project for its output path keeps the packed file in
+		sync with the build (it honours the configuration, OutputPath and an output directory given on the
+		command line) and also works when packing an already built tree without building it again.
+	-->
+	<PropertyGroup>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeImplementationAssembly</TargetsForTfmSpecificBuildOutput>
+	</PropertyGroup>
+
+	<Target Name="IncludeImplementationAssembly">
+		<MSBuild Projects="@(ProjectReference)" Condition="'%(ProjectReference.PrivateAssets)' == 'all'" Targets="GetTargetPath">
+			<Output TaskParameter="TargetOutputs" ItemName="_YanPrivateReferenceAssembly" />
+		</MSBuild>
+		<ItemGroup>
+			<BuildOutputInPackage Include="@(_YanPrivateReferenceAssembly)" />
+		</ItemGroup>
+	</Target>
 
 </Project>

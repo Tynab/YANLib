@@ -67,8 +67,8 @@ YANLib offers a collection of specialized components, each focusing on a specifi
 - **Generic Type Support**: Flexible type parameters for input and output types
 - **Consistent API**: Similar method naming and behavior across components
 - **Performance Optimization**: Efficient implementations with caching where appropriate
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Ordered, Lazy Collections**: Collection methods that return `IEnumerable<T>` are lazily evaluated and keep the input order (except `YANObject.ChangeTimeZoneAllProperties`, which changes the objects in place and therefore runs eagerly); only the in-place `List<T>` overloads (`ChangeTimeZone`, `Title`, `Lower`, `Upper`, ...), which update the list by index, and the `YANRandom` generators work in parallel (1,000+ elements)
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## 🧩 Key Components
@@ -87,8 +87,9 @@ A comprehensive utility library for object operations and validations, offering 
 ```csharp
 // Null checking
 object? obj = null;
-bool isNull = obj.IsNull();      // Returns true
-bool isNotNull = obj.IsNotNull(); // Returns false
+bool isNull = obj is null;          // Returns true
+bool isNotNull = obj is not null;   // Returns false
+// IsNull()/IsNotNull() were removed in 8.3.3 by mistake and are restored as obsolete shims in 8.4.0; use `is null` / `is not null`
 
 // Check if all properties have default values
 var obj = new TestClass();
@@ -108,7 +109,9 @@ A powerful utility library for parsing and converting objects to unmanaged types
 - Object parsing with default value fallbacks
 - Nullable type parsing with null for invalid inputs
 - Collection parsing with robust error handling
-- Format support for date/time, TimeSpan, and culture-specific parsing
+- Format support for date/time and TimeSpan
+- Culture-specific parsing: `Parse` and `Parses` use the current culture; `ParseWith` and `ParsesWith` (8.4.0) take an `IFormatProvider` (a `null` provider is the current culture) and otherwise follow the same rules, see Culture on the YANUnmanaged wiki page
+- Never throws: invalid or out-of-range input (for example `"99999999999".Parse<int>()`) gives the default value (`0`, `null` or `defaultValue`); `Parse<int>()` floors fractional strings (`"3.7"` -> 3) and boxed fractions are rounded half to even in every overload (`3.7` -> 4), see Conversion Rules on the YANUnmanaged wiki page; `nint`/`nuint` are supported
 
 ```csharp
 // Parse string to int
@@ -126,6 +129,10 @@ DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
 // Parse to TimeSpan
 object timeInput = "01:30:45";
 TimeSpan time = timeInput.Parse<TimeSpan>(); // Returns TimeSpan of 1 hour, 30 minutes, 45 seconds
+
+// Parse with a given culture (8.4.0)
+object priceInput = "1.5";
+double price = priceInput.ParseWith<double>(CultureInfo.InvariantCulture); // Returns 1.5 under any current culture (Parse<double>() returns 15 under de-DE)
 ```
 
 ### YANEnumerable
@@ -221,6 +228,7 @@ A comprehensive utility library for mathematical operations, providing extension
 - Power functions (Sqrt, Cbrt, Pow, Abs)
 - Trigonometric functions (Sin, Cos, Tan, Asin, Acos, Atan)
 - Logarithmic and exponential functions
+- Exact integer and decimal arithmetic without a round trip through double (`1.005m.Round(2)` is 1.01); a result that does not fit the type is the default value (`int.MinValue.Abs()` is 0)
 
 ```csharp
 // Statistical functions
@@ -275,13 +283,13 @@ A comprehensive utility library for generating random values of various types, s
 ```csharp
 // Generate random values of various types
 int randomInt = YANRandom.GenerateRandom<int>(); // Random int
-double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in range
+double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in [-10.5, 10.5)
 DateTime randomDate = YANRandom.GenerateRandom<DateTime>(); // Random DateTime
 bool randomBool = YANRandom.GenerateRandom<bool>(); // Random boolean
 
 // Generate collections of random values
 IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10); // 10 random ints
-IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in range
+IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in [-10.5, 10.5)
 ```
 
 ### YANTask
@@ -291,8 +299,8 @@ A specialized utility library that extends the Task Parallel Library (TPL), prov
 #### Key Features
 
 - Conditional task waiting
-- Multiple result filtering
-- Asynchronous enumeration
+- Streaming of every matching result as an `IAsyncEnumerable<T>`, with an optional limit
+- Results checked in completion order
 - Error handling with exception safety
 - Cancellation support
 
@@ -307,12 +315,28 @@ var tasks = new[]
 };
 
 // Using WaitAnyWithCondition - returns as soon as it finds a match
-int? result = await tasks.WaitAnyWithCondition(x => x > 5);
+int result = await tasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 
 // Using WhenAnyWithCondition - waits for tasks to complete until it finds a match
-int? anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
+int anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
 Console.WriteLine(anotherResult); // Output: 10
+
+// No match returns default(T): 0 for int, not null
+int noMatch = await tasks.WaitAnyWithCondition(x => x > 100);
+Console.WriteLine(noMatch); // Output: 0
+
+// Enumerate every matching result as the tasks complete (tasks that are already complete come in collection order)
+await foreach (var item in tasks.WaitAnyWithConditions(x => x > 5))
+{
+    Console.WriteLine(item); // Output: 7, 10
+}
+
+// Stop after the first matching result; a canceled token throws OperationCanceledException from the loop
+await foreach (var item in tasks.WhenAnyWithConditions(x => x > 5, taken: 1))
+{
+    Console.WriteLine(item); // Output: 7
+}
 ```
 
 ### YANProcess
@@ -325,12 +349,14 @@ A specialized utility library for managing system processes, focusing on process
 - Multiple process management
 - Asynchronous operations
 - Process cleanup with automatic resource disposal
+- Optional single-process kills (`entireProcessTree: false`) and cancellation or timeout of the wait
 
 ```csharp
-// Kill all instances of a process with a specific name
+// Kill all instances of a process with a specific name (each with its whole process tree;
+// the calling process itself is never killed)
 await "notepad".KillAllProcessesByName();
 
-// Kill multiple processes using a collection
+// Kill multiple processes using a collection (null or blank names are skipped)
 var processNames = new List<string?>
 {
     "notepad",
@@ -339,6 +365,12 @@ var processNames = new List<string?>
 };
 
 await processNames.KillAllProcessesByNames();
+
+// Kill only the matching processes (their child processes keep running), and stop waiting for
+// them to exit after 10 seconds: OperationCanceledException, the processes stay signalled
+using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+await "notepad".KillAllProcessesByName(entireProcessTree: false, timeout.Token);
+await processNames.KillAllProcessesByNames(entireProcessTree: false, timeout.Token);
 ```
 
 ### YANExpression
@@ -350,7 +382,7 @@ A specialized utility library for creating and manipulating strongly-typed expre
 - Property access expression building
 - Type safety with proper type information
 - Value type handling with automatic boxing
-- Expression caching for better performance
+- Expression-tree caching per type, parameter name and property name (compile once and keep the delegate)
 
 ```csharp
 // Create a property expression for accessing the Name property on a Person object
@@ -419,7 +451,7 @@ YANLib is designed with performance in mind. The library uses various optimizati
 
 - Caching of expressions and reflection results
 - Efficient memory usage with custom pooling
-- Parallel processing for large collections where appropriate
+- Lazy, order-preserving collection methods (parallel work only for in-place `List<T>` updates and random generation)
 - Optimized algorithms for common operations
 
 ### JSON Performance
@@ -482,7 +514,7 @@ public List<Product> ProcessProductData(string[] rawData)
 ### Asynchronous Operations with Error Handling
 
 ```csharp
-public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
+public async Task<WeatherData?> GetWeatherFromMultipleProviders(string location)
 {
     var providers = new[]
     {
@@ -491,7 +523,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
         GetWeatherFromProvider3(location)
     };
 
-    // Return the first non-null weather data
+    // Return the first non-null weather data (null if every provider returns null or fails)
     return await providers.WaitAnyWithCondition(data => data != null);
 }
 ```
@@ -502,7 +534,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
 public bool IsValidCustomer(Customer customer)
 {
     // Customer must not be null and must have all required properties set
-    return customer.IsNotNull() && 
+    return customer is not null && 
            !customer.AnyPropertiesDefault(["Name", "Email", "PhoneNumber"]);
 }
 
@@ -586,7 +618,7 @@ public class TestDataGenerator
             {
                 Id = i,
                 Name = YANRandom.GenerateRandom<string>(),
-                Age = YANRandom.GenerateRandom<int>(18, 80),
+                Age = YANRandom.GenerateRandom<int>(18, 80), // 18 to 79: max is exclusive
                 RegistrationDate = YANRandom.GenerateRandom<DateTime>(
                     new DateTime(2020, 1, 1),
                     DateTime.Now
@@ -644,65 +676,25 @@ YANLib is based on .NET 8.0 (LTS) and consists of the following main components:
 
 ```plaintext
 YANLib/
-├── Core/
-│   ├── Object/
-│   │   ├── YANObject.cs
-│   │   ├── YANObject.Property.cs
-│   │   └── ...
-│   ├── Unmanaged/
-│   │   ├── YANUnmanaged.cs
-│   │   ├── YANUnmanaged.Collection.cs
-│   │   └── ...
-│   ├── Enumerable/
-│   │   ├── YANEnumerable.Generic.cs
-│   │   ├── YANEnumerable.Generic.Immutable.cs
-│   │   └── ...
-│   └── Text/
-│       ├── YANText.cs
-│       ├── YANText.Char.cs
-│       └── ...
-├── Data & Serialization/
-│   ├── Json/
-│   │   ├── YANJson.cs
-│   │   ├── YANJson.Collection.cs
-│   │   └── ...
-│   ├── Math/
-│   │   ├── YANMath.cs
-│   │   ├── YANMath.Collection.cs
-│   │   └── ...
-│   ├── DateTime/
-│   │   ├── YANDateTime.cs
-│   │   ├── YANDateTime.Generic.cs
-│   │   └── ...
-│   └── Random/
-│       ├── YANRandom.cs
-│       ├── YANRandom.Nullable.cs
-│       └── ...
-├── Concurrency & Process/
-│   ├── Task/
-│   │   ├── YANTask.cs
-│   │   ├── YANTask.Collection.cs
-│   │   └── ...
-│   └── Process/
-│       ├── YANProcess.cs
-│       ├── YANProcess.Collection.cs
-│       └── ...
-└── Advanced/
-    ├── Expression/
-    │   ├── YANExpression.cs
-    │   ├── YANExpression.Implement.cs
-    │   └── ...
-    └── Snowflake/
-        ├── IdGenerator.Constant.cs
-        ├── IdGenerator.Constructor.cs
-        └── ...
+├── lib/
+│   ├── YANLib/                    # public API, packed as Tynab.YANLib
+│   │   ├── YANObject.cs           # one static partial class per area (YANObject, YANUnmanaged,
+│   │   ├── YANObject.*.cs         # YANEnumerable, YANText, YANJson, YANMath, YANDateTime,
+│   │   ├── ...                    # YANRandom, YANTask, YANProcess, YANExpression), split by file
+│   │   ├── Snowflake/             # IdGenerator (namespace YANLib.Snowflake)
+│   │   └── *.md                   # wiki pages
+│   └── YANLib.Implementation/     # internal implementations (*.Implement.cs), shipped in the same package
+├── test/
+│   └── YANLib.Tests/              # xUnit tests
+└── console/
+    └── YANLib.Benchmarks/         # BenchmarkDotNet benchmarks
 ```
 
 ### Technical Details
 
 Each component in YANLib is implemented with careful attention to performance, memory usage, and error handling:
 
-- **YANObject**: Uses reflection caching for property access, implements efficient null and default value checking
+- **YANObject**: Caches the properties of each type and reads and writes them through accessors compiled on their second use (`IsNullDefault`, `AllPropertiesDefault`, ..., `Copy`), implements efficient null and default value checking
 - **YANUnmanaged**: Implements specialized parsing methods for each unmanaged type with format support
 - **YANEnumerable**: Uses optimized collection conversion with LINQ integration and immutable collection support
 - **YANText**: Implements efficient string manipulation using StringBuilder where appropriate

@@ -22,12 +22,18 @@ public static partial class YANExpression
     /// <returns>A lambda expression that accesses the specified property on an object of type <typeparamref name="T"/>.</returns>
     /// <remarks>
     /// This method creates an expression of the form: <c>x => x.PropertyName</c> where x is the parameter name.
-    /// The resulting expression is cached for better performance when the same property is accessed multiple times.
+    /// The property is looked up among the readable, non-indexer public instance properties of <typeparamref name="T"/>, inherited ones included:
+    /// an exact (case-sensitive) match wins over a case-insensitive one, and for a property hidden with <c>new</c> the most-derived one is used.
+    /// If no property matches, a public parameterless instance method with a return value and that name is called instead (<c>x => x.Method()</c>),
+    /// e.g. <c>ToString</c> or <c>GetType</c>; validate untrusted names (such as user-supplied sort fields) with
+    /// <see cref="YANObject.IsValidField{T}(string)"/> first.
     /// If the property is a value type, it will be automatically boxed to an object.
+    /// The expression tree (not a compiled delegate) is cached per type, parameter name and property name, so repeated calls return the same instance;
+    /// <see cref="LambdaExpression.Compile()"/> is not cached. The cache is never trimmed and grows with every distinct combination.
     /// </remarks>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="parameterName"/> or <paramref name="propertyName"/> is null or whitespace,
-    /// or when the specified property does not exist on type <typeparamref name="T"/>.
+    /// or when neither a property nor a suitable parameterless method with the specified name exists on type <typeparamref name="T"/>.
     /// </exception>
     [DebuggerHidden]
     [DebuggerStepThrough]

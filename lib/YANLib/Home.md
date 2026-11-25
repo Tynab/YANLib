@@ -17,8 +17,9 @@ A comprehensive utility library for object operations and validations, offering 
 ```csharp
 // Null checking
 object? obj = null;
-bool isNull = obj.IsNull();      // Returns true
-bool isNotNull = obj.IsNotNull(); // Returns false
+bool isNull = obj is null;          // Returns true
+bool isNotNull = obj is not null;   // Returns false
+// IsNull()/IsNotNull() were removed in 8.3.3 by mistake and are restored as obsolete shims in 8.4.0; use `is null` / `is not null`
 
 // Check if all properties have default values
 var obj = new TestClass();
@@ -45,6 +46,10 @@ int resultWithDefault = invalidInput.Parse<int>(42); // Returns 42
 // Parse to enum
 object enumInput = "Tuesday";
 DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
+
+// Parse with a given culture (8.4.0); Parse uses the current culture
+object priceInput = "1.5";
+double price = priceInput.ParseWith<double>(CultureInfo.InvariantCulture); // Returns 1.5 under any current culture (Parse<double>() returns 15 under de-DE)
 ```
 
 ### [YANEnumerable](YANEnumerable)
@@ -148,13 +153,13 @@ A comprehensive utility library for generating random values of various types, s
 ```csharp
 // Generate random values of various types
 int randomInt = YANRandom.GenerateRandom<int>(); // Random int
-double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in range
+double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in [-10.5, 10.5)
 DateTime randomDate = YANRandom.GenerateRandom<DateTime>(); // Random DateTime
 bool randomBool = YANRandom.GenerateRandom<bool>(); // Random boolean
 
 // Generate collections of random values
 IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10); // 10 random ints
-IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in range
+IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in [-10.5, 10.5)
 ```
 
 ### [YANTask](YANTask)
@@ -172,12 +177,28 @@ var tasks = new[]
 };
 
 // Using WaitAnyWithCondition - returns as soon as it finds a match
-int? result = await tasks.WaitAnyWithCondition(x => x > 5);
+int result = await tasks.WaitAnyWithCondition(x => x > 5);
 Console.WriteLine(result); // Output: 7
 
 // Using WhenAnyWithCondition - waits for tasks to complete until it finds a match
-int? anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
+int anotherResult = await tasks.WhenAnyWithCondition(x => x > 8);
 Console.WriteLine(anotherResult); // Output: 10
+
+// No match returns default(T): 0 for int, not null
+int noMatch = await tasks.WaitAnyWithCondition(x => x > 100);
+Console.WriteLine(noMatch); // Output: 0
+
+// Enumerate every matching result as the tasks complete (tasks that are already complete come in collection order)
+await foreach (var item in tasks.WaitAnyWithConditions(x => x > 5))
+{
+    Console.WriteLine(item); // Output: 7, 10
+}
+
+// Stop after the first matching result; a canceled token throws OperationCanceledException from the loop
+await foreach (var item in tasks.WhenAnyWithConditions(x => x > 5, taken: 1))
+{
+    Console.WriteLine(item); // Output: 7
+}
 ```
 
 ### [YANProcess](YANProcess)
@@ -185,10 +206,11 @@ Console.WriteLine(anotherResult); // Output: 10
 A specialized utility library for managing system processes, focusing on process termination operations.
 
 ```csharp
-// Kill all instances of a process with a specific name
+// Kill all instances of a process with a specific name (each with its whole process tree;
+// the calling process itself is never killed)
 await "notepad".KillAllProcessesByName();
 
-// Kill multiple processes using a collection
+// Kill multiple processes using a collection (null or blank names are skipped)
 var processNames = new List<string?>
 {
     "notepad",
@@ -197,6 +219,12 @@ var processNames = new List<string?>
 };
 
 await processNames.KillAllProcessesByNames();
+
+// Kill only the matching processes (their child processes keep running), and stop waiting for
+// them to exit after 10 seconds: OperationCanceledException, the processes stay signalled
+using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+await "notepad".KillAllProcessesByName(entireProcessTree: false, timeout.Token);
+await processNames.KillAllProcessesByNames(entireProcessTree: false, timeout.Token);
 ```
 
 ### [YANExpression](YANExpression)
@@ -223,8 +251,8 @@ All YANLib components share these common characteristics:
 - **Generic Type Support**: Flexible type parameters for input and output types
 - **Consistent API**: Similar method naming and behavior across components
 - **Performance Optimization**: Efficient implementations with caching where appropriate
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Ordered, Lazy Collections**: Collection methods that return `IEnumerable<T>` are lazily evaluated and keep the input order (except `YANObject.ChangeTimeZoneAllProperties`, which changes the objects in place and therefore runs eagerly); only the in-place `List<T>` overloads (`ChangeTimeZone`, `Title`, `Lower`, `Upper`, ...), which update the list by index, and the `YANRandom` generators work in parallel (1,000+ elements)
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Technical Implementation
@@ -241,10 +269,10 @@ YANLib is built with several technical considerations in mind:
 
 ## Getting Started
 
-To use YANLib in your project, simply add a reference to the YANLib NuGet package:
+To use YANLib in your project, add a reference to the [Tynab.YANLib](https://www.nuget.org/packages/Tynab.YANLib) NuGet package (the `YANLib` id on nuget.org is an unrelated package):
 
 ```plaintext
-dotnet add package YANLib
+dotnet add package Tynab.YANLib
 ```
 
 Then add the appropriate using directive to your code:
@@ -281,7 +309,7 @@ public List<Product> ProcessProductData(string[] rawData)
 ### Asynchronous Operations with Error Handling
 
 ```csharp
-public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
+public async Task<WeatherData?> GetWeatherFromMultipleProviders(string location)
 {
     var providers = new[]
     {
@@ -290,7 +318,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
         GetWeatherFromProvider3(location)
     };
 
-    // Return the first non-null weather data
+    // Return the first non-null weather data (null if every provider returns null or fails)
     return await providers.WaitAnyWithCondition(data => data != null);
 }
 ```
@@ -301,7 +329,7 @@ public async Task<WeatherData> GetWeatherFromMultipleProviders(string location)
 public bool IsValidCustomer(Customer customer)
 {
     // Customer must not be null and must have all required properties set
-    return customer.IsNotNull() && 
+    return customer is not null && 
            !customer.AnyPropertiesDefault(["Name", "Email", "PhoneNumber"]);
 }
 
@@ -326,9 +354,9 @@ public List<User> GenerateTestUsers(int count)
     return Enumerable.Range(1, count)
         .Select(_ => new User
         {
-            Id = YANRandom.GenerateRandom<int>(1, 10000),
-            Name = $"User-{YANRandom.GenerateRandom<string>(8)}",
-            Email = $"{YANRandom.GenerateRandom<string>(5)}@example.com",
+            Id = YANRandom.GenerateRandom<int>(1, 10000), // 1 to 9999: max is exclusive
+            Name = $"User-{Random.Shared.NextString(8)}",
+            Email = $"{Random.Shared.NextString(5)}@example.com",
             CreatedDate = YANRandom.GenerateRandom<DateTime>(
                 new DateTime(2020, 1, 1),
                 DateTime.Now)

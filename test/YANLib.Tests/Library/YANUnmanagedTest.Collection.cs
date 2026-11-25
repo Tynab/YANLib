@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 
 namespace YANLib.Tests.Library;
 
@@ -357,12 +358,12 @@ public partial class YANUnmanagedTest
         // Act
         var result = input.Parses<int, string>();
 
-        // Assert
+        // Assert ("3.5" is floored to 3 like "3.5".Parse<int>(), it is not rounded up)
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
         Assert.Equal("Value1", result[1]);
         Assert.Equal("Value2", result[2]);
-        Assert.Equal("Value3", result[4]);
+        Assert.Equal("Value3", result[3]);
     }
 
     [Fact]
@@ -425,6 +426,26 @@ public partial class YANUnmanagedTest
 
         // Assert
         Assert.Contains("An item with the same key has already been added", exception.Message);
+    }
+
+    // Pins the XML remark: a value that cannot be parsed becomes default(TValue), which is null only for a reference or nullable value type.
+    [Fact]
+    public void Parses_UnparsableValues_ReturnDefaultOfValueType_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "abc" },
+            { "2", "3" }
+        };
+
+        // Act
+        var result = input.Parses<int, int>();
+        var nullableResult = input.Parses<int, int?>();
+
+        // Assert
+        Assert.Equal(new Dictionary<int, int> { { 1, 0 }, { 2, 3 } }, result);
+        Assert.Equal(new Dictionary<int, int?> { { 1, null }, { 2, 3 } }, nullableResult);
     }
 
     [Fact]
@@ -510,6 +531,109 @@ public partial class YANUnmanagedTest
         Assert.Equal(2, result.Count);
         Assert.Equal(guid1, result[new DateTime(2023, 1, 1)]);
         Assert.Equal(guid2, result[new DateTime(2023, 2, 1)]);
+    }
+
+    #endregion
+
+    #region ParsesWith
+
+    [Fact]
+    public void ParsesWith_InvariantProviderUnderGermanCulture_ParsesEveryElement_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "1.5", "-2.25", "abc", null, 3 };
+        var nonGeneric = new ArrayList(input);
+
+        // Act (enumerated under de-DE, so the provider, not the current culture, decides)
+        var results = WithCulture(new CultureInfo("de-DE"), () => new
+        {
+            Generic = input.ParsesWith<double>(CultureInfo.InvariantCulture, -1d)?.ToList(),
+            GenericEnumerableFormat = input.ParsesWith<double>(CultureInfo.InvariantCulture, -1d, (IEnumerable<string?>?)null)?.ToList(),
+            NonGeneric = nonGeneric.ParsesWith<double>(CultureInfo.InvariantCulture, -1d)?.ToList(),
+            NonGenericEnumerableFormat = nonGeneric.ParsesWith<double>(CultureInfo.InvariantCulture, -1d, (IEnumerable<string?>?)null)?.ToList(),
+            Existing = input.Parses<double>(-1d)?.ToList()
+        });
+
+        // Assert
+        List<double> expected = [1.5, -2.25, -1, -1, 3];
+
+        Assert.Equal(expected, results.Generic);
+        Assert.Equal(expected, results.GenericEnumerableFormat);
+        Assert.Equal(expected, results.NonGeneric);
+        Assert.Equal(expected, results.NonGenericEnumerableFormat);
+        Assert.Equal([15, -225, -1, -1, 3], results.Existing);
+    }
+
+    [Fact]
+    public void ParsesWith_DateTimeFormats_AreMatchedWithInvariantCulture_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "13/12/2025", "13.12.2025" };
+        var fallback = new DateTime(1999, 9, 9);
+
+        // Act
+        var (generic, nonGeneric) = WithCulture(new CultureInfo("de-DE"), () => (input.ParsesWith<DateTime>(new CultureInfo("de-DE"), fallback, "dd/MM/yyyy")?.ToList(), new ArrayList(input).ParsesWith<DateTime>(new CultureInfo("de-DE"), fallback, new List<string?> { "dd/MM/yyyy" })?.ToList()));
+
+        // Assert
+        Assert.Equal([new DateTime(2025, 12, 13), fallback], generic);
+        Assert.Equal([new DateTime(2025, 12, 13), fallback], nonGeneric);
+    }
+
+    [Fact]
+    public void ParsesWith_NullProvider_ReadsCultureOfEnumeratingThread_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "1.5" };
+
+        // Act (created under the invariant culture, enumerated under de-DE)
+        var (withNull, withCurrent) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParsesWith<double>(null, 0d), input.ParsesWith<double>(CultureInfo.CurrentCulture, 0d)));
+        var (enumeratedNull, enumeratedCurrent) = WithCulture(new CultureInfo("de-DE"), () => (withNull?.ToList(), withCurrent?.ToList()));
+
+        // Assert (a null provider behaves like Parses; an explicit provider is fixed when ParsesWith is called)
+        Assert.Equal([15d], enumeratedNull);
+        Assert.Equal([1.5], enumeratedCurrent);
+    }
+
+    [Fact]
+    public void ParsesWith_NullOrEmptyInput_ReturnsNull_Collection()
+    {
+        // Act & Assert
+        Assert.Null(((List<object?>?)null).ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+        Assert.Null(new List<object?>().ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+        Assert.Null(((ArrayList?)null).ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+        Assert.Null(new ArrayList().ParsesWith<int>(CultureInfo.InvariantCulture, 0));
+    }
+
+    [Fact]
+    public void ParsesWith_ProviderThrows_UsesDefaultValue_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "5", "1.5", 7 };
+
+        // Act
+        var result = input.ParsesWith<int>(new ThrowingFormatProvider(), -1)?.ToList();
+
+        // Assert (never throws; a boxed int does not need the provider)
+        Assert.Equal([-1, -1, 7], result);
+    }
+
+    #endregion
+
+    #region Order
+
+    // 8.3.3 switched to PLINQ without AsOrdered for 1,000+ items, so large results came back scrambled. Against that code this
+    // regression test fails only statistically (PLINQ does not guarantee a different order), on the current code it is exact.
+    [Fact]
+    public void Parses_LargeCollection_PreservesInputOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static x => (object?)x.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToList();
+
+        // Act
+        var result = input.Parses<int>(0)?.ToList();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 5_000), result);
     }
 
     #endregion

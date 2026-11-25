@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using YANLib.Implementation;
 using static System.DateTimeOffset;
 
 namespace YANLib.Snowflake;
@@ -30,73 +29,90 @@ public partial class IdGenerator
     [DebuggerStepThrough]
     private static long WaitForNextMillisecond(long lastTimestamp)
     {
+        // SpinWait backs off (it pauses, then yields and sleeps) instead of burning a core at 100% while the lock is held; a sleep can end
+        // a fraction of a millisecond after the clock has moved on
+        var spinner = new SpinWait();
         var currentTimestamp = GetCurrentTimestamp();
 
         while (currentTimestamp <= lastTimestamp)
         {
+            spinner.SpinOnce();
             currentTimestamp = GetCurrentTimestamp();
         }
 
         return currentTimestamp;
     }
 
+    // A negative ID (its timestamp reaches the sign bit 2^40 ms, about 34.8 years, after timestampEpoch; 8.3.3 also generated one for an
+    // epoch later than the current time) is encoded as its unsigned 64-bit two's complement value, so the string only uses the alphabet
+    // and FromBase returns the same ID.
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static string ToBaseAlphabetic(long value)
+    private static string ToBase(long value, string alphabet)
     {
-        var result = string.Empty;
+        var remaining = unchecked((ulong)value);
+        var radix = (ulong)alphabet.Length;
+        Span<char> buffer = stackalloc char[64];
+        var position = buffer.Length;
 
         do
         {
-            result = BASE_ALPHABETIC_CHARS[(value % BASE_ALPHABETIC_CHARS_LENGTH).ParseImplement<int>()] + result;
-            value /= BASE_ALPHABETIC_CHARS_LENGTH;
-        } while (value > 0);
+            buffer[--position] = alphabet[(int)(remaining % radix)];
+            remaining /= radix;
+        } while (remaining > 0);
 
-        return result;
+        return new string(buffer[position..]);
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static long FromBaseAlphabetic(string value)
+    private static long FromBase(string value, string alphabet, string alphabetName, string paramName)
     {
-        var result = 0L;
+        ArgumentNullException.ThrowIfNull(value, paramName);
+
+        if (value.Length is 0)
+        {
+            throw new ArgumentException("The ID must not be empty.", paramName);
+        }
+
+        var radix = (ulong)alphabet.Length;
+        var result = 0UL;
 
         for (var i = 0; i < value.Length; i++)
         {
-            result = result * BASE_ALPHABETIC_CHARS_LENGTH + BASE_ALPHABETIC_CHARS.IndexOf(value[i]);
+            var digit = alphabet.IndexOf(value[i]);
+
+            if (digit < 0)
+            {
+                throw new ArgumentException($"The ID contains '{value[i]}' at position {i}; only the characters {alphabetName} are allowed.", paramName);
+            }
+
+            if (result > (ulong.MaxValue - (ulong)digit) / radix)
+            {
+                throw new ArgumentException($"The ID \"{value}\" is larger than a 64-bit ID.", paramName);
+            }
+
+            result = (result * radix) + (ulong)digit;
         }
 
-        return result;
+        return unchecked((long)result);
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static string ToBaseAlphanumeric(long value)
-    {
-        var result = string.Empty;
-
-        do
-        {
-            result = BASE_ALPHANUMERIC_CHARS[(value % BASE_ALPHANUMERIC_CHARS_LENGTH).ParseImplement<int>()] + result;
-            value /= BASE_ALPHANUMERIC_CHARS_LENGTH;
-        } while (value > 0);
-
-        return result;
-    }
+    private static string ToBaseAlphabetic(long value) => ToBase(value, BASE_ALPHABETIC_CHARS);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
-    private static long FromBaseAlphanumeric(string value)
-    {
-        var result = 0L;
+    private static long FromBaseAlphabetic(string value, string paramName) => FromBase(value, BASE_ALPHABETIC_CHARS, "A-Z (upper case)", paramName);
 
-        for (var i = 0; i < value.Length; i++)
-        {
-            result = result * BASE_ALPHANUMERIC_CHARS_LENGTH + BASE_ALPHANUMERIC_CHARS.IndexOf(value[i]);
-        }
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static string ToBaseAlphanumeric(long value) => ToBase(value, BASE_ALPHANUMERIC_CHARS);
 
-        return result;
-    }
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    private static long FromBaseAlphanumeric(string value, string paramName) => FromBase(value, BASE_ALPHANUMERIC_CHARS, "0-9 and A-Z (upper case)", paramName);
 
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -113,9 +129,19 @@ public partial class IdGenerator
     /// <summary>
     /// Generates a new unique ID based on the Snowflake algorithm.
     /// </summary>
-    /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <returns>A unique 64-bit ID.</returns>
-    /// <exception cref="Exception">Thrown when the system clock moves backwards.</exception>
+    /// <param name="timestampEpoch">
+    /// The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>. It must not be later than the current time, nor
+    /// 2^41 ms (about 69.7 years) or more before it, so that the time since the epoch fits the 41-bit timestamp field.
+    /// </param>
+    /// <returns>
+    /// A unique 64-bit ID. From 2^40 ms (about 34.8 years) after <paramref name="timestampEpoch"/> on, the timestamp reaches the sign bit
+    /// and the ID is negative; <see cref="ExtractIdComponents(long, long, long, int, int, int)"/> reads its timestamp correctly (unsigned).
+    /// </returns>
+    /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards (it derives from <see cref="Exception"/>, so existing <c>catch (Exception)</c> blocks still catch it).</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="timestampEpoch"/> is later than the current time, or 2^41 ms or more before it (8.3.3 returned a negative or
+    /// wrapped ID instead). The failing call changes nothing: it uses up no sequence number.
+    /// </exception>
     /// <remarks>
     /// The generated ID is composed of:
     /// - 41 bits for timestamp (milliseconds since epoch)
@@ -124,6 +150,7 @@ public partial class IdGenerator
     /// - Configurable bits for sequence number
     /// 
     /// This method is thread-safe and can generate multiple unique IDs per millisecond based on the sequence bit allocation.
+    /// The first ID uses the sequence passed to the constructor (0 by default).
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -135,25 +162,43 @@ public partial class IdGenerator
 
             if (currentTimestamp < _lastTimestamp)
             {
-                throw new Exception("Clock moved backwards. Refusing to generate ID for timestamp earlier than last timestamp.");
+                throw new InvalidOperationException("Clock moved backwards. Refusing to generate ID for timestamp earlier than last timestamp.");
             }
-            else if (currentTimestamp == _lastTimestamp)
-            {
-                Sequence = (Sequence + 1) & MaxSequence;
 
-                if (Sequence is 0)
+            var sequence = Sequence;
+
+            if (currentTimestamp == _lastTimestamp)
+            {
+                sequence = (sequence + 1) & MaxSequence;
+
+                if (sequence is 0)
                 {
                     currentTimestamp = WaitForNextMillisecond(_lastTimestamp);
                 }
             }
-            else
+            else if (_hasGeneratedId)
             {
-                Sequence = default;
+                sequence = default;
             }
 
+            // Validated before the state changes, so a failing call uses up no sequence number. The subtraction wraps to a negative value
+            // only when the true difference is 2^63 or more.
+            var timestamp = unchecked(currentTimestamp - timestampEpoch);
+
+            if (timestamp is < 0 or > MAX_TIMESTAMP)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(timestampEpoch),
+                    timestampEpoch,
+                    $"The epoch must not be later than the current time ({currentTimestamp}) nor {MAX_TIMESTAMP + 1} ms or more before it, so that the time since the epoch fits the 41-bit timestamp field.");
+            }
+
+            // The first ID keeps the sequence passed to the constructor.
+            Sequence = sequence;
+            _hasGeneratedId = true;
             _lastTimestamp = currentTimestamp;
 
-            return ((currentTimestamp - timestampEpoch) << _timestampLeftShift) | (DatacenterId << _datacenterIdShift) | (WorkerId << _workerIdShift) | (Sequence & MaxSequence);
+            return (timestamp << _timestampLeftShift) | (DatacenterId << _datacenterIdShift) | (WorkerId << _workerIdShift) | (sequence & MaxSequence);
         }
     }
 
@@ -161,10 +206,16 @@ public partial class IdGenerator
     /// Generates a new unique ID in base-26 alphabetic format (A-Z).
     /// </summary>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <returns>A unique ID as a base-26 alphabetic string.</returns>
+    /// <returns>A unique ID as a base-26 alphabetic string (upper-case letters only, 'A' = 0).</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="timestampEpoch"/> is later than the current time, or 2^41 ms or more before it (see <see cref="NextId(long)"/>).
+    /// </exception>
     /// <remarks>
     /// This method generates a Snowflake ID and then converts it to a base-26 alphabetic string.
     /// The resulting string is more compact than the decimal representation of the ID.
+    /// A negative ID (from 2^40 ms after <paramref name="timestampEpoch"/> on, see <see cref="NextId(long)"/>) is encoded as its unsigned 64-bit
+    /// value, so the string still contains only A-Z and <see cref="ExtractIdAlphabeticComponents(string, long, long, int, int, int)"/> reads the same 64-bit ID from it.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -174,10 +225,16 @@ public partial class IdGenerator
     /// Generates a new unique ID in base-36 alphanumeric format (0-9, A-Z).
     /// </summary>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <returns>A unique ID as a base-36 alphanumeric string.</returns>
+    /// <returns>A unique ID as a base-36 alphanumeric string (digits and upper-case letters only).</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the system clock moves backwards.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="timestampEpoch"/> is later than the current time, or 2^41 ms or more before it (see <see cref="NextId(long)"/>).
+    /// </exception>
     /// <remarks>
     /// This method generates a Snowflake ID and then converts it to a base-36 alphanumeric string.
     /// The resulting string is more compact than both the decimal and alphabetic representations of the ID.
+    /// A negative ID (from 2^40 ms after <paramref name="timestampEpoch"/> on, see <see cref="NextId(long)"/>) is encoded as its unsigned 64-bit
+    /// value, so the string still contains only 0-9 and A-Z and <see cref="ExtractIdAlphanumericComponents(string, long, long, int, int, int)"/> reads the same 64-bit ID from it.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -188,7 +245,7 @@ public partial class IdGenerator
     /// </summary>
     /// <param name="id">The Snowflake ID to extract components from.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">The sequence value to adjust the timestamp. Defaults to 0.</param>
+    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <param name="workerIdBits">The number of bits allocated for the worker ID. Defaults to 5.</param>
     /// <param name="datacenterIdBits">The number of bits allocated for the datacenter ID. Defaults to 5.</param>
     /// <param name="sequenceBits">The number of bits allocated for the sequence. Defaults to 13.</param>
@@ -237,7 +294,8 @@ public partial class IdGenerator
         var timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
 
         // Extract components
-        var timestamp = FromUnixTimeMilliseconds((id >> timestampLeftShift) + timestampEpoch - sequence).UtcDateTime;
+        // Unsigned shift: the 41-bit timestamp field ends at the sign bit, so an ID made 2^40 ms or more after the epoch is negative.
+        var timestamp = FromUnixTimeMilliseconds((long)((ulong)id >> timestampLeftShift) + timestampEpoch).UtcDateTime;
         var workerId = (id >> workerIdShift) & ((1L << workerIdBits) - 1);
         var datacenterId = (id >> datacenterIdShift) & ((1L << datacenterIdBits) - 1);
 
@@ -250,7 +308,7 @@ public partial class IdGenerator
     /// <param name="id">The Snowflake ID to extract components from.</param>
     /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">The sequence value to adjust the timestamp. Defaults to 0.</param>
+    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
     /// <remarks>
     /// This method simplifies component extraction by using predefined bit allocation strategies.
@@ -270,11 +328,13 @@ public partial class IdGenerator
     /// </summary>
     /// <param name="id">The base-26 alphabetic Snowflake ID to extract components from.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">The sequence value to adjust the timestamp. Defaults to 0.</param>
+    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <param name="workerIdBits">The number of bits allocated for the worker ID. Defaults to 5.</param>
     /// <param name="datacenterIdBits">The number of bits allocated for the datacenter ID. Defaults to 5.</param>
     /// <param name="sequenceBits">The number of bits allocated for the sequence. Defaults to 13.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
     /// <remarks>
     /// This method first converts the alphabetic ID to its numeric form and then extracts the components.
     /// The bit allocations must match those used to generate the ID for correct extraction.
@@ -288,7 +348,7 @@ public partial class IdGenerator
         int workerIdBits = DEFAULT_WORKER_ID_BITS,
         int datacenterIdBits = DEFAULT_DATACENTER_ID_BITS,
         int sequenceBits = DEFAULT_SEQUENCE_BITS
-    ) => ExtractIdComponents(FromBaseAlphabetic(id), timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
+    ) => ExtractIdComponents(FromBaseAlphabetic(id, nameof(id)), timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
 
     /// <summary>
     /// Extracts the timestamp, worker ID, and datacenter ID components from a base-26 alphabetic Snowflake ID using a predefined bit allocation strategy.
@@ -296,8 +356,10 @@ public partial class IdGenerator
     /// <param name="id">The base-26 alphabetic Snowflake ID to extract components from.</param>
     /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">The sequence value to adjust the timestamp. Defaults to 0.</param>
+    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
     /// <remarks>
     /// This method simplifies component extraction by using predefined bit allocation strategies.
     /// The strategy must match the one used to generate the ID for correct extraction.
@@ -316,11 +378,13 @@ public partial class IdGenerator
     /// </summary>
     /// <param name="id">The base-36 alphanumeric Snowflake ID to extract components from.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">The sequence value to adjust the timestamp. Defaults to 0.</param>
+    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <param name="workerIdBits">The number of bits allocated for the worker ID. Defaults to 5.</param>
     /// <param name="datacenterIdBits">The number of bits allocated for the datacenter ID. Defaults to 5.</param>
     /// <param name="sequenceBits">The number of bits allocated for the sequence. Defaults to 13.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than 0-9 and A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
     /// <remarks>
     /// This method first converts the alphanumeric ID to its numeric form and then extracts the components.
     /// The bit allocations must match those used to generate the ID for correct extraction.
@@ -334,7 +398,7 @@ public partial class IdGenerator
         int workerIdBits = DEFAULT_WORKER_ID_BITS,
         int datacenterIdBits = DEFAULT_DATACENTER_ID_BITS,
         int sequenceBits = DEFAULT_SEQUENCE_BITS
-    ) => ExtractIdComponents(FromBaseAlphanumeric(id), timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
+    ) => ExtractIdComponents(FromBaseAlphanumeric(id, nameof(id)), timestampEpoch, sequence, workerIdBits, datacenterIdBits, sequenceBits);
 
     /// <summary>
     /// Extracts the timestamp, worker ID, and datacenter ID components from a base-36 alphanumeric Snowflake ID using a predefined bit allocation strategy.
@@ -342,8 +406,10 @@ public partial class IdGenerator
     /// <param name="id">The base-36 alphanumeric Snowflake ID to extract components from.</param>
     /// <param name="strategy">The bit allocation strategy used when generating the ID.</param>
     /// <param name="timestampEpoch">The epoch timestamp in milliseconds. Defaults to <see cref="TIMESTAMP_EPOCH"/>.</param>
-    /// <param name="sequence">The sequence value to adjust the timestamp. Defaults to 0.</param>
+    /// <param name="sequence">Ignored; kept for compatibility. Earlier versions subtracted it, in milliseconds, from the extracted timestamp.</param>
     /// <returns>A tuple containing the timestamp as a <see cref="DateTime"/>, worker ID, and datacenter ID.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, contains a character other than 0-9 and A-Z (lower-case letters are rejected), or is larger than a 64-bit value.</exception>
     /// <remarks>
     /// This method simplifies component extraction by using predefined bit allocation strategies.
     /// The strategy must match the one used to generate the ID for correct extraction.

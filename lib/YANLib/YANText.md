@@ -36,7 +36,7 @@ The library is organized into several functional categories:
 - **Bulk Processing**: Apply text operations to collections of strings or characters
 - **Validation**: Check if all or any elements in a collection meet specific criteria
 - **Case Conversion**: Convert all strings or characters in a collection to a specific case
-- **Parallel Processing**: Automatic parallel processing for large collections
+- **Order Preservation**: Collection results are lazily evaluated and keep the input order
 
 
 ## Usage Examples
@@ -204,22 +204,28 @@ bool hasUpper = password.ToCharArray().AnyUppers(); // Returns true
 bool hasNumber = password.ToCharArray().AnyNumber(); // Returns true
 bool hasPunctuation = password.ToCharArray().AnyPunctuation(); // Returns true
 
-// Complex string formatting
+// Complex string formatting: punctuation separates the words and digits are removed
 string rawName = "john.q.public123";
-string formattedName = rawName
-    .FilterAlphanumeric() // Remove special characters
-    .Replace("123", "") // Remove numbers
-    .FormatName(); // Format as proper name
-// Returns "John Q Public"
+string formattedName = rawName.FormatName(); // Returns "John Q Public"
+
+// Filtering first removes the dots, so the words run together
+string filteredName = rawName
+    .FilterAlphanumeric() // Remove special characters: "johnqpublic123"
+    .Replace("123", "") // Remove numbers: "johnqpublic"
+    .FormatName(); // Returns "Johnqpublic"
+
+// Tabs, repeated separators and trailing punctuation do not leave extra spaces
+string tidyName = " john ,\tDOE. ".FormatName(); // Returns "John Doe"
 ```
 
 
 ## Performance Considerations
 
 - The library uses optimized implementations for different text operations
-- For large collections (>1000 items), parallel processing is automatically used
-- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
-- String operations are designed to minimize memory allocations where possible
+- Collection methods that return `IEnumerable<T>` are lazily evaluated and preserve the input order; the in-place `List<string?>` / `List<char>` / `List<char?>` overloads (`Title`, `Lower`, `Upper`, ...) update lists with 1,000+ elements in parallel by index, so the order is kept as well
+- The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
+- String operations are designed to minimize memory allocations where possible: `CleanSpace` and the `Filter*` methods build their result in a stack buffer (a pooled array for long strings) and return the input itself when nothing changes, `Capitalize` writes straight into the new string, and `FormatName` reuses a per-thread `StringBuilder`
+- `AllEqualsIgnoreCase`, `AnyEqualsIgnoreCase`, `AllNotEqualsIgnoreCase` and `AnyNotEqualsIgnoreCase` compare strings exactly like `EqualsIgnoreCase` (`StringComparison.OrdinalIgnoreCase`), enumerate the collection once and do not create lower-cased copies; for arrays and lists (of up to 16 strings for `AnyEqualsIgnoreCase` / `AllNotEqualsIgnoreCase`, which otherwise use a `HashSet`) they allocate nothing
 
 
 ## Implementation Details

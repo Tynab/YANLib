@@ -218,6 +218,20 @@ public partial class YANEnumerableTest
     }
 
     [Fact]
+    public void ToList_DerivedInstancesToBaseType_KeepsInstances_Enumerable()
+    {
+        // Arrange
+        var dog = new Dog();
+        IEnumerable<object?> input = [dog];
+
+        // Act
+        var result = input.ToList<Animal>();
+
+        // Assert (8.3.3 returned [null])
+        Assert.Same(dog, Assert.Single(result));
+    }
+
+    [Fact]
     public void ToList_MixedTypes_ParsesCorrectly_Enumerable()
     {
         // Arrange
@@ -725,4 +739,33 @@ public partial class YANEnumerableTest
 
         public string? Name { get; set; }
     }
+
+    private class Animal
+    {
+    }
+
+    private sealed class Dog : Animal
+    {
+    }
+
+    #region Order
+
+    // 8.3.3 switched to PLINQ without AsOrdered for 1,000+ items, so large results came back scrambled. Against that code this
+    // regression test fails only statistically (PLINQ does not guarantee a different order), on the current code it is exact.
+    [Fact]
+    public void ToListAndToArray_LargeCollection_PreservesInputOrder_Enumerable()
+    {
+        // Arrange
+        IEnumerable<object?> input = Enumerable.Range(0, 5_000).Select(static x => (object?)x).ToList();
+
+        // Act
+        var list = input.ToList<int>();
+        var array = input.ToArray<int>();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 5_000), list);
+        Assert.Equal(Enumerable.Range(0, 5_000), array);
+    }
+
+    #endregion
 }

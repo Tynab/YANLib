@@ -1,20 +1,18 @@
-﻿using YANLib.Tests.Extensions;
-
-namespace YANLib.Tests.Library;
+﻿namespace YANLib.Tests.Library;
 
 public partial class YANTaskTest
 {
-    #region WaitAnyWithConditionsTest
+    #region WaitAnyWithConditions
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_NullTasks_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_NullTasks_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
         IEnumerable<Task<int>>? tasks = null;
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -22,14 +20,14 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_EmptyTasks_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_EmptyTasks_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
         var tasks = Array.Empty<Task<int>>();
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -37,7 +35,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_TasksWithMatchingCondition_ReturnsMatchingResults()
+    public async Task WaitAnyWithConditions_TasksWithMatchingCondition_ReturnsMatchingResults_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -50,7 +48,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -60,7 +58,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -73,7 +71,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 10;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -81,7 +79,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_TasksWithException_HandlesExceptionGracefully()
+    public async Task WaitAnyWithConditions_TasksWithException_HandlesExceptionGracefully_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -94,7 +92,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -104,33 +102,44 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_WithCancellationToken_RespectsToken()
+    public async Task WaitAnyWithConditions_AlreadyCanceledToken_ThrowsOperationCanceledException_TaskCollection()
     {
         // Arrange
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
 
         var tasks = new[]
         {
-            Task.Delay(1000).ContinueWith(_ => 1),
-            Task.Delay(2000).ContinueWith(_ => 2),
-            Task.Delay(3000).ContinueWith(_ => 3)
+            Task.FromResult(1),
+            Task.FromResult(2),
+            Task.FromResult(3)
         };
 
         static bool predicate(int x) => x > 1;
 
-        // Act
         cts.Cancel();
 
-        var result = tasks.WaitAnyWithConditionsTest(predicate, cancellationToken: cts.Token);
+        // Act
+        var result = tasks.WaitAnyWithConditions(predicate, cancellationToken: cts.Token);
 
-        // Assert
-        var items = await result.ToListAsync();
-
-        Assert.Empty(items);
+        // Assert (nothing runs until the enumeration starts; then it throws before yielding anything)
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await result.ToListAsync());
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_DelayedTasks_WaitsForAllTasks()
+    public async Task WaitAnyWithConditions_NullTasksWithAlreadyCanceledToken_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        IEnumerable<Task<int>>? tasks = null;
+        using var cts = new CancellationTokenSource();
+
+        cts.Cancel();
+
+        // Act & Assert
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await tasks.WaitAnyWithConditions(x => x > 0, cancellationToken: cts.Token).ToListAsync());
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_DelayedTasks_WaitsForAllTasks_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -143,7 +152,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate);
+        var result = tasks.WaitAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -153,7 +162,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WaitAnyWithConditionsTest_WithTakenParameter_LimitsResults()
+    public async Task WaitAnyWithConditions_WithTakenParameter_LimitsResults_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -169,26 +178,307 @@ public partial class YANTaskTest
         uint taken = 2;
 
         // Act
-        var result = tasks.WaitAnyWithConditionsTest(predicate, taken);
+        var result = tasks.WaitAnyWithConditions(predicate, taken);
         var items = await result.ToListAsync();
 
         // Assert
         Assert.Equal(2, items.Count);
     }
 
-    #endregion
+    [Fact]
+    public async Task WaitAnyWithConditions_CanceledDuringEnumeration_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var cts = new CancellationTokenSource();
 
-    #region WhenAnyWithConditionsTest
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            never.Task
+        };
+
+        var items = new List<int>();
+
+        // Act
+        async Task Enumerate()
+        {
+            await foreach (var item in tasks.WaitAnyWithConditions(x => x > 0, cancellationToken: cts.Token))
+            {
+                items.Add(item);
+                cts.Cancel();
+            }
+        }
+
+        var enumeration = Enumerate();
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(enumeration, await Task.WhenAny(enumeration, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => enumeration);
+        Assert.Equal([1], items);
+    }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_NullTasks_ReturnsEmptyEnumerable()
+    public async Task WaitAnyWithConditions_CanceledWhileHandlingLastItem_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        using var cts = new CancellationTokenSource();
+        var tasks = new[] { Task.FromResult(1) };
+        await using var enumerator = tasks.WaitAnyWithConditions(x => x > 0, taken: 1, cancellationToken: cts.Token).GetAsyncEnumerator();
+
+        Assert.True(await enumerator.MoveNextAsync());
+        Assert.Equal(1, enumerator.Current);
+
+        // Act
+        cts.Cancel();
+
+        // Assert (no item is left and the limit is reached, but the cancellation is still reported)
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await enumerator.MoveNextAsync());
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_CanceledWhileWaiting_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var cts = new CancellationTokenSource();
+        var tasks = new[] { never.Task };
+
+        // Act
+        var enumeration = tasks.WaitAnyWithConditions(x => x > 0, cancellationToken: cts.Token).ToListAsync().AsTask();
+
+        cts.CancelAfter(200);
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(enumeration, await Task.WhenAny(enumeration, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => enumeration);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task WaitAnyWithConditions_MethodTokenOrWithCancellationToken_ThrowsOperationCanceledException_TaskCollection(bool cancelMethodToken)
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var methodCts = new CancellationTokenSource();
+        using var withCancellationCts = new CancellationTokenSource();
+        var tasks = new[] { never.Task };
+
+        // GetAsyncEnumerator(token) is what WithCancellation(token) and await foreach call.
+        await using var enumerator = tasks.WaitAnyWithConditions(x => x > 0, cancellationToken: methodCts.Token).GetAsyncEnumerator(withCancellationCts.Token);
+
+        // Act (the enumeration waits for a task that never completes)
+        var move = enumerator.MoveNextAsync().AsTask();
+
+        (cancelMethodToken ? methodCts : withCancellationCts).Cancel();
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(move, await Task.WhenAny(move, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => move);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_CanceledWithCancellation_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        using var cts = new CancellationTokenSource();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            Task.FromResult(2)
+        };
+
+        cts.Cancel();
+
+        var items = new List<int>();
+
+        // Act
+        async Task Enumerate()
+        {
+            await foreach (var item in tasks.WaitAnyWithConditions(x => x > 0).WithCancellation(cts.Token))
+            {
+                items.Add(item);
+            }
+        }
+
+        // Assert
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(Enumerate);
+        Assert.Empty(items);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_LazySequence_StartsEachTaskOnce_TaskCollection()
+    {
+        // Arrange
+        var starts = 0;
+
+        // An iterator has no precomputed count, so checking it for emptiness would run (and start) its first item.
+        IEnumerable<Task<int>> StartTasks()
+        {
+            for (var x = 1; x <= 3; x++)
+            {
+                starts++;
+
+                yield return Task.FromResult(x);
+            }
+        }
+
+        var tasks = StartTasks();
+
+        // Act
+        var items = await tasks.WaitAnyWithConditions(x => x > 1).ToListAsync();
+
+        // Assert
+        Assert.Equal([2, 3], items);
+        Assert.Equal(3, starts);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_PendingTasks_YieldsInCompletionOrder_TaskCollection()
+    {
+        // Arrange
+        var first = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var second = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var tasks = new[]
+        {
+            second.Task,
+            first.Task
+        };
+
+        await using var enumerator = tasks.WaitAnyWithConditions(x => x > 0).GetAsyncEnumerator();
+
+        // Act & Assert (second completes only after first has been yielded, so no timing is involved)
+        var move = enumerator.MoveNextAsync();
+
+        first.SetResult(1);
+        Assert.True(await move);
+        Assert.Equal(1, enumerator.Current);
+
+        move = enumerator.MoveNextAsync();
+
+        second.SetResult(2);
+        Assert.True(await move);
+        Assert.Equal(2, enumerator.Current);
+        Assert.False(await enumerator.MoveNextAsync());
+    }
+
+    [Theory]
+    [InlineData(0u, new[] { 1, 2, 3 })]
+    [InlineData(2u, new[] { 1, 2 })]
+    public async Task WaitAnyWithConditions_TaskCompletesWhileEarlierItemIsHandled_YieldsItWhenReached_TaskCollection(uint taken, int[] expected)
+    {
+        // Arrange
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (the second task completes while the first result is handled, after the enumeration has started)
+        await foreach (var item in tasks.WaitAnyWithConditions(x => x > 0, taken))
+        {
+            items.Add(item);
+
+            if (item is 1)
+            {
+                second.SetResult(2);
+            }
+        }
+
+        // Assert (tasks are checked in collection order: the second task is complete when it is reached, so it comes before the third)
+        Assert.Equal(expected, items);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_RunningTasksCompleteBeforeWaitStarts_YieldsThemInCollectionOrder_TaskCollection()
+    {
+        // Arrange
+        var first = new TaskCompletionSource<int>();
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            first.Task,
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (both running tasks complete, the second one first, while the third result is handled, before the enumeration starts waiting)
+        await foreach (var item in tasks.WaitAnyWithConditions(x => x > 0))
+        {
+            items.Add(item);
+
+            if (item is 3)
+            {
+                second.SetResult(2);
+                first.SetResult(1);
+            }
+        }
+
+        // Assert (tasks that complete before the enumeration starts waiting come in collection order)
+        Assert.Equal([3, 1, 2], items);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_PredicateThrows_PropagatesException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[] { Task.FromResult(0) };
+
+        // Act & Assert
+        _ = await Assert.ThrowsAsync<DivideByZeroException>(async () => await tasks.WaitAnyWithConditions(x => 10 / x > 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_NullPredicate_ThrowsArgumentNullException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[] { Task.FromResult(1) };
+
+        // Act & Assert (the first MoveNextAsync checks the predicate; it threw NullReferenceException before 8.4.0 made the method public)
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await tasks.WaitAnyWithConditions(null!).ToListAsync());
+        Assert.Equal("predicate", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task WaitAnyWithConditions_NullPredicateAndNoSuccessfulTask_ThrowsArgumentNullException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromException<int>(new Exception("Test exception")),
+            Task.FromCanceled<int>(new CancellationToken(true))
+        };
+        IEnumerable<Task<int>>? none = null;
+
+        // Act & Assert (the predicate is checked before the tasks, so a null predicate no longer goes unnoticed when no task succeeds or there are no tasks)
+        _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await tasks.WaitAnyWithConditions(null!).ToListAsync());
+        _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await none.WaitAnyWithConditions(null!).ToListAsync());
+    }
+
+    #endregion
+
+    #region WhenAnyWithConditions
+
+    [Fact]
+    public async Task WhenAnyWithConditions_NullTasks_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
         IEnumerable<Task<int>>? tasks = null;
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -196,14 +486,14 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_EmptyTasks_ReturnsEmptyEnumerable()
+    public async Task WhenAnyWithConditions_EmptyTasks_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
         var tasks = Array.Empty<Task<int>>();
         static bool predicate(int x) => x > 0;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -211,7 +501,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_TasksWithMatchingCondition_ReturnsMatchingResults()
+    public async Task WhenAnyWithConditions_TasksWithMatchingCondition_ReturnsMatchingResults_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -224,7 +514,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -234,7 +524,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable()
+    public async Task WhenAnyWithConditions_TasksWithNoMatchingCondition_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -247,7 +537,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 10;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -255,7 +545,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_TasksWithException_HandlesExceptionGracefully()
+    public async Task WhenAnyWithConditions_TasksWithException_HandlesExceptionGracefully_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -268,7 +558,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -278,31 +568,94 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_WithCancellationToken_RespectsToken()
+    public async Task WhenAnyWithConditions_AlreadyCanceledToken_ThrowsOperationCanceledException_TaskCollection()
     {
         // Arrange
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
 
         var tasks = new[]
         {
-            Task.Delay(1000).ContinueWith(_ => 1),
-            Task.Delay(2000).ContinueWith(_ => 2),
-            Task.Delay(3000).ContinueWith(_ => 3)
+            Task.FromResult(1),
+            Task.FromResult(2),
+            Task.FromResult(3)
         };
 
         static bool predicate(int x) => x > 1;
 
-        // Act
         cts.Cancel();
-        var result = tasks.WhenAnyWithConditionsTest(predicate, cancellationToken: cts.Token);
+
+        // Act
+        var result = tasks.WhenAnyWithConditions(predicate, cancellationToken: cts.Token);
+
+        // Assert (nothing runs until the enumeration starts; then it throws before yielding anything)
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await result.ToListAsync());
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_CanceledDuringEnumeration_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var cts = new CancellationTokenSource();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            never.Task
+        };
+
+        var items = new List<int>();
+
+        // Act
+        async Task Enumerate()
+        {
+            await foreach (var item in tasks.WhenAnyWithConditions(x => x > 0, cancellationToken: cts.Token))
+            {
+                items.Add(item);
+                cts.Cancel();
+            }
+        }
+
+        var enumeration = Enumerate();
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(enumeration, await Task.WhenAny(enumeration, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => enumeration);
+        Assert.Equal([1], items);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_CanceledWithCancellation_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        using var cts = new CancellationTokenSource();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            Task.FromResult(2)
+        };
+
+        cts.Cancel();
+
+        var items = new List<int>();
+
+        // Act
+        async Task Enumerate()
+        {
+            await foreach (var item in tasks.WhenAnyWithConditions(x => x > 0).WithCancellation(cts.Token))
+            {
+                items.Add(item);
+            }
+        }
 
         // Assert
-        var items = await result.ToListAsync();
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(Enumerate);
         Assert.Empty(items);
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_DelayedTasks_WaitsForAllTasks()
+    public async Task WhenAnyWithConditions_DelayedTasks_WaitsForAllTasks_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -315,7 +668,7 @@ public partial class YANTaskTest
         static bool predicate(int x) => x > 1;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate);
+        var result = tasks.WhenAnyWithConditions(predicate);
         var items = await result.ToListAsync();
 
         // Assert
@@ -325,7 +678,7 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task WhenAnyWithConditionsTest_WithTakenParameter_LimitsResults()
+    public async Task WhenAnyWithConditions_WithTakenParameter_LimitsResults_TaskCollection()
     {
         // Arrange
         var tasks = new[]
@@ -341,22 +694,168 @@ public partial class YANTaskTest
         uint taken = 2;
 
         // Act
-        var result = tasks.WhenAnyWithConditionsTest(predicate, taken);
+        var result = tasks.WhenAnyWithConditions(predicate, taken);
         var items = await result.ToListAsync();
 
         // Assert
         Assert.Equal(2, items.Count);
     }
 
+    [Fact]
+    public async Task WhenAnyWithConditions_CanceledWhileWaiting_ThrowsOperationCanceledException_TaskCollection()
+    {
+        // Arrange
+        var never = new TaskCompletionSource<int>();
+        using var cts = new CancellationTokenSource();
+        var tasks = new[] { never.Task };
+
+        // Act
+        var enumeration = tasks.WhenAnyWithConditions(x => x > 0, cancellationToken: cts.Token).ToListAsync().AsTask();
+
+        cts.CancelAfter(200);
+
+        // Assert (the guard only fails the test if cancellation is never observed)
+        Assert.Same(enumeration, await Task.WhenAny(enumeration, Task.Delay(TimeSpan.FromSeconds(30))));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => enumeration);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_LazySequence_StartsEachTaskOnce_TaskCollection()
+    {
+        // Arrange
+        var starts = 0;
+
+        // An iterator has no precomputed count, so checking it for emptiness would run (and start) its first item.
+        IEnumerable<Task<int>> StartTasks()
+        {
+            for (var x = 1; x <= 3; x++)
+            {
+                starts++;
+
+                yield return Task.FromResult(x);
+            }
+        }
+
+        var tasks = StartTasks();
+
+        // Act
+        var items = await tasks.WhenAnyWithConditions(x => x > 1).ToListAsync();
+
+        // Assert
+        Assert.Equal([2, 3], items);
+        Assert.Equal(3, starts);
+    }
+
+    [Theory]
+    [InlineData(0u, new[] { 1, 2, 3 })]
+    [InlineData(2u, new[] { 1, 2 })]
+    public async Task WhenAnyWithConditions_TaskCompletesWhileEarlierItemIsHandled_YieldsItWhenReached_TaskCollection(uint taken, int[] expected)
+    {
+        // Arrange
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            Task.FromResult(1),
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (the second task completes while the first result is handled, after the enumeration has started)
+        await foreach (var item in tasks.WhenAnyWithConditions(x => x > 0, taken))
+        {
+            items.Add(item);
+
+            if (item is 1)
+            {
+                second.SetResult(2);
+            }
+        }
+
+        // Assert (tasks are checked in collection order: the second task is complete when it is reached, so it comes before the third)
+        Assert.Equal(expected, items);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_RunningTasksCompleteBeforeWaitStarts_YieldsThemInCollectionOrder_TaskCollection()
+    {
+        // Arrange
+        var first = new TaskCompletionSource<int>();
+        var second = new TaskCompletionSource<int>();
+
+        var tasks = new[]
+        {
+            first.Task,
+            second.Task,
+            Task.FromResult(3)
+        };
+
+        var items = new List<int>();
+
+        // Act (both running tasks complete, the second one first, while the third result is handled, before the enumeration starts waiting)
+        await foreach (var item in tasks.WhenAnyWithConditions(x => x > 0))
+        {
+            items.Add(item);
+
+            if (item is 3)
+            {
+                second.SetResult(2);
+                first.SetResult(1);
+            }
+        }
+
+        // Assert (tasks that complete before the enumeration starts waiting come in collection order)
+        Assert.Equal([3, 1, 2], items);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_PredicateThrows_PropagatesException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[] { Task.FromResult(0) };
+
+        // Act & Assert
+        _ = await Assert.ThrowsAsync<DivideByZeroException>(async () => await tasks.WhenAnyWithConditions(x => 10 / x > 1).ToListAsync());
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_NullPredicate_ThrowsArgumentNullException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[] { Task.FromResult(1) };
+
+        // Act & Assert (the first MoveNextAsync checks the predicate; it threw NullReferenceException before 8.4.0 made the method public)
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await tasks.WhenAnyWithConditions(null!).ToListAsync());
+        Assert.Equal("predicate", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task WhenAnyWithConditions_NullPredicateAndNoSuccessfulTask_ThrowsArgumentNullException_TaskCollection()
+    {
+        // Arrange
+        var tasks = new[]
+        {
+            Task.FromException<int>(new Exception("Test exception")),
+            Task.FromCanceled<int>(new CancellationToken(true))
+        };
+        IEnumerable<Task<int>>? none = null;
+
+        // Act & Assert (the predicate is checked before the tasks, so a null predicate no longer goes unnoticed when no task succeeds or there are no tasks)
+        _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await tasks.WhenAnyWithConditions(null!).ToListAsync());
+        _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await none.WhenAnyWithConditions(null!).ToListAsync());
+    }
+
     #endregion
 
-    #region AsyncEnumerableEmptyTest
+    #region AsyncEnumerableEmpty
 
     [Fact]
-    public async Task AsyncEnumerableEmptyTest_ReturnsEmptyEnumerable()
+    public async Task AsyncEnumerableEmpty_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
-        var result = YANTaskTestExtensions.AsyncEnumerableEmptyTest<int>();
+        var result = YANTask.AsyncEnumerableEmpty<int>();
 
         // Act
         var items = await result.ToListAsync();
@@ -366,10 +865,10 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task AsyncEnumerableEmptyTest_WithDifferentType_ReturnsEmptyEnumerable()
+    public async Task AsyncEnumerableEmpty_WithDifferentType_ReturnsEmptyEnumerable_TaskCollection()
     {
         // Arrange
-        var result = YANTaskTestExtensions.AsyncEnumerableEmptyTest<string>();
+        var result = YANTask.AsyncEnumerableEmpty<string>();
 
         // Act
         var items = await result.ToListAsync();
@@ -379,10 +878,10 @@ public partial class YANTaskTest
     }
 
     [Fact]
-    public async Task AsyncEnumerableEmptyTest_EnumerationCompletes_WithoutExceptions()
+    public async Task AsyncEnumerableEmpty_EnumerationCompletes_WithoutExceptions_TaskCollection()
     {
         // Arrange
-        var result = YANTaskTestExtensions.AsyncEnumerableEmptyTest<int>();
+        var result = YANTask.AsyncEnumerableEmpty<int>();
 
         // Act
         var exception = await Record.ExceptionAsync(async () =>

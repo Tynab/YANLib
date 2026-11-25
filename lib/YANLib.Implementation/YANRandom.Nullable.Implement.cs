@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using static System.Nullable;
+﻿using static System.Nullable;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANRandom
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? GenerateRandomImplement<T>()
     {
         var targetType = typeof(T);
@@ -16,7 +13,7 @@ internal static partial class YANRandom
             targetType = GetUnderlyingType(typeof(T))!;
         }
 
-        var random = new Random();
+        var random = Random.Shared;
 
         object? raw = targetType switch
         {

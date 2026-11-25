@@ -9,7 +9,8 @@ namespace YANLib;
 /// <remarks>
 /// This class contains methods for working with collections of strings, including checking if all or any strings
 /// meet certain conditions (null, empty, whitespace), comparing strings within collections, and performing case
-/// conversions on all strings in a collection. Methods are optimized to use parallel processing for large collections.
+/// conversions on all strings in a collection. Methods that return <see cref="IEnumerable{T}"/> are lazily evaluated
+/// and preserve the input order.
 /// </remarks>
 public static partial class YANText
 {
@@ -248,6 +249,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The collection to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all strings are equal, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AllEqualsIgnoreCaseImplement();
@@ -257,6 +259,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The array to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all strings are equal, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllEqualsIgnoreCase(params string?[] input) => input.AllEqualsIgnoreCaseImplement();
@@ -266,6 +269,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The collection to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if any strings are equal, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AnyEqualsIgnoreCaseImplement();
@@ -275,6 +279,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The array to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if any strings are equal, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyEqualsIgnoreCase(params string?[] input) => input.AnyEqualsIgnoreCaseImplement();
@@ -284,6 +289,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The collection to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all strings are not equal, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllNotEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AllNotEqualsIgnoreCaseImplement();
@@ -293,6 +299,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The array to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if all strings are not equal, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AllNotEqualsIgnoreCase(params string?[] input) => input.AllNotEqualsIgnoreCaseImplement();
@@ -302,6 +309,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The collection to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if any string is not equal to others, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyNotEqualsIgnoreCase(this IEnumerable<string?>? input) => input.AnyNotEqualsIgnoreCaseImplement();
@@ -311,6 +319,7 @@ public static partial class YANText
     /// </summary>
     /// <param name="input">The array to check. If <c>null</c> or empty, returns <c>false</c>.</param>
     /// <returns><c>true</c> if any string is not equal to others, ignoring case; otherwise, <c>false</c>.</returns>
+    /// <remarks>Strings are compared like <see cref="EqualsIgnoreCase(string?, string?)"/> (<see cref="StringComparison.OrdinalIgnoreCase"/>); <c>null</c> equals only <c>null</c>.</remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static bool AnyNotEqualsIgnoreCase(params string?[] input) => input.AnyNotEqualsIgnoreCaseImplement();

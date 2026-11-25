@@ -1,13 +1,10 @@
-﻿using System.Diagnostics;
-using static System.Linq.Enumerable;
+﻿using static System.Linq.Enumerable;
 using static System.Math;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANRandom
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<T> GenerateRandomsImplement<T>(object? min = null, object? max = null, object? size = null) where T : unmanaged
     {
         var n = size.ParseImplement<uint>().ParseImplement<int>();
@@ -16,8 +13,6 @@ internal static partial class YANRandom
         return n < 1_000 ? r.Select(i => GenerateRandomImplement<T>(min, max)) : r.AsParallel().Select(i => GenerateRandomImplement<T>(min, max));
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<T> GenerateRandomsImplement<T>(this IEnumerable<T>? input, object? size = null, bool allowDuplicates = true) where T : unmanaged
     {
         var n = size.ParseImplement<uint>().ParseImplement<int>();
@@ -62,8 +57,6 @@ internal static partial class YANRandom
         }
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<T> GenerateRandomsImplement<T>(this System.Collections.IEnumerable? input, object? size = null, bool allowDuplicates = true) where T : unmanaged
         => input is null ? [] : input.Cast<object?>().GenerateRandomsImplement<T>(size, allowDuplicates);
 }

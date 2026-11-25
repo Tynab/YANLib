@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 
 namespace YANLib.Tests.Library;
 
@@ -285,6 +286,32 @@ public partial class YANUnmanagedTest
         Assert.Equal(expected, result);
     }
 
+    // Pins the XML remarks of the unconstrained Parses<T> overloads: an element that cannot be parsed becomes default(T). A plain
+    // input.Parses<int>() binds to these one-parameter overloads too; the method-group conversions only make that choice explicit.
+    [Fact]
+    public void Parses_UnparsableElementsToNonNullableValueType_ReturnDefault_NullableCollection()
+    {
+        // Arrange
+        Func<IEnumerable<object?>?, IEnumerable<int>?> parsesEnumerable = YANUnmanaged.Parses<int>;
+        Func<object?[]?, IEnumerable<int>?> parsesArray = YANUnmanaged.Parses<int>;
+        Func<IEnumerable?, IEnumerable<int>?> parsesNonGeneric = YANUnmanaged.Parses<int>;
+        Func<IEnumerable<object?>?, IEnumerable<string?>?> parsesString = YANUnmanaged.Parses<string>;
+        object?[] input = ["123", "not a number", null, "789"];
+        var expected = new[] { 123, 0, 0, 789 };
+
+        // Act
+        var enumerableResult = parsesEnumerable(input)?.ToArray();
+        var arrayResult = parsesArray(input)?.ToArray();
+        var nonGenericResult = parsesNonGeneric(new ArrayList(input))?.ToArray();
+        var stringResult = parsesString(input)?.ToArray();
+
+        // Assert
+        Assert.Equal(expected, enumerableResult);
+        Assert.Equal(expected, arrayResult);
+        Assert.Equal(expected, nonGenericResult);
+        Assert.Equal(new string?[] { "123", "not a number", null, "789" }, stringResult);
+    }
+
     [Fact]
     public void Parses_NullLookup_ReturnsEmptyLookup_NullableCollection()
     {
@@ -482,6 +509,27 @@ public partial class YANUnmanagedTest
         Assert.Equal("Value3", group2[0]);
     }
 
+    // Pins the XML remark: keys and elements that cannot be parsed become default(TKey) / default(TElement), so for int keys they share
+    // the group of 0 with null keys, while int? keys and elements give null.
+    [Fact]
+    public void Parses_UnparsableKeysAndElements_ReturnDefaultOfType_NullableCollection()
+    {
+        // Arrange
+        var input = new object?[] { 1, "1", "x", null, 2.0 }.ToLookup(static x => x, static x => x);
+
+        // Act
+        var result = input.Parses<int, int>();
+        var nullableResult = input.Parses<int?, int?>();
+
+        // Assert
+        Assert.Equal([1, 0, 2], result.Select(static g => g.Key));
+        Assert.Equal([1, 1], result[1]);
+        Assert.Equal([0, 0], result[0]);
+        Assert.Equal([2], result[2]);
+        Assert.Equal([1, null, 2], nullableResult.Select(static g => g.Key));
+        Assert.Equal([null, null], nullableResult[null]);
+    }
+
     [Fact]
     public void Parses_DateTimeKeys_ParsesKeysCorrectly_NullableCollection()
     {
@@ -603,6 +651,104 @@ public partial class YANUnmanagedTest
                 Assert.Contains($"Value{i}-{j}", group);
             }
         }
+    }
+
+    #endregion
+
+    #region ParsesWith
+
+    [Fact]
+    public void ParsesWith_InvariantProviderUnderVietnameseCulture_ParsesEveryElement_NullableCollection()
+    {
+        // Arrange
+        var input = new List<object?> { "1.5", "abc", null, 2.5 };
+        var nonGeneric = new ArrayList(input);
+
+        // Act (enumerated under vi-VN, so the provider, not the current culture, decides)
+        var results = WithCulture(new CultureInfo("vi-VN"), () => new
+        {
+            Generic = input.ParsesWith<double?>(CultureInfo.InvariantCulture)?.ToList(),
+            NonGeneric = nonGeneric.ParsesWith<double?>(CultureInfo.InvariantCulture)?.ToList(),
+            Text = input.ParsesWith<string>(CultureInfo.InvariantCulture)?.ToList(),
+            ExistingText = input.Parses<string>()?.ToList()
+        });
+
+        // Assert
+        Assert.Equal([1.5, null, null, 2.5], results.Generic);
+        Assert.Equal([1.5, null, null, 2.5], results.NonGeneric);
+        Assert.Equal(["1.5", "abc", null, "2.5"], results.Text);
+        Assert.Equal(["1.5", "abc", null, "2,5"], results.ExistingText);
+    }
+
+    [Fact]
+    public void ParsesWith_FractionalStringForInteger_FloorsLikeParses_NullableCollection()
+    {
+        // Arrange
+        var input = new List<object?> { "3.7", "-3.5", "x" };
+
+        // Act
+        var (floored, nullable) = WithCulture(new CultureInfo("de-DE"), () => (input.ParsesWith<int>(CultureInfo.InvariantCulture)?.ToList(), input.ParsesWith<int?>(CultureInfo.InvariantCulture)?.ToList()));
+
+        // Assert
+        Assert.Equal([3, -4, 0], floored);
+        Assert.Equal([null, null, null], nullable);
+    }
+
+    [Fact]
+    public void ParsesWith_NullProvider_ReadsCultureOfEnumeratingThread_NullableCollection()
+    {
+        // Arrange
+        var input = new ArrayList { "1.5" };
+
+        // Act (created under the invariant culture, enumerated under de-DE)
+        var (withNull, withCurrent) = WithCulture(CultureInfo.InvariantCulture, () => (input.ParsesWith<double?>(null), input.ParsesWith<double?>(CultureInfo.CurrentCulture)));
+        var (enumeratedNull, enumeratedCurrent) = WithCulture(new CultureInfo("de-DE"), () => (withNull?.ToList(), withCurrent?.ToList()));
+
+        // Assert (a null provider behaves like Parses; an explicit provider is fixed when ParsesWith is called)
+        Assert.Equal([15d], enumeratedNull);
+        Assert.Equal([1.5], enumeratedCurrent);
+    }
+
+    [Fact]
+    public void ParsesWith_NullOrEmptyInput_ReturnsNull_NullableCollection()
+    {
+        // Act & Assert
+        Assert.Null(((List<object?>?)null).ParsesWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(new List<object?>().ParsesWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(((ArrayList?)null).ParsesWith<int?>(CultureInfo.InvariantCulture));
+        Assert.Null(new ArrayList().ParsesWith<int?>(CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
+    public void ParsesWith_ProviderThrows_ReturnsNulls_NullableCollection()
+    {
+        // Arrange
+        var input = new ArrayList { "5", "1.5", 7 };
+
+        // Act
+        var result = input.ParsesWith<int?>(new ThrowingFormatProvider())?.ToList();
+
+        // Assert (never throws; a boxed int does not need the provider)
+        Assert.Equal([null, null, 7], result);
+    }
+
+    #endregion
+
+    #region Order
+
+    // 8.3.3 switched to PLINQ without AsOrdered for 1,000+ items, so large results came back scrambled. Against that code this
+    // regression test fails only statistically (PLINQ does not guarantee a different order), on the current code it is exact.
+    [Fact]
+    public void Parses_LargeCollection_PreservesInputOrder_NullableCollection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static x => (object?)x.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToList();
+
+        // Act
+        var result = input.Parses<int>()?.ToList();
+
+        // Assert
+        Assert.Equal(Enumerable.Range(0, 5_000), result);
     }
 
     #endregion

@@ -15,11 +15,12 @@ The library is organized into several functional categories:
 - **Single Object Parsing**: Convert objects to unmanaged types like int, double, DateTime, Guid, and enums
 - **Default Value Handling**: Specify default values to use when parsing fails
 - **Format Support**: Use format strings for parsing DateTime values
+- **Culture Choice**: `Parse` and `Parses` use the current culture; `ParseWith` and `ParsesWith` (since 8.4.0) take an `IFormatProvider` (see [Culture](#culture-parsewith--parseswith))
 
 ### Collection Conversion
 
 - **Collection Parsing**: Convert collections of objects to collections of unmanaged types
-- **Parallel Processing**: Automatic parallel processing for large collections (>1000 elements)
+- **Order Preservation**: `Parses` results are lazily evaluated and keep the input order
 - **Dictionary/Lookup Conversion**: Parse dictionaries with object keys/values to typed dictionaries
 
 ### Nullable Type Support
@@ -159,12 +160,80 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 ```
 
 
+## Conversion Rules
+
+`Parse` never throws. Strings are parsed with `CultureInfo.CurrentCulture` and the same number styles as `Convert.ToInt32(string, IFormatProvider)` and its siblings (so `"1.5"` is 15 for `double` under `de-DE`). To parse with another culture, use `ParseWith` / `ParsesWith` (see [Culture](#culture-parsewith--parseswith)); the rules below apply to them as well.
+
+| Input | `Parse<int>()` | `Parse<int>(-1)` | `Parse<int?>()` |
+|-------|----------------|------------------|-----------------|
+| `"123"` | 123 | 123 | 123 |
+| `"3.7"` / `"-3.5"` | 3 / -4 (floored) | -1 | `null` |
+| `"abc"` | 0 | -1 | `null` |
+| `"99999999999"` (out of range) | 0 | -1 | `null` |
+| `3.7` / `2.5` (boxed `double`) | 4 / 2 (rounded half to even) | 4 / 2 | 4 / 2 |
+| `1e10` (boxed, out of range) | 0 | -1 | `null` |
+| `2147483647.6` (boxed) | 2147483647 (the floor fits) | -1 | `null` |
+
+- **Fractions**: a fractional string is floored, using the exact `decimal` value, only by the one-argument `Parse<T>()` with a non-nullable integer `T`; the `defaultValue` overload and nullable targets return the default / `null` instead. A boxed fractional number is rounded half to even by every overload; when only the rounded value is out of range (`2147483647.6`), `Parse<T>()` floors it if the floor fits.
+- **Out of range**: never throws and never wraps around: the result is `0` / `null` / the converted `defaultValue`.
+- **`nint` / `nuint`**: supported as targets and as inputs (converted through `long` / `ulong`).
+- **Already the target type**: an input that already is a `T` is returned unchanged (a derived instance typed as its base class stays the same instance; a `DateTime` keeps its milliseconds and `Kind`). A `defaultValue` of type `T` is returned unchanged as well, also when a `format` is given.
+- **`char`**: `5.Parse<char>()` converts through the text (`'5'`), `5.Parse<char>('#')` through `Convert.ToChar` (`'\u0005'`).
+- **Failing `ToString()`**: an input whose `ToString()` throws is treated as unparsable.
+
+### Culture (`ParseWith` / `ParsesWith`)
+
+Since 8.4.0, `ParseWith` and `ParsesWith` take an `IFormatProvider` right after the input and otherwise follow `Parse` and `Parses`. `Parse` and `Parses` keep reading `CultureInfo.CurrentCulture`.
+
+| Overload | Same rules as |
+|----------|---------------|
+| `ParseWith<T>(this object? input, IFormatProvider? provider)` | `Parse<T>()` |
+| `ParseWith<T>(this object? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format)` and `(..., object? defaultValue, params string?[]? format)`, `where T : unmanaged` | `Parse<T>(defaultValue, format)` |
+| `ParsesWith<T>(this IEnumerable<object?>? input, IFormatProvider? provider)` and the same for a non-generic `IEnumerable` | `Parses<T>()` |
+| `ParsesWith<T>(this IEnumerable<object?>? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format)` and `(..., params string?[]? format)`, both also for a non-generic `IEnumerable`, `where T : unmanaged` | `Parses<T>(defaultValue, format)` |
+
+```csharp
+using System.Globalization;
+
+CultureInfo.CurrentCulture = new CultureInfo("vi-VN"); // ',' is the decimal separator, '.' the group separator
+
+double a = "1.5".Parse<double>(); // 15
+double b = "1.5".ParseWith<double>(CultureInfo.InvariantCulture); // 1.5 under any current culture
+double c = "1,5".ParseWith<double>(null); // 1.5: a null provider is the current culture, as in Parse
+string? d = 1.5.ParseWith<string>(CultureInfo.InvariantCulture); // "1.5" (1.5.Parse<string>() is "1,5")
+double e = "abc".ParseWith<double>(CultureInfo.InvariantCulture, "2.5"); // 2.5: the default value is parsed with the provider too
+int f = "3.7".ParseWith<int>(CultureInfo.InvariantCulture); // 3: the rules of Parse<int>() (floored)
+int g = "3.7".ParseWith<int>(CultureInfo.InvariantCulture, null); // 0: the rules of Parse<int>(null)
+IEnumerable<decimal>? h = new object?[] { "1,234.5", "x" }.ParsesWith<decimal>(CultureInfo.InvariantCulture, -1m); // [1234.5, -1]
+DateTime i = "01/02/2025".ParseWith<DateTime>(new CultureInfo("en-GB"), null); // 1 February 2025
+DateTime j = "13/12/2025".ParseWith<DateTime>(new CultureInfo("de-DE"), null, "dd/MM/yyyy"); // 13 December 2025 (exact formats are invariant)
+```
+
+- **What the provider controls**: number parsing, `DateTime` and `TimeSpan` text without an exact format, `Convert.ChangeType` (a custom `IConvertible` input receives the provider), and the text of an input or default value that implements `IFormattable`. That text comes from `ToString(null, provider)`, also for `string` targets. For a custom type it can differ from `ToString()`, which `Parse` and a `null` provider use, so there `ParseWith(CultureInfo.CurrentCulture)` can differ from `Parse`. An enum input is the exception: `Enum` ignores the provider, so a negative enum value without a name, such as `(DayOfWeek)(-1)`, gets the negative sign of the current culture (`"−1"` with U+2212 under `sv-SE`, also from `ParseWith<string>(CultureInfo.InvariantCulture)`).
+- **Exact formats stay invariant**: the `format` strings are matched with `CultureInfo.InvariantCulture`, as by `Parse` (`/` and `:` are literal); the provider does not change them. `"13.12.2025".ParseWith<DateTime>(new CultureInfo("de-DE"), null, "dd/MM/yyyy")` is `default`, while without a format `"13.12.2025".ParseWith<DateTime>(new CultureInfo("de-DE"), null)` is 13 December 2025.
+- **`null` provider**: the same as the existing overload. `ParsesWith` is lazy like `Parses`: with a `null` provider every element is parsed with the culture of the thread that enumerates the result, while an explicit provider, also `CultureInfo.CurrentCulture`, is the one passed to `ParsesWith`.
+- **One-argument and default-value rules**: `defaultValue` has no default value in `ParseWith`, so `ParseWith<int>(provider)` follows `Parse<int>()` (floors fractional strings, `null` for a nullable `T`) and `ParseWith<int>(provider, null)` follows `Parse<int>(null)`.
+- **Never throws**, also when the provider throws (for example from `GetFormat`): that step counts as a failed parse.
+- **Not affected**: `Guid` and enum names do not depend on the culture (the sign of a negative enum value without a name does, see above). The dictionary and lookup forms of `Parses`, the `YANEnumerable` conversions (`ToList<T>`, `ToArray<T>`, ...) and `Parses<T>(params object?[]?)` have no provider form and use the current culture; an `object?[]` array binds to `ParsesWith<T>(IEnumerable<object?>?, ...)`.
+
+### Changes since 8.3.3
+
+- Out-of-range integer conversions (`"99999999999".Parse<int>()`, `1e10.Parse<int>()`, and through them `100000.Pow(2)` or `int.MinValue.Abs()` on `int`) used to crash the process with a stack overflow; they now return `0` / `null` / the default value.
+- `nint` / `nuint` conversions work (`"5".Parse<nint>(0)` was 0, `"5".Parse<nint?>()` was `null`, `((object)5).Parse<nint>()` crashed).
+- Fractional strings are floored exactly: `"2.9999999999999999".Parse<int>()` is 2 (was 3), `"0.99999999999999999999".Parse<byte>()` is 0 (was 1), `"12345678901234567.9".Parse<long>()` is 12345678901234567 (was 12345678901234600).
+- Inputs that already have the target type are returned unchanged: `Animal a = new Dog(); a.IsDefault()` is `false` (was `true`), `new object[] { dog }.ToList<Animal>()` is `[dog]` (was `[null]`), parsed `DateTime` values keep milliseconds and `Kind`.
+- `"bad".Parse<DateTime>(dt, "dd/MM/yyyy")` returns `dt` (was `DateTime.MinValue`).
+- `Parses` and the `ToList`, `ToArray`, `ToImmutableArray`, ... conversions built on it keep the input order for 1,000+ elements (they used unordered PLINQ); `Parses` is lazily evaluated on the enumerating thread.
+- Invalid strings no longer throw and catch exceptions internally: `"abc".Parse<int>()` takes about 30 ns instead of about 24 µs.
+- New in 8.4.0: `ParseWith` and `ParsesWith` with an `IFormatProvider` (see [Culture](#culture-parsewith--parseswith)); the existing overloads are unchanged.
+
+
 ## Performance Considerations
 
-- The library uses caching for type reflection to improve performance
-- For large collections (>1000 items), parallel processing is automatically used
-- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
-- Type conversion is optimized for common scenarios
+- Per-type metadata is cached in a static generic class, which is thread-safe without locks
+- Collection methods are lazily evaluated on the enumerating thread and preserve the input order
+- The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
+- Strings are parsed with `TryParse`, so invalid input does not cost an exception
 
 
 ## Implementation Details
@@ -182,13 +251,14 @@ The library provides comprehensive coverage of type conversion operations:
 
 | Category | Functions |
 |----------|-----------|
-| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<float>, Parse<double>, Parse<decimal> |
-| **Other Value Types** | Parse<bool>, Parse<char>, Parse<DateTime>, Parse<DateTimeOffset>, Parse<TimeSpan>, Parse<Guid> |
+| **Numeric Types** | Parse<byte>, Parse<sbyte>, Parse<short>, Parse<ushort>, Parse<int>, Parse<uint>, Parse<long>, Parse<ulong>, Parse<nint>, Parse<nuint>, Parse<float>, Parse<double>, Parse<decimal> |
+| **Other Value Types** | Parse<bool>, Parse<char>, Parse<DateTime>, Parse<TimeSpan>, Parse<Guid> |
 | **Enum Types** | Parse<TEnum> where TEnum : struct, Enum |
 | **Nullable Types** | Parse<T?> where T : struct |
 | **Collection Conversion** | Parses<T>, Parses<TKey, TValue> |
 | **Dictionary Conversion** | Parses<TKey, TValue> for IDictionary<object, object?> |
 | **Format Support** | Parse<T>(format) for DateTime and other format-dependent types |
+| **Culture** | ParseWith<T>(provider), ParseWith<T>(provider, defaultValue, format), ParsesWith<T>(provider), ParsesWith<T>(provider, defaultValue, format) |
 
 
 ## Technical Details
@@ -197,7 +267,7 @@ The library provides comprehensive coverage of type conversion operations:
 - **Default Value Handling**: Provides configurable default values when parsing fails
 - **Format Support**: Supports custom format strings for parsing formatted values like dates
 - **Enum Parsing**: Implements case-insensitive enum parsing with name and value support
-- **Type Conversion**: Uses `Convert.ChangeType()` and specialized conversion methods for type conversion
+- **Type Conversion**: Parses strings with `TryParse` (`IParsable<T>`), range-checks boxed numbers before converting them, and uses `Convert.ChangeType()` only for the remaining `IConvertible` conversions, inside `try`/`catch`
 - **Nullable Type Support**: Implements special handling for nullable value types
 - **Collection Processing**: Processes collections of objects with efficient type conversion
 - **Dictionary Conversion**: Implements key and value parsing for dictionary type conversion

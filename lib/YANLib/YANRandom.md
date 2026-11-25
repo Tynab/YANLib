@@ -28,7 +28,7 @@ The library is organized into several functional categories:
 - **Random Value Collections**: Generate collections of random values of specified types
 - **Random Sampling**: Select random values from existing collections
 - **Duplicate Control**: Option to allow or prevent duplicates in generated collections
-- **Parallel Processing**: Automatic parallel processing for large collections (1000+ elements)
+- **Parallel Generation**: Collections of 1,000+ random values are generated in parallel (the values are random, so their order carries no meaning)
 
 ### Type Flexibility
 
@@ -51,7 +51,7 @@ int randomInt = random.NextInt(); // Random int (full range)
 int boundedInt = random.NextInt(1, 100); // Random int between 1 (inclusive) and 100 (exclusive)
 double randomDouble = random.NextDouble(); // Random double between 0.0 and 1.0
 double boundedDouble = random.NextDouble(-10.5, 10.5); // Random double in range
-decimal randomDecimal = random.NextDecimal(); // Random decimal value
+decimal randomDecimal = random.NextDecimal(); // Random decimal in [0, 1), uniformly distributed (28 decimal places)
 bool randomBool = random.NextBool(); // Random boolean (true or false)
 byte randomByte = random.NextByte(0, 255); // Random byte in range
 DateTime randomDate = random.NextDateTime(); // Random DateTime
@@ -59,6 +59,7 @@ DateTime boundedDate = random.NextDateTime(
     new DateTime(2023, 1, 1), 
     new DateTime(2023, 12, 31)); // Random date in 2023
 char randomChar = random.NextChar(); // Random lowercase letter
+char boundedChar = random.NextChar('a', 'f'); // Random character in ['a', 'f'): 'a' to 'e' (min if min == max, '\0' if min > max)
 string randomString = random.NextString(10); // Random string of 10 lowercase letters
 ```
 
@@ -67,9 +68,9 @@ string randomString = random.NextString(10); // Random string of 10 lowercase le
 ```csharp
 // Generate random values of specific types
 int randomInt = YANRandom.GenerateRandom<int>(); // Random int
-int boundedInt = YANRandom.GenerateRandom<int>(1, 100); // Random int in range
+int boundedInt = YANRandom.GenerateRandom<int>(1, 100); // Random int in [1, 100)
 float randomFloat = YANRandom.GenerateRandom<float>(); // Random float
-double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in range
+double boundedDouble = YANRandom.GenerateRandom<double>(-10.5, 10.5); // Random double in [-10.5, 10.5)
 DateTime randomDate = YANRandom.GenerateRandom<DateTime>(); // Random DateTime
 bool randomBool = YANRandom.GenerateRandom<bool>(); // Random boolean
 
@@ -79,14 +80,17 @@ int randomNumber = numbers.GenerateRandom(); // Random element from the array
 
 // Using params for convenience
 int randomFromParams = YANRandom.GenerateRandom(1, 2, 3, 4, 5); // Random element from params
+int oneOfTwo = YANRandom.GenerateRandom(new[] { 1, 100 }); // 1 or 100: two values must be passed as an array
 ```
+
+Two typed bounds, as in `GenerateRandom<int>(1, 100)` or `GenerateRandom(date1, date2)`, select the range overload `GenerateRandom<T>(T min, T max)`: the result is in [min, max) for the numeric types, `DateTime` and `char`, and is `min` or `max` for other types such as `bool`, `Guid` or enums. Up to version 8.3.3, which had no such overload, these calls compiled to the params overload and returned one of the two arguments. A two-bound call that names one or both bounds, such as `GenerateRandom<Guid>(min: a, max: b)` or `GenerateRandom<Guid>(a, max: b)`, compiled to `GenerateRandom<T>(object? min, object? max)` instead, which ignores the bounds of a `bool`, `Guid` or enum and returned a random `bool`, `Guid.Empty` or, for most enums, the zero value; such a call now returns `min` or `max` as well. A call with one named bound, such as `GenerateRandom<Guid>(max: b)`, still binds to the `object?` overload. Code compiled against 8.3.3 keeps the old behaviour until it is recompiled.
 
 ### Generating Collections of Random Values
 
 ```csharp
 // Generate collections of random values
 IEnumerable<int> randomInts = YANRandom.GenerateRandoms<int>(size: 10); // 10 random ints
-IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in range
+IEnumerable<double> randomDoubles = YANRandom.GenerateRandoms<double>(-10.5, 10.5, 5); // 5 random doubles in [-10.5, 10.5)
 IEnumerable<DateTime> randomDates = YANRandom.GenerateRandoms<DateTime>(size: 3); // 3 random dates
 
 // Generate random values from an existing collection
@@ -133,8 +137,8 @@ IEnumerable<double> randomDoubles = mixedTypes.GenerateRandoms<double>(size: 5);
 IEnumerable<int> largeCollection = YANRandom.GenerateRandoms<int>(size: 10000); // 10,000 random ints
 
 // Generate random values with custom min/max for different types
-byte randomByte = YANRandom.GenerateRandom<byte>(10, 20); // Random byte between 10 and 20
-short randomShort = YANRandom.GenerateRandom<short>(-100, 100); // Random short between -100 and 100
+byte randomByte = YANRandom.GenerateRandom<byte>(10, 20); // Random byte in [10, 20)
+short randomShort = YANRandom.GenerateRandom<short>(-100, 100); // Random short in [-100, 100)
 long randomLong = YANRandom.GenerateRandom<long>(long.MinValue / 2, long.MaxValue / 2); // Random long in range
 
 // Generate random values from a collection with no duplicates
@@ -153,11 +157,12 @@ float randomFloat = customObjects.GenerateRandom<float>(); // Random float from 
 
 ## Performance Considerations
 
-- **Parallel Processing**: For collections with more than 1000 elements, the library automatically uses parallel processing for better performance
+- **Parallel Generation**: For collections with more than 1000 elements, the random generators use parallel processing for better performance; other YANLib collection methods preserve the input order
 - **Type Conversion**: The library handles type conversion internally, minimizing the need for explicit casting
 - **Null Handling**: All methods handle null inputs gracefully, returning appropriate default values rather than throwing exceptions
-- **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges
-- **Debugging Support**: Uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- **Range Validation**: Methods validate min/max ranges and return default values for invalid ranges (min greater than max); min equal to max returns min
+- **Half-Open Ranges**: Every range is [min, max): max is never returned, also not through floating-point rounding, so a call without bounds never returns the type's MaxValue
+- **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details
@@ -184,8 +189,8 @@ The library provides comprehensive coverage of random value generation:
 | **Numeric Types** | NextByte, NextSbyte, NextShort, NextUshort, NextInt, NextUint, NextLong, NextUlong, NextNint, NextNuint, NextSingle, NextDouble, NextDecimal |
 | **Boolean** | NextBool |
 | **DateTime** | NextDateTime |
-| **Text** | NextChar, NextString |
-| **Generic** | GenerateRandom<T> |
+| **Text** | NextChar, NextChar(char min, char max), NextString |
+| **Generic** | GenerateRandom<T>, GenerateRandom<T>(T min, T max) |
 | **Collections** | GenerateRandoms<T> |
 | **Collection Sampling** | GenerateRandom, GenerateRandoms |
 | **Nullable Types** | Support for generating nullable random values |
@@ -197,10 +202,10 @@ The library provides comprehensive coverage of random value generation:
 - **Random Number Generation**: Extends `System.Random` with additional methods for various data types
 - **Range Validation**: Implements boundary checking to ensure generated values stay within specified ranges
 - **Type-Specific Generation**: Uses specialized methods for each primitive type to ensure proper range and distribution
-- **DateTime Generation**: Generates random DateTime values within the supported DateTime range
+- **DateTime Generation**: Generates a whole number of ticks in [min, max), keeping sub-second precision and the Kind of min
 - **String Generation**: Implements character-based random string generation with configurable length
-- **Collection Sampling**: Uses reservoir sampling algorithm for selecting random elements from collections
+- **Collection Sampling**: Picks uniformly random indexes (without duplicates, it removes each picked element from a copy of the collection)
 - **Duplicate Control**: Implements tracking mechanism to prevent duplicates when requested
-- **Thread Safety**: Uses thread-local Random instances to prevent contention in multi-threaded scenarios
+- **Thread Safety**: The static `GenerateRandom`/`GenerateRandoms` methods use `Random.Shared`, which is thread-safe; the `Next...` extension methods use the `Random` instance you pass, which, like any `System.Random`, must not be shared between threads without locking. The exception is `NextString`: its characters come from `Random.Shared`, and the instance you pass only draws the length when `size` is `null` (it is not used when you give a `size`), so a seeded `Random` gives reproducible `NextChar` values but not reproducible `NextString` values
 - **Parallel Processing**: Implements parallel processing for generating large collections of random values
 - **Generic Implementation**: Uses generic type parameters with constraints to support various types

@@ -67,6 +67,8 @@ List<int> listResult = input.ToList<int>(); // Returns List with [1, 2, 3]
 HashSet<int> hashSetResult = input.ToHashSet<int>(); // Returns HashSet with [1, 2, 3]
 ```
 
+String elements are parsed with the current culture (see Conversion Rules on the [YANUnmanaged](YANUnmanaged) page). The results shown for `"3.5"` on this page assume a culture whose decimal separator is `.`, such as en-US or the invariant culture: under de-DE or vi-VN, for example, `"3.5"` becomes 35, and under fr-FR it does not parse, so it becomes 0.
+
 ### Dictionary and Lookup Conversion
 
 ```csharp
@@ -92,7 +94,7 @@ Dictionary<int, string?> dict = items.ToDictionary<TestItem, int, string?, int, 
 // Returns {1: "Item1", 2: "Item2", 3: "Item3"}
 
 // Convert to Lookup<int, string?>
-ILookup<int?, string?> lookup = items.ToLookup<TestItem, int, string?, int, string?>(
+ILookup<int, string?> lookup = items.ToLookup<TestItem, int, string?, int, string?>(
     item => item.Id,      // Key selector
     item => item.Name     // Value selector
 );
@@ -184,7 +186,7 @@ HashSet<int> hashSetResult = duplicates.ToHashSet<int>(); // Returns HashSet wit
 
 - The library uses optimized implementations for different collection types
 - Type conversion is performed efficiently with minimal overhead
-- The implementation uses `DebuggerHidden` and `DebuggerStepThrough` attributes to improve debugging experience
+- The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 - Collection operations are designed to minimize memory allocations where possible
 
 

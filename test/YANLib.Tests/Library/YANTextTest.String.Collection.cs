@@ -616,6 +616,115 @@ public partial class YANTextTest
         Assert.True(result);
     }
 
+    // U+212A KELVIN SIGN lower-cases (invariant) to 'k', but string.Equals(..., OrdinalIgnoreCase), which the scalar EqualsIgnoreCase uses,
+    // treats it as different from "k". The collection methods now agree with the scalar method.
+    [Fact]
+    public void EqualsIgnoreCase_KelvinSignAndK_CollectionAgreesWithScalar_StringCollection()
+    {
+        // Arrange
+        string?[] collection = ["\u212A", "k"];
+
+        // Act
+        var scalar = collection[0].EqualsIgnoreCase(collection[1]);
+
+        // Assert
+        Assert.False(scalar);
+        Assert.Equal(scalar, collection.AllEqualsIgnoreCase());
+        Assert.Equal(scalar, collection.AnyEqualsIgnoreCase());
+        Assert.Equal(!scalar, collection.AllNotEqualsIgnoreCase());
+        Assert.Equal(!scalar, collection.AnyNotEqualsIgnoreCase());
+    }
+
+    [Fact]
+    public void EqualsIgnoreCase_NullElements_NullEqualsOnlyNull_StringCollection()
+    {
+        // Arrange
+        string?[] nulls = [null, null];
+        string?[] mixed = [null, "a", "A"];
+
+        // Act & Assert
+        Assert.True(nulls.AllEqualsIgnoreCase());
+        Assert.True(nulls.AnyEqualsIgnoreCase());
+        Assert.False(mixed.AllEqualsIgnoreCase());
+        Assert.True(mixed.AnyEqualsIgnoreCase());
+        Assert.False(mixed.AllNotEqualsIgnoreCase());
+        Assert.True(mixed.AnyNotEqualsIgnoreCase());
+    }
+
+    [Fact]
+    public void EqualsIgnoreCase_SingleElement_AllEqualAndAllNotEqual_StringCollection()
+    {
+        // Arrange
+        string?[] single = ["only"];
+
+        // Act & Assert
+        Assert.True(single.AllEqualsIgnoreCase());
+        Assert.False(single.AnyEqualsIgnoreCase());
+        Assert.True(single.AllNotEqualsIgnoreCase());
+        Assert.False(single.AnyNotEqualsIgnoreCase());
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(40)]
+    public void AnyEqualsIgnoreCase_ArrayListAndSequence_AgreeForSmallAndLargeInputs_StringCollection(int count)
+    {
+        // Arrange (small inputs compare pairs, large ones use a set)
+        var distinct = Enumerable.Range(0, count).Select(x => (string?)$"item{x}").ToArray();
+        var withDuplicate = distinct.Append("ITEM0").ToArray();
+
+        // Act & Assert
+        foreach (var input in new IEnumerable<string?>[] { distinct, distinct.ToList(), distinct.Select(x => x) })
+        {
+            Assert.False(input.AnyEqualsIgnoreCase());
+            Assert.True(input.AllNotEqualsIgnoreCase());
+            Assert.False(input.AllEqualsIgnoreCase());
+            Assert.True(input.AnyNotEqualsIgnoreCase());
+        }
+
+        foreach (var input in new IEnumerable<string?>[] { withDuplicate, withDuplicate.ToList(), withDuplicate.Select(x => x) })
+        {
+            Assert.True(input.AnyEqualsIgnoreCase());
+            Assert.False(input.AllNotEqualsIgnoreCase());
+        }
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_List_ComparesEveryElement_StringCollection()
+    {
+        // Arrange
+        var equal = new List<string?> { "Text", "TEXT", "text" };
+        var different = new List<string?> { "Text", "TEXT", "next" };
+
+        // Act & Assert
+        Assert.True(equal.AllEqualsIgnoreCase());
+        Assert.False(equal.AnyNotEqualsIgnoreCase());
+        Assert.False(different.AllEqualsIgnoreCase());
+        Assert.True(different.AnyNotEqualsIgnoreCase());
+    }
+
+    [Fact]
+    public void AllEqualsIgnoreCase_LazySequence_EnumeratesOnce_StringCollection()
+    {
+        // Arrange
+        var enumerations = 0;
+
+        IEnumerable<string?> Strings()
+        {
+            enumerations++;
+
+            yield return "Text";
+            yield return "TEXT";
+        }
+
+        // Act
+        var result = Strings().AllEqualsIgnoreCase();
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(1, enumerations);
+    }
+
     #endregion
 
     #region Lower

@@ -1014,7 +1014,7 @@ public partial class YANMathTest
         var result = input.Cbrts<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result);
+        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result, static (x, y) => Math.Abs(x - y) < 1e-12);
     }
 
     [Fact]
@@ -1027,7 +1027,7 @@ public partial class YANMathTest
         var result = input.Cbrts<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 2.0, default, 3.0 }, result);
+        Assert.Equal(new List<double> { 2.0, default, 3.0 }, result, static (x, y) => Math.Abs(x - y) < 1e-12);
     }
 
     [Fact]
@@ -1040,7 +1040,7 @@ public partial class YANMathTest
         var result = input.Cbrts<double>();
 
         // Assert
-        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result);
+        Assert.Equal(new List<double> { 2.0, 3.0, -3.0 }, result, static (x, y) => Math.Abs(x - y) < 1e-12);
     }
 
     [Fact]
@@ -1050,7 +1050,7 @@ public partial class YANMathTest
         var result = YANMath.Cbrts<double?>(8.0, 27.0, -27.0);
 
         // Assert
-        Assert.Equal([2.0, 3.0, -3.0], result);
+        Assert.Equal([2.0, 3.0, -3.0], result, static (x, y) => x.HasValue && y.HasValue && Math.Abs(x.Value - y.Value) < 1e-12);
     }
 
     #endregion

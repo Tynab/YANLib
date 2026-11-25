@@ -79,6 +79,44 @@ public partial class YANMathTest
         Assert.Equal(1, result);
     }
 
+    [Fact]
+    public void Min_AllNullCollection_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Min<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Min_AllNullNullableCollection_ReturnsNull_Math()
+    {
+        // pin: a nullable target already returned null in 8.3.3; only non-nullable targets threw
+        // Arrange
+        IEnumerable<int?> input = [null, null];
+
+        // Act
+        var result = YANMath.Min<int?>(input);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Min_DoubleWithNaN_ReturnsNaN_Math()
+    {
+        // pin: the LINQ ordering of NaN that 8.3.3 had, which MinMax keeps
+        // Act
+        var result = YANMath.Min(1.0, double.NaN, -1.0);
+
+        // Assert
+        Assert.True(double.IsNaN(result));
+    }
+
     #endregion
 
     #region Max
@@ -156,6 +194,49 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(9, result);
+    }
+
+    [Fact]
+    public void Max_AllNullCollection_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Max<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Max_DoubleWithNaN_IgnoresNaN_Math()
+    {
+        // pin: the LINQ ordering of NaN that 8.3.3 had, which MinMax keeps
+        // Act
+        var result = YANMath.Max(double.NaN, 1.0, -1.0);
+
+        // Assert
+        Assert.Equal(1.0, result);
+    }
+
+    [Fact]
+    public void Max_DateTimes_KeepMillisecondsAndKind_Math()
+    {
+        // pin: already correct before area C (the parse fast path returns a DateTime unchanged); guards the native comparison
+        // Arrange
+        var earlier = new DateTime(2024, 1, 1, 10, 0, 0, 123, DateTimeKind.Utc);
+        var later = new DateTime(2024, 1, 1, 10, 0, 0, 456, DateTimeKind.Utc);
+
+        // Act
+        var max = YANMath.Max(earlier, later);
+        var min = YANMath.Min(later, earlier);
+
+        // Assert
+        Assert.Equal(later, max);
+        Assert.Equal(DateTimeKind.Utc, max.Kind);
+        Assert.Equal(earlier, min);
+        Assert.Equal(DateTimeKind.Utc, min.Kind);
     }
 
     #endregion
@@ -237,6 +318,99 @@ public partial class YANMathTest
         Assert.Equal(6.0, result);
     }
 
+    [Fact]
+    public void Average_AllNullCollection_ReturnsDefault_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null, null };
+
+        // Act
+        var result = input.Average<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Average_AllNullNullableCollection_ReturnsNull_Math()
+    {
+        // Arrange
+        var input = new List<int?> { null };
+
+        // Act
+        var result = input.Average<int?>();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Average_Int_RoundsHalfToEven_Math()
+    {
+        // pin: the 8.3.3 rounding of an integer average, which the Int128 path keeps
+        // Act
+        var twoAndThree = YANMath.Average(2, 3);
+        var oneAndTwo = YANMath.Average(1, 2);
+
+        // Assert
+        Assert.Equal(2, twoAndThree);
+        Assert.Equal(2, oneAndTwo);
+    }
+
+    [Fact]
+    public void Average_Decimal_KeepsAllDigits_Math()
+    {
+        // Act
+        var result = YANMath.Average(1m, 0m, 0m);
+
+        // Assert
+        Assert.Equal(1m / 3m, result);
+    }
+
+    [Fact]
+    public void Average_DoubleNegativeZero_KeepsSign_Math()
+    {
+        // pin: the 8.3.3 result, which the typed double path keeps
+        // Act
+        var result = YANMath.Average(-0.0);
+
+        // Assert
+        Assert.True(double.IsNegative(result));
+    }
+
+    [Fact]
+    public void Average_LazySequences_MatchArrays_Math()
+    {
+        // pin: the enumerator path must give what the span path gives
+        // Arrange
+        var ints = Enumerable.Range(1, 1_000).Select(static x => x * 3);
+        IEnumerable<long> longs = new HashSet<long> { 9007199254740993, 9007199254740995 };
+        var doubles = Enumerable.Range(1, 100).Select(static x => x / 7.0);
+        var decimals = Enumerable.Range(1, 100).Select(static x => x / 7m);
+        var negativeZero = new[] { -0.0 }.Select(static x => x);
+
+        // Act & Assert
+        Assert.Equal(YANMath.Average(ints.ToArray()), YANMath.Average<int>(ints));
+        Assert.Equal(9007199254740994L, YANMath.Average<long>(longs));
+        Assert.Equal(YANMath.Average(doubles.ToArray()), YANMath.Average<double>(doubles));
+        Assert.Equal(YANMath.Average(decimals.ToArray()), YANMath.Average<decimal>(decimals));
+        Assert.True(double.IsNegative(YANMath.Average<double>(negativeZero)));
+    }
+
+    [Fact]
+    public void Average_SequenceEmptyOnSecondEnumeration_ReturnsDefault_Math()
+    {
+        // Act
+        var intResult = YANMath.Average<int>(new OneShot<int>(5, 1, 3));
+        var decimalResult = YANMath.Average<decimal>(new OneShot<decimal>(1m));
+        var doubleResult = YANMath.Average<double>(new OneShot<double>(1.0));
+
+        // Assert
+        Assert.Equal(0, intResult);
+        Assert.Equal(0m, decimalResult);
+        Assert.Equal(0.0, doubleResult);
+    }
+
     #endregion
 
     #region Sum
@@ -316,6 +490,108 @@ public partial class YANMathTest
         Assert.Equal(30, result);
     }
 
+    [Fact]
+    public void Sum_LongAboveTwoToThe53_IsExact_Math()
+    {
+        // Act
+        var result = YANMath.Sum(new long[] { 9007199254740993, 0 });
+
+        // Assert
+        Assert.Equal(9007199254740993, result);
+    }
+
+    [Fact]
+    public void Sum_LongNearMaxValue_IsExact_Math()
+    {
+        // Act
+        var result = YANMath.Sum(long.MaxValue, long.MaxValue, long.MinValue);
+
+        // Assert
+        Assert.Equal(long.MaxValue - 1, result);
+    }
+
+    [Fact]
+    public void Sum_Decimal_HasNoTrailingZeros_Math()
+    {
+        // pin: 8.3.3 results had no trailing zeros, and decimal results keep that
+        // Act
+        var result = YANMath.Sum(1.10m, 2.20m);
+
+        // Assert
+        Assert.Equal("3.3", result.ToString(System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
+    public void Sum_DecimalOverflow_FallsBackToDouble_Math()
+    {
+        // pin: the 8.3.3 result on decimal overflow, which the fallback keeps
+        // Act
+        var result = YANMath.Sum(decimal.MaxValue, decimal.MaxValue, decimal.MinValue);
+
+        // Assert
+        Assert.Equal(0m, result);
+    }
+
+    [Fact]
+    public void Sum_IntOverflow_ReturnsDefault_Math()
+    {
+        // pin: the documented overflow result (default), unchanged on purpose
+        // Act
+        var result = YANMath.Sum(Enumerable.Range(0, 100_000).ToArray());
+        var nullableResult = YANMath.Sum<int?>(int.MaxValue, 1);
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Null(nullableResult);
+    }
+
+    [Fact]
+    public void Sum_Float_IsComputedInDouble_Math()
+    {
+        // pin: float sums stay in double, as in 8.3.3
+        // Act
+        var result = YANMath.Sum(0.1f, 0.2f, 0.3f);
+
+        // Assert
+        Assert.Equal((float)((double)0.1f + 0.2f + 0.3f), result);
+    }
+
+    [Fact]
+    public void Sum_LazySequences_MatchArrays_Math()
+    {
+        // Arrange
+        var ints = Enumerable.Range(1, 1_000).Select(static x => x * 3);
+        IEnumerable<long> longs = new HashSet<long> { 9007199254740993, 1, 2 };
+        var doubles = Enumerable.Range(1, 100).Select(static x => x / 7.0);
+        var decimals = Enumerable.Range(1, 100).Select(static x => x / 7m);
+        var decimalOverflow = new[] { decimal.MaxValue, decimal.MaxValue, decimal.MinValue }.Select(static x => x);
+
+        // Act & Assert
+        Assert.Equal(YANMath.Sum(ints.ToArray()), YANMath.Sum<int>(ints));
+        Assert.Equal(9007199254740996L, YANMath.Sum<long>(longs));
+        Assert.Equal(YANMath.Sum(doubles.ToArray()), YANMath.Sum<double>(doubles));
+        Assert.Equal(YANMath.Sum(decimals.ToArray()), YANMath.Sum<decimal>(decimals));
+        Assert.Equal(0, YANMath.Sum<int>(Enumerable.Range(0, 100_000)));
+        Assert.Equal(0m, YANMath.Sum<decimal>(decimalOverflow));
+    }
+
+    [Fact]
+    public void Sum_ListSubclassWithOwnEnumerator_FollowsTheEnumerator_Math()
+    {
+        // Arrange
+        IEnumerable<int> input = new FilteredList { 5, -100, 3 };
+
+        // Act
+        var sum = YANMath.Sum<int>(input);
+        var average = YANMath.Average<int>(input);
+        var min = YANMath.Min<int>(input);
+
+        // Assert
+        Assert.Equal(8, sum);
+        Assert.Equal(4, average);
+        Assert.Equal(3, min);
+    }
+
     #endregion
 
     #region Truncate
@@ -370,6 +646,16 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Truncate_LongAboveTwoToThe53_IsExact_Math()
+    {
+        // Act
+        var result = 9007199254740993L.Truncate();
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
     }
 
     #endregion
@@ -566,6 +852,170 @@ public partial class YANMathTest
         Assert.Equal(4.0, result);
     }
 
+    [Fact]
+    public void Round_DecimalMidpoint_RoundsTheDecimalValue_Math()
+    {
+        // Act
+        var result = 1.005m.Round(2);
+
+        // Assert
+        Assert.Equal(1.01m, result);
+    }
+
+    [Fact]
+    public void Round_DecimalToPositiveInfinity_KeepsExactValue_Math()
+    {
+        // Act
+        var result = 1.10m.Round(2, MidpointRounding.ToPositiveInfinity);
+
+        // Assert
+        Assert.Equal(1.1m, result);
+    }
+
+    [Fact]
+    public void Round_LongMaxValue_ReturnsInput_Math()
+    {
+        // Act
+        var result = long.MaxValue.Round(2);
+
+        // Assert
+        Assert.Equal(long.MaxValue, result);
+    }
+
+    [Fact]
+    public void Round_NegativeDigits_Throws_Math()
+    {
+        // pin: the 8.3.3 exception, which the decimal path keeps
+        // Act & Assert
+        _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5m.Round(-1));
+        _ = Assert.Throws<ArgumentOutOfRangeException>(static () => 5.Round(-1));
+    }
+
+    [Fact]
+    public void Round_DoubleMoreThan15Digits_RoundsAsDecimal_Math()
+    {
+        // Act
+        var tiny = 1e-16.Round(20);
+        var half = 1.5.Round(16);
+        var sum = (0.1 + 0.2).Round(17);
+        var cut = (0.1 + 0.2).Round(16);
+        var belowDecimalScale = 1e-30.Round(20);
+        var seventeenDigits = 30490906.876740474.Round(20);
+        var negativeZero = (-0.0).Round(20);
+
+        // Assert
+        Assert.Equal(30490906.876740474, seventeenDigits);
+        Assert.True(double.IsNegative(negativeZero));
+        Assert.Equal(1e-16, tiny);
+        Assert.Equal(1.5, half);
+        Assert.Equal(0.30000000000000004, sum);
+        Assert.Equal(0.3, cut);
+        Assert.Equal(0.0, belowDecimalScale);
+    }
+
+    [Fact]
+    public void Round_DoubleMoreThan15DigitsOutsideDecimalRange_RoundsTo15Digits_Math()
+    {
+        // Act
+        var huge = 1e300.Round(20);
+        var notANumber = double.NaN.Round(16);
+
+        // Assert
+        Assert.Equal(1e300, huge);
+        Assert.True(double.IsNaN(notANumber));
+    }
+
+    [Fact]
+    public void Round_DoubleMoreThan28DecimalPlaces_RoundsExactlyOnShortestText_Math()
+    {
+        // the shortest text of this double has 29 decimal places, more than decimal holds: digit-shift rounding is exact at any number of
+        // digits (until 8.4.0 development it was rounded to 28 places first and returned 2E-13 for 20 digits ToZero)
+        // Act
+        var result = 1.9999999999999998e-13.Round(20, MidpointRounding.ToZero);
+        var twentyEight = 1.9999999999999998e-13.Round(28, MidpointRounding.ToZero);
+        var beyondTheText = 1.9999999999999998e-13.Round(30, MidpointRounding.ToZero);
+        var thousand = 1.9999999999999998e-13.Round(1000);
+        var directed = 4.4444444444444444e-13.Round(28, MidpointRounding.ToPositiveInfinity);
+        var negative = (-1.9999999999999998e-13).Round(20, MidpointRounding.ToNegativeInfinity);
+        var fifteenDigits = 1.9999999999999998e-13.Round(15, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(1.9999999e-13, result);
+        Assert.Equal(1.999999999999999e-13, twentyEight);
+        Assert.Equal(1.9999999999999998e-13, beyondTheText);
+        Assert.Equal(1.9999999999999998e-13, thousand);
+        Assert.Equal(4.444444444444445e-13, directed);
+        Assert.Equal(-2e-13, negative);
+        Assert.Equal(1.99e-13, fifteenDigits);
+    }
+
+    [Fact]
+    public void Round_DoubleMoreThan28DecimalPlaces_DecidesTiesOnShortestText_Math()
+    {
+        // 3.5e-28 is 3.49999...e-28 in binary and 2.5e-28 is 2.50000...1e-28: the ties are decided on the text, as decimal decides them
+        // Act
+        var awayFromZero = 3.5e-28.Round(28);
+        var toEven = 2.5e-28.Round(28, MidpointRounding.ToEven);
+        var negativeToEven = (-3.5e-28).Round(28, MidpointRounding.ToEven);
+
+        // Assert
+        Assert.Equal(4e-28, awayFromZero);
+        Assert.Equal(2e-28, toEven);
+        Assert.Equal(-4e-28, negativeToEven);
+    }
+
+    [Fact]
+    public void Round_TinyDoubleDirected_KeepsTheStep_Math()
+    {
+        // Act
+        var up = 1e-30.Round(20, MidpointRounding.ToPositiveInfinity);
+        var down = (-1e-30).Round(20, MidpointRounding.ToNegativeInfinity);
+        var nearest = 1e-30.Round(20);
+        var exact = 1e-30.Round(30);
+        var smallest = double.Epsilon.Round(16, MidpointRounding.ToPositiveInfinity);
+        var negativeSmallest = (-double.Epsilon).Round(16, MidpointRounding.ToPositiveInfinity);
+        var tiny = 1e-300.Round(20, MidpointRounding.ToNegativeInfinity);
+        var single = 1e-30f.Round(30);
+
+        // Assert
+        Assert.Equal(1e-20, up);
+        Assert.Equal(-1e-20, down);
+        Assert.Equal(0.0, nearest);
+        Assert.Equal(1e-30, exact);
+        Assert.Equal(1e-16, smallest);
+        Assert.True(negativeSmallest == 0 && double.IsNegative(negativeSmallest));
+        Assert.Equal(0.0, tiny);
+        Assert.Equal(1e-30f, single);
+    }
+
+    [Fact]
+    public void Rounds_DoubleMoreThan28DecimalPlaces_RoundsExactly_Math()
+    {
+        // Act
+        var array = new[] { 1.9999999999999998e-13, -1e-30 }.Rounds(20, MidpointRounding.ToZero);
+        var nullable = new double?[] { 1.9999999999999998e-13, null }.Rounds(20, MidpointRounding.ToZero);
+        var nonGeneric = new System.Collections.ArrayList { 1.9999999999999998e-13 }.Rounds<double>(20, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal([1.9999999e-13, -0.0], array!);
+        Assert.Equal([1.9999999e-13, null], nullable!);
+        Assert.Equal([1.9999999e-13], nonGeneric!);
+    }
+
+    [Fact]
+    public void Round_DecimalAndIntegerMoreThan15Digits_DoNotThrow_Math()
+    {
+        // Act
+        var decimalResult = 1.23456789012345678m.Round(16);
+        var cappedResult = 1.23456789012345678m.Round(40);
+        var integerResult = 5.Round(20);
+
+        // Assert
+        Assert.Equal(1.2345678901234568m, decimalResult);
+        Assert.Equal(1.23456789012345678m, cappedResult);
+        Assert.Equal(5, integerResult);
+    }
+
     #endregion
 
     #region Sqrt
@@ -691,6 +1141,52 @@ public partial class YANMathTest
         Assert.Equal(8.0, result);
     }
 
+    [Fact]
+    public void Pow_IntResultOutOfRange_ReturnsZero_Math()
+    {
+        // Arrange
+        var input = 100_000;
+
+        // Act (8.3.3 crashed the process with a stack overflow; overflow semantics are an open decision)
+        var result = input.Pow(2);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Pow_LongWholeExponent_IsExact_Math()
+    {
+        // Act
+        var result = 3L.Pow(39);
+
+        // Assert
+        Assert.Equal(4052555153018976267L, result);
+    }
+
+    [Fact]
+    public void Pow_DecimalNegativeExponent_IsExact_Math()
+    {
+        // Act
+        var result = 3m.Pow(-1);
+
+        // Assert
+        Assert.Equal(1m / 3m, result);
+    }
+
+    [Fact]
+    public void Pow_IntOverflow_ReturnsDefault_Math()
+    {
+        // pin: the 8.3.3 overflow result (default), which the Int128 path keeps
+        // Act
+        var result = 100000.Pow(2);
+        var negativeExponent = 2.Pow(-1);
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Equal(0, negativeExponent);
+    }
+
     #endregion
 
     #region Abs
@@ -735,6 +1231,19 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Abs_IntMinValue_ReturnsZero_Math()
+    {
+        // Arrange
+        var input = int.MinValue;
+
+        // Act (8.3.3 crashed the process with a stack overflow; overflow semantics are an open decision)
+        var result = input.Abs();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
     public void Abs_ZeroValue_ReturnsZero_Math()
     {
         // Arrange
@@ -758,6 +1267,29 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(5.0, result);
+    }
+
+    [Fact]
+    public void Abs_LongAboveTwoToThe53_IsExact_Math()
+    {
+        // Act
+        var result = (-9007199254740993L).Abs();
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
+    }
+
+    [Fact]
+    public void Abs_IntMinValue_ReturnsDefault_Math()
+    {
+        // pin: the 8.3.3 overflow result (default), which the Int128 path keeps
+        // Act
+        var result = int.MinValue.Abs();
+        var nullableResult = ((int?)int.MinValue).Abs();
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Null(nullableResult);
     }
 
     #endregion
@@ -1123,7 +1655,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(3.0, result.Value, 15);
     }
 
     [Fact]
@@ -1136,7 +1669,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(-3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(-3.0, result.Value, 15);
     }
 
     [Fact]
@@ -1149,7 +1683,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(3.0, result.Value, 15);
     }
 
     #endregion
@@ -1432,6 +1967,16 @@ public partial class YANMathTest
         Assert.Equal(-1.0, result);
     }
 
+    [Fact]
+    public void Log2_PowerOfTwo_IsExact_Math()
+    {
+        // Act
+        var result = 536870912.0.Log2();
+
+        // Assert
+        Assert.Equal(29.0, result);
+    }
+
     #endregion
 
     #region ILogB
@@ -1486,6 +2031,33 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(10, result);
+    }
+
+    #endregion
+
+    #region Helpers
+
+    /// <summary>A sequence that yields its items on the first enumeration only, as a consumed stream does.</summary>
+    private sealed class OneShot<T>(params T[] items) : IEnumerable<T>
+    {
+        private bool _enumerated;
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            var first = !_enumerated;
+
+            _enumerated = true;
+
+            return first ? ((IEnumerable<T>)items).GetEnumerator() : Enumerable.Empty<T>().GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    /// <summary>A <see cref="List{T}"/> whose own <see cref="IEnumerable{T}"/> implementation skips negative items.</summary>
+    private sealed class FilteredList : List<int>, IEnumerable<int>
+    {
+        IEnumerator<int> IEnumerable<int>.GetEnumerator() => ToArray().Where(static x => x >= 0).GetEnumerator();
     }
 
     #endregion

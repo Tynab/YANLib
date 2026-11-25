@@ -73,7 +73,6 @@ public static partial class YANText
     /// Determines whether any nullable character in the specified collection is not <c>null</c> and not empty.
     /// </summary>
     /// <param name="input">The collection to check. If <c>null</c> or empty, returns <c>false</c>.</param>
-    /// <returns><c>true</c> if any nullable character is not <c>null  returns <c>false</c>.</param>
     /// <returns><c>true</c> if any nullable character is not <c>null</c> and not empty; otherwise, <c>false</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]

@@ -1020,4 +1020,367 @@ public partial class IdGeneratorTest
     }
 
     #endregion
+
+    #region Sequence, Round Trip and Validation
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(8192)]
+    public void Constructor_SequenceOutOfRange_ThrowsArgumentOutOfRangeException(long sequence)
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new IdGenerator(1, 1, sequence));
+
+        Assert.Equal("sequence", exception.ParamName);
+        Assert.Contains("Sequence must be between 0 and 8191", exception.Message);
+    }
+
+    [Fact]
+    public void Constructor_SequenceOutOfRangeForCustomBits_ThrowsArgumentOutOfRangeException()
+        // Arrange & Act & Assert
+        => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new IdGenerator(1, 1, 8, 10, 10, 3));
+
+    [Fact]
+    public void Constructor_SequenceOutOfRangeForStrategy_ThrowsArgumentOutOfRangeException()
+        // Arrange & Act & Assert
+        => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new IdGenerator(1, 1, 128, BitAllocationStrategy.Balanced));
+
+    [Fact]
+    public void NextId_WithInitialSequence_UsesItForFirstId()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1, 100);
+
+        // Act
+        var id = idGenerator.NextId();
+
+        // Assert
+        Assert.Equal(100, id & idGenerator.MaxSequence);
+        Assert.Equal(100, idGenerator.Sequence);
+    }
+
+    [Fact]
+    public void NextId_WithMaximumInitialSequence_StaysUnique()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(workerId: 1, datacenterId: 1, sequence: 7, workerIdBits: 10, datacenterIdBits: 10, sequenceBits: 3);
+
+        // Act
+        var ids = Enumerable.Range(0, 100).Select(_ => idGenerator.NextId()).ToList();
+
+        // Assert
+        Assert.Equal(7, ids[0] & 7);
+        Assert.Equal(ids.Count, ids.Distinct().Count());
+        Assert.Equal(ids.OrderBy(x => x), ids);
+    }
+
+    [Theory]
+    [InlineData(BitAllocationStrategy.Default, 31, 7)]
+    [InlineData(BitAllocationStrategy.MoreDistributed, 1000, 1023)]
+    [InlineData(BitAllocationStrategy.HighVolume, 3, 2)]
+    [InlineData(BitAllocationStrategy.Balanced, 200, 100)]
+    public void NextId_RoundTrip_ExtractsAllComponents(BitAllocationStrategy strategy, long workerId, long datacenterId)
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(workerId, datacenterId, 0, strategy);
+
+        // Act
+        var before = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var id = idGenerator.NextId();
+        var after = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var sequence = idGenerator.Sequence;
+        var (timestamp, extractedWorkerId, extractedDatacenterId) = IdGenerator.ExtractIdComponents(id, strategy);
+        var milliseconds = new DateTimeOffset(timestamp).ToUnixTimeMilliseconds();
+
+        // Assert
+        Assert.Equal(DateTimeKind.Utc, timestamp.Kind);
+        Assert.InRange(milliseconds, before, after);
+        Assert.Equal(workerId, extractedWorkerId);
+        Assert.Equal(datacenterId, extractedDatacenterId);
+        Assert.Equal(sequence, id & idGenerator.MaxSequence);
+    }
+
+    [Fact]
+    public void ExtractIdComponents_WithSequenceArgument_DoesNotShiftTimestamp()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(5, 10);
+        var id = idGenerator.NextId();
+
+        // Act
+        var (withoutSequence, _, _) = IdGenerator.ExtractIdComponents(id);
+        var (withSequence, _, _) = IdGenerator.ExtractIdComponents(id, IdGenerator.TIMESTAMP_EPOCH, 42);
+        var (alphabetic, _, _) = IdGenerator.ExtractIdAlphabeticComponents(idGenerator.NextIdAlphabetic(), IdGenerator.TIMESTAMP_EPOCH, 42);
+
+        // Assert
+        Assert.Equal(withoutSequence, withSequence);
+        Assert.InRange(alphabetic, withoutSequence, DateTime.UtcNow);
+    }
+
+    [Fact]
+    public void NextId_EpochInFuture_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        // Act & Assert (8.3.3 returned a negative ID)
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+        Assert.Equal(epoch, exception.ActualValue);
+    }
+
+    [Fact]
+    public void NextIdAlphabetic_EpochInFuture_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        // Act & Assert (8.3.3 returned the negative ID encoded as its unsigned 64-bit value)
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextIdAlphanumeric_EpochInFuture_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        // Act & Assert (8.3.3 returned the negative ID encoded as its unsigned 64-bit value)
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphanumeric(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Theory]
+    [InlineData(long.MaxValue)]
+    [InlineData(long.MinValue)]
+    [InlineData(long.MinValue + 1)]
+    public void NextId_EpochAtTheEndsOfLong_ThrowsArgumentOutOfRangeException(long epoch)
+    {
+        // Arrange (long.MinValue: the subtraction wraps, the time since the epoch is far beyond 2^41 ms)
+        var idGenerator = new IdGenerator(5, 10);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+    }
+
+    [Fact]
+    public void NextId_EpochIsNow_HasTimestampZeroOrJustAbove()
+    {
+        // Arrange (the current time can only be at or after the epoch when NextId reads it)
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        // Act
+        var id = idGenerator.NextId(epoch);
+        var after = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdComponents(id, epoch);
+
+        // Assert
+        Assert.InRange(id >> 23, 0, after - epoch);
+        Assert.InRange(new DateTimeOffset(timestamp).ToUnixTimeMilliseconds(), epoch, after);
+        Assert.Equal(5, workerId);
+        Assert.Equal(10, datacenterId);
+    }
+
+    [Fact]
+    public void NextId_EpochNearlyTwoToThe41MillisecondsAgo_FillsTheTimestampField()
+    {
+        // Arrange: 2^41 - 1 ms before now, plus a margin of ten minutes for the time the test takes. The timestamp reaches the sign bit,
+        // so the ID is negative, and the string forms encode it as its unsigned 64-bit value
+        const long largest = (1L << 41) - 1;
+        const long margin = 10 * 60 * 1000;
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - largest + margin;
+
+        // Act
+        var id = idGenerator.NextId(epoch);
+        var alphabetic = idGenerator.NextIdAlphabetic(epoch);
+        var alphanumeric = idGenerator.NextIdAlphanumeric(epoch);
+        var (_, workerId, datacenterId) = IdGenerator.ExtractIdAlphabeticComponents(alphabetic, epoch);
+        var (_, alphanumericWorkerId, alphanumericDatacenterId) = IdGenerator.ExtractIdAlphanumericComponents(alphanumeric, epoch);
+
+        // Assert
+        Assert.True(id < 0);
+        Assert.InRange((long)((ulong)id >> 23), largest - margin, largest);
+        Assert.Matches("^[A-Z]+$", alphabetic);
+        Assert.Matches("^[0-9A-Z]+$", alphanumeric);
+        Assert.Equal((5L, 10L), (workerId, datacenterId));
+        Assert.Equal((5L, 10L), (alphanumericWorkerId, alphanumericDatacenterId));
+    }
+
+    [Fact]
+    public void ExtractIdComponents_IdWithTheSignBitSet_ReadsTheTimestampUnsigned()
+    {
+        // Arrange: an epoch 2^40 ms (about 34.8 years) plus ten minutes ago, so the timestamp reaches the sign bit and the ID is
+        // negative (8.3.3 read such a timestamp 2^41 ms, about 69.7 years, too early); relative to now, so it stays in the window
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - (1L << 40) - (10 * 60 * 1000);
+        var before = DateTime.UtcNow.AddMinutes(-10);
+
+        // Act
+        var id = idGenerator.NextId(epoch);
+        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdComponents(id, epoch);
+        var (alphabeticTimestamp, _, _) = IdGenerator.ExtractIdAlphabeticComponents(idGenerator.NextIdAlphabetic(epoch), epoch);
+        var (alphanumericTimestamp, _, _) = IdGenerator.ExtractIdAlphanumericComponents(idGenerator.NextIdAlphanumeric(epoch), epoch);
+        var after = DateTime.UtcNow.AddMinutes(10);
+
+        // Assert
+        Assert.True(id < 0);
+        Assert.InRange(timestamp, before, after);
+        Assert.InRange(alphabeticTimestamp, before, after);
+        Assert.InRange(alphanumericTimestamp, before, after);
+        Assert.Equal((5L, 10L), (workerId, datacenterId));
+    }
+
+    [Fact]
+    public void NextId_EpochTwoToThe41MillisecondsAgo_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange (whenever NextId reads the clock, at least 2^41 ms have passed since this epoch)
+        var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - (1L << 41);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(epoch));
+
+        Assert.Equal("timestampEpoch", exception.ParamName);
+        Assert.Equal(epoch, exception.ActualValue);
+    }
+
+    [Fact]
+    public void NextId_InvalidEpoch_DoesNotUseUpASequenceNumber()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(workerId: 1, datacenterId: 1, sequence: 5);
+        var lastTimestamp = typeof(IdGenerator).GetField("_lastTimestamp", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        var future = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds();
+
+        Assert.NotNull(lastTimestamp);
+
+        // Act & Assert: before the first ID
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextId(future));
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphabetic(future));
+
+        Assert.Equal(5, idGenerator.Sequence);
+        Assert.Equal(-1L, lastTimestamp.GetValue(idGenerator));
+
+        // the first ID still uses the sequence passed to the constructor
+        var id = idGenerator.NextId();
+
+        Assert.Equal(5, id & idGenerator.MaxSequence);
+
+        // after an ID, a failing call leaves the last timestamp and the sequence as they were
+        var last = lastTimestamp.GetValue(idGenerator);
+        var sequence = idGenerator.Sequence;
+
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => idGenerator.NextIdAlphanumeric(future));
+
+        Assert.Equal(last, lastTimestamp.GetValue(idGenerator));
+        Assert.Equal(sequence, idGenerator.Sequence);
+    }
+
+    [Theory]
+    [InlineData("HLHXCZMXSYUMQP", "3W5E11264SGSF")]
+    public void ExtractIdComponents_NegativeIdStrings_ReadTheSameId(string alphabetic, string alphanumeric)
+    {
+        // the largest strings stand for the unsigned 64-bit value of -1, the encoding of a negative ID
+        // Act
+        var expected = IdGenerator.ExtractIdComponents(-1);
+        var fromAlphabetic = IdGenerator.ExtractIdAlphabeticComponents(alphabetic);
+        var fromAlphanumeric = IdGenerator.ExtractIdAlphanumericComponents(alphanumeric);
+
+        // Assert
+        Assert.Equal(expected, fromAlphabetic);
+        Assert.Equal(expected, fromAlphanumeric);
+        Assert.Equal((31L, 31L), (expected.WorkerId, expected.DatacenterId));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("abc")]
+    [InlineData("AB-C")]
+    [InlineData("AB1")]
+    [InlineData("ZZZZZZZZZZZZZZZZ")]
+    [InlineData("HLHXCZMXSYUMQQ")]
+    public void ExtractIdAlphabeticComponents_InvalidId_ThrowsArgumentException(string id)
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => IdGenerator.ExtractIdAlphabeticComponents(id));
+
+        Assert.Equal("id", exception.ParamName);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("1z9")]
+    [InlineData("1Z 9")]
+    [InlineData("ZZZZZZZZZZZZZZ")]
+    [InlineData("3W5E11264SGSG")]
+    public void ExtractIdAlphanumericComponents_InvalidId_ThrowsArgumentException(string id)
+    {
+        // Arrange & Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => IdGenerator.ExtractIdAlphanumericComponents(id));
+
+        Assert.Equal("id", exception.ParamName);
+    }
+
+    [Fact]
+    public void ExtractIdAlphabeticComponents_NullId_ThrowsArgumentNullException()
+        // Arrange & Act & Assert
+        => _ = Assert.Throws<ArgumentNullException>(() => IdGenerator.ExtractIdAlphabeticComponents(null!));
+
+    [Fact]
+    public void ExtractIdAlphanumericComponents_NullId_ThrowsArgumentNullException()
+        // Arrange & Act & Assert
+        => _ = Assert.Throws<ArgumentNullException>(() => IdGenerator.ExtractIdAlphanumericComponents(null!));
+
+    [Theory]
+    [InlineData("BPNHEBKDMGLCQ")]
+    [InlineData("HLHXCZMXSYUMQP")]
+    public void ExtractIdAlphabeticComponents_DocumentedAndMaximumIds_DoNotThrow(string id)
+    {
+        // Arrange & Act
+        var exception = Record.Exception(() => IdGenerator.ExtractIdAlphabeticComponents(id));
+
+        // Assert
+        Assert.Null(exception);
+    }
+
+    [Theory]
+    [InlineData("1Z9DHPKW0S")]
+    [InlineData("3W5E11264SGSF")]
+    public void ExtractIdAlphanumericComponents_DocumentedAndMaximumIds_DoNotThrow(string id)
+    {
+        // Arrange & Act
+        var exception = Record.Exception(() => IdGenerator.ExtractIdAlphanumericComponents(id));
+
+        // Assert
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void NextId_ClockMovedBackwards_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var idGenerator = new IdGenerator(1, 1);
+        var lastTimestamp = typeof(IdGenerator).GetField("_lastTimestamp", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+        Assert.NotNull(lastTimestamp);
+        lastTimestamp.SetValue(idGenerator, DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeMilliseconds());
+
+        // Act & Assert
+        var exception = Assert.Throws<InvalidOperationException>(() => idGenerator.NextId());
+
+        Assert.Contains("Clock moved backwards", exception.Message);
+    }
+
+    #endregion
 }

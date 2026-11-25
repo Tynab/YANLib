@@ -79,6 +79,19 @@ public partial class YANMathTest
         Assert.Equal(1, result);
     }
 
+    [Fact]
+    public void Min_AllNullObjectCollection_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        var input = new List<object?> { null, null };
+
+        // Act
+        var result = input.Min<int>();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
     #endregion
 
     #region Max
@@ -156,6 +169,32 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(9, result);
+    }
+
+    [Fact]
+    public void Max_AllNullObjectParams_ReturnsDefault_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Max<double>(null, null);
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Max_DateTimeObjects_KeepMillisecondsAndKind_MathGeneric()
+    {
+        // pin: already correct before area C (the parse fast path returns a DateTime unchanged); guards the native comparison
+        // Arrange
+        object earlier = new DateTime(2024, 1, 1, 10, 0, 0, 123, DateTimeKind.Local);
+        object later = new DateTime(2024, 1, 1, 10, 0, 0, 456, DateTimeKind.Local);
+
+        // Act
+        var max = YANMath.Max<DateTime>(earlier, later);
+
+        // Assert
+        Assert.Equal(later, max);
+        Assert.Equal(DateTimeKind.Local, max.Kind);
     }
 
     #endregion
@@ -237,6 +276,29 @@ public partial class YANMathTest
         Assert.Equal(6.0, result);
     }
 
+    [Fact]
+    public void Average_AllNullObjectCollection_ReturnsDefault_MathGeneric()
+    {
+        // Arrange
+        var input = new List<object?> { null, null };
+
+        // Act
+        var result = input.Average<decimal>();
+
+        // Assert
+        Assert.Equal(0m, result);
+    }
+
+    [Fact]
+    public void Average_AllNullObjectParams_ReturnsNull_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Average<int?>(null, null);
+
+        // Assert
+        Assert.Null(result);
+    }
+
     #endregion
 
     #region Sum
@@ -316,6 +378,49 @@ public partial class YANMathTest
         Assert.Equal(30, result);
     }
 
+    [Fact]
+    public void Sum_LongObjects_AreExact_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<long>(9007199254740993L, 0);
+
+        // Assert
+        Assert.Equal(9007199254740993L, result);
+    }
+
+    [Fact]
+    public void Sum_DecimalTargetFromFloats_UsesShortestDigits_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<decimal>(0.1f, 0.2f);
+
+        // Assert
+        Assert.Equal(0.3m, result);
+    }
+
+    [Fact]
+    public void Sum_UnparsableStrings_CountAsZero_MathGeneric()
+    {
+        // pin: unparsable strings count as 0, as in 8.3.3
+        // Act
+        var result = YANMath.Sum<int>("5-", "(5)", 2);
+
+        // Assert
+        Assert.Equal(2, result);
+    }
+
+    [Fact]
+    public void Sum_WholeDoubleAndFloat_AreExact_MathGeneric()
+    {
+        // Act
+        var result = YANMath.Sum<long>(Math.Pow(2, 60), 1L);
+        var floatResult = YANMath.Sum<int>(123456792f);
+
+        // Assert
+        Assert.Equal(1152921504606846977L, result);
+        Assert.Equal(123456792, floatResult);
+    }
+
     #endregion
 
     #region Truncate
@@ -370,6 +475,43 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Truncate_WholeDoubleAbove2Pow53_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = Math.Pow(2, 60);
+        object? unsignedInput = 9223372036854775808.0;
+
+        // Act
+        var result = input.Truncate<long>();
+        var unsignedResult = unsignedInput.Truncate<ulong>();
+        var decimalResult = input.Truncate<decimal>();
+        var largeDecimalResult = ((object?)1e23).Truncate<decimal>();
+
+        // Assert
+        Assert.Equal(1152921504606846976L, result);
+        Assert.Equal(9223372036854775808UL, unsignedResult);
+        Assert.Equal(1152921504606846976m, decimalResult);
+        Assert.Equal(99999999999999991611392m, largeDecimalResult);
+    }
+
+    [Fact]
+    public void Truncate_WholeFloatAbove2Pow24_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = 123456792f;
+
+        // Act
+        var result = input.Truncate<int>();
+        var decimalResult = input.Truncate<decimal>();
+        var fraction = ((object?)0.1f).Round<decimal>(5);
+
+        // Assert
+        Assert.Equal(123456792, result);
+        Assert.Equal(123456792m, decimalResult);
+        Assert.Equal(0.1m, fraction);
     }
 
     #endregion
@@ -428,6 +570,22 @@ public partial class YANMathTest
         Assert.Equal(4.0, result);
     }
 
+    [Fact]
+    public void Ceiling_TinyPositiveValue_ReturnsOne_MathGeneric()
+    {
+        // Act
+        var result = ((object?)1e-29).Ceiling<int>();
+        var epsilonResult = ((object?)double.Epsilon).Ceiling<int>();
+        var decimalResult = ((object?)1e-30).Ceiling<decimal>();
+        var stringResult = ((object?)"1e-29").Ceiling<int>();
+
+        // Assert
+        Assert.Equal(1, result);
+        Assert.Equal(1, epsilonResult);
+        Assert.Equal(1m, decimalResult);
+        Assert.Equal(1, stringResult);
+    }
+
     #endregion
 
     #region Floor
@@ -482,6 +640,20 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void Floor_TinyNegativeValue_ReturnsMinusOne_MathGeneric()
+    {
+        // Act
+        var result = ((object?)-1e-29).Floor<int>();
+        var nullableResult = ((object?)-1e-30).Floor<long?>();
+        var stringResult = ((object?)"-1E-30").Floor<int>();
+
+        // Assert
+        Assert.Equal(-1, result);
+        Assert.Equal(-1L, nullableResult);
+        Assert.Equal(-1, stringResult);
     }
 
     #endregion
@@ -564,6 +736,199 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(4.0, result);
+    }
+
+    [Fact]
+    public void Round_DecimalTargetFromDouble_UsesShortestDigits_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.005;
+
+        // Act
+        var result = input.Round<decimal>(2);
+
+        // Assert
+        Assert.Equal(1.01m, result);
+    }
+
+    [Fact]
+    public void Round_MoreThan15DigitsObject_DoesNotThrow_MathGeneric()
+    {
+        // Arrange
+        object? input = 1.5;
+
+        // Act
+        var doubleResult = input.Round<double>(16);
+        var decimalResult = input.Round<decimal>(20);
+
+        // Assert
+        Assert.Equal(1.5, doubleResult);
+        Assert.Equal(1.5m, decimalResult);
+    }
+
+    [Fact]
+    public void Round_WholeDoubleAndFloatExtension_IsExact_MathGeneric()
+    {
+        // Act
+        var result = Math.Pow(2, 60).Round<long>();
+        var floatResult = 123456792f.Round<int>();
+
+        // Assert
+        Assert.Equal(1152921504606846976L, result);
+        Assert.Equal(123456792, floatResult);
+    }
+
+    [Fact]
+    public void Round_TinyValueDirected_KeepsTheStep_MathGeneric()
+    {
+        // Act
+        var up = ((object?)1e-30).Round<decimal>(2, MidpointRounding.ToPositiveInfinity);
+        var down = ((object?)-1e-30).Round<int>(null, MidpointRounding.ToNegativeInfinity);
+        var toZero = ((object?)1.9999999999999998e-13).Round<decimal>(15, MidpointRounding.ToZero);
+        var smallest = ((object?)1e-28).Round<decimal>(28);
+
+        // Assert
+        Assert.Equal(0.01m, up);
+        Assert.Equal(-1, down);
+        Assert.Equal(0.000000000000199m, toZero);
+        Assert.Equal(0.0000000000000000000000000001m, smallest);
+    }
+
+    [Fact]
+    public void Round_TinyValueTo15Digits_RoundsInDouble_MathGeneric()
+    {
+        // pin: the documented limit (see the Round remarks and YANMath.md): with 15 or fewer digits, a value whose shortest text has more
+        // than 28 decimal places is rounded in double, as in 8.3.3, so the last digit can be one unit off (exact: 156E-15 and 28E-15)
+        // Arrange
+        object? below = 1.5699999999999999e-13;
+        object? above = 2.7000000000000002e-14;
+
+        // Act
+        var toZero = below.Round<decimal>(15, MidpointRounding.ToZero);
+        var up = above.Round<decimal>(15, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { below }.Rounds<decimal>(15, MidpointRounding.ToZero);
+        var array = new[] { 1.5699999999999999e-13 }.Rounds<decimal>(15, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(0.000000000000157m, toZero);
+        Assert.Equal(0.000000000000027m, up);
+        Assert.Equal([0.000000000000157m], collection!);
+        Assert.Equal([0.000000000000157m], array!);
+    }
+
+    [Fact]
+    public void Round_TinyValueTo28Digits_KeepsEveryDigit_MathGeneric()
+    {
+        // the shortest texts of these doubles have 29 decimal places (1.2345678901234566E-13); rounded exactly at 28 places of that text they
+        // keep 16 significant digits, where a round trip through a double result kept 15 and was up to 6 units in the last place off
+        // Arrange
+        object? input = 1.2345678901234566e-13;
+        object? negative = -1.2345678901234566e-13;
+        object? directed = 4.4444444444444444e-13;
+
+        // Act
+        var nearest = input.Round<decimal>(28);
+        var clamped = negative.Round<decimal?>(29);
+        var up = directed.Round<decimal>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input }.Rounds<decimal>(28);
+
+        // Assert
+        Assert.Equal(0.0000000000001234567890123457m, nearest);
+        Assert.Equal(-0.0000000000001234567890123457m, clamped);
+        Assert.Equal(0.0000000000004444444444444445m, up);
+        Assert.Equal([0.0000000000001234567890123457m], collection!);
+    }
+
+    [Fact]
+    public void Round_TinyValueMoreThan15Digits_IsExactOnShortestText_MathGeneric()
+    {
+        // a double or float whose shortest text has more than 28 decimal places is rounded exactly on that text (digit shifting), for a
+        // decimal result at no more than 28 places; until 8.4.0 development it was rounded to 28 places first (0.0000000000002)
+        // Arrange
+        object? input = 1.9999999999999998e-13;
+        object? negative = -1.9999999999999998e-13;
+        object? tiny = 1e-30;
+        object? single = 1e-30f;
+
+        // Act
+        var toZero = input.Round<decimal>(20, MidpointRounding.ToZero);
+        var clamped = input.Round<decimal>(29, MidpointRounding.ToZero);
+        var nullable = negative.Round<decimal?>(20, MidpointRounding.ToNegativeInfinity);
+        var asDouble = input.Round<double>(20, MidpointRounding.ToZero);
+        var up = tiny.Round<decimal>(20, MidpointRounding.ToPositiveInfinity);
+        var singleUp = single.Round<decimal>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input, tiny }.Rounds<decimal>(20, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(0.00000000000019999999m, toZero);
+        Assert.Equal(0.0000000000001999999999999999m, clamped);
+        Assert.Equal(-0.0000000000002m, nullable);
+        Assert.Equal(1.9999999e-13, asDouble);
+        Assert.Equal(0.00000000000000000001m, up);
+        Assert.Equal(0.0000000000000000000000000001m, singleUp);
+        Assert.Equal([0.00000000000019999999m, 0m], collection!);
+    }
+
+    [Fact]
+    public void Round_StringMoreThan28DecimalPlaces_RoundsAt28PlacesFirst_MathGeneric()
+    {
+        // pin: a string is parsed as decimal, which keeps 28 decimal places, so a decimal result to more than 15 digits is rounded from
+        // those 28 places (exact: 0.00000000000019999999); a double result goes through the parsed double and is exact
+        // Arrange
+        object? input = "1.9999999999999998e-13";
+
+        // Act
+        var asDecimal = input.Round<decimal>(20, MidpointRounding.ToZero);
+        var asDouble = input.Round<double>(20, MidpointRounding.ToZero);
+
+        // Assert
+        Assert.Equal(0.0000000000002m, asDecimal);
+        Assert.Equal(1.9999999e-13, asDouble);
+    }
+
+    [Fact]
+    public void Round_TinyDecimalToDouble_RoundsAt28PlacesFirst_MathGeneric()
+    {
+        // pin: a decimal with a double result is converted with the 8.3.3 cast, which turns 1e-28m into 1.0000000000000001E-28; rounded to
+        // 28 places first, as before, it stays 1e-28 (rounding that double exactly toward positive infinity would give 2E-28)
+        // Arrange
+        object? input = 0.0000000000000000000000000001m;
+
+        // Act
+        var up = input.Round<double>(28, MidpointRounding.ToPositiveInfinity);
+        var beyond = input.Round<double>(31, MidpointRounding.ToPositiveInfinity);
+        var single = input.Round<float>(28, MidpointRounding.ToPositiveInfinity);
+        var collection = new List<object?> { input }.Rounds<double>(28, MidpointRounding.ToPositiveInfinity);
+
+        // Assert
+        Assert.Equal(1e-28, up);
+        Assert.Equal(1e-28, beyond);
+        Assert.Equal(1e-28f, single);
+        Assert.Equal([1e-28], collection!);
+    }
+
+    [Fact]
+    public void Round_FractionalDoubleWithoutDigits_MatchesMathRound_MathGeneric()
+    {
+        // pin: Round without digits rounds a double in double and converts the whole result exactly, without the text round trip
+        // Arrange
+        object?[] inputs = [2.5, -2.5, 0.49999999999999994, 2.4999999999999996, -1.5f, 123.45678901234567];
+        MidpointRounding[] modes = [MidpointRounding.ToEven, MidpointRounding.AwayFromZero, MidpointRounding.ToZero, MidpointRounding.ToNegativeInfinity, MidpointRounding.ToPositiveInfinity];
+
+        foreach (var input in inputs)
+        {
+            foreach (var mode in modes)
+            {
+                // Act
+                var expected = Math.Round(Convert.ToDouble(input), mode);
+                var result = input.Round<long>(null, mode);
+                var decimalResult = input.Round<decimal?>(null, mode);
+
+                // Assert
+                Assert.Equal((long)expected, result);
+                Assert.Equal((decimal)expected, decimalResult);
+            }
+        }
     }
 
     #endregion
@@ -691,6 +1056,19 @@ public partial class YANMathTest
         Assert.Equal(0.0, result);
     }
 
+    [Fact]
+    public void Pow_DecimalTargetNegativeExponent_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = 3;
+
+        // Act
+        var result = input.Pow<decimal>(-1);
+
+        // Assert
+        Assert.Equal(1m / 3m, result);
+    }
+
     #endregion
 
     #region Abs
@@ -758,6 +1136,24 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(0.0, result);
+    }
+
+    [Fact]
+    public void Abs_IntMinValueObject_ReturnsDefault_MathGeneric()
+    {
+        // pin: the 8.3.3 overflow result (default), which the exact object path keeps
+        // Arrange
+        object? input = int.MinValue;
+
+        // Act
+        var result = input.Abs<int>();
+        var nullableResult = input.Abs<int?>();
+        var longResult = input.Abs<long>();
+
+        // Assert
+        Assert.Equal(0, result);
+        Assert.Null(nullableResult);
+        Assert.Equal(2147483648L, longResult);
     }
 
     #endregion
@@ -1123,7 +1519,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(3.0, result.Value, 15);
     }
 
     [Fact]
@@ -1136,7 +1533,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(-3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(-3.0, result.Value, 15);
     }
 
     [Fact]
@@ -1149,7 +1547,8 @@ public partial class YANMathTest
         double? result = input.Cbrt<double>();
 
         // Assert
-        Assert.Equal(3.0, result);
+        Assert.NotNull(result);
+        Assert.Equal(3.0, result.Value, 15);
     }
 
     #endregion
@@ -1430,6 +1829,19 @@ public partial class YANMathTest
 
         // Assert
         Assert.Equal(-1.0, result);
+    }
+
+    [Fact]
+    public void Log2_PowerOfTwoObject_IsExact_MathGeneric()
+    {
+        // Arrange
+        object? input = 2147483648L;
+
+        // Act
+        var result = input.Log2<double>();
+
+        // Assert
+        Assert.Equal(31.0, result);
     }
 
     #endregion

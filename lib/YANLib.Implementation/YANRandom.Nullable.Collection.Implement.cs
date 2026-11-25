@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using static System.Linq.Enumerable;
+﻿using static System.Linq.Enumerable;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANRandom
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IEnumerable<T?> GenerateRandomsImplement<T>(object? size = null)
     {
         var n = size.ParseImplement<uint>().ParseImplement<int>();

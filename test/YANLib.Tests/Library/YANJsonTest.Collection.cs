@@ -470,4 +470,26 @@ public partial class YANJsonTest
     }
 
     #endregion
+
+    #region Order
+
+    // 8.3.3 switched to PLINQ without AsOrdered for 1,000+ items, so large results came back scrambled. Against that code this
+    // regression test fails only statistically (PLINQ does not guarantee a different order), on the current code it is exact.
+    [Fact]
+    public void SerializesAndDeserializes_LargeCollection_PreservesInputOrder_Collection()
+    {
+        // Arrange
+        var input = Enumerable.Range(0, 5_000).Select(static x => (object?)new { Id = x }).ToList();
+
+        // Act
+        var json = input.Serializes()?.ToList();
+        var ids = json?.Deserializes<JsonElement>()?.Select(static x => x.GetProperty("id").GetInt32()).ToList();
+
+        // Assert
+        Assert.NotNull(json);
+        Assert.Equal(Enumerable.Range(0, 5_000).Select(static x => $"{{\"id\":{x}}}"), json);
+        Assert.Equal(Enumerable.Range(0, 5_000), ids);
+    }
+
+    #endregion
 }

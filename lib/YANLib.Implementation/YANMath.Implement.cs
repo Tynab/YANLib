@@ -1,121 +1,123 @@
-﻿using System.Diagnostics;
-using static System.MidpointRounding;
+﻿using static System.MidpointRounding;
 
 namespace YANLib.Implementation;
 
 internal static partial class YANMath
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? MinImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Min(x => x.ParseImplement<T?>());
+    internal static T? MinImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : MinMax(input, false);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? MinImplement<T>(this System.Collections.IEnumerable? input) => input is null ? default : input.Cast<object?>().MinImplement<T?>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? MaxImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Max(x => x.ParseImplement<T?>());
+    internal static T? MaxImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : MinMax(input, true);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? MaxImplement<T>(this System.Collections.IEnumerable? input) => input is null ? default : input.Cast<object?>().MaxImplement<T?>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? AverageImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : input.Where(static x => x is not null).Average(x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? AverageImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : AverageNumber(input);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? AverageImplement<T>(this System.Collections.IEnumerable? input) => input is null ? default : input.Cast<object?>().AverageImplement<T?>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? SumImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : input.Sum(static x => x.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? SumImplement<T>(this IEnumerable<T?>? input) => input.IsNullEmptyImplement() ? default : SumNumber(input);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? SumImplement<T>(this System.Collections.IEnumerable? input) => input is null ? default : input.Cast<object?>().SumImplement<T?>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? TruncateImplement<T>(this T? input) => input is null ? input : Math.Truncate(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? TruncateImplement<T>(this T? input) => Exact(input, Math.Truncate, decimal.Truncate, false);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? CeilingImplement<T>(this T? input) => input is null ? input : Math.Ceiling(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? CeilingImplement<T>(this T? input) => Exact(input, Math.Ceiling, decimal.Ceiling, false);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? FloorImplement<T>(this T? input) => input is null ? input : Math.Floor(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? FloorImplement<T>(this T? input) => Exact(input, Math.Floor, decimal.Floor, false);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static T? RoundImplement<T>(this T? input, object? digits = null, MidpointRounding mode = AwayFromZero)
-        => input is null ? input : digits is null ? Math.Round(input.ParseImplement<double>(), mode).ParseImplement<T?>() : Math.Round(input.ParseImplement<double>(), digits.ParseImplement<int>(), mode).ParseImplement<T?>();
+    {
+        if (input is null)
+        {
+            return input;
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? SqrtImplement<T>(this T? input) => input is null ? input : Math.Sqrt(input.ParseImplement<double>()).ParseImplement<T?>();
+        var kind = KindOf<T>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? PowImplement<T>(this T? input, object? power) => input is null || power is null ? default : Math.Pow(input.ParseImplement<double>(), power.ParseImplement<double>()).ParseImplement<T?>();
+        if (kind == NumberKind.Other)
+        {
+            return ((object?)input).RoundImplement<T>(digits, mode);
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? AbsImplement<T>(this T? input) => input is null ? input : Math.Abs(input.ParseImplement<double>()).ParseImplement<T?>();
+        var places = ParseDigits(digits);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? SinImplement<T>(this T? input) => input is null ? input : Math.Sin(input.ParseImplement<double>()).ParseImplement<T?>();
+        if (IsBinaryFloatingPoint(kind))
+        {
+            return FromDouble<T>(RoundDouble(ToDouble(input), places, mode));
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? CosImplement<T>(this T? input) => input is null ? input : Math.Cos(input.ParseImplement<double>()).ParseImplement<T?>();
+        if (!IsValidRound(places, mode))
+        {
+            // Math.Round throws the ArgumentOutOfRangeException or ArgumentException that 8.3.3 threw for every type
+            _ = RoundDouble(0, places, mode);
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? TanImplement<T>(this T? input) => input is null ? input : Math.Tan(input.ParseImplement<double>()).ParseImplement<T?>();
+        // an integer is already rounded to any number of digits
+        return kind == NumberKind.Decimal ? As<decimal, T>(Normalize(RoundDecimal(As<T, decimal>(input), places, mode))) : input;
+    }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? AsinImplement<T>(this T? input) => input is null ? input : Math.Asin(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? SqrtImplement<T>(this T? input) => Unary(input, Math.Sqrt);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? AcosImplement<T>(this T? input) => input is null ? input : Math.Acos(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? PowImplement<T>(this T? input, object? power)
+    {
+        if (input is null || power is null)
+        {
+            return default;
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? AtanImplement<T>(this T? input) => input is null ? input : Math.Atan(input.ParseImplement<double>()).ParseImplement<T?>();
+        var kind = KindOf<T>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? CbrtImplement<T>(this T? input) => input is null ? input : Math.Cbrt(input.ParseImplement<double>()).ParseImplement<T?>();
+        if (kind == NumberKind.Other)
+        {
+            return ((object?)input).PowImplement<T>(power);
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? ExpImplement<T>(this T? input) => input is null ? input : Math.Exp(input.ParseImplement<double>()).ParseImplement<T?>();
+        var exponent = power.ParseImplement<double>();
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? Exp2Implement<T>(this T? input) => input is null ? input : Math.Pow(2, input.ParseImplement<double>()).ParseImplement<T?>();
+        if (IsBinaryFloatingPoint(kind))
+        {
+            return FromDouble<T>(Math.Pow(ToDouble(input), exponent));
+        }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
+        if (IsInteger(kind))
+        {
+            return TryPowInteger(ToInt128(input), exponent, out var result) ? TryFromInt128(result, out T value) ? value : default : PowDouble<T>(input, exponent);
+        }
+
+        return TryPowDecimal(As<T, decimal>(input), exponent, out var number) ? As<decimal, T>(Normalize(number)) : PowDouble<T>(input, exponent);
+    }
+
+    internal static T? AbsImplement<T>(this T? input) => Exact(input, Math.Abs, Math.Abs, true);
+
+    internal static T? SinImplement<T>(this T? input) => Unary(input, Math.Sin);
+
+    internal static T? CosImplement<T>(this T? input) => Unary(input, Math.Cos);
+
+    internal static T? TanImplement<T>(this T? input) => Unary(input, Math.Tan);
+
+    internal static T? AsinImplement<T>(this T? input) => Unary(input, Math.Asin);
+
+    internal static T? AcosImplement<T>(this T? input) => Unary(input, Math.Acos);
+
+    internal static T? AtanImplement<T>(this T? input) => Unary(input, Math.Atan);
+
+    internal static T? CbrtImplement<T>(this T? input) => Unary(input, Math.Cbrt);
+
+    internal static T? ExpImplement<T>(this T? input) => Unary(input, Math.Exp);
+
+    internal static T? Exp2Implement<T>(this T? input) => Unary(input, static x => Math.Pow(2, x));
+
     internal static T? LogImplement<T>(this T? input, object? baseValue = null)
-        => input is null ? input : baseValue is null ? Math.Log(input.ParseImplement<double>()).ParseImplement<T?>() : Math.Log(input.ParseImplement<double>(), baseValue.ParseImplement<double>()).ParseImplement<T?>();
+        => input is null ? input
+        : !IsBinaryFloatingPoint(KindOf<T>()) ? ((object?)input).LogImplement<T>(baseValue)
+        : baseValue is null ? FromDouble<T>(Math.Log(ToDouble(input)))
+        : FromDouble<T>(Math.Log(ToDouble(input), baseValue.ParseImplement<double>()));
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? Log10Implement<T>(this T? input) => input is null ? input : Math.Log10(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? Log10Implement<T>(this T? input) => Unary(input, Math.Log10);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? Log2Implement<T>(this T? input) => input is null ? input : Math.Log(input.ParseImplement<double>(), 2).ParseImplement<T?>();
+    internal static T? Log2Implement<T>(this T? input) => Unary(input, Math.Log2);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? ILogBImplement<T>(this T? input) => input is null ? input : Math.ILogB(input.ParseImplement<double>()).ParseImplement<T?>();
+    internal static T? ILogBImplement<T>(this T? input)
+        => input is null ? input : IsBinaryFloatingPoint(KindOf<T>()) ? FromDouble<T>(Math.ILogB(ToDouble(input))) : ((object?)input).ILogBImplement<T>();
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using static System.Threading.Tasks.Task;
 
 namespace YANLib.Implementation;
@@ -8,55 +7,98 @@ internal static partial class YANTask
 {
     #region Private
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
+    // Every cancellation throws OperationCanceledException, as ChannelReader.ReadAllAsync does: a token that is already
+    // cancelled when the enumeration starts (also for null or empty tasks), cancelled while waiting for a task, or
+    // cancelled while the consumer handles an item (checked when the consumer asks for the next one, before the taken
+    // limit ends the enumeration). [EnumeratorCancellation] combines the method's token with a token passed through
+    // WithCancellation, so both are observed. Exceptions thrown by the predicate propagate to the consumer.
     private static async IAsyncEnumerable<T> AnyWithConditions<T>(IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await Yield();
 
-        if (tasks.IsNullEmptyImplement())
+        cancellationToken.ThrowIfCancellationRequested();
+        ArgumentNullException.ThrowIfNull(predicate);
+
+        if (tasks is null)
         {
             yield break;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
+        var pending = Materialize(tasks);
 
-        var pending = new HashSet<Task<T>>(tasks);
-        var emitted = 0;
-        var maxToEmit = taken.IsDefaultImplement() ? pending.Count.ParseImplement<uint>() : taken;
-
-        while (pending.Count > 0 && emitted < maxToEmit)
+        if (pending.Count is 0)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            yield break;
+        }
 
-            var completed = await WhenAny(pending).ConfigureAwait(false);
+        var maxToEmit = taken.IsDefaultImplement() ? (uint)pending.Count : taken;
+        var emitted = 0u;
+        List<Task<T>>? incomplete = null;
 
-            _ = pending.Remove(completed);
-
-            T result;
-
-            try
+        // The tasks are checked in collection order, without registering anything: each task that is complete when it is
+        // reached (also one that completed while the consumer handled an earlier result) is yielded at once. The others are
+        // registered afterwards, in collection order, so those that have completed by then come first, in that order.
+        foreach (var task in pending)
+        {
+            if (!task.IsCompleted)
             {
-                result = await completed.ConfigureAwait(false);
-            }
-            catch
-            {
+                (incomplete ??= []).Add(task);
+
                 continue;
             }
 
-            if (predicate(result))
-            {
-                emitted++;
+            cancellationToken.ThrowIfCancellationRequested();
 
-                yield return result;
+            if (IsSuccessful(task) && predicate(task.Result))
+            {
+                yield return task.Result;
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (++emitted >= maxToEmit)
+                {
+                    yield break;
+                }
             }
+        }
+
+        if (incomplete is null)
+        {
+            yield break;
+        }
+
+        using var stop = new CancellationTokenSource();
+
+        try
+        {
+            var completions = InCompletionOrder(incomplete, stop.Token);
+
+            for (var remaining = incomplete.Count; remaining > 0; remaining--)
+            {
+                var completed = await completions.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+                if (IsSuccessful(completed) && predicate(completed.Result))
+                {
+                    yield return completed.Result;
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (++emitted >= maxToEmit)
+                    {
+                        yield break;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            // Removes the continuations from the tasks that are still running, however the enumeration ends.
+            stop.Cancel();
         }
     }
 
     #endregion
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static async IAsyncEnumerable<T> AsyncEnumerableEmptyImplement<T>()
     {
         await Yield();
@@ -64,13 +106,9 @@ internal static partial class YANTask
         yield break;
     }
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IAsyncEnumerable<T> WaitAnyWithConditionsImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
-        => cancellationToken.IsCancellationRequested ? AsyncEnumerableEmptyImplement<T>() : AnyWithConditions(tasks, predicate, taken, cancellationToken);
+        => AnyWithConditions(tasks, predicate, taken, cancellationToken);
 
-    [DebuggerHidden]
-    [DebuggerStepThrough]
     internal static IAsyncEnumerable<T> WhenAnyWithConditionsImplement<T>(this IEnumerable<Task<T>>? tasks, Func<T, bool> predicate, uint taken = 0, CancellationToken cancellationToken = default)
-        => cancellationToken.IsCancellationRequested ? AsyncEnumerableEmptyImplement<T>() : AnyWithConditions(tasks, predicate, taken, cancellationToken);
+        => AnyWithConditions(tasks, predicate, taken, cancellationToken);
 }

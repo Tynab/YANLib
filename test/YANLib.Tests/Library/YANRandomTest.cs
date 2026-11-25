@@ -79,6 +79,38 @@ public partial class YANRandomTest
         Assert.Equal(0m, result);
     }
 
+    [Fact]
+    public void NextDecimal_NoParameters_IsUniformInUnitInterval_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(42);
+        const int draws = 100_000;
+        var upperFifth = 0;
+        var belowOneTenth = 0;
+
+        // Act
+        for (var i = 0; i < draws; i++)
+        {
+            var value = random.NextDecimal();
+
+            Assert.True(value is >= 0m and < 1m);
+
+            if (value >= 0.8m)
+            {
+                upperFifth++;
+            }
+
+            if (value < 0.1m)
+            {
+                belowOneTenth++;
+            }
+        }
+
+        // Assert
+        Assert.InRange(upperFifth, draws * 18 / 100, draws * 22 / 100);
+        Assert.InRange(belowOneTenth, draws * 8 / 100, draws * 12 / 100);
+    }
+
     #endregion
 
     #region NextBool
@@ -537,6 +569,20 @@ public partial class YANRandomTest
         Assert.Equal(0, result);
     }
 
+    [Fact]
+    public void NextNint_NoParameters_CoversNegativeAndPositiveValues_RandomExtension()
+    {
+        // Arrange (fixed seed: deterministic; 8.3.3 crashed the process here with a stack overflow)
+        var random = new Random(20251113);
+
+        // Act
+        var results = Enumerable.Range(0, 10_000).Select(_ => random.NextNint()).ToList();
+
+        // Assert (each half of the range is expected about 5,000 times)
+        Assert.True(results.Count(static x => x < 0) > 4_000);
+        Assert.True(results.Count(static x => x > 0) > 4_000);
+    }
+
     #endregion
 
     #region NextNuint
@@ -582,6 +628,36 @@ public partial class YANRandomTest
 
         // Assert
         Assert.Equal((nuint)0, result);
+    }
+
+    [Fact]
+    public void NextNuint_NoParameters_CoversWholeRange_RandomExtension()
+    {
+        // Arrange (fixed seed: deterministic)
+        var random = new Random(20251113);
+        var upperHalf = nuint.MaxValue / 2;
+
+        // Act
+        var results = Enumerable.Range(0, 10_000).Select(_ => random.NextNuint()).ToList();
+
+        // Assert (8.3.3 returned 0 for about half of the calls and never a value in the upper half)
+        Assert.True(results.Count(x => x > upperHalf) > 4_000);
+        Assert.True(results.Count(static x => x == 0) < 10);
+    }
+
+    [Fact]
+    public void NextNuint_WithMinMax_CoversWholeInterval_RandomExtension()
+    {
+        // Arrange (fixed seed: deterministic)
+        var random = new Random(20251113);
+        nuint min = 10;
+        nuint max = 20;
+
+        // Act
+        var results = Enumerable.Range(0, 1_000).Select(_ => random.NextNuint(min, max)).ToHashSet();
+
+        // Assert (max is exclusive, as for the other NextXxx methods)
+        Assert.Equal(Enumerable.Range(10, 10).Select(static x => (nuint)x).ToHashSet(), results);
     }
 
     #endregion
@@ -759,6 +835,81 @@ public partial class YANRandomTest
         Assert.True(results.Count > 1);
     }
 
+    [Fact]
+    public void NextChar_Range_ReturnsEveryCharacterOfTheHalfOpenRange_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(20261124);
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 1_000; i++)
+        {
+            _ = results.Add(random.NextChar('a', 'f'));
+        }
+
+        // Assert
+        Assert.Equal(['a', 'b', 'c', 'd', 'e'], results.Order());
+    }
+
+    [Fact]
+    public void NextChar_RangeAtCharMaxValue_ExcludesMax_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(42);
+        var min = (char)(char.MaxValue - 2);
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 1_000; i++)
+        {
+            _ = results.Add(random.NextChar(min, char.MaxValue));
+        }
+
+        // Assert
+        Assert.Equal([min, (char)(char.MaxValue - 1)], results.Order());
+    }
+
+    [Fact]
+    public void NextChar_Range_Seeded_DrawsLikeNext_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(7);
+        var reference = new Random(7);
+
+        // Act & Assert
+        for (var i = 0; i < 100; i++)
+        {
+            Assert.Equal((char)reference.Next('0', 'z'), random.NextChar('0', 'z'));
+        }
+    }
+
+    [Fact]
+    public void NextChar_MinEqualsMax_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var result = random.NextChar('q', 'q');
+
+        // Assert
+        Assert.Equal('q', result);
+    }
+
+    [Fact]
+    public void NextChar_MinGreaterThanMax_ReturnsDefault_RandomExtension()
+    {
+        // Arrange
+        var random = new Random();
+
+        // Act
+        var result = random.NextChar('z', 'a');
+
+        // Assert
+        Assert.Equal(default, result);
+    }
+
     #endregion
 
     #region NextString
@@ -790,6 +941,62 @@ public partial class YANRandomTest
         // Assert
         Assert.Equal(size, result.Length);
         Assert.True(result.All(static c => char.IsLower(c) && char.IsLetter(c)));
+    }
+
+    [Fact]
+    public void NextString_PassedInstance_DrawsOnlyTheLength_RandomExtension()
+    {
+        // pin: the documented behaviour (see YANRandom.md, Thread Safety), as in 8.3.3: the characters come from Random.Shared, and the
+        // passed instance only draws the length when size is null; a NextString that draws its characters from it would change this test
+        // Arrange
+        var sized = new CountingRandom();
+        var unsized = new CountingRandom();
+
+        // Act
+        var fixedLength = sized.NextString(8);
+        var randomLength = unsized.NextString();
+
+        // Assert
+        Assert.Equal(8, fixedLength.Length);
+        Assert.Equal(0, sized.Draws);
+        Assert.Equal(254, randomLength.Length);
+        Assert.Equal(1, unsized.Draws);
+        Assert.True(randomLength.All(static c => c is >= 'a' and <= 'z'));
+    }
+
+    /// <summary>A <see cref="Random"/> that counts its draws; each draw is the largest value below the exclusive upper bound.</summary>
+    private sealed class CountingRandom : Random
+    {
+        public int Draws { get; private set; }
+
+        public override int Next() => Count(int.MaxValue - 1);
+
+        public override int Next(int maxValue) => Count(Math.Max(0, maxValue - 1));
+
+        public override int Next(int minValue, int maxValue) => Count(Math.Max(minValue, maxValue - 1));
+
+        public override long NextInt64() => Count(long.MaxValue - 1);
+
+        public override long NextInt64(long maxValue) => Count(Math.Max(0, maxValue - 1));
+
+        public override long NextInt64(long minValue, long maxValue) => Count(Math.Max(minValue, maxValue - 1));
+
+        public override double NextDouble() => Count(Math.BitDecrement(1.0));
+
+        public override float NextSingle() => Count(MathF.BitDecrement(1f));
+
+        public override void NextBytes(byte[] buffer) => Draws++;
+
+        public override void NextBytes(Span<byte> buffer) => Draws++;
+
+        protected override double Sample() => Count(Math.BitDecrement(1.0));
+
+        private T Count<T>(T value)
+        {
+            Draws++;
+
+            return value;
+        }
     }
 
     #endregion
@@ -1042,6 +1249,368 @@ public partial class YANRandomTest
 
         // Assert
         Assert.True(results.Count >= 3);
+    }
+
+    #endregion
+
+    #region GenerateRandom with typed bounds
+
+    [Fact]
+    public void GenerateRandom_TypedIntBounds_ReturnsValuesInRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<int>();
+
+        // Act
+        for (var i = 0; i < 2_000; i++)
+        {
+            var result = YANRandom.GenerateRandom<int>(1, 100);
+
+            Assert.InRange(result, 1, 99);
+            _ = results.Add(result);
+        }
+
+        // Assert
+        Assert.True(results.Count > 50);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedDoubleBounds_ReturnsValuesInRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<double>();
+
+        // Act
+        for (var i = 0; i < 100; i++)
+        {
+            var result = YANRandom.GenerateRandom(-10.5, 10.5);
+
+            Assert.True(result is >= -10.5 and < 10.5);
+            _ = results.Add(result);
+        }
+
+        // Assert
+        Assert.True(results.Count > 2);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedDateTimeBounds_ReturnsValueInRangeWithKindOfMin_RandomGeneric()
+    {
+        // Arrange
+        var min = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var max = new DateTime(2020, 1, 2, 0, 0, 0, DateTimeKind.Utc);
+        var results = new HashSet<DateTime>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            var result = YANRandom.GenerateRandom(min, max);
+
+            Assert.True(result >= min && result < max);
+            Assert.Equal(DateTimeKind.Utc, result.Kind);
+            _ = results.Add(result);
+        }
+
+        // Assert
+        Assert.True(results.Count > 2);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedCharBounds_ReturnsCharsInRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom('a', 'c'));
+        }
+
+        // Assert
+        Assert.Equal(['a', 'b'], results.Order());
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedBoundsMinGreaterThanMax_ReturnsDefault_RandomGeneric()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom(5, 1);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void GenerateRandom_TypedBoolPair_ReturnsEitherValue_RandomGeneric()
+    {
+        // pin: a type without a range still picks one of the two values
+        // Arrange
+        var results = new HashSet<bool>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom(true, false));
+        }
+
+        // Assert
+        Assert.Equal(2, results.Count);
+    }
+
+    [Fact]
+    public void GenerateRandom_NamedGuidBounds_ReturnsOneOfThem_RandomGeneric()
+    {
+        // compiled against 8.3.3, both two-bound calls bound to GenerateRandom<T>(object?, object?) and returned Guid.Empty; pin: a call with
+        // one named bound still binds there
+        // Arrange
+        var first = new Guid("11111111-1111-1111-1111-111111111111");
+        var second = new Guid("22222222-2222-2222-2222-222222222222");
+        Guid[] bounds = [first, second];
+
+        // Act & Assert
+        for (var i = 0; i < 50; i++)
+        {
+            Assert.Contains(YANRandom.GenerateRandom<Guid>(min: first, max: second), bounds);
+            Assert.Contains(YANRandom.GenerateRandom<Guid>(first, max: second), bounds);
+        }
+
+        Assert.Equal(Guid.Empty, YANRandom.GenerateRandom<Guid>(max: second));
+    }
+
+    [Fact]
+    public void GenerateRandom_TwoValuesAsArray_ReturnsOneOfThem_RandomParams()
+    {
+        // pin: an explicit array still binds to params T[] after GenerateRandom<T>(T min, T max) was added
+        // Act & Assert
+        for (var i = 0; i < 200; i++)
+        {
+            Assert.Contains(YANRandom.GenerateRandom(new[] { 1, 100 }), new[] { 1, 100 });
+        }
+    }
+
+    #endregion
+
+    #region Half-open ranges
+
+    [Fact]
+    public void NextUlong_AdjacentBounds_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.Equal(5UL, random.NextUlong(5UL, 6UL));
+        }
+    }
+
+    [Fact]
+    public void NextUlong_EqualBounds_ReturnsMin_RandomExtension()
+    {
+        // pin: equal bounds return min, as before the half-open fix
+        // Act
+        var result = new Random(1).NextUlong(7UL, 7UL);
+
+        // Assert
+        Assert.Equal(7UL, result);
+    }
+
+    [Fact]
+    public void NextDateTime_AdjacentTicks_ReturnsMin_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var min = new DateTime(2024, 1, 1, 0, 0, 0, 500, DateTimeKind.Utc);
+        var max = min.AddTicks(1);
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.Equal(min, random.NextDateTime(min, max));
+        }
+    }
+
+    [Fact]
+    public void NextDateTime_WithMinMax_KeepsSubSecondTicksAndKind_RandomExtension()
+    {
+        // pin: already correct before area C (ticks, and the parse fast path keeps Kind); guards the tick-based range
+        // Arrange
+        var random = new Random(1);
+        var min = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var max = min.AddSeconds(1);
+        var subSecond = false;
+
+        // Act
+        for (var i = 0; i < 100; i++)
+        {
+            var result = random.NextDateTime(min, max);
+
+            // Assert
+            Assert.Equal(DateTimeKind.Utc, result.Kind);
+            Assert.True(result >= min && result < max);
+            subSecond |= result.Ticks % TimeSpan.TicksPerSecond != 0;
+        }
+
+        Assert.True(subSecond);
+    }
+
+    [Fact]
+    public void NextSingle_DrawJustBelowOne_StaysBelowMax_RandomExtension()
+    {
+        // Act
+        var result = new UpperEdgeRandom().NextSingle(1f, 2f);
+
+        // Assert
+        Assert.Equal(MathF.BitDecrement(2f), result);
+    }
+
+    [Fact]
+    public void NextDouble_DrawJustBelowOne_StaysBelowMax_RandomExtension()
+    {
+        // Act
+        var result = new UpperEdgeRandom().NextDouble(1.0, 2.0);
+
+        // Assert
+        Assert.Equal(Math.BitDecrement(2.0), result);
+    }
+
+    [Fact]
+    public void NextDecimal_DrawJustBelowOne_StaysBelowMax_RandomExtension()
+    {
+        // Arrange
+        var min = 10_000_000_000_000_000_000_000_000_000m;
+        var max = min + 1;
+
+        // Act
+        var result = new UpperEdgeRandom().NextDecimal(min, max);
+
+        // Assert
+        Assert.True(result >= min && result < max);
+    }
+
+    [Fact]
+    public void NextDecimal_RoundingToMax_StaysBelowMax_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var min = 10_000_000_000_000_000_000_000_000_000m;
+        var max = min + 1;
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.Equal(min, random.NextDecimal(min, max));
+        }
+    }
+
+    [Fact]
+    public void NextDouble_FullRange_ReturnsFiniteValues_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+
+        // Act & Assert
+        for (var i = 0; i < 1_000; i++)
+        {
+            Assert.True(double.IsFinite(random.NextDouble(double.MinValue, double.MaxValue)));
+        }
+    }
+
+    [Fact]
+    public void NextDecimal_FullRange_DoesNotThrow_RandomExtension()
+    {
+        // Arrange
+        var random = new Random(1);
+        var negative = false;
+        var positive = false;
+
+        // Act
+        for (var i = 0; i < 1_000; i++)
+        {
+            var result = random.NextDecimal(decimal.MinValue, decimal.MaxValue);
+
+            negative |= result < 0;
+            positive |= result > 0;
+        }
+
+        // Assert
+        Assert.True(negative && positive);
+    }
+
+    [Fact]
+    public void NextBoundedFloatingPoint_EqualBounds_ReturnBound_RandomExtension()
+    {
+        // pin: equal bounds return the bound, as before the half-open clamp
+        // Arrange
+        var random = new Random(1);
+        var date = new DateTime(2024, 1, 1, 0, 0, 0, 123, DateTimeKind.Local);
+
+        // Act & Assert
+        Assert.Equal(1.5, random.NextDouble(1.5, 1.5));
+        Assert.Equal(1.5f, random.NextSingle(1.5f, 1.5f));
+        Assert.Equal(2m, random.NextDecimal(2m, 2m));
+        Assert.Equal(date, random.NextDateTime(date, date));
+    }
+
+    [Fact]
+    public void GenerateRandom_CharObjectBounds_HonoursRange_RandomGeneric()
+    {
+        // Arrange
+        var results = new HashSet<char>();
+
+        // Act
+        for (var i = 0; i < 200; i++)
+        {
+            _ = results.Add(YANRandom.GenerateRandom<char>((object)'a', (object)'c'));
+        }
+
+        // Assert
+        Assert.Equal(['a', 'b'], results.Order());
+    }
+
+    [Fact]
+    public void GenerateRandom_CharWithoutBounds_ReturnsLowercaseLetter_RandomGeneric()
+    {
+        // Act
+        var result = YANRandom.GenerateRandom<char>(null, null);
+
+        // Assert
+        Assert.InRange(result, 'a', 'z');
+    }
+
+    [Fact]
+    public void NextBoolAndNextChar_Seeded_KeepTheirSequences_RandomExtension()
+    {
+        // pin: the direct NextBool and NextChar keep the seeded sequences of the boxing versions
+        // Arrange
+        var random = new Random(7);
+        var reference = new Random(7);
+        const string letters = "abcdefghijklmnopqrstuvwxyz";
+
+        // Act & Assert
+        for (var i = 0; i < 100; i++)
+        {
+            Assert.Equal(reference.Next(0, 2) == 1, random.NextBool());
+            Assert.Equal(letters[reference.Next(0, letters.Length)], random.NextChar());
+        }
+    }
+
+    /// <summary>A <see cref="Random"/> whose draws are the largest values below the exclusive upper bounds, and whose random bytes are all 0xFF.</summary>
+    private sealed class UpperEdgeRandom : Random
+    {
+        public override void NextBytes(byte[] buffer) => Array.Fill(buffer, byte.MaxValue);
+
+        public override void NextBytes(Span<byte> buffer) => buffer.Fill(byte.MaxValue);
+
+        public override double NextDouble() => Math.BitDecrement(1.0);
+
+        public override float NextSingle() => MathF.BitDecrement(1f);
+
+        public override long NextInt64(long maxValue) => maxValue - 1;
+
+        public override long NextInt64(long minValue, long maxValue) => minValue == maxValue ? minValue : maxValue - 1;
     }
 
     #endregion

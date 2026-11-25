@@ -21,7 +21,7 @@ public static partial class YANJson
     /// <returns>A collection of JSON string representations of the objects, or <c>null</c> if the input is <c>null</c> or empty.</returns>
     /// <remarks>
     /// When no options are provided, this method uses a default configuration with camel case property naming.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -35,7 +35,7 @@ public static partial class YANJson
     /// <remarks>
     /// This method provides a convenient way to serialize an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses default options with camel case property naming.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -50,7 +50,7 @@ public static partial class YANJson
     /// <remarks>
     /// This method first casts the non-generic collection to a generic collection of objects before serializing.
     /// When no options are provided, this method uses a default configuration with camel case property naming.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -65,7 +65,7 @@ public static partial class YANJson
     /// <remarks>
     /// When no options are provided, this method uses a default configuration with camel case property naming.
     /// This method is more efficient than serializing to strings when the results will be used with APIs that accept byte arrays.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -80,7 +80,7 @@ public static partial class YANJson
     /// This method provides a convenient way to serialize an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses default options with camel case property naming.
     /// This method is more efficient than serializing to strings when the results will be used with APIs that accept byte arrays.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -96,7 +96,7 @@ public static partial class YANJson
     /// This method first casts the non-generic collection to a generic collection of objects before serializing.
     /// When no options are provided, this method uses a default configuration with camel case property naming.
     /// This method is more efficient than serializing to strings when the results will be used with APIs that accept byte arrays.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -112,7 +112,7 @@ public static partial class YANJson
     /// <remarks>
     /// When no options are provided, this method uses a default configuration with case-insensitive property matching.
     /// If deserialization of an element fails due to invalid JSON or type incompatibility, that element will be <c>default(T)</c> in the result.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -128,7 +128,7 @@ public static partial class YANJson
     /// This method provides a convenient way to deserialize an array of JSON strings without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method uses default options with case-insensitive property matching.
     /// If deserialization of an element fails due to invalid JSON or type incompatibility, that element will be <c>default(T)</c> in the result.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -145,7 +145,7 @@ public static partial class YANJson
     /// When no options are provided, this method uses a default configuration with case-insensitive property matching.
     /// If deserialization of an element fails due to invalid JSON or type incompatibility, that element will be <c>default(T)</c> in the result.
     /// This method is more efficient than deserializing from strings when working with APIs that provide byte arrays.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -162,7 +162,7 @@ public static partial class YANJson
     /// This method uses default options with case-insensitive property matching.
     /// If deserialization of an element fails due to invalid JSON or type incompatibility, that element will be <c>default(T)</c> in the result.
     /// This method is more efficient than deserializing from strings when working with APIs that provide byte arrays.
-    /// For large collections (1000+ elements), this method will use parallel processing for better performance.
+    /// The result is lazily evaluated and preserves input order.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]

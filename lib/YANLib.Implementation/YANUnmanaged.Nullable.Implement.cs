@@ -1,58 +1,47 @@
-﻿using System.Diagnostics;
-using static System.Convert;
-using static System.Nullable;
-
+﻿
 namespace YANLib.Implementation;
 
 internal static partial class YANUnmanaged
 {
-    [DebuggerHidden]
-    [DebuggerStepThrough]
-    internal static T? ParseImplement<T>(this object? input)
-    {
-        return input is null
-            ? default
-            : typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>) && GetUnderlyingType(typeof(T)) is Type enumUnderlying && enumUnderlying.IsEnum
-            ? Enum.TryParse(enumUnderlying, input.ToString(), true, out var enumResult) ? (T?)enumResult : default
-            : typeof(T) switch
-            {
-                Type stringType when stringType == typeof(string) => (T?)(object?)input.ToString(),
-                Type dateTimeType when dateTimeType == typeof(DateTime) => (T)(object)input.ToString().ParseDateTime(),
-                Type nullableDateTimeType when nullableDateTimeType == typeof(DateTime?) => (T?)(object?)input.ToString().ParseDateTimeNullable(),
-                Type guidType when guidType == typeof(Guid) => (T)(object)input.ToString().ParseGuid(),
-                Type nullableGuidType when nullableGuidType == typeof(Guid?) => (T?)(object?)input.ToString().ParseGuidNullable(),
-                Type timeSpanType when timeSpanType == typeof(TimeSpan) => (T)(object)input.ToString().ParseTimeSpan(),
-                Type nullableTimeSpanType when nullableTimeSpanType == typeof(TimeSpan?) => (T?)(object?)input.ToString().ParseTimeSpanNullable(),
-                Type enumType when enumType.IsEnum && Enum.TryParse(enumType, input.ToString(), true, out var e) => (T)e,
-                _ => GetUnderlyingTypeCached(typeof(T)) is Type underlyingType ? ChangeTypeOrDefault(input, underlyingType) : ChangeTypeOrDefault(input, typeof(T))
-            };
+    internal static T? ParseImplement<T>(this object? input) => input.ParseWithImplement<T>(null);
 
-        static T? ChangeTypeOrDefault(object input, Type targetType)
+    /// <param name="input">The object to parse.</param>
+    /// <param name="provider">The culture for every culture-dependent step; <c>null</c> keeps the 8.3.3 behaviour (current culture).</param>
+    internal static T? ParseWithImplement<T>(this object? input, IFormatProvider? provider)
+    {
+        if (input is null)
         {
-            try
+            return default;
+        }
+
+        // already the requested type: return it unchanged. 8.3.3 sent it through Convert.ChangeType or ToString(), which
+        // turned reference types typed as a base class or interface into null and dropped DateTime milliseconds and Kind.
+        if (input is T value)
+        {
+            return value;
+        }
+
+        return typeof(T) == typeof(string) ? (T?)(object?)input.SafeToString(provider)
+            : typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?) ? input.SafeToString(provider).ParseDateTimeNullable(provider) is T dateTime ? dateTime : default
+            : typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?) ? input.SafeToString(provider).ParseGuidNullable() is T guid ? guid : default
+            : typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(TimeSpan?) ? input.SafeToString(provider).ParseTimeSpanNullable(provider) is T timeSpan ? timeSpan : default
+            : ParseCache<T>.Kind == ParseKind.Enum ? Enum.TryParse(ParseCache<T>.Target, input.SafeToString(provider), true, out var enumValue) && enumValue is T parsedEnum ? parsedEnum : default
+            : ConvertOrDefault(input, provider);
+
+        static T? ConvertOrDefault(object input, IFormatProvider? provider)
+        {
+            // the one-argument overload turns non-string input into text for char targets (5 -> '5', not '\u0005')
+            if (ParseCache<T>.Kind == ParseKind.Char && input is not string)
             {
-                if (targetType == typeof(char) && input is not string)
+                if (input.SafeToString(provider) is not string text)
                 {
-                    input = input.ToString()!;
+                    return default;
                 }
 
-                return (T?)ChangeType(input, targetType);
+                input = text;
             }
-            catch
-            {
-                return typeof(T) == typeof(byte)
-                    || typeof(T) == typeof(sbyte)
-                    || typeof(T) == typeof(short)
-                    || typeof(T) == typeof(ushort)
-                    || typeof(T) == typeof(int)
-                    || typeof(T) == typeof(uint)
-                    || typeof(T) == typeof(long)
-                    || typeof(T) == typeof(ulong)
-                    || typeof(T) == typeof(nint)
-                    || typeof(T) == typeof(nuint)
-                    ? input.ParseImplement<decimal>(default).FloorImplement().ParseImplement<T>()
-                    : default;
-            }
+
+            return TryChangeType(input, ParseCache<T>.Target, ParseCache<T>.Kind, ParseCache<T>.FloorFractions, provider, out var result) && result is T value ? value : default;
         }
     }
 }

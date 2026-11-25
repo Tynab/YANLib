@@ -12,6 +12,7 @@ public partial class IdGenerator
     #region Fields
 
     private long _lastTimestamp = -1;
+    private bool _hasGeneratedId;
     private readonly object _lock = new();
 
     private readonly int _workerIdShift;
@@ -40,9 +41,15 @@ public partial class IdGenerator
     /// </summary>
     /// <param name="workerId">The worker ID. Must be unique within the datacenter and within the valid range.</param>
     /// <param name="datacenterId">The datacenter ID. Must be unique across datacenters and within the valid range.</param>
-    /// <param name="sequence">The initial sequence value.</param>
+    /// <param name="sequence">
+    /// The sequence number of the first ID generated, within the millisecond in which it is generated. Must be between 0 and <see cref="MaxSequence"/>.
+    /// Later IDs in the same millisecond continue from it; each later millisecond starts again at 0.
+    /// </param>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="workerId"/> or <paramref name="datacenterId"/> is outside the valid range.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="sequence"/> is negative or greater than <see cref="MaxSequence"/> (8,191 with the default bit allocation).
     /// </exception>
     /// <remarks>
     /// This constructor uses the default bit allocation (5 bits for worker ID, 5 bits for datacenter ID, 13 bits for sequence).
@@ -55,13 +62,19 @@ public partial class IdGenerator
     /// </summary>
     /// <param name="workerId">The worker ID. Must be unique within the datacenter and within the valid range.</param>
     /// <param name="datacenterId">The datacenter ID. Must be unique across datacenters and within the valid range.</param>
-    /// <param name="sequence">The initial sequence value.</param>
+    /// <param name="sequence">
+    /// The sequence number of the first ID generated, within the millisecond in which it is generated. Must be between 0 and <see cref="MaxSequence"/>.
+    /// Later IDs in the same millisecond continue from it; each later millisecond starts again at 0.
+    /// </param>
     /// <param name="workerIdBits">The number of bits to allocate for the worker ID.</param>
     /// <param name="datacenterIdBits">The number of bits to allocate for the datacenter ID.</param>
     /// <param name="sequenceBits">The number of bits to allocate for the sequence.</param>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="workerId"/> or <paramref name="datacenterId"/> is outside the valid range,
     /// or when the total bits allocated exceeds 23.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="sequence"/> is negative or greater than <see cref="MaxSequence"/> (2^<paramref name="sequenceBits"/> - 1).
     /// </exception>
     /// <remarks>
     /// The worker ID and datacenter ID must be within their respective valid ranges to ensure uniqueness of generated IDs.
@@ -116,6 +129,11 @@ public partial class IdGenerator
             throw new ArgumentException($"Datacenter ID must be between 0 and {MaxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
         }
 
+        if (sequence < 0 || sequence > MaxSequence)
+        {
+            throw new ArgumentOutOfRangeException(nameof(sequence), sequence, $"Sequence must be between 0 and {MaxSequence}, but got {sequence}.");
+        }
+
         WorkerId = workerId;
         DatacenterId = datacenterId;
         Sequence = sequence;
@@ -147,10 +165,16 @@ public partial class IdGenerator
     /// </summary>
     /// <param name="workerId">The worker ID. Must be unique within the datacenter and within the valid range for the selected strategy.</param>
     /// <param name="datacenterId">The datacenter ID. Must be unique across datacenters and within the valid range for the selected strategy.</param>
-    /// <param name="sequence">The initial sequence value.</param>
+    /// <param name="sequence">
+    /// The sequence number of the first ID generated, within the millisecond in which it is generated. Must be between 0 and <see cref="MaxSequence"/>.
+    /// Later IDs in the same millisecond continue from it; each later millisecond starts again at 0.
+    /// </param>
     /// <param name="strategy">The bit allocation strategy to use.</param>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="workerId"/> or <paramref name="datacenterId"/> is outside the valid range for the selected strategy.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="sequence"/> is negative or greater than <see cref="MaxSequence"/> for the selected strategy.
     /// </exception>
     /// <remarks>
     /// This constructor simplifies the creation of an IdGenerator by using predefined bit allocation strategies.
@@ -220,6 +244,11 @@ public partial class IdGenerator
             throw new ArgumentException($"Datacenter ID must be between 0 and {MaxDatacenterId}, but got {datacenterId}.", nameof(datacenterId));
         }
 
+        if (sequence < 0 || sequence > MaxSequence)
+        {
+            throw new ArgumentOutOfRangeException(nameof(sequence), sequence, $"Sequence must be between 0 and {MaxSequence}, but got {sequence}.");
+        }
+
         WorkerId = workerId;
         DatacenterId = datacenterId;
         Sequence = sequence;
@@ -246,10 +275,11 @@ public partial class IdGenerator
     public long DatacenterId { get; }
 
     /// <summary>
-    /// Gets or sets the sequence component of this ID generator.
+    /// Gets the sequence component of the last ID generated (before the first ID: the sequence passed to the constructor).
     /// </summary>
     /// <remarks>
-    /// The sequence is incremented for every ID generated within the same millisecond and is reset when the clock moves forward.
+    /// The first ID uses the sequence passed to the constructor. The sequence is incremented for every further ID generated within the same millisecond
+    /// and is reset to 0 when the clock moves forward.
     /// </remarks>
     public long Sequence { get; private set; }
 
