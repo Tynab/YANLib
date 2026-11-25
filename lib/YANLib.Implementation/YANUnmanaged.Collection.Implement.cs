@@ -23,15 +23,31 @@ internal static partial class YANUnmanaged
             return [];
         }
 
-        var copy = new Dictionary<object, object?>(input);
-        var result = new Dictionary<TKey, TValue?>(copy.Count);
+        // Without onDuplicate, the input is copied under the default comparer, as in 8.3.3: two keys that are equal under object.Equals but kept
+        // apart by the input's comparer (two distinct "1" strings under ReferenceEqualityComparer) throw ArgumentException from that copy. With
+        // onDuplicate, the entries are only snapshotted, in enumeration order and without being re-keyed, so such keys reach onDuplicate.
+        IReadOnlyCollection<KeyValuePair<object, object?>> entries = onDuplicate is null ? new Dictionary<object, object?>(input) : SnapshotEntries(input);
+        var result = new Dictionary<TKey, TValue?>(entries.Count);
 
-        foreach (var pair in copy)
+        foreach (var pair in entries)
         {
             YANEnumerable.AddOrResolve(result, pair.Key is TKey k ? k : pair.Key.ParseImplement<TKey>(), pair.Value is TValue v ? v : pair.Value.ParseImplement<TValue?>(), onDuplicate);
         }
 
         return result;
+    }
+
+    /// <summary>The entries of <paramref name="input"/>, in its enumeration order, without re-keying them under another comparer.</summary>
+    private static List<KeyValuePair<object, object?>> SnapshotEntries(IDictionary<object, object?> input)
+    {
+        var entries = new List<KeyValuePair<object, object?>>(input.Count);
+
+        foreach (var pair in input)
+        {
+            entries.Add(pair);
+        }
+
+        return entries;
     }
 
     internal static Dictionary<TKey, TValue?> ParsesImplement<TKey, TValue>(this IDictionary<object, object?>? input) where TKey : unmanaged => ParsesDictionary<TKey, TValue>(input, null);

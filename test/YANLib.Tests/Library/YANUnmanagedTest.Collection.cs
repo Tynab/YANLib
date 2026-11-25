@@ -608,11 +608,53 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
-    public void Parses_OnDuplicateKeysEqualUnderDefaultComparer_ThrowsArgumentException_Collection()
+    public void Parses_OnDuplicateKeysEqualUnderDefaultComparer_CallsOnDuplicate_Collection()
     {
-        // pin of the documented limitation: the input is copied under the default comparer before its keys are parsed, so two keys that its
-        // own comparer keeps apart but object.Equals does not (two "1" strings, or two boxes of 1, under ReferenceEqualityComparer) throw
-        // before onDuplicate is called
+        // Arrange (two keys that the input's own comparer keeps apart but object.Equals does not, two "1" strings or two boxes of 1 under
+        // ReferenceEqualityComparer: 8.4.0 before this change copied the input under the default comparer first, so they threw ArgumentException
+        // before onDuplicate was called)
+        var input = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { new string('1', 1), "a" },
+            { new string('1', 1), "b" }
+        };
+
+        var boxes = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
+        {
+            { 1, "a" },
+            { 1, "b" },
+            { "2", "c" }
+        };
+
+        var calls = new List<(string? Stored, string? Incoming)>();
+
+        // Act
+        var keepLast = input.Parses<int, string>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return incoming;
+        });
+        var keepFirst = boxes.Parses<int, string>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return stored;
+        });
+
+        // Assert (in the enumeration order of the input, which is left unchanged)
+        Assert.Equal(new Dictionary<int, string?> { { 1, "b" } }, keepLast);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "a" }, { 2, "c" } }, keepFirst);
+        Assert.Equal([("a", "b"), ("a", "b")], calls);
+        Assert.Equal((2, 3), (input.Count, boxes.Count));
+    }
+
+    [Fact]
+    public void Parses_KeysEqualUnderDefaultComparer_ThrowsArgumentException_Collection()
+    {
+        // pin: without onDuplicate the input is still copied under the default comparer before its keys are parsed, as in 8.3.3, so two keys that
+        // its own comparer keeps apart but object.Equals does not (two "1" strings, or two boxes of 1, under ReferenceEqualityComparer) throw
+        // ArgumentException from that copy
         // Arrange
         var input = new Dictionary<object, object?>(ReferenceEqualityComparer.Instance)
         {
@@ -626,27 +668,38 @@ public partial class YANUnmanagedTest
             { 1, "b" }
         };
 
-        var calls = 0;
-
         // Act
-        var exception = Assert.Throws<ArgumentException>(() => input.Parses<int, string>((_, incoming) =>
-        {
-            calls++;
-
-            return incoming;
-        }));
-        var boxesException = Assert.Throws<ArgumentException>(() => boxes.Parses<int, string>((stored, _) =>
-        {
-            calls++;
-
-            return stored;
-        }));
+        var exception = Assert.Throws<ArgumentException>(() => input.Parses<int, string>());
+        var boxesException = Assert.Throws<ArgumentException>(() => boxes.Parses<int, string>());
 
         // Assert
-        Assert.Equal((2, 2), (input.Count, boxes.Count));
         Assert.Contains("An item with the same key has already been added", exception.Message);
         Assert.Contains("An item with the same key has already been added", boxesException.Message);
-        Assert.Equal(0, calls);
+        Assert.Null(exception.ParamName);
+        Assert.Null(boxesException.ParamName);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateNullKeyOfCustomDictionary_IsParsedLikeAnUnparsableKey_Collection()
+    {
+        // Arrange (only a custom IDictionary can hold a null key; 8.4.0 before this change threw ArgumentNullException from the copy, as the
+        // overload without onDuplicate still does)
+        var input = new EntriesDictionary(new(null!, "n"), new(0, "z"));
+        var calls = new List<(string? Stored, string? Incoming)>();
+
+        // Act
+        var result = input.Parses<int, string>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return incoming;
+        });
+        var exception = Assert.Throws<ArgumentNullException>(() => input.Parses<int, string>());
+
+        // Assert
+        Assert.Equal(new Dictionary<int, string?> { { 0, "z" } }, result);
+        Assert.Equal([("n", "z")], calls);
+        Assert.Equal("key", exception.ParamName);
     }
 
     [Fact]
@@ -815,4 +868,44 @@ public partial class YANUnmanagedTest
     }
 
     #endregion
+
+    /// <summary>A read-only <see cref="IDictionary{TKey, TValue}"/> that enumerates the given entries as they are, a <c>null</c> key included.</summary>
+    private sealed class EntriesDictionary(params KeyValuePair<object, object?>[] entries) : IDictionary<object, object?>
+    {
+        public ICollection<object> Keys => [.. entries.Select(static x => x.Key)];
+
+        public ICollection<object?> Values => [.. entries.Select(static x => x.Value)];
+
+        public int Count => entries.Length;
+
+        public bool IsReadOnly => true;
+
+        public object? this[object key]
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        public void Add(object key, object? value) => throw new NotSupportedException();
+
+        public void Add(KeyValuePair<object, object?> item) => throw new NotSupportedException();
+
+        public void Clear() => throw new NotSupportedException();
+
+        public bool Contains(KeyValuePair<object, object?> item) => entries.Contains(item);
+
+        public bool ContainsKey(object key) => entries.Any(x => Equals(x.Key, key));
+
+        public void CopyTo(KeyValuePair<object, object?>[] array, int arrayIndex) => entries.CopyTo(array, arrayIndex);
+
+        public IEnumerator<KeyValuePair<object, object?>> GetEnumerator() => ((IEnumerable<KeyValuePair<object, object?>>)entries).GetEnumerator();
+
+        public bool Remove(object key) => throw new NotSupportedException();
+
+        public bool Remove(KeyValuePair<object, object?> item) => throw new NotSupportedException();
+
+        public bool TryGetValue(object key, out object? value) => throw new NotSupportedException();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }
