@@ -29,8 +29,9 @@ public static partial class YANExpression
     /// <see cref="YANObject.IsValidField{T}(string)"/> first.
     /// If the property is a value type, it will be automatically boxed to an object.
     /// The expression tree (not a compiled delegate) is cached per type, parameter name and property name, so repeated calls return the same instance;
-    /// <see cref="LambdaExpression.Compile()"/> is not cached. Within a type the cache is never trimmed and grows with every distinct combination;
-    /// the type itself is held weakly, so the cached expressions of a type of a collectible <c>AssemblyLoadContext</c> are released when that context unloads.
+    /// <see cref="LambdaExpression.Compile()"/> is not cached. Within a type the cache is never trimmed and grows with every distinct parameter-name and
+    /// property-name pair that builds an expression (a name that matches nothing throws and is not cached); the type itself is held weakly, so the cached
+    /// expressions of a type of a collectible <c>AssemblyLoadContext</c> are released when that context unloads.
     /// </remarks>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="parameterName"/> or <paramref name="propertyName"/> is null or whitespace,
