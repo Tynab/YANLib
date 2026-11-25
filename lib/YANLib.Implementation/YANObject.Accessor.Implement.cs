@@ -25,6 +25,14 @@ namespace YANLib.Implementation;
 // dynamic code is not compiled (RuntimeFeature.IsDynamicCodeCompiled is false) or not supported (the compilation throws), reflection is used.
 // It is also used where reflection is told to interpret every call (the Switch.System.Reflection.ForceInterpretedInvoke app-context switch),
 // since an interpreted call also runs the static constructor of a struct property type before the getter.
+//
+// That switch is read here each time an accessor would compile (on its second call), while .NET reflection keeps the value it read first. So
+// one change at run time is not mirrored: when reflection has read the switch as set (from runtimeconfig.json, say) and it is cleared later with
+// AppContext.SetSwitch, reflection keeps interpreting every call while the accessors compiled after that do not. This differs only for a struct
+// property type whose static constructor throws: reflection throws a TargetInvocationException wrapping the TypeInitializationException on
+// every read, without running the getter, while a compiled reader runs the getter and the property check then throws the
+// TypeInitializationException unwrapped (from GetDefaultValue), and a compiled copier copies the property. The other way round (set at run time
+// after reflection has read it as cleared), the accessors that have not compiled yet stay on reflection, so their results are those of reflection.
 internal static partial class YANObject
 {
     private static readonly ConcurrentDictionary<Type, PropertyReader[]> PropertyReaderCache = new();
@@ -90,6 +98,8 @@ internal static partial class YANObject
     /// <summary>
     /// Whether accessors are compiled at all: dynamic code is compiled (<see cref="RuntimeFeature.IsDynamicCodeCompiled"/>) and reflection is not told to
     /// interpret every call (the <c>Switch.System.Reflection.ForceInterpretedInvoke</c> app-context switch, read when an accessor would be compiled).
+    /// Reflection keeps the value of the switch that it read first, so clearing the switch at run time after reflection has read it as set is not
+    /// mirrored: see the comment at the top of this file.
     /// </summary>
     private static bool CanCompileAccessors()
         => RuntimeFeature.IsDynamicCodeCompiled && !(AppContext.TryGetSwitch("Switch.System.Reflection.ForceInterpretedInvoke", out var interpreted) && interpreted);
