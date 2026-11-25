@@ -39,12 +39,13 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
   - Inherited properties are checked, and indexers and write-only properties are skipped.
   - `AllValidFields` with a blank name is `false` again, as in 8.3.2.
   - `Copy()` creates the runtime type, and throws `NotSupportedException` for a collection type instead of losing its items.
+  - The per-type caches hold their types weakly (`ConditionalWeakTable`), so a type of a collectible `AssemblyLoadContext` (a plugin) used with the property checks, the field-name checks, `Copy` or `ChangeTimeZoneAllProperty` no longer keeps that context from unloading.
   - `ChangeTimeZoneAllProperties` is eager and converts each object once.
   - `ChangeTimeZoneAllProperty`:
     - It handles cycles, deep graphs (a 1,000,000-node list), read-only collections, dictionaries and `ArraySegment<T>`.
     - It writes converted copies back in 8.3.3's order.
   - Property reads and copies use compiled accessors from the second call on: `IsNullDefault` on 6 properties takes 99 ns instead of 199 ns. The results and the type, message and `InnerException` of a getter or setter exception are those of reflection (apart from one `ForceInterpretedInvoke` case described on the YANObject wiki page), but the exception's `Source`, `TargetSite` and stack frames differ from the second call on (see *Behaviour changes* below).
-- **YANExpression**: `PropertyExpression` calls a matching parameterless method correctly. Its cache key includes the parameter name, and it no longer throws for `new`-hidden properties.
+- **YANExpression**: `PropertyExpression` calls a matching parameterless method correctly. Its cache key includes the parameter name, and it no longer throws for `new`-hidden properties. Its cache holds the types weakly, so a plugin type no longer keeps a collectible `AssemblyLoadContext` from unloading.
 - **YANTask**:
   - Cancellation is observed while waiting: 114 ms instead of never.
   - Completion order is tracked in O(n): 16,000 tasks take 0.9 ms instead of 2.4 s, and no continuation is leaked.

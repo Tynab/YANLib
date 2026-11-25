@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -8,12 +7,17 @@ using static System.Reflection.BindingFlags;
 
 namespace YANLib.Implementation;
 
+// The per-type caches of this class (here, in the ChangeTimeZoneAllProperty region and in YANObject.Accessor.Implement.cs) are ConditionalWeakTables:
+// they hold their Type keys weakly, so caching a type of a collectible AssemblyLoadContext (a plugin) does not keep that context from unloading. As with
+// ConcurrentDictionary.GetOrAdd, GetValue runs the factory outside the table's lock, so two first calls for a type can both compute the value, and
+// every caller gets the value stored first. A cached value can reference its key (a PropertyInfo its declaring type, a compiled accessor the types it
+// uses) without keeping it alive.
 internal static partial class YANObject
 {
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ReadablePropertyCache = new();
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ReadWritePropertyCache = new();
-    private static readonly ConcurrentDictionary<Type, object> DefaultValueCache = new();
+    private static readonly ConditionalWeakTable<Type, PropertyInfo[]> ReadablePropertyCache = new();
+    private static readonly ConditionalWeakTable<Type, PropertyInfo[]> PropertyCache = new();
+    private static readonly ConditionalWeakTable<Type, PropertyInfo[]> ReadWritePropertyCache = new();
+    private static readonly ConditionalWeakTable<Type, object> DefaultValueCache = new();
 
     #region Private
 
@@ -23,7 +27,7 @@ internal static partial class YANObject
     /// by a property of another type is kept (reflection already leaves out one hidden by a property of the same type), so <c>Copy</c> and
     /// <c>ChangeTimeZoneAllProperty</c> handle both, as 8.3.3 did.
     /// </summary>
-    private static PropertyInfo[] GetCachedReadableProperties(Type type) => ReadablePropertyCache.GetOrAdd(type, static t =>
+    private static PropertyInfo[] GetCachedReadableProperties(Type type) => ReadablePropertyCache.GetValue(type, static t =>
         [.. t.GetProperties(Public | Instance).Where(static x => x.CanRead && !x.PropertyType.IsByRefLike && x.GetIndexParameters().Length is 0)]);
 
     /// <summary>
@@ -31,12 +35,12 @@ internal static partial class YANObject
     /// 8.3.3, that <c>ChangeTimeZoneAllProperty</c> walks in a dictionary type or a type implementing only <c>IList&lt;DateTime?&gt;</c>.
     /// </summary>
     private static PropertyInfo[] GetCachedReadWriteProperties(Type type)
-        => ReadWritePropertyCache.GetOrAdd(type, static t => [.. GetCachedReadableProperties(t).Where(static x => x.CanWrite)]);
+        => ReadWritePropertyCache.GetValue(type, static t => [.. GetCachedReadableProperties(t).Where(static x => x.CanWrite)]);
 
     /// <summary>
     /// Gets the properties of <see cref="GetCachedReadableProperties(Type)"/>, keeping for a name hidden with <c>new</c> only the most-derived property.
     /// </summary>
-    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetOrAdd(type, static t =>
+    private static PropertyInfo[] GetCachedProperties(Type type) => PropertyCache.GetValue(type, static t =>
     {
         var result = new List<PropertyInfo>();
 
@@ -62,7 +66,7 @@ internal static partial class YANObject
     /// zero-initialised box (a struct's explicit parameterless constructor is not run, unlike <see cref="Activator.CreateInstance(Type)"/>).
     /// </summary>
     private static object? GetDefaultValue(Type type)
-        => type.IsValueType && Nullable.GetUnderlyingType(type) is null ? DefaultValueCache.GetOrAdd(type, static t => RuntimeHelpers.GetUninitializedObject(t)) : null;
+        => type.IsValueType && Nullable.GetUnderlyingType(type) is null ? DefaultValueCache.GetValue(type, static t => RuntimeHelpers.GetUninitializedObject(t)) : null;
 
     #endregion
 
@@ -468,10 +472,11 @@ internal static partial class YANObject
         node.Properties = GetCachedReadableProperties(type);
     }
 
-    private static readonly ConcurrentDictionary<Type, bool> TimeZoneLeafCache = new();
-    private static readonly ConcurrentDictionary<Type, bool> TimeZoneCollectionCache = new();
-    private static readonly ConcurrentDictionary<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
-    private static readonly ConcurrentDictionary<Type, Func<object, (IList? Array, int Offset, int Count)>?> ArraySegmentBoundsCache = new();
+    // The bool caches hold boxed bools: the values of a ConditionalWeakTable are references.
+    private static readonly ConditionalWeakTable<Type, object> TimeZoneLeafCache = new();
+    private static readonly ConditionalWeakTable<Type, object> TimeZoneCollectionCache = new();
+    private static readonly ConditionalWeakTable<Type, Func<object, object?, object?, bool>?> DateTimeDictionaryConverterCache = new();
+    private static readonly ConditionalWeakTable<Type, Func<object, (IList? Array, int Offset, int Count)>?> ArraySegmentBoundsCache = new();
 
     private static readonly Type[] TimeZoneLeafBaseTypes =
     [
@@ -496,7 +501,7 @@ internal static partial class YANObject
     /// non-data types (reflection, delegates, streams, tasks, threads, handles, pointers, <see cref="Lazy{T}"/>, whose value the walk must not create),
     /// or an array / list / <see cref="ArraySegment{T}"/> whose elements are all such values.
     /// </summary>
-    private static bool IsTimeZoneLeaf(this Type type) => TimeZoneLeafCache.GetOrAdd(type, static t => IsTimeZoneLeaf(t, []));
+    private static bool IsTimeZoneLeaf(this Type type) => (bool)TimeZoneLeafCache.GetValue(type, static t => IsTimeZoneLeaf(t, []));
 
     /// <summary>
     /// Computes <see cref="IsTimeZoneLeaf(Type)"/>. <paramref name="listTypes"/> holds the list types whose element type is being checked, so a list type
@@ -507,7 +512,7 @@ internal static partial class YANObject
     {
         if (TimeZoneLeafCache.TryGetValue(type, out var cached))
         {
-            return cached;
+            return (bool)cached;
         }
 
         if (type.IsPrimitive || type.IsEnum || type.IsPointer || type.IsByRefLike || type == typeof(string) || type == typeof(decimal) || type == typeof(DateTime)
@@ -545,7 +550,7 @@ internal static partial class YANObject
     /// Whether <paramref name="type"/> is a collection that the walk converts in place (an array, a list or a dictionary), so a getter-only property
     /// of this type is still walked.
     /// </summary>
-    private static bool IsTimeZoneCollection(this Type type) => TimeZoneCollectionCache.GetOrAdd(type, static t =>
+    private static bool IsTimeZoneCollection(this Type type) => (bool)TimeZoneCollectionCache.GetValue(type, static t =>
         !t.IsValueType && !t.IsTimeZoneLeaf() && (t.IsArray || typeof(IList).IsAssignableFrom(t) || typeof(IDictionary).IsAssignableFrom(t)
         || IsGenericInterface(t, typeof(IList<>)) || IsGenericInterface(t, typeof(IDictionary<,>)) || Array.Exists(t.GetInterfaces(), x => IsGenericInterface(x, typeof(IList<>)) || IsGenericInterface(x, typeof(IDictionary<,>)))));
 
@@ -582,7 +587,7 @@ internal static partial class YANObject
     /// <summary>
     /// Gets a converter for a type that implements <c>IDictionary&lt;TKey, DateTime&gt;</c> or <c>IDictionary&lt;TKey, DateTime?&gt;</c>, or <c>null</c>.
     /// </summary>
-    private static Func<object, object?, object?, bool>? GetDateTimeDictionaryConverter(Type type) => DateTimeDictionaryConverterCache.GetOrAdd(type, static t =>
+    private static Func<object, object?, object?, bool>? GetDateTimeDictionaryConverter(Type type) => DateTimeDictionaryConverterCache.GetValue(type, static t =>
     {
         foreach (var itf in t.GetInterfaces())
         {
@@ -609,7 +614,7 @@ internal static partial class YANObject
     /// the segment's items in that array instead of walking the segment's properties, which would convert the items outside the segment too.
     /// (Segments of <see cref="DateTime"/> / <c>DateTime?</c> are converted as lists.)
     /// </summary>
-    private static Func<object, (IList? Array, int Offset, int Count)>? GetArraySegmentBounds(Type type) => ArraySegmentBoundsCache.GetOrAdd(type, static t =>
+    private static Func<object, (IList? Array, int Offset, int Count)>? GetArraySegmentBounds(Type type) => ArraySegmentBoundsCache.GetValue(type, static t =>
         IsArraySegment(t)
             ? typeof(YANObject).GetMethod(nameof(ArraySegmentBounds), NonPublic | Static)!.MakeGenericMethod(t.GetGenericArguments())
                 .CreateDelegate<Func<object, (IList? Array, int Offset, int Count)>>()

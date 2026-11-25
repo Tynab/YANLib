@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +7,8 @@ namespace YANLib.Implementation;
 // Compiled property accessors for the property checks (IsNullDefault, IsNotNullDefault, AllPropertiesDefault, AnyPropertiesDefault,
 // AllPropertiesNotDefault, AnyPropertiesNotDefault, in every form) and for Copy. 8.3.3 called PropertyInfo.GetValue / SetValue on every
 // call. Now each type gets, on first use, a reader for each property of GetCachedProperties (a copier for each property of
-// GetCachedReadWriteProperties for Copy), in the same order, cached per Type like the property lists (the Type keys are held strongly).
+// GetCachedReadWriteProperties for Copy), in the same order, cached per Type like the property lists (in a ConditionalWeakTable, which holds the
+// Type keys weakly: a compiled accessor references the types it uses, but a cached value does not keep its key alive).
 //
 // Each reader and copier makes its first call through reflection, as before, and on its second call compiles a DynamicMethod for its
 // property, which that call and the later ones use. This is the tiering .NET 8 reflection itself uses for a method: its first call is
@@ -35,8 +35,8 @@ namespace YANLib.Implementation;
 // after reflection has read it as cleared), the accessors that have not compiled yet stay on reflection, so their results are those of reflection.
 internal static partial class YANObject
 {
-    private static readonly ConcurrentDictionary<Type, PropertyReader[]> PropertyReaderCache = new();
-    private static readonly ConcurrentDictionary<Type, PropertyCopier[]?> PropertyCopierCache = new();
+    private static readonly ConditionalWeakTable<Type, PropertyReader[]> PropertyReaderCache = new();
+    private static readonly ConditionalWeakTable<Type, PropertyCopier[]?> PropertyCopierCache = new();
 
     /// <summary>
     /// A marker for a value that is not computed yet.
@@ -74,7 +74,7 @@ internal static partial class YANObject
     /// property checks (<c>IsNullDefault</c>, <c>AllPropertiesDefault</c>, ...) read.
     /// </summary>
     private static PropertyReader[] GetCachedReaders(Type type)
-        => PropertyReaderCache.GetOrAdd(type, static t => [.. GetCachedProperties(t).Select(static x => new PropertyReader(x))]);
+        => PropertyReaderCache.GetValue(type, static t => [.. GetCachedProperties(t).Select(static x => new PropertyReader(x))]);
 
     /// <summary>
     /// Gets the readers of <see cref="GetCachedReaders(Type)"/> whose property name is in <paramref name="names"/>, in the same order:
@@ -86,7 +86,7 @@ internal static partial class YANObject
     /// Gets a <see cref="PropertyCopier"/> for each property of <see cref="GetCachedReadWriteProperties(Type)"/>, in the same order: the properties
     /// that <c>Copy</c> copies; or <c>null</c> for a collection type (<see cref="IsCopyCollection(Type)"/>), which <c>Copy</c> does not support.
     /// </summary>
-    private static PropertyCopier[]? GetCachedCopiers(Type type) => PropertyCopierCache.GetOrAdd(type, static t
+    private static PropertyCopier[]? GetCachedCopiers(Type type) => PropertyCopierCache.GetValue(type, static t
         => IsCopyCollection(t) ? null : [.. GetCachedReadWriteProperties(t).Select(static x => new PropertyCopier(x))]);
 
     /// <summary>

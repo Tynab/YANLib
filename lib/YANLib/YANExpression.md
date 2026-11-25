@@ -211,21 +211,22 @@ bool areDifferentTypes = object.ReferenceEquals(expr1, customerExpr); // Returns
 - A name that matches a parameterless method now builds a call: `PropertyExpression<Person>("p", "GetFullName")` is `p => p.GetFullName()` (it was a constant `System.Reflection.RuntimeMethodInfo` type). Methods returning `void`, by-ref or by-ref-like values and generic methods throw `ArgumentException`.
 - The cache key includes the parameter name: `("x", "Name")` followed by `("u", "Name")` returns `u => u.Name` (it returned the cached `x => x.Name`). Concurrent first calls for the same key return the same instance.
 - Properties hidden with `new` and properties whose names differ only in case no longer throw `AmbiguousMatchException`: the most-derived property and the exact-case match win. The indexer `Item` is not treated as a property.
+- The cache holds its types weakly (a `ConditionalWeakTable` keyed by type): calling `PropertyExpression<T>` with a type of a collectible `AssemblyLoadContext` (a plugin) no longer keeps that context from unloading, and the type's cached expressions go with it.
 
 
 ## Performance Considerations
 
 - **Expression Caching**: The library caches expression trees by type, parameter name and property name, so repeated calls skip the reflection and return the same instance
 - **Compilation Cost**: The cache holds expression trees, not compiled delegates; `Compile()` is relatively expensive and runs on every call to it, so compile once and keep the delegate
-- **Memory Usage**: Cached expressions are stored in a `ConcurrentDictionary` that is never trimmed, so it grows with every distinct type/parameter/property combination; validate untrusted names (e.g. with `IsValidField<T>()`) before passing them
-- **Thread Safety**: The caching mechanism is thread-safe (`ConcurrentDictionary.GetOrAdd`): concurrent first calls for the same key all receive the same instance
+- **Memory Usage**: Cached expressions are kept per type in a `ConditionalWeakTable`, which holds the type weakly, so the expressions of a type of a collectible `AssemblyLoadContext` are released when it unloads; for any other type they stay for the life of the process. Within a type the cache (a `ConcurrentDictionary`) is never trimmed, so it grows with every distinct parameter/property name pair that builds an expression (a name that matches nothing throws and is not cached); validate untrusted names (e.g. with `IsValidField<T>()`) before passing them
+- **Thread Safety**: The caching mechanism is thread-safe (`ConditionalWeakTable.GetValue`, then `ConcurrentDictionary.GetOrAdd`): concurrent first calls for the same key all receive the same instance
 - **Debugging Support**: The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
 
 
 ## Implementation Details
 
 - **Expression Trees**: Uses the Expression API from `System.Linq.Expressions` to build property access expressions
-- **Caching Strategy**: Uses a `ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression>` for thread-safe caching
+- **Caching Strategy**: Uses a `ConditionalWeakTable<Type, ConcurrentDictionary<(string ParameterName, string PropertyName), LambdaExpression>>` for thread-safe caching that holds the types weakly
 - **Value Type Handling**: Automatically converts value types to `object` using `Expression.Convert`
 - **Reflection**: Uses reflection to find the property (or parameterless method) when an expression is first built
 - **Error Handling**: Provides detailed error messages for common issues like null/empty names or non-existent properties
@@ -246,8 +247,8 @@ The library provides focused coverage of expression operations:
 ## Technical Details
 
 - **Expression Building**: Uses `System.Linq.Expressions` to dynamically build property access expressions at runtime
-- **Expression Caching**: Implements a thread-safe caching mechanism using `ConcurrentDictionary<(Type Type, string ParameterName, string PropertyName), LambdaExpression>` to store and reuse expression trees
-- **Cache Key Structure**: Uses a tuple of `(Type, string, string)` combining the object type, parameter name and property name as the cache key
+- **Expression Caching**: Implements a thread-safe caching mechanism using `ConditionalWeakTable<Type, ConcurrentDictionary<(string ParameterName, string PropertyName), LambdaExpression>>` to store and reuse expression trees
+- **Cache Key Structure**: Uses the object type (held weakly), then a tuple of `(string, string)` combining the parameter name and property name, as the cache key
 - **Parameter Naming**: Supports custom parameter names in expressions (e.g., `p => p.PropertyName` vs `x => x.PropertyName`)
 - **Type Handling**: Automatically handles boxing/unboxing for value types when converting to/from `object`
 - **Property Validation**: Performs validation to ensure properties exist on the target type before building expressions
