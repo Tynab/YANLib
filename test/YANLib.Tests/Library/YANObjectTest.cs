@@ -1371,17 +1371,20 @@ public partial class YANObjectTest
         // Arrange
         var viewFirst = new TzViewAndCopy([Hour(1)]);
         var copyFirst = new TzCopyAndView([Hour(1)]);
+        var viewInDerived = new TzViewOverCopyBase([Hour(1)]);
 
         // Act
         viewFirst.ChangeTimeZoneAllProperty(0, 7);
         copyFirst.ChangeTimeZoneAllProperty(0, 7);
+        viewInDerived.ChangeTimeZoneAllProperty(0, 7);
 
         // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, when the
-        // getter-only property is declared first (viewFirst) or the copy's setter stores a copy (copyFirst); with the copy property declared first and
-        // a setter that stores the list it receives, the field is shifted once, as in 8.3.3. 8.3.3 did not read the getter-only property and shifted
-        // the field once, to Hour(8))
+        // getter-only property comes first in property order (viewFirst; viewInDerived, whose View is declared in the derived class and so comes
+        // before the inherited Copy) or the copy's setter stores a copy (copyFirst); with the copy property first and a setter that stores the list
+        // it receives, the field is shifted once, as in 8.3.3. 8.3.3 did not read the getter-only property and shifted the field once, to Hour(8))
         Assert.Equal([Hour(15)], viewFirst.View);
         Assert.Equal([Hour(15)], copyFirst.View);
+        Assert.Equal([Hour(15)], viewInDerived.View);
     }
 
     [Fact]
@@ -1391,18 +1394,22 @@ public partial class YANObjectTest
         var copyFirst = new TzCopyBeforeDirect { Direct = [Hour(1)] };
         var directFirst = new TzDirectBeforeCopy { Direct = [Hour(1)] };
         var copyFirstCopyingSetter = new TzCopyBeforeDirectCopyingSetter { Direct = [Hour(1)] };
+        var copyInDerived = new TzCopyOverDirectBase { Direct = [Hour(1)] };
 
         // Act
         copyFirst.ChangeTimeZoneAllProperty(0, 7);
         directFirst.ChangeTimeZoneAllProperty(0, 7);
         copyFirstCopyingSetter.ChangeTimeZoneAllProperty(0, 7);
+        copyInDerived.ChangeTimeZoneAllProperty(0, 7);
 
         // Assert (pinned: the setter of Copy, declared first, stores the converted copy in Direct, which then returns that list, already converted, so the
         // value is shifted once, where 8.3.3 converted it again through Direct, to Hour(15); with Direct declared first, or a setter that stores a copy,
-        // it is shifted twice, as in 8.3.3)
+        // it is shifted twice, as in 8.3.3. Property order puts a class's own properties before the inherited ones, so a Copy declared in a class
+        // deriving from the one that declares Direct comes first too (copyInDerived) and the value is shifted once)
         Assert.Equal([Hour(8)], copyFirst.Direct);
         Assert.Equal([Hour(15)], directFirst.Direct);
         Assert.Equal([Hour(15)], copyFirstCopyingSetter.Direct);
+        Assert.Equal([Hour(8)], copyInDerived.Direct);
     }
 
     [Fact]
@@ -2492,6 +2499,40 @@ public partial class YANObjectTest
         }
 
         public List<DateTime> Direct { get; set; } = [];
+    }
+
+    private class TzCopyBase(List<DateTime> initial)
+    {
+        private List<DateTime> dates = initial;
+
+        public List<DateTime> Copy
+        {
+            get => [.. dates];
+            set => dates = value;
+        }
+
+        protected List<DateTime> Dates => dates;
+    }
+
+    // View is declared in the derived class, so Type.GetProperties lists it before the inherited Copy.
+    private sealed class TzViewOverCopyBase(List<DateTime> initial) : TzCopyBase(initial)
+    {
+        public List<DateTime> View => Dates;
+    }
+
+    private class TzDirectBase
+    {
+        public List<DateTime> Direct { get; set; } = [];
+    }
+
+    // Copy is declared in the derived class, so Type.GetProperties lists it before the inherited Direct.
+    private sealed class TzCopyOverDirectBase : TzDirectBase
+    {
+        public List<DateTime> Copy
+        {
+            get => [.. Direct];
+            set => Direct = value;
+        }
     }
 
     private sealed class TzLogWriter : StringWriter
