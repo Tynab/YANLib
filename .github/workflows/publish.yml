@@ -1,0 +1,67 @@
+name: Publish
+
+# Publishes Tynab.YANLib to nuget.org when a version tag such as v8.4.0 is pushed:
+#
+#     git tag v8.4.0 && git push origin v8.4.0
+#
+# The package is built and checked by the CI workflow (build with warnings as errors, format check, the whole test suite and
+# package validation), which this workflow calls first; the push job only checks that the tag matches the package version
+# and pushes that package. It needs the repository secret NUGET_API_KEY: an API key created on nuget.org with the "Push"
+# scope for the Tynab.YANLib package (Settings > Secrets and variables > Actions > New repository secret).
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Push to nuget.org
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Download the package built by CI
+        uses: actions/download-artifact@v8
+        with:
+          name: nupkg
+          path: package
+
+      # v8.4.0 must publish Tynab.YANLib.8.4.0.nupkg: a tag that does not match the <Version> in YANLib.csproj fails here.
+      - name: Check that the tag matches the package version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          expected="package/Tynab.YANLib.${TAG#v}.nupkg"
+          if [ ! -f "$expected" ]; then
+            echo "::error::Tag $TAG does not match the package version: expected $expected, found: $(ls package)"
+            exit 1
+          fi
+
+      - name: Check that the API key is configured
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "::error::Add the repository secret NUGET_API_KEY (a nuget.org API key with the Push scope for Tynab.YANLib)."
+            exit 1
+          fi
+
+      # --skip-duplicate: re-running the workflow for a version that is already on nuget.org does not fail.
+      - name: Push to nuget.org
+        env:
+          TAG: ${{ github.ref_name }}
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: >-
+          dotnet nuget push "package/Tynab.YANLib.${TAG#v}.nupkg"
+          --api-key "$NUGET_API_KEY"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate

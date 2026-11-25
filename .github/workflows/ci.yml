@@ -1,7 +1,8 @@
 name: CI
 
 # Restores, builds (warnings as errors), checks formatting, runs the whole test suite and packs Tynab.YANLib
-# (package validation against the published 8.3.3). Nothing is published.
+# (package validation against the published 8.3.3). Nothing is published here: the Publish workflow (publish.yml)
+# calls this workflow for a version tag and pushes the package it produces.
 
 on:
   push:
@@ -13,6 +14,7 @@ on:
       - develop
       - main
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
