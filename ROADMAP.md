@@ -418,6 +418,8 @@ Today's behaviour is documented in the wiki pages; these can be picked up in any
 
 *Area:* Parse / collections
 
+**Done in 8.4.0 (option 4, chosen by the owner): `Parses<TKey, TValue>(IDictionary<object, object?>)`, `ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` have an overload with a `Func<TValue?, TValue?, TValue?> onDuplicate` (stored value, incoming value -> stored value, in input order; a `null` function throws `ArgumentNullException`, an exception from it propagates). The existing overloads keep throwing `ArgumentException`, documented on each method (XML docs, YANUnmanaged.md, YANEnumerable.md). No new public type. The overloads differ from the existing ones in arity, so no existing call shape changes its binding (C# 12, 13 and 14); `var f = dict.Parses<int, string>;` and the same for the three conversions with all type arguments lose their natural type (CS8917), as for NextChar.**
+
 Parses<TKey,TValue>(IDictionary), ToDictionary and ToImmutable(Sorted)Dictionary use Add, so keys like "1" and 1, or "3.2" and "3.7" (both floor to 3), throw ArgumentException. This is unchanged.
 
 Options:

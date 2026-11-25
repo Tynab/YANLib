@@ -15,7 +15,8 @@ internal static partial class YANUnmanaged
     internal static IEnumerable<T>? ParsesWithImplement<T>(this System.Collections.IEnumerable? input, IFormatProvider? provider, object? defaultValue, IEnumerable<string?>? format) where T : unmanaged
         => input is null ? default : input.Cast<object?>().ParsesWithImplement<T>(provider, defaultValue, format);
 
-    internal static Dictionary<TKey, TValue?> ParsesImplement<TKey, TValue>(this IDictionary<object, object?>? input) where TKey : unmanaged
+    /// <summary>The parsed copy of <paramref name="input"/>, in its enumeration order; duplicate parsed keys as in <see cref="YANEnumerable.AddOrResolve"/>.</summary>
+    private static Dictionary<TKey, TValue?> ParsesDictionary<TKey, TValue>(IDictionary<object, object?>? input, Func<TValue?, TValue?, TValue?>? onDuplicate) where TKey : unmanaged
     {
         if (input.IsNullEmptyImplement())
         {
@@ -27,9 +28,18 @@ internal static partial class YANUnmanaged
 
         foreach (var pair in copy)
         {
-            result.Add(pair.Key is TKey k ? k : pair.Key.ParseImplement<TKey>(), pair.Value is TValue v ? v : pair.Value.ParseImplement<TValue?>());
+            YANEnumerable.AddOrResolve(result, pair.Key is TKey k ? k : pair.Key.ParseImplement<TKey>(), pair.Value is TValue v ? v : pair.Value.ParseImplement<TValue?>(), onDuplicate);
         }
 
         return result;
+    }
+
+    internal static Dictionary<TKey, TValue?> ParsesImplement<TKey, TValue>(this IDictionary<object, object?>? input) where TKey : unmanaged => ParsesDictionary<TKey, TValue>(input, null);
+
+    internal static Dictionary<TKey, TValue?> ParsesImplement<TKey, TValue>(this IDictionary<object, object?>? input, Func<TValue?, TValue?, TValue?> onDuplicate) where TKey : unmanaged
+    {
+        ArgumentNullException.ThrowIfNull(onDuplicate);
+
+        return ParsesDictionary<TKey, TValue>(input, onDuplicate);
     }
 }

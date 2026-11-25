@@ -100,6 +100,12 @@ IDictionary<object, object?> dict = new Dictionary<object, object?>
 
 Dictionary<int, string?> parsedDict = dict.Parses<int, string>(); // Returns {1: "Value1", 2: "Value2", 3: "Value3"}
 
+// Keys that parse to the same value: Parses<TKey, TValue>() throws ArgumentException, the onDuplicate overload decides
+IDictionary<object, object?> clash = new Dictionary<object, object?> { { "1", "a" }, { 1, "b" }, { "3.2", "c" }, { "3.7", "d" } };
+Dictionary<int, string?> keepFirst = clash.Parses<int, string>((stored, incoming) => stored); // {1: "a", 3: "c"}
+Dictionary<int, string?> keepLast = clash.Parses<int, string>((stored, incoming) => incoming); // {1: "b", 3: "d"}
+Dictionary<int, string?> merged = clash.Parses<int, string>((stored, incoming) => stored + incoming); // {1: "ab", 3: "cd"}
+
 // Parse collection of strings to TimeSpan values
 IEnumerable<object?> timeInputs = new object?[] { "01:30:45", "02:15:30", "03:45:10" };
 IEnumerable<TimeSpan> timeResults = timeInputs.Parses<TimeSpan>(); // Returns collection of TimeSpan objects
@@ -181,6 +187,7 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 - **`DateTime` default with a format**: a `defaultValue` that is not a `DateTime` (usually a string) is turned into text and parsed with the `format` strings first and, if they do not match, like an input without a format (the current culture, or the provider of `ParseWith` / `ParsesWith`); if that fails too, the result is `DateTime.MinValue`. So `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` is 1 January 2025, and `"bad".Parse<DateTime>("02/01/2025", "dd/MM/yyyy")` is 2 January 2025 under any culture because the format matches. Other non-`DateTime` defaults take the same path, so a `DateTimeOffset` or `DateOnly` default now gives its date and time with a format too, as it already did without one.
 - **`char`**: `5.Parse<char>()` converts through the text (`'5'`), `5.Parse<char>('#')` through `Convert.ToChar` (`'\u0005'`).
 - **Failing `ToString()`**: an input whose `ToString()` throws is treated as unparsable.
+- **Dictionary keys that parse to the same value**: `Parses<TKey, TValue>(IDictionary<object, object?>)` throws `ArgumentException` when two keys parse to the same `TKey` (`"1"` and `1`, or `"3.2"` and `"3.7"`, which are both floored to 3). Since 8.4.0, `Parses<TKey, TValue>(onDuplicate)` takes a `Func<TValue?, TValue?, TValue?>` that receives the value stored for the key and the parsed value of the new entry and returns the value to store: `(stored, incoming) => stored` keeps the first, `(stored, incoming) => incoming` the last, in the enumeration order of the input dictionary (insertion order for a `Dictionary` without removals). It is not called when no keys collide, an exception it throws propagates, and a `null` function throws `ArgumentNullException`.
 
 ### Culture (`ParseWith` / `ParsesWith`)
 
@@ -228,6 +235,7 @@ DateTime j = "13/12/2025".ParseWith<DateTime>(new CultureInfo("de-DE"), null, "d
 - `Parses` and the `ToList`, `ToArray`, `ToImmutableArray`, ... conversions built on it keep the input order for 1,000+ elements (they used unordered PLINQ); `Parses` is lazily evaluated on the enumerating thread.
 - Invalid strings no longer throw and catch exceptions internally: `"abc".Parse<int>()` takes about 30 ns instead of about 24 µs.
 - New in 8.4.0: `ParseWith` and `ParsesWith` with an `IFormatProvider` (see [Culture](#culture-parsewith--parseswith)); the existing overloads are unchanged.
+- New in 8.4.0: `Parses<TKey, TValue>(IDictionary<object, object?>?, Func<TValue?, TValue?, TValue?> onDuplicate)` resolves keys that parse to the same value (see Conversion Rules); `Parses<TKey, TValue>()` still throws `ArgumentException` for them. With the second overload, `var f = dict.Parses<int, string>;` needs an explicit delegate type (CS8917).
 
 
 ## Performance Considerations
@@ -258,7 +266,7 @@ The library provides comprehensive coverage of type conversion operations:
 | **Enum Types** | Parse<TEnum> where TEnum : struct, Enum |
 | **Nullable Types** | Parse<T?> where T : struct |
 | **Collection Conversion** | Parses<T>, Parses<TKey, TValue> |
-| **Dictionary Conversion** | Parses<TKey, TValue> for IDictionary<object, object?> |
+| **Dictionary Conversion** | Parses<TKey, TValue> for IDictionary<object, object?>, with an optional onDuplicate function |
 | **Format Support** | Parse<T>(format) for DateTime and other format-dependent types |
 | **Culture** | ParseWith<T>(provider), ParseWith<T>(provider, defaultValue, format), ParsesWith<T>(provider), ParsesWith<T>(provider, defaultValue, format) |
 

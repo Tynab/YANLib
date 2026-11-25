@@ -618,6 +618,35 @@ public partial class YANEnumerableTest
         Assert.Null(result[2]);
     }
 
+    [Fact]
+    public void ToImmutableDictionary_DuplicateKeys_ThrowsUnlessOnDuplicate_ImmutableEnumerable()
+    {
+        // Arrange (1.2 and 0.8 are both rounded to the int 1, 3.4 and 2.6 to 3)
+        IEnumerable<object?> input =
+        [
+            new KeyedItem(1.2, "first"),
+            new KeyedItem(0.8, "second"),
+            new KeyedItem(3.4, "a"),
+            new KeyedItem(2.6, "b")
+        ];
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => input.ToImmutableDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value));
+        var keepFirst = input.ToImmutableDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (stored, _) => stored);
+        var keepLast = input.ToImmutableDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (_, incoming) => incoming);
+        var thrown = Assert.Throws<InvalidOperationException>(() => input.ToImmutableDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (_, _) => throw new InvalidOperationException("conflict")));
+        var nullResolver = Assert.Throws<ArgumentNullException>(static () => ((IEnumerable<object?>?)null).ToImmutableDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, null!));
+        var empty = ((IEnumerable<object?>?)null).ToImmutableDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (stored, _) => stored);
+
+        // Assert
+        Assert.Contains("An item with the same key has already been added", exception.Message);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "first" }, { 3, "a" } }, keepFirst);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "second" }, { 3, "b" } }, keepLast);
+        Assert.Equal("conflict", thrown.Message);
+        Assert.Equal("onDuplicate", nullResolver.ParamName);
+        Assert.Empty(empty);
+    }
+
     #endregion
 
     #region ToImmutableStack
@@ -1264,6 +1293,33 @@ public partial class YANEnumerableTest
         Assert.Null(result[1]);
         Assert.Equal("Item3", result[3]);
         Assert.Equal([1, 3], [.. result.Keys]);
+    }
+
+    [Fact]
+    public void ToImmutableSortedDictionary_DuplicateKeys_ThrowsUnlessOnDuplicate_ImmutableEnumerable()
+    {
+        // Arrange (2.6 and 3.4 are both rounded to 3; first and last follow the input order, not the key order)
+        IEnumerable<object?> input =
+        [
+            new KeyedItem(2.6, "b"),
+            new KeyedItem(0.8, "single"),
+            new KeyedItem(3.4, "a")
+        ];
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => input.ToImmutableSortedDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value));
+        var keepFirst = input.ToImmutableSortedDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (stored, _) => stored);
+        var merged = input.ToImmutableSortedDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (stored, incoming) => stored + "+" + incoming);
+        var thrown = Assert.Throws<InvalidOperationException>(() => input.ToImmutableSortedDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, static (_, _) => throw new InvalidOperationException("conflict")));
+        var nullResolver = Assert.Throws<ArgumentNullException>(() => input.ToImmutableSortedDictionary<KeyedItem, int, string, double, string>(static item => item.Key, static item => item.Value, null!));
+
+        // Assert
+        Assert.Contains("An item with the same key has already been added", exception.Message);
+        Assert.Equal([1, 3], [.. keepFirst.Keys]);
+        Assert.Equal("b", keepFirst[3]);
+        Assert.Equal("b+a", merged[3]);
+        Assert.Equal("conflict", thrown.Message);
+        Assert.Equal("onDuplicate", nullResolver.ParamName);
     }
 
     #endregion

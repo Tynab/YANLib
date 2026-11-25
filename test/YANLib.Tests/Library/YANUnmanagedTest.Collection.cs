@@ -511,6 +511,117 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parses_DuplicateKeysWithOnDuplicate_ResolvesInEnumerationOrder_Collection()
+    {
+        // Arrange ("1" and 1 parse to the same int key, and so do "3.2" and "3.7", both floored to 3)
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "first" },
+            { 1, "second" },
+            { "3.2", "a" },
+            { "3.7", "b" },
+            { "5", "single" }
+        };
+
+        // Act
+        var keepFirst = input.Parses<int, string>(static (stored, _) => stored);
+        var keepLast = input.Parses<int, string>(static (_, incoming) => incoming);
+        var merged = input.Parses<int, string>(static (stored, incoming) => stored + "+" + incoming);
+
+        // Assert
+        Assert.Equal(new Dictionary<int, string?> { { 1, "first" }, { 3, "a" }, { 5, "single" } }, keepFirst);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "second" }, { 3, "b" }, { 5, "single" } }, keepLast);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "first+second" }, { 3, "a+b" }, { 5, "single" } }, merged);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicate_ReceivesParsedValues_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "7", "10" },
+            { 7L, 5 },
+            { 7.0, "x" }
+        };
+
+        var calls = new List<(int? Stored, int? Incoming)>();
+
+        // Act (values are parsed before the resolver sees them; "x" is null for int?)
+        var result = input.Parses<int, int?>((stored, incoming) =>
+        {
+            calls.Add((stored, incoming));
+
+            return (stored ?? 0) + (incoming ?? 0);
+        });
+
+        // Assert
+        Assert.Equal([(10, 5), (15, null)], calls);
+        Assert.Equal(new Dictionary<int, int?> { { 7, 15 } }, result);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateWithoutCollision_IsNotCalled_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "a" },
+            { "2", "b" }
+        };
+
+        var called = false;
+
+        // Act
+        var result = input.Parses<int, string>((stored, _) =>
+        {
+            called = true;
+
+            return stored;
+        });
+        var nullResult = ((IDictionary<object, object?>?)null).Parses<int, string>(static (stored, _) => stored);
+        var emptyResult = new Dictionary<object, object?>().Parses<int, string>(static (stored, _) => stored);
+
+        // Assert
+        Assert.False(called);
+        Assert.Equal(new Dictionary<int, string?> { { 1, "a" }, { 2, "b" } }, result);
+        Assert.Empty(nullResult);
+        Assert.Empty(emptyResult);
+    }
+
+    [Fact]
+    public void Parses_OnDuplicateThrows_ExceptionPropagates_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?>
+        {
+            { "1", "a" },
+            { 1, "b" }
+        };
+
+        // Act
+        var exception = Assert.Throws<InvalidOperationException>(() => input.Parses<int, string>(static (_, _) => throw new InvalidOperationException("conflict")));
+
+        // Assert
+        Assert.Equal("conflict", exception.Message);
+    }
+
+    [Fact]
+    public void Parses_NullOnDuplicate_ThrowsArgumentNullException_Collection()
+    {
+        // Arrange
+        var input = new Dictionary<object, object?> { { "1", "a" } };
+
+        // Act
+        var exception = Assert.Throws<ArgumentNullException>(() => input.Parses<int, string>(null!));
+        var nullInputException = Assert.Throws<ArgumentNullException>(static () => ((IDictionary<object, object?>?)null).Parses<int, string>(null!));
+
+        // Assert
+        Assert.Equal("onDuplicate", exception.ParamName);
+        Assert.Equal("onDuplicate", nullInputException.ParamName);
+    }
+
+    [Fact]
     public void Parses_ComplexTypes_HandlesComplexTypesCorrectly_Collection()
     {
         // Arrange

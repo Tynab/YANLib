@@ -156,12 +156,42 @@ public static partial class YANEnumerable
     /// <remarks>
     /// This method filters the input collection to include only elements of type <typeparamref name="T"/>.
     /// The key selector and element selector functions are applied to each element, and the results are parsed to the specified key and value types.
-    /// If duplicate keys are encountered after parsing, an exception will be thrown.
+    /// If two elements have keys that parse to the same value, an <see cref="ArgumentException"/> is thrown; the overload with an <c>onDuplicate</c>
+    /// function lets the caller choose the value instead.
     /// </remarks>
+    /// <exception cref="ArgumentException">Thrown when the keys of two elements parse to the same <typeparamref name="TKey"/> value.</exception>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static Dictionary<TKey, TValue?> ToDictionary<T, TKey, TValue, TK, TV>(this IEnumerable<object?>? input, Func<T, TK> keySelector, Func<T, TV> elementSelector) where TKey : unmanaged where TK : unmanaged
         => input.ToDictionaryImplement<T, TKey, TValue, TK, TV>(keySelector, elementSelector);
+
+    /// <summary>
+    /// Converts a collection of objects to a dictionary with keys and values of the specified types, resolving keys that parse to the same value
+    /// with <paramref name="onDuplicate"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the input collection.</typeparam>
+    /// <typeparam name="TKey">The unmanaged key type for the resulting dictionary.</typeparam>
+    /// <typeparam name="TValue">The value type for the resulting dictionary.</typeparam>
+    /// <typeparam name="TK">The type returned by the key selector function.</typeparam>
+    /// <typeparam name="TV">The type returned by the element selector function.</typeparam>
+    /// <param name="input">The collection of objects to convert. If <c>null</c> or empty, returns an empty dictionary.</param>
+    /// <param name="keySelector">A function to extract a key from each element.</param>
+    /// <param name="elementSelector">A function to extract a value from each element.</param>
+    /// <param name="onDuplicate">
+    /// Called when a key parses to a value that is already in the result, with the value stored for it and the parsed value of the new element;
+    /// its result is stored. <c>(stored, incoming) =&gt; stored</c> keeps the first value, <c>(stored, incoming) =&gt; incoming</c> the last one.
+    /// </param>
+    /// <returns>A dictionary with keys of type <typeparamref name="TKey"/> and values of type <typeparamref name="TValue"/>, or an empty dictionary if the input is <c>null</c> or empty.</returns>
+    /// <remarks>
+    /// The elements are converted as by <see cref="ToDictionary{T, TKey, TValue, TK, TV}(IEnumerable{object}, Func{T, TK}, Func{T, TV})"/>, in input order.
+    /// <paramref name="onDuplicate"/> is not called when no two keys collide, and an exception it throws propagates.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="onDuplicate"/> is <c>null</c> (also for a <c>null</c> or empty <paramref name="input"/>).</exception>
+    [DebuggerHidden]
+    [DebuggerStepThrough]
+    public static Dictionary<TKey, TValue?> ToDictionary<T, TKey, TValue, TK, TV>(this IEnumerable<object?>? input, Func<T, TK> keySelector, Func<T, TV> elementSelector, Func<TValue?, TValue?, TValue?> onDuplicate)
+        where TKey : unmanaged where TK : unmanaged
+        => input.ToDictionaryImplement<T, TKey, TValue, TK, TV>(keySelector, elementSelector, onDuplicate);
 
     /// <summary>
     /// Converts a collection of objects to a lookup with keys and values of the specified types.
