@@ -1503,7 +1503,8 @@ public partial class YANObjectTest
         namedList.Name = "n";
 
         // Act and Assert (8.4.0 before this check copied only the settable properties, so the items were lost: new List<int> { 1, 2 }.Copy() was an
-        // empty list; 8.3.3 threw TargetParameterCountException for the types with an indexer and returned an empty HashSet, LinkedList or SortedSet)
+        // empty list; 8.3.3 threw TargetParameterCountException for the types with a public read-write indexer and returned an empty HashSet,
+        // LinkedList or SortedSet)
         var exception = Assert.Throws<NotSupportedException>(() => namedList.Copy());
 
         Assert.Contains(typeof(CopyNamedList).ToString(), exception.Message);
