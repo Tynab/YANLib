@@ -19,6 +19,19 @@ internal static partial class YANUnmanaged
     private static DateTime ParseDateTime(this string? input, IFormatProvider? provider, DateTime defaultValue = default, IEnumerable<string?>? format = null)
         => input.IsNullWhiteSpaceImplement() ? defaultValue : format.IsNullEmptyImplement() ? TryParseDateTime(input, provider, out var dt) ? dt : defaultValue : TryParseExact(input, [.. format], InvariantCulture, None, out dt) ? dt : defaultValue;
 
+    /// <summary>
+    /// The text of a <c>defaultValue</c> that is not a <see cref="DateTime"/>: parsed with the exact <paramref name="format"/> strings first and,
+    /// when they are given but do not match, like an input without a format (<see cref="TryParseDateTime"/>: the current culture, or
+    /// <paramref name="provider"/>); <see cref="DateTime.MinValue"/> when that fails too. Before 8.4.0 the text was parsed with the format only,
+    /// so <c>"bad".Parse&lt;DateTime&gt;("2025-01-01", "dd/MM/yyyy")</c> returned <see cref="DateTime.MinValue"/>; a text that matches the format
+    /// gives the same result as before.
+    /// </summary>
+    private static DateTime ParseDateTimeDefault(this string? text, IFormatProvider? provider, IEnumerable<string?>? format)
+        => text.IsNullWhiteSpaceImplement() ? default
+        : !format.IsNullEmptyImplement() && TryParseExact(text, [.. format], InvariantCulture, None, out var dt) ? dt
+        : TryParseDateTime(text, provider, out dt) ? dt
+        : default;
+
     private static Guid ParseGuid(this string? input, Guid defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : Guid.TryParse(input, out var guid) ? guid : defaultValue;
 
     private static TimeSpan ParseTimeSpan(this string? input, IFormatProvider? provider, TimeSpan defaultValue = default) => input.IsNullWhiteSpaceImplement() ? defaultValue : TryParseTimeSpan(input, provider, out var ts) ? ts : defaultValue;
@@ -94,8 +107,9 @@ internal static partial class YANUnmanaged
 
         if (typeof(T) == typeof(DateTime))
         {
-            // a DateTime default is used as is; 8.3.3 re-parsed its ToString() with the format and so ignored it when a format was given
-            var fallback = defaultValue is DateTime dateTime ? dateTime : defaultValue.SafeToString(provider).ParseDateTime(provider, default, format);
+            // a DateTime default is used as is; 8.3.3 re-parsed its ToString() with the format and so ignored it when a format was given.
+            // Any other default is parsed as text, with the format first and then without it.
+            var fallback = defaultValue is DateTime dateTime ? dateTime : defaultValue.SafeToString(provider).ParseDateTimeDefault(provider, format);
 
             return (T)(object)input.SafeToString(provider).ParseDateTime(provider, fallback, format);
         }

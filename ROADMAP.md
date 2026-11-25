@@ -462,6 +462,8 @@ Recommendation: Keep sequential and document the recipe. Add opt-in overloads on
 
 *Area:* Parse / collections
 
+**Done in 8.4.0 (option 2, chosen by the owner): a default value that is not a `DateTime` is parsed with the format first and, if that fails, like an input without a format (CurrentCulture for `Parse` / `Parses`, the provider for `ParseWith` / `ParsesWith`); `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` is 1 January 2025. Only results that were `DateTime.MinValue` change (YANUnmanaged.md, Conversion Rules).**
+
 Only a DateTime-typed defaultValue is used as is now. A string default is still parsed with the given format, so `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` still returns DateTime.MinValue (unchanged 8.3.3 behaviour).
 
 Options:

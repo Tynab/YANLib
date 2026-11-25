@@ -77,6 +77,7 @@ Each item changes a result, an exception or a side effect that code written agai
 - `DateTime` values keep their milliseconds and `Kind` (8.3.3 cut them to whole seconds, `Unspecified`): `dt.Parse<DateTime>()`, `dt.Parse<DateTime?>()` and a `DateTime` `defaultValue`. A `DateTime` input with a format is returned (was `DateTime.MinValue`), and `new DateTime(1, 1, 1, 0, 0, 0, 1).IsDefault()` `true` -> `false`.
 - In the `defaultValue` overload, a `DateTime` string keeps its milliseconds (`"2025-01-02 03:04:05.678".Parse<DateTime>(d)` .000 -> .678), a string with `Z` or an offset gives `Kind` `Local`, as `DateTime.TryParse` does (was `Unspecified`), and `"bad".Parse<DateTime>(dt, "dd/MM/yyyy")` `DateTime.MinValue` -> `dt`.
 - An input whose `ToString()` throws gives `null`, the default or `defaultValue` for string, `DateTime`, `Guid`, `TimeSpan` and enum targets; 8.3.3 let the exception escape.
+- With a `format`, a `DateTime` default that is not a `DateTime` (usually a string) is parsed with the format first and, if that fails, without it (current culture, or the provider of `ParseWith` / `ParsesWith`): `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` `DateTime.MinValue` -> 1 January 2025, also in `Parses`. A `DateTimeOffset` or `DateOnly` default gives its date and time (was `DateTime.MinValue`). Only results that were `DateTime.MinValue` change.
 
 **Collection helpers**
 

@@ -580,6 +580,30 @@ public partial class YANUnmanagedTest
     }
 
     [Fact]
+    public void Parses_StringDefaultValueNotMatchingFormat_FallsBackToGeneralParse_Collection()
+    {
+        // Arrange
+        var input = new List<object?> { "15/06/2023", "bad" };
+        var german = new CultureInfo("de-DE");
+
+        // Act (before 8.4.0 the unparsable elements became DateTime.MinValue)
+        var results = WithCulture(new CultureInfo("en-US"), () => new[]
+        {
+            input.Parses<DateTime>("2025-01-01", "dd/MM/yyyy")?.ToList(),
+            input.Parses<DateTime>("2025-01-01", new List<string?> { "dd/MM/yyyy" })?.ToList(),
+            new ArrayList(input).Parses<DateTime>("2025-01-01", "dd/MM/yyyy")?.ToList(),
+            new ArrayList(input).Parses<DateTime>("2025-01-01", new List<string?> { "dd/MM/yyyy" })?.ToList(),
+            input.ParsesWith<DateTime>(german, "01.01.2025", "dd/MM/yyyy")?.ToList(),
+            input.ParsesWith<DateTime>(german, "01.01.2025", new List<string?> { "dd/MM/yyyy" })?.ToList(),
+            new ArrayList(input).ParsesWith<DateTime>(german, "01.01.2025", "dd/MM/yyyy")?.ToList(),
+            new ArrayList(input).ParsesWith<DateTime>(german, "01.01.2025", new List<string?> { "dd/MM/yyyy" })?.ToList()
+        });
+
+        // Assert
+        Assert.All(results, static result => Assert.Equal([new DateTime(2023, 6, 15), new DateTime(2025, 1, 1)], result));
+    }
+
+    [Fact]
     public void ParsesWith_NullProvider_ReadsCultureOfEnumeratingThread_Collection()
     {
         // Arrange

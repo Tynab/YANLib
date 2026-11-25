@@ -178,6 +178,7 @@ IEnumerable<Guid?> guidResults = mixedTypes.Parses<Guid?>(); // [null, null, nul
 - **Out of range**: never throws and never wraps around: the result is `0` / `null` / the converted `defaultValue`.
 - **`nint` / `nuint`**: supported as targets and as inputs (converted through `long` / `ulong`).
 - **Already the target type**: an input that already is a `T` is returned unchanged (a derived instance typed as its base class stays the same instance; a `DateTime` keeps its milliseconds and `Kind`). A `defaultValue` of type `T` is returned unchanged as well, also when a `format` is given.
+- **`DateTime` default with a format**: a `defaultValue` that is not a `DateTime` (usually a string) is turned into text and parsed with the `format` strings first and, if they do not match, like an input without a format (the current culture, or the provider of `ParseWith` / `ParsesWith`); if that fails too, the result is `DateTime.MinValue`. So `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` is 1 January 2025, and `"bad".Parse<DateTime>("02/01/2025", "dd/MM/yyyy")` is 2 January 2025 under any culture because the format matches. Other non-`DateTime` defaults take the same path, so a `DateTimeOffset` or `DateOnly` default now gives its date and time with a format too, as it already did without one.
 - **`char`**: `5.Parse<char>()` converts through the text (`'5'`), `5.Parse<char>('#')` through `Convert.ToChar` (`'\u0005'`).
 - **Failing `ToString()`**: an input whose `ToString()` throws is treated as unparsable.
 
@@ -223,6 +224,7 @@ DateTime j = "13/12/2025".ParseWith<DateTime>(new CultureInfo("de-DE"), null, "d
 - Fractional strings are floored exactly: `"2.9999999999999999".Parse<int>()` is 2 (was 3), `"0.99999999999999999999".Parse<byte>()` is 0 (was 1), `"12345678901234567.9".Parse<long>()` is 12345678901234567 (was 12345678901234600).
 - Inputs that already have the target type are returned unchanged: `Animal a = new Dog(); a.IsDefault()` is `false` (was `true`), `new object[] { dog }.ToList<Animal>()` is `[dog]` (was `[null]`), parsed `DateTime` values keep milliseconds and `Kind`.
 - `"bad".Parse<DateTime>(dt, "dd/MM/yyyy")` returns `dt` (was `DateTime.MinValue`).
+- In `Parse<DateTime>` with a `format`, a default value that is not a `DateTime` and does not match the format is parsed again without it: `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` is 1 January 2025 (was `DateTime.MinValue`), also in `ParseWith`, `Parses` and `ParsesWith`. Only results that were `DateTime.MinValue` change.
 - `Parses` and the `ToList`, `ToArray`, `ToImmutableArray`, ... conversions built on it keep the input order for 1,000+ elements (they used unordered PLINQ); `Parses` is lazily evaluated on the enumerating thread.
 - Invalid strings no longer throw and catch exceptions internally: `"abc".Parse<int>()` takes about 30 ns instead of about 24 µs.
 - New in 8.4.0: `ParseWith` and `ParsesWith` with an `IFormatProvider` (see [Culture](#culture-parsewith--parseswith)); the existing overloads are unchanged.
