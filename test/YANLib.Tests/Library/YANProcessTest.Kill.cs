@@ -19,14 +19,31 @@ internal sealed class SleepProcesses : IDisposable
     private readonly List<string> _startedIndirectly = [];
     private readonly List<(string Name, Process Shell, StringBuilder Errors)> _shells = [];
 
-    // Arguments that make a renamed copy of /bin/sleep sleep. A plain sleep binary needs none; the multi-call coreutils binary
-    // (to which /bin/sleep links on some systems, e.g. the GitHub ubuntu-latest image) chooses its program by file name and
-    // fails with "unknown program" for a renamed copy unless it is told which program to run. null: no variant works.
-    private static readonly Lazy<string[]?> SleepArguments = new(ProbeSleepArguments);
+    // How a renamed copy of /bin/sleep can be made to sleep under its own name. A plain sleep binary needs nothing. A multi-call
+    // coreutils binary (to which /bin/sleep links on some systems, e.g. the GitHub ubuntu-latest image) picks its program by file
+    // name: uutils accepts a name that ends in "-sleep", other builds take the program name as the first argument. Variants
+    // that rename the process (GNU's --coreutils-prog=) are rejected, because the tests find processes by their unique name.
+    // null: no variant works on this machine (see SleepProbeReport).
+    private static readonly Lazy<(string Suffix, string[] Arguments)?> SleepVariant = new(ProbeSleepVariant);
+
+    private static string _sleepProbeReport = "not probed";
+
+    // What the probe found, for the message of a test that requires the fixture.
+    public static string SleepProbeReport
+    {
+        get
+        {
+            _ = SleepVariant.Value;
+
+            return _sleepProbeReport;
+        }
+    }
+
+    private static string[] SleepArguments => SleepVariant.Value!.Value.Arguments;
 
     public SleepProcesses()
     {
-        IsSupported = OperatingSystem.IsLinux() && File.Exists(SLEEP_PATH) && SleepArguments.Value is not null;
+        IsSupported = OperatingSystem.IsLinux() && File.Exists(SLEEP_PATH) && SleepVariant.Value is not null;
         IsShellSupported = IsSupported && File.Exists(SHELL_PATH);
         Directory = Path.Combine(Path.GetTempPath(), $"yanlib-process-{Guid.NewGuid():N}");
 
@@ -43,28 +60,38 @@ internal sealed class SleepProcesses : IDisposable
     public string Directory { get; }
 
     // The sleep arguments for a shell command line, each preceded by a space (they contain no characters the shell interprets).
-    private static string SleepShellArguments => string.Concat(SleepArguments.Value!.Select(x => $" {x}"));
+    private static string SleepShellArguments => string.Concat(SleepArguments.Select(x => $" {x}"));
 
-    // Runs a renamed copy of /bin/sleep for 0 seconds with each candidate argument list and returns the first that succeeds.
-    private static string[]? ProbeSleepArguments()
+    // Starts a renamed copy of /bin/sleep with each candidate (name suffix, arguments) and returns the first whose process runs
+    // under the copy's own name; the probe processes are killed. Records what happened in _sleepProbeReport.
+    private static (string Suffix, string[] Arguments)? ProbeSleepVariant()
     {
         if (!OperatingSystem.IsLinux() || !File.Exists(SLEEP_PATH))
         {
+            _sleepProbeReport = $"not Linux or no {SLEEP_PATH}";
+
             return null;
         }
 
+        var report = new StringBuilder($"{SLEEP_PATH} -> {Path.GetFullPath(new FileInfo(SLEEP_PATH).ResolveLinkTarget(true)?.FullName ?? SLEEP_PATH)}; ");
         var directory = Path.Combine(Path.GetTempPath(), $"yanlib-sleep-probe-{Guid.NewGuid():N}");
 
         try
         {
             _ = System.IO.Directory.CreateDirectory(directory);
 
-            var copy = Path.Combine(directory, "ysprobe");
+            (string Suffix, string[] Arguments)[] candidates = [("", []), ("-sleep", []), ("", ["sleep"]), ("", ["--coreutils-prog=sleep"])];
 
-            File.Copy(SLEEP_PATH, copy);
-
-            foreach (var candidate in new[] { Array.Empty<string>(), ["--coreutils-prog=sleep"], ["sleep"] })
+            foreach (var (suffix, arguments) in candidates)
             {
+                var name = $"ysprobe{suffix}";
+                var copy = Path.Combine(directory, name);
+
+                if (!File.Exists(copy))
+                {
+                    File.Copy(SLEEP_PATH, copy);
+                }
+
                 var startInfo = new ProcessStartInfo(copy)
                 {
                     UseShellExecute = false,
@@ -72,20 +99,62 @@ internal sealed class SleepProcesses : IDisposable
                     RedirectStandardOutput = true
                 };
 
-                foreach (var argument in candidate)
+                foreach (var argument in arguments)
                 {
                     startInfo.ArgumentList.Add(argument);
                 }
 
-                startInfo.ArgumentList.Add("0");
+                startInfo.ArgumentList.Add("10");
 
                 using var process = Process.Start(startInfo)!;
+                var stderr = process.StandardError.ReadToEndAsync();
+                var deadline = Stopwatch.StartNew();
+                var comm = "";
 
-                if (process.WaitForExit(TimeSpan.FromSeconds(30)) && process.ExitCode is 0)
+                // Accepted when the process runs under the copy's own name (it may first run briefly under another name).
+                while (deadline.Elapsed < TimeSpan.FromSeconds(5) && !process.HasExited)
                 {
-                    return candidate;
+                    try
+                    {
+                        var (current, state) = ReadStat($"/proc/{process.Id}/stat");
+
+                        comm = current;
+
+                        if (current == name && state is not ('Z' or 'X'))
+                        {
+                            Thread.Sleep(200);
+
+                            if (!process.HasExited && ReadStat($"/proc/{process.Id}/stat").Comm == name)
+                            {
+                                process.Kill();
+                                _ = process.WaitForExit(TimeSpan.FromSeconds(10));
+                                _ = report.Append($"'{name}' {string.Join(' ', arguments)}: ok.");
+                                _sleepProbeReport = report.ToString();
+
+                                return (suffix, arguments);
+                            }
+                        }
+                    }
+                    catch (IOException)
+                    {
+                        // The process exited meanwhile.
+                    }
+
+                    Thread.Sleep(50);
                 }
+
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                    _ = process.WaitForExit(TimeSpan.FromSeconds(10));
+                }
+
+                var exit = process.HasExited ? process.ExitCode.ToString(System.Globalization.CultureInfo.InvariantCulture) : "running";
+
+                _ = report.Append($"'{name}' {string.Join(' ', arguments)}: exit {exit}, ran as '{comm}', stderr [{(stderr.Wait(TimeSpan.FromSeconds(5)) ? stderr.Result.Trim() : "")}]; ");
             }
+
+            _sleepProbeReport = report.Append("no variant works.").ToString();
 
             return null;
         }
@@ -102,8 +171,13 @@ internal sealed class SleepProcesses : IDisposable
         }
     }
 
-    // A unique process name: prefix + 8 hex digits.
-    public static string UniqueName(string prefix = "ys") => $"{prefix}{Guid.NewGuid():N}"[..(prefix.Length + 8)];
+    // A unique process name of at most 15 characters: prefix, hex digits and the suffix the sleep variant needs (see SleepVariant).
+    public static string UniqueName(string prefix = "ys")
+    {
+        var suffix = SleepVariant.Value?.Suffix ?? "";
+
+        return $"{prefix}{Guid.NewGuid():N}"[..(prefix.Length + Math.Min(8, 15 - prefix.Length - suffix.Length))] + suffix;
+    }
 
     // Copies /bin/sleep as fileName and starts it for 60 seconds; the returned Process is owned by the caller.
     public Process Start(string fileName) => Start(fileName, new Process());
@@ -115,7 +189,7 @@ internal sealed class SleepProcesses : IDisposable
             UseShellExecute = false
         };
 
-        foreach (var argument in SleepArguments.Value!)
+        foreach (var argument in SleepArguments)
         {
             process.StartInfo.ArgumentList.Add(argument);
         }
@@ -439,6 +513,23 @@ public partial class YANProcessTest
     }
 
     #region Kill
+
+    [Fact]
+    public void SleepProcesses_OnLinuxCi_CanStartRenamedCopies_Process()
+    {
+        // On a Linux CI runner the fixture must work: otherwise every process test returns early and passes without a process
+        // (this happened on the GitHub image, where /bin/sleep is a multi-call coreutils binary). Locally it may be unsupported.
+        if (!OperatingSystem.IsLinux() || Environment.GetEnvironmentVariable("CI") is not "true")
+        {
+            return;
+        }
+
+        // Arrange & Act
+        using var sleepers = new SleepProcesses();
+
+        // Assert
+        Assert.True(sleepers.IsShellSupported, SleepProcesses.SleepProbeReport);
+    }
 
     [Fact]
     public async Task KillAllProcessesByName_RunningProcess_KillsIt_Process()

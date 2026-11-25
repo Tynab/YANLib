@@ -1220,16 +1220,17 @@ public partial class IdGeneratorTest
     [Fact]
     public void ExtractIdComponents_IdWithTheSignBitSet_ReadsTheTimestampUnsigned()
     {
-        // Arrange: the Unix epoch is more than 2^40 ms (about 34.8 years) ago, so the timestamp reaches the sign bit and the ID is negative
-        // (8.3.3 read such a timestamp 2^41 ms, about 69.7 years, too early)
+        // Arrange: an epoch 2^40 ms (about 34.8 years) plus ten minutes ago, so the timestamp reaches the sign bit and the ID is
+        // negative (8.3.3 read such a timestamp 2^41 ms, about 69.7 years, too early); relative to now, so it stays in the window
         var idGenerator = new IdGenerator(5, 10);
+        var epoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - (1L << 40) - (10 * 60 * 1000);
         var before = DateTime.UtcNow.AddMinutes(-10);
 
         // Act
-        var id = idGenerator.NextId(0L);
-        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdComponents(id, 0L);
-        var (alphabeticTimestamp, _, _) = IdGenerator.ExtractIdAlphabeticComponents(idGenerator.NextIdAlphabetic(0L), 0L);
-        var (alphanumericTimestamp, _, _) = IdGenerator.ExtractIdAlphanumericComponents(idGenerator.NextIdAlphanumeric(0L), 0L);
+        var id = idGenerator.NextId(epoch);
+        var (timestamp, workerId, datacenterId) = IdGenerator.ExtractIdComponents(id, epoch);
+        var (alphabeticTimestamp, _, _) = IdGenerator.ExtractIdAlphabeticComponents(idGenerator.NextIdAlphabetic(epoch), epoch);
+        var (alphanumericTimestamp, _, _) = IdGenerator.ExtractIdAlphanumericComponents(idGenerator.NextIdAlphanumeric(epoch), epoch);
         var after = DateTime.UtcNow.AddMinutes(10);
 
         // Assert
