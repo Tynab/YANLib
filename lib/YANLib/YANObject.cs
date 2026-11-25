@@ -205,7 +205,7 @@ public static partial class YANObject
     /// so items that it stores are not copied.
     /// When the copy is an instance of the runtime type, its constructor runs, and an exception thrown by it surfaces as <see cref="System.Reflection.TargetInvocationException"/>.
     /// For a value type, the value itself is returned, since assigning a struct already copies all of its fields; a boxed struct passed as <see cref="object"/>
-    /// is returned in a new box.
+    /// is returned in a new box, except that a boxed primitive type (<see cref="Type.IsPrimitive"/>) or enum is returned as the same box.
     /// </remarks>
     /// <exception cref="NotSupportedException">The runtime type of <paramref name="input"/> is a class that implements <see cref="System.Collections.IList"/>,
     /// <see cref="System.Collections.IDictionary"/>, <see cref="System.Collections.ICollection"/> or <see cref="ICollection{T}"/>. Use the collection's own copy constructor (such as

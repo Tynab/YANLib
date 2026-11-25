@@ -687,7 +687,7 @@ internal static partial class YANObject
 
         if (runtimeType.IsValueType)
         {
-            // A boxed struct typed as object: return a new box holding a copy of the value.
+            // A boxed struct typed as object: return a new box holding a copy of the value (a boxed primitive or enum is returned as is).
             return (T)RuntimeHelpers.GetObjectValue(input);
         }
 

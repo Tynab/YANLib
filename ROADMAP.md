@@ -8,7 +8,7 @@ This page records the design decisions found during the 8.3.3 review (Areas A-E)
 - Breaking changes stay out of 8.x; they are collected under *Planned for 9.0* below.
 - New, non-breaking API for 8.4.0: `Parse` with `IFormatProvider`, `Random.NextChar(char min, char max)`, `YANProcess` overloads with an `entireProcessTree` choice and with cancellation/timeout, and public `YANTask.WaitAnyWithConditions` / `WhenAnyWithConditions` (cancellation throws `OperationCanceledException`).
 - Internal improvements for 8.4.0: compiled property accessors in `YANObject`, `Snowflake` `SpinWait` and epoch-range validation, exact `Round` beyond 15 digits for tiny doubles, and no `[DebuggerHidden]`/`[DebuggerStepThrough]` in `YANLib.Implementation`.
-- Internal and repository follow-ups for 8.4.0 (H2): `Copy()` throws `NotSupportedException` for collection types instead of losing their items (H2a), the per-type reflection caches hold their `Type` keys weakly so collectible `AssemblyLoadContext`s can unload (H2b), the README 'Important Notes' block from another project is removed (H2c), and the test project no longer references the benchmark console (H2d).
+- Internal and repository follow-ups for 8.4.0 (H2): `Copy()` throws `NotSupportedException` for collection types, which 8.3.3 copied without their items or failed on (H2a), the per-type reflection caches hold their `Type` keys weakly so collectible `AssemblyLoadContext`s can unload (H2b), the README 'Important Notes' block from another project is removed (H2c), and the test project no longer references the benchmark console (H2d).
 - Last follow-ups for 8.4.0 (I1): `Copy()` also rejects classes that implement only the non-generic `ICollection` (I1a); YANJson with collectible `AssemblyLoadContext`s is investigated and documented, with no code change (I1b); `Parses` with `onDuplicate` no longer re-keys the input dictionary (I1c); the extra `Average` pass for an element without a `decimal` value is listed in CHANGELOG.md (I1d); the re-enumeration design of the exact `decimal` `Average` on overflow is confirmed.
 - 9.0: `sequence` is removed from the custom-bit `Extract*Components` overloads together with the `[Obsolete]` strategy overloads that take it.
 
@@ -537,7 +537,7 @@ Recommendation: Option 2 plus caching only successful lookups. That needs no pub
 
 *Area:* YANObject / YANExpression
 
-The spec said 'Structs: copy into a boxed copy and unbox'. Copying settable properties into a boxed new T() still returns default values for structs without settable properties (5.Copy() == 0, DateTime.Copy() == MinValue, Guid.Copy() == Empty), which was the reported bug. Boxing the input and copying its properties into itself is a no-op. I implemented 'return the value itself' (and a new box for a boxed struct typed as object), which matches 'shallow copy' for value types.
+The spec said 'Structs: copy into a boxed copy and unbox'. Copying settable properties into a boxed new T() still returns default values for structs without settable properties (5.Copy() == 0, DateTime.Copy() == MinValue, Guid.Copy() == Empty), which was the reported bug. Boxing the input and copying its properties into itself is a no-op. I implemented 'return the value itself' (and a new box for a boxed struct typed as object; a boxed primitive or enum, which `RuntimeHelpers.GetObjectValue` does not re-box, is returned as the same box), which matches 'shallow copy' for value types.
 
 Options:
 
