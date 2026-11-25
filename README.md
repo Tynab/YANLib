@@ -694,7 +694,7 @@ YANLib/
 
 Each component in YANLib is implemented with careful attention to performance, memory usage, and error handling:
 
-- **YANObject**: Uses reflection caching for property access, implements efficient null and default value checking
+- **YANObject**: Caches the properties of each type and reads and writes them through accessors compiled on their second use (`IsNullDefault`, `AllPropertiesDefault`, ..., `Copy`), implements efficient null and default value checking
 - **YANUnmanaged**: Implements specialized parsing methods for each unmanaged type with format support
 - **YANEnumerable**: Uses optimized collection conversion with LINQ integration and immutable collection support
 - **YANText**: Implements efficient string manipulation using StringBuilder where appropriate

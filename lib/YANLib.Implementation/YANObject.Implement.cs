@@ -57,16 +57,12 @@ internal static partial class YANObject
         return [.. result];
     });
 
-    private static PropertyInfo[] GetCachedProperties(Type type, IEnumerable<string?> names) => [.. GetCachedProperties(type).Where(x => names.Contains(x.Name))];
-
     /// <summary>
     /// Gets <c>default(T)</c> for <paramref name="type"/> as an object: <c>null</c> for reference and nullable types, otherwise a cached
     /// zero-initialised box (a struct's explicit parameterless constructor is not run, unlike <see cref="Activator.CreateInstance(Type)"/>).
     /// </summary>
     private static object? GetDefaultValue(Type type)
         => type.IsValueType && Nullable.GetUnderlyingType(type) is null ? DefaultValueCache.GetOrAdd(type, static t => RuntimeHelpers.GetUninitializedObject(t)) : null;
-
-    private static bool IsDefaultValue(this PropertyInfo prop, object input) => EqualityComparer<object>.Default.Equals(prop.GetValue(input), GetDefaultValue(prop.PropertyType));
 
     #endregion
 
@@ -699,9 +695,9 @@ internal static partial class YANObject
             runtimeType = typeof(T);
         }
 
-        foreach (var prop in GetCachedReadWriteProperties(runtimeType))
+        foreach (var copier in GetCachedCopiers(runtimeType))
         {
-            prop.SetValue(result, prop.GetValue(input));
+            copier.Copy(input, result);
         }
 
         return result;
