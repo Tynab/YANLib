@@ -117,8 +117,10 @@ internal static partial class YANText
     }
 
     // Splits input into words and writes them in the TCase style, with invariant-culture casing. A word starts after a
-    // separator, at an upper-case letter after a lower-case letter, digit or uncased letter ("helloWorld", "version2Update"),
-    // and at the last upper-case letter of a run that is followed by a lower-case letter ("HTTPServer" -> HTTP|Server).
+    // separator, at an upper-case letter whose last letter before it in the word is lower-case or uncased, digits in between
+    // included ("helloWorld", "version2Update"), and at the last upper-case letter of a run that is followed by a lower-case
+    // letter ("HTTPServer" -> HTTP|Server, "HTML5Parser" -> HTML5|Parser). Digits belong to the word before them, so an
+    // upper-case word with digits stays one word ("FOO123BAR", "BASE64URL") and an upper-case style can be converted again.
     // Returns input itself when the result is equal to it, and an empty string when input has no letter or digit.
     private static string? ConvertWordCase<TCase>(string? input) where TCase : struct, IWordCase
     {
@@ -140,7 +142,10 @@ internal static partial class YANText
             var wordIndex = -1;
             var positionInWord = 0;
             var inWord = false;
-            var previous = WordCharKind.Separator;
+
+            // The kind of the last letter of the current word (digits do not change it); Upper for a word that starts with
+            // digits, so an upper-case letter after them starts a new word only before a lower-case letter ("123Abc").
+            var previousLetter = WordCharKind.Upper;
             var index = 0;
 
             while (index < source.Length)
@@ -152,7 +157,6 @@ internal static partial class YANText
                 if (kind is WordCharKind.Separator)
                 {
                     inWord = false;
-                    previous = WordCharKind.Separator;
                 }
                 else if (kind is WordCharKind.Mark)
                 {
@@ -166,8 +170,8 @@ internal static partial class YANText
                 {
                     var startsWord = !inWord
                         || kind is WordCharKind.Upper
-                        && (previous is WordCharKind.Lower or WordCharKind.Digit or WordCharKind.OtherLetter
-                            || previous is WordCharKind.Upper && GetNextWordCharKind(source, index + consumed) is WordCharKind.Lower);
+                        && (previousLetter is WordCharKind.Lower or WordCharKind.OtherLetter
+                            || previousLetter is WordCharKind.Upper && GetNextWordCharKind(source, index + consumed) is WordCharKind.Lower);
 
                     if (startsWord)
                     {
@@ -180,13 +184,18 @@ internal static partial class YANText
 
                         positionInWord = 0;
                         inWord = true;
+                        previousLetter = WordCharKind.Upper;
                     }
 
                     var upper = positionInWord is 0 ? TCase.UpperFirst(wordIndex) : TCase.UpperRest;
 
                     count += (upper ? Rune.ToUpperInvariant(rune) : Rune.ToLowerInvariant(rune)).EncodeToUtf16(buffer[count..]);
                     positionInWord++;
-                    previous = kind;
+
+                    if (kind is not WordCharKind.Digit)
+                    {
+                        previousLetter = kind;
+                    }
                 }
 
                 index += consumed;

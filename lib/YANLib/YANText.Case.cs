@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using YANLib.Implementation;
 
 namespace YANLib;
@@ -17,12 +18,15 @@ public static partial class YANText
     /// </returns>
     /// <remarks>
     /// Words are runs of letters and decimal digits; every other character (white space, <c>_</c>, <c>-</c>, <c>.</c>, ...) separates words
-    /// and is dropped, and a combining mark stays with the letter before it. A new word also starts at an upper-case letter that follows a
-    /// lower-case letter, a digit or an uncased letter (<c>helloWorld</c>, <c>version2Update</c>), and at the last upper-case letter of a run
-    /// that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>). Letters are cased with the invariant culture.
+    /// and is dropped, and a combining mark stays with the letter or digit before it. A new word also starts at an upper-case letter whose
+    /// last letter before it in the word is lower-case or uncased, digits in between included (<c>helloWorld</c>, <c>version2Update</c>), and
+    /// at the last upper-case letter of a run that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>,
+    /// <c>HTML5Parser</c> is <c>HTML5</c> + <c>Parser</c>); digits belong to the word before them (<c>FOO123BAR</c> is one word). Letters are
+    /// cased with the invariant culture; a letter with no simple invariant case mapping (such as <c>İ</c>, <c>ı</c> or <c>ß</c>) keeps its case.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
+    [return: NotNullIfNotNull(nameof(input))]
     public static string? CamelCase(this string? input) => input.CamelCaseImplement();
 
     /// <summary>
@@ -38,7 +42,7 @@ public static partial class YANText
     /// Returns the strings of the specified collection converted to camelCase, as <see cref="CamelCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The collection to convert. If <c>null</c> or empty, returns the input collection.</param>
-    /// <returns>A lazily evaluated collection with every string converted to camelCase; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to camelCase as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? CamelCases(this IEnumerable<string?>? input) => input.CamelCasesImplement();
@@ -47,7 +51,7 @@ public static partial class YANText
     /// Returns the strings of the specified array converted to camelCase, as <see cref="CamelCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The array to convert. If <c>null</c> or empty, returns the input array.</param>
-    /// <returns>A lazily evaluated collection with every string converted to camelCase; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to camelCase as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? CamelCases(params string?[]? input) => input.CamelCasesImplement();
@@ -66,12 +70,15 @@ public static partial class YANText
     /// </returns>
     /// <remarks>
     /// Words are runs of letters and decimal digits; every other character (white space, <c>_</c>, <c>-</c>, <c>.</c>, ...) separates words
-    /// and is dropped, and a combining mark stays with the letter before it. A new word also starts at an upper-case letter that follows a
-    /// lower-case letter, a digit or an uncased letter (<c>helloWorld</c>, <c>version2Update</c>), and at the last upper-case letter of a run
-    /// that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>). Letters are cased with the invariant culture.
+    /// and is dropped, and a combining mark stays with the letter or digit before it. A new word also starts at an upper-case letter whose
+    /// last letter before it in the word is lower-case or uncased, digits in between included (<c>helloWorld</c>, <c>version2Update</c>), and
+    /// at the last upper-case letter of a run that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>,
+    /// <c>HTML5Parser</c> is <c>HTML5</c> + <c>Parser</c>); digits belong to the word before them (<c>FOO123BAR</c> is one word). Letters are
+    /// cased with the invariant culture; a letter with no simple invariant case mapping (such as <c>İ</c>, <c>ı</c> or <c>ß</c>) keeps its case.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
+    [return: NotNullIfNotNull(nameof(input))]
     public static string? PascalCase(this string? input) => input.PascalCaseImplement();
 
     /// <summary>
@@ -87,7 +94,7 @@ public static partial class YANText
     /// Returns the strings of the specified collection converted to PascalCase, as <see cref="PascalCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The collection to convert. If <c>null</c> or empty, returns the input collection.</param>
-    /// <returns>A lazily evaluated collection with every string converted to PascalCase; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to PascalCase as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? PascalCases(this IEnumerable<string?>? input) => input.PascalCasesImplement();
@@ -96,7 +103,7 @@ public static partial class YANText
     /// Returns the strings of the specified array converted to PascalCase, as <see cref="PascalCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The array to convert. If <c>null</c> or empty, returns the input array.</param>
-    /// <returns>A lazily evaluated collection with every string converted to PascalCase; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to PascalCase as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? PascalCases(params string?[]? input) => input.PascalCasesImplement();
@@ -115,12 +122,15 @@ public static partial class YANText
     /// </returns>
     /// <remarks>
     /// Words are runs of letters and decimal digits; every other character (white space, <c>_</c>, <c>-</c>, <c>.</c>, ...) separates words
-    /// and is dropped, and a combining mark stays with the letter before it. A new word also starts at an upper-case letter that follows a
-    /// lower-case letter, a digit or an uncased letter (<c>helloWorld</c>, <c>version2Update</c>), and at the last upper-case letter of a run
-    /// that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>). Letters are cased with the invariant culture.
+    /// and is dropped, and a combining mark stays with the letter or digit before it. A new word also starts at an upper-case letter whose
+    /// last letter before it in the word is lower-case or uncased, digits in between included (<c>helloWorld</c>, <c>version2Update</c>), and
+    /// at the last upper-case letter of a run that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>,
+    /// <c>HTML5Parser</c> is <c>HTML5</c> + <c>Parser</c>); digits belong to the word before them (<c>FOO123BAR</c> is one word). Letters are
+    /// cased with the invariant culture; a letter with no simple invariant case mapping (such as <c>İ</c>, <c>ı</c> or <c>ß</c>) keeps its case.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
+    [return: NotNullIfNotNull(nameof(input))]
     public static string? SnakeLowerCase(this string? input) => input.SnakeLowerCaseImplement();
 
     /// <summary>
@@ -136,7 +146,7 @@ public static partial class YANText
     /// Returns the strings of the specified collection converted to lower snake_case, as <see cref="SnakeLowerCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The collection to convert. If <c>null</c> or empty, returns the input collection.</param>
-    /// <returns>A lazily evaluated collection with every string converted to lower snake_case; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to lower snake_case as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? SnakeLowerCases(this IEnumerable<string?>? input) => input.SnakeLowerCasesImplement();
@@ -145,7 +155,7 @@ public static partial class YANText
     /// Returns the strings of the specified array converted to lower snake_case, as <see cref="SnakeLowerCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The array to convert. If <c>null</c> or empty, returns the input array.</param>
-    /// <returns>A lazily evaluated collection with every string converted to lower snake_case; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to lower snake_case as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? SnakeLowerCases(params string?[]? input) => input.SnakeLowerCasesImplement();
@@ -164,12 +174,15 @@ public static partial class YANText
     /// </returns>
     /// <remarks>
     /// Words are runs of letters and decimal digits; every other character (white space, <c>_</c>, <c>-</c>, <c>.</c>, ...) separates words
-    /// and is dropped, and a combining mark stays with the letter before it. A new word also starts at an upper-case letter that follows a
-    /// lower-case letter, a digit or an uncased letter (<c>helloWorld</c>, <c>version2Update</c>), and at the last upper-case letter of a run
-    /// that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>). Letters are cased with the invariant culture.
+    /// and is dropped, and a combining mark stays with the letter or digit before it. A new word also starts at an upper-case letter whose
+    /// last letter before it in the word is lower-case or uncased, digits in between included (<c>helloWorld</c>, <c>version2Update</c>), and
+    /// at the last upper-case letter of a run that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>,
+    /// <c>HTML5Parser</c> is <c>HTML5</c> + <c>Parser</c>); digits belong to the word before them (<c>FOO123BAR</c> is one word). Letters are
+    /// cased with the invariant culture; a letter with no simple invariant case mapping (such as <c>İ</c>, <c>ı</c> or <c>ß</c>) keeps its case.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
+    [return: NotNullIfNotNull(nameof(input))]
     public static string? SnakeUpperCase(this string? input) => input.SnakeUpperCaseImplement();
 
     /// <summary>
@@ -185,7 +198,7 @@ public static partial class YANText
     /// Returns the strings of the specified collection converted to upper SNAKE_CASE, as <see cref="SnakeUpperCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The collection to convert. If <c>null</c> or empty, returns the input collection.</param>
-    /// <returns>A lazily evaluated collection with every string converted to upper SNAKE_CASE; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to upper SNAKE_CASE as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? SnakeUpperCases(this IEnumerable<string?>? input) => input.SnakeUpperCasesImplement();
@@ -194,7 +207,7 @@ public static partial class YANText
     /// Returns the strings of the specified array converted to upper SNAKE_CASE, as <see cref="SnakeUpperCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The array to convert. If <c>null</c> or empty, returns the input array.</param>
-    /// <returns>A lazily evaluated collection with every string converted to upper SNAKE_CASE; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to upper SNAKE_CASE as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? SnakeUpperCases(params string?[]? input) => input.SnakeUpperCasesImplement();
@@ -213,12 +226,15 @@ public static partial class YANText
     /// </returns>
     /// <remarks>
     /// Words are runs of letters and decimal digits; every other character (white space, <c>_</c>, <c>-</c>, <c>.</c>, ...) separates words
-    /// and is dropped, and a combining mark stays with the letter before it. A new word also starts at an upper-case letter that follows a
-    /// lower-case letter, a digit or an uncased letter (<c>helloWorld</c>, <c>version2Update</c>), and at the last upper-case letter of a run
-    /// that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>). Letters are cased with the invariant culture.
+    /// and is dropped, and a combining mark stays with the letter or digit before it. A new word also starts at an upper-case letter whose
+    /// last letter before it in the word is lower-case or uncased, digits in between included (<c>helloWorld</c>, <c>version2Update</c>), and
+    /// at the last upper-case letter of a run that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>,
+    /// <c>HTML5Parser</c> is <c>HTML5</c> + <c>Parser</c>); digits belong to the word before them (<c>FOO123BAR</c> is one word). Letters are
+    /// cased with the invariant culture; a letter with no simple invariant case mapping (such as <c>İ</c>, <c>ı</c> or <c>ß</c>) keeps its case.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
+    [return: NotNullIfNotNull(nameof(input))]
     public static string? KebabLowerCase(this string? input) => input.KebabLowerCaseImplement();
 
     /// <summary>
@@ -234,7 +250,7 @@ public static partial class YANText
     /// Returns the strings of the specified collection converted to lower kebab-case, as <see cref="KebabLowerCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The collection to convert. If <c>null</c> or empty, returns the input collection.</param>
-    /// <returns>A lazily evaluated collection with every string converted to lower kebab-case; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to lower kebab-case as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? KebabLowerCases(this IEnumerable<string?>? input) => input.KebabLowerCasesImplement();
@@ -243,7 +259,7 @@ public static partial class YANText
     /// Returns the strings of the specified array converted to lower kebab-case, as <see cref="KebabLowerCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The array to convert. If <c>null</c> or empty, returns the input array.</param>
-    /// <returns>A lazily evaluated collection with every string converted to lower kebab-case; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to lower kebab-case as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? KebabLowerCases(params string?[]? input) => input.KebabLowerCasesImplement();
@@ -262,12 +278,15 @@ public static partial class YANText
     /// </returns>
     /// <remarks>
     /// Words are runs of letters and decimal digits; every other character (white space, <c>_</c>, <c>-</c>, <c>.</c>, ...) separates words
-    /// and is dropped, and a combining mark stays with the letter before it. A new word also starts at an upper-case letter that follows a
-    /// lower-case letter, a digit or an uncased letter (<c>helloWorld</c>, <c>version2Update</c>), and at the last upper-case letter of a run
-    /// that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>). Letters are cased with the invariant culture.
+    /// and is dropped, and a combining mark stays with the letter or digit before it. A new word also starts at an upper-case letter whose
+    /// last letter before it in the word is lower-case or uncased, digits in between included (<c>helloWorld</c>, <c>version2Update</c>), and
+    /// at the last upper-case letter of a run that is followed by a lower-case letter (<c>HTTPServer</c> is <c>HTTP</c> + <c>Server</c>,
+    /// <c>HTML5Parser</c> is <c>HTML5</c> + <c>Parser</c>); digits belong to the word before them (<c>FOO123BAR</c> is one word). Letters are
+    /// cased with the invariant culture; a letter with no simple invariant case mapping (such as <c>İ</c>, <c>ı</c> or <c>ß</c>) keeps its case.
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
+    [return: NotNullIfNotNull(nameof(input))]
     public static string? KebabUpperCase(this string? input) => input.KebabUpperCaseImplement();
 
     /// <summary>
@@ -283,7 +302,7 @@ public static partial class YANText
     /// Returns the strings of the specified collection converted to upper KEBAB-CASE, as <see cref="KebabUpperCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The collection to convert. If <c>null</c> or empty, returns the input collection.</param>
-    /// <returns>A lazily evaluated collection with every string converted to upper KEBAB-CASE; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to upper KEBAB-CASE as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? KebabUpperCases(this IEnumerable<string?>? input) => input.KebabUpperCasesImplement();
@@ -292,7 +311,7 @@ public static partial class YANText
     /// Returns the strings of the specified array converted to upper KEBAB-CASE, as <see cref="KebabUpperCase(string?)"/> does, in the input order.
     /// </summary>
     /// <param name="input">The array to convert. If <c>null</c> or empty, returns the input array.</param>
-    /// <returns>A lazily evaluated collection with every string converted to upper KEBAB-CASE; <c>null</c> elements stay <c>null</c>.</returns>
+    /// <returns>A collection that converts every string to upper KEBAB-CASE as it is enumerated (the first element is read at the call, to return an empty input as is); <c>null</c> elements stay <c>null</c>.</returns>
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static IEnumerable<string?>? KebabUpperCases(params string?[]? input) => input.KebabUpperCasesImplement();

@@ -24,6 +24,10 @@ public partial class YANTextTest
         { "\U0001F600smile \U0001F600face", "smileFace", "SmileFace", "smile_face", "SMILE_FACE", "smile-face", "SMILE-FACE" },
         { "123abc", "123abc", "123abc", "123abc", "123ABC", "123abc", "123ABC" },
         { "--", "", "", "", "", "", "" },
+        { "FOO123BAR", "foo123bar", "Foo123bar", "foo123bar", "FOO123BAR", "foo123bar", "FOO123BAR" },
+        { "HTML5Parser", "html5Parser", "Html5Parser", "html5_parser", "HTML5_PARSER", "html5-parser", "HTML5-PARSER" },
+        { "Base64URL", "base64Url", "Base64Url", "base64_url", "BASE64_URL", "base64-url", "BASE64-URL" },
+        { "123Abc", "123Abc", "123Abc", "123_abc", "123_ABC", "123-abc", "123-ABC" },
     };
 
     [Theory]
@@ -138,6 +142,45 @@ public partial class YANTextTest
         Assert.Same(pascal, pascal.PascalCase());
         Assert.Same(snake, snake.SnakeLowerCase());
         Assert.Same(kebab, kebab.KebabUpperCase());
+    }
+
+    [Fact]
+    public void WordCases_SnakeAndKebabResults_SplitAtTheSamePlacesAgain_Text()
+    {
+        // Arrange (seeded random ASCII text full of digits, case changes and separators)
+        const string alphabet = "aAbBzZ019_- .";
+        var random = new Random(8_500);
+
+        for (var i = 0; i < 20_000; i++)
+        {
+            var chars = new char[random.Next(1, 16)];
+
+            for (var j = 0; j < chars.Length; j++)
+            {
+                chars[j] = alphabet[random.Next(alphabet.Length)];
+            }
+
+            var input = new string(chars);
+            var snakeLower = input.SnakeLowerCase();
+
+            // Act & Assert
+            Assert.Equal(snakeLower, input.SnakeUpperCase().SnakeLowerCase());
+            Assert.Equal(snakeLower, input.KebabUpperCase().SnakeLowerCase());
+            Assert.Equal(snakeLower, snakeLower.SnakeLowerCase());
+            Assert.Equal(input.KebabUpperCase(), input.SnakeLowerCase().KebabUpperCase());
+        }
+    }
+
+    [Fact]
+    public void WordCases_NonNullArgument_IsNonNullResult_Text()
+    {
+        // Act (compiles without CS8600 under nullable reference types: [return: NotNullIfNotNull])
+        string camel = "a b".CamelCase();
+        string kebab = "a b".KebabUpperCase();
+
+        // Assert
+        Assert.Equal("aB", camel);
+        Assert.Equal("A-B", kebab);
     }
 
     [Fact]
