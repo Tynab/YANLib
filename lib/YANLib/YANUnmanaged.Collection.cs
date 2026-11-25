@@ -179,9 +179,9 @@ public static partial class YANUnmanaged
     /// Keys that cannot be parsed will use the default value of <typeparamref name="TKey"/>.
     /// Values that cannot be parsed will be the default value of <typeparamref name="TValue"/> in the resulting dictionary: <c>null</c> for a
     /// reference type or a nullable value type, otherwise <c>default(TValue)</c> (for example <c>0</c> for <see cref="int"/>).
-    /// If two keys parse to the same value (<c>"1"</c> and <c>1</c>, or <c>"3.2"</c> and <c>"3.7"</c>, which are both floored to 3 for <see cref="int"/>),
-    /// an <see cref="ArgumentException"/> is thrown; <see cref="Parses{TKey, TValue}(IDictionary{object, object}, Func{TValue, TValue, TValue})"/> lets the
-    /// caller choose the value instead.
+    /// If two keys parse to the same value (<c>"1"</c> and <c>1</c>, or <c>"3.2"</c> and <c>"3.7"</c>, which are both floored to 3 for <see cref="int"/>
+    /// under a culture whose decimal separator is <c>.</c>), an <see cref="ArgumentException"/> is thrown;
+    /// <see cref="Parses{TKey, TValue}(IDictionary{object, object}, Func{TValue, TValue, TValue})"/> lets the caller choose the value instead.
     /// </remarks>
     /// <exception cref="ArgumentException">Thrown when two keys of <paramref name="input"/> parse to the same <typeparamref name="TKey"/> value.</exception>
     [DebuggerHidden]

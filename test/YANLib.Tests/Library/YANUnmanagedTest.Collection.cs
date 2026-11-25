@@ -513,7 +513,7 @@ public partial class YANUnmanagedTest
     [Fact]
     public void Parses_DuplicateKeysWithOnDuplicate_ResolvesInEnumerationOrder_Collection()
     {
-        // Arrange ("1" and 1 parse to the same int key, and so do "3.2" and "3.7", both floored to 3)
+        // Arrange ("1" and 1 parse to the same int key, and so do "3.2" and "3.7", both floored to 3 where '.' is the decimal separator)
         var input = new Dictionary<object, object?>
         {
             { "1", "first" },
@@ -524,9 +524,10 @@ public partial class YANUnmanagedTest
         };
 
         // Act
-        var keepFirst = input.Parses<int, string>(static (stored, _) => stored);
-        var keepLast = input.Parses<int, string>(static (_, incoming) => incoming);
-        var merged = input.Parses<int, string>(static (stored, incoming) => stored + "+" + incoming);
+        var (keepFirst, keepLast, merged) = WithCulture(CultureInfo.InvariantCulture, () => (
+            input.Parses<int, string>(static (stored, _) => stored),
+            input.Parses<int, string>(static (_, incoming) => incoming),
+            input.Parses<int, string>(static (stored, incoming) => stored + "+" + incoming)));
 
         // Assert
         Assert.Equal(new Dictionary<int, string?> { { 1, "first" }, { 3, "a" }, { 5, "single" } }, keepFirst);
