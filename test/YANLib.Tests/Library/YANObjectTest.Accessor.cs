@@ -226,6 +226,41 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void IsNullDefault_ForceInterpretedInvokeSwitch_KeepsUsingReflection_ObjectProperty()
+    {
+        // Arrange (with this switch reflection interprets every call, which runs the static constructor of a struct property type before every getter
+        // call, so the accessors do not compile either: no compiled accessor shows in the stack trace of the getter's exception; no other test reads or
+        // copies this type, and the switch is process-wide, so it is cleared again at once)
+        const string forceInterpretedInvoke = "Switch.System.Reflection.ForceInterpretedInvoke";
+
+        var input = new AccessorInterpretedTier();
+        var traces = new List<string?>();
+
+        AppContext.SetSwitch(forceInterpretedInvoke, true);
+
+        try
+        {
+            // Act
+            for (var call = 1; call <= 3; call++)
+            {
+                traces.Add(Assert.Throws<TargetInvocationException>(() => input.IsNullDefault()).InnerException!.StackTrace);
+                traces.Add(Assert.Throws<TargetInvocationException>(() => input.Copy()).InnerException!.StackTrace);
+            }
+        }
+        finally
+        {
+            AppContext.SetSwitch(forceInterpretedInvoke, false);
+        }
+
+        // Assert
+        Assert.All(traces, x =>
+        {
+            Assert.DoesNotContain("YANObject_Get_", x);
+            Assert.DoesNotContain("YANObject_Copy_", x);
+        });
+    }
+
+    [Fact]
     public void Copy_CollectibleRuntimeTypeWithoutParameterlessConstructor_DoesNotKeepTheTypeAlive_Object()
     {
         // Arrange and Act (Copy<object> of an instance whose runtime type has no public parameterless constructor copies into a new object, so, as
@@ -377,6 +412,15 @@ public partial class YANObjectTest
     }
 
     private sealed class AccessorCopierTier
+    {
+        public int Boom
+        {
+            get => throw new InvalidOperationException("getter");
+            set { }
+        }
+    }
+
+    private sealed class AccessorInterpretedTier
     {
         public int Boom
         {

@@ -22,6 +22,8 @@ namespace YANLib.Implementation;
 //
 // Dynamic code: the accessors are compiled by the JIT. YANLib targets net8.0 on the JIT; trimming and Native AOT are out of scope. Where
 // dynamic code is not compiled (RuntimeFeature.IsDynamicCodeCompiled is false) or not supported (the compilation throws), reflection is used.
+// It is also used where reflection is told to interpret every call (the Switch.System.Reflection.ForceInterpretedInvoke app-context switch),
+// since an interpreted call also runs the static constructor of a struct property type before the getter.
 internal static partial class YANObject
 {
     private static readonly ConcurrentDictionary<Type, PropertyReader[]> PropertyReaderCache = new();
@@ -85,13 +87,20 @@ internal static partial class YANObject
     private static bool IsCompilableAccessorType(Type type) => !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef && !type.IsByRefLike && !type.ContainsGenericParameters;
 
     /// <summary>
+    /// Whether accessors are compiled at all: dynamic code is compiled (<see cref="RuntimeFeature.IsDynamicCodeCompiled"/>) and reflection is not told to
+    /// interpret every call (the <c>Switch.System.Reflection.ForceInterpretedInvoke</c> app-context switch, read when an accessor would be compiled).
+    /// </summary>
+    private static bool CanCompileAccessors()
+        => RuntimeFeature.IsDynamicCodeCompiled && !(AppContext.TryGetSwitch("Switch.System.Reflection.ForceInterpretedInvoke", out var interpreted) && interpreted);
+
+    /// <summary>
     /// Compiles a getter for <paramref name="prop"/> that does what <see cref="PropertyInfo.GetValue(object)"/> does for an instance of a type that
     /// has the property: it calls the property's get method (non-public included), with a virtual call for a class and on the boxed value itself for
     /// a struct (so a getter that changes the struct changes the box, as with reflection), and returns the value boxed (<c>null</c> for an empty
     /// <see cref="Nullable{T}"/>). The exceptions of the get method are not wrapped here: <see cref="PropertyReader"/> wraps them.
     /// </summary>
     /// <returns>The getter, or <c>null</c> when the property is read through reflection instead: see <see cref="IsCompilableAccessorType(Type)"/>, a get
-    /// method that does not match the property, dynamic code that is not compiled, or a failed compilation (with <c>restrictedSkipVisibility</c>,
+    /// method that does not match the property, <see cref="CanCompileAccessors"/>, or a failed compilation (with <c>restrictedSkipVisibility</c>,
     /// <see cref="DynamicMethod.CreateDelegate(Type)"/> compiles the method, so an invalid method fails here, before any getter runs).</returns>
     private static Func<object, object?>? CompileGetter(PropertyInfo prop)
     {
@@ -100,7 +109,7 @@ internal static partial class YANObject
             var declaringType = prop.DeclaringType;
             var getter = prop.GetGetMethod(true);
 
-            if (!RuntimeFeature.IsDynamicCodeCompiled || declaringType is null || getter is null || getter.IsStatic || getter.GetParameters().Length is not 0
+            if (!CanCompileAccessors() || declaringType is null || getter is null || getter.IsStatic || getter.GetParameters().Length is not 0
                 || getter.ReturnType != prop.PropertyType || !IsCompilableAccessorType(declaringType) || !IsCompilableAccessorType(prop.PropertyType))
             {
                 return null;
@@ -153,7 +162,7 @@ internal static partial class YANObject
             var getter = prop.GetGetMethod(true);
             var setter = prop.GetSetMethod(true);
 
-            if (!RuntimeFeature.IsDynamicCodeCompiled || declaringType is null || declaringType.IsValueType || getter is null || setter is null || getter.IsStatic
+            if (!CanCompileAccessors() || declaringType is null || declaringType.IsValueType || getter is null || setter is null || getter.IsStatic
                 || setter.IsStatic || getter.GetParameters().Length is not 0 || getter.ReturnType != prop.PropertyType || setter.ReturnType != typeof(void)
                 || setter.GetParameters() is not [{ ParameterType: var valueType }] || valueType != prop.PropertyType || !IsCompilableAccessorType(declaringType)
                 || !IsCompilableAccessorType(prop.PropertyType))
