@@ -192,6 +192,38 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void IsNullDefault_RepeatedCalls_ReadThroughTheCompiledGetterFromTheSecondCall_ObjectProperty()
+    {
+        // Arrange (no other test reads this type, so these are the first calls of its accessor; the compiled getter is a DynamicMethod named
+        // YANObject_Get_<property>, whose frame shows in the stack trace of the getter's exception, where reflection shows its own invoke stub)
+        var input = new AccessorGetterTier();
+
+        // Act
+        var traces = Enumerable.Range(0, 3).Select(_ => Assert.Throws<TargetInvocationException>(() => input.IsNullDefault()).InnerException!.StackTrace).ToArray();
+
+        // Assert
+        Assert.DoesNotContain("YANObject_Get_", traces[0]);
+        Assert.Contains("YANObject_Get_Boom", traces[1]);
+        Assert.Contains("YANObject_Get_Boom", traces[2]);
+    }
+
+    [Fact]
+    public void Copy_RepeatedCalls_CopyThroughTheCompiledCopierFromTheSecondCall_Object()
+    {
+        // Arrange (no other test copies this type, so these are the first calls of its accessor; the compiled copier is a DynamicMethod named
+        // YANObject_Copy_<property>, whose frame shows in the stack trace of the getter's exception, where reflection shows its own invoke stub)
+        var input = new AccessorCopierTier();
+
+        // Act
+        var traces = Enumerable.Range(0, 3).Select(_ => Assert.Throws<TargetInvocationException>(() => input.Copy()).InnerException!.StackTrace).ToArray();
+
+        // Assert
+        Assert.DoesNotContain("YANObject_Copy_", traces[0]);
+        Assert.Contains("YANObject_Copy_Boom", traces[1]);
+        Assert.Contains("YANObject_Copy_Boom", traces[2]);
+    }
+
+    [Fact]
     public void AllPropertiesDefault_ConcurrentFirstUseOfManyTypes_SameResultsOnEveryThread_ObjectProperty()
     {
         // Best effort: the threads meet at a barrier before each round on each type, so they make the first call (reflection), the second call (which
@@ -298,6 +330,20 @@ public partial class YANObjectTest
         public int Boom
         {
             get => throw (LastThrown = new InvalidOperationException("getter"));
+            set { }
+        }
+    }
+
+    private sealed class AccessorGetterTier
+    {
+        public int Boom => throw new InvalidOperationException("getter");
+    }
+
+    private sealed class AccessorCopierTier
+    {
+        public int Boom
+        {
+            get => throw new InvalidOperationException("getter");
             set { }
         }
     }
