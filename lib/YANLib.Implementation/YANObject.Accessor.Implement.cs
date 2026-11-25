@@ -17,8 +17,9 @@ namespace YANLib.Implementation;
 // shares its first reflection call with ChangeTimeZoneAllProperty (which still reads and writes through reflection).
 //
 // The contract is kept: an exception thrown by a compiled getter or setter surfaces as a TargetInvocationException whose InnerException
-// is that exception, as reflection throws it (same type, message and HResult). A property that cannot be compiled (a pointer, function
-// pointer or by-ref (ref return) type, an accessor that does not match the property, a failed compilation) keeps using reflection.
+// is that exception, as reflection throws it (same type, message and HResult; its Source, TargetSite and stack trace point into this
+// library instead of the reflection invoker). A property that cannot be compiled (a pointer, function pointer or by-ref (ref return)
+// type, an accessor that does not match the property, a failed compilation) keeps using reflection.
 //
 // Dynamic code: the accessors are compiled by the JIT. YANLib targets net8.0 on the JIT; trimming and Native AOT are out of scope. Where
 // dynamic code is not compiled (RuntimeFeature.IsDynamicCodeCompiled is false) or not supported (the compilation throws), reflection is used.
