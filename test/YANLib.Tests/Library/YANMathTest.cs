@@ -513,15 +513,62 @@ public partial class YANMathTest
             values[0] = decimal.Abs(values[0]);
             values[1] = new decimal(-1, -1, -1 - random.Next(16), false, 0);
 
-            // Act
-            var typed = YANMath.Average(values);
-            var boxed = YANMath.Average<decimal>(values.Cast<object?>());
+            // Act & Assert
+            AssertEveryAveragePath(values, ExactMean(values));
+        }
+    }
 
-            // Assert
-            var expected = ExactMean(values);
+    // decimal.MaxValue + 0.4m is decimal.MaxValue: the decimal running sum can round before it overflows, so the exact sum cannot start from
+    // it. Before this was fixed, only arrays and List<T> added every element exactly; the other paths lost what the rounding dropped.
+    [Fact]
+    public void Average_DecimalSumRoundsBeforeOverflow_ReturnsExactMeanOnEveryPath_Math()
+    {
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        decimal[] fractionLost = [max, 0.4m, max, 4m];
+        decimal[] cancelled = [max, .. Enumerable.Repeat(0.4m, 10), max, -max, -max, 4m];
 
-            Assert.True(expected == typed && decimal.GetBits(expected).SequenceEqual(decimal.GetBits(typed)), $"{string.Join(", ", values)}: {typed} != {expected}");
-            Assert.Equal(decimal.GetBits(expected), decimal.GetBits(boxed));
+        // Act & Assert: (2 * max + 4.4) / 4 = 39614081257132168796771975168.6 rounds to ...169, and 8 / 15
+        AssertEveryAveragePath(fractionLost, 39614081257132168796771975169m);
+        AssertEveryAveragePath(cancelled, 8m / 15m);
+        Assert.Equal(1L, YANMath.Average<long>(cancelled.Cast<object?>().ToArray()));
+    }
+
+    [Fact]
+    public void Average_DecimalSumRoundsBeforeOverflow_MatchesExactOracleOnEveryPath_Math()
+    {
+        // Arrange: seeded inputs whose decimal sum rounds before it overflows: a large whole value, fractions that a sum of that size cannot
+        // hold, a value near decimal.MaxValue that overflows the sum, mostly two values that nearly cancel the first and the third (so the
+        // dropped fractions matter), then more fractions
+        var random = new Random(20261126);
+
+        for (var round = 0; round < 300; round++)
+        {
+            var large = new decimal(random.Next(), random.Next(), (int)(0xC0000000u | (uint)random.Next()), false, 0);
+            var nearMax = new decimal(-1, -1, -1 - random.Next(16), false, 0);
+            var values = new List<decimal> { large };
+
+            AddFractions(values, random, random.Next(1, 5));
+            values.Add(nearMax);
+
+            if (random.Next(4) != 0)
+            {
+                values.Add(-large + random.Next(-3, 4));
+                values.Add(-nearMax + random.Next(0, 4));
+            }
+
+            AddFractions(values, random, random.Next(0, 4));
+
+            // Act & Assert
+            AssertEveryAveragePath([.. values], ExactMean(values));
+        }
+
+        static void AddFractions(List<decimal> values, Random random, int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                values.Add(new decimal(random.Next(), random.Next(), random.Next(1 << 20), random.Next(2) == 0, (byte)random.Next(1, 29)));
+            }
         }
     }
 
@@ -536,6 +583,29 @@ public partial class YANMathTest
         // Assert
         Assert.Equal(0m, sum);
         Assert.Null(objectSum);
+    }
+
+    /// <summary>
+    /// Asserts that every Average overload with a <see cref="decimal"/> result gives the bits of <paramref name="expected"/> for
+    /// <paramref name="values"/>: the span paths, the enumerator path, and the object paths (nullable, boxed, non-generic).
+    /// </summary>
+    private static void AssertEveryAveragePath(decimal[] values, decimal expected)
+    {
+        var results = new (string Path, decimal? Result)[]
+        {
+            ("decimal[]", YANMath.Average(values)),
+            ("List<decimal>", YANMath.Average<decimal>(values.ToList())),
+            ("Select", YANMath.Average<decimal>(values.Select(static x => x))),
+            ("ReadOnlyCollection", YANMath.Average<decimal>(new System.Collections.ObjectModel.ReadOnlyCollection<decimal>(values))),
+            ("decimal?[]", YANMath.Average<decimal?>(values.Select(static x => (decimal?)x).ToArray())),
+            ("object[]", YANMath.Average<decimal>(values.Cast<object?>().ToArray())),
+            ("ArrayList", new System.Collections.ArrayList(values).Average<decimal>())
+        };
+
+        foreach (var (path, result) in results)
+        {
+            Assert.True(result.HasValue && decimal.GetBits(expected).SequenceEqual(decimal.GetBits(result.Value)), $"{path} [{string.Join(", ", values)}]: {result} != {expected}");
+        }
     }
 
     /// <summary>

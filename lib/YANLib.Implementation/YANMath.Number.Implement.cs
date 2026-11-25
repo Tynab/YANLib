@@ -16,9 +16,9 @@ namespace YANLib.Implementation;
 // that are inherently double (Sqrt, Sin, Log, ...) stay in double.
 //
 // Unchanged semantics: a result that does not fit the target is default (0, or null for a nullable target), never an
-// exception; a decimal overflow falls back to the 8.3.3 double computation (except in Average, whose sum continues exactly in
-// BigInteger since 8.4.0, see DecimalUnits); a result converted to an integer target is rounded half to even; decimal results
-// carry no trailing zeros, as the double round trip produced.
+// exception; a decimal overflow falls back to the 8.3.3 double computation (except in Average, whose elements are added again
+// exactly in BigInteger since 8.4.0, see DecimalUnits); a result converted to an integer target is rounded half to even; decimal
+// results carry no trailing zeros, as the double round trip produced.
 internal static partial class YANMath
 {
     #region Classification
@@ -584,12 +584,14 @@ internal static partial class YANMath
 
     /// <summary>
     /// Exact sum of object-path elements converted with <see cref="TryToDecimal(object, out decimal, bool)"/>, a value with more than 28
-    /// decimal places rounded to 28 (the precision of the <see cref="decimal"/> sum); <c>false</c> on a failed conversion or an overflow.
+    /// decimal places rounded to 28 (the precision of the <see cref="decimal"/> sum); <c>false</c> on a failed conversion or an overflow
+    /// (<paramref name="overflowed"/>: an <see cref="OverflowException"/> of the sum or of the sequence itself).
     /// </summary>
-    private static bool TrySumDecimal(IEnumerable<object?> input, out decimal sum, out long count)
+    private static bool TrySumDecimal(IEnumerable<object?> input, out decimal sum, out long count, out bool overflowed)
     {
         sum = 0;
         count = 0;
+        overflowed = false;
 
         try
         {
@@ -608,6 +610,8 @@ internal static partial class YANMath
         }
         catch (OverflowException)
         {
+            overflowed = true;
+
             return false;
         }
     }
@@ -674,8 +678,9 @@ internal static partial class YANMath
 
     /// <summary>
     /// The average of typed <see cref="decimal"/> elements: their <see cref="decimal"/> sum divided by the count, as before 8.4.0, or, when an
-    /// addition overflows, the exact mean (<see cref="DecimalUnits"/>); <paramref name="count"/> 0 when there are no elements. <c>false</c>
-    /// only when the sequence itself throws <see cref="OverflowException"/>: the caller then takes the 8.3.3 <c>double</c> path, as before.
+    /// addition overflows, the exact mean of all elements, added again (<see cref="DecimalUnits"/>); <paramref name="count"/> 0 when there are
+    /// no elements. <c>false</c> only when the sequence itself throws <see cref="OverflowException"/>: the caller then takes the 8.3.3
+    /// <c>double</c> path, as before.
     /// </summary>
     private static bool TryAverageDecimal(IEnumerable<decimal> input, out decimal average, out long count)
     {
@@ -712,126 +717,92 @@ internal static partial class YANMath
             return true;
         }
 
-        using var enumerator = input.GetEnumerator();
-        var number = 0m;
-        var adding = false;
-
-        count = 0;
-
-        try
+        // the 8.3.3 loop, into a separate local: passing sum by reference made the span loop above about twice as slow
+        if (!TrySumDecimal(input, out var total, out count))
         {
-            while (enumerator.MoveNext())
-            {
-                number = enumerator.Current;
-                adding = true;
-                sum += number;
-                adding = false;
-                count++;
-            }
-        }
-        catch (OverflowException) when (adding)
-        {
-            return TryAverageExactly(enumerator, DecimalUnits.From(sum) + DecimalUnits.From(number), ref count, out average);
-        }
-        catch (OverflowException)
-        {
-            average = default;
-            count = 0;
-
-            return false;
+            // the running sum may have been rounded before it overflowed, so it cannot be continued: enumerate the sequence again and add
+            // every element exactly, as the 8.3.3 double path enumerated it again (an OverflowException of the sequence itself ends there)
+            return TryAverageExactly(input, out average, out count);
         }
 
-        average = count > 0 ? sum / count : default;
+        average = count > 0 ? total / count : default;
 
         return true;
     }
 
-    /// <summary>The rest of <see cref="TryAverageDecimal(IEnumerable{decimal}, out decimal, out long)"/> after the overflowing element.</summary>
-    private static bool TryAverageExactly(IEnumerator<decimal> enumerator, BigInteger units, ref long count, out decimal average)
+    /// <summary>
+    /// The exact mean of <paramref name="input"/>, enumerated again after its <see cref="decimal"/> sum overflowed; <paramref name="count"/> 0
+    /// when it has no elements left. <c>false</c> when the sequence itself throws <see cref="OverflowException"/>.
+    /// </summary>
+    private static bool TryAverageExactly(IEnumerable<decimal> input, out decimal average, out long count)
     {
-        count++;
+        var units = BigInteger.Zero;
+
+        average = default;
+        count = 0;
 
         try
         {
-            while (enumerator.MoveNext())
+            foreach (var value in input)
             {
-                units += DecimalUnits.From(enumerator.Current);
+                units += DecimalUnits.From(value);
                 count++;
             }
         }
         catch (OverflowException)
         {
-            average = default;
             count = 0;
 
             return false;
         }
 
-        average = DecimalUnits.Mean(units, count);
+        if (count > 0)
+        {
+            average = DecimalUnits.Mean(units, count);
+        }
 
         return true;
     }
 
     /// <summary>
     /// The average of object-path elements converted with <see cref="TryToDecimal(object, out decimal, bool)"/>: their <see cref="decimal"/>
-    /// sum divided by the count, as before 8.4.0, or, when an addition overflows, the exact mean (<see cref="DecimalUnits"/>). <c>false</c> on
-    /// a failed conversion (also after an overflow), when there are no elements, or when the sequence itself throws
-    /// <see cref="OverflowException"/>: the 8.3.3 <c>double</c> path then decides, as before.
+    /// sum divided by the count, as before 8.4.0, or, when an addition overflows, the exact mean of all elements, added again
+    /// (<see cref="DecimalUnits"/>). <c>false</c> on a failed conversion (also in that second pass), when there are no elements, or when the
+    /// sequence itself throws <see cref="OverflowException"/>: the 8.3.3 <c>double</c> path then decides, as before.
     /// </summary>
     private static bool TryAverageDecimal(IEnumerable<object?> input, out decimal average)
     {
-        using var enumerator = input.GetEnumerator();
-        decimal sum = 0;
-        var number = 0m;
-        var count = 0L;
-        var adding = false;
-
         average = default;
 
-        try
+        if (TrySumDecimal(input, out var sum, out var count, out var overflowed))
         {
-            while (enumerator.MoveNext())
+            if (count == 0)
             {
-                if (!TryToDecimal(enumerator.Current, out number, true))
-                {
-                    return false;
-                }
-
-                adding = true;
-                sum += number;
-                adding = false;
-                count++;
+                return false;
             }
-        }
-        catch (OverflowException) when (adding)
-        {
-            return TryAverageExactly(enumerator, DecimalUnits.From(sum) + DecimalUnits.From(number), count + 1, out average);
-        }
-        catch (OverflowException)
-        {
-            return false;
+
+            average = sum / count;
+
+            return true;
         }
 
-        if (count == 0)
-        {
-            return false;
-        }
-
-        average = sum / count;
-
-        return true;
+        // as in the typed path: the rounded running sum cannot be continued, so every element is added again, exactly
+        return overflowed && TryAverageExactly(input, out average);
     }
 
-    /// <summary>The rest of <see cref="TryAverageDecimal(IEnumerable{object}, out decimal)"/> after the overflowing element.</summary>
-    private static bool TryAverageExactly(IEnumerator<object?> enumerator, BigInteger units, long count, out decimal average)
+    /// <summary>The second, exact pass of <see cref="TryAverageDecimal(IEnumerable{object}, out decimal)"/> after an overflow.</summary>
+    private static bool TryAverageExactly(IEnumerable<object?> input, out decimal average)
     {
+        var units = BigInteger.Zero;
+        var count = 0L;
+
         average = default;
 
         try
         {
-            while (enumerator.MoveNext())
+            foreach (var value in input)
             {
-                if (!TryToDecimal(enumerator.Current, out var number, true))
+                if (!TryToDecimal(value, out var number, true))
                 {
                     return false;
                 }
@@ -841,6 +812,11 @@ internal static partial class YANMath
             }
         }
         catch (OverflowException)
+        {
+            return false;
+        }
+
+        if (count == 0)
         {
             return false;
         }
@@ -884,7 +860,7 @@ internal static partial class YANMath
 
     /// <summary>Sum of a non-empty object-path collection; see the class remarks.</summary>
     private static T? SumObject<T>(IEnumerable<object?> input)
-        => NumberTarget<T>.IsDecimal && TrySumDecimal(input, out var sum, out _) ? FromDecimal<T>(sum) : SumObjectDouble<T>(input);
+        => NumberTarget<T>.IsDecimal && TrySumDecimal(input, out var sum, out _, out _) ? FromDecimal<T>(sum) : SumObjectDouble<T>(input);
 
     /// <summary>The 8.3.3 sum: every element (null = 0) as <c>double</c>.</summary>
     private static T? SumObjectDouble<T>(IEnumerable<object?> input) => input.Sum(static x => x.ParseImplement<double>()).ParseImplement<T?>();
