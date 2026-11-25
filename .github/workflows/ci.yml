@@ -40,8 +40,13 @@ jobs:
           lfs: true
           persist-credentials: false
 
-      # global.json pins the latest .NET 8 SDK (8.0.100 with rollForward latestFeature). Without it the runner's newest
-      # preinstalled SDK would be used, and the formatter output depends on the SDK version.
+      # CI pins the latest .NET 8 SDK (8.0.100 with rollForward latestFeature) with a global.json written here, not committed,
+      # so contributors can build with any SDK. Without the pin the runner's newest preinstalled SDK would be used, and the
+      # formatter output depends on the SDK version.
+      - name: Pin the .NET 8 SDK
+        run: |
+          echo '{ "sdk": { "version": "8.0.100", "rollForward": "latestFeature" } }' > global.json
+
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v6
         with:

@@ -1091,7 +1091,7 @@ Decisions recorded when the CI workflow and `global.json` were added (Area F). N
 
 *Area:* CI and tooling
 
-**Open: the owner decides whether contributors without a .NET 8 SDK should be supported locally. Option 1 is committed.**
+**Chosen by the owner (November 2026): option 2. Done in 8.4.0: the committed global.json is removed and the CI workflow writes it before setting up .NET, so contributors can use any SDK; the .editorconfig header says CI decides the format gate.**
 
 latestFeature never crosses majors: a 9.0.100 + latestFeature global.json with only SDK 8 installed fails with 'A compatible .NET SDK was not found' (exit 145). So a developer who has only a .NET 9/10/11 SDK can no longer run dotnet build/test/format at the repository root, and Visual Studio honours global.json too. YANLib.sln says 'Visual Studio Version 18' (VS 2026, which ships the .NET 10 SDK), so the maintainer may not have an 8.0 SDK. .NET 8 support ended on 2026-11-10, so the file asks contributors to install an out-of-support SDK. The pin exists because the formatter output depends on the SDK version, and it gives a local `dotnet format` the same result as CI. Unverified risk: an unpinned newer SDK may report net8.0 as out of support, which TreatWarningsAsErrors could turn into a build break; that is a reason to keep a pin in CI either way.
 

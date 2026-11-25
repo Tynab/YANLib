@@ -165,4 +165,4 @@ Each item changes a result, an exception or a side effect that code written agai
 - A clean `dotnet pack` works, and `dotnet pack` validates the API against 8.3.3.
 - Restore uses nuget.org only.
 - The debugger can step into `YANLib.Implementation`; only the thin public facade stays hidden.
-- New: `.editorconfig` (checked by `dotnet format --verify-no-changes`), `global.json` (every `dotnet` command at the repository root now needs a .NET 8 SDK, 8.0.100 or later), the CI workflow and `ROADMAP.md`.
+- New: `.editorconfig` (checked by `dotnet format --verify-no-changes`), the CI workflow (it pins the .NET 8 SDK with a `global.json` it writes itself, so contributors can use any SDK) and `ROADMAP.md`.

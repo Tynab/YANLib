@@ -6,6 +6,8 @@
 #
 # (whitespace, code style and analyzers at their default severity: warning). Run it from the repository
 # root; it must exit with code 0. `dotnet format YANLib.sln` (without --verify-no-changes) applies the fixes.
+# CI runs it with the latest .NET 8 SDK (it writes a global.json for that); another SDK may format some code
+# differently (for example the wrapping of collection expressions), so CI decides.
 #
 # The code-style preferences below have no severity suffix, so they guide the IDE and `dotnet format`
 # without failing the check; only the whitespace rules and warning-level analyzers can fail it.
