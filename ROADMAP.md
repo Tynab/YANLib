@@ -138,7 +138,7 @@ Recommendation: Add CancellationToken overloads and return the implementation ta
 
 **Chosen for 8.4.0: SpinWait.SpinOnce() in the wait loop.**
 
-**Done in 8.4.0 (0984360): WaitForNextMillisecond spins with SpinWait.SpinOnce(); the IDs are unchanged. Measured with BitAllocationStrategy.MoreDistributed (16,000 IDs): about 0.1 s of CPU instead of 2.0 s, and about 2.2 s instead of 2.0 s of wall time (see "SpinWait.SpinOnce() vs SpinOnce(-1)" below).**
+**Done in 8.4.0 (0984360): WaitForNextMillisecond spins with SpinWait.SpinOnce(); the IDs are unchanged. Measured with BitAllocationStrategy.MoreDistributed (16,000 IDs): about 0.1 s of CPU instead of 2.0 s, and about 2.3 s instead of 2.0 s of wall time (see "SpinWait.SpinOnce() vs SpinOnce(-1)" below).**
 
 The 8.3.3 review did not change it (spec: thread-safety fine, locking untouched).
 
@@ -479,11 +479,11 @@ Recommendation: Keep sequential and document the recipe. Add opt-in overloads on
 
 **Done in 8.4.0 (option 2, chosen by the owner): a default value that is not a `DateTime` is parsed with the format first and, if that fails, like an input without a format (CurrentCulture for `Parse` / `Parses`, the provider for `ParseWith` / `ParsesWith`); `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` is 1 January 2025. Only results that were `DateTime.MinValue` change (YANUnmanaged.md, Conversion Rules).**
 
-Only a DateTime-typed defaultValue is used as is now. A string default is still parsed with the given format, so `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` still returns DateTime.MinValue (unchanged 8.3.3 behaviour).
+In 8.3.3 a default value was parsed with the given format only (a DateTime-typed one through its text), so `"bad".Parse<DateTime>("2025-01-01", "dd/MM/yyyy")` returned DateTime.MinValue.
 
 Options:
 
-- Keep (current)
+- Keep (8.3.3)
 - Parse the string default with the format, then fall back to a general DateTime.TryParse
 - Parse the string default without the format
 

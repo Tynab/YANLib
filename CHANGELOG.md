@@ -22,7 +22,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
   - Invalid strings are parsed with `TryParse`: `"abc".Parse<int>()` takes 33 ns instead of 23 µs.
   - Fractional strings are floored exactly.
   - An input that already is a `T` is returned unchanged, so a `DateTime` keeps its milliseconds and `Kind`.
-- **Collections**: the helpers no longer use unordered PLINQ, so results keep the input order. `ToImmutable*` of an empty non-generic collection no longer throws.
+- **Collections**: the helpers that return a sequence, apart from the `YANRandom` generators, no longer use unordered PLINQ, so results keep the input order. `ToImmutable*` of an empty non-generic collection no longer throws.
 - **YANMath**:
   - Integer and decimal math no longer goes through `double` (integers are exact, decimals are computed in `decimal`): `1.005m.Round(2)` is `1.01`, `long` sums keep every digit, and `3m.Pow(-1)` is 0.3333333333333333333333333333 (was 0.333333333333333).
   - `Round` accepts more than 15 digits, exactly.
@@ -159,7 +159,7 @@ Each item changes a result, an exception or a side effect that code written agai
 - The `sequence` argument of the `Extract*Components` methods is ignored; 8.3.3 subtracted it, in milliseconds, from the timestamp.
 - `ExtractIdAlphabeticComponents` / `ExtractIdAlphanumericComponents` throw `ArgumentNullException` for `null` (was `NullReferenceException`) and `ArgumentException` (`ParamName` `id`) for an empty, lower-case, foreign-character or larger-than-64-bit string; 8.3.3 returned meaningless components (`"abc"` decoded to 2022-12-31).
 - A clock rollback throws `InvalidOperationException` instead of `System.Exception`; `catch (Exception)` still catches it.
-- When the sequences of a millisecond are used up, `SpinWait` uses much less CPU but lowers the peak rate: 16,000 IDs with `BitAllocationStrategy.MoreDistributed` took about 2.2 s instead of 2.0 s (about 0.1 s of CPU instead of 2.0 s).
+- When the sequences of a millisecond are used up, `SpinWait` uses much less CPU but lowers the peak rate: 16,000 IDs with `BitAllocationStrategy.MoreDistributed` took about 2.3 s instead of 2.0 s (about 0.1 s of CPU instead of 2.0 s).
 
 ### Source compatibility notes
 
