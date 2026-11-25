@@ -1,5 +1,22 @@
 # Changelog
 
+## 8.5.0
+
+New, non-breaking API requested in the open GitHub issues, covered by tests (2365 tests, 0 failures) and by CI (build with warnings as errors, format check, the whole test suite and package validation against 8.4.0).
+
+### New API
+
+- **Word case conversion** (YANText, issues #172 to #195): `CamelCase`, `PascalCase`, `SnakeLowerCase`, `SnakeUpperCase`, `KebabLowerCase` and `KebabUpperCase` convert a string, convert a `List<string?>` in place, and, as `CamelCases`, `PascalCases`, `SnakeLowerCases`, `SnakeUpperCases`, `KebabLowerCases` and `KebabUpperCases`, convert an `IEnumerable<string?>` or a `params` array (lazily, in the input order). Words are runs of letters and decimal digits and every other character separates them; a new word also starts at an upper-case letter after a lower-case letter or a digit, and at the last capital of an acronym followed by a lower-case letter. Letters are cased with the invariant culture: `"hello world".CamelCase()` is `helloWorld`, `"HTTPServer".SnakeLowerCase()` is `http_server`, `"user_id".KebabUpperCase()` is `USER-ID`, and under `tr-TR` `"ID".CamelCase()` is `id`. `null`, empty and white-space strings are returned as they are. The rules and more examples are on the YANText wiki page.
+- **Parity** (YANMath, issues #214 and #215): `IsEven` and `IsOdd` for every number type that implements `INumberBase<T>` (they are `T.IsEvenInteger` and `T.IsOddInteger`): `4.IsEven()`, `(-3).IsOdd()` and `4.0.IsEven()` are true, `4.5` and `double.NaN` are neither even nor odd, and the nullable overloads return `false` for `null`.
+
+### Source compatibility notes
+
+- A project that already has its own extension methods with these names for the same types in an imported namespace may now get CS0121 (ambiguous call); call the method through its class to choose one.
+
+### Packaging and tooling
+
+- Package validation compares the API with 8.4.0.
+
 ## 8.4.0
 
 A large maintenance release. Every change was made against the 8.3.3 sources, checked by independent reviews, and is covered by tests (2230 tests, 0 failures) and by CI (build with warnings as errors, format check, the whole test suite and package validation against 8.3.3 on every push and pull request to `develop` and `main`). The wiki pages YANUnmanaged, YANObject, YANExpression and SnowflakelD have a *Changes since 8.3.3* section with more detail; for the other classes, this file is the full list. Design questions that were not changed in 8.x are listed in [ROADMAP.md](ROADMAP.md).

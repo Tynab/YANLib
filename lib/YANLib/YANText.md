@@ -13,6 +13,7 @@ The library is organized into several functional categories:
 ### String Operations
 
 - **Case Conversion**: Convert strings to different cases (lowercase, uppercase, title case)
+- **Word Case Conversion** (8.5.0): Convert text or identifiers to camelCase, PascalCase, snake_case, SNAKE_CASE, kebab-case and KEBAB-CASE
 - **Text Formatting**: Format strings as proper names, clean whitespace, capitalize text
 - **Content Filtering**: Extract specific character types (alphabetic, numeric, alphanumeric)
 - **Null/Empty Checking**: Determine if strings are null, empty, or whitespace
@@ -50,6 +51,14 @@ string upper = text.Upper(); // Returns "HELLO WORLD"
 string lower = text.Lower(); // Returns "hello world"
 string title = text.Title(); // Returns "Hello World"
 string capitalized = text.Capitalize(); // Returns "Hello world"
+
+// Word case conversion (8.5.0)
+string camel = "hello world".CamelCase(); // Returns "helloWorld"
+string pascal = "user_id".PascalCase(); // Returns "UserId"
+string snake = "HTTPServer".SnakeLowerCase(); // Returns "http_server"
+string constant = "getHTTPResponseCode".SnakeUpperCase(); // Returns "GET_HTTP_RESPONSE_CODE"
+string kebab = "XMLHttpRequest".KebabLowerCase(); // Returns "xml-http-request"
+string header = "content type".KebabUpperCase(); // Returns "CONTENT-TYPE"
 
 // Text formatting
 string name = "john.doe";
@@ -219,12 +228,31 @@ string tidyName = " john ,\tDOE. ".FormatName(); // Returns "John Doe"
 ```
 
 
+### Word Case Conversion Rules
+
+`CamelCase`, `PascalCase`, `SnakeLowerCase`, `SnakeUpperCase`, `KebabLowerCase` and `KebabUpperCase` (8.5.0) split the input into words, then write the words in their style:
+
+- A word is a run of letters and decimal digits (Unicode letters included). Every other character (white space, `_`, `-`, `.`, `/`, symbols, emoji) separates words and is dropped. A combining mark stays with the letter before it, so decomposed text (`"cha\u0300o"`) stays one word; a mark with no letter before it is dropped.
+- A new word also starts at an upper-case letter that follows a lower-case letter, a digit or an uncased letter (`helloWorld` is hello + World, `version2Update` is version2 + Update), and at the last upper-case letter of a run that is followed by a lower-case letter (`HTTPServer` is HTTP + Server, `XMLHttpRequest` is XML + Http + Request). A digit stays with the word before it, and letters after a digit continue the word (`foo123bar` is one word). An acronym followed by a word that starts with a lower-case letter is split before its last capital (`IPv6Address` is I + Pv6 + Address, `iOS` is i + OS).
+- Letters are cased with the invariant culture, so the result does not depend on the current culture (under `tr-TR`, `"ID".CamelCase()` is `"id"`, not `"ıd"`). camelCase writes the first word in lower case and starts every other word with an upper-case letter; PascalCase starts every word with an upper-case letter; the other letters of a word are lower case. The snake and kebab styles join the words with `_` or `-`, all in lower or all in upper case.
+- `null`, an empty string and white space are returned as they are; a string with no letter or digit (`"--"`) gives an empty string; when the result equals the input, the input string itself is returned (no allocation for the result).
+- The `List<string?>` overloads convert in place (lists of 1,000 or more strings in parallel by index); the `IEnumerable<string?>` and `params` overloads (`CamelCases`, `PascalCases`, ...) are lazily evaluated and keep the input order. `null` elements stay `null`.
+
+| Input | CamelCase | PascalCase | SnakeLowerCase | SnakeUpperCase | KebabLowerCase | KebabUpperCase |
+|-------|-----------|------------|----------------|----------------|----------------|----------------|
+| `hello world` | helloWorld | HelloWorld | hello_world | HELLO_WORLD | hello-world | HELLO-WORLD |
+| `HTTPServer` | httpServer | HttpServer | http_server | HTTP_SERVER | http-server | HTTP-SERVER |
+| `user_id` | userId | UserId | user_id | USER_ID | user-id | USER-ID |
+| `Version 2 update` | version2Update | Version2Update | version_2_update | VERSION_2_UPDATE | version-2-update | VERSION-2-UPDATE |
+| `Xin chào thế giới` | xinChàoThếGiới | XinChàoThếGiới | xin_chào_thế_giới | XIN_CHÀO_THẾ_GIỚI | xin-chào-thế-giới | XIN-CHÀO-THẾ-GIỚI |
+
+
 ## Performance Considerations
 
 - The library uses optimized implementations for different text operations
 - Collection methods that return `IEnumerable<T>` are lazily evaluated and preserve the input order; the in-place `List<string?>` / `List<char>` / `List<char?>` overloads (`Title`, `Lower`, `Upper`, ...) update lists with 1,000+ elements in parallel by index, so the order is kept as well
 - The thin public facade is marked `DebuggerHidden` and `DebuggerStepThrough`, so the debugger steps from your code straight into the implementation (`YANLib.Implementation`), whose code you can step through
-- String operations are designed to minimize memory allocations where possible: `CleanSpace` and the `Filter*` methods build their result in a stack buffer (a pooled array for long strings) and return the input itself when nothing changes, `Capitalize` writes straight into the new string, and `FormatName` reuses a per-thread `StringBuilder`
+- String operations are designed to minimize memory allocations where possible: `CleanSpace`, the `Filter*` methods and the word case methods (`CamelCase`, `SnakeLowerCase`, ...) build their result in a stack buffer (a pooled array for long strings) and return the input itself when nothing changes, `Capitalize` writes straight into the new string, and `FormatName` reuses a per-thread `StringBuilder`
 - `AllEqualsIgnoreCase`, `AnyEqualsIgnoreCase`, `AllNotEqualsIgnoreCase` and `AnyNotEqualsIgnoreCase` compare strings exactly like `EqualsIgnoreCase` (`StringComparison.OrdinalIgnoreCase`), enumerate the collection once and do not create lower-cased copies; for arrays and lists (of up to 16 strings for `AnyEqualsIgnoreCase` / `AllNotEqualsIgnoreCase`, which otherwise use a `HashSet`) they allocate nothing
 
 
@@ -244,6 +272,7 @@ The library provides comprehensive coverage of text manipulation operations:
 | Category | Functions |
 |----------|-----------|
 | **String Case Conversion** | Upper, Lower, Title, Capitalize |
+| **String Word Case Conversion** | CamelCase, PascalCase, SnakeLowerCase, SnakeUpperCase, KebabLowerCase, KebabUpperCase |
 | **String Formatting** | FormatName, CleanSpace |
 | **String Content Filtering** | FilterAlphabetic, FilterNumber, FilterAlphanumeric |
 | **String Validation** | IsNullEmpty, IsNotNullEmpty, IsNullWhiteSpace, IsNotNullWhiteSpace |
@@ -253,6 +282,7 @@ The library provides comprehensive coverage of text manipulation operations:
 | **Character Collection Operations** | AllEmpty, AnyEmpty, AllWhiteSpace, AnyWhiteSpace, AllAlphabetic, AnyAlphabetic, AllNumber, AnyNumber, AllAlphanumeric, AnyAlphanumeric, AllPunctuation, AnyPunctuation, AllLowers, AnyLowers, AllUppers, AnyUppers |
 | **String Collection Operations** | AllNull, AnyNull, AllNullEmpty, AnyNullEmpty, AllNullWhiteSpace, AnyNullWhiteSpace, AllNotNull, AnyNotNull, AllNotNullEmpty, AnyNotNullEmpty, AllNotNullWhiteSpace, AnyNotNullWhiteSpace, AllEqualsIgnoreCase, AnyEqualsIgnoreCase |
 | **Collection Case Conversion** | Upper, Lower, Uppers, Lowers, Titles, Capitalizes |
+| **Collection Word Case Conversion** | CamelCase, PascalCase, SnakeLowerCase, SnakeUpperCase, KebabLowerCase, KebabUpperCase (in place); CamelCases, PascalCases, SnakeLowerCases, SnakeUpperCases, KebabLowerCases, KebabUpperCases |
 | **Collection Formatting** | FormatNames, CleanSpaces |
 | **Collection Content Filtering** | FilterAlphabetics, FilterNumbers, FilterAlphanumerics |
 
@@ -261,7 +291,7 @@ The library provides comprehensive coverage of text manipulation operations:
 
 - **String Manipulation**: Implements efficient string manipulation using `StringBuilder` where appropriate
 - **Character Classification**: Uses `char` methods like `char.IsLetter()`, `char.IsDigit()` for character classification
-- **Case Conversion**: Uses `ToUpper()` and `ToLower()` with culture considerations for case conversion
+- **Case Conversion**: Uses `ToUpper()` and `ToLower()` with culture considerations for case conversion; the word case methods use the invariant culture (`Rune.ToUpperInvariant` / `Rune.ToLowerInvariant`)
 - **Whitespace Handling**: Implements specialized methods for cleaning and normalizing whitespace
 - **String Formatting**: Uses regex and string replacement for complex text formatting operations
 - **Collection Processing**: Implements specialized methods for processing collections of strings or characters

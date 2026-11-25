@@ -33,19 +33,16 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>### YANLib 8.4.0 – Correctness, Performance and New Overloads
+		<PackageReleaseNotes>### YANLib 8.5.0 – Word Case Conversion and Parity
 
-* **New API**: `ParseWith`/`ParsesWith` (parse with an `IFormatProvider`), `GenerateRandom&lt;T&gt;(T min, T max)` and `Random.NextChar(char min, char max)`, public `YANTask.WaitAnyWithConditions`/`WhenAnyWithConditions`, `YANProcess` overloads with `entireProcessTree` and `CancellationToken`, `onDuplicate` overloads of `Parses`, `ToDictionary`, `ToImmutableDictionary` and `ToImmutableSortedDictionary` for keys that parse to the same value, `Snowflake` `Extract*Components` strategy overloads without the ignored `sequence`, and `IsNull`/`IsNotNull` restored as obsolete shims.
-* **Fixes**: `Parse` no longer crashes on out-of-range values and supports `nint`/`nuint`; with a format, a `Parse&lt;DateTime&gt;` string default that does not match it is parsed without it; exact integer/decimal math in `YANMath`, also for a `decimal` `Average` whose running sum overflows; uniform, half-open `YANRandom` ranges; inherited properties, safe graph walks and runtime-type `Copy` in `YANObject`; the per-type caches of `YANObject` and `YANExpression` hold their types weakly and no longer keep a collectible `AssemblyLoadContext` (plugin) loaded; prompt cancellation and O(n) completion order in `YANTask`; robust `YANProcess` kills; `Snowflake` sequence, extraction and validation fixes; order-preserving collection helpers.
-* **Faster**: TryParse instead of exceptions, no boxing in typed `Sum`/`Average` of non-nullable numbers, compiled property accessors in `YANObject`.
-* **Behaviour changes to check**: `IdGenerator.NextId*` throws for an epoch in the future or 2^41 ms or more in the past; `GenerateRandom&lt;T&gt;(a, b)` with two typed numeric, `DateTime` or `char` arguments returns a value in [a, b); inherited properties count in `IsNullDefault`; `Copy()` throws `NotSupportedException` for collection types (`IList`, `IDictionary`, `ICollection`, `ICollection&lt;T&gt;`), which 8.3.3 copied without their items (unless a settable property held them) or failed on (for example `TargetParameterCountException` for `List&lt;T&gt;` and `Dictionary&lt;TKey, TValue&gt;`); the `Parse&lt;DateTime&gt;` default fallback above (was `DateTime.MinValue`); the `[Obsolete]` `Extract*Components` strategy overloads that take `sequence` give warning CS0618, an error with warnings as errors; the collection helpers that return a sequence, apart from the `YANRandom` generators, keep the input order (no more unordered PLINQ).
-* **Package**: ships XML docs, no `favicon.ico` content file, API validated against 8.3.3.
+* **New API**: `YANText` word case conversion: `CamelCase`, `PascalCase`, `SnakeLowerCase`, `SnakeUpperCase`, `KebabLowerCase` and `KebabUpperCase` for a string or a `List&lt;string?&gt;`, and `CamelCases`, `PascalCases`, ... for a collection, with invariant-culture casing (`"HTTPServer".SnakeLowerCase()` is `http_server`); `YANMath.IsEven`/`IsOdd` for every number type that implements `INumberBase&lt;T&gt;`, with nullable overloads (`null` is neither).
+* **Package**: API validated against 8.4.0.
 
 Full list: [CHANGELOG.md](https://github.com/Tynab/YANLib/blob/main/CHANGELOG.md). Documentation: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
-		<Version>8.4.0</Version>
+		<Version>8.5.0</Version>
 		<LangVersion>12</LangVersion>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -58,7 +55,7 @@ Full list: [CHANGELOG.md](https://github.com/Tynab/YANLib/blob/main/CHANGELOG.md
 			Validation is incremental: after changing only the baseline version, delete obj/ so that it runs again.
 		-->
 		<EnablePackageValidation>true</EnablePackageValidation>
-		<PackageValidationBaselineVersion>8.3.3</PackageValidationBaselineVersion>
+		<PackageValidationBaselineVersion>8.4.0</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

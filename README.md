@@ -181,6 +181,7 @@ A comprehensive utility library for text manipulation, character operations, and
 #### Key Features
 
 - String manipulation (case conversion, whitespace handling)
+- Word case conversion (8.5.0): camelCase, PascalCase, snake_case, SNAKE_CASE, kebab-case, KEBAB-CASE
 - String validation with null safety
 - Character operations
 - Collection text operations
@@ -192,6 +193,11 @@ string text = "hello world";
 string upper = text.Upper(); // Returns "HELLO WORLD"
 string title = text.Title(); // Returns "Hello World"
 string capitalized = text.Capitalize(); // Returns "Hello world"
+
+// Word case conversion (8.5.0)
+string camel = "hello world".CamelCase(); // Returns "helloWorld"
+string snake = "HTTPServer".SnakeLowerCase(); // Returns "http_server"
+string kebab = "user_id".KebabUpperCase(); // Returns "USER-ID"
 
 // Text formatting
 string name = "john.doe";
@@ -239,6 +245,7 @@ A comprehensive utility library for mathematical operations, providing extension
 - Statistical functions (Min, Max, Average, Sum)
 - Rounding operations (Truncate, Ceiling, Floor, Round)
 - Power functions (Sqrt, Cbrt, Pow, Abs)
+- Parity (8.5.0): IsEven, IsOdd for every number type
 - Trigonometric functions (Sin, Cos, Tan, Asin, Acos, Atan)
 - Logarithmic and exponential functions
 - Exact integer and decimal arithmetic without a round trip through double (`1.005m.Round(2)` is 1.01); a result that does not fit the type is the default value (`int.MinValue.Abs()` is 0)
@@ -253,6 +260,10 @@ double avg = YANMath.Average(5.2, 3.1, 7.8, 2.4); // Returns 4.625
 double sqrt = 16.0.Sqrt(); // Returns 4.0
 double powered = 2.0.Pow(3); // Returns 8.0
 double abs = (-5.0).Abs(); // Returns 5.0
+
+// Parity (8.5.0)
+bool even = 4.IsEven(); // Returns true
+bool odd = (-3).IsOdd(); // Returns true
 ```
 
 ### YANDateTime
