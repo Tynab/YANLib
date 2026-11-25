@@ -531,6 +531,53 @@ public partial class YANMathTest
     }
 
     [Fact]
+    public void Sum_DecimalPassFails_EnumeratesSequenceThreeTimes_Math()
+    {
+        // pin of the documented counts: with an integer or decimal result, a failed decimal pass (an object element without a decimal value,
+        // an overflow) is followed by the double pass that gives the result, as in 8.3.3, so an iterator source is started three times (8.3.3:
+        // twice); an Average over only nulls takes the same three passes; with a double result both start it twice
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        var nan = new CountingSequence<object?>(1, double.NaN, 2);
+        var infinity = new CountingSequence<object?>(1, double.NegativeInfinity);
+        var outOfRange = new CountingSequence<object?>(1, 1e30);
+        var nonGeneric = new CountingSequence<object?>(1, double.NaN, 2);
+        var boxedOverflow = new CountingSequence<object?>(max, max);
+        var typedOverflow = new CountingSequence<decimal>(max, max);
+        var nullableOverflow = new CountingSequence<decimal?>(max, null, max);
+        var doubleSum = new CountingSequence<object?>(1, double.NaN, 2);
+        var allNull = new CountingSequence<object?>(null, null);
+        var typedAllNull = new CountingSequence<int?>(null, null);
+        var doubleAllNull = new CountingSequence<object?>(null, null);
+
+        // Act
+        var nanResult = YANMath.Sum<int>(nan);
+        var infinityResult = YANMath.Sum<decimal?>(infinity);
+        var outOfRangeResult = YANMath.Sum<long>(outOfRange);
+        var nonGenericResult = ((System.Collections.IEnumerable)nonGeneric).Sum<long>();
+        var boxedOverflowResult = YANMath.Sum<decimal>(boxedOverflow);
+        var typedOverflowResult = YANMath.Sum<decimal>(typedOverflow);
+        var nullableOverflowResult = YANMath.Sum<decimal?>(nullableOverflow);
+        var doubleSumResult = YANMath.Sum<double>(doubleSum);
+        var allNullResult = YANMath.Average<decimal>(allNull);
+        var typedAllNullResult = YANMath.Average<int?>(typedAllNull);
+        var doubleAllNullResult = YANMath.Average<double>(doubleAllNull);
+
+        // Assert
+        Assert.Equal((0, 3), (nanResult, nan.Enumerations));
+        Assert.Equal(((decimal?)null, 3), (infinityResult, infinity.Enumerations));
+        Assert.Equal((0L, 3), (outOfRangeResult, outOfRange.Enumerations));
+        Assert.Equal((0L, 3), (nonGenericResult, nonGeneric.Enumerations));
+        Assert.Equal((0m, 3), (boxedOverflowResult, boxedOverflow.Enumerations));
+        Assert.Equal((0m, 3), (typedOverflowResult, typedOverflow.Enumerations));
+        Assert.Equal(((decimal?)null, 3), (nullableOverflowResult, nullableOverflow.Enumerations));
+        Assert.Equal((double.NaN, 2), (doubleSumResult, doubleSum.Enumerations));
+        Assert.Equal((0m, 3), (allNullResult, allNull.Enumerations));
+        Assert.Equal(((int?)null, 3), (typedAllNullResult, typedAllNull.Enumerations));
+        Assert.Equal((0d, 2), (doubleAllNullResult, doubleAllNull.Enumerations));
+    }
+
+    [Fact]
     public void Average_DecimalSumOverflows_MatchesExactOracle_Math()
     {
         // Arrange: seeded inputs whose decimal sum overflows, with values of every scale
