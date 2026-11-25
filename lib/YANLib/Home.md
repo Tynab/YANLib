@@ -50,6 +50,10 @@ DayOfWeek day = enumInput.Parse<DayOfWeek>(); // Returns DayOfWeek.Tuesday
 // Parse with a given culture (8.4.0); Parse uses the current culture
 object priceInput = "1.5";
 double price = priceInput.ParseWith<double>(CultureInfo.InvariantCulture); // Returns 1.5 under any current culture (Parse<double>() returns 15 under de-DE)
+
+// Keys that parse to the same value: keep the first (8.4.0); Parses<int, string>() without onDuplicate throws ArgumentException
+var rawDictionary = new Dictionary<object, object?> { { "1", "a" }, { 1, "b" } };
+Dictionary<int, string?> firstWins = rawDictionary.Parses<int, string>((stored, incoming) => stored); // Returns { 1: "a" }
 ```
 
 ### [YANEnumerable](YANEnumerable)
@@ -68,6 +72,13 @@ ImmutableArray<int> immutableArray = input.ToImmutableArray<int>(); // Returns I
 Dictionary<int, string?> dict = items.ToDictionary<TestItem, int, string?, int, string?>(
     item => item.Id,      // Key selector
     item => item.Name     // Value selector
+);
+
+// Items with the same Id: keep the last Name (8.4.0); without onDuplicate this throws ArgumentException
+Dictionary<int, string?> lastWins = items.ToDictionary<TestItem, int, string?, int, string?>(
+    item => item.Id,
+    item => item.Name,
+    (stored, incoming) => incoming
 );
 ```
 

@@ -2,7 +2,7 @@
 
 ## 8.4.0
 
-A large maintenance release. Every change was made against the 8.3.3 sources, checked by independent reviews, and is covered by tests (2186 tests, 0 failures) and by CI (build with warnings as errors, format check, the whole test suite and package validation against 8.3.3 on every push and pull request to `develop` and `main`). The wiki pages YANUnmanaged, YANObject, YANExpression and SnowflakelD have a *Changes since 8.3.3* section with more detail; for the other classes, this file is the full list. Design questions that were not changed in 8.x are listed in [ROADMAP.md](ROADMAP.md).
+A large maintenance release. Every change was made against the 8.3.3 sources, checked by independent reviews, and is covered by tests (2228 tests, 0 failures) and by CI (build with warnings as errors, format check, the whole test suite and package validation against 8.3.3 on every push and pull request to `develop` and `main`). The wiki pages YANUnmanaged, YANObject, YANExpression and SnowflakelD have a *Changes since 8.3.3* section with more detail; for the other classes, this file is the full list. Design questions that were not changed in 8.x are listed in [ROADMAP.md](ROADMAP.md).
 
 ### New API
 
