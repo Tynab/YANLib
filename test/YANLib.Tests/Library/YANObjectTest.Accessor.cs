@@ -1,5 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace YANLib.Tests.Library;
 
@@ -224,6 +226,23 @@ public partial class YANObjectTest
     }
 
     [Fact]
+    public void Copy_CollectibleRuntimeTypeWithoutParameterlessConstructor_DoesNotKeepTheTypeAlive_Object()
+    {
+        // Arrange and Act (Copy<object> of an instance whose runtime type has no public parameterless constructor copies into a new object, so, as
+        // in 8.3.3, nothing caches that runtime type and its collectible assembly can be unloaded)
+        var type = CopyInstanceOfCollectibleType();
+
+        for (var i = 0; i < 20 && type.IsAlive; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+        // Assert
+        Assert.False(type.IsAlive);
+    }
+
+    [Fact]
     public void AllPropertiesDefault_ConcurrentFirstUseOfManyTypes_SameResultsOnEveryThread_ObjectProperty()
     {
         // Best effort: the threads meet at a barrier before each round on each type, so they make the first call (reflection), the second call (which
@@ -292,6 +311,24 @@ public partial class YANObjectTest
     }
 
     #endregion
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference CopyInstanceOfCollectibleType()
+    {
+        var builder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("YANLib.Tests.Collectible"), AssemblyBuilderAccess.RunAndCollect)
+            .DefineDynamicModule("YANLib.Tests.Collectible").DefineType("NoParameterlessConstructor", TypeAttributes.Public);
+        var il = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, [typeof(int)]).GetILGenerator();
+
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes)!);
+        il.Emit(OpCodes.Ret);
+
+        var type = builder.CreateType();
+
+        Assert.Equal(typeof(object), Activator.CreateInstance(type, 1)!.Copy().GetType());
+
+        return new WeakReference(type);
+    }
 
     private struct AccessorPoint
     {

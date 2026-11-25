@@ -26,7 +26,6 @@ internal static partial class YANObject
 {
     private static readonly ConcurrentDictionary<Type, PropertyReader[]> PropertyReaderCache = new();
     private static readonly ConcurrentDictionary<Type, PropertyCopier[]> PropertyCopierCache = new();
-    private static readonly ConcurrentDictionary<Type, bool> PublicParameterlessConstructorCache = new();
 
     /// <summary>
     /// A marker for a value that is not computed yet.
@@ -78,11 +77,6 @@ internal static partial class YANObject
     /// </summary>
     private static PropertyCopier[] GetCachedCopiers(Type type)
         => PropertyCopierCache.GetOrAdd(type, static t => [.. GetCachedReadWriteProperties(t).Select(static x => new PropertyCopier(x))]);
-
-    /// <summary>
-    /// Whether <paramref name="type"/> has a public parameterless constructor (<see cref="Type.GetConstructor(Type[])"/>), cached per type.
-    /// </summary>
-    private static bool HasPublicParameterlessConstructor(Type type) => PublicParameterlessConstructorCache.GetOrAdd(type, static t => t.GetConstructor(Type.EmptyTypes) is not null);
 
     /// <summary>
     /// Whether a value of <paramref name="type"/> can be passed by a compiled accessor: not a pointer, function pointer, by-ref (ref return) or

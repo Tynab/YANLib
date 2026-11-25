@@ -685,7 +685,7 @@ internal static partial class YANObject
 
         T result;
 
-        if (runtimeType != typeof(T) && HasPublicParameterlessConstructor(runtimeType))
+        if (runtimeType != typeof(T) && runtimeType.GetConstructor(Type.EmptyTypes) is not null)
         {
             result = (T)Activator.CreateInstance(runtimeType)!;
         }
