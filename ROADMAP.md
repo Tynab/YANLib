@@ -864,6 +864,8 @@ Recommendation: Keep normalised in 8.x, so ToString output does not change for e
 
 *Area:* YANMath / YANRandom
 
+**Done in 8.4.0 for Average (the recommendation, chosen by the owner): when the running `decimal` sum of an Average overflows, the elements are added exactly as a `BigInteger` count of 10^-28 and the exact mean is rounded as `decimal` division rounds (half to even, largest scale whose mantissa fits 96 bits; it matched `decimal` division bit for bit on about two million non-overflowing inputs). This covers the typed, nullable, object and non-generic overloads and integer results computed in `decimal`; `Average(decimal.MaxValue, decimal.MaxValue)` is `decimal.MaxValue`. Averages that do not overflow give the same bits as before (4,012 inputs over every overload, compared with f344fc4), and are not slower: typed `decimal[1000]` took about 7-9 µs instead of 15 µs, boxed `object[1000]` about 17 µs instead of 18-22 µs (best of several interleaved runs). Sum keeps the double fallback, as the overflow decision says.**
+
 Typed and object decimal Sum/Average fall back to the 8.3.3 double result when an intermediate sum overflows decimal. Sum then keeps its old answer (usually 0). Average(decimal.MaxValue, decimal.MaxValue) is still 0 although the exact average decimal.MaxValue fits.
 
 Options:

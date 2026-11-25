@@ -16,8 +16,9 @@ namespace YANLib.Implementation;
 // that are inherently double (Sqrt, Sin, Log, ...) stay in double.
 //
 // Unchanged semantics: a result that does not fit the target is default (0, or null for a nullable target), never an
-// exception; a decimal overflow falls back to the 8.3.3 double computation; a result converted to an integer target is
-// rounded half to even; decimal results carry no trailing zeros, as the double round trip produced.
+// exception; a decimal overflow falls back to the 8.3.3 double computation (except in Average, whose sum continues exactly in
+// BigInteger since 8.4.0, see DecimalUnits); a result converted to an integer target is rounded half to even; decimal results
+// carry no trailing zeros, as the double round trip produced.
 internal static partial class YANMath
 {
     #region Classification
@@ -611,6 +612,244 @@ internal static partial class YANMath
         }
     }
 
+    /// <summary>
+    /// The exact sum behind an Average with a <see cref="decimal"/> result once its <see cref="decimal"/> running sum has overflowed: a
+    /// <see cref="BigInteger"/> count of 10^-28 units (every <see cref="decimal"/> is a whole number of them). Before 8.4.0 such an Average took
+    /// the 8.3.3 <c>double</c> path, so the average of <see cref="decimal.MaxValue"/> and <see cref="decimal.MaxValue"/> was 0. Only the overflow
+    /// path uses this class, so its powers of ten are computed on the first overflow.
+    /// </summary>
+    private static class DecimalUnits
+    {
+        private const int MaxScale = 28;
+
+        private static readonly BigInteger[] PowersOfTen = [.. Enumerable.Range(0, MaxScale + 1).Select(static x => BigInteger.Pow(10, x))];
+
+        private static readonly BigInteger MaxMantissa = (BigInteger.One << 96) - 1;
+
+        /// <summary><paramref name="value"/> as a whole number of 10^-28 units.</summary>
+        internal static BigInteger From(decimal value)
+        {
+            Span<int> bits = stackalloc int[4];
+
+            _ = decimal.GetBits(value, bits);
+
+            var mantissa = (BigInteger)((UInt128)(uint)bits[2] << 64 | (UInt128)(uint)bits[1] << 32 | (uint)bits[0]);
+            var units = mantissa * PowersOfTen[MaxScale - ((bits[3] >> 16) & 0xFF)];
+
+            return bits[3] < 0 ? -units : units;
+        }
+
+        /// <summary>
+        /// <paramref name="units"/> / <paramref name="count"/> 10^-28 units as <see cref="decimal"/>, rounded as <see cref="decimal"/> division
+        /// rounds: half to even, at the largest scale (at most 28) whose mantissa fits in 96 bits. A mean of decimals is never larger than the
+        /// largest of them, so scale 0 always fits. A zero mean is positive.
+        /// </summary>
+        internal static decimal Mean(BigInteger units, long count)
+        {
+            var magnitude = BigInteger.Abs(units);
+
+            for (var scale = MaxScale; scale >= 0; scale--)
+            {
+                // mean * 10^scale = units / (count * 10^(28 - scale))
+                var divisor = count * PowersOfTen[MaxScale - scale];
+                var quotient = BigInteger.DivRem(magnitude, divisor, out var remainder);
+                var half = (remainder << 1).CompareTo(divisor);
+
+                if (half > 0 || half == 0 && !quotient.IsEven)
+                {
+                    quotient++;
+                }
+
+                if (quotient <= MaxMantissa)
+                {
+                    var mantissa = (UInt128)quotient;
+
+                    return new decimal((int)(uint)mantissa, (int)(uint)(mantissa >> 32), (int)(uint)(mantissa >> 64), units.Sign < 0 && !quotient.IsZero, (byte)scale);
+                }
+            }
+
+            throw new UnreachableException();
+        }
+    }
+
+    /// <summary>
+    /// The average of typed <see cref="decimal"/> elements: their <see cref="decimal"/> sum divided by the count, as before 8.4.0, or, when an
+    /// addition overflows, the exact mean (<see cref="DecimalUnits"/>); <paramref name="count"/> 0 when there are no elements. <c>false</c>
+    /// only when the sequence itself throws <see cref="OverflowException"/>: the caller then takes the 8.3.3 <c>double</c> path, as before.
+    /// </summary>
+    private static bool TryAverageDecimal(IEnumerable<decimal> input, out decimal average, out long count)
+    {
+        decimal sum = 0;
+
+        if (TryGetSpan(input, out var span))
+        {
+            try
+            {
+                foreach (var value in span)
+                {
+                    sum += value;
+                }
+            }
+            catch (OverflowException)
+            {
+                // only the addition throws here: add the span again, exactly
+                var units = BigInteger.Zero;
+
+                foreach (var value in span)
+                {
+                    units += DecimalUnits.From(value);
+                }
+
+                count = span.Length;
+                average = DecimalUnits.Mean(units, count);
+
+                return true;
+            }
+
+            count = span.Length;
+            average = count > 0 ? sum / count : default;
+
+            return true;
+        }
+
+        using var enumerator = input.GetEnumerator();
+        var number = 0m;
+        var adding = false;
+
+        count = 0;
+
+        try
+        {
+            while (enumerator.MoveNext())
+            {
+                number = enumerator.Current;
+                adding = true;
+                sum += number;
+                adding = false;
+                count++;
+            }
+        }
+        catch (OverflowException) when (adding)
+        {
+            return TryAverageExactly(enumerator, DecimalUnits.From(sum) + DecimalUnits.From(number), ref count, out average);
+        }
+        catch (OverflowException)
+        {
+            average = default;
+            count = 0;
+
+            return false;
+        }
+
+        average = count > 0 ? sum / count : default;
+
+        return true;
+    }
+
+    /// <summary>The rest of <see cref="TryAverageDecimal(IEnumerable{decimal}, out decimal, out long)"/> after the overflowing element.</summary>
+    private static bool TryAverageExactly(IEnumerator<decimal> enumerator, BigInteger units, ref long count, out decimal average)
+    {
+        count++;
+
+        try
+        {
+            while (enumerator.MoveNext())
+            {
+                units += DecimalUnits.From(enumerator.Current);
+                count++;
+            }
+        }
+        catch (OverflowException)
+        {
+            average = default;
+            count = 0;
+
+            return false;
+        }
+
+        average = DecimalUnits.Mean(units, count);
+
+        return true;
+    }
+
+    /// <summary>
+    /// The average of object-path elements converted with <see cref="TryToDecimal(object, out decimal, bool)"/>: their <see cref="decimal"/>
+    /// sum divided by the count, as before 8.4.0, or, when an addition overflows, the exact mean (<see cref="DecimalUnits"/>). <c>false</c> on
+    /// a failed conversion (also after an overflow), when there are no elements, or when the sequence itself throws
+    /// <see cref="OverflowException"/>: the 8.3.3 <c>double</c> path then decides, as before.
+    /// </summary>
+    private static bool TryAverageDecimal(IEnumerable<object?> input, out decimal average)
+    {
+        using var enumerator = input.GetEnumerator();
+        decimal sum = 0;
+        var number = 0m;
+        var count = 0L;
+        var adding = false;
+
+        average = default;
+
+        try
+        {
+            while (enumerator.MoveNext())
+            {
+                if (!TryToDecimal(enumerator.Current, out number, true))
+                {
+                    return false;
+                }
+
+                adding = true;
+                sum += number;
+                adding = false;
+                count++;
+            }
+        }
+        catch (OverflowException) when (adding)
+        {
+            return TryAverageExactly(enumerator, DecimalUnits.From(sum) + DecimalUnits.From(number), count + 1, out average);
+        }
+        catch (OverflowException)
+        {
+            return false;
+        }
+
+        if (count == 0)
+        {
+            return false;
+        }
+
+        average = sum / count;
+
+        return true;
+    }
+
+    /// <summary>The rest of <see cref="TryAverageDecimal(IEnumerable{object}, out decimal)"/> after the overflowing element.</summary>
+    private static bool TryAverageExactly(IEnumerator<object?> enumerator, BigInteger units, long count, out decimal average)
+    {
+        average = default;
+
+        try
+        {
+            while (enumerator.MoveNext())
+            {
+                if (!TryToDecimal(enumerator.Current, out var number, true))
+                {
+                    return false;
+                }
+
+                units += DecimalUnits.From(number);
+                count++;
+            }
+        }
+        catch (OverflowException)
+        {
+            return false;
+        }
+
+        average = DecimalUnits.Mean(units, count);
+
+        return true;
+    }
+
     /// <summary><paramref name="sum"/> / <paramref name="count"/> rounded half to even, as the <c>double</c> average was when converted to an integer.</summary>
     private static Int128 DivideToEven(Int128 sum, long count)
     {
@@ -674,8 +913,8 @@ internal static partial class YANMath
 
         if (kind == NumberKind.Decimal)
         {
-            return !TrySumDecimal((IEnumerable<decimal>)(object)input, out var sum, out var count) ? AverageObjectDouble<T>(input.Cast<object?>())
-                : count > 0 ? As<decimal, T>(Normalize(sum / count))
+            return !TryAverageDecimal((IEnumerable<decimal>)(object)input, out var average, out var count) ? AverageObjectDouble<T>(input.Cast<object?>())
+                : count > 0 ? As<decimal, T>(Normalize(average))
                 : default;
         }
 
@@ -687,7 +926,7 @@ internal static partial class YANMath
     {
         var values = input.Where(static x => x is not null);
 
-        return NumberTarget<T>.IsDecimal && TrySumDecimal(values, out var sum, out var count) && count > 0 ? FromDecimal<T>(sum / count) : AverageObjectDouble<T>(values);
+        return NumberTarget<T>.IsDecimal && TryAverageDecimal(values, out var average) ? FromDecimal<T>(average) : AverageObjectDouble<T>(values);
     }
 
     /// <summary>The 8.3.3 average: the non-null elements as <c>double</c>; <c>default</c> when there are none.</summary>

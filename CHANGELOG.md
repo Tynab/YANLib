@@ -29,6 +29,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
   - `Min` / `Max` / `Average` of all-`null` input return the default.
   - `Log2` uses `Math.Log2`.
   - Typed `Sum` / `Average` no longer box: `Sum<int>` over 1000 items takes 1 µs instead of 34 µs, with no allocation.
+  - `Average` with a `decimal` result is exact when its running `decimal` sum overflows (it fell back to `double`): `YANMath.Average(decimal.MaxValue, decimal.MaxValue)` is `decimal.MaxValue`. `Sum` keeps the `double` fallback.
 - **YANRandom**:
   - `NextDecimal()` is uniform over `[0, 1)`.
   - Ranges are half-open everywhere, including `NextUlong`, `NextDateTime` and rounding at the top of a range.
@@ -93,6 +94,7 @@ Each item changes a result, an exception or a side effect that code written agai
 - `Log2` uses `Math.Log2`: `536870912.0.Log2()` 29.000000000000004 -> 29. Other results can change in the last digit.
 - The exact conversion costs time: `Sum` and `Average` with an integer or `decimal` result over boxed `double` values, or over a `double` collection with another result type (`doubles.Sum<decimal>()`), are several times slower. `YANMath.Sum<decimal>` over 1,000 boxed random doubles took about 0.58 ms instead of about 0.15 ms. Same-type typed calls (`YANMath.Sum<double>(doubles)`) are not affected.
 - Typed `Average` / `Min` / `Max` over a `List<T>` subclass that re-implements `IEnumerable<T>` follow that enumeration, as typed `Sum` already did: for a list holding 5, -100 and 3 that enumerates 5 and 3, `Average` -31 -> 4 and `Min` -100 -> 3.
+- When the running `decimal` sum of an `Average` overflows, the elements are added exactly (`BigInteger`) instead of falling back to the `double` average, and the mean is rounded as `decimal` division rounds: `YANMath.Average(decimal.MaxValue, decimal.MaxValue)` 0 -> `decimal.MaxValue`, `YANMath.Average(decimal.MaxValue, 1m, -decimal.MaxValue)` 0 -> 0.3333333333333333333333333333, `YANMath.Average<decimal>(new object[] { decimal.MaxValue, decimal.MaxValue, 1e20 })` 52818775042842900000000000000 -> 52818775042842891729029300223, `YANMath.Average<long>(new object[] { decimal.MaxValue, 3m, -decimal.MaxValue })` 0 -> 1. Averages whose sum does not overflow gave the same bits in a check of 4,012 inputs over every overload; an object element without a `decimal` value (`double.NaN`) still selects the `double` average, and `Sum` is unchanged.
 
 **YANRandom**
 

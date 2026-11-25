@@ -1,4 +1,6 @@
-﻿namespace YANLib.Tests.Library;
+﻿using System.Numerics;
+
+namespace YANLib.Tests.Library;
 
 public partial class YANMathTest
 {
@@ -409,6 +411,176 @@ public partial class YANMathTest
         Assert.Equal(0, intResult);
         Assert.Equal(0m, decimalResult);
         Assert.Equal(0.0, doubleResult);
+    }
+
+    // Before 8.4.0 an overflowing decimal sum fell back to the double average, which is 0 here (the double mean of two decimal.MaxValue
+    // values does not convert back to decimal) or lost the small terms.
+    [Fact]
+    public void Average_DecimalSumOverflows_ReturnsExactMean_Math()
+    {
+        // Arrange
+        const decimal max = decimal.MaxValue;
+        var third = 1m / 3m;
+
+        // Act & Assert: typed span path (array, params, List<T>) and enumerator path
+        Assert.Equal(max, YANMath.Average(max, max));
+        Assert.Equal(max, YANMath.Average<decimal>(new[] { max, max, max }));
+        Assert.Equal(third, YANMath.Average<decimal>(new List<decimal> { max, 1m, -max }));
+        Assert.Equal(third, YANMath.Average<decimal>(new[] { max, 1m, -max }.Select(static x => x)));
+        Assert.Equal(max - 1, YANMath.Average<decimal>(new HashSet<decimal> { max, max - 1, max - 2 }));
+        Assert.Equal(-max, YANMath.Average(-max, -max));
+
+        // object path: nullable and boxed elements, the non-generic overload and an integer result computed in decimal
+        Assert.Equal(max, YANMath.Average<decimal?>(max, null, max));
+        Assert.Equal(max, YANMath.Average<decimal>(new object?[] { max, "79228162514264337593543950335", null }));
+        Assert.Equal(max, new System.Collections.ArrayList { max, max }.Average<decimal>());
+        Assert.Equal(1L, YANMath.Average<long>(new object?[] { max, 3m, -max }));
+        Assert.Equal(1, YANMath.Average<int?>(new object?[] { max, 3, -max }));
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflows_RoundsHalfToEven_Math()
+    {
+        // Arrange (the means are 79228162514264337593543950334.5 and ...333.5: no decimal place is left, so they round to even)
+        const decimal max = decimal.MaxValue;
+
+        // Act
+        var down = YANMath.Average(max, max - 1);
+        var up = YANMath.Average(max, max - 3);
+        var negative = YANMath.Average(-max, -(max - 1));
+        var objectPath = YANMath.Average<decimal?>(max, max - 3);
+
+        // Assert
+        Assert.Equal(79228162514264337593543950334m, down);
+        Assert.Equal(79228162514264337593543950334m, up);
+        Assert.Equal(-79228162514264337593543950334m, negative);
+        Assert.Equal(79228162514264337593543950334m, objectPath);
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflowsToZeroMean_IsPositiveZero_Math()
+    {
+        // Arrange
+        const decimal max = decimal.MaxValue;
+
+        // Act
+        var typed = YANMath.Average(max, max, -max, -max);
+        var boxed = YANMath.Average<decimal>(new object?[] { -max, -max, max, max });
+
+        // Assert
+        Assert.Equal(0m, typed);
+        Assert.False(decimal.IsNegative(typed));
+        Assert.Equal(0m, boxed);
+        Assert.False(decimal.IsNegative(boxed));
+    }
+
+    [Fact]
+    public void Average_DecimalOverflowThenFailedConversion_KeepsDoubleFallback_Math()
+    {
+        // pin: a value without a decimal equivalent (NaN) still sends the object path to the 8.3.3 double average, also after an overflow
+        // Arrange
+        const decimal max = decimal.MaxValue;
+
+        // Act
+        var nanLast = YANMath.Average<decimal>(new object?[] { max, max, double.NaN });
+        var nanFirst = YANMath.Average<decimal>(new object?[] { double.NaN, max, max });
+        var convertible = YANMath.Average<decimal>(new object?[] { max, max, 1e20 });
+
+        // Assert (a double that converts to decimal after the overflow keeps the exact path: (2 * max + 1e20) / 3)
+        Assert.Equal(0m, nanLast);
+        Assert.Equal(0m, nanFirst);
+        Assert.Equal(52818775042842891729029300223m, convertible);
+    }
+
+    [Fact]
+    public void Average_DecimalSumOverflows_MatchesExactOracle_Math()
+    {
+        // Arrange: seeded inputs whose decimal sum overflows, with values of every scale
+        var random = new Random(20261125);
+
+        for (var round = 0; round < 300; round++)
+        {
+            var count = random.Next(2, 9);
+            var values = new decimal[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                var scale = (byte)(i == 0 ? 0 : random.Next(0, 29));
+                var high = i == 0 ? (int)(0xC0000000u | (uint)random.Next()) : random.Next();
+                values[i] = new decimal(random.Next(), random.Next(), high, random.Next(4) == 0, scale);
+            }
+
+            values[0] = decimal.Abs(values[0]);
+            values[1] = new decimal(-1, -1, -1 - random.Next(16), false, 0);
+
+            // Act
+            var typed = YANMath.Average(values);
+            var boxed = YANMath.Average<decimal>(values.Cast<object?>());
+
+            // Assert
+            var expected = ExactMean(values);
+
+            Assert.True(expected == typed && decimal.GetBits(expected).SequenceEqual(decimal.GetBits(typed)), $"{string.Join(", ", values)}: {typed} != {expected}");
+            Assert.Equal(decimal.GetBits(expected), decimal.GetBits(boxed));
+        }
+    }
+
+    [Fact]
+    public void Sum_DecimalOverflow_KeepsDocumentedResult_Math()
+    {
+        // pin: Sum keeps its overflow semantics (the double fallback), only Average became exact
+        // Act
+        var sum = YANMath.Sum(decimal.MaxValue, decimal.MaxValue);
+        var objectSum = YANMath.Sum<decimal?>(decimal.MaxValue, decimal.MaxValue);
+
+        // Assert
+        Assert.Equal(0m, sum);
+        Assert.Null(objectSum);
+    }
+
+    /// <summary>
+    /// The mean of <paramref name="values"/> as <see cref="decimal"/> division would give it if the sum fitted: the exact rational mean,
+    /// rounded half to even at the largest scale (up to 28) whose mantissa fits in 96 bits, without trailing zeros.
+    /// </summary>
+    private static decimal ExactMean(IReadOnlyList<decimal> values)
+    {
+        var numerator = BigInteger.Zero;
+
+        foreach (var value in values)
+        {
+            var bits = decimal.GetBits(value);
+            var mantissa = (new BigInteger((uint)bits[2]) << 64) + (new BigInteger((uint)bits[1]) << 32) + new BigInteger((uint)bits[0]);
+            var term = mantissa * BigInteger.Pow(10, 28 - ((bits[3] >> 16) & 0xFF));
+
+            numerator += bits[3] < 0 ? -term : term;
+        }
+
+        var denominator = values.Count * BigInteger.Pow(10, 28);
+
+        for (var scale = 28; scale >= 0; scale--)
+        {
+            var scaled = BigInteger.Abs(numerator) * BigInteger.Pow(10, scale);
+            var quotient = BigInteger.DivRem(scaled, denominator, out var remainder);
+            var comparison = (remainder * 2).CompareTo(denominator);
+
+            if (comparison > 0 || comparison == 0 && !quotient.IsEven)
+            {
+                quotient++;
+            }
+
+            if (quotient.GetBitLength() <= 96)
+            {
+                var bytes = quotient.ToByteArray(isUnsigned: true, isBigEndian: false);
+
+                Array.Resize(ref bytes, 12);
+
+                var result = new decimal(BitConverter.ToInt32(bytes, 0), BitConverter.ToInt32(bytes, 4), BitConverter.ToInt32(bytes, 8), numerator.Sign < 0 && !quotient.IsZero, (byte)scale);
+
+                return result / 1.0000000000000000000000000000m;
+            }
+        }
+
+        throw new OverflowException("The mean does not fit decimal.");
     }
 
     #endregion

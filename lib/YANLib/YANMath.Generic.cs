@@ -84,7 +84,7 @@ public static partial class YANMath
     /// <returns>The average of all values in the collection, converted to type <typeparamref name="T"/>, or <c>default(T)</c> if the collection is <c>null</c>, empty or has only <c>null</c> elements.</returns>
     /// <remarks>
     /// This method ignores <c>null</c> elements in the collection when calculating the average.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even. If the running <see cref="decimal"/> sum overflows, the elements are added exactly instead (since 8.4.0; before, the <c>double</c> calculation was used), so <c>YANMath.Average(decimal.MaxValue, decimal.MaxValue)</c> is <see cref="decimal.MaxValue"/> (was 0).
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
@@ -99,7 +99,7 @@ public static partial class YANMath
     /// <remarks>
     /// This method provides a convenient way to calculate the average of an array of objects without having to explicitly cast it to <see cref="IEnumerable{T}"/>.
     /// This method ignores <c>null</c> elements in the array when calculating the average.
-    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even.
+    /// When <typeparamref name="T"/> is an integer type or <see cref="decimal"/> (or a nullable one), the elements are converted to <see cref="decimal"/> (a whole <see cref="double"/> or <see cref="float"/> exactly, any other through its shortest round-trip text, so 1.005 stays 1.005) and added exactly; otherwise they are converted to <c>double</c> for the calculation. The result is converted to type <typeparamref name="T"/>. An average converted to an integer type is rounded half to even. If the running <see cref="decimal"/> sum overflows, the elements are added exactly instead (since 8.4.0; before, the <c>double</c> calculation was used), so <c>YANMath.Average(decimal.MaxValue, decimal.MaxValue)</c> is <see cref="decimal.MaxValue"/> (was 0).
     /// </remarks>
     [DebuggerHidden]
     [DebuggerStepThrough]
