@@ -41,7 +41,7 @@
 * **Behaviour changes to check**: `IdGenerator.NextId*` throws for an epoch in the future or 2^41 ms or more in the past; `GenerateRandom&lt;T&gt;(a, b)` with two typed numeric, `DateTime` or `char` arguments returns a value in [a, b); inherited properties count in `IsNullDefault`; collection helpers are lazy and ordered.
 * **Package**: ships XML docs, no `favicon.ico` content file, API validated against 8.3.3.
 
-Full list: [CHANGELOG.md](https://github.com/Tynab/YANLib/blob/main/CHANGELOG.md). Documentation: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
+Full list: [CHANGELOG.md](https://github.com/Tynab/YANLib/blob/develop/CHANGELOG.md). Documentation: [https://github.com/Tynab/YANLib/wiki](https://github.com/Tynab/YANLib/wiki)</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageId>Tynab.YANLib</PackageId>
