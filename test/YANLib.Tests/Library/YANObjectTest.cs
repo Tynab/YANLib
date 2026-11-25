@@ -1376,8 +1376,10 @@ public partial class YANObjectTest
         viewFirst.ChangeTimeZoneAllProperty(0, 7);
         copyFirst.ChangeTimeZoneAllProperty(0, 7);
 
-        // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, in either
-        // declaration order; 8.3.3 did not read the getter-only property and shifted the field once, to Hour(8))
+        // Assert (pinned: the getter-only list is converted in place and the writable copy getter over the same field converts it again, when the
+        // getter-only property is declared first (viewFirst) or the copy's setter stores a copy (copyFirst); with the copy property declared first and
+        // a setter that stores the list it receives, the field is shifted once, as in 8.3.3. 8.3.3 did not read the getter-only property and shifted
+        // the field once, to Hour(8))
         Assert.Equal([Hour(15)], viewFirst.View);
         Assert.Equal([Hour(15)], copyFirst.View);
     }
