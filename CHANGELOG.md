@@ -49,7 +49,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
     - It no longer fails on cycles, deep graphs (a 1,000,000-node list), read-only collections, dictionaries and `ArraySegment<T>`. The values of a dictionary whose values are not `DateTime` / `DateTime?` (a `Dictionary<string, Order>` settable property or input, which threw `TargetParameterCountException`) and the items of a `ReadOnlyCollection<DateTime>` (which threw `NotSupportedException`) are left unchanged.
     - It writes converted copies back in 8.3.3's order.
   - Property reads and copies use compiled accessors from the second call on: `IsNullDefault` on 6 properties takes 99 ns instead of 199 ns. The results and the type, message and `InnerException` of a getter or setter exception are those of reflection (apart from one `ForceInterpretedInvoke` case described on the YANObject wiki page), but the exception's `Source`, `TargetSite` and stack frames differ from the second call on (see *Behaviour changes* below).
-- **YANExpression**: `PropertyExpression` calls a matching parameterless method correctly. Its cache key includes the parameter name, and it no longer throws for `new`-hidden properties. Its cache holds the types weakly, so a plugin type no longer keeps a collectible `AssemblyLoadContext` from unloading.
+- **YANExpression**: `PropertyExpression` calls a matching parameterless method correctly. Its cache key includes the parameter name, and it no longer throws `AmbiguousMatchException` for `new`-hidden properties or for properties whose names differ only in case (the most-derived property and the exact-case match win). Its cache holds the types weakly, so a plugin type no longer keeps a collectible `AssemblyLoadContext` from unloading.
 - **YANTask**:
   - Cancellation is observed while waiting: 114 ms instead of never.
   - Completion order is tracked in O(n): 16,000 tasks take 0.9 ms instead of 2.4 s, and no continuation is leaked.
@@ -130,6 +130,7 @@ Each item changes a result, an exception or a side effect that code written agai
 
 - `PropertyExpression<T>("p", name)` with the name of a parameterless method builds a call (`p => p.Describe()`; 8.3.3 built a constant `System.Reflection.RuntimeMethodInfo` type), and throws `ArgumentException` for a `void`, by-ref, by-ref-like or generic method.
 - The cache key includes the parameter name: `("x", "Name")` followed by `("u", "Name")` returned `x => x.Name`, now `u => u.Name`.
+- A property hidden with `new`, or a name that matches properties differing only in case, builds an expression instead of throwing `AmbiguousMatchException`: the most-derived property and the exact-case match win (`("p", "name")` gives `p => p.name` and `("p", "Name")` gives `p => p.Name` when both properties exist).
 
 **YANTask**
 
