@@ -15,7 +15,7 @@ This page records the design decisions found during the 8.3.3 review (Areas A-E)
 
 *Area:* Parse / collections
 
-**Chosen for 8.4.0: additive IFormatProvider overloads, CurrentCulture stays the default (option 2). Invariant default is a 9.0 item. Done: `ParseWith<T>(this object?, IFormatProvider?)` (rules of `Parse<T>()`), `ParseWith<T>(this object?, IFormatProvider?, object? defaultValue, IEnumerable<string?>? / params string?[]? format) where T : unmanaged`, and `ParsesWith<T>` for the `IEnumerable<object?>` and non-generic `IEnumerable` forms of both (YANUnmanaged.md, Culture). They have a new name because a `Parse<T>(object?, IFormatProvider)` overload would silently rebind `x.Parse<int>(CultureInfo.InvariantCulture)` and `x.Parse<int>(null)`, which pass a defaultValue today; a scratch consumer (C# 12 to 14) binds all 148 existing Parse/Parses call shapes as before. A `null` provider is the existing behaviour. Exact DateTime formats stay on InvariantCulture with any provider, as in `Parse`. The dictionary/lookup forms and the YANEnumerable conversions have no provider form.**
+**Chosen for 8.4.0: additive IFormatProvider overloads, CurrentCulture stays the default (option 2). Invariant default is a 9.0 item. Done in 8.4.0 (ccdf3e9, 517386d): `ParseWith<T>(this object?, IFormatProvider?)` (rules of `Parse<T>()`), `ParseWith<T>(this object?, IFormatProvider?, object? defaultValue, IEnumerable<string?>? / params string?[]? format) where T : unmanaged`, and `ParsesWith<T>` for the `IEnumerable<object?>` and non-generic `IEnumerable` forms of both (YANUnmanaged.md, Culture). They have a new name because a `Parse<T>(object?, IFormatProvider)` overload would silently rebind `x.Parse<int>(CultureInfo.InvariantCulture)` and `x.Parse<int>(null)`, which pass a defaultValue today; a scratch consumer (C# 12 to 14) binds all 148 existing Parse/Parses call shapes as before. A `null` provider is the existing behaviour. Exact DateTime formats stay on InvariantCulture with any provider, as in `Parse`. The dictionary/lookup forms and the YANEnumerable conversions have no provider form.**
 
 Strings are parsed with CultureInfo.CurrentCulture, as Convert.ChangeType did. Under de-DE and vi-VN, "1.5".Parse<double>() == 15 and 1.5.Parse<string>() == "1,5". The equivalence table shows the same culture behaviour old and new.
 
@@ -31,7 +31,7 @@ Recommendation: Add IFormatProvider overloads in a minor release (or one taking 
 
 *Area:* YANObject / YANExpression
 
-**Chosen for 8.4.0: compiled getters/setters cached per type, getter exceptions still wrapped in TargetInvocationException (option 2). Done: the property checks (IsNullDefault, IsNotNullDefault, AllProperties*/AnyProperties*, every form) and Copy read and write each property through a DynamicMethod accessor cached per Type and compiled on the accessor's second call (its first call stays the reflection call, as .NET 8 reflection's own first call is interpreted, so the results, the getter/setter calls and the exception type, message, HResult and InnerException are unchanged; from the second call the TargetInvocationException's Source, TargetSite and stack traces point into YANLib.Implementation instead of the reflection invoker, see YANObject.md, Changes since 8.3.3); getter, setter and constructor exceptions surface as TargetInvocationException wrapping the thrown instance; pointer, function pointer and ref-return properties, and every property under the Switch.System.Reflection.ForceInterpretedInvoke switch (as set when the accessor would compile; reflection keeps the value it read first, so clearing the switch at run time after reflection has read it as set is not mirrored, see YANObject.md, Performance Considerations), stay on reflection; ChangeTimeZoneAllProperty is unchanged. Measured (Release, Stopwatch): IsNullDefault on 6 properties 199 -> 99 ns, Copy of 10 properties 597 -> 89 ns; the second call of a new type costs about 0.3 ms (6-property IsNullDefault) to 0.9 ms (10-property Copy) more for the compilation (YANObject.md, Performance Considerations). No BenchmarkDotNet suite was added.**
+**Chosen for 8.4.0: compiled getters/setters cached per type, getter exceptions still wrapped in TargetInvocationException (option 2). Done in 8.4.0 (9b86e8e, 5ffcf25): the property checks (IsNullDefault, IsNotNullDefault, AllProperties*/AnyProperties*, every form) and Copy read and write each property through a DynamicMethod accessor cached per Type and compiled on the accessor's second call (its first call stays the reflection call, as .NET 8 reflection's own first call is interpreted, so the results, the getter/setter calls and the exception type, message, HResult and InnerException are unchanged; from the second call the TargetInvocationException's Source, TargetSite and stack traces point into YANLib.Implementation instead of the reflection invoker, see YANObject.md, Changes since 8.3.3); getter, setter and constructor exceptions surface as TargetInvocationException wrapping the thrown instance; pointer, function pointer and ref-return properties, and every property under the Switch.System.Reflection.ForceInterpretedInvoke switch (as set when the accessor would compile; reflection keeps the value it read first, so clearing the switch at run time after reflection has read it as set is not mirrored, see YANObject.md, Performance Considerations), stay on reflection; ChangeTimeZoneAllProperty is unchanged. Measured (Release, Stopwatch): IsNullDefault on 6 properties 199 -> 99 ns, Copy of 10 properties 597 -> 89 ns; the second call of a new type costs about 0.3 ms (6-property IsNullDefault) to 0.9 ms (10-property Copy) more for the compilation (YANObject.md, Performance Considerations). No BenchmarkDotNet suite was added.**
 
 Every property is read with PropertyInfo.GetValue on every call (the ~30 ns reflection invoke dominates; IsNullDefault on 6 properties is ~200+ ns). An earlier prototype with Expression-compiled getters/setters per type was 2-10x faster, but getter exceptions would surface raw instead of wrapped in TargetInvocationException, which the docs now describe.
 
@@ -49,7 +49,9 @@ Recommendation: Option 2. Same observable behaviour with a large speed-up. Do it
 
 **Chosen for 8.4.0: remove the attributes from YANLib.Implementation only (option 2).**
 
-1160 occurrences of each in lib/*.cs. Consumers cannot step into library frames, and exceptions surface at the call site.
+**Done in 8.4.0 (2f3a038): the 543 [DebuggerHidden] and 543 [DebuggerStepThrough] attributes of YANLib.Implementation were removed; the thin public facade keeps them, so a step from user code goes straight into the implementation, whose code can be stepped through.**
+
+Before 8.4.0 there were 1160 occurrences of each in lib/*.cs. Consumers could not step into library frames, and exceptions surfaced at the call site.
 
 Options:
 
@@ -63,9 +65,9 @@ Recommendation: Option 2: keep the thin facade hidden but let the debugger step 
 
 *Area:* Packaging / docs / tooling
 
-**Chosen: 8.4.0. Done: Version 8.4.0, PackageReleaseNotes and CHANGELOG.md.**
+**Chosen: 8.4.0. Done in 8.4.0 (08f47a0): Version 8.4.0, PackageReleaseNotes and CHANGELOG.md.**
 
-Areas A-E add API and change packaging (XML docs, no favicon content, validation). The version is still 8.3.3 and PackageReleaseNotes describe 8.3.3. Package validation baseline is 8.3.3.
+Areas A-E added API and changed packaging (XML docs, no favicon content, validation). Until 08f47a0 the version was still 8.3.3 and PackageReleaseNotes described 8.3.3. The package validation baseline stays 8.3.3.
 
 Options:
 
@@ -73,7 +75,7 @@ Options:
 - 8.3.4 (if only fixes are counted)
 - Leave to the owner at release time
 
-Recommendation: Option 1 (8.4.0) chosen by the owner; I did not bump. Update PackageReleaseNotes then. The validation baseline can stay at 8.3.3 or move to the last published version.
+Recommendation: Option 1 (8.4.0), chosen by the owner and done, with PackageReleaseNotes updated at the bump. The validation baseline can stay at 8.3.3 or move to the last published version.
 
 ### Make WaitAnyWithConditions / WhenAnyWithConditions (and AsyncEnumerableEmpty) public
 
@@ -81,7 +83,9 @@ Recommendation: Option 1 (8.4.0) chosen by the owner; I did not bump. Update Pac
 
 **Chosen for 8.4.0: make WaitAnyWithConditions / WhenAnyWithConditions public (AsyncEnumerableEmpty stays internal).**
 
-They are internal in the facade. YANTask.md documented them as public; it now marks them internal, and tests reach them via InternalsVisibleTo.
+**Done in 8.4.0 (6ffea4f, documented in 1aafb53): both are public facade methods with the internal signatures; package validation passes. A null predicate throws ArgumentNullException since 3c2ab80 (see "Null predicate in the YANTask methods" below).**
+
+In 8.3.3 they were internal in the facade although YANTask.md documented them as public; the 8.3.3 review first marked them internal in the docs, and tests reached them via InternalsVisibleTo.
 
 Options:
 
@@ -97,7 +101,9 @@ Recommendation: Keep internal until N5/N6 and the cancellation semantics below a
 
 **Chosen for 8.4.0: throw OperationCanceledException in every cancellation case, as the .NET convention (option 2), together with making the methods public.**
 
-Implemented quiet end in every case: already cancelled, WithCancellation, while waiting, while the consumer handles an item. This matches the XML doc and the pre-cancel tests; the old code threw only mid-enumeration. Only internal callers exist.
+**Done in 8.4.0 (6ffea4f): a token already canceled when the enumeration starts (also for a null or empty collection), a WithCancellation token, a cancellation while waiting and one while the consumer handles an item all throw OperationCanceledException; continuations are still removed.**
+
+Before 6ffea4f, the review had implemented a quiet end in every case: already cancelled, WithCancellation, while waiting, while the consumer handles an item. That matched the XML doc and the pre-cancel tests; 8.3.3 threw only mid-enumeration. Only internal callers existed then.
 
 Options:
 
@@ -111,7 +117,7 @@ Recommendation: If the methods become public, switch to throwing OperationCancel
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
-**Chosen for 8.4.0: add CancellationToken / timeout overloads (option 2). Done: `KillAllProcessesByName(this string?, CancellationToken)` and `KillAllProcessesByNames<TNames>(this TNames?, CancellationToken)`, plus the token parameter of the entireProcessTree overloads below. A timeout is the token of `new CancellationTokenSource(TimeSpan)`: TimeSpan overloads would make a `default` argument ambiguous (CS0121). The facade async/await wrappers are unchanged. Source break to list in the 8.4.0 release notes: with more than one overload, the `KillAllProcessesByName` method group has no natural type, so `var f = YANProcess.KillAllProcessesByName;` (which compiled against 8.3.3) now fails with CS8917 and needs an explicit delegate type (`Func<string?, Task>`); explicitly typed delegates and `Select(YANProcess.KillAllProcessesByName)` still bind to the old overload.**
+**Chosen for 8.4.0: add CancellationToken / timeout overloads (option 2). Done in 8.4.0 (be44ee9, d61c34e): `KillAllProcessesByName(this string?, CancellationToken)` and `KillAllProcessesByNames<TNames>(this TNames?, CancellationToken)`, plus the token parameter of the entireProcessTree overloads below. A timeout is the token of `new CancellationTokenSource(TimeSpan)`: TimeSpan overloads would make a `default` argument ambiguous (CS0121). The facade async/await wrappers are unchanged. Source break to list in the 8.4.0 release notes: with more than one overload, the `KillAllProcessesByName` method group has no natural type, so `var f = YANProcess.KillAllProcessesByName;` (which compiled against 8.3.3) now fails with CS8917 and needs an explicit delegate type (`Func<string?, Task>`); explicitly typed delegates and `Select(YANProcess.KillAllProcessesByName)` still bind to the old overload.**
 
 WaitForExitAsync can wait indefinitely for a process that ignores SIGKILL (e.g. D state); the facade does `async Task X() => await XImplement()`.
 
@@ -129,7 +135,9 @@ Recommendation: Add CancellationToken overloads and return the implementation ta
 
 **Chosen for 8.4.0: SpinWait.SpinOnce() in the wait loop.**
 
-Not changed (spec: thread-safety fine, locking untouched).
+**Done in 8.4.0 (0984360): WaitForNextMillisecond spins with SpinWait.SpinOnce(); the IDs are unchanged. Measured with BitAllocationStrategy.MoreDistributed (16,000 IDs): about 0.1 s of CPU instead of 2.0 s, and about 2.2 s instead of 2.0 s of wall time (see "SpinWait.SpinOnce() vs SpinOnce(-1)" below).**
+
+The 8.3.3 review did not change it (spec: thread-safety fine, locking untouched).
 
 Options:
 
@@ -145,7 +153,9 @@ Recommendation: SpinWait.SpinOnce(); low risk, no output change.
 
 **Chosen for 8.4.0: NextId* throw ArgumentOutOfRangeException when now - epoch is negative or >= 2^41 (option 2; a behaviour change, listed in the release notes).**
 
-Not changed. Negative IDs now encode safely, but an epoch far in the past can overflow into the sign bit.
+**Done in 8.4.0 (65b0748): NextId, NextIdAlphabetic and NextIdAlphanumeric throw ArgumentOutOfRangeException (ParamName "timestampEpoch") before any state changes, so a failing call uses up no sequence number. Elapsed times of 2^40 to 2^41 - 1 ms still set the sign bit; Extract* reads them unsigned since 1f32140 (see "Timestamps in [2^40, 2^41) set the sign bit" below).**
+
+The 8.3.3 review did not change it: negative IDs were made to encode safely, but an epoch far in the past could overflow into the sign bit.
 
 Options:
 
@@ -159,7 +169,7 @@ Recommendation: Throw ArgumentOutOfRangeException in NextId* in the next major (
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
-**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3). Done: `KillAllProcessesByName(this string?, bool entireProcessTree, CancellationToken = default)` and `KillAllProcessesByNames<TNames>(this TNames?, bool entireProcessTree, CancellationToken = default) where TNames : IEnumerable<string?>`, generic so that `params` calls with only null/default arguments keep their binding; `false` uses Kill(), so a matching ancestor of the caller is killed on its own. The new same-name overloads remove the natural type of the `KillAllProcessesByName` method group: `var f = YANProcess.KillAllProcessesByName;` needs an explicit delegate type (`Func<string?, Task>`) since 8.4.0 (CS8917; see N7).**
+**Chosen for 8.4.0: keep the tree kill as the default and add an opt-in entireProcessTree parameter/overload (option 3). Done in 8.4.0 (be44ee9): `KillAllProcessesByName(this string?, bool entireProcessTree, CancellationToken = default)` and `KillAllProcessesByNames<TNames>(this TNames?, bool entireProcessTree, CancellationToken = default) where TNames : IEnumerable<string?>`, generic so that `params` calls with only null/default arguments keep their binding; `false` uses Kill(), so a matching ancestor of the caller is killed on its own. The new same-name overloads remove the natural type of the `KillAllProcessesByName` method group: `var f = YANProcess.KillAllProcessesByName;` needs an explicit delegate type (`Func<string?, Task>`) since 8.4.0 (CS8917; see N7).**
 
 KillAllProcessesByName(s) kills each matching process with Process.Kill(entireProcessTree: true), so every descendant is killed too, whatever its name (for example child processes of a matching shell). The earlier record wrongly said the caller dies when a matching process is its ancestor. In fact .NET refuses any tree that contains the calling process: the ancestor stays alive, nothing is killed through it, and the library still kills the other matches and then rethrows the first failure. I verified this with the new test KillAndDispose_AncestorOfCallingProcess_IsRefusedAndTheOthersAreStillKilled_Process; the two verifiers observed it on .NET 8.0.34. The calling process itself is skipped by id. So the caller is never killed, but a by-name call that matches an ancestor (for example a shell name) ends with InvalidOperationException. Switching to Kill() would stop killing unrelated descendants and would also stop the ancestor refusal: an ancestor with a matching name would then be killed on its own, without its tree.
 
@@ -178,6 +188,8 @@ Recommendation: Keep Kill(entireProcessTree: true) for this release, now correct
 
 **Chosen for 8.4.0: typed NextChar(this Random, char min, char max).**
 
+**Done in 8.4.0 (1512816): `Random.NextChar(char min, char max)` returns a char in [min, max). It removes the natural delegate type of the NextChar method group (CS8917; see "NextChar(char, char) removes the natural delegate type" below).**
+
 Public NextChar(this Random) returns a-z only. Char bounds now work through GenerateRandom<char>(min, max) and GenerateRandom('a', 'f'). The other Next* methods take (object? min, object? max), and NextChar does not.
 
 Options:
@@ -194,7 +206,9 @@ Recommendation: Add NextChar(this Random random, char min, char max) in a minor 
 
 **Chosen for 8.4.0: digit-shift rounding (option b).**
 
-The spec's recipe is Math.Round(ToDecimal(v), Math.Min(decimals, 28), mode). For |v| < ~1e-11 with 17 significant digits, ToDecimal first rounds v to 28 places, so the result can be one unit in the last requested place off. Example: 1.9999999999999998e-13.Round(20, ToZero) returns 2E-13; the exact answer is 1.9999999E-13. 8.3.3 threw ArgumentOutOfRangeException for any digits above 15. The object path is fixed, because it falls back to the double computation. RoundDouble cannot use that fallback, because Math.Round(v, 15) returns 0 for these values. The limit is documented in YANMath.md, the Round XML remarks and a code comment, and pinned by Round_DoubleMoreThan28DecimalPlaces_RoundsAt28PlacesFirst.
+**Done in 8.4.0 (2dbdbae, with 930c0ed for boxed decimal inputs): a double whose shortest text needs more than 28 decimal places is rounded by shifting its digits, so Round is exact at any number of digits: 1.9999999999999998e-13.Round(20, ToZero) returns 1.9999999E-13 and 1e-30.Round(30) returns 1E-30. Documented in YANMath.md (Precision, Rounding and Overflow) and the Round XML remarks, and pinned by Round_DoubleMoreThan28DecimalPlaces_RoundsExactlyOnShortestText_Math. Strings and boxed decimals keep the 28-places-first path (see the two entries under "Decisions recorded while building 8.4.0").**
+
+The spec's recipe is Math.Round(ToDecimal(v), Math.Min(decimals, 28), mode). For |v| < ~1e-11 with 17 significant digits, ToDecimal first rounds v to 28 places, so the result could be one unit in the last requested place off. Example: before 2dbdbae, 1.9999999999999998e-13.Round(20, ToZero) returned 2E-13; the exact answer is 1.9999999E-13. 8.3.3 threw ArgumentOutOfRangeException for any digits above 15. The object path was already fixed, because it falls back to the double computation. RoundDouble could not use that fallback, because Math.Round(v, 15) returns 0 for these values. Until 2dbdbae the limit was documented and pinned by Round_DoubleMoreThan28DecimalPlaces_RoundsAt28PlacesFirst.
 
 Options:
 
@@ -203,7 +217,7 @@ Options:
 - (c) Throw ArgumentOutOfRangeException, as 8.3.3 did, when such a value is rounded to more than 15 digits.
 - (d) Round such values to 15 digits with Math.Round. This is often worse: tiny values become 0.
 
-Recommendation: (b) as a small follow-up, so the new 'more than 15 digits' feature is correct across its whole domain. Until then, (a) is in place and documented.
+Recommendation: (b) as a small follow-up, so the new 'more than 15 digits' feature is correct across its whole domain. Taken in 8.4.0 (see the status above).
 
 ## Planned for 9.0 (breaking)
 
@@ -574,15 +588,18 @@ Recommendation: Option 2 if the maintainers want a fail-fast guard: depth unique
 
 *Area:* YANObject / YANExpression
 
-8.3.3 never walked getter-only properties. The walk now walks a getter-only property whose declared type is a class that is an array, a list or a dictionary. Two framework wrappers broke this rule and were fixed one by one: ArraySegment<T>.Array converted the whole array, and Lazy<T>.Value ran the factory. Other framework getter-only collections are still reached, such as Exception.Data and ThreadLocal<T>.Values, as is the getter-only 'view' case in the guard decision.
+8.3.3 never walked getter-only properties. The walk now walks a getter-only property whose declared type is an array, a list or a dictionary class or interface. Two framework wrappers broke this rule and were fixed one by one: ArraySegment<T>.Array converted the whole array, and Lazy<T>.Value ran the factory. Other framework getter-only collections are still reached, such as Exception.Data and ThreadLocal<T>.Values, as is the getter-only 'view' case in the guard decision. The first recommendation was to walk getter-only collection properties only when the declaring type is not a framework type, which removes the whole class of wrapper and backing-store problems without losing the DTO use case that motivated the rule.
+
+Later evidence (r4 probe goandcopy / copyandgo, 4 cultures): a field exposed both by a getter-only collection property and by a writable copy getter is now shifted twice, in either declaration order. Examples are `List<DateTime> View => _d;` with `List<DateTime> Copy { get => _d.ToList(); set => _d = value; }`, and `DateTime[] _d` behind `List<DateTime> Days { get => _d.ToList(); set => _d = value.ToArray(); }` plus `IList<DateTime> View => _d`. With (0, 7), 10:00 becomes 00:00 the next day (+14 h); 8.3.3 gave 17:00 (+7 h). This is now documented (md:153 no longer says 'as in 8.3.3' for it, plus a 'Changes since 8.3.3' entry) and pinned by ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object. The DTO is a user type, so the earlier recommended option (skip framework-declared getter-only properties) does not remove this double shift. For dictionary and IList<DateTime?>-only types, the walk of their own properties (finding 1) already skips getter-only properties for the same reason.
 
 Options:
 
-- Keep the rule with the exclusions now in place (current).
-- Walk getter-only collection properties only when the declaring type is not a framework type (declaring assembly not System.Private.CoreLib or System.*). DTO properties such as List<T> Items { get; } keep working, and framework backing stores are never read.
-- Revert to 8.3.3 and never walk getter-only properties. This loses in-place conversion of getter-only DTO lists.
+- Keep the current rule with its exclusions; the double shift stays documented and pinned.
+- Walk getter-only collection properties only when the declaring type is not a framework type (declaring assembly not System.Private.CoreLib / System.*). This fixes the framework wrapper and backing-store cases, but NOT this double shift.
+- Heuristic: skip a getter-only collection property when the same type also has a writable property of a collection type (assume 'view plus serializer copy'). This removes this shape but stops converting getter-only DTO lists whenever the DTO has any other writable list, which makes it fragile.
+- Revert to 8.3.3 and never walk getter-only properties. This removes this double shift and every wrapper problem, but loses in-place conversion of `List<T> Items { get; }` DTO lists (CA2227 style), the common case that motivated the rule.
 
-Recommendation: Option 2. It removes the whole class of wrapper and backing-store problems without losing the DTO use case that motivated the rule.
+Recommendation: Option 2, keeping the documented double shift for user DTOs. A field behind both a getter-only view and a writable copy getter is the same once-per-path class as two copy getters over one field, which also double-shifts in 8.3.3. Choose option 4 instead only if this patch release must match 8.3.3's final values on every shape.
 
 ### Items of custom IList<T>-only collection types in ChangeTimeZoneAllProperty
 
@@ -654,21 +671,6 @@ Options:
 - Walk all properties of such subclasses, as 8.3.3 did: this reads and may write back inherited framework properties (Stream timeouts, which throw and would now be skipped; TextWriter.NewLine / FormatProvider; StreamWriter.AutoFlush) and walks into framework internals, which is the problem the leaf list fixed.
 
 Recommendation: Option 2, in a later release, listed as a behaviour change from this release. It restores 8.3.3's conversion of user data on these classes and keeps framework getters unread. Keep option 1 for this patch, since it is documented and pinned.
-
-### Scope of the getter-only collection rule in ChangeTimeZoneAllProperty (updated with the getter-only list plus copy-getter double shift)
-
-*Area:* YANObject / YANExpression
-
-Previously recorded: 8.3.3 never walked getter-only properties. The walk now walks getter-only properties declared as an array, list or dictionary class or interface. ArraySegment<T>.Array and Lazy<T>.Value were excluded one by one, and framework getter-only collections such as Exception.Data and ThreadLocal<T>.Values are still reached. The earlier recommendation was to skip getter-only properties declared by framework types. New evidence (r4 probe goandcopy / copyandgo, 4 cultures): a field exposed both by a getter-only collection property and by a writable copy getter is now shifted twice, in either declaration order. Examples are `List<DateTime> View => _d;` with `List<DateTime> Copy { get => _d.ToList(); set => _d = value; }`, and `DateTime[] _d` behind `List<DateTime> Days { get => _d.ToList(); set => _d = value.ToArray(); }` plus `IList<DateTime> View => _d`. With (0, 7), 10:00 becomes 00:00 the next day (+14 h); 8.3.3 gave 17:00 (+7 h). This is now documented (md:153 no longer says 'as in 8.3.3' for it, plus a 'Changes since 8.3.3' entry) and pinned by ChangeTimeZoneAllProperty_GetterOnlyListAndCopyGetterOverOneField_ShiftsItTwice_Object. The DTO is a user type, so the earlier recommended option (skip framework-declared getter-only properties) does not remove this double shift. For dictionary and IList<DateTime?>-only types, the walk of their own properties (finding 1) already skips getter-only properties for the same reason.
-
-Options:
-
-- Keep the current rule with its exclusions; the double shift stays documented and pinned.
-- Walk getter-only collection properties only when the declaring type is not a framework type (declaring assembly not System.Private.CoreLib / System.*). This fixes the framework wrapper and backing-store cases, but NOT this double shift.
-- Heuristic: skip a getter-only collection property when the same type also has a writable property of a collection type (assume 'view plus serializer copy'). This removes this shape but stops converting getter-only DTO lists whenever the DTO has any other writable list, which makes it fragile.
-- Revert to 8.3.3 and never walk getter-only properties. This removes this double shift and every wrapper problem, but loses in-place conversion of `List<T> Items { get; }` DTO lists (CA2227 style), the common case that motivated the rule.
-
-Recommendation: Option 2, keeping the documented double shift for user DTOs. A field behind both a getter-only view and a writable copy getter is the same once-per-path class as two copy getters over one field, which also double-shifts in 8.3.3. Choose option 4 instead only if this patch release must match 8.3.3's final values on every shape.
 
 ### Dictionary / IList<DateTime?>-only types: own properties walked after their values (finding 1), and the wrapper whose writable property returns its backing collection
 
@@ -815,7 +817,9 @@ Recommendation: Keep the per-thread builder.
 
 *Area:* YANTask / YANProcess / YANText / Snowflake
 
-They threw IndexOutOfRangeException. Implemented an unsigned 64-bit encoding, which keeps the documented A-Z / 0-9A-Z alphabet and round-trips through Extract* (long.MinValue, -1, 0, long.MaxValue checked).
+**Status in 8.4.0: unsigned encoding kept, and the recommended S8 validation is done. NextId* now throws ArgumentOutOfRangeException for an epoch later than now (65b0748), so a future epoch no longer produces a negative ID. The only negative IDs left are those made 2^40 ms (about 34.8 years) or more after their epoch, which set the sign bit (NextId(0L), the Unix epoch, does today). NextIdAlphabetic/NextIdAlphanumeric encode them as unsigned 64-bit values, and Extract* reads the timestamp field unsigned (1f32140), so they decode to the right date (8.3.3: 1957 for NextId(0L)).**
+
+In 8.3.3 they threw IndexOutOfRangeException. The review implemented an unsigned 64-bit encoding, which keeps the documented A-Z / 0-9A-Z alphabet and round-trips through Extract* (long.MinValue, -1, 0, long.MaxValue checked).
 
 Options:
 
@@ -823,7 +827,7 @@ Options:
 - Throw ArgumentOutOfRangeException for a negative ID
 - Prefix a '-' sign (breaks the alphabet contract)
 
-Recommendation: Keep unsigned, and prevent negative IDs at the source by validating timestampEpoch (S8).
+Recommendation: Keep unsigned, and prevent negative IDs at the source by validating timestampEpoch (S8). Both are in 8.4.0.
 
 ### Lower-case input to ExtractIdAlphabetic/AlphanumericComponents
 
@@ -883,7 +887,7 @@ Recommendation: (a), already implemented and documented in YANMath.md with the 1
 
 ## Decisions recorded while building 8.4.0
 
-The 8.4.0 additions kept the behaviour described in each entry; these are follow-up choices.
+These are follow-up choices found while the 8.4.0 additions were built. Most entries kept the behaviour they describe; the two marked *Done in 8.4.0* (the Snowflake sign bit and the YANTask null predicate) were implemented before the release.
 
 ### NextChar(char, char) removes the natural delegate type of the NextChar method group (CS8917)
 
@@ -940,6 +944,23 @@ Options:
 - A hybrid: spin with SpinOnce(-1) until the next millisecond is near, then SpinOnce(); more code, needs measurement
 
 Recommendation: Keep SpinOnce() (option 1), the owner's choice and the stated goal. Only strategies that use up their sequence every millisecond (MoreDistributed, 8 IDs/ms) feel the throughput cost. Document it, which SnowflakelD.md now does.
+
+### Timestamps in [2^40, 2^41) set the sign bit and ExtractIdComponents misread them
+
+*Area:* Random / YANMath / Snowflake (8.4.0)
+
+**Done in 8.4.0 (1f32140): option 3. ExtractIdComponents, and through it the alphabetic and alphanumeric variants, read the timestamp field unsigned ((long)((ulong)id >> shift)), so every ID that 8.4.0 can generate decodes to its real date. Documented in the NextId remarks and SnowflakelD.md, and pinned by ExtractIdComponents_IdWithTheSignBitSet_ReadsTheTimestampUnsigned.**
+
+The timestamp shift is 23, so the 41-bit field includes bit 63. The owner's bound (2^41 or more throws) accepts elapsed times of 2^40 to 2^41 - 1 ms, which give negative IDs. Before 1f32140, ExtractIdComponents used an arithmetic shift (id >> 23) and read their timestamp 2^41 ms (about 69.7 years) too early. This is current, not a 2057 problem: NextId(0L) (the Unix epoch) passes validation and returns a negative ID, which 8.3.3 and the arithmetic shift decoded to a date in 1957. Any epoch older than about 34.8 years behaves the same; with the default 2023 epoch, it starts in November 2057.
+
+Options:
+
+- Keep the 2^41 bound and the arithmetic shift (documented misread)
+- Bound at 2^40 so IDs are never negative (a stricter behaviour change than the owner chose; epochs older than about 34.8 years would throw)
+- Keep 2^41 and make ExtractIdComponents read the timestamp unsigned: correct for every ID 8.4.0 can generate, but it changes Extract for negative IDs that 8.3.3 generated with a future epoch
+- Keep 2^41 and add an opt-in unsigned extraction overload
+
+Recommendation: Option 3 in 8.4.0. With future epochs now rejected, the only negative IDs NextId can make are sign-bit ones, which the unsigned read decodes correctly. Note it in the release notes next to the epoch validation (done in CHANGELOG.md). If changing Extract had been too much for 8.x, option 2 was the safe alternative.
 
 ### Shape of the collection overloads for entireProcessTree/cancellation (deviation from the spec's example signature)
 
@@ -1011,6 +1032,27 @@ Options:
 
 Recommendation: A. The order is now documented precisely and pinned by tests. B gives only part of the guarantee and still changes results, and C adds cost for a guarantee nobody has asked for. Revisit only if the owner wants a strict completion-order contract before 8.4.0 ships.
 
+### Null predicate in the YANTask methods (WaitAnyWithConditions / WhenAnyWithConditions and WaitAnyWithCondition / WhenAnyWithCondition)
+
+*Area:* YANTask / YANProcess (8.4.0)
+
+**Done in 8.4.0 (3c2ab80): option 3. The streaming methods throw ArgumentNullException (ParamName "predicate") from the first MoveNextAsync, next to the existing ArgumentException for a null task, whatever the tasks are. The released single-result methods still count a null predicate as no match. The XML docs, YANTask.md and the pinning tests were updated.**
+
+Behaviour before 3c2ab80 (documented in 1d3f272 and pinned by tests):
+- The streaming methods called the predicate without a null check. A null predicate threw NullReferenceException from MoveNextAsync at the first task that completed successfully, and gave an empty enumeration when no task succeeded or the collection was null or empty.
+- The scalar methods catch every predicate exception. A null predicate counts as no match, and they return default(T) after waiting for all tasks.
+
+Timing decided the options. The streaming methods became public for the first time in 8.4.0 (they were internal in 8.3.3), so validating them before the release breaks no released consumer. The scalar methods are already released, so changing them is a behaviour change for existing callers.
+
+Options:
+
+- Keep the behaviour as documented: streaming throws NullReferenceException lazily, scalar returns default(T).
+- Throw ArgumentNullException eagerly in the facade of the streaming methods (when WaitAnyWithConditions is called, before enumeration), the BCL convention for iterator-returning methods. Leave the scalar methods as they are.
+- Throw ArgumentNullException at the first MoveNextAsync in the streaming methods, so it fits the existing lazy-throw model of ArgumentException and OperationCanceledException.
+- Validate in both families: ArgumentNullException in the streaming methods (eager or first MoveNextAsync) and also in the scalar methods, listed as a behaviour change for the scalar methods.
+
+Recommendation: Option 3 before 8.4.0 shipped. It costs nothing for released consumers and turns a NullReferenceException that depended on the data (sometimes thrown, sometimes an empty result) into a consistent ArgumentNullException. Leave the scalar methods unchanged (their no-match handling is documented) unless the owner wants symmetry; then take option 4 in a later release and list it as a behaviour change.
+
 ### Should the IFormatProvider of ParseWith/ParsesWith also govern exact DateTime format strings?
 
 *Area:* Parse with IFormatProvider (8.4.0)
@@ -1040,3 +1082,39 @@ Options:
 - Eager compile with no emulation, documenting the static-constructor timing difference as a behaviour change
 
 Recommendation: Keep compile-on-second-call. It is the only option that keeps reflection's first-call semantics exactly, and its one-time cost (about 0.3-0.8 ms more per type) is paid back after a few thousand calls. Revisit with a higher threshold only if real workloads check many types just two or three times.
+
+## CI and tooling
+
+Decisions recorded when the CI workflow and `global.json` were added (Area F). Neither affects package consumers.
+
+### Contributor impact of the committed global.json (8.0.100, rollForward latestFeature)
+
+*Area:* CI and tooling
+
+**Open: the owner decides whether contributors without a .NET 8 SDK should be supported locally. Option 1 is committed.**
+
+latestFeature never crosses majors: a 9.0.100 + latestFeature global.json with only SDK 8 installed fails with 'A compatible .NET SDK was not found' (exit 145). So a developer who has only a .NET 9/10/11 SDK can no longer run dotnet build/test/format at the repository root, and Visual Studio honours global.json too. YANLib.sln says 'Visual Studio Version 18' (VS 2026, which ships the .NET 10 SDK), so the maintainer may not have an 8.0 SDK. .NET 8 support ended on 2026-11-10, so the file asks contributors to install an out-of-support SDK. The pin exists because the formatter output depends on the SDK version, and it gives a local `dotnet format` the same result as CI. Unverified risk: an unpinned newer SDK may report net8.0 as out of support, which TreatWarningsAsErrors could turn into a build break; that is a reason to keep a pin in CI either way.
+
+Options:
+
+- Keep global.json committed with latestFeature (current): local and CI use the same .NET 8 SDK and formatter, but contributors must install an 8.0 SDK, and VS 2026 users without one cannot load or build the solution.
+- Generate global.json only inside the CI job (for example `dotnet new globaljson --sdk-version 8.0.100 --roll-forward latestFeature` before setup-dotnet) and drop the committed file: CI stays pinned and contributors use any SDK, but a local `dotnet format` on SDK 10/11 may disagree with CI.
+- Commit global.json with rollForward latestMajor: contributors are never blocked, but the pin is gone. setup-dotnet maps latestMajor to no version, and the SDK resolver then picks the newest installed SDK (11.0.100 on the runner), so the formatter drifts with each runner image.
+
+Recommendation: It depends on whether the maintainer has (or will install) an 8.0 SDK and wants the same formatter locally and in CI. If yes, keep option 1. If the maintainer works only with VS 2026 / SDK 10+, switch to option 2: CI keeps its pin and nobody is blocked locally; then add a line to the .editorconfig header saying that the format gate is defined by the .NET 8 SDK used in CI. Do not use option 3, since it gives up the pin that was the reason for global.json.
+
+### SDK band in CI: latestFeature (8.0.4xx on the runner) vs latestPatch (8.0.1xx, what was measured locally)
+
+*Area:* CI and tooling
+
+**Settled: option 1 (keep latestFeature). The real GitHub runs on SDK 8.0.428 passed the build and the format gate, so no switch to latestPatch is needed.**
+
+The ubuntu-24.04 image has 8.0.134, 8.0.206, 8.0.319 and 8.0.428 preinstalled. With latestFeature, setup-dotnet installs channel 8.0 and the resolver picks 8.0.428 or newer (Roslyn 4.11). Every local measurement, including the format gate, was made on 8.0.134 (Roslyn 4.8). Proxies for Roslyn 4.11 were clean (compiler toolset 4.11: 0 warnings and all tests passed; Formatter 4.11 changed 0 of 149 files), but the 8.0.4xx SDK's own `dotnet format` and its bundled analyzers had not been run before the first real CI run. With latestPatch, setup-dotnet would install the newest 8.0.1xx and the resolver would stay in the 1xx band, the band rehearsed locally.
+
+Options:
+
+- Keep latestFeature (current, the spec's choice): newest .NET 8 tooling.
+- Switch global.json to rollForward latestPatch: CI uses the same 8.0.1xx band (Roslyn 4.8) as every local measurement, but contributors then need an 8.0.1xx SDK specifically (VS 2022 17.9+ ships 8.0.2xx-4xx), which is stricter locally.
+- Keep latestFeature in the committed file and pin CI more tightly (for example a CI-generated global.json with 8.0.134 + latestPatch, combined with option 2 of the previous decision).
+
+Recommendation: Option 1. The plan was to watch the first real run and apply option 2 (a one-line change to global.json) only if 'Check formatting' or 'Build' failed on 8.0.4xx alone; the runs on 8.0.428 passed both, so option 1 stays.
