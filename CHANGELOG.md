@@ -15,7 +15,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
 ### Fixes
 
 - **Parse** (YANUnmanaged):
-  - An out-of-range value (`"99999999999".Parse<int>()`, `int.MinValue.Abs()`, `long.MaxValue.Round()`) no longer crashes the process with a stack overflow. It returns the default (0, `null` or `defaultValue`), as the never-throw contract says.
+  - An out-of-range value (`"99999999999".Parse<int>()`, `int.MinValue.Abs()`) no longer crashes the process with a stack overflow. It returns the default (0, `null` or `defaultValue`), as the never-throw contract says.
   - `nint`/`nuint` are supported, and the type cache is thread-safe.
   - Invalid strings are parsed with `TryParse`: `"abc".Parse<int>()` takes 33 ns instead of 23 µs.
   - Fractional strings are floored exactly.
@@ -24,6 +24,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
 - **YANMath**:
   - Integer and decimal math is exact instead of going through `double`: `1.005m.Round(2)` is `1.01`, `long` sums keep every digit, and `3m.Pow(-1)` is exact.
   - `Round` accepts more than 15 digits, exactly.
+  - Values at the type limits are exact: `long.MaxValue.Round()`, which crashed 8.3.3 with a stack overflow, returns `long.MaxValue`.
   - `Min` / `Max` / `Average` of all-`null` input return the default.
   - `Log2` uses `Math.Log2`.
   - Typed `Sum` / `Average` no longer box: `Sum<int>` over 1000 items takes 1 µs instead of 34 µs, with no allocation.
@@ -42,7 +43,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
   - `ChangeTimeZoneAllProperty`:
     - It handles cycles, deep graphs (a 1,000,000-node list), read-only collections, dictionaries and `ArraySegment<T>`.
     - It writes converted copies back in 8.3.3's order.
-  - Property reads and copies use compiled accessors from the second call on: `IsNullDefault` on 6 properties takes 99 ns instead of 199 ns. The results are unchanged, and an exception thrown by a getter or setter still arrives as a `TargetInvocationException` with the same message and `InnerException`; only its `Source`, `TargetSite` and stack frames differ from the second call on (see *Behaviour changes* below).
+  - Property reads and copies use compiled accessors from the second call on: `IsNullDefault` on 6 properties takes 99 ns instead of 199 ns. The results and the type, message and `InnerException` of a getter or setter exception are those of reflection (apart from one `ForceInterpretedInvoke` case described on the YANObject wiki page), but the exception's `Source`, `TargetSite` and stack frames differ from the second call on (see *Behaviour changes* below).
 - **YANExpression**: `PropertyExpression` calls a matching parameterless method correctly. Its cache key includes the parameter name, and it no longer throws for `new`-hidden properties.
 - **YANTask**:
   - Cancellation is observed while waiting: 114 ms instead of never.
@@ -66,7 +67,7 @@ A large maintenance release. Every change was made against the 8.3.3 sources, ch
 
 ### Behaviour changes to check when upgrading
 
-Each item changes a result, an exception or a side effect that code written against 8.3.3 can observe; the examples were measured on 8.3.3 and 8.4.0. Calls that crashed the process in 8.3.3 are listed under *Fixes* only.
+Each item changes a result, an exception or a side effect that code written against 8.3.3 can observe. Most before -> after values were measured with the same calls on 8.3.3 and 8.4.0; the YANProcess items and a few details (the `TimeSpan` and enum `ToString()` targets, `GetCallingAssembly`, a never-ending graph) come from the reviews, the tests and the wiki pages. Calls that crashed the process in 8.3.3 are listed under *Fixes* only.
 
 **YANUnmanaged (Parse)**
 
@@ -88,6 +89,7 @@ Each item changes a result, an exception or a side effect that code written agai
 - `Min` / `Max` / `Average` of all-`null` input return the default instead of throwing `InvalidOperationException`: `new List<int?> { null, null }.Min<int>()` is 0, `YANMath.Average<int?>(null, null)` is `null`. A typed `Average` over a sequence that is empty when enumerated again is 0 (threw).
 - `Round` with 16 or more digits rounds instead of throwing `ArgumentOutOfRangeException`: `(0.1 + 0.2).Round(16)` is 0.3. Negative digits still throw. With 16 or more digits, an undefined `MidpointRounding` throws `ArgumentException` (`ParamName` `mode`) instead of `ArgumentOutOfRangeException` (`digits`).
 - `Log2` uses `Math.Log2`: `536870912.0.Log2()` 29.000000000000004 -> 29. Other results can change in the last digit.
+- The exact conversion costs time: `Sum` and `Average` with an integer or `decimal` result over boxed `double` values, or over a `double` collection with another result type (`doubles.Sum<decimal>()`), are several times slower. `YANMath.Sum<decimal>` over 1,000 boxed random doubles took about 0.58 ms instead of about 0.15 ms. Same-type typed calls (`YANMath.Sum<double>(doubles)`) are not affected.
 - Typed `Sum` / `Average` / `Min` / `Max` over a `List<T>` subclass that re-implements `IEnumerable<T>` follow that enumeration: for a list holding 5, -100 and 3 that enumerates 5 and 3, `Average` -31 -> 4 and `Min` -100 -> 3.
 
 **YANRandom**

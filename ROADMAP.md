@@ -1,6 +1,6 @@
 # YANLib roadmap and open decisions
 
-This page records the design decisions found during the 8.3.3 review (Areas A-E). Each entry lists the context, the options and a recommendation. Nothing here is implemented unless the entry says it was chosen for 8.4.0.
+This page records the design decisions found during the 8.3.3 review (Areas A-E), while the 8.4.0 additions were built (G1-G4) and when CI was added (F). Each entry lists the context, the options and a recommendation. Nothing here is implemented unless the entry says it was chosen for, or done in, 8.4.0.
 
 ## Owner decisions (November 2026)
 
@@ -37,7 +37,7 @@ Every property is read with PropertyInfo.GetValue on every call (the ~30 ns refl
 
 Options:
 
-- Keep reflection (current; exception type documented as TargetInvocationException)
+- Keep reflection (the state before 8.4.0; exception type documented as TargetInvocationException)
 - Compiled getters/setters cached per Type, and wrap getter exceptions in TargetInvocationException to keep the contract
 - Compiled accessors with raw exceptions, documented as a behaviour change in a minor release
 
@@ -89,7 +89,7 @@ In 8.3.3 they were internal in the facade although YANTask.md documented them as
 
 Options:
 
-- Keep them internal (current); docs say so
+- Keep them internal (the state before 8.4.0); docs say so
 - Make them public in a minor release (an addition, package validation passes) after N5/N6 and the cancellation semantics are settled
 - Delete them
 
@@ -107,7 +107,7 @@ Before 6ffea4f, the review had implemented a quiet end in every case: already ca
 
 Options:
 
-- Keep the quiet end (current)
+- Keep the quiet end (the state before 6ffea4f)
 - Throw OperationCanceledException in every case (the .NET convention, e.g. ChannelReader.ReadAllAsync), changing the pre-cancel tests
 - Add a parameter that chooses
 
@@ -212,7 +212,7 @@ The spec's recipe is Math.Round(ToDecimal(v), Math.Min(decimals, 28), mode). For
 
 Options:
 
-- (a) Keep the documented limit (current).
+- (a) Keep the documented limit (the state before 2dbdbae).
 - (b) Add digit-shift rounding, about 20 lines. Take the mantissa digits and exponent of the R text, build a decimal shifted by 10^places, decimal.Round to 0 places, and parse back as '<q>E-<places>'. Use it only when the direct conversion needs more than 28 places. Flip the pin test to 1.9999999e-13.
 - (c) Throw ArgumentOutOfRangeException, as 8.3.3 did, when such a value is rounded to more than 15 digits.
 - (d) Round such values to 15 digits with Math.Round. This is often worse: tiny values become 0.
